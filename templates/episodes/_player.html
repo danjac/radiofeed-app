@@ -1,12 +1,12 @@
 {% load static %}
 {% if is_playing %}
     {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-        <div x-data="player({
-            autoplay: {{ player_action|yesno:'true,false' }},
-            mediaSrc: '{{ episode.media_url }}',
-            currentTime: {% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
-            })"
-            @keydown.window="shortcuts">
+        <div x-data="player(
+            {{ player_action|yesno:'true,false' }},
+            '{{ episode.media_url }}',
+            {% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
+            )"
+            @keydown.window="player.shortcuts">
             {{ episode.get_media_metadata|json_script:"player-metadata" }}
             <audio x-ref="audio"
                 preload="metadata"
@@ -192,11 +192,11 @@
     {% include "episodes/_history_actions.html" with hx_oob=True %}
 {% endif %}
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('player', () =>  {
-            autoplay: false,
-            mediaSrc: null,
-            currentTime: 0,
+    document.addEventListener('alpine:init', (options) => {
+        Alpine.data('player', (autoplay = false, mediaSrc = null, currentTime = 0) => ({
+            autoplay,
+            mediaSrc,
+            currentTime,
             duration: 0,
             isError: false,
             isLoaded: false,
@@ -222,14 +222,14 @@
                     this.$refs.audio.playbackRate = value;
                 });
 
-                this.counters.current = this.formatDuration(currentTime);
-                this.counters.duration = this.formatDuration(duration);
+                this.counters.current = this.formatDuration(this.currentTime);
+                this.counters.duration = this.formatDuration(this.duration);
 
-                this.$refs.audio.currentTime = currentTime;
+                this.$refs.audio.currentTime = this.currentTime;
                 this.$refs.audio.load();
 
                 if ('mediaSession' in navigator) {
-                    navigator.mediaSession.metadata = getMediaMetadata();
+                    navigator.mediaSession.metadata = this.getMediaMetadata();
                 }
             },
             formatDuration(value) {
@@ -340,8 +340,12 @@
                         this.lastTimeUpdate = time;
                         fetch('{% url "episodes:player_time_update" %}', {
                             method: 'POST',
-                            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-                            body: new URLSearchParams({ current_time: time }),
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: new URLSearchParams({
+                                current_time: time
+                            }),
                         });
                     }
                 }
@@ -418,8 +422,6 @@
                     this.$refs.audio.pause();
                 }
             }
-        })
+        }))
     });
 </script>
-
-
