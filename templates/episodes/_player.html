@@ -1,7 +1,11 @@
 {% load static %}
 {% if is_playing %}
     {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-        <div x-data="player"
+        <div x-data="player({
+            autoplay: {{ player_action|yesno:'true,false' }},
+            mediaSrc: '{{ episode.media_url }}',
+            currentTime: {% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
+            })"
             @keydown.window="shortcuts">
             {{ episode.get_media_metadata|json_script:"player-metadata" }}
             <audio x-ref="audio"
@@ -190,9 +194,9 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('player', () =>  {
-            autoplay: {{ player_action|yesno:'true,false' }},
-            mediaSrc: '{{ episode.media_url }}',
-            currentTime: {% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
+            autoplay: false,
+            mediaSrc: null,
+            currentTime: 0,
             duration: 0,
             isError: false,
             isLoaded: false,
@@ -204,6 +208,29 @@
             counters: {
                 current: '00:00:00',
                 duration: '00:00:00',
+            },
+            init() {
+                this.$watch('currentTime', (value) => {
+                    this.counters.current = this.formatDuration(value);
+                });
+
+                this.$watch('duration', (value) => {
+                    this.counters.duration = this.formatDuration(value);
+                });
+
+                this.$watch('playbackRate', (value) => {
+                    this.$refs.audio.playbackRate = value;
+                });
+
+                this.counters.current = this.formatDuration(currentTime);
+                this.counters.duration = this.formatDuration(duration);
+
+                this.$refs.audio.currentTime = currentTime;
+                this.$refs.audio.load();
+
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = getMediaMetadata();
+                }
             },
             formatDuration(value) {
                 if (isNaN(value) || value < 0) return '00:00:00';
@@ -390,32 +417,9 @@
                 } else {
                     this.$refs.audio.pause();
                 }
-            },
-            init() {
-                $watch('currentTime', (value) => {
-                    counters.current = formatDuration(value);
-                });
-
-                $watch('duration', (value) => {
-                    counters.duration = formatDuration(value);
-                });
-
-                $watch('playbackRate', (value) => {
-                    $refs.audio.playbackRate = value;
-                });
-
-                counters.current = formatDuration(currentTime);
-                counters.duration = formatDuration(duration);
-
-                $refs.audio.currentTime = currentTime;
-                $refs.audio.load();
-
-                if ('mediaSession' in navigator) {
-                    navigator.mediaSession.metadata = getMediaMetadata();
-                }
-
             }
-        }
-            </script>
+        })
+    });
+</script>
 
 
