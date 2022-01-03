@@ -1,6 +1,6 @@
 {% extends "podcasts/base.html" %}
 
-{% block subtitle %} | {{ podcast.cleaned_title }}{% endblock %}
+{% block title %} | {{ podcast.cleaned_title }}{% endblock %}
 
 {% block content %}
     <h1 class="font-bold text-lg lg:text-xl mb-3 text-center sm:text-left">{{ podcast.cleaned_title }}</h1>

@@ -18,7 +18,7 @@
     </a>
 {% endblock title %}
 
-{% block subtitle %}
+{% block title %}
     {% if is_podcast_detail %}
         {% include "_date.html" with value=episode.pub_date title="Release Date" %}
     {% else %}
@@ -30,4 +30,4 @@
             </a>
         {% endwith %}
     {% endif %}
-{% endblock subtitle %}
+{% endblock title %}

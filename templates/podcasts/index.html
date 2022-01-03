@@ -1,6 +1,6 @@
 {% extends "podcasts/base.html" %}
 
-{% block subtitle %} | {{ promoted|yesno:"Trending,My" }} Podcasts {% endblock %}
+{% block title %} | {{ promoted|yesno:"Trending,My" }} Podcasts {% endblock %}
 
 {% block content %}
     {% if has_subscriptions %}
