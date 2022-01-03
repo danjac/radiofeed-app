@@ -27,8 +27,8 @@
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
         {% endblock %}>
 
-            {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-            {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
+            {% include "_navbar.html" %}
+            {% include "_hx_indicator.html" %}
 
     {% endif %}
 
