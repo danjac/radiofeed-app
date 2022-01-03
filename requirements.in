@@ -1,5 +1,6 @@
 attrs
 bleach
+bleach-extras
 Brotli
 cryptography
 decorator

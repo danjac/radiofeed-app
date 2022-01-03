@@ -82,6 +82,10 @@ input[type='search']::-webkit-search-results-decoration {
     @apply inline;
 }
 
+.markdown li ul {
+    @apply pl-3;
+}
+
 .markdown table {
     @apply table-auto w-full;
 }

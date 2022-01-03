@@ -4,10 +4,10 @@ import html
 import re
 
 import bleach
+import bleach_extras
 import markdown
 
 from django.template.defaultfilters import striptags
-from html5lib.filters import whitespace
 
 ALLOWED_TAGS: list[str] = [
     "a",
@@ -28,6 +28,7 @@ ALLOWED_TAGS: list[str] = [
     "h6",
     "hr",
     "i",
+    "img",
     "li",
     "ol",
     "p",
@@ -54,16 +55,16 @@ ALLOWED_TAGS: list[str] = [
 
 ALLOWED_ATTRS: dict[str, list[str]] = {
     "a": ["href", "target", "title"],
+    "img": ["src", "alt"],
 }
 
 HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 
-cleaner = bleach.Cleaner(
+cleaner = bleach_extras.cleaner_factory__strip_content(
     attributes=ALLOWED_ATTRS,
     tags=ALLOWED_TAGS,
     strip=True,
-    filters=[whitespace.Filter],
 )
 
 
