@@ -38,17 +38,13 @@
         hx-history-elt
         id="layout">
 
-        {% block sidebar %}
-            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
-                {% include "_sidebar.html" %}
-            </aside>
-        {% endblock %}
+        <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
+            {% include "_sidebar.html" %}
+        </aside>
 
-        {% block main %}
-            <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
-                {% block content %}{% endblock %}
-            </main>
-        {% endblock main %}
+        <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
+            {% block content %}{% endblock %}
+        </main>
     </div>
 
     {% if not request.htmx %}
