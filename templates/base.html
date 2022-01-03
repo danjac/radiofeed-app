@@ -1,40 +1,38 @@
 {% spaceless %}
     {% load static player %}
     {% block header_tags %}
-        {% if request.htmx %}
+        {% if not request.htmx %}
+            <!DOCTYPE html>
+            <html lang="en">
+
+                <head>
+        {% endif %}
+        {% block head %}
             {% block title_tag %}
                 <title>
                     {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
                 </title>
             {% endblock title_tag %}
+            {% if not request.htmx %}
+                {% block meta_tags %}
+                    {% include "_meta.html" %}
+                {% endblock meta_tags %}
+                {% include "_static.html" %}
+                {% include "_google_search.html" %}
+            {% endif %}
+        {% endblock head %}
 
-        {% else %}
-            <!DOCTYPE html>
-            <html lang="en">
+        {% if not request.htmx %}
+            </head>
 
-                <head>
-                    {% block head %}
-                        {% block title_tag %}
-                            <title>
-                                {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
-                            </title>
-                        {% endblock title_tag %}
-                        {% block meta_tags %}
-                            {% include "_meta.html" %}
-                        {% endblock meta_tags %}
-                        {% include "_static.html" %}
-                        {% include "_google_search.html" %}
-                    {% endblock head %}
-                </head>
-
-                <body {% block bodyattrs %}
-                    class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
-                    hx-boost="true"
-                    hx-target="#layout"
-                    hx-swap="outerHTML show:window:top"
-                    hx-indicator="#loader"
-                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                {% endblock %}>
+            <body {% block bodyattrs %}
+                class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
+                hx-boost="true"
+                hx-target="#layout"
+                hx-swap="outerHTML show:window:top"
+                hx-indicator="#loader"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+            {% endblock %}>
         {% endif %}
     {% endblock header_tags %}
 
