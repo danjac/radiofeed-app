@@ -206,9 +206,7 @@
         }
     }
 }"
-     {# fmt:on #}
-            x-init="
-            {# fmt:off #}
+     x-init="
         $watch('currentTime', (value) => {
             counters.current = formatDuration(value);
         });
