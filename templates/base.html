@@ -1,41 +1,54 @@
 {% spaceless %}
     {% load static player %}
     {% block header_tags %}
-        <!DOCTYPE html>
-        <html lang="en">
+        {% if request.htmx %}
+            {% block title_tag %}
+                <title>
+                    {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
+                </title>
+            {% endblock title_tag %}
 
-            <head>
-                {% block head %}
-                    {% block title_tag %}
-                        <title>
-                            {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
-                        </title>
-                    {% endblock title_tag %}
-                    {% block meta_tags %}
-                        {% include "_meta.html" %}
-                    {% endblock meta_tags %}
-                    {% include "_static.html" %}
-                    {% include "_google_search.html" %}
-                {% endblock head %}
-            </head>
+        {% else %}
+            <!DOCTYPE html>
+            <html lang="en">
 
-            <body {% block bodyattrs %}
-                class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
-                hx-boost="true"
-                hx-target="#layout"
-                hx-swap="outerHTML show:window:top"
-                hx-indicator="#loader"
-                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-            {% endblock %}>
+                <head>
+                    {% block head %}
+                        {% block title_tag %}
+                            <title>
+                                {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
+                            </title>
+                        {% endblock title_tag %}
+                        {% block meta_tags %}
+                            {% include "_meta.html" %}
+                        {% endblock meta_tags %}
+                        {% include "_static.html" %}
+                        {% include "_google_search.html" %}
+                    {% endblock head %}
+                </head>
+
+                <body {% block bodyattrs %}
+                    class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
+                    hx-boost="true"
+                    hx-target="#layout"
+                    hx-swap="outerHTML show:window:top"
+                    hx-indicator="#loader"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                {% endblock %}>
+        {% endif %}
     {% endblock header_tags %}
 
     {% block page_header %}
-        {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-        {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
+        {% if request.htmx %}
+            {% include "_signup_cta.html" with hx_swap=True %}
+        {% else %}
+            {% block navbar %}{% include "_navbar.html" %}{% endblock %}
+            {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
+        {% endif %}
     {% endblock page_header %}
 
     {% block messages %}
-        {% include "_messages.html" %}
+        {% include "_messages.html" with hx_oob=request.htmx %}
     {% endblock messages %}
 
     {% block layout %}
@@ -63,19 +76,23 @@
     {% endblock %}
 
     {% block page_footer %}
-        {% block player %}
-            {% if user.is_authenticated %}
-                <div id="player">
-                    {% audio_player %}
-                </div>
-                {% include "episodes/_player_js.html" %}
-            {% endif %}
-        {% endblock player %}
+        {% if not request.htmx %}
+            {% block player %}
+                {% if user.is_authenticated %}
+                    <div id="player">
+                        {% audio_player %}
+                    </div>
+                    {% include "episodes/_player_js.html" %}
+                {% endif %}
+            {% endblock player %}
+        {% endif %}
 
     {% endblock page_footer %}
     {% block footer_tags %}
-        </body>
+        {% if not request.htmx %}
+            </body>
 
-        </html>
+            </html>
+        {% endif %}
     {% endblock footer_tags %}
 {% endspaceless %}
