@@ -1,6 +1,6 @@
 {% if user.is_anonymous %}
     <div id="signup-cta"
-        {% if hx_swap %}hx-swap-oob="true"
+        {% if hx_oob %}hx-swap-oob="true"
         {% endif %}
         class="text-center p-3 bg-blue-700 text-white font-bold">
         <a class="underline link text-white"

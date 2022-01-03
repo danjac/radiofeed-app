@@ -38,7 +38,7 @@
 
     {% block page_header %}
         {% if request.htmx %}
-            {% include "_signup_cta.html" with hx_swap=True %}
+            {% include "_signup_cta.html" with hx_oob=True %}
         {% else %}
             {% block navbar %}{% include "_navbar.html" %}{% endblock %}
             {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
