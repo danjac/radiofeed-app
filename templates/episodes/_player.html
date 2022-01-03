@@ -1,8 +1,8 @@
 {% load static %}
 {% if is_playing %}
     {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-        <div x-data="
-            {# fmt:off #}
+        <div {# fmt:off #}
+     x-data="
 {
     autoplay: {{ player_action|yesno:'true,false' }},
     mediaSrc: '{{ episode.media_url }}',
