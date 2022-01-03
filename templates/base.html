@@ -9,7 +9,10 @@
     <title>
         {% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}
     </title>
-    {% if not request.htmx %}
+    {% if request.htmx %}
+        {% include "_signup_cta.html" with hx_oob=True %}
+
+    {%  else %}
         {% include "_meta.html" %}
         {% include "_static.html" %}
         {% include "_google_search.html" %}
@@ -23,13 +26,10 @@
             hx-indicator="#loader"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
         {% endblock %}>
-    {% endif %}
 
-    {% if request.htmx %}
-        {% include "_signup_cta.html" with hx_oob=True %}
-    {% else %}
-        {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-        {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
+            {% block navbar %}{% include "_navbar.html" %}{% endblock %}
+            {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
+
     {% endif %}
 
     {% include "_messages.html" with hx_oob=request.htmx %}
