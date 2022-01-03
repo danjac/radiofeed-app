@@ -10,7 +10,7 @@
         {% block head %}
             {% block title_tag %}
                 <title>
-                    {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
+                    {% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}
                 </title>
             {% endblock title_tag %}
             {% if not request.htmx %}
