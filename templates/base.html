@@ -34,7 +34,6 @@
 
     {% include "_messages.html" with hx_oob=request.htmx %}
 
-
     <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5"
         hx-history-elt
         id="layout">
@@ -53,7 +52,9 @@
     </div>
 
     {% if not request.htmx %}
+
         {% cookie_notice %}
+
         {% if user.is_authenticated %}
             <div id="player">
                 {% audio_player %}
