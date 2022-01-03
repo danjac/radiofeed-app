@@ -57,22 +57,16 @@
 
     {% if not request.htmx %}
         {% cookie_notice %}
+        {% if user.is_authenticated %}
+            <div id="player">
+                {% audio_player %}
+            </div>
+            {% include "episodes/_player_js.html" %}
+        {% endif %}
     {% endif %}
 
-    {% if not request.htmx %}
-        {% block player %}
-            {% if user.is_authenticated %}
-                <div id="player">
-                    {% audio_player %}
-                </div>
-                {% include "episodes/_player_js.html" %}
-            {% endif %}
-        {% endblock player %}
-    {% endif %}
+    </body>
 
-    {% if not request.htmx %}
-        </body>
-
-        </html>
-    {% endif %}
+    </html>
+{% endif %}
 {% endspaceless %}
