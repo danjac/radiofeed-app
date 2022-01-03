@@ -183,6 +183,10 @@
             </div>
     {% endwith %}
 {% endif %}
+{% if episode and player_action %}
+    {% include "episodes/_player_action.html" with hx_oob=True %}
+    {% include "episodes/_history_actions.html" with hx_oob=True %}
+{% endif %}
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('player', () =>  {
@@ -414,7 +418,4 @@
         }
             </script>
 
-            {% if episode and player_action %}
-                {% include "episodes/_player_action.html" with hx_oob=True %}
-                {% include "episodes/_history_actions.html" with hx_oob=True %}
-            {% endif %}
+
