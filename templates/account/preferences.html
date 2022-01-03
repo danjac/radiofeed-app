@@ -2,7 +2,7 @@
 
 {% load %}
 
-{% block title %} | Preferences{% endblock %}
+{% block title %}{{ block.super }} | Preferences{% endblock %}
 
 {% block settings_content %}
     <form method="post"

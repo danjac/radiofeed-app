@@ -1,7 +1,7 @@
 {% extends "account/settings_base.html" %}
 
 
-{% block title %} | E-mail Addresses{% endblock %}
+{% block title %}{{ block.super }} | E-mail Addresses{% endblock %}
 
 {% block settings_content %}
     {% if user.emailaddress_set.all %}

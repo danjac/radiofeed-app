@@ -1,5 +1,7 @@
 {% extends "podcasts/podcast_detail_base.html" %}
 
+{% block title %}{{ block.super }} | About{% endblock %}
+
 {% block podcast_content %}
     {% with link=podcast.link|normalize_url funding_url=podcast.funding_url|normalize_url %}
         <article class="space-y-3 border-t dark:border-gray-500 pt-3">
