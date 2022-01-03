@@ -7,8 +7,9 @@
                 autoplay={{ player_action|yesno:'true,false' }},
                 mediaUrl='{{ episode.media_url }}',
                 currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
-            )"
+            )
             {# fmt:on #}
+            "
             @keydown.window="shortcuts">
             {{ episode.get_media_metadata|json_script:"player-metadata" }}
             <audio x-ref="audio"
