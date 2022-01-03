@@ -1,12 +1,15 @@
 {% load static %}
 {% if is_playing %}
     {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-        <div x-data="player(
-            {{ player_action|yesno:'true,false' }},
-            '{{ episode.media_url }}',
-            {% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
+        <div x-data="
+            {# fmt: off #}
+            player(
+            autoplay={{ player_action|yesno:'true,false' }},
+            mediaUrl='{{ episode.media_url }}',
+            currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
             )"
-            @keydown.window="player.shortcuts">
+            {# fmt: on #}
+            @keydown.window="shortcuts">
             {{ episode.get_media_metadata|json_script:"player-metadata" }}
             <audio x-ref="audio"
                 preload="metadata"
@@ -192,7 +195,7 @@
     {% include "episodes/_history_actions.html" with hx_oob=True %}
 {% endif %}
 <script>
-    document.addEventListener('alpine:init', (options) => {
+    document.addEventListener('alpine:init', () => {
         Alpine.data('player', (autoplay = false, mediaSrc = null, currentTime = 0) => ({
             autoplay,
             mediaSrc,
