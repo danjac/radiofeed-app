@@ -8,7 +8,6 @@
         <div class="flex items-center flex-shrink-0 mr-6">
 
             <a href="{{ home_url }}"
-                @click="$dispatch('close-sidebar')"
                 title="{{ request.site.name }}"
                 class="mr-2 lg:mr-4 inline-block">
                 <img src="{% static 'img/wave.png' %}"
@@ -20,7 +19,6 @@
 
             <a class="font-bold text-lg lg:text-xl"
                 title="{{ request.site.name }}"
-                @click="$dispatch('close-sidebar')"
                 href="{{ home_url }}">{{ request.site.name }}</a>
 
             {% if debug %}
@@ -65,7 +63,6 @@
         <div class="flex items-center space-x-3">
             {% if user.is_authenticated %}
                 <a href="{% url 'users:preferences' %}"
-                    @click="$dispatch('close-sidebar')"
                     title="Settings for {{ user.username }}"
                     class="flex items-center font-bold">
                     {{ user.username|slice:12 }}
