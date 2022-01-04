@@ -5,6 +5,7 @@
     class="relative bg-transparent {{ css_class|default:'' }}">
     <input type="search"
         x-model="search"
+        @click="$el.select()"
         name="{{ search_param|default:'q' }}"
         autocomplete="off"
         aria-label="{{ placeholder|default:'Search' }}"

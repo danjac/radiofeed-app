@@ -44,6 +44,7 @@
             <input type="search"
                 x-ref="search"
                 x-model="search"
+                @click="$el.select()"
                 name="q"
                 accesskey="k"
                 autocomplete="off"
@@ -103,6 +104,7 @@
                 @htmx:after-request.window="search=''">
                 <input type="search"
                     x-model="search"
+                    @click="$el.select()"
                     name="q"
                     autocomplete="off"
                     aria-label="Search"
