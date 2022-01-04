@@ -127,8 +127,9 @@
                 <details class="space-y-3">
                     <summary class="font-semibold lg:text-lg cursor-pointer">How do I save an episode to listen to later?</summary>
                     <p>
-                        Click the star icon {% icon "star" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} in the episode page to add an episode to your Bookmarks.
-                        You can add episodes you want to listen to later, or add favorites you want to listen to again.
+                        Click the star icon {% icon "star" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
+                        in the episode page to add an episode to your <a class="link" href="{% url 'episodes:bookmarks' %}">Bookmarks</a>.
+                        You can add episodes you want to listen to later, or favorites you want to listen to again.
                     </p>
                 </details>
             </li>
