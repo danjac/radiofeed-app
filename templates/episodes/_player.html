@@ -10,7 +10,8 @@
             )
             {# fmt:on #}
                 "
-                @keydown.window="shortcuts">
+                @keydown.window="shortcuts"
+                class="pt-28 sm:pt-20 lg:pt-24">
                 {{ episode.get_media_metadata|json_script:"player-metadata" }}
                 <audio x-ref="audio"
                     preload="metadata"
