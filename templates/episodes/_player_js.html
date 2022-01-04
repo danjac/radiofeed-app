@@ -115,10 +115,13 @@
 
                 this.isError = false;
 
-                const stored = this.restore();
+                const {
+                    playbackRate,
+                    autoplay
+                } = this.restore();
 
-                this.playbackRate = stored.playbackRate || this.defaultPlaybackRate;
-                this.autoplay = this.autoplay || stored.autoplay;
+                this.playbackRate = playbackRate || this.defaultPlaybackRate;
+                this.autoplay = this.autoplay || autoplay;
 
                 if (this.autoplay) {
                     this.$refs.audio.play().catch((err) => {
@@ -231,4 +234,5 @@
             }
         }))
     });
+
 </script>
