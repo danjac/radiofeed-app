@@ -14,7 +14,7 @@ class TestClean:
 
     def test_unsafe(self):
         text = "<script>alert('xss ahoy!')</script>"
-        assert cleaners.clean(text) == "alert('xss ahoy!')"
+        assert cleaners.clean(text) == ""
 
 
 class TestStripHtml:
@@ -43,4 +43,4 @@ class TestMarkup:
 
     def test_unsafe(self):
         text = "<script>alert('xss ahoy!')</script>"
-        assert cleaners.markup(text) == "alert('xss ahoy!')"
+        assert cleaners.markup(text) == ""
