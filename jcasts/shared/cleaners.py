@@ -55,7 +55,7 @@ ALLOWED_TAGS: list[str] = [
 
 ALLOWED_ATTRS: dict[str, list[str]] = {
     "a": ["href", "target", "title"],
-    "img": ["src", "alt"],
+    "img": ["src", "alt", "height", "width", "loading"],
 }
 
 HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
