@@ -5,13 +5,14 @@
 {% if socialaccount_providers %}
     <div class="flex items-center space-x-3">
         {% for provider in socialaccount_providers %}
-            <form method="post" action="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
+            <form method="post"
+                action="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
                 hx-disable="true">
-                <button class="flex items-center btn btn-secondary"
+                <button class="flex items-center btn btn-secondary">
                     {% icon provider.id css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
                     {{ provider.name }}
-                    </button>
-                </form>
+                </button>
+            </form>
         {% endfor %}
     </div>
 {% endif %}
