@@ -8,6 +8,7 @@
             <form method="post"
                 action="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
                 hx-disable="true">
+                {% csrf_token %}
                 <button class="flex items-center btn btn-secondary">
                     {% icon provider.id css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
                     {{ provider.name }}
