@@ -9,7 +9,7 @@ from jcasts.shared.typedefs import User
 
 
 def send_user_notification_email(
-    user: User,
+    recipient: User,
     subject: str,
     template_name: str,
     html_template_name: str,
@@ -19,7 +19,7 @@ def send_user_notification_email(
     site = Site.objects.get_current()
 
     context = {
-        "recipient": user,
+        "recipient": recipient,
         "site": site,
     } | (context or {})
 
@@ -27,6 +27,6 @@ def send_user_notification_email(
         f"[{site.name}] {subject}",
         loader.render_to_string(template_name, context),
         settings.DEFAULT_FROM_EMAIL,
-        [user.email],
+        [recipient.email],
         html_message=loader.render_to_string(html_template_name, context),
     )
