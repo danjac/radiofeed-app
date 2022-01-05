@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional, Set, Union
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -33,7 +34,7 @@ CategoryManager = models.Manager.from_queryset(CategoryQuerySet)
 class Category(models.Model):
 
     name: str = models.CharField(max_length=100, unique=True)
-    parent: "Category" | None = models.ForeignKey(
+    parent: Optional["Category"] = models.ForeignKey(
         "self",
         null=True,
         blank=True,
@@ -86,43 +87,43 @@ class Podcast(models.Model):
     title: str = models.TextField()
 
     # latest episode pub date from RSS feed
-    pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
+    pub_date: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
-    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
+    parsed: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
     # has been queued for parsing
-    queued: datetime | None = models.DateTimeField(null=True, blank=True)
+    queued: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
     # rq
-    feed_queue: str | None = models.CharField(max_length=30, null=True, blank=True)
+    feed_queue: Optional[str] = models.CharField(max_length=30, null=True, blank=True)
 
     # Last-Modified header from RSS feed
-    modified: datetime | None = models.DateTimeField(null=True, blank=True)
+    modified: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
     # feed parse result fields
 
-    result: str | None = models.CharField(
+    result: Optional[str] = models.CharField(
         max_length=20, choices=Result.choices, null=True, blank=True
     )
 
     # hash of last polled content
-    content_hash: str | None = models.CharField(max_length=64, null=True, blank=True)
+    content_hash: Optional[str] = models.CharField(max_length=64, null=True, blank=True)
 
-    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
+    http_status: Optional[int] = models.SmallIntegerField(null=True, blank=True)
 
     errors: int = models.PositiveIntegerField(default=0)
 
-    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url: Optional[str] = models.URLField(max_length=2083, null=True, blank=True)
 
-    funding_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    funding_url: Optional[str] = models.URLField(max_length=2083, null=True, blank=True)
     funding_text: str = models.TextField(blank=True)
 
     language: str = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]
     )
     description: str = models.TextField(blank=True)
-    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    link: Optional[str] = models.URLField(max_length=2083, null=True, blank=True)
     keywords: str = models.TextField(blank=True)
     extracted_text: str = models.TextField(blank=True)
     owner: str = models.TextField(blank=True)
@@ -142,7 +143,7 @@ class Podcast(models.Model):
         related_name="recommended_podcasts",
     )
 
-    search_vector: str | None = SearchVectorField(null=True, editable=False)
+    search_vector: Optional[str] = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()
 
@@ -186,7 +187,7 @@ class Podcast(models.Model):
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def is_subscribed(self, user: User | AnonymousUser) -> bool:
+    def is_subscribed(self, user: Union[User | AnonymousUser]) -> bool:
         if user.is_anonymous:
             return False
         return Subscription.objects.filter(podcast=self, user=user).exists()
@@ -231,7 +232,7 @@ class RecommendationQuerySet(models.QuerySet):
         return self._raw_delete(self.db)
 
     def for_user(self, user: User) -> models.QuerySet:
-        podcast_ids: set[int] = (
+        podcast_ids: Set[int] = (
             set(
                 user.bookmark_set.select_related("episode__podcast").values_list(
                     "episode__podcast", flat=True

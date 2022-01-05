@@ -2,6 +2,7 @@ import mimetypes
 import os
 
 from datetime import datetime, timedelta
+from typing import Optional
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -85,7 +86,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             self.filter(pk__in=episode_ids).distinct() if episode_ids else self.none()
         )
 
-    def get_next_episode(self, episode: "Episode") -> "Episode" | None:
+    def get_next_episode(self, episode: "Episode") -> Optional["Episode"]:
 
         return (
             self.filter(
@@ -97,7 +98,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             .first()
         )
 
-    def get_previous_episode(self, episode: "Episode") -> "Episode " | None:
+    def get_previous_episode(self, episode: "Episode") -> Optional["Episode"]:
 
         return (
             self.filter(
@@ -125,22 +126,22 @@ class Episode(models.Model):
     description: str = models.TextField(blank=True)
     keywords: str = models.TextField(blank=True)
 
-    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    link: Optional[str] = models.URLField(max_length=2083, null=True, blank=True)
 
     episode_type: str = models.CharField(max_length=30, default="full")
-    episode: int | None = models.IntegerField(null=True, blank=True)
-    season: int | None = models.IntegerField(null=True, blank=True)
+    episode: Optional[int] = models.IntegerField(null=True, blank=True)
+    season: Optional[int] = models.IntegerField(null=True, blank=True)
 
-    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url: Optional[str] = models.URLField(max_length=2083, null=True, blank=True)
 
     media_url: str = models.URLField(max_length=2083)
     media_type: str = models.CharField(max_length=60)
-    length: int | None = models.BigIntegerField(null=True, blank=True)
+    length: Optional[int] = models.BigIntegerField(null=True, blank=True)
 
     duration: str = models.CharField(max_length=30, blank=True)
     explicit: bool = models.BooleanField(default=False)
 
-    search_vector: str | None = SearchVectorField(null=True, editable=False)
+    search_vector: Optional[str] = SearchVectorField(null=True, editable=False)
 
     objects = EpisodeManager()
 
@@ -172,13 +173,13 @@ class Episode(models.Model):
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def get_link(self) -> str | None:
+    def get_link(self) -> Optional[str]:
         return self.link or self.podcast.link
 
-    def get_file_size(self) -> str | None:
+    def get_file_size(self) -> Optional[str]:
         return filesizeformat(self.length) if self.length else None
 
-    def get_cover_url(self) -> str | None:
+    def get_cover_url(self) -> Optional[str]:
         return self.cover_url or self.podcast.cover_url
 
     def is_bookmarked(self, user: User | AnonymousUser) -> bool:
@@ -195,11 +196,11 @@ class Episode(models.Model):
         return strip_html(self.description)
 
     @cached_property
-    def current_time(self) -> int | None:
+    def current_time(self) -> Optional[int]:
         raise AssertionError("use with QuerySet method 'with_current_time'")
 
     @cached_property
-    def completed(self) -> datetime | None:
+    def completed(self) -> Optional[datetime]:
         raise AssertionError("use with QuerySet method 'with_current_time'")
 
     @cached_property

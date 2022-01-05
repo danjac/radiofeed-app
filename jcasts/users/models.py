@@ -1,3 +1,5 @@
+from typing import Optional, Set
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -14,7 +16,7 @@ class UserQuerySet(models.QuerySet):
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     def create_user(
-        self, username: str, email: str, password: str | None = None, **kwargs
+        self, username: str, email: str, password: Optional[str] = None, **kwargs
     ) -> "User":
         user = self.model(
             username=username, email=self.normalize_email(email), **kwargs
@@ -41,7 +43,7 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def get_email_addresses(self) -> set[str]:
+    def get_email_addresses(self) -> Set[str]:
         """Get set of emails belonging to user.
 
         Returns:
