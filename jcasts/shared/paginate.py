@@ -49,6 +49,6 @@ def render_paginated_list(
                 **pagination_kwargs,
             ),
             "pagination_template": pagination_template_name,
-            **(extra_context or {}),
-        },
+        }
+        | (extra_context or {}),
     )

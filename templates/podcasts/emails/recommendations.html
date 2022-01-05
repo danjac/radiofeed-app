@@ -4,9 +4,7 @@
 
     {% for podcast in podcasts %}
         <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #eee;">
-            <h2 style="margin-bottom: 0.75rem; font-weight: 600; font-size: 1.25rem;"
-            >
-
+            <h2 style="margin-bottom: 0.75rem; font-weight: 600; font-size: 1.25rem; line-height: 1.75rem;">
                 <a style="text-decoration: underline; color: #000;" href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
             </h2>
 

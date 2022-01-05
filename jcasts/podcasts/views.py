@@ -285,8 +285,7 @@ def get_podcast_detail_context(
         "num_episodes": Episode.objects.filter(podcast=podcast).count(),
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
         "og_data": podcast.get_opengraph_data(request),
-        **(extra_context or {}),
-    }
+    } | (extra_context or {})
 
 
 def render_subscribe_action(
@@ -319,6 +318,6 @@ def render_podcast_list(
         "podcasts/_podcasts_cached.html" if cached else "podcasts/_podcasts.html",
         {
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
-            **(extra_context or {}),
-        },
+        }
+        | (extra_context or {}),
     )
