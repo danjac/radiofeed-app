@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -17,7 +15,7 @@ class UserQuerySet(models.QuerySet):
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     def create_user(
         self, username: str, email: str, password: str | None = None, **kwargs
-    ) -> User:
+    ) -> "User":
         user = self.model(
             username=username, email=self.normalize_email(email), **kwargs
         )
@@ -27,7 +25,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 
     def create_superuser(
         self, username: str, email: str, password: str, **kwargs
-    ) -> User:
+    ) -> "User":
         return self.create_user(
             username,
             email,

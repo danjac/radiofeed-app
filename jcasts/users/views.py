@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import csv
 
 from django.conf import settings
