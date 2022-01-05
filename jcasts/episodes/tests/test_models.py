@@ -452,13 +452,3 @@ class TestAudioLogManager:
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
-
-
-class TestAudioLogModel:
-    def test_to_json(self, db):
-        log = AudioLogFactory()
-        data = log.to_json()
-        assert data["episode"]["id"] == log.episode.id
-        assert data["episode"]["url"] == log.episode.get_absolute_url()
-        assert data["podcast"]["title"] == log.episode.podcast.title
-        assert data["podcast"]["url"] == log.episode.podcast.get_absolute_url()
