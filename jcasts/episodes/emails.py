@@ -28,6 +28,7 @@ def send_new_episodes_email(user: User, since: timedelta) -> None:
     context = {
         "recipient": user,
         "site": site,
+        "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
         "episodes": episodes,
     }
 
