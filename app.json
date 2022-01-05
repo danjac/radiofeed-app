@@ -30,6 +30,10 @@
             "schedule": "12 5 * * *"
         },
         {
+            "command": "python manage.py send_new_episodes_emails",
+            "schedule": "9 6 * * *"
+        },
+        {
             "command": "python manage.py send_recommendation_emails",
             "schedule": "12 9 * * 1"
         },

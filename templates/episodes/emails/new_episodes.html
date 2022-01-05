@@ -11,20 +11,22 @@
 
             <p>Greetings from {{ site.name }}!
 
-                <p>Here are some podcasts you might find interesting:</p>
+                <p>Here are some new episodes from your collection:</p>
 
-                {% for podcast in podcasts %}
+                {% for episode in episodes %}
+
                     <p>
-                        <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+                        <a href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
                     </p>
 
                     <p>
-                        {{ podcast.cleaned_description|urlize|truncatewords:60 }}
+                        {{ episode.cleaned_description|urlize|truncatewords:60 }}
                     </p>
+
                     <hr />
                 {% endfor %}
 
-                <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications"
+                <p>If you do not want to receive any more notifications, you can just uncheck the "Send email notifications"
                     option
                     on your <a href="{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}">settings</a> page.</p>
             </body>

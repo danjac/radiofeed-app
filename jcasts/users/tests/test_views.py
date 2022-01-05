@@ -19,7 +19,7 @@ class TestUserPreferences:
             resp = client.post(
                 self.url,
                 {
-                    "send_recommendations_email": False,
+                    "send_email_notifications": False,
                     "autoplay": True,
                 },
             )
@@ -27,7 +27,7 @@ class TestUserPreferences:
 
         auth_user.refresh_from_db()
 
-        assert not auth_user.send_recommendations_email
+        assert not auth_user.send_email_notifications
 
 
 class TestUserStats:

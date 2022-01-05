@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts.emails import send_recommendations_email
+from jcasts.episodes.emails import send_new_episodes_email
 
 
 class Command(BaseCommand):
@@ -13,4 +15,4 @@ class Command(BaseCommand):
         for user in get_user_model().objects.filter(
             send_email_notifications=True, is_active=True
         ):
-            send_recommendations_email.delay(user)
+            send_new_episodes_email.delay(user, since=timedelta(hours=24))

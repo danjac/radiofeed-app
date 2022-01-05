@@ -39,7 +39,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 
 
 class User(AbstractUser):
-    send_recommendations_email: bool = models.BooleanField(default=True)
+    send_email_notifications: bool = models.BooleanField(default=True)
 
     objects = UserManager()
 

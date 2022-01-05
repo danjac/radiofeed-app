@@ -6,7 +6,6 @@ from django.core.mail import send_mail
 from django.template import loader
 from django_rq import job
 
-from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast, Recommendation
 from jcasts.shared.typedefs import User
 
@@ -29,13 +28,7 @@ def send_recommendations_email(user: User) -> None:
 
     podcasts = Podcast.objects.filter(pk__in=list(recommendations)).distinct()[:3]
 
-    # any unlistened episodes this week
-
-    episodes = (
-        Episode.objects.recommended(user).select_related("podcast").order_by("?")[:3]
-    )
-
-    if len(podcasts) + len(episodes) not in range(2, 7):
+    if len(podcasts) not in range(2, 7):
         return
 
     # save recommendations
@@ -49,7 +42,6 @@ def send_recommendations_email(user: User) -> None:
         "recipient": user,
         "site": site,
         "podcasts": podcasts,
-        "episodes": episodes,
     }
 
     message = loader.render_to_string("podcasts/emails/recommendations.txt", context)

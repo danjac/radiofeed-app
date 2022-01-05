@@ -20,7 +20,7 @@ class UserCreationForm(BaseUserCreationForm):
 class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
-        fields: tuple[str, ...] = ("send_recommendations_email",)
+        fields: tuple[str, ...] = ("send_email_notifications",)
         help_texts: dict[str, str] = {
-            "send_recommendations_email": "Send me podcast recommendations every week",
+            "send_email_notifications": "I'd like to receive notications of new content and recommendations.",
         }

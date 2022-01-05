@@ -85,9 +85,9 @@ class TestSeedPodcastData:
 class TestSendRecommendationEmails:
     def test_command(self, db, mocker):
 
-        yes = UserFactory(send_recommendations_email=True)
-        UserFactory(send_recommendations_email=False)
-        UserFactory(send_recommendations_email=True, is_active=False)
+        yes = UserFactory(send_email_notifications=True)
+        UserFactory(send_email_notifications=False)
+        UserFactory(send_email_notifications=True, is_active=False)
 
         mock_send = mocker.patch(
             "jcasts.podcasts.emails.send_recommendations_email.delay"

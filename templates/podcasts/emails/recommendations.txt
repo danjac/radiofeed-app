@@ -3,7 +3,6 @@ Hi {{ recipient.username }}
 
 Greetings from {{ site.name }}!
 
-{% if podcasts %}
 Here are some podcasts you might find interesting:
 
 {% for podcast in podcasts %}
@@ -15,22 +14,8 @@ Here are some podcasts you might find interesting:
 {% absolute_uri podcast %}
 
 {% endfor %}
-{% endif %}
 
-{% if episodes %}
-{% if podcasts %}...and here{% else %}Here {% endif %} are some episodes from last week you might have missed:
-{% for episode in episodes %}
-
-{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}
-
-{{ episode.cleaned_description|truncatewords:60 }}
-
-{% absolute_uri episode %}
-
-{% endfor %}
-{% endif %}
-
-If you do not want to receive any more recommendations, you can just uncheck the "Send email recommendations" option
+If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications" option
 on your settings page:
 
 {{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}
