@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import io
 
 from datetime import datetime
@@ -191,6 +189,47 @@ def parse_channel(
     return feed, items
 
 
+def parse_items(
+    channel: lxml.etree.Element, namespaces: dict[str, str]
+) -> Generator[Item, None, None]:
+
+    for item in channel.iterfind("item"):
+
+        try:
+            yield parse_item(XPathFinder(item, namespaces))
+
+        except (ValueError, TypeError):
+            pass
+
+
+class XPathFinder:
+    def __init__(
+        self, element: lxml.etree.Element, namespaces: dict[str, str] | None = None
+    ):
+        self.element = element
+        self.namespaces = namespaces
+
+    def find(self, *paths: str, default: str = "") -> str:
+
+        """Find single attribute or text value. Returns
+        first matching value."""
+        for path in paths:
+            try:
+                return self.findall(path)[0]
+            except IndexError:
+                pass
+        return default
+
+    def findall(self, path: str) -> list[str]:
+        try:
+            return [
+                value.strip()
+                for value in self.element.xpath(path, namespaces=self.namespaces)
+            ]
+        except UnicodeDecodeError:
+            return []
+
+
 def parse_feed(finder: XPathFinder) -> Feed:
     return Feed(
         title=finder.find("title/text()"),
@@ -211,19 +250,6 @@ def parse_feed(finder: XPathFinder) -> Feed:
         ),
         categories=finder.findall("//itunes:category/@text"),
     )
-
-
-def parse_items(
-    channel: lxml.etree.Element, namespaces: dict[str, str]
-) -> Generator[Item, None, None]:
-
-    for item in channel.iterfind("item"):
-
-        try:
-            yield parse_item(XPathFinder(item, namespaces))
-
-        except (ValueError, TypeError):
-            pass
 
 
 def parse_item(finder: XPathFinder) -> Item:
@@ -258,31 +284,3 @@ def parse_item(finder: XPathFinder) -> Item:
         episode_type=finder.find("itunes:episodetype/text()", default="full"),
         keywords=finder.findall("category/text()"),
     )
-
-
-class XPathFinder:
-    def __init__(
-        self, element: lxml.etree.Element, namespaces: dict[str, str] | None = None
-    ):
-        self.element = element
-        self.namespaces = namespaces
-
-    def find(self, *paths: str, default: str = "") -> str:
-
-        """Find single attribute or text value. Returns
-        first matching value."""
-        for path in paths:
-            try:
-                return self.findall(path)[0]
-            except IndexError:
-                pass
-        return default
-
-    def findall(self, path: str) -> list[str]:
-        try:
-            return [
-                value.strip()
-                for value in self.element.xpath(path, namespaces=self.namespaces)
-            ]
-        except UnicodeDecodeError:
-            return []
