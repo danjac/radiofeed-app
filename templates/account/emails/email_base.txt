@@ -1,0 +1,13 @@
+{% autoescape off %}
+Hi {{ recipient.username }}
+
+Greetings from {{ site.name }}!
+
+{% block content %}{% endblock %}
+
+If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications" option
+on your settings page:
+
+{% absolute_uri 'users:preferences' %}
+
+{% endautoescape %}

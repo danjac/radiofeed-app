@@ -1,8 +1,5 @@
-{% autoescape off %}
-Hi {{ recipient.username }}
-
-Greetings from {{ site.name }}!
-
+{% extends "account/emails/email_base.txt" %}
+{% block content %}
 Here are some new episode from your collection:
 
 {% for episode in episodes %}
@@ -15,9 +12,4 @@ Here are some new episode from your collection:
 
 {% endfor %}
 
-If you do not want to receive any more notifications, you can just uncheck the "Send email notifications" option
-on your settings page:
-
-{% absolute_uri 'users:preferences' %}
-
-{% endautoescape %}
+{% endblock %}

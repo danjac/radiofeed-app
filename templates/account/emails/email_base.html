@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ site.name }}</title>
+        <style>
+            {{ inline_css }}
+        </style>
+    </head>
+
+    <body>
+        <h1 class="mb-3 font-bold text-xl">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
+
+        {% block content %}{% endblock %}
+
+        <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications"
+            option
+            on your <a class="link underline" href="{% absolute_uri 'users:preferences' %}">settings</a> page.</p>
+    </body>
+
+</html>

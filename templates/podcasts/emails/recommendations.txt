@@ -1,8 +1,5 @@
-{% autoescape off %}
-Hi {{ recipient.username }}
-
-Greetings from {{ site.name }}!
-
+{% extends "account/emails/email_base.txt" %}
+{% block content %}
 Here are some podcasts you might find interesting:
 
 {% for podcast in podcasts %}
@@ -14,10 +11,4 @@ Here are some podcasts you might find interesting:
 {% absolute_uri podcast %}
 
 {% endfor %}
-
-If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications" option
-on your settings page:
-
-{% absolute_uri 'users:preferences' %}
-
-{% endautoescape %}
+{% endblock content %}
