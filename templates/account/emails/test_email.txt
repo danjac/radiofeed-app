@@ -1,2 +1,2 @@
-{% extends "account/emails/email_base.txt" %}
+{% extends "account/emails/base.txt" %}
 
