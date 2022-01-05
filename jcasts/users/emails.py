@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import pathlib
-
-from functools import lru_cache
-
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
@@ -28,7 +24,6 @@ def send_user_notification_email(
     context = {
         "recipient": user,
         "site": site,
-        "inline_css": get_inline_css(),
     } | (context or {})
 
     send_mail(
@@ -38,13 +33,3 @@ def send_user_notification_email(
         [user.email],
         html_message=loader.render_to_string(html_template_name, context),
     )
-
-
-@lru_cache
-def get_inline_css() -> str:
-    try:
-        return open(
-            pathlib.Path(settings.BASE_DIR) / "assets" / "bundle.css", "r"
-        ).read()
-    except IOError:
-        return ""
