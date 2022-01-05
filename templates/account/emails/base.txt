@@ -6,7 +6,7 @@ Greetings from {{ site.name }}!
 {% block content %}{% endblock %}
 
 If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications" option
-on your settings page:
+on your Settings page:
 
 {% absolute_uri 'users:preferences' %}
 
