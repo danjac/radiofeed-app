@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-from django.conf import settings
-from django.contrib.sites.models import Site
-from django.core.mail import send_mail
-from django.template import loader
 from django_rq import job
 
 from jcasts.podcasts.models import Podcast, Recommendation
 from jcasts.shared.typedefs import User
+from jcasts.users.emails import send_user_notification_email
 
 
 @job("mail")
@@ -36,22 +33,12 @@ def send_recommendations_email(user: User) -> None:
     if podcasts:
         user.recommended_podcasts.add(*podcasts)
 
-    site = Site.objects.get_current()
-
-    context = {
-        "recipient": user,
-        "site": site,
-        "podcasts": podcasts,
-    }
-
-    message = loader.render_to_string("podcasts/emails/recommendations.txt", context)
-    html_message = loader.render_to_string(
-        "podcasts/emails/recommendations.html", context
-    )
-    send_mail(
-        f"[{site.name}] Hi {user.username}, here are some new podcasts you might like!",
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        html_message=html_message,
+    send_user_notification_email(
+        user,
+        f"Hi {user.username}, here are some new podcasts you might like!",
+        "podcasts/emails/recommendations.txt",
+        "podcasts/emails/recommendations.html",
+        {
+            "podcasts": podcasts,
+        },
     )

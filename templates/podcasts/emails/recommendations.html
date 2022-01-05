@@ -4,30 +4,31 @@
     <head>
         <meta charset="UTF-8">
         <title>{{ site.name }}</title>
+        <style>
+            {{ inline_css }}
+        </style>
     </head>
 
     <body>
-        <h1>Hi {{ recipient.username }}</h1>
+        <h1 class="mb-3 font-bold text-xl">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
 
-        <h2>Greetings from {{ site.name }}!</h2>
-
-
-        <p>Here are some podcasts you might find interesting:</p>
+        <p class="mb-3">Here are some podcasts you might find interesting:</p>
 
         {% for podcast in podcasts %}
-            <p>
-                <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
-            </p>
+            <div class="mb-3 pb-3 border-b">
+                <h2 class="mb-3 text-lg">
+                    <a class="link underline" href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+                </h2>
 
-            <p>
-                {{ podcast.cleaned_description|urlize|truncatewords:60 }}
-            </p>
-            <hr />
+                <p class="markdown">
+                    {{ podcast.cleaned_description|urlize|truncatewords:60 }}
+                </p>
+            </div>
         {% endfor %}
 
         <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications"
             option
-            on your <a href="{% absolute_uri 'users:preferences' %}">settings</a> page.</p>
+            on your <a class="link underline" href="{% absolute_uri 'users:preferences' %}">settings</a> page.</p>
     </body>
 
 </html>

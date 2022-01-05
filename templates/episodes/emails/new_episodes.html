@@ -4,32 +4,31 @@
     <head>
         <meta charset="UTF-8">
         <title>{{ site.name }}</title>
+        <style>
+            {{ inline_css }}
+        </style>
     </head>
 
     <body>
-        <h1>Hi {{ recipient.username }}</h1>
+        <h1 class="mb-3 font-bold text-xl">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
 
-        <h2>Greetings from {{ site.name }}!</h2>
-
-        <p>Here are some new episodes from your collection:</p>
+        <p class="mb-3">Here are some new episodes from your collection:</p>
 
         {% for episode in episodes %}
+            <div class="mb-3 pb-3 border-b">
+                <h2 class="mb-3 text-lg">
+                    <a class="link underline" href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
+                </h2>
 
-            <p>
-                <a href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
-            </p>
-
-            <p>
-                {{ episode.cleaned_description|urlize|truncatewords:60 }}
-            </p>
-
-            <hr />
+                <p class="markdown">
+                    {{ episode.cleaned_description|urlize|truncatewords:60 }}
+                </p>
+            </div>
         {% endfor %}
-
 
         <p>If you do not want to receive any more notifications, you can just uncheck the "Send email notifications"
             option
-            on your <a href="{% absolute_uri 'users:preferences' %}">settings</a> page.</p>
+            on your <a class="link underline" href="{% absolute_uri 'users:preferences' %}">settings</a> page.</p>
     </body>
 
 </html>
