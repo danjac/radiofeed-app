@@ -7,26 +7,27 @@
     </head>
 
     <body>
-        <p>Hi {{ recipient.username }}
+        <h1>Hi {{ recipient.username }}</h1>
 
-            <p>Greetings from {{ site.name }}!</p>
+        <h2>Greetings from {{ site.name }}!</h2>
 
-            <p>Here are some podcasts you might find interesting:</p>
 
-            {% for podcast in podcasts %}
-                <p>
-                    <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
-                </p>
+        <p>Here are some podcasts you might find interesting:</p>
 
-                <p>
-                    {{ podcast.cleaned_description|urlize|truncatewords:60 }}
-                </p>
-                <hr />
-            {% endfor %}
+        {% for podcast in podcasts %}
+            <p>
+                <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+            </p>
 
-            <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications"
-                option
-                on your <a href="{% absolute_uri 'users:preferences' %}">settings</a> page.</p>
-        </body>
+            <p>
+                {{ podcast.cleaned_description|urlize|truncatewords:60 }}
+            </p>
+            <hr />
+        {% endfor %}
 
-    </html>
+        <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications"
+            option
+            on your <a href="{% absolute_uri 'users:preferences' %}">settings</a> page.</p>
+    </body>
+
+</html>
