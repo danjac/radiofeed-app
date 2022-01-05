@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional, Set, Union
@@ -34,7 +36,7 @@ CategoryManager = models.Manager.from_queryset(CategoryQuerySet)
 class Category(models.Model):
 
     name: str = models.CharField(max_length=100, unique=True)
-    parent: Optional["Category"] = models.ForeignKey(
+    parent: Category | None = models.ForeignKey(
         "self",
         null=True,
         blank=True,
