@@ -16,9 +16,6 @@ def send_user_notification_email(
     context: dict | None = None,
 ) -> None:
 
-    if not user.send_email_notifications:
-        return
-
     site = Site.objects.get_current()
 
     context = {
