@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import mimetypes
 import os
 
@@ -86,7 +88,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             self.filter(pk__in=episode_ids).distinct() if episode_ids else self.none()
         )
 
-    def get_next_episode(self, episode: "Episode") -> Optional["Episode"]:
+    def get_next_episode(self, episode: Episode) -> Episode | None:
 
         return (
             self.filter(
@@ -98,7 +100,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             .first()
         )
 
-    def get_previous_episode(self, episode: "Episode") -> Optional["Episode"]:
+    def get_previous_episode(self, episode: Episode) -> Episode | None:
 
         return (
             self.filter(
