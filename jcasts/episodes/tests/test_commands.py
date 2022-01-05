@@ -20,6 +20,6 @@ class TestNewEpisodesEmails:
         assert mock_send.call_args == (
             (
                 yes,
-                timedelta(hours=24),
+                timedelta(days=7),
             ),
         )

@@ -31,7 +31,7 @@
         },
         {
             "command": "python manage.py send_new_episodes_emails",
-            "schedule": "9 6 * * *"
+            "schedule": "17 6 * * 3"
         },
         {
             "command": "python manage.py send_recommendation_emails",

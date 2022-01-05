@@ -12,11 +12,11 @@ from jcasts.users.emails import send_user_notification_email
 @job("mail")
 def send_new_episodes_email(user: User, since: timedelta) -> None:
     """Sends email with new episodes added to user's collection."""
+
     episodes = (
-        Episode.objects.recommended(user, since)
-        .select_related("podcast")
-        .order_by("-pub_date", "-id")
-    )
+        Episode.objects.recommended(user, since).select_related("podcast").order_by("?")
+    )[:6]
+
     if not episodes.exists():
         return
 
