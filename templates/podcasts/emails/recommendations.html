@@ -1,11 +1,13 @@
 {% extends "account/emails/base.html" %}
 {% block content %}
-    <p class="mb-3">Here are some podcasts you might find interesting:</p>
+    <p style="margin-bottom: 0.75rem;">Here are some podcasts you might find interesting:</p>
 
     {% for podcast in podcasts %}
-        <div class="mb-3 pb-3 border-b">
-            <h2 class="mb-3 text-lg">
-                <a class="link underline" href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+        <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px;">
+            <h2 style="margin-bottom: 0.75rem; font-weight: 600; font-size: 1.25rem;"
+            >
+
+                <a style="text-decoration: underline; color: #000;" href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
             </h2>
 
             <p class="markdown">

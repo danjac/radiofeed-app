@@ -4,19 +4,16 @@
     <head>
         <meta charset="UTF-8">
         <title>{{ site.name }}</title>
-        <style>
-            {{ inline_css }}
-        </style>
     </head>
 
-    <body>
-        <h1 class="mb-3 font-bold text-xl">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
+    <body style="font-family: Helvetica, sans-serif;">
+        <h1 style="margin-bottom: 0.75rem; font-weight: 700; font-size: 1.25rem;">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
 
         {% block content %}{% endblock %}
 
         <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications"
             option
-            on your <a class="link underline" href="{% absolute_uri 'users:preferences' %}">Settings</a> page.</p>
+            on your <a class="text-decoration: underline; color: #000;" href="{% absolute_uri 'users:preferences' %}">Settings</a> page.</p>
     </body>
 
 </html>
