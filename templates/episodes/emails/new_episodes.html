@@ -3,7 +3,7 @@
     <p style="margin-bottom: 0.75rem;">Here are some new episodes from your collection:</p>
 
     {% for episode in episodes %}
-        <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px;">
+        <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #eee;">
             <h2 style="margin-bottom: 0.75rem; font-weight: 600; font-size: 1.25rem;"
             >
                 <a style="text-decoration: underline; color: #000;" href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
