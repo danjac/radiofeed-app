@@ -18,5 +18,6 @@ Here are some podcasts you might find interesting:
 If you do not want to receive any more recommendations, you can just uncheck the "Send email notifications" option
 on your settings page:
 
-{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}
+{% absolute_uri 'users:preferences' %}
+
 {% endautoescape %}

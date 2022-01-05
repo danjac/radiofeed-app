@@ -4,11 +4,13 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
+from django_rq import job
 
 from jcasts.podcasts.models import Podcast, Recommendation
 from jcasts.shared.typedefs import User
 
 
+@job("mail")
 def send_recommendations_email(user: User) -> None:
     """Sends email with 2 or 3 recommended podcasts, based on:
     - favorites
@@ -39,7 +41,6 @@ def send_recommendations_email(user: User) -> None:
     context = {
         "recipient": user,
         "site": site,
-        "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
         "podcasts": podcasts,
     }
 
