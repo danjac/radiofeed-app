@@ -1,16 +1,14 @@
 <div class="fixed z-50 top-10 lg:top-auto lg:bottom-10 inset-x-0 mx-auto w-64 lg:w-80"
     id="messages"
     x-data="{messages: []}"
-    x-init="
-    {# fmt:off #}
+    x-init="{# fmt:off #}
      {% for message in messages %}
         messages.push({
             message: '{{ message|escapejs }}',
             tags: '{{ message.tags|escapejs }}'
         });
         {% endfor %}
-    {# fmt:on #}
-    "
+    {# fmt:on #}"
     @add-message.window="messages.push($event.detail)"
     {% if hx_oob %}
         hx-swap-oob="true"

@@ -1,15 +1,12 @@
 {% if episode %}
     {% if is_playing %}
         {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-            <div x-data="
-                {# fmt:off #}
+            <div x-data="{# fmt:off #}
             player(
                 autoplay={{ player_action|yesno:'true,false' }},
                 mediaUrl='{{ episode.media_url }}',
                 currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
-            )
-            {# fmt:on #}
-                "
+            ){# fmt:on #}"
                 @keydown.window="shortcuts"
                 class="pt-28 sm:pt-20 lg:pt-24">
                 {{ episode.get_media_metadata|json_script:"player-metadata" }}

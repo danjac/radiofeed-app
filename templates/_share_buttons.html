@@ -33,19 +33,19 @@
         </a>
         <button class="link focus:outline-none"
             title="Copy link to Clipboard"
-            @click="
-            input = document.createElement('input');
-            input.style = 'position: absolute; left: -1000px; top: -1000px';
-            input.value = window.location.href;
-            document.body.appendChild(input);
-            input.select();
-            document.execCommand('copy');
-            document.body.removeChild(input);
-            $dispatch('add-message', {
-            message: 'Copied link to Clipboard',
-            tags: 'message-success'
-            });
-            ">
+            @click="{# fmt:off #}
+                input = document.createElement('input');
+                input.style = 'position: absolute; left: -1000px; top: -1000px';
+                input.value = window.location.href;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                $dispatch('add-message', {
+                    message: 'Copied link to Clipboard',
+                    tags: 'message-success'
+                });
+                "{# fmt:on #}>
             {% icon "link" css_class=ICON_CLASS %}
         </button>
     </div>
