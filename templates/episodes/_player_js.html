@@ -142,22 +142,20 @@
                 this.isError = true;
             },
             timeUpdate() {
-                this.isPlaying = true;
-                if (this.$refs.audio) {
-                    this.currentTime = Math.floor(this.$refs.audio.currentTime);
-                    const time = Math.round(this.currentTime);
-                    if (time % 5 === 0 && this.lastTimeUpdate !== time) {
-                        this.lastTimeUpdate = time;
-                        fetch('{% url "episodes:player_time_update" %}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': '{{ csrf_token }}'
-                            },
-                            body: new URLSearchParams({
-                                current_time: time
-                            }),
-                        });
-                    }
+                this.isPlaying=true;
+                this.currentTime = Math.floor(this.$refs.audio.currentTime);
+                const time = Math.round(this.currentTime);
+                if (time % 5 === 0 && this.lastTimeUpdate !== time) {
+                    this.lastTimeUpdate = time;
+                    fetch('{% url "episodes:player_time_update" %}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: new URLSearchParams({
+                            current_time: time
+                        }),
+                    });
                 }
             },
             buffering() {
