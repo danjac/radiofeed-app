@@ -46,7 +46,7 @@ input[type='search']::-webkit-search-results-decoration {
 .markdown h3,
 .markdown h4,
 .markdown h5 {
-    @apply font-bold;
+    @apply font-bold mb-3;
 }
 
 .markdown hr {
