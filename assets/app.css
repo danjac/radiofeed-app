@@ -41,12 +41,16 @@ input[type='search']::-webkit-search-results-decoration {
 
 /* MARKDOWN */
 
+.markdown {
+    @apply space-y-3;
+}
+
 .markdown h1,
 .markdown h2,
 .markdown h3,
 .markdown h4,
 .markdown h5 {
-    @apply font-bold mb-3;
+    @apply font-bold;
 }
 
 .markdown hr {
