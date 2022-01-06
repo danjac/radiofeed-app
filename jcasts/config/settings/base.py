@@ -89,12 +89,13 @@ LOCAL_APPS = [
     "jcasts.episodes",
     "jcasts.podcasts",
     "jcasts.users",
+    # https://docs.djangoproject.com/en/4.0/ref/contrib/admin/#overriding-the-default-admin-site
+    "jcasts.config.apps.AdminConfig",
 ]
 
 
 INSTALLED_APPS = [
     "django.forms",
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
