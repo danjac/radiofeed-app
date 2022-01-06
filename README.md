@@ -12,12 +12,6 @@ To update podcast data and download episodes from their RSS feeds:
 
 > ./bin/manage schedule_podcast_feeds
 
-> ./bin/manage parse_podcast_feeds
-
-Or alternatively just run:
-
-> make schedule parse
-
 You can then generate podcast recommendations with this command:
 
 > ./bin/manage make_recommendations
