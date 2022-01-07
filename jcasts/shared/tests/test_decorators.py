@@ -14,7 +14,7 @@ class TestAjaxLoginRequired:
         return ajax_login_required(lambda req: HttpResponse())
 
     def test_anonymous_htmx(self, rf, anonymous_user, ajax_view):
-        req = rf.get("/")
+        req = rf.get("/", HTTP_HX_REQUEST="true")
         req.user = anonymous_user
         req.htmx = True
         resp = ajax_view(req)
@@ -22,7 +22,7 @@ class TestAjaxLoginRequired:
         assert resp.headers["HX-Redirect"] == f"{reverse('account_login')}?next=/"
 
     def test_anonymous_plain_ajax(self, rf, anonymous_user, ajax_view):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req = rf.get("/")
         req.user = anonymous_user
         req.htmx = False
         with pytest.raises(PermissionDenied):
