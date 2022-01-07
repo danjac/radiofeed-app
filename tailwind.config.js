@@ -15,7 +15,13 @@ module.exports = {
         './tailwind-safelist.txt',
     ],
     keyframes: true,
-    theme: {},
+    theme: {
+        extend: {
+            colors: {
+                orange: colors.orange,
+            },
+        },
+    },
     variants: {
         textColor: ['responsive', 'hover', 'focus', 'visited', 'dark'],
     },
