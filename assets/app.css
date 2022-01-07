@@ -169,7 +169,7 @@ input[type='range']::-moz-range-thumb {
     @apply bg-green-600;
 }
 .message-warning {
-    @apply bg-orange-600;
+    @apply bg-violet-600;
 }
 .message-error {
     @apply bg-red-600;
