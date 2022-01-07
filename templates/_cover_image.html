@@ -16,15 +16,15 @@
         {% endif %}
     {% endif %}
     {% if cover_url %}
-        x-data="{
-        isLoaded: false,
-        src: '{{ cover_url|escapejs }}',
-        placeholder: '{{ placeholder|escapejs }}',
-        coverUrl: '{{ cover_url|escapejs }}'
-        }"
+        x-data="{# fmt:off #}{
+            isLoaded: false,
+            src: '{{ cover_url|escapejs }}',
+            placeholder: '{{ placeholder|escapejs }}',
+            coverUrl: '{{ cover_url|escapejs }}'
+        }{# fmt:on #}"
         x-init="src=placeholder;"
         @load.once="src=coverUrl;isLoaded=true;"
         @error.once="src=placeholder;isLoaded=true;"
-        :class="{'filter blur-sm': !isLoaded}"
+        :class="{'blur': !isLoaded}"
         :src="src"
     {% endif %}>
