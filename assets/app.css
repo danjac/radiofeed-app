@@ -1,5 +1,4 @@
 @tailwind base;
-
 @tailwind components;
 
 body {
@@ -39,188 +38,114 @@ input[type='search']::-webkit-search-results-decoration {
     display: block !important;
 }
 
-/* MARKDOWN */
-
-.markdown {
-    @apply space-y-3;
-}
-
-.markdown h1,
-.markdown h2,
-.markdown h3,
-.markdown h4,
-.markdown h5 {
-    @apply font-bold;
-}
-
-.markdown hr {
-    @apply border-gray-300 dark:border-gray-600;
-}
-
-.markdown pre {
-    @apply whitespace-pre-wrap;
-}
-
-.markdown a {
-    @apply break-words underline;
-}
-
-.markdown a:hover {
-    @apply text-blue-600 dark:text-blue-400;
-}
-
-.markdown img {
-    @apply object-scale-down;
-}
-
-.markdown ol {
-    @apply list-decimal list-inside space-y-3;
-}
-
-.markdown ul {
-    @apply list-disc list-inside space-y-3;
-}
-
-.markdown p,
-.markdown div {
-    @apply space-y-3;
-}
-
-.markdown li div,
-.markdown li p {
-    @apply inline;
-}
-
-.markdown li ul {
-    @apply pl-3;
-}
-
-.markdown table {
-    @apply table-auto w-full;
-}
-
-.markdown td,
-.markdown th {
-    @apply border p-1 dark:border-gray-500;
-}
-
-.markdown th {
-    @apply text-left bg-gray-100 dark:bg-gray-800 font-semibold;
-}
-
-/* PLAYER */
-
-.player--indicator {
-    @apply bg-gray-800;
-}
-
-.player--active .player--interactive {
-    @apply cursor-pointer;
-}
-
-.player--active .player--indicator {
-    @apply bg-blue-800;
-}
-
-.player--active .player--progress {
-    @apply bg-gradient-to-r from-blue-900 to-blue-600 dark:from-blue-800;
-}
-
-.player--active .player--title:hover {
-    @apply text-blue-500;
-}
-
-.player--inactive .player--title {
-    @apply animate-pulse text-gray-300;
-}
-
-.player--inactive .player--interactive {
-    @apply opacity-75 cursor-not-allowed pointer-events-none;
-}
-
-.player--inactive .player--counter {
-    @apply opacity-75;
-}
-
-.player--inactive .player--progress,
-.player--inactive .player--indicator {
-    @apply bg-gray-800 dark:bg-gray-600;
-}
-
 input[type='range']::-webkit-slider-thumb,
 input[type='range']::-moz-range-thumb {
-    @apply w-4 h-4 rounded-full appearance-none pointer-events-auto bg-blue-800;
+    background-color: theme('colors.blue.800');
+    width: theme('spacing.4');
+    height: theme('spacing.4');
+    border-radius: theme('borderRadius.full');
+    appearance: none;
+    pointer-events: none;
 }
 
 /* MESSAGES */
 
 .message {
-    @apply text-white;
+    color: theme('colors.white');
 }
 
 .message-debug {
-    @apply bg-gray-600;
+    background-color: theme('colors.gray.600');
 }
 
 .message-info {
-    @apply bg-blue-600;
+    background-color: theme('colors.blue.600');
 }
 .message-success {
-    @apply bg-green-600;
+    background-color: theme('colors.green.600');
 }
 .message-warning {
-    @apply bg-violet-600;
+    background-color: theme('colors.violet.600');
 }
 .message-error {
-    @apply bg-red-600;
+    background-color: theme('colors.red.600');
 }
 
 /* BUTTONS */
 
 .btn {
-    @apply px-2 py-1 rounded font-semibold;
+    padding: theme('padding.1') theme('padding.2');
+    border-radius: theme('borderRadius.DEFAULT');
+    font-weight: theme('fontWeight.semibold');
 }
 
-.btn:focus {
-    @apply outline-none;
+.btn.focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
 }
 
 .btn-default {
-    @apply text-white bg-blue-800 border border-blue-800 dark:border-gray-500;
+    color: theme('colors.white');
+    background-color: theme('colors.blue.800');
+    border: solid theme('borderWidth.DEFAULT') theme('colors.blue.800');
 }
 
 .btn-default:hover {
-    @apply hover:bg-blue-600;
+    background-color: theme('colors.blue.600');
 }
 
 .btn-secondary {
-    @apply border border-blue-800 text-blue-800 dark:text-white dark:border-gray-500;
+    color: theme('colors.blue.800');
+    border: solid theme('borderWidth.DEFAULT') theme('colors.blue.800');
 }
 
 .btn-secondary:hover {
-    @apply border-blue-600 text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-300;
+    color: theme('colors.blue.600');
+    background-color: theme('colors.gray.100');
+    border-color: theme('colors.blue.800');
+}
+
+@media (prefers-color-scheme: dark) {
+    .btn-secondary {
+        color: theme('colors.white');
+        border-color: theme('colors.gray.500');
+    }
+    .btn-secondary:hover {
+        color: theme('colors.blue.400');
+        background-color: theme('colors.gray.800');
+        border-color: theme('colors.blue.300');
+    }
 }
 
 .btn-danger {
-    @apply text-white bg-red-800 border border-red-800 dark:border-gray-500;
+    color: theme('colors.white');
+    background-color: theme('colors.red.800');
 }
 
 .btn-danger:hover {
-    @apply bg-red-600;
+    background-color: theme('colors.red.600');
 }
 
 /* LINKS */
 
 .link {
-    @apply text-gray-800 font-semibold dark:text-gray-100;
+    color: theme('colors.gray.800');
+    font-weight: theme('fontWeight.semibold');
 }
 
-.link:hover {
-    @apply text-blue-600 font-semibold dark:text-blue-300;
-}
-
+.link:hover,
 .link:focus {
-    @apply text-blue-600 font-semibold dark:text-blue-300;
+    color: theme('colors.blue.600');
+}
+
+@media (prefers-color-scheme: dark) {
+    .link {
+        color: theme('colors.gray.100');
+    }
+    .link:hover,
+    .link:focus {
+        color: theme('colors.blue.300');
+    }
 }
 
 @tailwind utilities;

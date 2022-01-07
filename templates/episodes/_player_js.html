@@ -39,6 +39,9 @@
                     navigator.mediaSession.metadata = this.getMediaMetadata();
                 }
             },
+            get isInteractive() {
+                return this.isPlaying && !this.isError;
+            },
             formatDuration(value) {
                 if (isNaN(value) || value < 0) return '00:00:00';
                 const duration = Math.floor(value);

@@ -1,7 +1,5 @@
 /* eslint-disable */
 
-const colors = require('tailwindcss/colors');
-
 module.exports = {
     mode: 'jit',
     darkMode: 'media',
@@ -18,5 +16,5 @@ module.exports = {
     variants: {
         textColor: ['responsive', 'hover', 'focus', 'visited', 'dark'],
     },
-    plugins: [require('@tailwindcss/forms')],
+    plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 };
