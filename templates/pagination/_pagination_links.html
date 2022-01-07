@@ -12,7 +12,7 @@
             </a>
         {% else %}
             <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                title="First Page"
+                title="No More Pages"
                 aria-label="First Page">Previous</span>
         {% endif %}
         {% if page_obj.has_next %}
@@ -24,7 +24,7 @@
             </a>
         {% else %}
             <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                title="Last Page"
+                title="No More Pages"
                 aria-label="Last Page">Next</span>
         {% endif %}
     </nav>
