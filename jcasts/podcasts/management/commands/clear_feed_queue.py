@@ -23,6 +23,7 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "--all",
+            "-a",
             help="Empty all queues",
             action="store_true",
             default=False,
