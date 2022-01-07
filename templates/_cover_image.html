@@ -25,6 +25,6 @@
         x-init="src=placeholder;"
         @load.once="src=coverUrl;isLoaded=true;"
         @error.once="src=placeholder;isLoaded=true;"
-        :class="{'blur': !isLoaded}"
+        :class="{'blur-sm': !isLoaded}"
         :src="src"
     {% endif %}>

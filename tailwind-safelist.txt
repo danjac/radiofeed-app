@@ -1,6 +1,6 @@
 -inset-x-20
 sm:-inset-x-0
-blur
+blur-sm
 type
 fill-current
 cursor-not-allowed
