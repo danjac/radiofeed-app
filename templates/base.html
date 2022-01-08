@@ -35,16 +35,16 @@
 
     {% include "_messages.html" with hx_oob=request.htmx %}
 
-    <div hx-history-elt id="layout">
-        <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5 h-full">
-            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
-                {% include "_sidebar.html" %}
-            </aside>
+    <div hx-history-elt
+        id="layout"
+        class="flex relative p-2 pt-6 mx-auto xl:w-4/5 h-full">
+        <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
+            {% include "_sidebar.html" %}
+        </aside>
 
-            <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
-                {% block content %}{% endblock %}
-            </main>
-        </div>
+        <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
+            {% block content %}{% endblock %}
+        </main>
     </div>
 
     {% if not request.htmx %}

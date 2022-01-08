@@ -1,6 +1,12 @@
 
 <div class="relative pt-20">
     <div class="space-y-1 bg-black text-white dark:bg-gray-800 p-1 w-full text-xs lg:text-sm absolute bottom-0">
+        <div class="flex items-center flex-wrap justify-center space-x-3">
+            <p class="text-center font-semibold">
+                Podcast audio recordings, show notes and artwork are the property of the individual owners
+                and are neither affiliated with nor endorsed by {{ request.site.name }}.
+            </p>
+        </div>
         <div class="flex items-center flex-wrap justify-center space-x-3 font-semibold">
             <div>
                 &copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
@@ -21,12 +27,6 @@
 
             </div>
 
-        </div>
-        <div class="flex items-center flex-wrap justify-center space-x-3">
-            <p class="text-center font-semibold">
-                Podcast audio recordings, show notes and artwork are the property of the individual owners
-                and are neither affiliated with nor endorsed by {{ request.site.name }}.
-            </p>
         </div>
     </div>
 </div>
