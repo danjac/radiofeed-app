@@ -10,9 +10,7 @@
 <meta name="Cache-Control"
     content="no-cache">
 <meta name="robots"
-    {% if user.is_authenticated %}content="noindex"
-    {% else %}content="index,follow"
-    {% endif %} />
+    content="index,follow">
 {% with og_description=og_data.description|truncatewords:60|default:"Find your favorite podcasts" og_title=og_data.title|default:request.site.name %}
     <meta name="description"
         content="{{ og_description }}" />
