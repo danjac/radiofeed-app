@@ -48,6 +48,7 @@ def render_paginated_list(
                 object_list,
                 **pagination_kwargs,
             ),
+            "pagination_target": target,
             "pagination_template": pagination_template_name,
         }
         | (extra_context or {}),

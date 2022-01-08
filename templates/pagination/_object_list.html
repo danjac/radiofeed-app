@@ -1,4 +1,5 @@
 {% extends "_object_list.html" %}
+{% block extra_attrs %}id="{{ pagination_target }}"{% endblock %}
 {% block result_list %}
     {% include "pagination/_pagination_links.html" %}
     {% with object_list=page_obj.object_list %}

@@ -1,7 +1,7 @@
 {% load static %}
 <section role="list"
     class="space-y-3"
-    id="object-list">
+    {% block extra_attrs %}{% endblock %}>
     {% block result_list %}
         {% for object in object_list %}
             {% block result %}{% endblock %}
