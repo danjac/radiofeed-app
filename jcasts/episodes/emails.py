@@ -15,9 +15,9 @@ def send_new_episodes_email(user: User, since: timedelta) -> None:
 
     episodes = (
         Episode.objects.recommended(user, since).select_related("podcast").order_by("?")
-    )[:3]
+    )[:6]
 
-    if len(episodes) not in (2, 3):
+    if len(episodes) < 3:
         return
 
     send_user_notification_email(
