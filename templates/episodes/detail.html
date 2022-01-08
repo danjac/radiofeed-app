@@ -122,7 +122,6 @@
             {% endwith %}
 
             {% include "_markdown.html" with content=episode.description %}
-            {% include "_disclaimer.html" with explicit=episode.explicit|default:podcast.explicit %}
 
         </article>
     {% endwith %}
