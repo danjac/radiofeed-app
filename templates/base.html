@@ -28,14 +28,11 @@
             {% include "_navbar.html" %}
             {% include "_hx_indicator.html" %}
 
+            <div class="flex flex-col h-screen">
+                <div class="flex-grow">
     {% endif %}
 
     {% include "_messages.html" with hx_oob=request.htmx %}
-
-    {% if not request.htmx %}
-        <div class="flex flex-col h-screen">
-            <div class="flex-grow">
-    {% endif %}
 
     <div hx-history-elt id="layout">
         <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5 h-full">
