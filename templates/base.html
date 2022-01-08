@@ -18,7 +18,7 @@
         {% include "_google_search.html" %}
         </head>
 
-        <body class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
+        <body class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base"
             hx-boost="true"
             hx-target="#layout"
             hx-swap="outerHTML show:window:top"
@@ -32,22 +32,25 @@
 
     {% include "_messages.html" with hx_oob=request.htmx %}
 
-    <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5"
-        hx-history-elt
-        id="layout">
+    {% if not request.htmx %}
+        <div class="flex flex-col h-screen">
+            <div class="flex-grow">
+    {% endif %}
 
-        <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
-            {% include "_sidebar.html" %}
-        </aside>
+    <div hx-history-elt id="layout">
+        <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5 h-full">
+            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
+                {% include "_sidebar.html" %}
+            </aside>
 
-        <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
-            {% block content %}{% endblock %}
-        </main>
+            <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
     </div>
 
-
     {% if not request.htmx %}
-        {% include "_footer.html" %}
+        </div>
 
         {% cookie_notice %}
 
@@ -57,6 +60,9 @@
             </div>
             {% include "episodes/_player_js.html" %}
         {% endif %}
+
+        {% include "_footer.html" %}
+        </div>
 
         </body>
 

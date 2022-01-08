@@ -8,7 +8,7 @@
                 currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
             ){# fmt:on #}"
                 @keydown.window="shortcuts"
-                class="pt-28 sm:pt-20 lg:pt-24">
+                class="pt-12 sm:pt-0 lg:pt-6">
                 {{ episode.get_media_metadata|json_script:"player-metadata" }}
                 <audio x-ref="audio"
                     preload="metadata"

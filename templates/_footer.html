@@ -1,19 +1,20 @@
-<div class="relative pt-28 sm:pt-20 lg:pt-24">
-    <div class="space-y-1 bg-black dark:bg-gray-600 p-1 w-full mt-6">
-        <div class="flex items-center flex-wrap justify-center space-x-3">
+
+<div class="relative pt-20">
+    <div class="space-y-1 bg-black text-white dark:bg-gray-600 p-1 w-full text-xs lg:text-sm absolute bottom-0">
+        <div class="flex items-center flex-wrap justify-center space-x-3 font-semibold">
             <div>
-                &copy; {% now 'Y' %} <a class="underline link"
+                &copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
                     href="mailto:danjac2018@gmail.com">Dan Jacob</a>
             </div>
             <div>
-                <a class="underline link"
+                <a class="underline hover:text-blue-500"
                     target="_blank"
                     rel="noopener"
                     href="https://github.com/danjac/jcasts/">Source Code</a>
 
             </div>
             <div>
-                <a class="underline link"
+                <a class="underline hover:text-blue-500"
                     target="_blank"
                     rel="noopener"
                     href="https://github.com/danjac/jcasts/issues/">Report an Issue</a>
@@ -22,11 +23,10 @@
 
         </div>
         <div class="flex items-center flex-wrap justify-center space-x-3">
-            <p class="text-xs lg:text-sm text-center font-semibold">
+            <p class="text-center font-semibold">
                 Audio recordings, show notes and artwork of this podcast are the property of its owner and are neither affiliated with nor
                 endorsed by {{ request.site.name }}.
             </p>
         </div>
     </div>
-</div>
 </div>
