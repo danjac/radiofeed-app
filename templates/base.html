@@ -45,7 +45,9 @@
         </main>
     </div>
 
+
     {% if not request.htmx %}
+        {% include "_footer.html" %}
 
         {% cookie_notice %}
 
