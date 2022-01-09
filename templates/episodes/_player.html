@@ -25,7 +25,7 @@
                     @stalled="buffering"
                     @suspend="buffering">
                 </audio>
-                <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
+                <div class="fixed bottom-0 z-10 bg-gradient-to-t from-zinc-900 to-zinc-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
                     x-ref="controls"
                     x-show="mediaSrc"
                     :class="{'player--active': isInteractive, 'player--inactive': !isInteractive}">
@@ -193,7 +193,7 @@
                                         aria-label="Progress"
                                         min="0"
                                         :class="{# fmt:off #}{
-                                            'bg-gradient-to-r from-blue-900 to-blue-600 dark:from-blue-800':isInteractive,
+                                            'bg-gradient-to-r from-blue-900 to-blue-600':isInteractive,
                                             'bg-gray-800 dark:bg-gray-600': !isInteractive
                                         }{# fmt:on #}"
                                         class="h-2 mx-auto rounded-full w-full flex items-center focus:outline-none">

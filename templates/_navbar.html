@@ -1,6 +1,6 @@
 {% load static %}
 {% url 'podcasts:index' as home_url %}
-<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-20 shadow"
+<header class="bg-zinc-900 dark:bg-zinc-800 text-white sticky top-0 w-full z-20 shadow-lg"
     x-data="{sidebar: false}"
     @htmx:after-request.window="sidebar=false">
     <div class="flex items-center justify-between px-1 py-2">
@@ -85,7 +85,7 @@
             </button>
         </div>
     </div>
-    <div class="xl:hidden absolute py-6 bg-white dark:bg-gray-800 top-15 left-0 w-full shadow-xl z-50"
+    <div class="xl:hidden absolute py-6 bg-white dark:bg-zinc-900 top-15 left-0 w-full shadow-xl z-50"
         x-cloak
         x-show.transition="sidebar"
         x-transition:enter="transition ease-out duration-100"
