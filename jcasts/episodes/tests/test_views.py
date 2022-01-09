@@ -142,22 +142,6 @@ class TestEpisodeDetail:
         assert resp.context_data["episode"] == episode
 
 
-class TestReloadPlayer:
-    url = reverse_lazy("episodes:reload_player")
-
-    def test_player_empty(self, client, auth_user, django_assert_num_queries):
-        with django_assert_num_queries(3):
-            assert_ok(client.get(self.url))
-
-    def test_player_not_empty(
-        self, client, auth_user, player_episode, django_assert_num_queries
-    ):
-        AudioLogFactory(user=auth_user, episode=player_episode)
-
-        with django_assert_num_queries(4):
-            assert_ok(client.get(self.url))
-
-
 class TestStartPlayer:
     # we have a number of savepoints here adding to query count
     num_savepoints = 3

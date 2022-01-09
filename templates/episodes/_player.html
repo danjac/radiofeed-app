@@ -174,9 +174,8 @@
                                                 :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 accesskey="r"
-                                                hx-get="{% url 'episodes:reload_player' %}"
-                                                hx-target="#player"
-                                                hx-swap="innerHTML">
+                                                @click="window.location.reload()"
+                                            >
                                                 {% icon "refresh" css_class=ICON_CSS %}
                                             </button>
                                         </div>

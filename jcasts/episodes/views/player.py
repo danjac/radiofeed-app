@@ -30,12 +30,11 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render_player(
+    return render_player_action(
         request,
         episode,
         current_time=log.current_time,
         completed=log.completed,
-        player_action=True,
     )
 
 
@@ -57,34 +56,11 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
                 current_time=0,
             )
 
-        return render_player(
+        return render_player_action(
             request,
             episode,
             completed=completed,
             is_playing=False,
-            player_action=True,
-        )
-
-    return HttpResponse()
-
-
-@require_http_methods(["GET"])
-@ajax_login_required
-def reload_player(request: HttpRequest) -> HttpResponse:
-
-    if (episode_id := request.player.get()) and (
-        log := (
-            AudioLog.objects.filter(user=request.user, episode=episode_id)
-            .select_related("episode", "episode__podcast")
-            .first()
-        )
-    ):
-
-        return render_player(
-            request,
-            log.episode,
-            completed=log.completed,
-            current_time=log.current_time,
         )
 
     return HttpResponse()
@@ -110,14 +86,13 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
 
-def render_player(
+def render_player_action(
     request: HttpRequest,
     episode: Episode,
     *,
     is_playing: bool = True,
     completed: datetime | None = None,
     current_time: int | None = None,
-    player_action: bool = False,
 ):
 
     return TemplateResponse(
@@ -127,7 +102,7 @@ def render_player(
             "episode": episode,
             "current_time": current_time,
             "is_playing": is_playing,
-            "player_action": player_action,
+            "player_action": True,
             "completed": completed,
             "listened": timezone.now(),
         },
