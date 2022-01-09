@@ -36,6 +36,13 @@ input[type='search']::-webkit-search-results-decoration {
 }
 
 @layer components {
+    input[type='range']::-webkit-slider-runnable-track {
+        appearance: none;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+
     input[type='range']::-webkit-slider-thumb,
     input[type='range']::-moz-range-thumb {
         background-color: theme('colors.blue.800');
