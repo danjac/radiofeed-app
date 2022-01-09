@@ -20,8 +20,8 @@ from jcasts.episodes.views import render_episode_list
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
 from jcasts.shared.decorators import ajax_login_required
+from jcasts.shared.http import HttpResponseConflict
 from jcasts.shared.paginate import render_paginated_list
-from jcasts.shared.response import HttpResponseConflict
 
 
 @require_http_methods(["GET"])
