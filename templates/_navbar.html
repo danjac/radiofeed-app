@@ -17,8 +17,8 @@
                     alt="{{ request.site.name }}">
             </a>
 
-            <a class="font-bold text-lg lg:text-xl"
-                title="{{ request.site.name }}"
+            <a class="font-bold text-lg lg:text-xl hover:text-blue-300"
+                title="{{ request.site.name }}: Home Page"
                 href="{{ home_url }}">{{ request.site.name }}</a>
 
             {% if debug %}
@@ -65,7 +65,7 @@
             {% if user.is_authenticated %}
                 <a href="{% url 'users:preferences' %}"
                     title="Settings for {{ user.username }}"
-                    class="flex items-center font-bold">
+                    class="flex items-center font-bold hover:text-blue-300">
                     {{ user.username|slice:12 }}
                 </a>
             {% endif %}
