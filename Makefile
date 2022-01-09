@@ -1,12 +1,12 @@
-all: build start migrate test seed
+all: build up migrate test seed
 
 build:
 	docker-compose build
 
-start:
+up:
 	docker-compose up -d --remove-orphans --scale worker=4
 
-stop:
+down:
 	docker-compose down
 
 restart:
