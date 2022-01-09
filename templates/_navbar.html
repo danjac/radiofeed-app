@@ -1,8 +1,8 @@
 {% load static %}
 {% url 'podcasts:index' as home_url %}
-<header class="bg-zinc-900 dark:bg-zinc-800 text-white sticky top-0 w-full z-20 shadow-lg"
+<header class="bg-black text-white sticky top-0 w-full z-20 shadow"
     x-data="{sidebar: false}"
-    @htmx:after-request.window="sidebar=false">
+    @htmx:before-request.window="sidebar=false">
     <div class="flex items-center justify-between px-1 py-2">
 
         <div class="flex items-center flex-shrink-0 mr-6">
@@ -40,7 +40,7 @@
             class="relative bg-transparent hidden sm:block"
             x-data="{search: ''}"
             @submit="$refs.search.blur();"
-            @htmx:after-request.window="search=''">
+            @htmx:before-request.window="search=''">
             <input type="search"
                 x-ref="search"
                 x-model="search"
@@ -85,7 +85,7 @@
             </button>
         </div>
     </div>
-    <div class="xl:hidden absolute py-6 bg-white dark:bg-zinc-900 top-15 left-0 w-full shadow-xl z-50"
+    <div class="xl:hidden absolute py-6 bg-white dark:bg-black top-15 left-0 w-full shadow-xl z-50"
         x-cloak
         x-show.transition="sidebar"
         x-transition:enter="transition ease-out duration-100"
@@ -101,7 +101,7 @@
                 method="get"
                 class="relative bg-transparent"
                 x-data="{search: ''}"
-                @htmx:after-request.window="search=''">
+                @htmx:before-request.window="search=''">
                 <input type="search"
                     x-model="search"
                     @click="$el.select()"

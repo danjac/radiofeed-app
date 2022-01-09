@@ -25,7 +25,7 @@
                     @stalled="buffering"
                     @suspend="buffering">
                 </audio>
-                <div class="fixed bottom-0 z-10 bg-gradient-to-t from-zinc-900 to-zinc-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
+                <div class="fixed bottom-0 z-10 bg-black text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
                     x-ref="controls"
                     x-show="mediaSrc"
                     :class="{'player--active': isInteractive, 'player--inactive': !isInteractive}">
