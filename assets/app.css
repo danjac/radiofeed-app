@@ -157,6 +157,9 @@ input[type='range']::-moz-range-thumb {
     .prose ul > li::marker {
         color: theme('colors.gray.300') !important;
     }
+    .prose hr {
+        border-color: theme('colors.gray.500') !important;
+    }
     .prose a,
     .prose blockquote,
     .prose figcaption,
