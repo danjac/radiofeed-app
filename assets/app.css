@@ -1,9 +1,6 @@
 @tailwind base;
 @tailwind components;
-
-body {
-    scroll-behavior: smooth;
-}
+@tailwind utilities;
 
 /* ALPINEJS */
 
@@ -38,144 +35,144 @@ input[type='search']::-webkit-search-results-decoration {
     display: block !important;
 }
 
-input[type='range']::-webkit-slider-thumb,
-input[type='range']::-moz-range-thumb {
-    background-color: theme('colors.blue.800');
-    width: theme('spacing.4');
-    height: theme('spacing.4');
-    border-radius: theme('borderRadius.full');
-    appearance: none;
-    pointer-events: none;
-}
+@layer components {
+    input[type='range']::-webkit-slider-thumb,
+    input[type='range']::-moz-range-thumb {
+        background-color: theme('colors.blue.800');
+        width: theme('spacing.4');
+        height: theme('spacing.4');
+        border-radius: theme('borderRadius.full');
+        appearance: none;
+        pointer-events: none;
+    }
 
-/* MESSAGES */
+    /* MESSAGES */
 
-.message {
-    color: theme('colors.white');
-}
-
-.message-debug {
-    background-color: theme('colors.gray.600');
-}
-
-.message-info {
-    background-color: theme('colors.blue.600');
-}
-.message-success {
-    background-color: theme('colors.green.600');
-}
-.message-warning {
-    background-color: theme('colors.violet.600');
-}
-.message-error {
-    background-color: theme('colors.red.600');
-}
-
-/* BUTTONS */
-
-.btn {
-    padding: theme('padding.1') theme('padding.2');
-    border-radius: theme('borderRadius.DEFAULT');
-    font-weight: theme('fontWeight.semibold');
-}
-
-.btn.focus {
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-}
-
-.btn-default {
-    color: theme('colors.white');
-    background-color: theme('colors.blue.800');
-    border: solid theme('borderWidth.DEFAULT') theme('colors.blue.800');
-}
-
-.btn-default:hover {
-    background-color: theme('colors.blue.600');
-}
-
-.btn-secondary {
-    color: theme('colors.blue.800');
-    border: solid theme('borderWidth.DEFAULT') theme('colors.blue.800');
-}
-
-.btn-secondary:hover {
-    color: theme('colors.blue.600');
-    background-color: theme('colors.gray.100');
-    border-color: theme('colors.blue.800');
-}
-
-@media (prefers-color-scheme: dark) {
-    .btn-secondary {
+    .message {
         color: theme('colors.white');
-        border-color: theme('colors.gray.500');
     }
+
+    .message-debug {
+        background-color: theme('colors.gray.600');
+    }
+
+    .message-info {
+        background-color: theme('colors.blue.600');
+    }
+    .message-success {
+        background-color: theme('colors.green.600');
+    }
+    .message-warning {
+        background-color: theme('colors.violet.600');
+    }
+    .message-error {
+        background-color: theme('colors.red.600');
+    }
+
+    /* BUTTONS */
+
+    .btn {
+        padding: theme('padding.1') theme('padding.2');
+        border-radius: theme('borderRadius.DEFAULT');
+        font-weight: theme('fontWeight.semibold');
+    }
+
+    .btn.focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+
+    .btn-default {
+        color: theme('colors.white');
+        background-color: theme('colors.blue.800');
+        border: solid theme('borderWidth.DEFAULT') theme('colors.blue.800');
+    }
+
+    .btn-default:hover {
+        background-color: theme('colors.blue.600');
+    }
+
+    .btn-secondary {
+        color: theme('colors.blue.800');
+        border: solid theme('borderWidth.DEFAULT') theme('colors.blue.800');
+    }
+
     .btn-secondary:hover {
-        color: theme('colors.blue.400');
-        background-color: theme('colors.gray.800');
-        border-color: theme('colors.blue.300');
+        color: theme('colors.blue.600');
+        background-color: theme('colors.gray.100');
+        border-color: theme('colors.blue.800');
     }
-}
 
-.btn-danger {
-    color: theme('colors.white');
-    background-color: theme('colors.red.800');
-}
+    @media (prefers-color-scheme: dark) {
+        .btn-secondary {
+            color: theme('colors.white');
+            border-color: theme('colors.gray.500');
+        }
+        .btn-secondary:hover {
+            color: theme('colors.blue.400');
+            background-color: theme('colors.gray.800');
+            border-color: theme('colors.blue.300');
+        }
+    }
 
-.btn-danger:hover {
-    background-color: theme('colors.red.600');
-}
+    .btn-danger {
+        color: theme('colors.white');
+        background-color: theme('colors.red.800');
+    }
 
-/* LINKS */
+    .btn-danger:hover {
+        background-color: theme('colors.red.600');
+    }
 
-.link {
-    color: theme('colors.gray.800');
-    font-weight: theme('fontWeight.semibold');
-}
+    /* LINKS */
 
-.link:hover,
-.link:focus {
-    color: theme('colors.blue.600');
-}
-
-@media (prefers-color-scheme: dark) {
     .link {
-        color: theme('colors.gray.100');
+        color: theme('colors.gray.800');
+        font-weight: theme('fontWeight.semibold');
     }
+
     .link:hover,
     .link:focus {
-        color: theme('colors.blue.300');
+        color: theme('colors.blue.600');
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .link {
+            color: theme('colors.gray.100');
+        }
+        .link:hover,
+        .link:focus {
+            color: theme('colors.blue.300');
+        }
+    }
+
+    /* workaround for broken dark:prose-invert */
+    @media (prefers-color-scheme: dark) {
+        .prose {
+            color: theme('colors.gray.300') !important;
+        }
+        .prose ol > li::marker,
+        .prose ul > li::marker {
+            color: theme('colors.gray.300') !important;
+        }
+        .prose hr {
+            border-color: theme('colors.gray.500') !important;
+        }
+        .prose a,
+        .prose blockquote,
+        .prose figcaption,
+        .prose pre,
+        .prose code,
+        .prose {
+            color: theme('colors.gray.300') !important;
+        }
+        .prose strong,
+        .prose h1,
+        .prose h2,
+        .prose h3,
+        .prose h4,
+        .prose h5 {
+            color: theme('colors.gray.200') !important;
+        }
     }
 }
-
-/* workaround for broken dark:prose-invert */
-@media (prefers-color-scheme: dark) {
-    .prose {
-        color: theme('colors.gray.300') !important;
-    }
-    .prose ol > li::marker,
-    .prose ul > li::marker {
-        color: theme('colors.gray.300') !important;
-    }
-    .prose hr {
-        border-color: theme('colors.gray.500') !important;
-    }
-    .prose a,
-    .prose blockquote,
-    .prose figcaption,
-    .prose pre,
-    .prose code,
-    .prose {
-        color: theme('colors.gray.300') !important;
-    }
-    .prose strong,
-    .prose h1,
-    .prose h2,
-    .prose h3,
-    .prose h4,
-    .prose h5 {
-        color: theme('colors.gray.200') !important;
-    }
-}
-
-@tailwind utilities;
