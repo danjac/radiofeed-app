@@ -1,19 +1,15 @@
 - name: Set environment variables
   shell: |
-    dokku config:set --no-restart {{ app_name }} DISABLE_COLLECTSTATIC='1' && \
-    dokku config:set --no-restart {{ app_name }} DJANGO_SETTINGS_MODULE=jcasts.config.settings.production && \
-    dokku config:set --no-restart {{ app_name }} ADMIN_URL='{{ admin_url }}' && \
-    dokku config:set --no-restart {{ app_name }} ADMINS='{{ admins }}' && \
-    dokku config:set --no-restart {{ app_name }} ALLOWED_HOSTS='{{ domain_name }}' && \
-    dokku config:set --no-restart {{ app_name }} DOKKU_LETSENCRYPT_EMAIL='{{ letsencrypt_email }}' && \
-    dokku config:set --no-restart {{ app_name }} MAILGUN_API_KEY='{{ mailgun_api_key }}' && \
-    dokku config:set --no-restart {{ app_name }} MAILGUN_SENDER_DOMAIN='{{ mailgun_sender_domain }}' && \
-    dokku config:set --no-restart {{ app_name }} SECRET_KEY='{{ secret_key }}' && \
-    dokku config:set --no-restart {{ app_name }} SENTRY_URL='{{ sentry_url }}' && \
-    dokku config:set --no-restart {{ app_name }} HOST_COUNTRY='{{ host_country }}' && \
-    dokku config:set --no-restart {{ app_name }} TWITTER_ACCOUNT='{{ twitter_account }}' && \
-    dokku config:set --no-restart {{ app_name }} CONTACT_EMAIL='{{ contact_email }}' && \
-    dokku config:set --no-restart {{ app_name }} RECAPTCHA_PUBLIC_KEY='{{ recaptcha_public_key }}' && \
-    dokku config:set --no-restart {{ app_name }} RECAPTCHA_PRIVATE_KEY='{{ recaptcha_private_key }}' && \
-    dokku config:set --no-restart {{ app_name }} PODCASTINDEX_API_KEY='{{ podcastindex_api_key }}' && \
-    dokku config:set --no-restart {{ app_name }} PODCASTINDEX_API_SECRET='{{ podcastindex_api_secret }}'
+      dokku config:set --no-restart {{ app_name }} DISABLE_COLLECTSTATIC='1' && \
+      dokku config:set --no-restart {{ app_name }} DJANGO_SETTINGS_MODULE=jcasts.config.settings.production && \
+      dokku config:set --no-restart {{ app_name }} ADMIN_URL='{{ admin_url }}' && \
+      dokku config:set --no-restart {{ app_name }} ADMINS='{{ admins }}' && \
+      dokku config:set --no-restart {{ app_name }} ALLOWED_HOSTS='{{ domain_name }}' && \
+      dokku config:set --no-restart {{ app_name }} DOKKU_LETSENCRYPT_EMAIL='{{ letsencrypt_email }}' && \
+      dokku config:set --no-restart {{ app_name }} MAILGUN_API_KEY='{{ mailgun_api_key }}' && \
+      dokku config:set --no-restart {{ app_name }} MAILGUN_SENDER_DOMAIN='{{ mailgun_sender_domain }}' && \
+      dokku config:set --no-restart {{ app_name }} SECRET_KEY='{{ secret_key }}' && \
+      dokku config:set --no-restart {{ app_name }} SENTRY_URL='{{ sentry_url }}' && \
+      dokku config:set --no-restart {{ app_name }} HOST_COUNTRY='{{ host_country }}' && \
+      dokku config:set --no-restart {{ app_name }} TWITTER_ACCOUNT='{{ twitter_account }}' && \
+      dokku config:set --no-restart {{ app_name }} CONTACT_EMAIL='{{ contact_email }}'
