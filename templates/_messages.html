@@ -17,8 +17,14 @@
     {% endif %}>
     <div class="space-y-3">
         <template x-for="message in messages">
-            <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl"
-                :class="message.tags"
+            <div class="flex justify-center text-center flex-wrap rounded items-center p-2 text-white shadow-xl"
+                :class="{# fmt:off #}{
+                     'bg-gray-600': message.tags === 'debug',
+                     'bg-blue-600': message.tags === 'info',
+                     'bg-green-600': message.tags === 'success',
+                     'bg-violet-600': message.tags === 'warning',
+                     'bg-red-600': message.tags === 'error',
+                 {# fmt:on #}}"
                 x-data="{show: true}"
                 x-show="show"
                 x-init="setTimeout(() => show = false, 1500)"

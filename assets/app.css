@@ -53,29 +53,6 @@ input[type='search']::-webkit-search-results-decoration {
         pointer-events: none;
     }
 
-    /* MESSAGES */
-
-    .message {
-        color: theme('colors.white');
-    }
-
-    .message-debug {
-        background-color: theme('colors.gray.600');
-    }
-
-    .message-info {
-        background-color: theme('colors.blue.600');
-    }
-    .message-success {
-        background-color: theme('colors.green.600');
-    }
-    .message-warning {
-        background-color: theme('colors.violet.600');
-    }
-    .message-error {
-        background-color: theme('colors.red.600');
-    }
-
     /* BUTTONS */
 
     .btn {

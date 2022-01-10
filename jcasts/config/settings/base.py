@@ -5,7 +5,6 @@ from email.utils import getaddresses
 
 import environ
 
-from django.contrib import messages
 from django.urls import reverse_lazy
 
 BASE_DIR = pathlib.Path(__file__).absolute().parents[3]
@@ -203,16 +202,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
-
-# https://docs.djangoproject.com/en/3.0/ref/contrib/messages/
-
-MESSAGE_TAGS = {
-    messages.DEBUG: "message-debug",
-    messages.INFO: "message-info",
-    messages.SUCCESS: "message-success",
-    messages.WARNING: "message-warning",
-    messages.ERROR: "message-error",
-}
 
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "assets"]

@@ -10,11 +10,11 @@ animate-pulse
 self-center
 top-0
 bottom-0
-bg-blue-500
-bg-green-500
-bg-indigo-500
-bg-purple-500
-bg-red-500
+bg-blue-600
+bg-green-600
+bg-indigo-600
+bg-violet-600
+bg-red-600
 max-h-8
 lg:w-28
 lg:h-28
