@@ -3,7 +3,7 @@ import fakeredis
 
 from split_settings.tools import include
 
-from jcasts.settings.base import ALLOWED_HOSTS
+from jcasts.config.settings.base import ALLOWED_HOSTS
 
 include("base.py")
 

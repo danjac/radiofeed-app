@@ -19,7 +19,7 @@
         },
         "DJANGO_SETTINGS_MODULE": {
             "description": "Django settings module for production",
-            "value": "jcasts.settings.production"
+            "value": "jcasts.config.settings.production"
         }
     },
     "cron": [
