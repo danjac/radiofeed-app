@@ -8,10 +8,10 @@ from django.utils import timezone
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
-from jcasts.podcasts import feed_parser
-from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
+from jcasts.podcasts.parsers import feed_parser
+from jcasts.podcasts.parsers.date_parser import parse_date
 
 
 class MockResponse:

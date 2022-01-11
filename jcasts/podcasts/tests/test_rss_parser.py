@@ -7,7 +7,7 @@ import pytest
 from django.utils import timezone
 
 from jcasts.podcasts.factories import FeedFactory, ItemFactory
-from jcasts.podcasts.rss_parser import (
+from jcasts.podcasts.parsers.rss_parser import (
     Feed,
     Item,
     RssParserError,

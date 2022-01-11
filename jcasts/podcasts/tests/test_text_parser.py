@@ -1,4 +1,8 @@
-from jcasts.podcasts.text_parser import clean_text, extract_keywords, get_stopwords
+from jcasts.podcasts.parsers.text_parser import (
+    clean_text,
+    extract_keywords,
+    get_stopwords,
+)
 
 
 class TestStopwords:

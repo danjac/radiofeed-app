@@ -7,8 +7,8 @@ from django.utils import timezone
 from django.utils.datastructures import OrderedSet
 from django_rq import get_queue
 
-from jcasts.podcasts import feed_parser
 from jcasts.podcasts.models import Podcast
+from jcasts.podcasts.parsers import feed_parser
 
 
 def schedule_primary_feeds(**kwargs) -> int:

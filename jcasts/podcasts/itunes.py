@@ -13,8 +13,8 @@ import requests
 
 from django.core.cache import cache
 
-from jcasts.podcasts import user_agent
 from jcasts.podcasts.models import Podcast
+from jcasts.podcasts.parsers import user_agent
 
 RE_PODCAST_ID = re.compile(r"id(?P<id>[0-9]+)")
 

@@ -2,7 +2,7 @@ import datetime
 
 from zoneinfo import ZoneInfo
 
-from jcasts.podcasts.date_parser import parse_date, parse_timestamp
+from jcasts.podcasts.parsers.date_parser import parse_date, parse_timestamp
 
 UTC = ZoneInfo(key="UTC")
 

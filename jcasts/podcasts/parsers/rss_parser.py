@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 
-from jcasts.podcasts.date_parser import parse_date
+from jcasts.podcasts.parsers.date_parser import parse_date
 
 NAMESPACES: dict[str, str] = {
     "atom": "http://www.w3.org/2005/Atom",
