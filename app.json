@@ -13,8 +13,14 @@
         }
     },
     "env": {
-        "DISABLE_COLLECTSTATIC": "1",
-        "DJANGO_SETTINGS_MODULE": "jcasts.settings.production"
+        "DISABLE_COLLECTSTATIC": {
+            "description": "Do not run collectstatic automatically",
+            "value": "1"
+        },
+        "DJANGO_SETTINGS_MODULE": {
+            "description": "Djanog settings module for production",
+            "value": "jcasts.settings.production"
+        }
     },
     "cron": [
         {
