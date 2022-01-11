@@ -25,7 +25,7 @@
                 {% active_link 'podcasts:category_list' as link %}
                 <a href="{{ link.url }}"
                     accesskey="c"
-                    title="Podcast Categories"
+                    title="Categories"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% icon "tag" css_class=ICON_CSS %}
                     Categories
@@ -35,7 +35,7 @@
                 {% active_link 'episodes:bookmarks' as link %}
                 <a href="{{ link.url }}"
                     accesskey="f"
-                    title="bookmarks"
+                    title="Bookmarks"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% icon "star" css_class=ICON_CSS %}
                     Bookmarks
