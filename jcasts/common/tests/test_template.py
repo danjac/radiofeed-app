@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from jcasts.shared.template import (
+from jcasts.common.template import (
     absolute_uri,
     active_link,
     format_duration,

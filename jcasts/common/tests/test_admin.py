@@ -1,4 +1,4 @@
-from jcasts.shared.admin import AdminSite
+from jcasts.common.admin import AdminSite
 
 
 class TestAdminSite:

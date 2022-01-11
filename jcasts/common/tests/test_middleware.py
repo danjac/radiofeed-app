@@ -2,7 +2,7 @@ import pytest
 
 from django_htmx.middleware import HtmxMiddleware
 
-from jcasts.shared.middleware import CacheControlMiddleware, SearchMiddleware
+from jcasts.common.middleware import CacheControlMiddleware, SearchMiddleware
 
 
 @pytest.fixture

@@ -3,6 +3,7 @@ import requests
 
 from django.urls import reverse, reverse_lazy
 
+from jcasts.common.asserts import assert_conflict, assert_not_found, assert_ok
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.factories import (
     CategoryFactory,
@@ -12,7 +13,6 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Subscription
-from jcasts.shared.asserts import assert_conflict, assert_not_found, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 

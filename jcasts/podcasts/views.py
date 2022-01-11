@@ -15,13 +15,13 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
+from jcasts.common.decorators import ajax_login_required
+from jcasts.common.http import HttpResponseConflict
+from jcasts.common.paginate import render_paginated_list
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
-from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.http import HttpResponseConflict
-from jcasts.shared.paginate import render_paginated_list
 
 
 @require_http_methods(["GET"])

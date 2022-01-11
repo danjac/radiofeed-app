@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
-from jcasts.shared.typedefs import User
+from jcasts.common.typedefs import User
 
 
 def send_user_notification_email(
