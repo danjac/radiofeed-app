@@ -18,7 +18,7 @@
             "value": "1"
         },
         "DJANGO_SETTINGS_MODULE": {
-            "description": "Djanog settings module for production",
+            "description": "Django settings module for production",
             "value": "jcasts.settings.production"
         }
     },
