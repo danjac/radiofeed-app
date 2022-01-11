@@ -9,10 +9,10 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.core.decorators import ajax_login_required
-from jcasts.core.paginate import render_paginated_list
 from jcasts.episodes.models import AudioLog, Episode
 from jcasts.episodes.views import get_episode_or_404
+from jcasts.shared.decorators import ajax_login_required
+from jcasts.shared.paginate import render_paginated_list
 
 
 @require_http_methods(["GET"])

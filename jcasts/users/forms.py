@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 
-from jcasts.core.typedefs import User
+from jcasts.shared.typedefs import User
 
 
 class UserChangeForm(BaseUserChangeForm):

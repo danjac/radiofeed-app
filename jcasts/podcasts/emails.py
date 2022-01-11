@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from django_rq import job
 
-from jcasts.core.typedefs import User
 from jcasts.podcasts.models import Podcast, Recommendation
+from jcasts.shared.typedefs import User
 from jcasts.users.emails import send_user_notification_email
 
 

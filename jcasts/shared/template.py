@@ -19,7 +19,7 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from jcasts.core import cleaners
+from jcasts.shared import cleaners
 
 register = template.Library()
 

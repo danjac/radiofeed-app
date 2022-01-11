@@ -11,9 +11,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.core.paginate import render_paginated_list
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
+from jcasts.shared.paginate import render_paginated_list
 
 
 @require_http_methods(["GET"])

@@ -20,10 +20,10 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
-from jcasts.core.cleaners import strip_html
-from jcasts.core.db import FastCountMixin, SearchMixin
-from jcasts.core.typedefs import User
 from jcasts.podcasts.models import Podcast
+from jcasts.shared.cleaners import strip_html
+from jcasts.shared.db import FastCountMixin, SearchMixin
+from jcasts.shared.typedefs import User
 
 UNIQUE_CONSTRAINT = "unique_%(app_label)s_%(class)s"
 
