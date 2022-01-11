@@ -2,7 +2,9 @@
     role="listitem">
 
     <div class="w-16 h-16 lg:w-20 lg:h-20">
-        {% block cover_image %}{% endblock %}
+        {% with COVER_IMAGE_CSS="h-16 w-16 lg:h-20 lg:w-20" %}
+            {% block cover_image %}{% endblock %}
+        {% endwith %}
     </div>
 
     <div class="flex flex-col place-content-between h-14 lg:h-16">

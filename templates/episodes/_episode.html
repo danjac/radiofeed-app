@@ -1,15 +1,13 @@
 {% extends "_list_item.html" %}
 
 {% block cover_image %}
-    {% with COVER_IMAGE_CSS="h-16 w-16 lg:h-20 lg:w-20" %}
-        {% if is_podcast_detail %}
-            {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url css_class=COVER_IMAGE_CSS %}
-        {% else %}
-            {% with podcast=episode.podcast %}
-                {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
-            {% endwith %}
-        {% endif %}
-    {% endwith %}
+    {% if is_podcast_detail %}
+        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url css_class=COVER_IMAGE_CSS %}
+    {% else %}
+        {% with podcast=episode.podcast %}
+            {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
+        {% endwith %}
+    {% endif %}
 {% endblock cover_image %}
 
 {% block title %}
