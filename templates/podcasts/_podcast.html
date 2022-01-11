@@ -1,7 +1,7 @@
 {% extends "_list_item.html" %}
 
 {% block cover_image %}
-    {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
+    {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class="h-16 w-16 lg:h-20 lg:w-20" %}
 {% endblock cover_image %}
 
 {% block title %}

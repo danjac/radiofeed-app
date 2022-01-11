@@ -1,6 +1,6 @@
 {% extends "_list_item.html" %}
 {% block cover_image %}
-    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
+    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=20 css_class="h-16 w-16 lg:h-20 lg:w-20" %}
 {% endblock cover_image %}
 
 {% block title %}
