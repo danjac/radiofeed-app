@@ -12,6 +12,10 @@
             "quantity": 4
         }
     },
+    "env": {
+        "DISABLE_COLLECTSTATIC": "1",
+        "DJANGO_SETTINGS_MODULE": "jcasts.settings.production"
+    },
     "cron": [
         {
             "command": "python manage.py schedule_podcast_feeds --primary --before=3 --limit=300",

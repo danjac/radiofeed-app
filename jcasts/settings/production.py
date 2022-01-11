@@ -4,7 +4,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 from split_settings.tools import include
 
-from jcasts.config.settings.base import BASE_DIR, INSTALLED_APPS, env
+from jcasts.settings.base import BASE_DIR, INSTALLED_APPS, env
 
 include("base.py")
 

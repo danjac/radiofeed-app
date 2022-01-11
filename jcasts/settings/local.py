@@ -2,7 +2,7 @@ import socket
 
 from split_settings.tools import include
 
-from jcasts.config.settings.base import INSTALLED_APPS, TEMPLATES
+from jcasts.settings.base import INSTALLED_APPS, TEMPLATES
 
 include("base.py")
 
