@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
 
-from jcasts.common.asserts import assert_ok
+from jcasts.core.asserts import assert_ok
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.factories import SubscriptionFactory
 

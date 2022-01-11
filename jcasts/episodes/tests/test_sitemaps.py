@@ -1,4 +1,4 @@
-from jcasts.common.asserts import assert_ok
+from jcasts.core.asserts import assert_ok
 from jcasts.episodes.factories import EpisodeFactory
 
 

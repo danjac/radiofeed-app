@@ -4,7 +4,7 @@ import pytest
 
 from django.urls import reverse, reverse_lazy
 
-from jcasts.common.asserts import (
+from jcasts.core.asserts import (
     assert_bad_request,
     assert_conflict,
     assert_no_content,

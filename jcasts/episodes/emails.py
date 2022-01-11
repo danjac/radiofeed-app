@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django_rq import job
 
-from jcasts.common.typedefs import User
+from jcasts.core.typedefs import User
 from jcasts.episodes.models import Episode
 from jcasts.users.emails import send_user_notification_email
 

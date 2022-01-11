@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 
-from jcasts.common.http import HttpResponseNoContent
+from jcasts.core.http import HttpResponseNoContent
 
 
 @require_http_methods(["GET", "HEAD"])

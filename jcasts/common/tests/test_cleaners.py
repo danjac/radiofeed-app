@@ -1,4 +1,4 @@
-from jcasts.common import cleaners
+from jcasts.core import cleaners
 
 
 class TestClean:

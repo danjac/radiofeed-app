@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
-from jcasts.common.middleware import BaseMiddleware
+from jcasts.core.middleware import BaseMiddleware
 
 
 class Player:

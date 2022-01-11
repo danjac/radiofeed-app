@@ -1,6 +1,6 @@
 from django.core.mail import EmailMessage
 
-from jcasts.common.email import RqBackend
+from jcasts.core.email import RqBackend
 
 
 class TestRqBackend:

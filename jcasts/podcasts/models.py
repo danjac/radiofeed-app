@@ -17,9 +17,9 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
-from jcasts.common.cleaners import strip_html
-from jcasts.common.db import FastCountMixin, SearchMixin
-from jcasts.common.typedefs import User
+from jcasts.core.cleaners import strip_html
+from jcasts.core.db import FastCountMixin, SearchMixin
+from jcasts.core.typedefs import User
 
 
 class CategoryQuerySet(models.QuerySet):

@@ -4,8 +4,8 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.urls import reverse
 
-from jcasts.common.asserts import assert_ok
-from jcasts.common.decorators import ajax_login_required
+from jcasts.core.asserts import assert_ok
+from jcasts.core.decorators import ajax_login_required
 
 
 class TestAjaxLoginRequired:

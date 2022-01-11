@@ -15,7 +15,7 @@ sitemaps = {
 
 
 urlpatterns = [
-    path("", include("jcasts.common.urls")),
+    path("", include("jcasts.core.urls")),
     path("", include("jcasts.episodes.urls")),
     path("", include("jcasts.podcasts.urls")),
     path("", include("jcasts.users.urls")),

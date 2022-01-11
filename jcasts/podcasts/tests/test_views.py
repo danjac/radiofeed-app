@@ -3,7 +3,7 @@ import requests
 
 from django.urls import reverse, reverse_lazy
 
-from jcasts.common.asserts import assert_conflict, assert_not_found, assert_ok
+from jcasts.core.asserts import assert_conflict, assert_not_found, assert_ok
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.factories import (
     CategoryFactory,

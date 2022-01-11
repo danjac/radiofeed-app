@@ -15,9 +15,9 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
-from jcasts.common.decorators import ajax_login_required
-from jcasts.common.http import HttpResponseConflict
-from jcasts.common.paginate import render_paginated_list
+from jcasts.core.decorators import ajax_login_required
+from jcasts.core.http import HttpResponseConflict
+from jcasts.core.paginate import render_paginated_list
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list
 from jcasts.podcasts import itunes

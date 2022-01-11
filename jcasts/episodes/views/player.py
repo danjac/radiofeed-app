@@ -8,8 +8,8 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
-from jcasts.common.decorators import ajax_login_required
-from jcasts.common.http import HttpResponseNoContent
+from jcasts.core.decorators import ajax_login_required
+from jcasts.core.http import HttpResponseNoContent
 from jcasts.episodes.models import AudioLog, Episode
 from jcasts.episodes.views import get_episode_or_404
 
