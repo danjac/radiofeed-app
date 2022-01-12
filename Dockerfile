@@ -17,6 +17,7 @@ RUN pip install -r ./requirements.txt -r ./dev-requirements.txt
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
+RUN python -m nltk.downloader omw-1.4
 
 # scripts
 COPY ./docker/start-webapp /start-webapp
