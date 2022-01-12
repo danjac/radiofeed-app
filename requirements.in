@@ -1,6 +1,7 @@
 attrs
 bleach
 bleach-extras
+bpython
 Brotli
 cryptography
 decorator
@@ -21,7 +22,6 @@ django-split-settings
 django-widget-tweaks
 gunicorn
 html5lib
-ipython
 lxml
 Markdown
 nltk

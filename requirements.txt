@@ -6,19 +6,17 @@
 #
 asgiref==3.4.1
     # via django
-asttokens==2.0.5
-    # via stack-data
 attrs==21.4.0
     # via -r requirements.in
-backcall==0.2.0
-    # via ipython
-black==21.12b0
-    # via ipython
 bleach==4.1.0
     # via
     #   -r requirements.in
     #   bleach-extras
 bleach-extras==0.1.2
+    # via -r requirements.in
+blessings==1.7
+    # via curtsies
+bpython==0.22.1
     # via -r requirements.in
 brotli==1.0.9
     # via -r requirements.in
@@ -32,17 +30,20 @@ charset-normalizer==2.0.10
     # via requests
 click==8.0.3
     # via
-    #   black
     #   nltk
     #   rq
 cryptography==36.0.1
     # via
     #   -r requirements.in
     #   pyjwt
-decorator==5.1.1
+curtsies==0.3.10
+    # via bpython
+cwcwidth==0.1.6
     # via
-    #   -r requirements.in
-    #   ipython
+    #   bpython
+    #   curtsies
+decorator==5.1.1
+    # via -r requirements.in
 defusedxml==0.7.1
     # via python3-openid
 deprecated==1.2.13
@@ -86,18 +87,14 @@ django-split-settings==1.1.0
     # via -r requirements.in
 django-widget-tweaks==1.4.11
     # via -r requirements.in
-executing==0.8.2
-    # via stack-data
+greenlet==1.1.2
+    # via bpython
 gunicorn==20.1.0
     # via -r requirements.in
 html5lib==1.1
     # via -r requirements.in
 idna==3.3
     # via requests
-ipython==8.0.0
-    # via -r requirements.in
-jedi==0.18.1
-    # via ipython
 joblib==1.1.0
     # via
     #   nltk
@@ -106,10 +103,6 @@ lxml==4.7.1
     # via -r requirements.in
 markdown==3.3.6
     # via -r requirements.in
-matplotlib-inline==0.1.3
-    # via ipython
-mypy-extensions==0.4.3
-    # via black
 nltk==3.6.7
     # via -r requirements.in
 numpy==1.22.0
@@ -126,28 +119,12 @@ packaging==21.3
     #   redis
 pandas==1.3.5
     # via -r requirements.in
-parso==0.8.3
-    # via jedi
-pathspec==0.9.0
-    # via black
-pexpect==4.8.0
-    # via ipython
-pickleshare==0.7.5
-    # via ipython
-platformdirs==2.4.1
-    # via black
-prompt-toolkit==3.0.24
-    # via ipython
 psycopg2-binary==2.9.3
     # via -r requirements.in
-ptyprocess==0.7.0
-    # via pexpect
-pure-eval==0.2.1
-    # via stack-data
 pycparser==2.21
     # via cffi
 pygments==2.11.2
-    # via ipython
+    # via bpython
 pyjwt[crypto]==2.3.0
     # via django-allauth
 pyparsing==3.0.6
@@ -160,6 +137,8 @@ python3-openid==3.2.0
     # via django-allauth
 pytz==2021.3
     # via pandas
+pyxdg==0.27
+    # via bpython
 redis==4.1.0
     # via
     #   -r requirements.in
@@ -171,6 +150,7 @@ regex==2021.11.10
 requests==2.27.1
     # via
     #   -r requirements.in
+    #   bpython
     #   django-allauth
     #   django-anymail
     #   requests-oauthlib
@@ -195,26 +175,16 @@ six==1.16.0
     #   python-dateutil
 sqlparse==0.4.2
     # via django
-stack-data==0.1.3
-    # via ipython
 threadpoolctl==3.0.0
     # via scikit-learn
-tomli==1.2.3
-    # via black
 tqdm==4.62.3
     # via nltk
-traitlets==5.1.1
-    # via
-    #   ipython
-    #   matplotlib-inline
 typing-extensions==4.0.1
-    # via black
+    # via bpython
 urllib3==1.26.8
     # via
     #   requests
     #   sentry-sdk
-wcwidth==0.2.5
-    # via prompt-toolkit
 webencodings==0.5.1
     # via
     #   bleach
