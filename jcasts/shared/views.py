@@ -46,3 +46,15 @@ def static_page(
     request: HttpRequest, template_name: str, extra_context: dict | None = None
 ) -> HttpResponse:
     return TemplateResponse(request, template_name, extra_context)
+
+
+@require_http_methods(["GET"])
+def security_txt(request):
+    return HttpResponse(
+        "\n".join(
+            [
+                f"Contact: mailto:{settings.CONTACT_DETAILS['email']}",
+            ]
+        ),
+        content_type="text/plain",
+    )

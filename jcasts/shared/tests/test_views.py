@@ -15,6 +15,12 @@ class TestHealthCheck:
             assert_no_content(client.get(reverse("health_check")))
 
 
+class TestWellKnown:
+    def test_security_txt(self, db, client, django_assert_num_queries):
+        with django_assert_num_queries(1):
+            assert_ok(client.get(reverse("well_known:security_txt")))
+
+
 class TestAboutPages:
     def test_faq(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
