@@ -40,8 +40,11 @@ class TestConverters:
         "value,expected",
         [
             ("1234", 1234),
+            ("0", 0),
+            ("-111111111111111", None),
+            ("111111111111111", None),
             (None, None),
-            ("integer", None),
+            ("a string", None),
         ],
     )
     def test_int_or_none(self, value, expected):

@@ -35,10 +35,18 @@ def is_complete(value: str | None) -> bool:
 
 
 def int_or_none(value: str | None) -> int | None:
-    try:
-        return int(value) if value else None
-    except ValueError:
+
+    if value is None:
         return None
+
+    try:
+        if (result := int(value)) in range(-2147483648, 2147483647):
+            return result
+
+    except ValueError:
+        ...
+
+    return None
 
 
 def list_to_str(value: list[str]) -> str:
