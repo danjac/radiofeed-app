@@ -39,10 +39,15 @@ requirements:
 	pip-compile requirements.in
 	pip-compile dev-requirements.in
 
+upgrade:
+	pip-compile --upgrade requirements.in
+	pip-compile --upgrade dev-requirements.in
+
 maint: maintenance
 
 maintenance:
 	ansible-playbook maintenance.yml --ask-pass
+
 
 push:
 	git push dokku main

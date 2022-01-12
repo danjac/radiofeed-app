@@ -2,7 +2,6 @@
 coverage
 factory-boy
 Faker
-fakeredis
 pytest
 pytest-cov
 pytest-django
