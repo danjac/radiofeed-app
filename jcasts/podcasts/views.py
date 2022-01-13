@@ -267,8 +267,8 @@ def get_podcast_detail_context(
     return {
         "podcast": podcast,
         "og_data": podcast.get_opengraph_data(request),
-        "has_similar": podcast.has_similar_podcasts_cached(),
-        "num_episodes": podcast.get_episode_count_cached(),
+        "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
+        "num_episodes": Episode.objects.filter(podcast=podcast).count(),
     } | (extra_context or {})
 
 
