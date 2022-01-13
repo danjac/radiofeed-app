@@ -114,6 +114,19 @@ class TestPodcastModel:
     def test_slug_if_title_empty(self):
         assert Podcast().slug == "no-title"
 
+    def test_get_episode_count(self, episode):
+        return episode.podcast.get_episode_count() == 1
+
+    def test_get_episode_count_zero(self, podcast):
+        return podcast.get_episode_count() == 0
+
+    def test_has_similar_podcasts(self, podcast):
+        RecommendationFactory(podcast=podcast)
+        assert podcast.has_similar_podcasts() is True
+
+    def test_not_has_similar_podcasts(self, podcast):
+        assert podcast.has_similar_podcasts() is False
+
     def test_cleaned_title(self):
         podcast = Podcast(title="<b>Test &amp; Code")
         assert podcast.cleaned_title == "Test & Code"

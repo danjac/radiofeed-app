@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from urllib.parse import urlparse
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
@@ -210,6 +211,13 @@ class Podcast(models.Model):
                 "image_width": 200,
             }
         return og_data
+
+    def get_episode_count(self):
+
+        return apps.get_model("episodes.Episode").objects.filter(podcast=self).count()
+
+    def has_similar_podcasts(self):
+        return Recommendation.objects.filter(podcast=self).exists()
 
 
 class Subscription(TimeStampedModel):
