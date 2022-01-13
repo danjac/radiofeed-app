@@ -117,12 +117,19 @@ class TestPodcastModel:
     def test_get_episode_count(self, episode):
         return episode.podcast.get_episode_count() == 1
 
+    def test_get_episode_count_cached(self, episode):
+        return episode.podcast.get_episode_count_cached() == 1
+
     def test_get_episode_count_zero(self, podcast):
         return podcast.get_episode_count() == 0
 
     def test_has_similar_podcasts(self, podcast):
         RecommendationFactory(podcast=podcast)
         assert podcast.has_similar_podcasts() is True
+
+    def test_has_similar_podcasts_cached(self, podcast):
+        RecommendationFactory(podcast=podcast)
+        assert podcast.has_similar_podcasts_cached() is True
 
     def test_not_has_similar_podcasts(self, podcast):
         assert podcast.has_similar_podcasts() is False

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
+from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.http import HttpRequest
@@ -212,12 +213,29 @@ class Podcast(models.Model):
             }
         return og_data
 
-    def get_episode_count(self):
-
+    def get_episode_count(self) -> int:
         return apps.get_model("episodes.Episode").objects.filter(podcast=self).count()
 
-    def has_similar_podcasts(self):
+    def get_episode_count_cached(self, timeout: int = 600) -> int:
+        cache_key = f"podcast-episode-count-{self.pk}"
+
+        if (count := cache.get(cache_key)) is None:
+            count = self.get_episode_count()
+            cache.set(cache_key, count, timeout)
+
+        return count
+
+    def has_similar_podcasts(self) -> bool:
         return Recommendation.objects.filter(podcast=self).exists()
+
+    def has_similar_podcasts_cached(self, timeout: int = 3600) -> bool:
+        cache_key = f"podcast-has-similar-{self.pk}"
+
+        if (has_similar := cache.get(cache_key)) is None:
+            has_similar = self.has_similar_podcasts()
+            cache.set(cache_key, has_similar, timeout)
+
+        return has_similar
 
 
 class Subscription(TimeStampedModel):
