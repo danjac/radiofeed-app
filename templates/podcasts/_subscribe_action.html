@@ -7,7 +7,6 @@
             {% if subscribed %}
                 <button class="btn btn-secondary inline-flex items-center"
                     title="Unsubscribe from this Podcast"
-                    hx-trigger="click delay:200ms"
                     hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
                     {% icon "eye_slash" css_class=ICON_CSS %}
                     Unsubscribe
@@ -15,7 +14,6 @@
             {% else %}
                 <button class="btn btn-default inline-flex items-center"
                     title="Subscribe to this Podcast"
-                    hx-trigger="click delay:200ms"
                     hx-post="{% url 'podcasts:subscribe' podcast.id %}">
                     {% icon "eye" css_class=ICON_CSS %}
                     Subscribe
