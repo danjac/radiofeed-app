@@ -49,14 +49,6 @@ def search(search_term: str) -> Generator[Feed, None, None]:
     )
 
 
-def top_rated() -> Generator[Feed, None, None]:
-    """Get the top-rated iTunes feeds"""
-    for result in get_response(
-        "https://rss.applemarketingtools.com/api/v2/us/podcasts/top/50/podcasts.json"
-    ).json()["feed"]["results"]:
-        yield from parse_feeds(get_podcast(result["id"]), promoted=True)
-
-
 def crawl() -> Generator[Feed, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 

@@ -136,57 +136,6 @@ class TestParsePodcastId:
         )
 
 
-class TestTopRated:
-    def test_new(self, db, mocker):
-        class MockResponse:
-            def raise_for_status(self):
-                ...
-
-            def json(self):
-                return {"feed": {"results": [{"id": "12345"}]}}
-
-        mocker.patch(
-            "requests.get",
-            return_value=MockResponse(),
-        )
-        mocker.patch(
-            "jcasts.podcasts.itunes.get_podcast",
-            return_value={"results": [MOCK_RESULT]},
-        )
-
-        feeds = list(itunes.top_rated())
-        assert len(feeds) == 1
-        podcasts = Podcast.objects.filter(promoted=True)
-        assert podcasts.count() == 1
-        assert podcasts.first().title == "Test & Code : Python Testing"
-
-    def test_existing(self, db, mocker):
-        class MockResponse:
-            def raise_for_status(self):
-                ...
-
-            def json(self):
-                return {"feed": {"results": [{"id": "12345"}]}}
-
-        mocker.patch(
-            "requests.get",
-            return_value=MockResponse(),
-        )
-        mocker.patch(
-            "jcasts.podcasts.itunes.get_podcast",
-            return_value={"results": [MOCK_RESULT]},
-        )
-
-        podcast = PodcastFactory(rss=MOCK_RESULT["feedUrl"])
-
-        feeds = list(itunes.top_rated())
-        assert len(feeds) == 1
-        assert feeds[0].podcast == podcast
-
-        podcast.refresh_from_db()
-        assert podcast.promoted
-
-
 class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 

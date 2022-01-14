@@ -11,26 +11,6 @@ from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
 
 
-class TestFetchTopRated:
-    def test_command(self, mocker):
-        mock_top_rated = mocker.patch(
-            "jcasts.podcasts.itunes.top_rated",
-            return_value=[
-                Feed(
-                    rss="https://example.com/test.xml",
-                    url="https://example.com/id2345",
-                )
-            ],
-        )
-        call_command("fetch_top_rated")
-        mock_top_rated.assert_called()
-
-    def test_exception(self, mocker):
-        mocker.patch("jcasts.podcasts.itunes.top_rated", side_effect=requests.HTTPError)
-        with pytest.raises(CommandError):
-            call_command("fetch_top_rated")
-
-
 class TestCrawlItunes:
     def test_command(self, mocker):
         mock_top_rated = mocker.patch(
