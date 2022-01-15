@@ -12,11 +12,6 @@ from django.views.decorators.http import require_http_methods
 from jcasts.shared.http import HttpResponseNoContent
 
 
-@require_http_methods(["GET"])
-def health_check(request: HttpRequest) -> HttpResponse:
-    return HttpResponseNoContent()
-
-
 @require_http_methods(["POST"])
 def accept_cookies(request: HttpRequest) -> HttpResponse:
     response = HttpResponseNoContent()
@@ -38,22 +33,9 @@ def static_page(
     return TemplateResponse(request, template_name, extra_context)
 
 
-@require_http_methods(["GET"])
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def security_txt(request):
-    return HttpResponse(
-        "\n".join(
-            [
-                f"Contact: mailto:{settings.CONTACT_DETAILS['email']}",
-            ]
-        ),
-        content_type="text/plain",
-    )
-
-
 @require_http_methods(["GET", "HEAD"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def robots(request: HttpRequest) -> HttpResponse:
+def robots_txt(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
             [
@@ -67,6 +49,19 @@ def robots(request: HttpRequest) -> HttpResponse:
                     ]
                 ],
                 f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
+            ]
+        ),
+        content_type="text/plain",
+    )
+
+
+@require_http_methods(["GET"])
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+def security_txt(request):
+    return HttpResponse(
+        "\n".join(
+            [
+                f"Contact: mailto:{settings.CONTACT_DETAILS['email']}",
             ]
         ),
         content_type="text/plain",
