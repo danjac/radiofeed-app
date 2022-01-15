@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import http
+import secrets
 
 from functools import lru_cache
 
@@ -15,11 +16,18 @@ from django.utils.http import http_date, quote_etag
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Category, Podcast
 from jcasts.podcasts.parsers import date_parser, rss_parser, text_parser
-from jcasts.shared import user_agent
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
 PARSE_ERROR_LIMIT = 3  # max errors before podcast is "dead"
+
+USER_AGENTS = [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
+]
 
 
 class NotModified(requests.RequestException):
@@ -307,7 +315,7 @@ def extract_text(
 def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     headers = {
         "Accept": ACCEPT_HEADER,
-        "User-Agent": user_agent.get_user_agent(),
+        "User-Agent": get_user_agent(),
     }
 
     if podcast.etag:
@@ -319,6 +327,10 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
 
 def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
+
+
+def get_user_agent() -> str:
+    return secrets.choice(USER_AGENTS)
 
 
 @lru_cache

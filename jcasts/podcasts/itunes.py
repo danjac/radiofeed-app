@@ -14,7 +14,7 @@ import requests
 from django.core.cache import cache
 
 from jcasts.podcasts.models import Podcast
-from jcasts.shared import user_agent
+from jcasts.podcasts.parsers.feed_parser import get_user_agent
 
 RE_PODCAST_ID = re.compile(r"id(?P<id>[0-9]+)")
 
@@ -73,7 +73,7 @@ def get_response(url, data: dict | None = None) -> requests.Response:
     response = requests.get(
         url,
         data,
-        headers={"User-Agent": user_agent.get_user_agent()},
+        headers={"User-Agent": get_user_agent()},
         timeout=10,
         allow_redirects=True,
     )
