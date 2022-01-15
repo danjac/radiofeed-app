@@ -35,7 +35,7 @@ def static_page(
 
 @require_http_methods(["GET", "HEAD"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def robots_txt(request: HttpRequest) -> HttpResponse:
+def robots(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
             [
@@ -57,7 +57,7 @@ def robots_txt(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def security_txt(request):
+def security(request):
     return HttpResponse(
         "\n".join(
             [

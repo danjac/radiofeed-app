@@ -3,16 +3,16 @@ from django.urls import reverse
 from jcasts.shared.asserts import assert_no_content, assert_ok
 
 
-class TestRobotsTxt:
-    def test_robots_txt(self, db, client, django_assert_num_queries):
+class TestRobots:
+    def test_get(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
-            assert_ok(client.get(reverse("robots_txt")))
+            assert_ok(client.get(reverse("robots")))
 
 
-class TestWellKnown:
-    def test_security_txt(self, db, client, django_assert_num_queries):
+class TestSecurty:
+    def test_get(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
-            assert_ok(client.get(reverse("well_known:security_txt")))
+            assert_ok(client.get(reverse("security")))
 
 
 class TestAboutPages:
