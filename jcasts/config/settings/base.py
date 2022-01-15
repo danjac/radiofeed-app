@@ -11,8 +11,8 @@ BASE_DIR = pathlib.Path(__file__).absolute().parents[3]
 
 env = environ.Env()
 
-DEBUG = False
 
+DEBUG = False
 
 SECRET_KEY = env("SECRET_KEY")
 
@@ -86,13 +86,12 @@ LOCAL_APPS = [
     "jcasts.episodes",
     "jcasts.podcasts",
     "jcasts.users",
-    # https://docs.djangoproject.com/en/4.0/ref/contrib/admin/#overriding-the-default-admin-site
-    "jcasts.config.apps.AdminConfig",
 ]
 
 
 INSTALLED_APPS = [
     "django.forms",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -133,6 +132,8 @@ MIDDLEWARE = [
 ]
 
 DEFAULT_PAGE_SIZE = 30
+
+ADMIN_SITE_HEADER = "jCasts Admin"
 
 # base Django admin URL (should be something obscure in production)
 

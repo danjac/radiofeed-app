@@ -8,6 +8,8 @@ from jcasts.config.settings.base import BASE_DIR, INSTALLED_APPS, env
 
 include("base.py")
 
+ADMIN_SITE_HEADER = "jCasts Admin [PRODUCTION]"
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"

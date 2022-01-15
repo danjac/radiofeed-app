@@ -14,6 +14,9 @@ sitemaps = {
 }
 
 
+admin.site.site_header = settings.ADMIN_SITE_HEADER
+
+
 urlpatterns = [
     path("", include("jcasts.shared.urls")),
     path("", include("jcasts.episodes.urls")),
