@@ -1,8 +1,0 @@
-User-Agent: *
-
-Disallow: /account/
-Disallow: /favorites/
-Disallow: /history/
-Disallow: /queue/
-
-Sitemap: {{ sitemap_url }}

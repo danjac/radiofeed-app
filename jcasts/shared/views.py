@@ -12,16 +12,6 @@ from django.views.decorators.http import require_http_methods
 from jcasts.shared.http import HttpResponseNoContent
 
 
-@require_http_methods(["GET", "HEAD"])
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def robots(request: HttpRequest) -> HttpResponse:
-    return TemplateResponse(
-        request,
-        "robots.txt",
-        {"sitemap_url": request.build_absolute_uri("/sitemap.xml")},
-    )
-
-
 @require_http_methods(["GET"])
 def health_check(request: HttpRequest) -> HttpResponse:
     return HttpResponseNoContent()
@@ -49,11 +39,34 @@ def static_page(
 
 
 @require_http_methods(["GET"])
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def security_txt(request):
     return HttpResponse(
         "\n".join(
             [
                 f"Contact: mailto:{settings.CONTACT_DETAILS['email']}",
+            ]
+        ),
+        content_type="text/plain",
+    )
+
+
+@require_http_methods(["GET", "HEAD"])
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+def robots(request: HttpRequest) -> HttpResponse:
+    return HttpResponse(
+        "\n".join(
+            [
+                "User-Agent: *",
+                *[
+                    f"Disallow: {url}"
+                    for url in [
+                        "/account/",
+                        "/favorites/",
+                        "/history/",
+                    ]
+                ],
+                f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
             ]
         ),
         content_type="text/plain",
