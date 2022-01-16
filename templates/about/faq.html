@@ -3,196 +3,150 @@
 {% block title %}{{ block.super }} | Frequently Asked Questions {% endblock %}
 
 {% block about_content %}
-    {% with site_name=request.site.name %}
 
-        <ul class="list-none list-inside space-y-3">
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">What is {{ site_name }}?</summary>
-                    <p>
-                        <strong>{{ site_name }}</strong> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
-                    </p>
-                </details>
-            </li>
+    <div class="prose dark:prose-invert prose-sm lg:prose break-words">
+        {% with site_name=request.site.name %}
 
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">Is {{ site_name }} free?</summary>
-                    <p>
-                        <strong>{{ site_name }}</strong> is free of charge. It's also <a href="https://github.com/danjac/jcasts/">free, open-source software!</a>
-                    </p>
-                </details>
-            </li>
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">Does {{ site_name }} store data about me?</summary>
-                    <p>
-                        <strong>{{ site_name }}</strong> keeps track of your podcast subscriptions, bookmarks and individual episodes you listen to. This data is not shared with any third party. If you delete your account, all this data is also permanently deleted. More detailed terms and conditions <a class="link"
-                            href="{% url 'about:terms' %}">here</a>.
-                    </p>
-                </details>
-            </li>
-
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">
-                        Do I have to create an account to use {{ site_name }}?</summary>
-                    <p>
-                        You don't have to <a class="link"
-                            href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
-                    </p>
-                    <p>
-                        You'll have to register at <strong>{{ site_name }}</strong> to do all of these:
-                    </p>
-                    <ul class="list-disc list-inside space-y-3 ml-3">
-                        <li>Play episodes in our custom Player</li>
-                        <li>Bookmark episodes to listen to later</li>
-                        <li>Add podcasts to your collection</li>
-                        <li>Get new weekly recommendations</li>
-                        <li>Keep track of episodes you have listened to</li>
-                    </ul>
-                </details>
-            </li>
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">What if I want to download an episode to my device?</summary>
-                    <p>
-                        Click the download icon {% icon "download" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} on the episode page to save the audio file to your device. You can then
-                        listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
-                        play History.
-                    </p>
-                </details>
-            </li>
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How do I add podcasts to my collection?</summary>
-                    <p>
-                        Just click the <strong>Subscribe</strong> button on the podcast&apos;s <strong>About</strong> page to add the podcast
-                        to your collection.
-                    </p>
-                </details>
-            </li>
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How does {{ site_name }} recommend new podcasts to me?</summary>
-                    <p>
-                        We will send you an email with new recommendations every week. We recommend new podcasts using a machine-learning algorithm based on your collection and listening history.
-                    </p>
-                </details>
-            </li>
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How do I stop receiving email notifications?</summary>
-                    <p>
-                        Go to the <a class="link"
-                            href="{% url 'users:preferences'%}">Preferences</a> section in the <strong>Settings</strong> area, uncheck the option <strong>Send email notifications</strong> and click the save button.
-                    </p>
-                </details>
-            </li>
-
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How do I remove an episode from my history?</summary>
-                    <p>
-                        Go to the episode page and click the trash icon {% icon "trash" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
-                        to permanently remove the episode from your History.
-                    </p>
-                </details>
-            </li>
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">Can I export my collection?</summary>
-                    <p>
-                        You can download your podcast feed collection in the <a class="link"
-                            href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <strong>Settings</strong> area.
-                        You can export your feeds in OPML, JSON or CSV format.
-                    </p>
-                </details>
-            </li>
-
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How do I add podcasts to {{ site_name }}?</summary>
-                    <p>
-                        First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
-                        click the <strong>iTunes</strong> link in the search results page. Any new podcasts you find in iTunes will be automatically
-                        added to our database. We're also adding new podcasts every day!
-                    </p>
-                </details>
-            </li>
-
-            <li class="space-y-3"
-                role="button"
-                x-data="{show: false}">
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How do I save an episode to listen to later?</summary>
-                    <p>
-                        Click the star icon {% icon "star" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
-                        in the episode page to add an episode to your <a class="link" href="{% url 'episodes:bookmarks' %}">Bookmarks</a>.
-                        You can add episodes you want to listen to later, or favorites you want to listen to again.
-                    </p>
-                </details>
-            </li>
-
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How often are podcasts updated?</summary>
-                    <p>
-                        Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
-                        submitted new content in a long time may be updated every few days.
-                    </p>
-                </details>
-            </li>
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">Which browsers does {{ site_name }} support?</summary>
-                    <p>
-                        <strong>{{ site_name }}</strong> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
-                        It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
-                            target="_blank"
-                            rel="noopener"
-                            href="https://github.com/danjac/jcasts/issues">bug</a> and provide as much detail as possible.
-                    </p>
-                </details>
-            </li>
-
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">Help! I've found a bug. How do I report it?</summary>
-                    <p>
-                        Sorry! If you find a bug we would be very grateful if you report it
-                        <a class="link"
-                            target="_blank"
-                            rel="noopener"
-                            href="https://github.com/danjac/jcasts/issues">here</a>. You can also submit any ideas or suggestions you have!
-                    </p>
-                </details>
-            </li>
-
-            <li>
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">I want to host an instance of {{ site_name }} myself. Is this possible?</summary>
-                    <p>
-                        Absolutely, this is an open source project that can be hosted on your own server. Please see the <a class="link"
-                            target="_blank"
-                            rel="noopener"
-                            href="https://github.com/danjac/jcasts/">README</a> for instructions on setting up and running an instance.
-                    </p>
-                </details>
-            </li>
-
-            <li class="space-y-3"
-                role="button"
-                x-data="{show: false}">
-                <details class="space-y-3">
-                    <summary class="font-semibold lg:text-lg cursor-pointer">How do I delete my account?</summary>
-                    <p>
-                        Go to <a class="link"
-                            href="{% url 'users:delete_account' %}">Delete Account</a> section in the <strong>Settings</strong> area. If you delete your account,
-                        your collection, bookmarks and history will also be <strong>permanently</strong> deleted.
-                    </p>
-                </details>
-            </li>
-        </ul>
-    {% endwith %}
+            <details>
+                <summary>What is {{ site_name }}?</summary>
+                <p>
+                    <strong>{{ site_name }}</strong> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
+                </p>
+            </details>
+            <details>
+                <summary>Is {{ site_name }} free?</summary>
+                <p>
+                    <strong>{{ site_name }}</strong> is free of charge. It's also <a href="https://github.com/danjac/jcasts/">free, open-source software!</a>
+                </p>
+            </details>
+            <details>
+                <summary>Does {{ site_name }} store data about me?</summary>
+                <p>
+                    <strong>{{ site_name }}</strong> keeps track of your podcast subscriptions, bookmarks and individual episodes you listen to. This data is not shared with any third party. If you delete your account, all this data is also permanently deleted. More detailed terms and conditions <a class="link"
+                        href="{% url 'about:terms' %}">here</a>.
+                </p>
+            </details>
+            <details>
+                <summary>
+                    Do I have to create an account to use {{ site_name }}?</summary>
+                <p>
+                    You don't have to <a class="link"
+                        href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
+                </p>
+                <p>
+                    You'll have to register at <strong>{{ site_name }}</strong> to do all of these:
+                </p>
+                <ul class="list-disc list-inside space-y-3 ml-3">
+                    <li>Play episodes in our custom Player</li>
+                    <li>Bookmark episodes to listen to later</li>
+                    <li>Add podcasts to your collection</li>
+                    <li>Get new weekly recommendations</li>
+                    <li>Keep track of episodes you have listened to</li>
+                </ul>
+            </details>
+            <details>
+                <summary>What if I want to download an episode to my device?</summary>
+                <p>
+                    Click the download icon {% icon "download" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} on the episode page to save the audio file to your device. You can then
+                    listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
+                    play History.
+                </p>
+            </details>
+            <details>
+                <summary>How do I add podcasts to my collection?</summary>
+                <p>
+                    Just click the <strong>Subscribe</strong> button on the podcast&apos;s <strong>About</strong> page to add the podcast
+                    to your collection.
+                </p>
+            </details>
+            <details>
+                <summary>How does {{ site_name }} recommend new podcasts to me?</summary>
+                <p>
+                    We will send you an email with new recommendations every week. We recommend new podcasts using a machine-learning algorithm based on your collection and listening history.
+                </p>
+            </details>
+            <details>
+                <summary>How do I stop receiving email notifications?</summary>
+                <p>
+                    Go to the <a class="link"
+                        href="{% url 'users:preferences'%}">Preferences</a> section in the <strong>Settings</strong> area, uncheck the option <strong>Send email notifications</strong> and click the save button.
+                </p>
+            </details>
+            <details>
+                <summary>How do I remove an episode from my history?</summary>
+                <p>
+                    Go to the episode page and click the trash icon {% icon "trash" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
+                    to permanently remove the episode from your History.
+                </p>
+            </details>
+            <details>
+                <summary>Can I export my collection?</summary>
+                <p>
+                    You can download your podcast feed collection in the <a class="link"
+                        href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <strong>Settings</strong> area.
+                    You can export your feeds in OPML, JSON or CSV format.
+                </p>
+            </details>
+            <details>
+                <summary>How do I add podcasts to {{ site_name }}?</summary>
+                <p>
+                    First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
+                    click the <strong>iTunes</strong> link in the search results page. Any new podcasts you find in iTunes will be automatically
+                    added to our database. We're also adding new podcasts every day!
+                </p>
+            </details>
+            <details>
+                <summary>How do I save an episode to listen to later?</summary>
+                <p>
+                    Click the star icon {% icon "star" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
+                    in the episode page to add an episode to your <a class="link" href="{% url 'episodes:bookmarks' %}">Bookmarks</a>.
+                    You can add episodes you want to listen to later, or favorites you want to listen to again.
+                </p>
+            </details>
+            <details>
+                <summary>How often are podcasts updated?</summary>
+                <p>
+                    Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
+                    submitted new content in a long time may be updated every few days.
+                </p>
+            </details>
+            <details>
+                <summary>Which browsers does {{ site_name }} support?</summary>
+                <p>
+                    <strong>{{ site_name }}</strong> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
+                    It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
+                        target="_blank"
+                        rel="noopener"
+                        href="https://github.com/danjac/jcasts/issues">bug</a> and provide as much detail as possible.
+                </p>
+            </details>
+            <details>
+                <summary>Help! I've found a bug. How do I report it?</summary>
+                <p>
+                    Sorry! If you find a bug we would be very grateful if you report it
+                    <a class="link"
+                        target="_blank"
+                        rel="noopener"
+                        href="https://github.com/danjac/jcasts/issues">here</a>. You can also submit any ideas or suggestions you have!
+                </p>
+            </details>
+            <details>
+                <summary>I want to host an instance of {{ site_name }} myself. Is this possible?</summary>
+                <p>
+                    Absolutely, this is an open source project that can be hosted on your own server. Please see the <a class="link"
+                        target="_blank"
+                        rel="noopener"
+                        href="https://github.com/danjac/jcasts/">README</a> for instructions on setting up and running an instance.
+                </p>
+            </details>
+            <details>
+                <summary>How do I delete my account?</summary>
+                <p>
+                    Go to <a class="link"
+                        href="{% url 'users:delete_account' %}">Delete Account</a> section in the <strong>Settings</strong> area. If you delete your account,
+                    your collection, bookmarks and history will also be <strong>permanently</strong> deleted.
+                </p>
+            </details>
+        {% endwith %}
+    </div>
 {% endblock %}
