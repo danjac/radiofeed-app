@@ -3,12 +3,12 @@
 {% block content %}
     {% if process == "connect" %}
 
-        <h1 class="mb-3 font-bold text-lg lg:text-xl">Connect to {{ provider.name }}</h1>
+        <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">Connect to {{ provider.name }}</h1>
         <p class="mb-3">You are about to connect a new third party account from {{ provider.name }}.</p>
 
     {% else %}
 
-        <h1 class="mb-3 font-bold text-lg lg:text-xl">Sign In Via {{ provider.name }}</h1>
+        <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">Sign In Via {{ provider.name }}</h1>
         <p class="mb-3">You are about to sign in using a third party account from {{ provider.name }}.</p>
 
     {% endif %}

@@ -5,7 +5,7 @@
 {% block content %}
 
     {% if request.search %}
-        <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl mb-3">Bookmarks</h1>
+        <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">Bookmarks</h1>
     {% endif %}
     <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
         {% if request.search %}
@@ -15,7 +15,7 @@
                     class="link">Search All Podcasts</a>
             </nav>
         {% else %}
-            <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl">Bookmarks</h1>
+            <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl">Bookmarks</h1>
         {% endif %}
 
         {% if request.search or page_obj.paginator.count %}

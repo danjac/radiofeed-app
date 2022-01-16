@@ -5,13 +5,13 @@
 {% block about_content %}
     <div class="prose dark:prose-invert prose-sm lg:prose break-words">
 
-        <h2>About Us</h2>
+        <h3>About Us</h3>
 
         <p>
             <strong>{{ request.site.name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
         </p>
 
-        <h2>Technology</h2>
+        <h3>Technology</h3>
 
         <p><strong>{{ request.site.name }}</strong> is an
             <a
@@ -38,7 +38,7 @@
                 rel="noopener"
                 target="_blank">Tailwind</a>.
         </p>
-        <h2>Additional Credits</h2>
+        <h3>Additional Credits</h3>
 
         <ul>
 
@@ -68,14 +68,14 @@
                 </a>
             </li>
         </ul>
-        <h2>General Disclaimer</h2>
+        <h3>General Disclaimer</h3>
 
         <p>
             All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
             nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
         </p>
 
-        <h2>Contact Us</h2>
+        <h3>Contact Us</h3>
         <p>
             {% get_contact_details as contact_details %}
 
