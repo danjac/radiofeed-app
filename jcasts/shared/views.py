@@ -3,13 +3,15 @@ from __future__ import annotations
 import datetime
 
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
+from django.http import FileResponse, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
 
 from jcasts.shared.http import HttpResponseNoContent
+
+CACHE_TIMEOUT = 24 * 60 * 60
 
 
 @require_http_methods(["POST"])
@@ -33,8 +35,17 @@ def static_page(
     return TemplateResponse(request, template_name, extra_context)
 
 
+@require_http_methods(["GET"])
+@cache_control(max_age=CACHE_TIMEOUT, immutable=True)
+def favicon(request: HttpRequest) -> HttpResponse:
+    return FileResponse(
+        (settings.BASE_DIR / "assets" / "img" / "wave-ico.png").open("rb")
+    )
+
+
 @require_http_methods(["GET", "HEAD"])
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+@cache_control(max_age=24 * 60 * 60, immutable=True)
+@cache_page(CACHE_TIMEOUT)
 def robots(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
@@ -56,7 +67,8 @@ def robots(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+@cache_control(max_age=24 * 60 * 60, immutable=True)
+@cache_page(CACHE_TIMEOUT)
 def security(request):
     return HttpResponse(
         "\n".join(

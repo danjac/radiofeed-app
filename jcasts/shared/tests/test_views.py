@@ -3,6 +3,11 @@ from django.urls import reverse
 from jcasts.shared.asserts import assert_no_content, assert_ok
 
 
+class TestFavicon:
+    def test_get(self, db, client):
+        assert_ok(client.get(reverse("favicon")))
+
+
 class TestRobots:
     def test_get(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
