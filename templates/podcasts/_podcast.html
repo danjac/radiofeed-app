@@ -1,4 +1,4 @@
-{% extends "_list_item.html" %}
+{% extends "_article.html" %}
 
 {% block cover_image %}
     {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
