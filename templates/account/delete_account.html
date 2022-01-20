@@ -3,7 +3,6 @@
 {% block title %}{{ block.super }} | Delete Account{% endblock %}
 
 {% block settings_content %}
-
     <div class="w-full space-y-3">
         <p>
             Please confirm that you want to delete your account. You will not be able to undo this action!
@@ -12,13 +11,11 @@
             <form method="POST"
                 hx-disable="true"
                 action="{% url 'users:delete_account' %}"
-                onSubmit="return confirm('Are you sure?')"
-            >
+                onSubmit="return confirm('Are you sure?')">
                 {% csrf_token %}
                 <button class="btn btn-danger inline-flex items-center"
                     name="confirm-delete"
-                    value="true"
-                >
+                    value="true">
                     {% icon "trash" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
                     Yes, delete my account
                 </button>
