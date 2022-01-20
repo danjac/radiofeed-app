@@ -11,15 +11,18 @@
         <div>
             <form method="POST"
                 hx-disable="true"
-                action="{% url 'users:delete_account' %}">
+                action="{% url 'users:delete_account' %}"
+                onSubmit="return confirm('Are you sure?')"
+            >
                 {% csrf_token %}
                 <button class="btn btn-danger inline-flex items-center"
                     name="confirm-delete"
                     value="true"
-                    @click="return confirm('Are you sure?')">
+                >
                     {% icon "trash" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
                     Yes, delete my account
                 </button>
-            </div>
+            </form>
         </div>
+    </div>
 {% endblock settings_content %}
