@@ -112,7 +112,7 @@ def parse_urls(content: bytes) -> Generator[str, None, None]:
             yield href
 
 
-def parse_feeds(data: dict, **defaults) -> Generator[Feed, None, None]:
+def parse_feeds(data: dict) -> Generator[Feed, None, None]:
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
@@ -126,26 +126,17 @@ def parse_feeds(data: dict, **defaults) -> Generator[Feed, None, None]:
     )
 
     for_insert: list[Podcast] = []
-    for_update: list[Podcast] = []
 
     for feed in feeds:
 
         feed.podcast = podcasts.get(feed.rss, None)
 
         if feed.podcast is None:
-            for_insert.append(Podcast(title=feed.title, rss=feed.rss, **defaults))
-        elif defaults:
-            for k, v in defaults.items():
-                setattr(feed.podcast, k, v)
-            for_update.append(feed.podcast)
-
+            for_insert.append(Podcast(title=feed.title, rss=feed.rss))
         yield feed
 
     if for_insert:
         Podcast.objects.bulk_create(for_insert, ignore_conflicts=True)
-
-    if for_update and defaults:
-        Podcast.objects.bulk_update(for_update, fields=defaults.keys())
 
 
 def parse_results(data: dict) -> Generator[Feed, None, None]:
