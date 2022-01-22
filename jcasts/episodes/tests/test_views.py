@@ -143,31 +143,33 @@ class TestEpisodeDetail:
 
 
 class TestStartPlayer:
-    # we have a number of savepoints here adding to query count
-    num_savepoints = 3
-
     def url(self, episode):
         return reverse("episodes:start_player", args=[episode.id])
-
-    def num_queries_with_savepoints(self, num_queries):
-        # SAVEPOINT + RELEASE SAVEPOINT
-        return num_queries + (self.num_savepoints * 2)
 
     def test_play_from_start(
         self, client, db, auth_user, episode, django_assert_num_queries
     ):
-        with django_assert_num_queries(self.num_queries_with_savepoints(7)):
+        with django_assert_num_queries(13):
             assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert client.session[Player.session_key] == episode.id
+
+    def test_play_from_start_anonymous(
+        self, client, db, episode, django_assert_num_queries
+    ):
+        with django_assert_num_queries(2):
+            assert_ok(client.post(self.url(episode)))
+
+        assert not AudioLog.objects.filter(episode=episode).exists()
+        assert Player.session_key not in client.session
 
     def test_another_episode_in_player(
         self, client, auth_user, episode, django_assert_num_queries
     ):
         client.session[Player.session_key] = EpisodeFactory().id
 
-        with django_assert_num_queries(self.num_queries_with_savepoints(7)):
+        with django_assert_num_queries(13):
             assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
@@ -176,7 +178,7 @@ class TestStartPlayer:
 
     def test_resume(self, client, auth_user, episode, django_assert_num_queries):
         log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
-        with django_assert_num_queries(self.num_queries_with_savepoints(5)):
+        with django_assert_num_queries(11):
             assert_ok(client.post(self.url(episode)))
 
         log.refresh_from_db()
@@ -189,7 +191,7 @@ class TestClosePlayer:
     url = reverse_lazy("episodes:close_player")
 
     def test_player_empty(self, client, auth_user, django_assert_num_queries):
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(2):
             resp = client.post(self.url)
         assert_ok(resp)
 
@@ -211,6 +213,15 @@ class TestClosePlayer:
 
         assert not log.completed
         assert log.current_time == 2000
+
+        assert_not_playing(client, player_episode)
+
+    def test_close_anonymous(self, client, player_episode, django_assert_num_queries):
+
+        # including savepoints
+        with django_assert_num_queries(6):
+            resp = client.post(self.url)
+        assert_ok(resp)
 
         assert_not_playing(client, player_episode)
 

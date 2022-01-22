@@ -74,17 +74,6 @@
                 </div>
             </div>
 
-            {% if request.user.is_anonymous %}
-                <div>
-
-                    <audio controls
-                        preload="metadata"
-                        src="{{ episode.media_url }}">
-                    </audio>
-
-                </div>
-            {% endif %}
-
             <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-2 sm:space-x-3">
                 {% include "_date.html" with value=episode.pub_date title="Release Date" %}
                 {% include "episodes/_duration.html" %}

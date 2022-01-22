@@ -6,6 +6,7 @@
                 autoplay={{ player_action|yesno:'true,false' }},
                 mediaUrl='{{ episode.media_url }}',
                 currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
+                isLoggedIn={{ user.is_authenticated|yesno:"true,false" }},
             ){# fmt:on #}"
                 @keydown.window="shortcuts"
                 class="pt-12 sm:pt-0 lg:pt-6">
@@ -204,6 +205,8 @@
     {% endif %}
     {% if player_action %}
         {% include "episodes/_player_toggle.html" with hx_oob=True %}
-        {% include "episodes/_history_toggle.html" with hx_oob=True %}
+        {% if user.is_authenticated %}
+            {% include "episodes/_history_toggle.html" with hx_oob=True %}
+        {% endif %}
     {% endif %}
 {% endif %}

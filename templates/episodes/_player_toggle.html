@@ -1,41 +1,27 @@
 {% with ICON_CSS="h-5 w-5 lg:h-6 lg:w-6 mr-2" %}
-    {% if user.is_authenticated %}
-        <div{% if hx_oob %} hx-swap-oob="true"
-        {% endif %}
-            id="play-action-{{ episode.id }}">
-            {% if is_playing %}
-                <button class="inline-flex items-center btn btn-secondary"
-                    hx-post="{% url 'episodes:close_player' %}"
-                    hx-push-url="false"
-                    hx-target="#player"
-                    hx-swap="innerHTML"
-                    title="Close Player">
-                    {% icon "stop" css_class=ICON_CSS %}
-                    Close
-                </button>
-            {% else %}
-                <button class="inline-flex items-center btn btn-default"
-                    hx-post="{% url 'episodes:start_player' episode.id %}"
-                    hx-push-url="false"
-                    hx-target="#player"
-                    hx-swap="innerHTML"
-                    title="Open Episode in Player">
-                    {% icon "play" css_class=ICON_CSS %}
-                    {% if completed %}Re-Play{% elif listened %}Resume{% else %}Play{% endif %}
-                </button>
-            {% endif %}
-        </div>
-    {% else %}
-        <div>
-
-            <a class="btn btn-default inline-flex items-center justify-center"
-                href="{{ episode.get_absolute_url|login_url }}"
-                hx-disable="true"
-                title="You must sign up or log in to play this episode">
-                {% icon "play" css_class=ICON_CSS %}
-                Play
-            </a>
-
-        </div>
+    <div{% if hx_oob %} hx-swap-oob="true"
     {% endif %}
+        id="play-action-{{ episode.id }}">
+        {% if is_playing %}
+            <button class="inline-flex items-center btn btn-secondary"
+                hx-post="{% url 'episodes:close_player' %}"
+                hx-push-url="false"
+                hx-target="#player"
+                hx-swap="innerHTML"
+                title="Close Player">
+                {% icon "stop" css_class=ICON_CSS %}
+                Close
+            </button>
+        {% else %}
+            <button class="inline-flex items-center btn btn-default"
+                hx-post="{% url 'episodes:start_player' episode.id %}"
+                hx-push-url="false"
+                hx-target="#player"
+                hx-swap="innerHTML"
+                title="Open Episode in Player">
+                {% icon "play" css_class=ICON_CSS %}
+                {% if completed %}Re-Play{% elif listened %}Resume{% else %}Play{% endif %}
+            </button>
+        {% endif %}
+    </div>
 {% endwith %}

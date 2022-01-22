@@ -15,46 +15,53 @@ from jcasts.shared.http import HttpResponseNoContent
 
 
 @require_http_methods(["POST"])
-@ajax_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
+    current_time: int = 0
+    completed: datetime | None = None
 
-    log, _ = AudioLog.objects.update_or_create(
-        episode=episode,
-        user=request.user,
-        defaults={
-            "completed": None,
-            "updated": timezone.now(),
-        },
-    )
+    if request.user.is_authenticated:
+        log, _ = AudioLog.objects.update_or_create(
+            episode=episode,
+            user=request.user,
+            defaults={
+                "completed": None,
+                "updated": timezone.now(),
+            },
+        )
+        current_time = log.current_time
+        completed = log.completed
 
-    request.player.set(episode.id)
+        request.player.set(episode.id)
 
     return render_player_action(
         request,
         episode,
-        current_time=log.current_time,
-        completed=log.completed,
+        current_time=current_time,
+        completed=completed,
     )
 
 
 @require_http_methods(["POST"])
-@ajax_login_required
 def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpResponse:
 
     if episode_id := request.player.pop():
+
         episode = get_episode_or_404(request, episode_id)
         completed: datetime | None = None
 
-        if mark_complete:
+        if request.user.is_authenticated:
 
-            completed = timezone.now()
+            if mark_complete:
 
-            AudioLog.objects.filter(user=request.user, episode=episode).update(
-                completed=completed,
-                updated=completed,
-                current_time=0,
-            )
+                completed = timezone.now()
+
+                AudioLog.objects.filter(user=request.user, episode=episode).update(
+                    completed=completed,
+                    updated=completed,
+                    current_time=0,
+                )
 
         return render_player_action(
             request,

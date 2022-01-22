@@ -52,18 +52,14 @@
 
         {% cookie_notice %}
 
-        {% if user.is_authenticated %}
-            <div id="player">
-                {% audio_player %}
-            </div>
-        {% endif %}
+        <div id="player">
+            {% audio_player %}
+        </div>
 
         {% include "_footer.html" %}
         </div>
 
-        {% if user.is_authenticated %}
-            {% include "episodes/_player_js.html" %}
-        {% endif %}
+        {% include "episodes/_player_js.html" %}
 
         </body>
 
