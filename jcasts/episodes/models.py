@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import mimetypes
-import os
+import pathlib
 
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
@@ -245,7 +245,7 @@ class Episode(models.Model):
         """Use with the `with_current_time` QuerySet method"""
         return self.pc_complete > 99
 
-    def get_opengraph_data(self, request: HttpRequest) -> dict:
+    def get_opengraph_data(self, request: HttpRequest, size: int = 200) -> dict:
         og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.cleaned_title} | {self.cleaned_title}",
@@ -257,8 +257,8 @@ class Episode(models.Model):
             og_data = {
                 **og_data,
                 "image": cover_url,
-                "image_height": 200,
-                "image_width": 200,
+                "image_height": size,
+                "image_width": size,
             }
 
         return og_data
@@ -291,8 +291,7 @@ class Episode(models.Model):
         )
 
     def get_media_url_ext(self) -> str:
-        _, ext = os.path.splitext(urlparse(self.media_url).path)
-        return ext[1:]
+        return pathlib.Path(self.media_url).suffix[1:]
 
     def get_media_metadata(self) -> dict:
         # https://developers.google.com/web/updates/2017/02/media-session
