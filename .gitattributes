@@ -2,6 +2,9 @@
 .gitignore export-ignore
 .gitmodules export-ignore
 .github export-ignore
+.pre-commit-config.yaml export-ignore
 
 assets/bundle.css -diff
+
+* text=auto eol=lf
 
