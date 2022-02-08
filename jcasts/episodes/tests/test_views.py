@@ -4,16 +4,16 @@ import pytest
 
 from django.urls import reverse, reverse_lazy
 
-from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
-from jcasts.episodes.middleware import Player
-from jcasts.episodes.models import AudioLog, Bookmark
-from jcasts.podcasts.factories import PodcastFactory, SubscriptionFactory
-from jcasts.shared.asserts import (
+from jcasts.common.asserts import (
     assert_bad_request,
     assert_conflict,
     assert_no_content,
     assert_ok,
 )
+from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from jcasts.episodes.middleware import Player
+from jcasts.episodes.models import AudioLog, Bookmark
+from jcasts.podcasts.factories import PodcastFactory, SubscriptionFactory
 
 episodes_url = reverse_lazy("episodes:index")
 

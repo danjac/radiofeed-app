@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import include, path
 
-from jcasts.shared import views
+from jcasts.common import views
 
 about_urls = [
     path(

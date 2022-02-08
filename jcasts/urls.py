@@ -18,7 +18,7 @@ admin.site.site_header = settings.ADMIN_SITE_HEADER
 
 
 urlpatterns = [
-    path("", include("jcasts.shared.urls")),
+    path("", include("jcasts.common.urls")),
     path("", include("jcasts.episodes.urls")),
     path("", include("jcasts.podcasts.urls")),
     path("", include("jcasts.users.urls")),

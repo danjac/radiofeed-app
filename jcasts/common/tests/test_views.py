@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from jcasts.shared.asserts import assert_no_content, assert_ok
+from jcasts.common.asserts import assert_no_content, assert_ok
 
 
 class TestFavicon:
