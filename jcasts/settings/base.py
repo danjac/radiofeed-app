@@ -7,7 +7,7 @@ import environ
 
 from django.urls import reverse_lazy
 
-BASE_DIR = pathlib.Path(__file__).absolute().parents[3]
+BASE_DIR = pathlib.Path(__file__).absolute().parents[2]
 
 env = environ.Env()
 
@@ -79,8 +79,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-
-ROOT_URLCONF = "jcasts.config.urls"
+ROOT_URLCONF = "jcasts.urls"
 
 LOCAL_APPS = [
     "jcasts.episodes",

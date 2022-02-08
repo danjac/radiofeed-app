@@ -1,7 +1,7 @@
 - name: Set environment variables
   shell: |
       dokku config:set --no-restart {{ app_name }} DISABLE_COLLECTSTATIC='1' && \
-      dokku config:set --no-restart {{ app_name }} DJANGO_SETTINGS_MODULE='jcasts.config.settings.production' && \
+      dokku config:set --no-restart {{ app_name }} DJANGO_SETTINGS_MODULE='jcasts.settings.production' && \
       dokku config:set --no-restart {{ app_name }} ADMIN_URL='{{ admin_url }}' && \
       dokku config:set --no-restart {{ app_name }} ADMINS='{{ admins }}' && \
       dokku config:set --no-restart {{ app_name }} ALLOWED_HOSTS='{{ domain_name }}' && \
