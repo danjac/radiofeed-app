@@ -1,4 +1,4 @@
-FROM python:3.10.1-buster AS django
+FROM python:3.10.2-buster AS django
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
