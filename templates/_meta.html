@@ -47,10 +47,10 @@
         <meta name="twitter:image"
             content="{{ og_data.image }}">
     {% endif %}
-    {% get_contact_details as contact_details %}
-    {% if contact_details.twitter %}
+    {% get_project_metadata as project_metadata %}
+    {% if project_metadata.twitter %}
         <meta name="twitter:site"
-            content="@{{ contact_details.twitter }}">
+            content="@{{ project_metadata.twitter }}">
     {% endif %}
     <meta name="twitter:title"
         content="{{ og_title }}">

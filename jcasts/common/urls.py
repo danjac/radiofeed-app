@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.urls import include, path
 
 from jcasts.common import views
@@ -32,7 +31,6 @@ about_urls = [
         name="terms",
         kwargs={
             "template_name": "about/terms.html",
-            "extra_context": {"privacy_details": settings.PRIVACY_DETAILS},
         },
     ),
 ]

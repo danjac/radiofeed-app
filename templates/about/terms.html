@@ -6,7 +6,7 @@
 {% block about_content %}
 
     {% get_providers as socialaccount_providers %}
-    {% get_contact_details as contact_details %}
+    {% get_project_metadata as project_metadata %}
 
     <div class="prose dark:prose-invert prose-sm lg:prose break-words">
         <p><em>Last updated: April 16, 2021</em></p>
@@ -38,7 +38,7 @@
         <p><strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any other
             device by a website, containing the details of Your browsing history on that website among its many uses.</p>
 
-        <p><strong>Country</strong> refers to: <strong>{{ privacy_details.host_country }}</strong></p>
+        <p><strong>Country</strong> refers to: <strong>{{ project_metadata.host_country }}</strong></p>
 
         <p><strong>Device</strong> means any device that can access the Service such as a computer, a cellphone
             or a digital tablet.</p>
@@ -305,8 +305,8 @@
 
         <h3>Children's Privacy</h3>
 
-        {% with age=privacy_details.age_of_consent %}
-            <p>Our Service does not address anyone under the age of {{ age }}. We do not
+        {% with age=project_metadata.age_of_consent %}
+            <p>Our Service does not address anyone under the age of <strong>{{ age }}</strong>. We do not
                 knowingly collect personally identifiable information from anyone under the age of
                 {{ age }}. If You are a parent or guardian and You are aware that Your child has provided
                 Us with Personal Data, please contact Us. If We become aware that We have collected
@@ -345,8 +345,8 @@
         <h3>Contact Us</h3>
 
         <p>If you have any questions about this Privacy Policy, You can contact us at
-            <a href="mailto:{{ contact_details.email }}"
-            >{{ contact_details.email }}</a>.
+            <a href="mailto:{{ project_metadata.contact_email }}"
+            >{{ project_metadata.contact_email }}</a>.
         </p>
 
     </div>

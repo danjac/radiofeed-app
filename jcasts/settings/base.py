@@ -244,13 +244,9 @@ LOGGING = {
     },
 }
 
-
-CONTACT_DETAILS = {
-    "email": env("CONTACT_EMAIL", default="admin@localhost"),
+PROJECT_METADATA = {
+    "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
     "twitter": env("TWITTER_ACCOUNT", default=None),
-}
-
-PRIVACY_DETAILS = {
     "host_country": env("HOST_COUNTRY", default="Finland"),
     "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
 }

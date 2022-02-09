@@ -104,8 +104,8 @@ def re_active_link(
 
 
 @register.simple_tag
-def get_contact_details() -> dict:
-    return settings.CONTACT_DETAILS
+def get_project_metadata() -> dict:
+    return settings.PROJECT_METADATA
 
 
 @register.filter(is_safe=True)
