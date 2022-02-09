@@ -5,28 +5,28 @@
 {% block content %}
 
     <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">History</h1>
+    {% with count=page_obj.paginator.count %}
+        {% if request.search or count %}
+            <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
+                <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
+                    {% if request.search %}
+                        <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
+                            title="Search Episodes"
+                            class="link">Search All Podcasts</a>
+                    {% elif newest_first %}
+                        <a href="{{ request.path|add:'?ordering=asc' }}"
+                            class="link">Oldest First</a>
+                    {% else %}
+                        <a href="{{ request.path|add:'?ordering=desc' }}"
+                            class="link">Newest First</a>
+                    {% endif %}
+                </nav>
 
-    <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
-
-        <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
-            {% if request.search %}
-                <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                    title="Search Episodes"
-                    class="link">Search All Podcasts</a>
-            {% elif newest_first %}
-                <a href="{{ request.path|add:'?ordering=asc' }}"
-                    class="link">Oldest First</a>
-            {% else %}
-                <a href="{{ request.path|add:'?ordering=desc' }}"
-                    class="link">Newest First</a>
-            {% endif %}
-        </nav>
-
-        {% if request.search or page_obj.paginator.count %}
-            <div class="flex items-center justify-center sm:justify-end">
-                {% include "_search_form.html" with placeholder="Search: History" %}
+                <div class="flex items-center justify-center sm:justify-end">
+                    {% include "_search_form.html" with placeholder="Search: History" %}
+                </div>
             </div>
         {% endif %}
-    </div>
+    {% endwith %}
     {% include pagination_template %}
 {% endblock content %}
