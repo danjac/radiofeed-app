@@ -12,16 +12,11 @@ def paginate(
     object_list: list | QuerySet,
     page_size: int = settings.DEFAULT_PAGE_SIZE,
     param: str = "page",
-    allow_empty: bool = True,
-    orphans: int = 0,
+    **kwargs,
 ) -> Page:
 
-    paginator = Paginator(
-        object_list,
-        page_size,
-        allow_empty_first_page=allow_empty,
-        orphans=orphans,
-    )
+    paginator = Paginator(object_list, page_size, **kwargs)
+
     try:
         return paginator.page(int(request.GET.get(param, 1)))
     except (ValueError, InvalidPage):
