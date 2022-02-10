@@ -14,7 +14,7 @@
     <a href="{{ episode.get_absolute_url }}"
         class="link"
         title="{{ episode.cleaned_title }}">
-        {{ episode.cleaned_title }}
+        {{ episode.cleaned_title|truncatechars:180 }}
     </a>
 {% endblock title %}
 
