@@ -1,5 +1,4 @@
 {% load static django_htmx %}
-
 <link rel="icon"
     type="image/png"
     href="{% static 'img/wave-ico.png' %}">
@@ -10,7 +9,13 @@
     media="screen"
     href="{% static 'bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
 
-<script src="{% static 'htmx.js' %}"></script>
-<script src="{% static 'alpine.js' %}"></script>
+<script src="https://unpkg.com/htmx.org@1.6.1"
+    integrity="sha384-tvG/2mnCFmGQzYC1Oh3qxQ7CkQ9kMzYjWZSNtrRZygHPDDqottzEJsqS4oUVodhW"
+    crossorigin="anonymous"></script>
+
+<script src="https://unpkg.com/alpinejs@3.9.0/dist/cdn.min.js"
+    defer
+    integrity="sha384-YLn2fD95BjQzmdi4Q0fYJ9Bq/lH5dKYdBi6Gc6a2YLzzNPlkPGp/QulFey8/xwqy"
+    crossorigin="anonymous"></script>
 
 {% django_htmx_script %}
