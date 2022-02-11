@@ -10,25 +10,25 @@ Local development requires docker and docker-compose. Just run the Makefile:
 
 To update podcast data and download episodes from their RSS feeds:
 
-> ./bin/manage schedule_podcast_feeds
+> ./scripts/manage schedule_podcast_feeds
 
 You can then generate podcast recommendations with this command:
 
-> ./bin/manage make_recommendations
+> ./scripts/manage make_recommendations
 
 You an also create a super user if you wish to access the Django admin:
 
-> ./bin/manage createsuperuser
+> ./scripts/manage createsuperuser
 
 You can access the development app in your browser at _http://localhost:8000_.
 
 To run unit tests:
 
-> ./bin/runtests [...]
+> ./scripts/runtests [...]
 
 This script takes the same arguments as _./python -m pytest_ e.g.:
 
-> ./bin/runtests -x --ff
+> ./scripts/runtests -x --ff
 
 For the common case:
 
@@ -48,7 +48,7 @@ You can also set *JCASTS_APPNAME* if different to *jcasts*.
 
 Then just run e.g.
 
-> ./bin/dokku-manage shell
+> ./scripts/dokku-manage shell
 
 ## Maintenance
 

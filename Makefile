@@ -16,22 +16,22 @@ logs:
 	docker-compose logs -f
 
 migrate:
-	./bin/manage migrate
+	./scripts/manage migrate
 
 superuser:
-	./bin/manage createsuperuser
+	./scripts/manage createsuperuser
 
 seed:
-	./bin/manage seed_podcast_data
+	./scripts/manage seed_podcast_data
 
 shell:
-	./bin/manage shell_plus
+	./scripts/manage shell_plus
 
 test:
-	./bin/runtests -v -x --ff --reuse-db
+	./scripts/runtests -v -x --ff --reuse-db
 
 coverage:
-	./bin/runtests -v -x --cov --reuse-db --cov-report term-missing
+	./scripts/runtests -v -x --cov --reuse-db --cov-report term-missing
 
 reqs: requirements
 
