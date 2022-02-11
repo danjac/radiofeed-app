@@ -11,9 +11,8 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY ./requirements.txt ./requirements.txt
-COPY ./dev-requirements.txt ./dev-requirements.txt
 
-RUN pip install -r ./requirements.txt -r ./dev-requirements.txt
+RUN pip install -r ./requirements.txt
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
