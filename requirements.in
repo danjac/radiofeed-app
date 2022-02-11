@@ -6,7 +6,6 @@ Werkzeug
 attrs
 bleach
 bleach-extras
-bpython
 coverage
 cryptography
 decorator
@@ -27,6 +26,7 @@ django-widget-tweaks
 factory-boy
 gunicorn
 html5lib
+ipython
 lxml
 nltk
 numpy
