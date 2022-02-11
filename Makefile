@@ -27,6 +27,9 @@ seed:
 shell:
 	./scripts/manage shell_plus
 
+dokku-shell:
+	./scripts/dokku-manage shell_plus
+
 test:
 	./scripts/runtests -v -x --ff --reuse-db
 
