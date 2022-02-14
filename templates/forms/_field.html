@@ -3,7 +3,7 @@
 {% if field.is_hidden %}
     {{ field }}
 {% else %}
-    <div class="space-y-3">
+    <fieldset class="space-y-3">
         {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" LABEL_CSS_CLASS=label_css_class|default:"flex items-center w-full font-semibold" %}
             {% if field|widget_type == "checkboxinput" %}
                 {% with css_class=css_class|default:'mr-3 dark:bg-gray-900' %}
@@ -24,5 +24,5 @@
         {% endwith %}
         {% include "forms/_errors.html" with errors=field.errors %}
         {% include "forms/_help_text.html" with help_text=field.help_text %}
-    </div>
+    </fieldset>
 {% endif %}
