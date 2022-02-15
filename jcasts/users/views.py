@@ -146,14 +146,6 @@ def delete_account(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(request, "account/delete_account.html")
 
 
-def render_opml_export(podcasts: QuerySet) -> HttpResponse:
-    return SimpleTemplateResponse(
-        "account/opml.xml",
-        {"podcasts": podcasts},
-        content_type="application/xml",
-    )
-
-
 def with_export_response_attachment(
     response: HttpResponse, extension: str
 ) -> HttpResponse:
