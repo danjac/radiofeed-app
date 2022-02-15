@@ -123,7 +123,7 @@ def similar(
 
 
 @require_http_methods(["GET"])
-def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponseRedirect:
+def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
