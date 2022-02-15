@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import csv
 
+from typing import Generator
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.urls import reverse
@@ -157,7 +158,7 @@ def with_export_response_attachment(
     return response
 
 
-def get_podcasts_for_export(request: HttpRequest) -> QuerySet:
+def get_podcasts_for_export(request: HttpRequest) -> Generator[Podcast, None, None]:
     return (
         Podcast.objects.filter(
             subscription__user=request.user,
