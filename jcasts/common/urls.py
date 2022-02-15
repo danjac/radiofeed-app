@@ -77,8 +77,8 @@ error_urls = [
 urlpatterns = [
     path("about/", include((about_urls, "about"), namespace="about")),
     path("error/", include((error_urls, "error"), namespace="error")),
+    path("accept_cookies/", views.accept_cookies, name="accept_cookies"),
     path("robots.txt", views.robots, name="robots"),
     path("favicon.ico", views.favicon, name="favicon"),
     path(".well-known/security.txt", views.security, name="security"),
-    path("~accept_cookies", views.accept_cookies, name="accept_cookies"),
 ]

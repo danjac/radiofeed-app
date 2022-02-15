@@ -21,17 +21,17 @@ urlpatterns = [
         name="episode_detail",
     ),
     path(
-        "player/<int:episode_id>/~start/",
+        "player/<int:episode_id>/start/",
         player.start_player,
         name="start_player",
     ),
     path(
-        "player/~close/",
+        "player/close/",
         player.close_player,
         name="close_player",
     ),
     path(
-        "player/~complete/",
+        "player/complete/",
         player.close_player,
         name="player_complete",
         kwargs={
@@ -39,29 +39,29 @@ urlpatterns = [
         },
     ),
     path(
-        "player/~timeupdate/",
+        "player/timeupdate/",
         player.player_time_update,
         name="player_time_update",
     ),
     path("history/", history.index, name="history"),
     path(
-        "history/<int:episode_id>/~complete/",
+        "history/<int:episode_id>/complete/",
         history.mark_complete,
         name="mark_complete",
     ),
     path(
-        "history/<int:episode_id>/~remove/",
+        "history/<int:episode_id>/remove/",
         history.remove_audio_log,
         name="remove_audio_log",
     ),
     path("bookmarks/", bookmarks.index, name="bookmarks"),
     path(
-        "bookmarks/<int:episode_id>/~add/",
+        "bookmarks/<int:episode_id>/add/",
         bookmarks.add_bookmark,
         name="add_bookmark",
     ),
     path(
-        "bookmarks/<int:episode_id>/~remove/",
+        "bookmarks/<int:episode_id>/remove/",
         bookmarks.remove_bookmark,
         name="remove_bookmark",
     ),
