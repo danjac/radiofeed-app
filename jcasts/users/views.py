@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template.response import SimpleTemplateResponse, TemplateResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
@@ -45,44 +46,72 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
-    try:
-        export_format = request.GET["format"]
-
-        renderer = {
-            "csv": render_csv_export,
-            "json": render_json_export,
-            "opml": render_opml_export,
-        }[export_format]
-
-    except KeyError:
-
-        return TemplateResponse(
-            request,
-            "account/export_podcast_feeds.html",
-            {
-                "formats": (
-                    ("csv", "table"),
-                    ("json", "code"),
-                    ("opml", "rss"),
-                )
-            },
-        )
-
-    response = renderer(
-        Podcast.objects.filter(
-            subscription__user=request.user,
-            pub_date__isnull=False,
-        )
-        .distinct()
-        .order_by("title")
-        .iterator(),
+    return TemplateResponse(
+        request,
+        "account/export_podcast_feeds.html",
+        {
+            "formats": [
+                ("csv", "table", reverse("users:export_podcast_feeds_csv")),
+                ("json", "code", reverse("users:export_podcast_feeds_json")),
+                ("opml", "rss", reverse("users:export_podcast_feeds_opml")),
+            ]
+        },
     )
 
-    response[
-        "Content-Disposition"
-    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.{export_format}"
 
-    return response
+@require_http_methods(["GET"])
+@login_required
+def export_podcast_feeds_csv(request: HttpRequest) -> HttpResponse:
+
+    response = HttpResponse(content_type="text/csv")
+
+    writer = csv.writer(response)
+    writer.writerow(["Title", "RSS", "Website"])
+
+    for podcast in get_podcasts_for_export(request):
+        writer.writerow(
+            [
+                podcast.title,
+                podcast.rss,
+                podcast.link,
+            ]
+        )
+    return with_export_response_attachment(response, "csv")
+
+
+@require_http_methods(["GET"])
+@login_required
+def export_podcast_feeds_json(request: HttpRequest) -> HttpResponse:
+
+    return with_export_response_attachment(
+        JsonResponse(
+            {
+                "podcasts": [
+                    {
+                        "title": podcast.title,
+                        "rss": podcast.rss,
+                        "url": podcast.link,
+                    }
+                    for podcast in get_podcasts_for_export(request)
+                ]
+            }
+        ),
+        "json",
+    )
+
+
+@require_http_methods(["GET"])
+@login_required
+def export_podcast_feeds_opml(request: HttpRequest) -> HttpResponse:
+
+    return with_export_response_attachment(
+        SimpleTemplateResponse(
+            "account/opml.xml",
+            {"podcasts": get_podcasts_for_export(request)},
+            content_type="application/xml",
+        ),
+        "opml",
+    )
 
 
 @require_http_methods(["GET"])
@@ -125,31 +154,24 @@ def render_opml_export(podcasts: QuerySet) -> HttpResponse:
     )
 
 
-def render_json_export(podcasts: QuerySet) -> HttpResponse:
-    return JsonResponse(
-        {
-            "podcasts": [
-                {
-                    "title": podcast.title,
-                    "rss": podcast.rss,
-                    "url": podcast.link,
-                }
-                for podcast in podcasts
-            ]
-        }
-    )
+def with_export_response_attachment(
+    response: HttpResponse, extension: str
+) -> HttpResponse:
 
+    response[
+        "Content-Disposition"
+    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.{extension}"
 
-def render_csv_export(podcasts: QuerySet) -> HttpResponse:
-    response = HttpResponse(content_type="text/csv")
-    writer = csv.writer(response)
-    writer.writerow(["Title", "RSS", "Website"])
-    for podcast in podcasts:
-        writer.writerow(
-            [
-                podcast.title,
-                podcast.rss,
-                podcast.link,
-            ]
-        )
     return response
+
+
+def get_podcasts_for_export(request: HttpRequest) -> QuerySet:
+    return (
+        Podcast.objects.filter(
+            subscription__user=request.user,
+            pub_date__isnull=False,
+        )
+        .distinct()
+        .order_by("title")
+        .iterator()
+    )
