@@ -1,6 +1,6 @@
 {% extends "icons/base.svg" %}
 {% block attrs %}
-fill="currentColor"
+    fill="currentColor"
     aria-hidden="true"
     viewBox="0 0 20 20"
 {% endblock attrs %}
