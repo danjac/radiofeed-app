@@ -3,7 +3,7 @@
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
-    {% endblock attrs %}
+{% endblock attrs %}
 {% block path %}
     <path stroke-linecap="round"
         stroke-linejoin="round"
