@@ -1,8 +1,10 @@
-<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+{% extends "icons/base.svg" %}
+{% block attrs %}
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
-    class="{{ css_class|default:'' }}">
+{% endblock attrs %}
+{% block path %}
     <path stroke-linecap="round"
         stroke-linejoin="round"
         stroke-width="2"
@@ -11,4 +13,4 @@
         stroke-linejoin="round"
         stroke-width="2"
         d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-</svg>
+{% endblock path %}
