@@ -125,12 +125,10 @@ def signup_url(url: str) -> str:
 
 
 @register.inclusion_tag("icons/_svg.html")
-def icon(name: str, css_class: str = "", title: str = "", **attrs) -> dict:
+def icon(name: str, css_class: str = "") -> dict:
     return {
         "name": name,
         "css_class": css_class,
-        "title": title,
-        "attrs": attrs,
         "svg_template": f"icons/_{name}.svg",
     }
 
