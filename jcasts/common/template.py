@@ -17,6 +17,7 @@ from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from jcasts.common import cleaners
@@ -124,13 +125,14 @@ def signup_url(url: str) -> str:
     return auth_redirect_url(url, reverse("account_signup"))
 
 
-@register.inclusion_tag("icons/_svg.html")
+@register.simple_tag
 def icon(name: str, css_class: str = "") -> dict:
-    return {
-        "name": name,
-        "css_class": css_class,
-        "svg_template": f"icons/_{name}.svg",
-    }
+    return format_html(
+        template.loader.render_to_string(
+            f"icons/_{name}.svg",
+            {"css_class": css_class},
+        )
+    )
 
 
 @register.inclusion_tag("_share_buttons.html", takes_context=True)
