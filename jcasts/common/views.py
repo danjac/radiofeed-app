@@ -14,6 +14,11 @@ from jcasts.common.http import HttpResponseNoContent
 CACHE_TIMEOUT = 24 * 60 * 60
 
 
+@require_http_methods(["GET"])
+def health_check(request: HttpRequest) -> HttpResponse:
+    return HttpResponseNoContent()
+
+
 @require_http_methods(["POST"])
 def accept_cookies(request: HttpRequest) -> HttpResponse:
     response = HttpResponseNoContent()
