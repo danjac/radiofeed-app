@@ -126,7 +126,7 @@ def signup_url(url: str) -> str:
 
 
 @register.simple_tag
-def icon(name: str, css_class: str = "") -> dict:
+def icon(name: str, css_class: str = "") -> str:
     return format_html(
         template.loader.render_to_string(
             f"icons/_{name}.svg",
