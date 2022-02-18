@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import math
 import re
 
@@ -126,6 +127,7 @@ def signup_url(url: str) -> str:
 
 
 @register.simple_tag
+@functools.lru_cache
 def icon(name: str, css_class: str = "") -> str:
     return format_html(
         template.loader.render_to_string(
