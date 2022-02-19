@@ -4,6 +4,7 @@ from jcasts.common.template import (
     absolute_uri,
     active_link,
     format_duration,
+    icon,
     login_url,
     markup,
     normalize_url,
@@ -95,6 +96,11 @@ class TestFormatDuration:
 
     def test_format_duration_if_more_than_one_hour(self):
         assert format_duration(9000) == "2h 30min"
+
+
+class TestIcon:
+    def test_icon(self):
+        assert 'class="h-4 w-4"' in icon("star", css_class="h-4 w-4")
 
 
 class TestLoginUrl:
