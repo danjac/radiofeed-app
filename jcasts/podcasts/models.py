@@ -152,6 +152,7 @@ class Podcast(models.Model):
         indexes = [
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
+            models.Index(fields=["promoted"]),
             GinIndex(fields=["search_vector"]),
         ]
 
