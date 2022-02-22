@@ -43,7 +43,6 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "fullscreen": [],
     "geolocation": [],
     "gyroscope": [],
-    "interest-cohort": [],
     "magnetometer": [],
     "microphone": [],
     "payment": [],
