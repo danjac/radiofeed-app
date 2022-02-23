@@ -132,33 +132,4 @@ input[type='search']::-webkit-search-results-decoration {
         }
     }
 
-    /* workaround for broken dark:prose-invert */
-    @media (prefers-color-scheme: dark) {
-        .prose {
-            color: theme('colors.gray.300') !important;
-        }
-        .prose ol > li::marker,
-        .prose ul > li::marker {
-            color: theme('colors.gray.300') !important;
-        }
-        .prose hr {
-            border-color: theme('colors.gray.500') !important;
-        }
-        .prose a,
-        .prose blockquote,
-        .prose figcaption,
-        .prose pre,
-        .prose code,
-        .prose {
-            color: theme('colors.gray.300') !important;
-        }
-        .prose strong,
-        .prose h1,
-        .prose h2,
-        .prose h3,
-        .prose h4,
-        .prose h5 {
-            color: theme('colors.gray.200') !important;
-        }
-    }
 }
