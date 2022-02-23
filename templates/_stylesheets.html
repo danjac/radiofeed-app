@@ -1,0 +1,12 @@
+{% load static %}
+
+<link rel="icon"
+    type="image/png"
+    href="{% static 'img/wave-ico.png' %}">
+
+<link rel="apple-touch-icon image_src"
+    href="{% static 'apple-touch-icon.png' %}">
+
+<link rel="stylesheet"
+    media="screen"
+    href="{% static 'bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">

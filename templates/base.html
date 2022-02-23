@@ -14,7 +14,7 @@
 
     {%  else %}
         {% include "_meta.html" %}
-        {% include "_static.html" %}
+        {% include "_stylesheets.html" %}
         {% include "_google_search.html" %}
         </head>
 
@@ -65,6 +65,8 @@
         {% if user.is_authenticated %}
             {% include "episodes/_player_js.html" %}
         {% endif %}
+
+        {% include "_javascripts.html" %}
 
         </body>
 

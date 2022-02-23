@@ -1,14 +1,4 @@
-{% load static django_htmx %}
-
-<link rel="icon"
-    type="image/png"
-    href="{% static 'img/wave-ico.png' %}">
-<link rel="apple-touch-icon image_src"
-    href="{% static 'apple-touch-icon.png' %}">
-
-<link rel="stylesheet"
-    media="screen"
-    href="{% static 'bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
+{% load django_htmx %}
 
 <script src="https://unpkg.com/htmx.org@1.7.0"
     integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo"
