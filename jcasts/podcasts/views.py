@@ -103,7 +103,7 @@ def similar(
     limit: int = 12,
 ) -> HttpResponse:
 
-    podcast = get_podcast_or_404(request, podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
@@ -139,7 +139,7 @@ def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
-    podcast = get_podcast_or_404(request, podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     return TemplateResponse(
         request,
@@ -159,7 +159,7 @@ def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
 
-    podcast = get_podcast_or_404(request, podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
@@ -233,7 +233,7 @@ def category_detail(
 @ajax_login_required
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
-    podcast = get_podcast_or_404(request, podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
@@ -247,14 +247,14 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @ajax_login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
-    podcast = get_podcast_or_404(request, podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     messages.info(request, "You are no longer subscribed to this podcast")
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return render_subscribe_action(request, podcast, subscribed=False)
 
 
-def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
+def get_podcast_or_404(podcast_id: int) -> Podcast:
     return get_object_or_404(
         Podcast.objects.filter(pub_date__isnull=False), pk=podcast_id
     )
