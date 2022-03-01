@@ -15,3 +15,8 @@
     crossorigin="anonymous"></script>
 
 {% django_htmx_script %}
+{% if user.is_authenticated %}
+    {% include "episodes/_player_js.html" %}
+{% endif %}
+
+
