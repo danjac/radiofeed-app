@@ -343,7 +343,7 @@ def clean_text(text: str) -> str:
 
 def extract_keywords(language: str, text: str) -> list[str]:
 
-    if not (text := clean_text(text).lower()):
+    if not (text := clean_text(text).casefold()):
         return []
 
     stopwords = get_stopwords(language)

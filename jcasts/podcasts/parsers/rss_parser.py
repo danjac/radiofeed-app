@@ -27,11 +27,11 @@ _validate_url = URLValidator(["http", "https"])
 
 
 def is_explicit(value: str | None) -> bool:
-    return (value or "").lower() in ("clean", "yes")
+    return (value or "").casefold() in ("clean", "yes")
 
 
 def is_complete(value: str | None) -> bool:
-    return (value or "").lower() == "yes"
+    return (value or "").casefold() == "yes"
 
 
 def int_or_none(value: str | None) -> int | None:

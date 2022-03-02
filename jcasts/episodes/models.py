@@ -270,7 +270,7 @@ class Episode(models.Model):
 
         episode_type = (
             self.episode_type.capitalize()
-            if self.episode_type and self.episode_type.lower() != "full"
+            if self.episode_type and self.episode_type.casefold() != "full"
             else None
         )
 
