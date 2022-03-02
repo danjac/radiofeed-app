@@ -1,4 +1,5 @@
 document.addEventListener("alpine:init", () => {
+    /* initialize any Alpine components here */
     Alpine.data(
         "player",
         (
