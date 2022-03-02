@@ -1,9 +1,11 @@
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('player', (autoplay = false, mediaSrc = null, currentTime = 0) => ({
+        Alpine.data('player', (autoplay = false, mediaSrc = null, currentTime = 0, timeUpdateUrl=null, csrfToken=null) => ({
             autoplay,
             mediaSrc,
             currentTime,
+            csrfToken,
+            timeUpdateUrl,
             duration: 0,
             isError: false,
             isLoaded: false,
@@ -150,10 +152,10 @@
                 const time = Math.round(this.currentTime);
                 if (time % 5 === 0 && this.lastTimeUpdate !== time) {
                     this.lastTimeUpdate = time;
-                    fetch('{% url "episodes:player_time_update" %}', {
+                    fetch(this.timeUpdateUrl, {
                         method: 'POST',
                         headers: {
-                            'X-CSRFToken': '{{ csrf_token }}'
+                            'X-CSRFToken': this.csrfToken
                         },
                         body: new URLSearchParams({
                             current_time: time
