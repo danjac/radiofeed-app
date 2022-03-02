@@ -221,10 +221,7 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        {
-            "category": category,
-            "children": category.children.order_by("name"),
-        },
+        {"category": category},
         cached=True,
     )
 
