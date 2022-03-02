@@ -8,7 +8,7 @@
                     hx-post="{% url 'episodes:close_player' %}"
                     hx-push-url="false"
                     hx-target="#player"
-                    hx-swap="innerHTML"
+                    hx-swap="innerHTML morphdom"
                     title="Close Player">
                     {% icon "stop" css_class=ICON_CSS %}
                     Close
@@ -18,7 +18,7 @@
                     hx-post="{% url 'episodes:start_player' episode.id %}"
                     hx-push-url="false"
                     hx-target="#player"
-                    hx-swap="innerHTML"
+                    hx-swap="innerHTML morphdom"
                     title="Open Episode in Player">
                     {% icon "play" css_class=ICON_CSS %}
                     {% if completed %}Re-Play{% elif listened %}Resume{% else %}Play{% endif %}

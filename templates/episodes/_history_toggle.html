@@ -2,7 +2,7 @@
     <div class="flex items-center space-x-3 lg:space-x-4"
         id="history-toggle-{{ episode.id }}"
         hx-target="this"
-        hx-swap="outerHTML"
+        hx-swap="outerHTML morphdom"
         {% if hx_oob %}hx-swap-oob="true"
         {% endif %}>
         {% if listened and not is_playing %}

@@ -19,10 +19,10 @@
         </head>
 
         <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm lg:text-base scroll-smooth"
-            hx-ext="alpine-morph"
+            hx-ext="alpine-morph morphdom-swap"
             hx-boost="true"
             hx-target="#layout"
-            hx-swap="outerHTML show:window:top"
+            hx-swap="outerHTML show:window:top morphdom"
             hx-indicator="#loader"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 

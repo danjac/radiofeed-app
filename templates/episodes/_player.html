@@ -35,7 +35,7 @@
                         <a class="w-84 truncate block text-center"
                             :class="{'hover:text-blue-500': isInteractive, 'animate-pulse text-gray-300': !isInteractive}"
                             href="{{ episode_url }}"
-                            hx-swap="outerHTML show:window:top"
+                            hx-swap="outerHTML show:window:top morphdom"
                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
 
                         </a>
@@ -83,7 +83,7 @@
                                             class="{{ BUTTON_CSS }}"
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
-                                            hx-swap="innerHTML">
+                                            hx-swap="innerHTML morphdom">
                                             {% icon "stop" css_class=ICON_CSS %}
                                         </button>
 
@@ -91,7 +91,7 @@
                                             x-ref="complete"
                                             hx-post="{% url "episodes:player_complete" %}"
                                             hx-target="#player"
-                                            hx-swap="innerHTML"></button>
+                                            hx-swap="innerHTML morphdom"></button>
 
                                     {% endwith %}
 
@@ -102,7 +102,7 @@
                                         <a class="truncate text-center block sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-3xl"
                                             :class="{'hover:text-blue-500': isInteractive, 'animate-pulse text-gray-300': !isInteractive}"
                                             href="{{ episode_url }}"
-                                            hx-swap="outerHTML show:window:top"
+                                            hx-swap="outerHTML show:window:top morpdom"
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                     </div>
                                     <div class="text-xs lg:text-sm text-center"

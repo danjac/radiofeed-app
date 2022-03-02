@@ -3,7 +3,7 @@
         id="bookmark-toggle"
         hx-push-url="false"
         hx-target="this"
-        hx-swap="outerHTML">
+        hx-swap="outerHTML morphdom">
 
         {% if is_bookmarked %}
             <button title="Remove from Bookmarks"
