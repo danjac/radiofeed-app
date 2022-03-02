@@ -1,4 +1,4 @@
-{% load django_htmx %}
+{% load django_htmx static %}
 
 <script src="https://unpkg.com/htmx.org@1.7.0"
     integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo"
@@ -16,8 +16,5 @@
 
 {% django_htmx_script %}
 
-{% if user.is_authenticated %}
-    {% include "episodes/_player_js.html" %}
-{% endif %}
-
+<script src="{% static 'player.js' %}"></script>
 
