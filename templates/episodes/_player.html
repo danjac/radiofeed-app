@@ -6,8 +6,8 @@
                 autoplay={{ player_action|yesno:'true,false' }},
                 mediaUrl='{{ episode.media_url }}',
                 currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
+                timeUpdateUrl='{% url 'episodes:player_time_update' %}',
                 csrfToken='{{ csrf_token }}',
-                timeUpdateUrl='{% url 'episodes:player_time_update' %}'
             ){# fmt:on #}"
                 @keydown.window="shortcuts"
                 class="pt-12 sm:pt-0 lg:pt-6">
