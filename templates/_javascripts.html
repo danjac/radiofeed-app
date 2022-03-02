@@ -16,5 +16,5 @@
 
 {% django_htmx_script %}
 
-<script src="{% static 'components.js' %}"></script>
+<script src="{% static 'player.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
 
