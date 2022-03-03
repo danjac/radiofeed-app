@@ -34,6 +34,16 @@ For the common case:
 
 > make test
 
+## Upgrade
+
+To upgrade Python dependencies you should install pip-tools https://github.com/jazzband/pip-tools on your local machine (not the DOcker container):
+
+> pip install --user pip-tools
+
+Then just run `make upgrade`.
+
+To add a new dependency, add it to **requirements.in** and then run `pip-compile`. This will update *requirements.txt* accordingly. You can then rebuild the containers with `make build` and commit the changes to the repo.
+
 ## Deployment
 
 > make push
