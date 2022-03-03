@@ -36,7 +36,7 @@ For the common case:
 
 ## Upgrade
 
-To upgrade Python dependencies you should install pip-tools https://github.com/jazzband/pip-tools on your local machine (not the DOcker container):
+To upgrade Python dependencies you should install pip-tools https://github.com/jazzband/pip-tools on your local machine (not the Docker container):
 
 > pip install --user pip-tools
 
