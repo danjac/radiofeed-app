@@ -23,11 +23,9 @@ from jcasts.episodes.views import render_episode_list
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
 
-# test commit
-
 
 @require_http_methods(["GET"])
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> None:
 
     subscribed = (
         set(request.user.subscription_set.values_list("podcast", flat=True))
