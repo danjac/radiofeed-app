@@ -1,0 +1,47 @@
+[flake8]
+ignore = ["E203", "E266", "E501", "W503", "E231", "E701"]
+max-line-length = 80
+max-complexity = 10
+select = ["B","C", "E", "F", "W", "T4", "B9"]
+
+[tool.isort]
+default_section="THIRDPARTY"
+known_first_party="jcasts"
+sections=["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+lines_between_types=1
+group_by_package=true
+order_by_type=true
+
+line_length = 88
+include_trailing_comma=true
+multi_line_output=3
+
+[tool.coverage.run]
+source="jcasts"
+omit=["*/migrations/*","*/tests/*","*/settings/*","**/typedefs.py","**/factories.py","*/wsgi.py"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE="jcasts.settings.test"
+testpaths="jcasts"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::django.utils.deprecation.RemovedInDjango41Warning"
+]
+
+[mypy]
+python_version = 3.10
+check_untyped_defs = false
+ignore_missing_imports = true
+show_error_codes = true
+warn_unused_ignores = false
+warn_redundant_casts = false
+warn_unused_configs = false
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module="*.tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module="*.migrations.*"
+ignore_errors = true
