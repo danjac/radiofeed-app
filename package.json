@@ -1,0 +1,20 @@
+{
+    "private": true,
+    "scripts": {
+        "watch-css": "NODE_ENV=production tailwindcss -i ./assets/app.css -o ./assets/bundle.css --minify --watch --verbose",
+        "watch-js": "esbuild ./assets/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./assets/bundle.js",
+        "watch": "concurrently npm:watch-css npm:watch-js"
+    },
+    "dependencies": {
+        "alpinejs": "^3.9.1",
+        "htmx.org": "^1.7.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/forms": "^0.5.0",
+        "@tailwindcss/line-clamp": "^0.3.1",
+        "@tailwindcss/typography": "^0.5.2",
+        "concurrently": "^7.0.0",
+        "esbuild": "^0.14.25",
+        "tailwindcss": "^3.0.23"
+    }
+}
