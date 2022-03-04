@@ -1,7 +1,7 @@
-document.addEventListener("alpine:init", () => {
+document.addEventListener('alpine:init', () => {
     /* initialize any Alpine components here */
-    Alpine.data(
-        "player",
+    window.Alpine.data(
+        'player',
         (
             autoplay = false,
             mediaSrc = null,
@@ -23,19 +23,19 @@ document.addEventListener("alpine:init", () => {
             defaultPlaybackRate: 1.0,
             lastTimeUpdate: null,
             counters: {
-                current: "00:00:00",
-                duration: "00:00:00",
+                current: '00:00:00',
+                duration: '00:00:00',
             },
             init() {
-                this.$watch("currentTime", (value) => {
+                this.$watch('currentTime', (value) => {
                     this.counters.current = this.formatDuration(value);
                 });
 
-                this.$watch("duration", (value) => {
+                this.$watch('duration', (value) => {
                     this.counters.duration = this.formatDuration(value);
                 });
 
-                this.$watch("playbackRate", (value) => {
+                this.$watch('playbackRate', (value) => {
                     this.$refs.audio.playbackRate = value;
                 });
 
@@ -45,7 +45,7 @@ document.addEventListener("alpine:init", () => {
                 this.$refs.audio.currentTime = this.currentTime;
                 this.$refs.audio.load();
 
-                if ("mediaSession" in navigator) {
+                if ('mediaSession' in navigator) {
                     navigator.mediaSession.metadata = this.getMediaMetadata();
                 }
             },
@@ -53,17 +53,17 @@ document.addEventListener("alpine:init", () => {
                 return this.isPlaying && !this.isError;
             },
             formatDuration(value) {
-                if (isNaN(value) || value < 0) return "00:00:00";
+                if (isNaN(value) || value < 0) return '00:00:00';
                 const duration = Math.floor(value);
                 const hours = Math.floor(duration / 3600);
                 const minutes = Math.floor((duration % 3600) / 60);
                 const seconds = Math.floor(duration % 60);
                 return [hours, minutes, seconds]
-                    .map((t) => t.toString().padStart(2, "0"))
-                    .join(":");
+                    .map((t) => t.toString().padStart(2, '0'))
+                    .join(':');
             },
             getMediaMetadata() {
-                const dataTag = document.getElementById("player-metadata");
+                const dataTag = document.getElementById('player-metadata');
                 if (!dataTag) {
                     return null;
                 }
@@ -82,17 +82,17 @@ document.addEventListener("alpine:init", () => {
 
                 if (!event.ctrlKey && !event.altKey) {
                     switch (event.code) {
-                        case "Space":
+                        case 'Space':
                             event.preventDefault();
                             event.stopPropagation();
                             this.togglePlayPause();
                             return;
-                        case "ArrowRight":
+                        case 'ArrowRight':
                             event.preventDefault();
                             event.stopPropagation();
                             this.skipForward();
                             return;
-                        case "ArrowLeft":
+                        case 'ArrowLeft':
                             event.preventDefault();
                             event.stopPropagation();
                             this.skipBack();
@@ -103,17 +103,17 @@ document.addEventListener("alpine:init", () => {
                 // playback rate
                 if (event.altKey) {
                     switch (event.key) {
-                        case "+":
+                        case '+':
                             event.preventDefault();
                             event.stopPropagation();
                             this.incrementPlaybackRate();
                             return;
-                        case "-":
+                        case '-':
                             event.preventDefault();
                             event.stopPropagation();
                             this.decrementPlaybackRate();
                             return;
-                        case "0":
+                        case '0':
                             event.preventDefault();
                             event.stopPropagation();
                             this.resetPlaybackRate();
@@ -158,9 +158,9 @@ document.addEventListener("alpine:init", () => {
                 if (time % 5 === 0 && this.lastTimeUpdate !== time) {
                     this.lastTimeUpdate = time;
                     fetch(this.timeUpdateUrl, {
-                        method: "POST",
+                        method: 'POST',
                         headers: {
-                            "X-CSRFToken": this.csrfToken,
+                            'X-CSRFToken': this.csrfToken,
                         },
                         body: new URLSearchParams({
                             current_time: time,
@@ -203,7 +203,7 @@ document.addEventListener("alpine:init", () => {
                 this.store();
             },
             restore() {
-                const stored = sessionStorage.getItem("player");
+                const stored = sessionStorage.getItem('player');
                 return stored
                     ? JSON.parse(stored)
                     : {
@@ -213,7 +213,7 @@ document.addEventListener("alpine:init", () => {
             },
             store() {
                 sessionStorage.setItem(
-                    "player",
+                    'player',
                     JSON.stringify({
                         playbackRate: this.playbackRate,
                         autoplay: this.isPlaying,

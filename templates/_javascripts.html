@@ -1,25 +1,6 @@
 {% load django_htmx static %}
 
-<script src="https://unpkg.com/htmx.org@1.7.0"
-    integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo"
-    crossorigin="anonymous"></script>
-
-<script src="https://unpkg.com/alpinejs@3.9.0/dist/cdn.min.js"
-    defer
-    integrity="sha384-YLn2fD95BjQzmdi4Q0fYJ9Bq/lH5dKYdBi6Gc6a2YLzzNPlkPGp/QulFey8/xwqy"
-    crossorigin="anonymous"></script>
-
-<script src="https://unpkg.com/@alpinejs/morph@3.9.0/dist/cdn.min.js"
-    defer
-    integrity="sha384-nich1nyuuhdxfeigrrif8a0jxjxakpcwd1jdpdzdavlmc3fonbda2eodfcxdqlp7"
-    crossorigin="anonymous"></script>
-
-<script src="https://unpkg.com/htmx.org@1.7.0/dist/ext/morphdom-swap.js"
-    defer
-    integrity="sha384-HxDW1iIsJ+JbW/AfmTWq43kVE8e+ikIO6q3/NbjU6ynX7L6mNctgUnr0sUN241nk"
-    crossorigin="anonymous"></script>
-
 {% django_htmx_script %}
 
-<script src="{% static 'player.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
+<script src="{% static 'bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
 
