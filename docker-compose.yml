@@ -87,11 +87,14 @@ services:
         depends_on:
             - webapp
 
-    tailwind:
-        <<: *django
-        command: /start-tailwind
-        depends_on:
-            - webapp
+    watcher:
+        build:
+            context: .
+            target: node
+        command: ['npm', 'run', 'watch']
+        volumes:
+            - ./:/app
+            - /app/node_modules
 
 volumes:
     pg_data: {}

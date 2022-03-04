@@ -27,3 +27,16 @@ RUN chmod +x /start-worker
 
 COPY ./docker/start-tailwind /start-tailwind
 RUN chmod +x /start-tailwind
+
+# frontend
+
+FROM node:17-buster AS node
+
+WORKDIR /app
+
+COPY tailwind.config.js ./tailwind.config.js
+COPY package.json ./package.json
+COPY package-lock.json ./package-lock.json
+
+RUN npm cache clean --force
+RUN npm ci
