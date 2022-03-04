@@ -1,12 +1,3 @@
-# Flake8 doesn't support pyproject.toml yet, so config
-# currently in .flake8. We can uncomment these lines if/when
-# supported.
-#[tool.flake8]
-#ignore = ["E203", "E266", "E501", "W503", "E231", "E701"]
-#max-line-length = 88
-#max-complexity = 10
-#select = ["B","C", "E", "F", "W", "T4", "B9"]
-
 [tool.isort]
 default_section="THIRDPARTY"
 known_first_party="jcasts"
