@@ -20,7 +20,7 @@ include_trailing_comma=true
 multi_line_output=3
 
 [tool.coverage.run]
-source="jcasts"
+source=["jcasts"]
 omit=["*/migrations/*","*/tests/*","*/settings/*","**/typedefs.py","**/factories.py","*/wsgi.py"]
 
 [tool.pytest.ini_options]
