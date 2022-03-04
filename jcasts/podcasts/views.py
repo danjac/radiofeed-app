@@ -25,7 +25,7 @@ from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscripti
 
 
 @require_http_methods(["GET"])
-def index(request: HttpRequest) -> None:
+def index(request: HttpRequest) -> HttpResponse:
 
     subscribed = (
         set(request.user.subscription_set.values_list("podcast", flat=True))
