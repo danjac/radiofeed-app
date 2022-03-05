@@ -25,9 +25,6 @@ RUN chmod +x /start-webapp
 COPY ./docker/start-worker /start-worker
 RUN chmod +x /start-worker
 
-COPY ./docker/start-tailwind /start-tailwind
-RUN chmod +x /start-tailwind
-
 # frontend
 
 FROM node:17-buster AS node
