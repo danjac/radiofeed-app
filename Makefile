@@ -43,6 +43,7 @@ requirements:
 
 upgrade:
 	pip-compile --upgrade requirements.in
+	npm update
 
 maint: maintenance
 

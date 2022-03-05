@@ -32,7 +32,6 @@ nltk
 numpy
 pandas
 psycopg2-binary
-pytailwindcss
 pytest
 pytest-cov
 pytest-django
