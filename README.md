@@ -4,7 +4,12 @@ This is the source code for [jCasts](https://jcasts.io), a simple, easy to use p
 
 ## Running jcasts on your local machine
 
-Local development requires docker and docker-compose. Just run the Makefile:
+Local development requires:
+
+* docker
+* docker-compose
+
+Just run the Makefile:
 
 > make
 
@@ -39,6 +44,10 @@ For the common case:
 To upgrade Python dependencies you should install pip-tools https://github.com/jazzband/pip-tools on your local machine (not the Docker container):
 
 > pip install --user pip-tools
+
+You also need **npm-check-updates**:
+
+> sudo npm install -g npm-check-updates
 
 Then just run `make upgrade`.
 
