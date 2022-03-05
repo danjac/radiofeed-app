@@ -20,10 +20,8 @@
             isLoaded: false,
             src: '{{ cover_url|escapejs }}',
             placeholder: '{{ placeholder|escapejs }}',
-            coverUrl: '{{ cover_url|escapejs }}'
         }{# fmt:on #}"
-        x-init="src=placeholder;"
-        @load.once="src=coverUrl;isLoaded=true;"
+        @load.once="isLoaded=true;"
         @error.once="src=placeholder;isLoaded=true;"
         :class="{'blur-sm': !isLoaded}"
         :src="src"
