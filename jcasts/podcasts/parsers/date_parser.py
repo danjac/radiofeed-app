@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from datetime import datetime
 
 from dateutil import parser as date_parser
@@ -256,17 +258,32 @@ def force_tz_aware(dt: datetime) -> datetime:
         )
 
 
+@functools.singledispatch
 def parse_date(value: str | datetime | None) -> datetime | None:
-    if not value:
-        return None
+    ...
 
-    if isinstance(value, datetime):
-        return force_tz_aware(value)
+
+@parse_date.register
+def _(value: str) -> datetime | None:
 
     try:
-        return force_tz_aware(date_parser.parse(value, tzinfos=TZ_INFOS))
+        return (
+            force_tz_aware(date_parser.parse(value, tzinfos=TZ_INFOS))
+            if value
+            else None
+        )
     except date_parser.ParserError:
         return None
+
+
+@parse_date.register
+def _(value: datetime) -> datetime | None:
+    return force_tz_aware(value)
+
+
+@parse_date.register
+def _(value: None) -> datetime | None:
+    return None
 
 
 def parse_timestamp(timestamp: int | None) -> datetime | None:
