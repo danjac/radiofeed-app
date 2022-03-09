@@ -92,6 +92,11 @@ services:
             context: .
             target: node
         command: ['npm', 'run', 'watch']
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '100k'
+                max-file: '3'
         volumes:
             - ./:/app
             - /app/node_modules
