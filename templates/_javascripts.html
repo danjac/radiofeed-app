@@ -2,5 +2,5 @@
 
 {% django_htmx_script %}
 
-<script src="{% static 'bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
+<script defer src="{% static 'bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
 
