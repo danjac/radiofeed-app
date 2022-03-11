@@ -81,13 +81,6 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 ROOT_URLCONF = "jcasts.urls"
 
-LOCAL_APPS = [
-    "jcasts.episodes",
-    "jcasts.podcasts",
-    "jcasts.users",
-]
-
-
 INSTALLED_APPS = [
     "django.forms",
     "django.contrib.admin",
@@ -109,7 +102,10 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "django_rq",
     "django_object_actions",
-] + LOCAL_APPS
+    "jcasts.episodes",
+    "jcasts.podcasts",
+    "jcasts.users",
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
