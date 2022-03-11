@@ -28,15 +28,15 @@
                 x-data="{show: true}"
                 x-show="show"
                 x-init="setTimeout(() => show = false, 1500)"
-                x-transition:enter="transition ease-in duration-200"
-                x-transition:enter-start="transform opacity-0"
-                x-transition:enter-end="transform opacity-100"
-                x-transition:leave="transition ease-out duration-500"
-                x-transition:leave-start="transform opacity-100"
-                x-transition:leave-end="transform opacity-0">
-                <div class="mx-auto font-semibold flex flex-wrap"
-                    x-text="message.message"></div>
-            </div>
-        </template>
+                    x-transition:enter="transition ease-in duration-200"
+                    x-transition:enter-start="transform opacity-0"
+                    x-transition:enter-end="transform opacity-100"
+                    x-transition:leave="transition ease-out duration-500"
+                    x-transition:leave-start="transform opacity-100"
+                    x-transition:leave-end="transform opacity-0">
+                    <div class="mx-auto font-semibold flex flex-wrap"
+                        x-text="message.message"></div>
+                </div>
+            </template>
+        </div>
     </div>
-</div>
