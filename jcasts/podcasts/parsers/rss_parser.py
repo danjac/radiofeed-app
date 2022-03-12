@@ -108,7 +108,8 @@ class Item:
     title: str = attr.ib(validator=not_empty)
     link: str | None = attr.ib(default=None, converter=url_or_none)
 
-    pub_date: datetime | None = attr.ib(converter=parse_date)
+    # https://github.com/python/mypy/issues/6172
+    pub_date: datetime | None = attr.ib(converter=parse_date)  # type: ignore
 
     media_url: str = attr.ib(validator=is_url)
     media_type: str = attr.ib()

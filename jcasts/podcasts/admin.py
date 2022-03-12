@@ -79,17 +79,19 @@ class PubDateFilter(admin.SimpleListFilter):
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         now = timezone.now()
-        return {
-            "yes": queryset.filter(pub_date__isnull=False),
-            "no": queryset.filter(pub_date__isnull=True),
-            "new": queryset.filter(pub_date__isnull=True, parsed__isnull=True),
-            "recent": queryset.filter(
-                pub_date__gt=now - self.interval,
-            ),
-            "sporadic": queryset.filter(
-                pub_date__lt=now - self.interval,
-            ),
-        }.setdefault(self.value(), queryset)
+        match self.value():
+            case "yes":
+                return queryset.filter(pub_date__isnull=False)
+            case "no":
+                return queryset.filter(pub_date__isnull=True)
+            case "new":
+                return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
+            case "recent":
+                return queryset.filter(pub_date__gt=now - self.interval)
+            case "sporadic":
+                return queryset.filter(pub_date__lt=now - self.interval)
+            case _:
+                return queryset
 
 
 class PromotedFilter(admin.SimpleListFilter):
