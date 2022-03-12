@@ -49,7 +49,7 @@ def favicon(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET", "HEAD"])
-@cache_control(max_age=24 * 60 * 60, immutable=True)
+@cache_control(max_age=CACHE_TIMEOUT, immutable=True)
 @cache_page(CACHE_TIMEOUT)
 def robots(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
@@ -72,7 +72,7 @@ def robots(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-@cache_control(max_age=24 * 60 * 60, immutable=True)
+@cache_control(max_age=CACHE_TIMEOUT, immutable=True)
 @cache_page(CACHE_TIMEOUT)
 def security(request):
     return HttpResponse(
