@@ -298,7 +298,7 @@ def render_podcast_list(
         template_name,
         "podcasts/_podcasts_cached.html" if cached else "podcasts/_podcasts.html",
         {
-            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+            "cache_timeout": settings.SHORT_CACHE_TIMEOUT,
         }
         | (extra_context or {}),
     )

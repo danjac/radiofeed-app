@@ -24,12 +24,12 @@ urlpatterns = [
     path("", include("jcasts.users.urls")),
     path(
         "sitemap.xml",
-        cache_page(settings.DEFAULT_CACHE_TIMEOUT)(sitemaps_views.index),
+        cache_page(settings.SHORT_CACHE_TIMEOUT)(sitemaps_views.index),
         {"sitemaps": sitemaps, "sitemap_url_name": "sitemaps"},
     ),
     path(
         "sitemap-<section>.xml",
-        cache_page(settings.DEFAULT_CACHE_TIMEOUT)(sitemaps_views.sitemap),
+        cache_page(settings.SHORT_CACHE_TIMEOUT)(sitemaps_views.sitemap),
         {"sitemaps": sitemaps},
         name="sitemaps",
     ),

@@ -122,7 +122,7 @@ def render_episode_list(
         template_name,
         "episodes/_episodes_cached.html" if cached else "episodes/_episodes.html",
         {
-            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+            "cache_timeout": settings.SHORT_CACHE_TIMEOUT,
         }
         | (extra_context or {}),
     )
