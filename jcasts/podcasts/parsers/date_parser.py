@@ -260,7 +260,7 @@ def force_tz_aware(dt: datetime) -> datetime:
 
 @functools.singledispatch
 def parse_date(value: str | datetime | None) -> datetime | None:
-    ...
+    return None
 
 
 @parse_date.register
@@ -279,11 +279,6 @@ def _(value: str) -> datetime | None:
 @parse_date.register
 def _(value: datetime) -> datetime | None:
     return force_tz_aware(value)
-
-
-@parse_date.register
-def _(value: None) -> datetime | None:
-    return None
 
 
 def parse_timestamp(timestamp: int | None) -> datetime | None:
