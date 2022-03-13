@@ -34,9 +34,13 @@ class TestParseDate:
 
         assert new_dt.tzinfo == UTC
 
-    def test_parse_date_if_date(self):
+    def test_parse_date_if_datetime(self):
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=UTC)
         assert parse_date(dt) == dt
+
+    def test_parse_date_if_date(self):
+        dt = datetime.date(2020, 6, 19)
+        assert parse_date(dt) == datetime.datetime(2020, 6, 19, 0, 0, 0, tzinfo=UTC)
 
     def test_parse_date_if_valid(self):
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=UTC)

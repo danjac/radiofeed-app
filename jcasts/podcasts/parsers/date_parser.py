@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 
-from datetime import datetime
+from datetime import date, datetime
 
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
@@ -259,7 +259,7 @@ def force_tz_aware(dt: datetime) -> datetime:
 
 
 @functools.singledispatch
-def parse_date(value: str | datetime | None) -> datetime | None:
+def parse_date(value: str | datetime | date | None) -> datetime | None:
     return None
 
 
@@ -279,6 +279,11 @@ def _(value: str) -> datetime | None:
 @parse_date.register
 def _(value: datetime) -> datetime | None:
     return force_tz_aware(value)
+
+
+@parse_date.register
+def _(value: date) -> datetime | None:
+    return parse_date(datetime.combine(value, datetime.min.time()))
 
 
 def parse_timestamp(timestamp: int | None) -> datetime | None:
