@@ -33,6 +33,7 @@ def schedule_secondary_feeds(**kwargs) -> int:
 
 def schedule_podcast_feeds(
     podcasts: QuerySet,
+    *,
     after: timedelta | None = None,
     before: timedelta | None = None,
     queue: str = "feeds",
