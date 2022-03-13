@@ -259,21 +259,8 @@ def force_tz_aware(dt: datetime) -> datetime:
 
 
 @functools.singledispatch
-def parse_date(value: str | datetime | date | None) -> datetime | None:
+def parse_date(value: datetime | date | str | None) -> datetime | None:
     return None
-
-
-@parse_date.register
-def _(value: str) -> datetime | None:
-
-    try:
-        return (
-            force_tz_aware(date_parser.parse(value, tzinfos=TZ_INFOS))
-            if value
-            else None
-        )
-    except date_parser.ParserError:
-        return None
 
 
 @parse_date.register
@@ -284,6 +271,15 @@ def _(value: datetime) -> datetime | None:
 @parse_date.register
 def _(value: date) -> datetime | None:
     return parse_date(datetime.combine(value, datetime.min.time()))
+
+
+@parse_date.register
+def _(value: str) -> datetime | None:
+
+    try:
+        return parse_date(date_parser.parse(value, tzinfos=TZ_INFOS)) if value else None
+    except date_parser.ParserError:
+        return None
 
 
 def parse_timestamp(timestamp: int | None) -> datetime | None:
