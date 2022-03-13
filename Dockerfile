@@ -18,13 +18,6 @@ RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
 RUN python -m nltk.downloader omw-1.4
 
-# scripts
-COPY ./docker/start-webapp /start-webapp
-RUN chmod +x /start-webapp
-
-COPY ./docker/start-worker /start-worker
-RUN chmod +x /start-worker
-
 # frontend
 
 FROM node:17-buster AS node

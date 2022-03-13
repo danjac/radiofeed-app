@@ -79,11 +79,24 @@ services:
         <<: *django
         ports:
             - '8000:8000'
-        command: /start-webapp
+        command:
+          - /bin/bash
+          - -c
+          - |
+            python manage.py migrate
+            python manage.py runserver 0.0.0.0:8000
 
     worker:
         <<: *django
-        command: /start-worker
+        command: [
+            './manage.py',
+            'rqworker',
+            'default',
+            'mail',
+            'feeds',
+            'feeds:frequent',
+            'feeds:sporadic'
+        ]
         depends_on:
             - webapp
 
@@ -91,7 +104,11 @@ services:
         build:
             context: .
             target: node
-        command: ['npm', 'run', 'watch']
+        command: [
+            'npm',
+            'run',
+            'watch'
+        ]
         logging:
             driver: 'json-file'
             options:
