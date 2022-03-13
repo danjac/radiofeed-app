@@ -280,9 +280,3 @@ def _(value: str) -> datetime | None:
         return parse_date(date_parser.parse(value, tzinfos=TZ_INFOS)) if value else None
     except date_parser.ParserError:
         return None
-
-
-def parse_timestamp(timestamp: int | None) -> datetime | None:
-    if timestamp is None:
-        return None
-    return force_tz_aware(datetime.utcfromtimestamp(timestamp))
