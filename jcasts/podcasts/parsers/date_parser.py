@@ -241,23 +241,6 @@ TZ_INFOS: dict[str, int | float] = {
 }
 
 
-def force_tz_aware(dt: datetime) -> datetime:
-    try:
-        return dt if is_aware(dt) else make_aware(dt)
-    except ValueError:
-        # weird offset: try and rebuild as UTC
-        return make_aware(
-            datetime(
-                year=dt.year,
-                month=dt.month,
-                day=dt.day,
-                hour=dt.hour,
-                minute=dt.minute,
-                second=dt.second,
-            )
-        )
-
-
 @functools.singledispatch
 def parse_date(value: datetime | date | str | None) -> datetime | None:
     return None
@@ -265,7 +248,20 @@ def parse_date(value: datetime | date | str | None) -> datetime | None:
 
 @parse_date.register
 def _(value: datetime) -> datetime | None:
-    return force_tz_aware(value)
+    try:
+        return value if is_aware(value) else make_aware(value)
+    except ValueError:
+        # weird offset: try and rebuild as UTC
+        return make_aware(
+            datetime(
+                year=value.year,
+                month=value.month,
+                day=value.day,
+                hour=value.hour,
+                minute=value.minute,
+                second=value.second,
+            )
+        )
 
 
 @parse_date.register
