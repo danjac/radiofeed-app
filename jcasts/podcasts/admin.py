@@ -34,10 +34,13 @@ class ActiveFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        return {
-            "yes": queryset.filter(active=True),
-            "no": queryset.filter(active=False),
-        }.setdefault(self.value(), queryset)
+        match self.value():
+            case "yes":
+                return queryset.filter(active=True)
+            case "no":
+                return queryset.filter(active=False)
+            case _:
+                return queryset
 
 
 class ResultFilter(admin.SimpleListFilter):
