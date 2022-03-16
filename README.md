@@ -55,6 +55,12 @@ To add a new dependency, add it to **requirements.in** and then run `pip-compile
 
 ## Deployment
 
+First configure local deployment:
+
+> git remote add dokku dokku@jcasts.io:jcasts
+
+(Change _jcasts.io_ to your domain).
+
 > make push
 
 Once deployed you can use the *dokku-manage* script to run Django commands remotely on your Dokku instance.
