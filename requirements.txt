@@ -38,7 +38,7 @@ coverage[toml]==6.3.2
     # via
     #   -r requirements.in
     #   pytest-cov
-cryptography==36.0.1
+cryptography==36.0.2
     # via
     #   -r requirements.in
     #   pyjwt
@@ -95,7 +95,7 @@ executing==0.8.3
     # via stack-data
 factory-boy==3.2.1
     # via -r requirements.in
-faker==13.3.1
+faker==13.3.2
     # via
     #   -r requirements.in
     #   factory-boy
@@ -204,7 +204,7 @@ redis==4.1.4
     #   django-redis
     #   django-rq
     #   rq
-regex==2022.3.2
+regex==2022.3.15
     # via nltk
 requests==2.27.1
     # via
@@ -247,7 +247,7 @@ traitlets==5.1.1
     # via
     #   ipython
     #   matplotlib-inline
-urllib3==1.26.8
+urllib3==1.26.9
     # via
     #   requests
     #   sentry-sdk
