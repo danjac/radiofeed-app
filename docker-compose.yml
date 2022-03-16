@@ -10,7 +10,7 @@ x-env: &default-env
 
 services:
     postgres:
-        image: docker.io/postgres:11.8
+        image: postgres:11.8
         environment:
             - POSTGRES_PASSWORD=password
         volumes:
@@ -28,7 +28,7 @@ services:
                 max-file: '3'
 
     redis:
-        image: docker.io/redis:6.2.2-buster
+        image: redis:6.2.2-buster
         stop_grace_period: '3s'
         healthcheck:
             test: ['CMD', 'redis-cli', 'ping']
@@ -42,7 +42,7 @@ services:
                 max-file: '3'
 
     mailhog:
-        image: docker.io/mailhog/mailhog:v1.0.0
+        image: mailhog/mailhog:v1.0.0
         stop_grace_period: '3s'
         ports:
             - '8025:8025'
