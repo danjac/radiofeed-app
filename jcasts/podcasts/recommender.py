@@ -66,6 +66,7 @@ def create_recommendations_for_language(
         with transaction.atomic():
 
             logger.info("Inserting %d recommendations:%s", len(matches), language)
+
             Recommendation.objects.bulk_create(
                 recommendations_from_matches(matches),
                 batch_size=100,
@@ -158,7 +159,9 @@ def find_similarity(
 ) -> Similarities:
 
     sorted_similar = sorted(
-        list(enumerate(similar)), key=operator.itemgetter(1), reverse=True
+        list(enumerate(similar)),
+        key=operator.itemgetter(1),
+        reverse=True,
     )[:NUM_MATCHES]
 
     matches = [
