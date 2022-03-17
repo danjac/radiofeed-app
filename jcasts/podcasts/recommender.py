@@ -56,13 +56,11 @@ def create_recommendations_for_language(
 ) -> None:
     logger.info("Recommendations for %s", language)
 
-    matches = build_matches_dict(
+    if matches := build_matches_dict(
         podcasts,
         categories,
         language,
-    )
-
-    if matches:
+    ):
         with transaction.atomic():
 
             logger.info("Inserting %d recommendations:%s", len(matches), language)
