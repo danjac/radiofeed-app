@@ -10,7 +10,6 @@ from typing import Generator
 
 import pandas
 
-from django.db import transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
@@ -61,15 +60,14 @@ def create_recommendations_for_language(
         categories,
         language,
     ):
-        with transaction.atomic():
 
-            logger.info("Inserting %d recommendations:%s", len(matches), language)
+        logger.info("Inserting %d recommendations:%s", len(matches), language)
 
-            Recommendation.objects.bulk_create(
-                recommendations_from_matches(matches),
-                batch_size=100,
-                ignore_conflicts=True,
-            )
+        Recommendation.objects.bulk_create(
+            recommendations_from_matches(matches),
+            batch_size=100,
+            ignore_conflicts=True,
+        )
 
 
 def build_matches_dict(
