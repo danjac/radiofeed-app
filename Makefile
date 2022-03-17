@@ -44,6 +44,8 @@ requirements:
 upgrade:
 	pip-compile --upgrade requirements.in
 	ncu -u
+	npm install
+
 
 maint: maintenance
 
