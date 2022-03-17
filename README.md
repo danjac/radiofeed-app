@@ -55,11 +55,15 @@ To add a new dependency, add it to **requirements.in** and then run `pip-compile
 
 ## Deployment
 
+The deployment requires Dokku https://dokku.com/
+
 First configure local deployment:
 
 > git remote add dokku dokku@jcasts.io:jcasts
 
 (Change _jcasts.io_ to your domain).
+
+You can now deploy to your Dokku install:
 
 > make push
 
