@@ -53,9 +53,27 @@ Then just run `make upgrade`.
 
 To add a new dependency, add it to **requirements.in** and then run `pip-compile`. This will update *requirements.txt* accordingly. You can then rebuild the containers with `make build` and commit the changes to the repo.
 
+## Configuration
+
+There are several Ansible playbooks for configuring and maintaining your deployment.
+
+First copy _hosts.example_ to _hosts_ and add the correct IP address.
+
+You should also create a file _.vault_pass_ and include the password for Ansible vault (this file should not be committed to the repo).
+
+Finally copy the file _vars.yml.template_ to _vars.yml_ and enter the correct values. When you're done, make sure to encrypt the file:
+
+> ansible-vault encrypt vars.yml
+
+Again, _vars.yml_ should not be included in your repo. You may wish to store it in a secure location, such as LastPass.
+
 ## Deployment
 
-The deployment requires Dokku https://dokku.com/
+The deployment requires Dokku https://dokku.com/. Follow the instructions to install Dokku on a host machine, or use a preconfigured VM or similar (for example Digital Ocean offers a Droplet preconfigured with Dokku).
+
+Once you have set up your configuration variables as instructed above, you can now update your Dokku instance with these environment variables using the provided Ansible playbook:
+
+> ansible-playbook configure.yml [ask pass](--ask-pass)
 
 First configure local deployment:
 
