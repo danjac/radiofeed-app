@@ -83,6 +83,8 @@ Then just run e.g.
 
 There is an Ansible playbook configured to clean up Docker containers, run server updates etc:
 
+> ansible-galaxy collection install geerlingguy.swap
+
 > ansible-playbook maintenance.yml
 
 ## License

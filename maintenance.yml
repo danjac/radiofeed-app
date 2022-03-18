@@ -1,7 +1,6 @@
 - name: Update and upgrade apt packages, install swap memory
   become: yes
   hosts: all
-  vars_files: vars.yml
   gather_facts: no
   roles:
     - docker
