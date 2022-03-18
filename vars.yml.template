@@ -1,11 +1,13 @@
 admin_url:
 admins:
-app_name:
+app_name: jcasts
+app_db_name:
+contact_email:
 domain_name:
 letsencrypt_email:
+host_country:
 mailgun_api_key:
 mailgun_sender_domain:
 secret_key:
 sentry_url:
-app_db_name:
 twitter_account:

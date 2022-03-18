@@ -71,7 +71,17 @@ Again, _vars.yml_ should not be included in your repo. You may wish to store it 
 
 The deployment requires Dokku https://dokku.com/. Follow the instructions to install Dokku on a host machine, or use a preconfigured VM or similar (for example Digital Ocean offers a Droplet preconfigured with Dokku).
 
-Once you have set up your configuration variables as instructed above, you can now update your Dokku instance with these environment variables using the provided Ansible playbook:
+You will need to add and configure buildpacks for PostgreSQL and Redis:
+
+```bash
+
+sudo dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
+
+sudo dokku plugin:install https://github.com/dokku/dokku-redis/
+
+```
+
+Once you have set up your configuration variables as instructed in the section above, you can now update your Dokku instance with these environment variables using the provided Ansible playbook:
 
 > ansible-playbook configure.yml [ask pass](--ask-pass)
 
