@@ -78,7 +78,7 @@ def format_duration(total_seconds: int | None) -> str:
     if total_minutes := round((total_seconds % 3600) / 60):
         rv.append(f"{total_minutes}min")
 
-    return " ".join(rv) if rv else ""
+    return " ".join(rv)
 
 
 @register.simple_tag(takes_context=True)
