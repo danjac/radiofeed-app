@@ -1,12 +1,29 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs17-slim
+FROM python:3.10.3-buster
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER=1
 ENV PYTHONHASHSEED=random
 
+ENV NODE_VERSION 17.8.0
+
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y postgresql-client-13
+    && apt-get install --no-install-recommends -y postgresql-client-11 git curl
+
+RUN curl "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" -O \
+    && tar -xf "node-v$NODE_VERSION-linux-x64.tar.xz" \
+    && ln -s "/node-v$NODE_VERSION-linux-x64/bin/node" /usr/local/bin/node \
+    && ln -s "/node-v$NODE_VERSION-linux-x64/bin/npm" /usr/local/bin/npm \
+    && ln -s "/node-v$NODE_VERSION-linux-x64/bin/npx" /usr/local/bin/npx
+
+RUN npm install -g bump-cli@2.1.0 \
+    && ln -s "/node-v$NODE_VERSION-linux-x64/bin/bump" /usr/local/bin/bump \
+    && npm cache clean --force \
+    && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
+
+RUN rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+    && apt-get autoremove
 
 WORKDIR /app
 
