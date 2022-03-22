@@ -173,10 +173,7 @@ class TestRssParser:
         assert len(items) == num_items
 
     def read_mock_file(self, mock_filename):
-        return open(
-            pathlib.Path(__file__).parent / "mocks" / mock_filename,
-            "rb",
-        ).read()
+        return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
 
 class TestFeed:

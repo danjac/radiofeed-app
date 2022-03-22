@@ -85,10 +85,9 @@ class TestParsePodcastFeed:
         feed_parser.get_categories_dict.cache_clear()
 
     def get_rss_content(self, filename=""):
-        return open(
-            pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file),
-            "rb",
-        ).read()
+        return (
+            pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)
+        ).read_bytes()
 
     def test_parse_podcast_feed_podcast_not_found(self, db):
         result = feed_parser.parse_podcast_feed(1234)

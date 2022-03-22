@@ -61,10 +61,9 @@ class TestCrawl:
         class MockResponse:
             def __init__(self):
 
-                self.content = open(
-                    pathlib.Path(__file__).parent / "mocks" / "podcasts.html",
-                    "rb",
-                ).read()
+                self.content = (
+                    pathlib.Path(__file__).parent / "mocks" / "podcasts.html"
+                ).read_bytes()
 
             def raise_for_status(self):
                 pass
@@ -83,10 +82,9 @@ class TestParseGenre:
     class MockResponse:
         def __init__(self):
 
-            self.content = open(
-                pathlib.Path(__file__).parent / "mocks" / "genre.html",
-                "rb",
-            ).read()
+            self.content = (
+                pathlib.Path(__file__).parent / "mocks" / "genre.html"
+            ).read_bytes()
 
         def raise_for_status(self):
             pass
