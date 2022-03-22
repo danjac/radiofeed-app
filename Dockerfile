@@ -1,4 +1,4 @@
-FROM python:3.10.2-buster AS django
+FROM nikolaik/python-nodejs:python3.10-nodejs17-slim
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -6,7 +6,7 @@ ENV PYTHONFAULTHANDLER=1
 ENV PYTHONHASHSEED=random
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y postgresql-client-11
+    && apt-get install --no-install-recommends -y postgresql-client-13
 
 WORKDIR /app
 
@@ -18,15 +18,8 @@ RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
 RUN python -m nltk.downloader omw-1.4
 
-# frontend
-
-FROM node:17-buster AS node
-
-WORKDIR /app
-
 COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
 COPY package-lock.json ./package-lock.json
 
-RUN npm cache clean --force
-RUN npm ci
+RUN npm cache clean --force && npm ci

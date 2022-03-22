@@ -56,7 +56,6 @@ services:
     django: &django
         build:
             context: .
-            target: django
         restart: on-failure
         privileged: true
         tty: true
@@ -74,6 +73,7 @@ services:
                 condition: service_healthy
         volumes:
             - ./:/app
+            - /app/node_modules
 
     webapp:
         <<: *django
@@ -101,22 +101,14 @@ services:
             - webapp
 
     watcher:
-        build:
-            context: .
-            target: node
+        <<: *django
         command: [
             'npm',
             'run',
             'watch'
         ]
-        logging:
-            driver: 'json-file'
-            options:
-                max-size: '100k'
-                max-file: '3'
-        volumes:
-            - ./:/app
-            - /app/node_modules
+        depends_on:
+            - webapp
 
 volumes:
     pg_data: {}
