@@ -53,7 +53,7 @@ services:
                 max-size: '100k'
                 max-file: '3'
 
-    django: &django
+    base: &base
         build:
             context: .
         restart: on-failure
@@ -76,7 +76,7 @@ services:
             - /app/node_modules
 
     webapp:
-        <<: *django
+        <<: *base
         ports:
             - '8000:8000'
         command:
@@ -87,7 +87,7 @@ services:
             python manage.py runserver 0.0.0.0:8000
 
     worker:
-        <<: *django
+        <<: *base
         command: [
             './manage.py',
             'rqworker',
@@ -101,14 +101,12 @@ services:
             - webapp
 
     watcher:
-        <<: *django
+        <<: *base
         command: [
             'npm',
             'run',
             'watch'
         ]
-        depends_on:
-            - webapp
 
 volumes:
     pg_data: {}
