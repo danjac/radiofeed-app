@@ -56,6 +56,7 @@ services:
     base: &base
         build:
             context: .
+        environment: *default-env
         restart: on-failure
         privileged: true
         tty: true
@@ -65,12 +66,6 @@ services:
             options:
                 max-size: '100k'
                 max-file: '3'
-        environment: *default-env
-        depends_on:
-            postgres:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
         volumes:
             - ./:/app
             - /app/node_modules
@@ -79,6 +74,11 @@ services:
         <<: *base
         ports:
             - '8000:8000'
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
         command:
           - /bin/bash
           - -c
@@ -88,6 +88,8 @@ services:
 
     worker:
         <<: *base
+        depends_on:
+            - webapp
         command: [
             './manage.py',
             'rqworker',
@@ -97,8 +99,6 @@ services:
             'feeds:frequent',
             'feeds:sporadic'
         ]
-        depends_on:
-            - webapp
 
     watcher:
         <<: *base
