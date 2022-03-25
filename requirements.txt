@@ -65,7 +65,7 @@ django==4.0.3
     #   django-permissions-policy
     #   django-redis
     #   django-rq
-django-allauth==0.49.0
+django-allauth==0.50.0
     # via -r requirements.in
 django-anymail==8.5
     # via -r requirements.in
@@ -243,7 +243,7 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-tqdm==4.63.0
+tqdm==4.63.1
     # via nltk
 traitlets==5.1.1
     # via

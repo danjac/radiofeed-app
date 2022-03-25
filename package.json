@@ -6,7 +6,7 @@
         "watch": "concurrently npm:watch-css npm:watch-js"
     },
     "dependencies": {
-        "alpinejs": "^3.9.2",
+        "alpinejs": "^3.9.3",
         "htmx.org": "^1.7.0"
     },
     "devDependencies": {
