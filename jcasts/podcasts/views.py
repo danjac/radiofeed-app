@@ -96,6 +96,19 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
+def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponse:
+
+    if (
+        episode := Episode.objects.filter(podcast=podcast_id)
+        .order_by("-pub_date")
+        .first()
+    ) is None:
+        raise Http404()
+
+    return HttpResponseRedirect(episode.get_absolute_url())
+
+
+@require_http_methods(["GET"])
 def similar(
     request: HttpRequest,
     podcast_id: int,
@@ -120,19 +133,6 @@ def similar(
             {"recommendations": recommendations},
         ),
     )
-
-
-@require_http_methods(["GET"])
-def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponse:
-
-    if (
-        episode := Episode.objects.filter(podcast=podcast_id)
-        .order_by("-pub_date")
-        .first()
-    ) is None:
-        raise Http404()
-
-    return HttpResponseRedirect(episode.get_absolute_url())
 
 
 @require_http_methods(["GET"])
