@@ -9,7 +9,7 @@ Local development requires:
 * docker
 * docker-compose
 
-Just run the Makefile:
+Just run the Makefile to build and start the containers and run initial data migrations:
 
 > make
 
