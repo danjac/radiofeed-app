@@ -25,6 +25,7 @@ django-split-settings
 django-widget-tweaks
 factory-boy
 gunicorn
+honcho
 html5lib
 ipython
 lxml

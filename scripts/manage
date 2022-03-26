@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-docker-compose exec webapp ./manage.py $@
+docker-compose exec honcho ./manage.py $@
 

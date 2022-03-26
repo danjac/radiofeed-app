@@ -70,34 +70,20 @@ services:
             - ./:/app
             - /app/node_modules
 
-    webapp:
+    honcho:
         <<: *base
         ports:
-            - '8000:8000'
+            - '5000:5000'
         depends_on:
             postgres:
                 condition: service_healthy
             redis:
                 condition: service_healthy
-        command:
-          - /bin/bash
-          - -c
-          - |
-            python manage.py migrate
-            python manage.py runserver 0.0.0.0:8000
-
-    worker:
-        <<: *base
-        depends_on:
-            - webapp
         command: [
-            './manage.py',
-            'rqworker',
-            'default',
-            'mail',
-            'feeds',
-            'feeds:frequent',
-            'feeds:sporadic'
+            'honcho',
+            'start',
+            '-f',
+            './Procfile.dev'
         ]
 
     watcher:
