@@ -1,13 +1,5 @@
 version: '3.8'
 
-x-env: &default-env
-    DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
-    EMAIL_HOST: mailhog
-    EMAIL_PORT: 1025
-    REDIS_URL: redis://redis:6379/0
-    SECRET_KEY: seekrit!
-    TWITTER_ACCOUNT: casts_j
-
 services:
     postgres:
         image: postgres:11.8
@@ -53,10 +45,16 @@ services:
                 max-size: '100k'
                 max-file: '3'
 
-    base: &base
+    honcho:
         build:
             context: .
-        environment: *default-env
+        environment:
+            DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
+            EMAIL_HOST: mailhog
+            EMAIL_PORT: 1025
+            REDIS_URL: redis://redis:6379/0
+            SECRET_KEY: seekrit!
+            TWITTER_ACCOUNT: casts_j
         restart: on-failure
         privileged: true
         tty: true
@@ -66,12 +64,6 @@ services:
             options:
                 max-size: '100k'
                 max-file: '3'
-        volumes:
-            - ./:/app
-            - /app/node_modules
-
-    honcho:
-        <<: *base
         ports:
             - '5000:5000'
         depends_on:
@@ -79,19 +71,14 @@ services:
                 condition: service_healthy
             redis:
                 condition: service_healthy
+        volumes:
+            - ./:/app
+            - /app/node_modules
         command: [
             'honcho',
             'start',
             '-f',
             './Procfile.dev'
-        ]
-
-    watcher:
-        <<: *base
-        command: [
-            'npm',
-            'run',
-            'watch'
         ]
 
 volumes:

@@ -1,2 +1,3 @@
 web: gunicorn --reload --workers=2 jcasts.wsgi
 worker: python manage.py rqworker mail default feeds feeds:frequent feeds:sporadic
+watcher: npm run watch

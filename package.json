@@ -1,5 +1,8 @@
 {
     "private": true,
+    "engines": {
+        "node": "17.x"
+    },
     "scripts": {
         "watch-css": "NODE_ENV=production tailwindcss -i ./assets/app.css -o ./assets/bundle.css --minify --watch --verbose",
         "watch-js": "esbuild ./assets/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./assets/bundle.js",
