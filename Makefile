@@ -43,13 +43,12 @@ requirements:
 
 upgrade:
 	pip-compile --upgrade requirements.in
-
+	./scripts/npm upgrade
 
 maint: maintenance
 
 maintenance:
 	ansible-playbook maintenance.yml --ask-pass
-
 
 push:
 	git push dokku main

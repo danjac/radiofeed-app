@@ -14,11 +14,7 @@ RUN curl "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.t
     && tar -xf "node-v$NODE_VERSION-linux-x64.tar.xz" \
     && ln -s "/node-v$NODE_VERSION-linux-x64/bin/node" /usr/local/bin/node \
     && ln -s "/node-v$NODE_VERSION-linux-x64/bin/npm" /usr/local/bin/npm \
-    && ln -s "/node-v$NODE_VERSION-linux-x64/bin/npx" /usr/local/bin/npx
-
-RUN npm install -g bump-cli@2.1.0 \
-    && ln -s "/node-v$NODE_VERSION-linux-x64/bin/bump" /usr/local/bin/bump \
-    && npm cache clean --force \
+    && ln -s "/node-v$NODE_VERSION-linux-x64/bin/npx" /usr/local/bin/npx \
     && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
 
 RUN rm -rf /var/lib/apt/lists/* \
