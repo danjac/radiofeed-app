@@ -45,10 +45,6 @@ To upgrade Python dependencies you should install pip-tools https://github.com/j
 
 > pip install --user pip-tools
 
-You also need **npm-check-updates**:
-
-> sudo npm install -g npm-check-updates
-
 Then just run `make upgrade`.
 
 To add a new dependency, add it to **requirements.in** and then run `pip-compile`. This will update *requirements.txt* accordingly. You can then rebuild the containers with `make build` and commit the changes to the repo.
