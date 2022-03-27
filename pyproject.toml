@@ -12,7 +12,7 @@ multi_line_output=3
 
 [tool.coverage.run]
 source=["jcasts"]
-omit=["*/migrations/*","*/tests/*","*/settings/*","**/typedefs.py","**/factories.py","*/wsgi.py"]
+omit=["*/migrations/*","*/tests/*","*/settings/*","**/factories.py","*/wsgi.py"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="jcasts.settings.test"

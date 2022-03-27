@@ -31,10 +31,10 @@ dokku-shell:
 	./scripts/dokku-manage shell_plus
 
 test:
-	./scripts/runtests -v -x --ff --reuse-db
+	./scripts/pytest -v -x --ff --reuse-db
 
 coverage:
-	./scripts/runtests -v -x --cov --reuse-db --cov-report term-missing
+	./scripts/pytest -v -x --cov --reuse-db --cov-report term-missing
 
 reqs: requirements
 
