@@ -1,6 +1,7 @@
-from django.contrib.auth import get_user_model
 from factory import Faker, post_generation
 from factory.django import DjangoModelFactory
+
+from jcasts.users.models import User
 
 
 class UserFactory(DjangoModelFactory):
@@ -12,5 +13,5 @@ class UserFactory(DjangoModelFactory):
         self.set_password("testpass1")
 
     class Meta:
-        model = get_user_model()
+        model = User
         django_get_or_create = ["username"]

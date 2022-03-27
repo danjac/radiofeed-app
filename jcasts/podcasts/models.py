@@ -4,7 +4,6 @@ from datetime import datetime
 from decimal import Decimal
 from urllib.parse import urlparse
 
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
@@ -19,7 +18,7 @@ from model_utils.models import TimeStampedModel
 
 from jcasts.common.cleaners import strip_html
 from jcasts.common.db import FastCountMixin, SearchMixin
-from jcasts.common.typedefs import User
+from jcasts.users.models import User
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -139,7 +138,7 @@ class Podcast(models.Model):
 
     # received recommendation email
     recipients: list[User] = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
+        User,
         blank=True,
         related_name="recommended_podcasts",
     )
@@ -215,7 +214,7 @@ class Podcast(models.Model):
 
 class Subscription(TimeStampedModel):
 
-    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user: User = models.ForeignKey(User, on_delete=models.CASCADE)
     podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
     class Meta:
