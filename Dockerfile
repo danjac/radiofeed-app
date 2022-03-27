@@ -37,5 +37,6 @@ RUN python -m nltk.downloader omw-1.4
 
 COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
+COPY package-lock.json ./package-lock.json
 
-RUN npm cache clean --force && npm install
+RUN npm cache clean --force && npm ci
