@@ -32,7 +32,7 @@ cffi==1.15.0
     # via cryptography
 charset-normalizer==2.0.12
     # via requests
-click==8.0.4
+click==8.1.0
     # via
     #   nltk
     #   rq
@@ -97,7 +97,7 @@ executing==0.8.3
     # via stack-data
 factory-boy==3.2.1
     # via -r requirements.in
-faker==13.3.3
+faker==13.3.4
     # via
     #   -r requirements.in
     #   factory-boy
@@ -263,7 +263,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   html5lib
-werkzeug==2.0.3
+werkzeug==2.1.0
     # via -r requirements.in
 whitenoise==6.0.0
     # via -r requirements.in
