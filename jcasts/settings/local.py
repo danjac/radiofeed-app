@@ -2,11 +2,11 @@ import socket
 
 from split_settings.tools import include
 
-from jcasts.settings.base import INSTALLED_APPS, TEMPLATES
+from jcasts.settings.base import ADMIN_SITE_HEADER, INSTALLED_APPS, TEMPLATES
 
 include("base.py")
 
-ADMIN_SITE_HEADER = "jCasts Admin [LOCAL DEVELOPMENT]"
+ADMIN_SITE_HEADER += " [LOCAL DEVELOPMENT]"
 
 DEBUG = True
 THUMBNAIL_DEBUG = True

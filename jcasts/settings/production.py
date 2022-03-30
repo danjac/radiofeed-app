@@ -4,11 +4,11 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 from split_settings.tools import include
 
-from jcasts.settings.base import BASE_DIR, INSTALLED_APPS, env
+from jcasts.settings.base import ADMIN_SITE_HEADER, BASE_DIR, INSTALLED_APPS, env
 
 include("base.py")
 
-ADMIN_SITE_HEADER = "jCasts Admin [PRODUCTION]"
+ADMIN_SITE_HEADER += " [PRODUCTION]"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
