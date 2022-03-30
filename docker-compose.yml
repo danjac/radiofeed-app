@@ -65,7 +65,7 @@ services:
                 max-size: '100k'
                 max-file: '3'
         ports:
-            - '5000:5000'
+            - '8000:8000'
         depends_on:
             postgres:
                 condition: service_healthy
