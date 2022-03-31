@@ -32,7 +32,7 @@ cffi==1.15.0
     # via cryptography
 charset-normalizer==2.0.12
     # via requests
-click==8.1.0
+click==8.1.1
     # via
     #   nltk
     #   rq
