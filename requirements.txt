@@ -32,7 +32,7 @@ cffi==1.15.0
     # via cryptography
 charset-normalizer==2.0.12
     # via requests
-click==8.1.1
+click==8.1.2
     # via
     #   nltk
     #   rq
@@ -202,7 +202,7 @@ python3-openid==3.2.0
     # via django-allauth
 pytz==2022.1
     # via pandas
-redis==4.2.0
+redis==4.2.1
     # via
     #   -r requirements.in
     #   django-redis
@@ -251,8 +251,6 @@ traitlets==5.1.1
     # via
     #   ipython
     #   matplotlib-inline
-typing-extensions==4.1.1
-    # via redis
 urllib3==1.26.9
     # via
     #   requests
