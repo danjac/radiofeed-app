@@ -83,6 +83,7 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 ROOT_URLCONF = "jcasts.urls"
 
 INSTALLED_APPS = [
+    "postgres_metrics.apps.PostgresMetrics",
     "django.forms",
     "django.contrib.admin",
     "django.contrib.auth",

@@ -18,6 +18,7 @@ django-htmx
 django-model-utils
 django-object-actions
 django-permissions-policy
+django-postgres-metrics
 django-ratelimit
 django-redis
 django-rq
