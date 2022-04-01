@@ -5,7 +5,7 @@ repos:
           - id: isort
             args: [--settings-path, 'pyproject.toml']
     - repo: https://github.com/ambv/black
-      rev: 22.1.0
+      rev: 22.3.0
       hooks:
           - id: black
             args: [--target-version, 'py310']
@@ -29,13 +29,13 @@ repos:
           - id: djhtml
             args: [--tabwidth, '4']
     - repo: https://github.com/pre-commit/mirrors-prettier
-      rev: "v2.6.0"
+      rev: "v2.6.1"
       hooks:
         - id: prettier
           types_or: [css, javascript]
           exclude: bundle.js|bundle.js.map|bundle.css|templates/|mockups/|node_modules/|README.md
     - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: 'v0.941'
+      rev: 'v0.942'
       hooks:
           - id: mypy
             additional_dependencies:
