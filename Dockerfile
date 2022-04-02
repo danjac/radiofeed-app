@@ -8,7 +8,7 @@ ENV PYTHONHASHSEED=random
 ENV NODE_VERSION 17.8.0
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y postgresql-client-11 curl
+    && apt-get install --no-install-recommends -y libpq-dev curl
 
 RUN curl "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" -O \
     && tar -xf "node-v$NODE_VERSION-linux-x64.tar.xz" \
