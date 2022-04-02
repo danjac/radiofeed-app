@@ -20,7 +20,7 @@ services:
                 max-file: '3'
 
     redis:
-        image: redis:6.2.2-buster
+        image: redis:6.2.6-buster
         stop_grace_period: '3s'
         healthcheck:
             test: ['CMD', 'redis-cli', 'ping']
