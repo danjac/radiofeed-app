@@ -19,7 +19,7 @@ from jcasts.podcasts.factories import PodcastFactory, SubscriptionFactory
 from jcasts.podcasts.models import Podcast
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="module")
 def admin():
     return PodcastAdmin(Podcast, AdminSite())
 

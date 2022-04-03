@@ -33,7 +33,7 @@ def mock_feed_queue(mocker):
     return queue
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def faker():
     return Faker()
 
@@ -47,7 +47,7 @@ def locmem_cache(settings):
     cache.clear()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def get_response():
     return lambda req: HttpResponse()
 

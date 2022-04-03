@@ -69,7 +69,7 @@ class TestParsePodcastFeed:
         )
 
     @pytest.fixture
-    def categories(self, db):
+    def categories(self):
         yield [
             CategoryFactory(name=name)
             for name in (

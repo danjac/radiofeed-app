@@ -8,7 +8,7 @@ from jcasts.episodes.models import Episode
 
 
 class TestEpisodeAdmin:
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def admin(self):
         return EpisodeAdmin(Episode, AdminSite())
 
