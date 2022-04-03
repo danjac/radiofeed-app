@@ -1,2 +1,3 @@
-web: gunicorn --workers=5 --max-requests=1000 --max-requests-jitter=50 jcasts.wsgi
+release: python manage.py migrate
+web: gunicorn --preload jcasts.wsgi
 worker: python manage.py rqworker mail default feeds feeds:frequent feeds:sporadic
