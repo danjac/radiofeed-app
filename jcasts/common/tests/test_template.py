@@ -1,7 +1,5 @@
 from django.urls import reverse
 
-import pytest
-
 from jcasts.common.template import (
     absolute_uri,
     active_link,
@@ -83,18 +81,22 @@ class TestAbsoluteUri:
 
 
 class TestFormatDuration:
-    @pytest.mark.parametrize(
-        "duration,expected", [
-            (None, ""),
-            (0, ""),
-            (30, ""),
-            (540, "9min"),
-            (2400, "40min"),
-            (9000, "2h 30min"),
-        ]
-    )
-    def test_format_duration(self, duration, expected):
-        assert format_duration(duration) == expected
+    def test_format_duration_if_empty(self):
+        assert format_duration(None) == ""
+        assert format_duration(0) == ""
+
+    def test_format_duration_if_less_than_one_minute(self):
+        assert format_duration(30) == ""
+
+    def test_format_duration_if_less_than_ten_minutes(self):
+        assert format_duration(540) == "9min"
+
+    def test_format_duration_if_less_than_one_hour(self):
+        assert format_duration(2400) == "40min"
+
+    def test_format_duration_if_more_than_one_hour(self):
+        assert format_duration(9000) == "2h 30min"
+
 
 class TestIcon:
     def test_icon(self):
