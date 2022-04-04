@@ -14,7 +14,6 @@ services:
             timeout: 3s
             retries: 30
         logging:
-            driver: 'json-file'
             options:
                 max-size: '100k'
                 max-file: '3'
@@ -28,7 +27,6 @@ services:
             timeout: 3s
             retries: 30
         logging:
-            driver: 'json-file'
             options:
                 max-size: '100k'
                 max-file: '3'
@@ -40,7 +38,6 @@ services:
             - '8025:8025'
             - '1025:1025'
         logging:
-            driver: 'json-file'
             options:
                 max-size: '100k'
                 max-file: '3'
@@ -60,7 +57,6 @@ services:
         tty: true
         stop_grace_period: '3s'
         logging:
-            driver: 'json-file'
             options:
                 max-size: '100k'
                 max-file: '3'
