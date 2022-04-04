@@ -8,7 +8,10 @@ ENV PYTHONHASHSEED=random
 ENV NODE_VERSION 17.8.0
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y libpq-dev curl
+    && apt-get install --no-install-recommends -y libpq-dev curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+    && apt-get autoremove
 
 RUN curl "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" -O \
     && tar -xf "node-v$NODE_VERSION-linux-x64.tar.xz" \
@@ -16,10 +19,6 @@ RUN curl "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.t
     && ln -s "/node-v$NODE_VERSION-linux-x64/bin/npm" /usr/local/bin/npm \
     && ln -s "/node-v$NODE_VERSION-linux-x64/bin/npx" /usr/local/bin/npx \
     && rm -f "/node-v$NODE_VERSION-linux-x64.tar.xz"
-
-RUN rm -rf /var/lib/apt/lists/* \
-    && apt-get clean \
-    && apt-get autoremove
 
 WORKDIR /app
 
