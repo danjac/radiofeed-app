@@ -35,7 +35,7 @@
                         <a class="w-84 truncate block text-center"
                             :class="{'hover:text-blue-500': isInteractive, 'animate-pulse text-gray-300': !isInteractive}"
                             href="{{ episode_url }}"
-                            hx-swap="outerHTML show:window:top morphdom"
+                            hx-swap="outerHTML show:window:top"
                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
 
                         </a>
@@ -83,7 +83,7 @@
                                             class="{{ BUTTON_CSS }}"
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
-                                            hx-swap="innerHTML morphdom">
+                                            hx-swap="innerHTML">
                                             {% icon "stop" css_class=ICON_CSS %}
                                         </button>
 
@@ -91,7 +91,7 @@
                                             x-ref="complete"
                                             hx-post="{% url "episodes:player_complete" %}"
                                             hx-target="#player"
-                                            hx-swap="innerHTML morphdom"></button>
+                                            hx-swap="innerHTML"></button>
 
                                     {% endwith %}
 
