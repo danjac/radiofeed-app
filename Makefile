@@ -27,16 +27,11 @@ seed:
 shell:
 	./scripts/manage shell_plus
 
-dokku-shell:
-	./scripts/dokku-manage shell_plus
-
 test:
 	./scripts/pytest -v -x --ff --reuse-db
 
 coverage:
 	./scripts/pytest -v -x --cov --reuse-db --cov-report term-missing
-
-reqs: requirements
 
 requirements:
 	pip-compile requirements.in
@@ -44,11 +39,3 @@ requirements:
 upgrade:
 	pip-compile --upgrade requirements.in
 	./scripts/npm upgrade
-
-maint: maintenance
-
-maintenance:
-	ansible-playbook maintenance.yml --ask-pass
-
-push:
-	git push dokku main
