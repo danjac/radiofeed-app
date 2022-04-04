@@ -31,7 +31,7 @@ dokku-shell:
 	./scripts/dokku-manage shell_plus
 
 test:
-	./scripts/pytest -v -x --ff --reuse-db -n logical
+	./scripts/pytest -v -x --ff --reuse-db
 
 coverage:
 	./scripts/pytest -v -x --cov --reuse-db --cov-report term-missing
