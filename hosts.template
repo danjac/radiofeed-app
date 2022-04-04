@@ -1,5 +1,0 @@
-[all:vars]
-ansible_user='root'
-
-[servers]
-# IP address goes here...

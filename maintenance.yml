@@ -1,8 +1,0 @@
-- name: Update and upgrade apt packages, install swap memory
-  become: yes
-  hosts: all
-  gather_facts: no
-  roles:
-    - docker
-    - apt-update
-    - geerlingguy.swap
