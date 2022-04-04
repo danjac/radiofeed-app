@@ -1,6 +1,6 @@
-import pytest
-
 from django.urls import reverse
+
+import pytest
 
 from jcasts.common.template import (
     absolute_uri,
@@ -84,19 +84,17 @@ class TestAbsoluteUri:
 
 class TestFormatDuration:
     @pytest.mark.parametrize(
-        "duration,expected",
-        [
+        "duration,expected", [
             (None, ""),
             (0, ""),
             (30, ""),
             (540, "9min"),
             (2400, "40min"),
             (9000, "2h 30min"),
-        ],
+        ]
     )
     def test_format_duration(self, duration, expected):
         assert format_duration(duration) == expected
-
 
 class TestIcon:
     def test_icon(self):
