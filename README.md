@@ -61,7 +61,6 @@ The following environment variables should be set in your Heroku installation:
     ADMIN_URL='/some-random-url/'
     ADMINS='me@site.com'
     ALLOWED_HOSTS='my-domain'
-    DOKKU_LETSENCRYPT_EMAIL='me@site.com'
     MAILGUN_API_KEY='<mailgun_api_key>'
     MAILGUN_SENDER_DOMAIN='my-domain'
     SECRET_KEY='<secret>'
