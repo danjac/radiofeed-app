@@ -1,7 +1,13 @@
 [tool.isort]
 default_section="THIRDPARTY"
 known_first_party="jcasts"
-sections=["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+sections=[
+    "FUTURE",
+    "STDLIB",
+    "THIRDPARTY",
+    "FIRSTPARTY",
+    "LOCALFOLDER"
+]
 lines_between_types=1
 group_by_package=true
 order_by_type=true
@@ -12,7 +18,13 @@ multi_line_output=3
 
 [tool.coverage.run]
 source=["jcasts"]
-omit=["*/migrations/*","*/tests/*","*/settings/*","**/factories.py","*/wsgi.py"]
+omit=[
+    "*/migrations/*",
+    "*/tests/*",
+    "*/settings/*",
+    "**/factories.py",
+    "*/wsgi.py"
+]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="jcasts.settings.test"
