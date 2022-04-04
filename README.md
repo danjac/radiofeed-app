@@ -56,7 +56,6 @@ Heroku deployment is supported. Deployment requires PostgreSQL and Redis buildpa
 The following environment variables should be set in your Heroku installation:
 
 ```
-    DISABLE_COLLECTSTATIC='1'
     DJANGO_SETTINGS_MODULE='jcasts.settings.production'
     ADMIN_URL='/some-random-url/'
     ADMINS='me@site.com'
