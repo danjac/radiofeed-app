@@ -69,3 +69,17 @@ The following environment variables should be set in your Heroku installation:
     CONTACT_EMAIL='me@site.com'
 ```
 
+You should also set up cron jobs using the scheduler add-on:
+
+https://devcenter.heroku.com/articles/scheduling-custom-django-management-commands#setup-heroku-scheduler
+
+The following commands can be set up to run using the scheduler:
+
+`python manage.py schedule_podcast_feeds`
+
+`python manage.py make_recommendations`
+
+`python manage.py send_recommendation_emails`
+
+The _schedule_podcast_feeds_ has a number of options so you can set up multiple schedules accordingly.
+
