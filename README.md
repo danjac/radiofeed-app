@@ -64,7 +64,7 @@ The following environment variables should be set in your Heroku installation:
     DOKKU_LETSENCRYPT_EMAIL='me@site.com'
     MAILGUN_API_KEY='<mailgun_api_key>'
     MAILGUN_SENDER_DOMAIN='my-domain'
-    SECRET_KEY='<[secret](secret)>'
+    SECRET_KEY='<secret>'
     SENTRY_URL='<sentry-url>'
     HOST_COUNTRY=''
     TWITTER_ACCOUNT='my_twitter_handle'
