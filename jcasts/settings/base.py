@@ -17,7 +17,10 @@ DEBUG = False
 SECRET_KEY = env("SECRET_KEY")
 
 DATABASES = {
-    "default": env.db(),
+    "default": {
+        **env.db(),
+        "CONN_MAX_AGE": 60,
+    },
 }
 
 # prevent deprecation warnings
@@ -59,8 +62,6 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 EMAIL_BACKEND = "jcasts.common.email.RqBackend"
 RQ_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 RQ_EMAIL_QUEUE = "mail"
-
-ATOMIC_REQUESTS = True
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
