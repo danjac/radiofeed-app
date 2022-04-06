@@ -12,7 +12,7 @@ from jcasts.podcasts.factories import (
     PodcastFactory,
     SubscriptionFactory,
 )
-from jcasts.users.factories import UserFactory
+from jcasts.users.factories import DEFAULT_PASSWORD, UserFactory
 
 
 class MockFeedQueue:
@@ -50,6 +50,11 @@ def locmem_cache(settings):
 @pytest.fixture(scope="session")
 def get_response():
     return lambda req: HttpResponse()
+
+
+@pytest.fixture(scope="session")
+def default_password():
+    return DEFAULT_PASSWORD
 
 
 @pytest.fixture

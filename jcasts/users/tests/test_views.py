@@ -4,6 +4,7 @@ from django.urls import reverse, reverse_lazy
 from jcasts.common.asserts import assert_ok
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.factories import SubscriptionFactory
+from jcasts.users.models import User
 
 
 class TestUserPreferences:
@@ -73,25 +74,39 @@ class TestExportPodcastFeeds:
 class TestDeleteAccount:
     url = reverse_lazy("users:delete_account")
 
-    def test_get(self, client, auth_user, django_user_model, django_assert_num_queries):
+    def test_get(self, client, auth_user, django_assert_num_queries):
         # make sure we don't accidentally delete account on get request
         with django_assert_num_queries(3):
             resp = client.get(self.url)
         assert_ok(resp)
-        assert django_user_model.objects.exists()
+        assert User.objects.exists()
 
     def test_post_unconfirmed(
-        self, client, auth_user, django_user_model, django_assert_num_queries
+        self, client, auth_user, default_password, django_assert_num_queries
     ):
         with django_assert_num_queries(3):
-            resp = client.post(self.url)
+            resp = client.post(self.url, {"password": default_password})
         assert_ok(resp)
-        assert django_user_model.objects.exists()
+        assert User.objects.exists()
+
+    def test_post_confirmed_invalid_password(
+        self, client, auth_user, django_assert_num_queries
+    ):
+        with django_assert_num_queries(3):
+            resp = client.post(
+                self.url,
+                {"confirm-delete": True, "password": "badpass"},
+            )
+        assert_ok(resp)
+        assert User.objects.exists()
 
     def test_post_confirmed(
-        self, client, auth_user, django_user_model, django_assert_num_queries
+        self, client, auth_user, default_password, django_assert_num_queries
     ):
         with django_assert_num_queries(15):
-            resp = client.post(self.url, {"confirm-delete": True})
+            resp = client.post(
+                self.url,
+                {"confirm-delete": True, "password": default_password},
+            )
         assert resp.url == settings.HOME_URL
-        assert not django_user_model.objects.exists()
+        assert not User.objects.exists()
