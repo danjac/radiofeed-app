@@ -6,7 +6,7 @@ from jcasts.settings.base import ADMIN_SITE_HEADER, INSTALLED_APPS, TEMPLATES
 
 include("base.py")
 
-ADMIN_SITE_HEADER += " [LOCAL DEVELOPMENT]"
+ADMIN_SITE_HEADER += " [LOCAL]"
 
 DEBUG = True
 
