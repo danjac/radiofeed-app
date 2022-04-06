@@ -26,9 +26,7 @@ COPY ./requirements.txt ./requirements.txt
 
 RUN pip install -r ./requirements.txt
 
-RUN python -m nltk.downloader stopwords
-RUN python -m nltk.downloader wordnet
-RUN python -m nltk.downloader omw-1.4
+RUN python -m nltk.downloader stopwords wordnet omw-1.4
 
 COPY package.json ./package.json
 COPY package-lock.json ./package-lock.json
