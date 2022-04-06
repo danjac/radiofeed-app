@@ -133,8 +133,8 @@ def delete_account(request: HttpRequest) -> HttpResponse:
     form = UserDeleteForm(request.user, request.POST or None)
     if (
         request.method == "POST"
-        and form.is_valid()
         and "confirm-delete" in request.POST
+        and form.is_valid()
     ):
         request.user.delete()
         logout(request)
