@@ -14,7 +14,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.common.forms import handle_form
 from jcasts.episodes.models import AudioLog, Bookmark
 from jcasts.podcasts.models import Podcast, Subscription
 from jcasts.users.forms import UserPreferencesForm
@@ -24,19 +23,17 @@ from jcasts.users.forms import UserPreferencesForm
 @login_required
 def user_preferences(request: HttpRequest) -> HttpResponse:
 
-    with handle_form(
-        request,
-        UserPreferencesForm,
-        instance=request.user,
-    ) as (form, success):
-
-        if success:
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        if form.is_valid():
 
             form.save()
             messages.success(request, "Your preferences have been saved")
             return HttpResponseRedirect(request.path)
+    else:
+        form = UserPreferencesForm(instance=request.user)
 
-        return TemplateResponse(request, "account/preferences.html", {"form": form})
+    return TemplateResponse(request, "account/preferences.html", {"form": form})
 
 
 @require_http_methods(["GET"])
