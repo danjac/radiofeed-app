@@ -3,8 +3,6 @@ from factory.django import DjangoModelFactory
 
 from jcasts.users.models import User
 
-DEFAULT_PASSWORD = "testpass1"  # nosec
-
 
 class UserFactory(DjangoModelFactory):
 
@@ -13,7 +11,7 @@ class UserFactory(DjangoModelFactory):
 
     @post_generation
     def password(self, *args, **kwargs):
-        self.set_password(DEFAULT_PASSWORD)
+        self.set_password("testpass1")
 
     class Meta:
         model = User

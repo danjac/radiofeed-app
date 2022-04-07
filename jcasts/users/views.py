@@ -16,7 +16,7 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import AudioLog, Bookmark
 from jcasts.podcasts.models import Podcast, Subscription
-from jcasts.users.forms import UserDeleteForm, UserPreferencesForm
+from jcasts.users.forms import UserPreferencesForm
 
 
 @require_http_methods(["GET", "POST"])
@@ -130,17 +130,12 @@ def user_stats(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET", "POST"])
 @login_required
 def delete_account(request: HttpRequest) -> HttpResponse:
-    form = UserDeleteForm(request.user, request.POST or None)
-    if (
-        request.method == "POST"
-        and "confirm-delete" in request.POST
-        and form.is_valid()
-    ):
+    if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
         return HttpResponseRedirect(settings.HOME_URL)
-    return TemplateResponse(request, "account/delete_account.html", {"form": form})
+    return TemplateResponse(request, "account/delete_account.html")
 
 
 def with_export_response_attachment(

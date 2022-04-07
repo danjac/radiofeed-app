@@ -81,32 +81,14 @@ class TestDeleteAccount:
         assert_ok(resp)
         assert User.objects.exists()
 
-    def test_post_unconfirmed(
-        self, client, auth_user, default_password, django_assert_num_queries
-    ):
+    def test_post_unconfirmed(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(3):
-            resp = client.post(self.url, {"password": default_password})
+            resp = client.post(self.url)
         assert_ok(resp)
         assert User.objects.exists()
 
-    def test_post_confirmed_invalid_password(
-        self, client, auth_user, django_assert_num_queries
-    ):
-        with django_assert_num_queries(3):
-            resp = client.post(
-                self.url,
-                {"confirm-delete": True, "password": "badpass"},
-            )
-        assert_ok(resp)
-        assert User.objects.exists()
-
-    def test_post_confirmed(
-        self, client, auth_user, default_password, django_assert_num_queries
-    ):
+    def test_post_confirmed(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(15):
-            resp = client.post(
-                self.url,
-                {"confirm-delete": True, "password": default_password},
-            )
+            resp = client.post(self.url, {"confirm-delete": True})
         assert resp.url == settings.HOME_URL
         assert not User.objects.exists()

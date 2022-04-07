@@ -9,12 +9,10 @@
         </p>
         <div>
             <form method="POST"
-                class="space-y-3"
                 hx-disable="true"
                 action="{% url 'users:delete_account' %}"
                 onSubmit="return confirm('Are you sure?')">
                 {% csrf_token %}
-                {{ form }}
                 <div>
                     <button class="btn btn-danger inline-flex items-center"
                         name="confirm-delete"
