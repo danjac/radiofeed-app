@@ -13,6 +13,7 @@
 !.pylintrc
 !.sonarcloud.properties
 !.vaultpass
+!.pre-commit-config.yaml
 __pycache__
 ansible.cfg
 bin
