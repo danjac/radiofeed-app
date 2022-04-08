@@ -21,7 +21,6 @@
 LICENSE
 README.md
 __pycache__
-ansible.cfg
 node_modules
 npm-debug.log
 screenshots
