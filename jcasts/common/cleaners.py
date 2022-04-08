@@ -4,7 +4,6 @@ import html
 import re
 
 import bleach
-import bleach_extras
 import markdown
 
 from django.template.defaultfilters import striptags
@@ -61,13 +60,6 @@ ALLOWED_ATTRS: dict[str, list[str]] = {
 HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 
-cleaner = bleach_extras.cleaner_factory__strip_content(
-    attributes=ALLOWED_ATTRS,
-    tags=ALLOWED_TAGS,
-    strip=True,
-)
-
-
 def linkify_callback(attrs: dict[tuple, str], new: bool = False) -> dict[tuple, str]:
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
@@ -75,7 +67,7 @@ def linkify_callback(attrs: dict[tuple, str], new: bool = False) -> dict[tuple, 
 
 
 def clean(value: str | None) -> str:
-    return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
+    return bleach.linkify(bleach.clean(value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True), [linkify_callback]) if value else ""  # type: ignore
 
 
 def strip_whitespace(value: str | None) -> str:
