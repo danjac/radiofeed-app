@@ -9,7 +9,6 @@
 !.pylintrc
 !.sonarcloud.properties
 !.tern-project
-!.vaultpass
 .*
 .git
 .github
