@@ -67,7 +67,16 @@ def linkify_callback(attrs: dict[tuple, str], new: bool = False) -> dict[tuple, 
 
 
 def clean(value: str | None) -> str:
-    return bleach.linkify(bleach.clean(value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True), [linkify_callback]) if value else ""  # type: ignore
+    return (
+        bleach.linkify(
+            bleach.clean(
+                value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True
+            ),
+            [linkify_callback],  # type: ignore
+        )
+        if value
+        else ""
+    )
 
 
 def strip_whitespace(value: str | None) -> str:
