@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% block title %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 
@@ -121,7 +122,9 @@
                 {% endif %}
             {% endwith %}
 
-            {% include "_markdown.html" with content=episode.description %}
+            {% cache 3600 episode-description episode.id %}
+                {% include "_markdown.html" with content=episode.description %}
+            {% endcache %}
 
         </article>
     {% endwith %}
