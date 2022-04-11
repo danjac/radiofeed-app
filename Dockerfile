@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER=1
 ENV PYTHONHASHSEED=random
 
-ENV NODE_VERSION 17.8.0
+ENV NODE_VERSION 17.9.0
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y libpq-dev curl \
