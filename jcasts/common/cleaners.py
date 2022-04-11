@@ -70,7 +70,10 @@ def clean(value: str | None) -> str:
     return (
         bleach.linkify(
             bleach.clean(
-                value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True
+                value,
+                tags=ALLOWED_TAGS,
+                attributes=ALLOWED_ATTRS,
+                strip=True,
             ),
             [linkify_callback],  # type: ignore
         )
@@ -89,9 +92,7 @@ def strip_html(value: str | None) -> str:
 
 
 def as_html(value: str) -> str:
-    if HTML_RE.match(value):
-        return value
-    return markdown.markdown(value)
+    return value if HTML_RE.match(value) else markdown.markdown(value)
 
 
 def markup(value: str | None) -> str:
