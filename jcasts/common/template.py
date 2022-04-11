@@ -169,7 +169,7 @@ def normalize_url(url: str | None) -> str:
             _validate_url(value)
             return value
         except ValidationError:
-            pass
+            continue
     return ""
 
 
