@@ -53,8 +53,7 @@ RQ_QUEUES = {
 
 RQ_SHOW_ADMIN_LINK = True
 
-SHORT_CACHE_TIMEOUT = 3600  # 1 hour
-LONG_CACHE_TIMEOUT = 3600 * 24
+DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)

@@ -39,7 +39,7 @@ def static_page(
 
 
 @require_http_methods(["GET"])
-@cache_control(max_age=settings.LONG_CACHE_TIMEOUT, immutable=True)
+@cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 def favicon(request: HttpRequest) -> HttpResponse:
     return FileResponse(
         (settings.BASE_DIR / "assets" / "img" / "wave-ico.png").open("rb")
@@ -47,8 +47,8 @@ def favicon(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET", "HEAD"])
-@cache_control(max_age=settings.LONG_CACHE_TIMEOUT, immutable=True)
-@cache_page(settings.LONG_CACHE_TIMEOUT)
+@cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
@@ -70,8 +70,8 @@ def robots(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-@cache_control(max_age=settings.LONG_CACHE_TIMEOUT, immutable=True)
-@cache_page(settings.LONG_CACHE_TIMEOUT)
+@cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def security(request):
     return HttpResponse(
         "\n".join(
