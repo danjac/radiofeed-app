@@ -1,4 +1,0 @@
-{% load cache %}
-{% cache cache_timeout podcasts request.get_full_path %}
-    {% include "podcasts/_podcasts.html" %}
-{% endcache %}

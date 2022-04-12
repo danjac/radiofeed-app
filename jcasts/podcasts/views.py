@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import functools
 import logging
 
 import requests
 
-from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -47,13 +46,12 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/index.html",
-        {
+        extra_context={
             "promoted": promoted,
             "show_latest": True,
             "has_subscriptions": bool(subscribed),
             "search_url": reverse("podcasts:search_podcasts"),
         },
-        cached=promoted,
     )
 
 
@@ -71,7 +69,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "-pub_date",
         ),
         "podcasts/search.html",
-        cached=True,
     )
 
 
@@ -174,7 +171,7 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
-        get_podcast_detail_context(
+        extra_context=get_podcast_detail_context(
             request,
             podcast,
             {
@@ -183,7 +180,6 @@ def episodes(
                 "is_podcast_detail": True,
             },
         ),
-        cached=True,
     )
 
 
@@ -221,8 +217,7 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        {"category": category},
-        cached=True,
+        extra_context={"category": category},
     )
 
 
@@ -284,21 +279,6 @@ def render_subscribe_action(
     )
 
 
-def render_podcast_list(
-    request: HttpRequest,
-    podcasts: QuerySet,
-    template_name: str,
-    extra_context: dict | None = None,
-    cached: bool = False,
-) -> TemplateResponse:
-
-    return render_paginated_list(
-        request,
-        podcasts,
-        template_name,
-        "podcasts/_podcasts_cached.html" if cached else "podcasts/_podcasts.html",
-        {
-            "cache_timeout": settings.SHORT_CACHE_TIMEOUT,
-        }
-        | (extra_context or {}),
-    )
+render_podcast_list = functools.partial(
+    render_paginated_list, pagination_template_name="podcasts/_podcasts.html"
+)

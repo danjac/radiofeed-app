@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import functools
+
 from datetime import timedelta
 
-from django.conf import settings
-from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -49,12 +49,11 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        {
+        extra_context={
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
             "search_url": reverse("episodes:search_episodes"),
         },
-        cached=promoted,
     )
 
 
@@ -70,7 +69,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         .order_by("-rank", "-pub_date")
     )
 
-    return render_episode_list(request, episodes, "episodes/search.html", cached=True)
+    return render_episode_list(request, episodes, "episodes/search.html")
 
 
 @require_http_methods(["GET"])
@@ -109,20 +108,6 @@ def get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def render_episode_list(
-    request: HttpRequest,
-    episodes: QuerySet,
-    template_name: str,
-    extra_context: dict | None = None,
-    cached: bool = False,
-) -> TemplateResponse:
-    return render_paginated_list(
-        request,
-        episodes,
-        template_name,
-        "episodes/_episodes_cached.html" if cached else "episodes/_episodes.html",
-        {
-            "cache_timeout": settings.SHORT_CACHE_TIMEOUT,
-        }
-        | (extra_context or {}),
-    )
+render_episode_list = functools.partial(
+    render_paginated_list, pagination_template_name="episodes/_episodes.html"
+)
