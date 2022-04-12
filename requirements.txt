@@ -57,6 +57,7 @@ django==4.0.3
     #   -r requirements.in
     #   django-allauth
     #   django-anymail
+    #   django-cachalot
     #   django-extensions
     #   django-htmx
     #   django-model-utils
@@ -67,6 +68,8 @@ django==4.0.3
 django-allauth==0.50.0
     # via -r requirements.in
 django-anymail==8.5
+    # via -r requirements.in
+django-cachalot==2.5.1
     # via -r requirements.in
 django-environ==0.8.1
     # via -r requirements.in

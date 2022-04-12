@@ -169,7 +169,7 @@ class TestPodcastEpisodes:
     def test_get_episodes(self, client, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(5):
             resp = client.get(self.url(podcast))
             assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -177,7 +177,7 @@ class TestPodcastEpisodes:
     def test_get_oldest_first(self, client, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(5):
             resp = client.get(
                 self.url(podcast),
                 {"ordering": "asc"},

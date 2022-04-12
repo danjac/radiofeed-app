@@ -11,6 +11,7 @@ decorator
 dj-database-url
 django-allauth
 django-anymail
+django-cachalot
 django-environ
 django-extensions
 django-htmx
