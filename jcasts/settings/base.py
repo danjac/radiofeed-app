@@ -206,7 +206,7 @@ STATICFILES_DIRS = [BASE_DIR / "assets"]
 TEMPLATES: list[dict] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "jcasts" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "debug": DEBUG,
