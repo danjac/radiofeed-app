@@ -231,10 +231,11 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
-        messages.success(request, "You are now subscribed to this podcast")
-        return render_subscribe_action(request, podcast, subscribed=True)
     except IntegrityError:
         return HttpResponseConflict()
+
+    messages.success(request, "You are now subscribed to this podcast")
+    return render_subscribe_action(request, podcast, subscribed=True)
 
 
 @require_http_methods(["POST"])
@@ -243,8 +244,9 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(podcast_id)
 
-    messages.info(request, "You are no longer subscribed to this podcast")
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
+    messages.info(request, "You are no longer subscribed to this podcast")
+
     return render_subscribe_action(request, podcast, subscribed=False)
 
 

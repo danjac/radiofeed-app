@@ -38,10 +38,11 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
-        messages.success(request, "Added to Bookmarks")
-        return render_bookmark_action(request, episode, is_bookmarked=True)
     except IntegrityError:
         return HttpResponseConflict()
+
+    messages.success(request, "Added to Bookmarks")
+    return render_bookmark_action(request, episode, is_bookmarked=True)
 
 
 @require_http_methods(["DELETE"])

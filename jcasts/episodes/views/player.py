@@ -72,8 +72,8 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode."""
 
-    try:
-        if episode_id := request.player.get():
+    if episode_id := request.player.get():
+        try:
 
             AudioLog.objects.filter(episode=episode_id, user=request.user).update(
                 completed=None,
@@ -81,9 +81,10 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
                 current_time=int(request.POST["current_time"]),
             )
 
-        return HttpResponseNoContent()
-    except (KeyError, ValueError):
-        return HttpResponseBadRequest()
+        except (KeyError, ValueError):
+            return HttpResponseBadRequest()
+
+    return HttpResponseNoContent()
 
 
 def render_player_action(
