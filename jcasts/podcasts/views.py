@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 import logging
 
 import requests
@@ -18,7 +17,6 @@ from jcasts.common.decorators import ajax_login_required
 from jcasts.common.http import HttpResponseConflict
 from jcasts.common.paginate import render_paginated_list
 from jcasts.episodes.models import Episode
-from jcasts.episodes.views import render_episode_list
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
 
@@ -42,11 +40,12 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.filter(pk__in=subscribed)
 
-    return render_podcast_list(
+    return render_paginated_list(
         request,
         podcasts,
         "podcasts/index.html",
-        extra_context={
+        "podcasts/_podcasts.html",
+        {
             "promoted": promoted,
             "show_latest": True,
             "has_subscriptions": bool(subscribed),
@@ -60,7 +59,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
-    return render_podcast_list(
+    return render_paginated_list(
         request,
         Podcast.objects.filter(pub_date__isnull=False)
         .search(request.search.value)
@@ -69,6 +68,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "-pub_date",
         ),
         "podcasts/search.html",
+        "podcasts/_podcasts.html",
     )
 
 
@@ -167,11 +167,12 @@ def episodes(
     else:
         episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
 
-    return render_episode_list(
+    return render_paginated_list(
         request,
         episodes,
         "podcasts/episodes.html",
-        extra_context=get_podcast_detail_context(
+        "episodes/_episodes.html",
+        get_podcast_detail_context(
             request,
             podcast,
             {
@@ -213,11 +214,12 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_podcast_list(
+    return render_paginated_list(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        extra_context={"category": category},
+        "podcasts/_podcasts.html",
+        {"category": category},
     )
 
 
@@ -277,8 +279,3 @@ def render_subscribe_action(
             "action": True,
         },
     )
-
-
-render_podcast_list = functools.partial(
-    render_paginated_list, pagination_template_name="podcasts/_podcasts.html"
-)

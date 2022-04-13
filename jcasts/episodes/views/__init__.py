@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import functools
-
 from datetime import timedelta
 
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -45,11 +43,12 @@ def index(request: HttpRequest) -> HttpResponse:
         .distinct()
     )
 
-    return render_episode_list(
+    return render_paginated_list(
         request,
         episodes,
         "episodes/index.html",
-        extra_context={
+        "episodes/_episodes.html",
+        {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
             "search_url": reverse("episodes:search_episodes"),
@@ -69,7 +68,9 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         .order_by("-rank", "-pub_date")
     )
 
-    return render_episode_list(request, episodes, "episodes/search.html")
+    return render_paginated_list(
+        request, episodes, "episodes/search.html", "episodes/_episodes.html"
+    )
 
 
 @require_http_methods(["GET"])
@@ -106,8 +107,3 @@ def get_episode_or_404(
     if with_current_time:
         qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
-
-
-render_episode_list = functools.partial(
-    render_paginated_list, pagination_template_name="episodes/_episodes.html"
-)
