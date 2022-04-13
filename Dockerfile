@@ -7,12 +7,6 @@ ENV PYTHONHASHSEED=random
 
 ENV NODE_VERSION 17.9.0
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends -y libpq-dev curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean \
-    && apt-get autoremove
-
 RUN curl "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" -O \
     && tar -xf "node-v$NODE_VERSION-linux-x64.tar.xz" \
     && ln -s "/node-v$NODE_VERSION-linux-x64/bin/node" /usr/local/bin/node \
