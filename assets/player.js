@@ -134,7 +134,7 @@ document.addEventListener('alpine:init', () => {
                 this.autoplay = this.autoplay || autoplay;
 
                 if (this.autoplay) {
-                    this.$refs.audio.play().catch((err) => {
+                    this.$refs.audio.play().catch(() => {
                         this.isPaused = true;
                         this.isPlaying = false;
                         this.isError = true;
