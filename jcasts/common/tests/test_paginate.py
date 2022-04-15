@@ -14,17 +14,20 @@ def podcasts(db):
 
 
 class TestRenderPaginatedList:
+    base_template = "podcasts/index.html"
+    pagination_template = "podcasts/_podcasts.html"
+
     def test_render(self, rf, podcasts):
         req = rf.get("/")
         req.htmx = HtmxDetails(req)
         resp = render_paginated_list(
             req,
             podcasts,
-            "podcasts/index.html",
-            "podcasts/_podcasts.html",
+            self.base_template,
+            self.pagination_template,
         )
         assert_ok(resp)
-        assert resp.template_name == "podcasts/index.html"
+        assert resp.template_name == self.base_template
 
     def test_render_htmx(self, rf, podcasts):
         req = rf.get("/", HTTP_HX_REQUEST="true")
@@ -32,11 +35,11 @@ class TestRenderPaginatedList:
         resp = render_paginated_list(
             req,
             podcasts,
-            "podcasts/index.html",
-            "podcasts/_podcasts.html",
+            self.base_template,
+            self.pagination_template,
         )
         assert_ok(resp)
-        assert resp.template_name == "podcasts/index.html"
+        assert resp.template_name == self.base_template
 
     def test_render_htmx_pagination_target(self, rf, podcasts):
         req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="object-list")
@@ -45,11 +48,11 @@ class TestRenderPaginatedList:
         resp = render_paginated_list(
             req,
             podcasts,
-            "podcasts/index.html",
-            "podcasts/_podcasts.html",
+            self.base_template,
+            self.pagination_template,
         )
         assert_ok(resp)
-        assert resp.template_name == "podcasts/_podcasts.html"
+        assert resp.template_name == self.pagination_template
 
 
 class TestPaginate:
