@@ -237,7 +237,7 @@ scipy==1.8.0
     # via
     #   -r requirements.in
     #   scikit-learn
-sentry-sdk==1.5.9
+sentry-sdk==1.5.10
     # via -r requirements.in
 six==1.16.0
     # via
