@@ -22,7 +22,7 @@ RUN pip install -r ./requirements.txt
 
 RUN python -m nltk.downloader stopwords wordnet omw-1.4
 
-COPY package.json ./package.json
-COPY package-lock.json ./package-lock.json
+COPY ./package.json ./package.json
+COPY ./package-lock.json ./package-lock.json
 
 RUN npm cache clean --force && npm ci
