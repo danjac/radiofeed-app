@@ -20,7 +20,7 @@
 LICENSE
 README.md
 __pycache__
+bin
 node_modules
 npm-debug.log
 screenshots
-scripts
