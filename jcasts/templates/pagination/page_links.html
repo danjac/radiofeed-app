@@ -4,24 +4,28 @@
         aria-label="Pagination"
         hx-target="#{{ pagination_target }}">
         {% if page_obj.has_previous %}
+        {% with page_number=page_obj.previous_page_number %}
             <a class="link"
-                href="{% pagination_url page_obj.previous_page_number %}"
-                aria-label="Page {{ page_obj.previous_page_number }}"
-                title="Page {{ page_obj.previous_page_number }}">
+                href="{% pagination_url page_number %}"
+                aria-label="Page {{ page_number }}"
+                title="Page {{ page_number }}">
                 Previous
             </a>
+            {% endwith %}
         {% else %}
             <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
                 title="No More Pages"
                 aria-label="No More Pages">Previous</span>
         {% endif %}
         {% if page_obj.has_next %}
+        {% with page_number=page_obj.next_page_number %}
             <a class="link"
-                href="{% pagination_url page_obj.next_page_number %}"
-                aria-label="Page {{ page_obj.next_page_number }}"
-                title="Page {{ page_obj.next_page_number }}">
+                href="{% pagination_url page_number %}"
+                aria-label="Page {{ page_number }}"
+                title="Page {{ page_number }}">
                 Next
             </a>
+            {% endwith %}
         {% else %}
             <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
                 title="No More Pages"
