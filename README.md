@@ -75,10 +75,10 @@ https://devcenter.heroku.com/articles/scheduling-custom-django-management-comman
 
 The following commands can be set up to run using the scheduler:
 
-`./bin/manage schedule_podcast_feeds`
+`python manage.py schedule_podcast_feeds`
 
-`./bin/manage make_recommendations`
+`python manage.py make_recommendations`
 
-`./bin/manage send_recommendation_emails`
+`python manage.py send_recommendation_emails`
 
 The _schedule_podcast_feeds_ command has a number of options so you can set up multiple schedules accordingly. For example the _--primary_ flag will sync any feeds subscribed by users, so it might be better to run that more often.
