@@ -28,11 +28,8 @@ omit=[
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="jcasts.settings.test"
+addopts="-v -x --ff --reuse-db"
 testpaths="jcasts"
-filterwarnings = [
-    "ignore::DeprecationWarning",
-    "ignore::django.utils.deprecation.RemovedInDjango41Warning"
-]
 
 [mypy]
 python_version = 3.10

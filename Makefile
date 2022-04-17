@@ -28,7 +28,7 @@ shell:
 	./scripts/manage shell_plus
 
 test:
-	./scripts/pytest -v -x --ff --reuse-db
+	./scripts/pytest
 
 coverage:
 	./scripts/pytest -v -x --cov --reuse-db --cov-report term-missing
