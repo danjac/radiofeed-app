@@ -1,6 +1,8 @@
+import Alpine from 'alpinejs';
+
 document.addEventListener('alpine:init', () => {
     /* initialize any Alpine components here */
-    window.Alpine.data(
+    Alpine.data(
         'player',
         (
             autoplay = false,
