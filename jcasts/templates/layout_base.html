@@ -6,7 +6,7 @@
     {% endblock header %}
     {% block layout %}
 
-        {% include "includes/_messages.html" with hx_oob=request.htmx %}
+        {% include "includes/messages.html" with hx_oob=request.htmx %}
 
         <div hx-history-elt
             id="layout"

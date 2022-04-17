@@ -2,10 +2,10 @@
 
 {% block cover_image %}
     {% if is_podcast_detail %}
-        {% include "includes/_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url css_class=COVER_IMAGE_CSS %}
+        {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url css_class=COVER_IMAGE_CSS %}
     {% else %}
         {% with podcast=episode.podcast %}
-            {% include "includes/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
+            {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
         {% endwith %}
     {% endif %}
 {% endblock cover_image %}
@@ -20,7 +20,7 @@
 
 {% block subtitle %}
     {% if is_podcast_detail %}
-        {% include "includes/_date.html" with value=episode.pub_date title="Release Date" %}
+        {% include "includes/date.html" with value=episode.pub_date title="Release Date" %}
     {% else %}
         {% with podcast=episode.podcast %}
             <a href="{{ podcast.get_episodes_url }}"

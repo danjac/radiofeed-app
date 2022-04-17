@@ -60,7 +60,7 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
 
                 <div class="h-28 w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36">
-                    {% include "includes/_cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36 border dark:border-gray-500" url=podcast.get_detail_url %}
+                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36 border dark:border-gray-500" url=podcast.get_detail_url %}
                 </div>
 
                 <div class="flex flex-col place-content-between h-24 lg:h-28">
@@ -76,7 +76,7 @@
             </div>
 
             <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-2 sm:space-x-3">
-                {% include "includes/_date.html" with value=episode.pub_date title="Release Date" %}
+                {% include "includes/date.html" with value=episode.pub_date title="Release Date" %}
                 {% include "episodes/includes/duration.html" %}
                 {% if episode.listened %}
                     <span class="hidden sm:inline-block">
@@ -123,7 +123,7 @@
             {% endwith %}
 
             {% cache 3600 episode-description episode.id %}
-                {% include "includes/_markdown.html" with content=episode.description %}
+                {% include "includes/markdown.html" with content=episode.description %}
             {% endcache %}
 
         </article>
