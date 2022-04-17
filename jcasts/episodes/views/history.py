@@ -89,7 +89,7 @@ def render_history_action(
 ) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/includes/history_toggle.html",
+        "episodes/actions/history_toggle.html",
         {
             "episode": episode,
             "listened": listened,

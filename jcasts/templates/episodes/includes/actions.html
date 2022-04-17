@@ -11,7 +11,7 @@
     </a>
 
     {% if user.is_authenticated %}
-        {% include "episodes/includes/bookmark_toggle.html" %}
-        {% include "episodes/includes/history_toggle.html" %}
+        {% include "episodes/actions/bookmark_toggle.html" %}
+        {% include "episodes/actions/history_toggle.html" %}
     {% endif %}
 </div>

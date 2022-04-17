@@ -61,7 +61,7 @@ def render_bookmark_action(
 ) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/includes/bookmark_toggle.html",
+        "episodes/actions/bookmark_toggle.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,
