@@ -1,0 +1,4 @@
+{% include "forms/errors.html" with errors=form.non_field_errors %}
+{% for field in form %}
+    {% include "forms/field.html" %}
+{% endfor %}

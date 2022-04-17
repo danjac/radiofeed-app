@@ -22,7 +22,7 @@
                 {% endwith %}
             {% endif %}
         {% endwith %}
-        {% include "forms/_errors.html" with errors=field.errors %}
-        {% include "forms/_help_text.html" with help_text=field.help_text %}
+        {% include "forms/errors.html" with errors=field.errors %}
+        {% include "forms/help_text.html" with help_text=field.help_text %}
     </div>
 {% endif %}
