@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import http
 import secrets
-import dataclasses
 
 from functools import lru_cache
 

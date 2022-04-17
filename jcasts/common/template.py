@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import dataclasses
 import functools
 import math
 import re
 
 from urllib import parse
 
-import dataclasses
 from django import template
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME

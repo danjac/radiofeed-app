@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import dataclasses
 import base64
+import dataclasses
 import io
 import re
 
