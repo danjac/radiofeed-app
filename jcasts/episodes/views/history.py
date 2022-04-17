@@ -36,7 +36,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         logs,
         "episodes/history.html",
-        "episodes/_history.html",
+        "episodes/includes/history.html",
         {
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
@@ -89,7 +89,7 @@ def render_history_action(
 ) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/_history_toggle.html",
+        "episodes/includes/history_toggle.html",
         {
             "episode": episode,
             "listened": listened,

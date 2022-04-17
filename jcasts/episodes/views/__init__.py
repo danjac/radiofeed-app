@@ -47,7 +47,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/_episodes.html",
+        "episodes/includes/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -69,7 +69,10 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     )
 
     return render_paginated_list(
-        request, episodes, "episodes/search.html", "episodes/_episodes.html"
+        request,
+        episodes,
+        "episodes/search.html",
+        "episodes/includes/episodes.html",
     )
 
 

@@ -1,8 +1,8 @@
 {% extends "object_list/object_list.html" %}
 {% block result %}
     {% if object.podcast and object.podcast.pub_date %}
-        {% include "podcasts/_podcast.html" with podcast=object.podcast %}
+        {% include "podcasts/includes/podcast.html" with podcast=object.podcast %}
     {% else %}
-        {% include "podcasts/_itunes_feed.html" with feed=object %}
+        {% include "podcasts/includes/itunes_feed.html" with feed=object %}
     {% endif %}
 {% endblock %}

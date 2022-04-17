@@ -7,7 +7,7 @@ from jcasts.episodes.models import AudioLog
 register = template.Library()
 
 
-@register.inclusion_tag("episodes/_player.html", takes_context=True)
+@register.inclusion_tag("episodes/includes/player.html", takes_context=True)
 def audio_player(context: dict) -> dict:
     request = context["request"]
 

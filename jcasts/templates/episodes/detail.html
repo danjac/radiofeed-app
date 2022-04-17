@@ -66,8 +66,8 @@
                 <div class="flex flex-col place-content-between h-24 lg:h-28">
 
                     {% with completed=episode.completed listened=episode.listened %}
-                        {% include "episodes/_player_toggle.html" %}
-                        {% include "episodes/_actions.html" %}
+                        {% include "episodes/includes/player_toggle.html" %}
+                        {% include "episodes/includes/actions.html" %}
                     {% endwith %}
 
                     {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
@@ -77,17 +77,17 @@
 
             <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-2 sm:space-x-3">
                 {% include "includes/_date.html" with value=episode.pub_date title="Release Date" %}
-                {% include "episodes/_duration.html" %}
+                {% include "episodes/includes/duration.html" %}
                 {% if episode.listened %}
                     <span class="hidden sm:inline-block">
-                        {% include "episodes/_listened.html" %}
+                        {% include "episodes/includes/listened.html" %}
                     </span>
                 {% endif %}
             </div>
 
             {% if episode.listened %}
                 <div class="font-semibold sm:hidden text-gray-600 dark:text-gray-300">
-                    {% include "episodes/_listened.html" %}
+                    {% include "episodes/includes/listened.html" %}
                 </div>
             {% endif %}
 

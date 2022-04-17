@@ -3,5 +3,5 @@
 {% block title %}{{ block.super }} | Similar{% endblock %}
 
 {% block podcast_content %}
-    {% include "podcasts/_recommendations.html" with object_list=recommendations %}
+    {% include "podcasts/includes/recommendations.html" with object_list=recommendations %}
 {% endblock podcast_content %}

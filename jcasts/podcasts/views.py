@@ -44,7 +44,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/index.html",
-        "podcasts/_podcasts.html",
+        "podcasts/includes/podcasts.html",
         {
             "promoted": promoted,
             "show_latest": True,
@@ -68,7 +68,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "-pub_date",
         ),
         "podcasts/search.html",
-        "podcasts/_podcasts.html",
+        "podcasts/includes/podcasts.html",
     )
 
 
@@ -171,7 +171,7 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
-        "episodes/_episodes.html",
+        "episodes/includes/episodes.html",
         get_podcast_detail_context(
             request,
             podcast,
@@ -218,7 +218,7 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        "podcasts/_podcasts.html",
+        "podcasts/includes/podcasts.html",
         {"category": category},
     )
 
@@ -274,7 +274,7 @@ def render_subscribe_action(
 
     return TemplateResponse(
         request,
-        "podcasts/_subscribe_toggle.html",
+        "podcasts/includes/subscribe_toggle.html",
         {
             "podcast": podcast,
             "subscribed": subscribed,

@@ -27,7 +27,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/_bookmarks.html",
+        "episodes/includes/bookmarks.html",
     )
 
 
@@ -61,7 +61,7 @@ def render_bookmark_action(
 ) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/_bookmark_toggle.html",
+        "episodes/includes/bookmark_toggle.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,

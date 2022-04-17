@@ -98,7 +98,7 @@ def render_player_action(
 
     return TemplateResponse(
         request,
-        "episodes/_player.html",
+        "episodes/includes/player.html",
         {
             "episode": episode,
             "current_time": current_time,
