@@ -106,22 +106,28 @@ class TestSearchITunes:
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
             )
         ]
-        mock_search = mocker.patch("jcasts.podcasts.itunes.search", return_value=feeds)
-
-        with django_assert_num_queries(1):
-            resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
-        assert_ok(resp)
-
-        mock_search.assert_called()
-
-    def test_search_exception(self, client, db, mocker, django_assert_num_queries):
         mock_search = mocker.patch(
-            "jcasts.podcasts.itunes.search", side_effect=requests.RequestException
+            "jcasts.podcasts.itunes.search_cached", return_value=feeds
         )
 
         with django_assert_num_queries(1):
             resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
         assert_ok(resp)
+
+        assert resp.context["feeds"] == feeds
+        mock_search.assert_called()
+
+    def test_search_exception(self, client, db, mocker, django_assert_num_queries):
+        mock_search = mocker.patch(
+            "jcasts.podcasts.itunes.search_cached",
+            side_effect=requests.RequestException,
+        )
+
+        with django_assert_num_queries(1):
+            resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        assert_ok(resp)
+
+        assert resp.context["feeds"] == []
 
         mock_search.assert_called()
 
