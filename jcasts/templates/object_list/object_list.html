@@ -4,7 +4,7 @@
     {% block extra_attrs %}{% endblock %}>
     {% block object_list %}
         {% for object in object_list %}
-            {% block object_list_item %}{% endblock %}
+            {% block object %}{% endblock %}
         {% empty %}
             {% block empty_list %}
                 <p class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
