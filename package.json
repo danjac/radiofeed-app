@@ -4,8 +4,8 @@
         "node": "17.x"
     },
     "scripts": {
-        "watch-css": "NODE_ENV=production tailwindcss -i ./assets/app.css -o ./assets/bundle.css --minify --watch --verbose",
-        "watch-js": "esbuild ./assets/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./assets/bundle.js",
+        "watch-css": "NODE_ENV=production tailwindcss -i ./jcasts/static/app.css -o ./jcasts/static/bundle.css --minify --watch --verbose",
+        "watch-js": "esbuild ./jcasts/static/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./jcasts/static/bundle.js",
         "watch": "concurrently npm:watch-css npm:watch-js"
     },
     "dependencies": {

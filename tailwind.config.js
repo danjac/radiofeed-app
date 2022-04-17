@@ -8,8 +8,8 @@ module.exports = {
         purgeLayersByDefault: true,
     },
     content: [
-        './templates/**/*.html',
-        './assets/js/**/*.js',
+        './jcasts/templates/**/*.html',
+        './jcasts/static/js/**/*.js',
         './tailwind-safelist.txt',
     ],
     keyframes: true,

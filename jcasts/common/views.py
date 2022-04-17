@@ -42,7 +42,7 @@ def static_page(
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 def favicon(request: HttpRequest) -> HttpResponse:
     return FileResponse(
-        (settings.BASE_DIR / "assets" / "img" / "wave-ico.png").open("rb")
+        (settings.APPS_DIR / "static" / "img" / "wave-ico.png").open("rb")
     )
 
 
