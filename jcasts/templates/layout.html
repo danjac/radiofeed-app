@@ -1,15 +1,96 @@
 {% extends "layout_base.html" %}
-{% load player %}
+{% load static django_htmx player %}
 {% block header %}
 
     <!DOCTYPE html>
     <html lang="en">
 
         <head>
-            {{ block.super }}
-            {% include "_meta.html" %}
-            {% include "_stylesheets.html" %}
-            {% include "_google_search.html" %}
+
+            {% with og_description=og_data.description|truncatewords:60|default:"Find your favorite podcasts" og_title=og_data.title|default:request.site.name %}
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible"
+                    content="IE=edge" />
+                <meta name="viewport"
+                    content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                <meta name="copyright"
+                    content="Dan Jacob {% now "Y" %}">
+                <meta name="htmx-config"
+                    content='{"historyCacheSize": 0, "refreshOnHistoryMiss": false}'>
+                <meta name="Cache-Control"
+                    content="no-cache">
+                <meta name="robots"
+                    content="index,follow">
+                <meta name="description"
+                    content="{{ og_description }}" />
+                <meta name="keywords"
+                    content="{{ og_data.keywords|default:'podcasts, news, rss, itunes' }}" />
+
+                <meta property="og:type"
+                    content="website" />
+                <meta property="og:title"
+                    content="{{ og_title }}" />
+                <meta property="og:description"
+                    content="{{ og_description }}" />
+                <meta property="og:url"
+                    content="{% if og_data.url %}{{ og_data.url }}{% else %}http://{{ request.site.domain }}{% endif %}" />
+                {% if og_data.image %}
+                    <meta property="og:image"
+                        content="{{ og_data.image }}" />
+                    <meta property="og:image:alt"
+                        content="{{ og_data.title|default:request.site.name }}" />
+                    {% if og_data.image_height and og_data.image_width %}
+                        <meta property="og:image:height"
+                            content="{{ og_data.image_height }}" />
+                        <meta property="og:image:width"
+                            content="{{ og_data.image_width }}" />
+                    {% endif %}
+                {% endif %}
+
+                <meta name="twitter:card"
+                    content="{% if og_data.image %}summary_large_image{% else %}summary{% endif %}">
+
+                <meta name="twitter:description"
+                    content="{{ og_description }}">
+                {% if og_data.image %}
+                    <meta name="twitter:image"
+                        content="{{ og_data.image }}">
+                {% endif %}
+                {% get_project_metadata as project_metadata %}
+                {% if project_metadata.twitter %}
+                    <meta name="twitter:site"
+                        content="@{{ project_metadata.twitter }}">
+                {% endif %}
+                <meta name="twitter:title"
+                    content="{{ og_title }}">
+            {% endwith %}
+
+            <link rel="icon"
+                type="image/png"
+                href="{% static 'img/wave-ico.png' %}">
+
+            <link rel="apple-touch-icon image_src"
+                href="{% static 'img/apple-touch-icon.png' %}">
+
+            <link rel="stylesheet"
+                media="screen"
+                href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
+
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "url": "{% absolute_uri 'podcasts:index' %}",
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": {
+                            "@type": "EntryPoint",
+                            "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?q={search_term_string}"
+                        },
+                        "query-input": "required name=search_term_string"
+                    }
+                }
+            </script>
         </head>
 
         <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm lg:text-base scroll-smooth"
@@ -19,12 +100,158 @@
             hx-indicator="#loader"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
-            {% include "_hx_indicator.html" %}
 
-            <div class="flex flex-col h-screen">
-                <div class="flex-grow">
-                    {% include "_navbar.html" %}
+            <div class="hx-indicator"
+                id="loader"
+                x-data="{width: 0}"
+                x-init="{# fmt:off #}
+    setInterval(() => {
+        if ($el.classList.contains('htmx-request')) {
+            width = width + (Math.random() / 100);
+            $el.style.width = `${10 + (width * 90)}%`;
+        } else {
+            width = 0;
+        }
+    }, 300);"{# fmt:on #}></div>
 
+
+                <div class="flex flex-col h-screen">
+                    <div class="flex-grow">
+
+                        {% url 'podcasts:index' as home_url %}
+                        <header class="bg-black text-white sticky top-0 w-full z-20 shadow"
+                            x-data="{sidebar: false}"
+                            @htmx:before-request.window="sidebar=false">
+                            <nav class="flex items-center justify-between p-2">
+
+                                <ul class="flex items-center flex-shrink-0 space-x-3">
+                                    <li>
+
+
+                                        <a href="{{ home_url }}"
+                                            title="{{ request.site.name }}"
+                                            class="flex items-center">
+                                            <img src="{% static 'img/wave.png' %}"
+                                                height="32"
+                                                width="32"
+                                                class="h-6 w-6 lg:h-8 lg:w-8"
+                                                alt="{{ request.site.name }}">
+                                        </a>
+                                    </li>
+                                    <li>
+
+                                        <a class="font-bold text-lg lg:text-xl xl:text-2xl hover:text-blue-300"
+                                            title="{{ request.site.name }}: Home Page"
+                                            href="{{ home_url }}">{{ request.site.name }}</a>
+                                    </li>
+
+                                    {% if debug %}
+                                        <li>
+                                            <div class="text-xs">
+                                                <span class="sm:hidden">xs</span>
+                                                <span class="hidden sm:inline-block md:hidden">sm</span>
+                                                <span class="hidden md:inline-block lg:hidden">md</span>
+                                                <span class="hidden lg:inline-block xl:hidden">lg</span>
+                                                <span class="hidden xl:inline-block 2xl:hidden">xl</span>
+                                                <span class="hidden 2xl:inline-block 3xl:hidden">2xl</span>
+                                                <span class="hidden 3xl:inline-block">3xl+</span>
+                                            </div>
+                                        </li>
+                                    {% endif %}
+
+                                </ul>
+
+                                <form action="{% url 'podcasts:search_podcasts' %}"
+                                    method="get"
+                                    class="relative bg-transparent hidden sm:block"
+                                    x-data="{search: ''}"
+                                    @submit="$refs.search.blur();"
+                                    @htmx:before-request.window="search=''">
+                                    <input type="search"
+                                        x-ref="search"
+                                        x-model="search"
+                                        @click="$el.select()"
+                                        name="q"
+                                        accesskey="k"
+                                        autocomplete="off"
+                                        aria-label="Search"
+                                        placeholder="Search"
+                                        class="px-4 py-1 w-64 lg:w-72 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900  text-sm lg:text-base">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+
+                                        <button type="submit"
+                                            title="Search"
+                                            class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                                            {% icon "search" css_class="h-4 w-4" %}
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <ul class="flex items-center space-x-3">
+                                    {% if user.is_authenticated %}
+                                        <li>
+                                            <a href="{% url 'users:preferences' %}"
+                                                title="Settings for {{ user.username }}"
+                                                class="flex items-center font-bold hover:text-blue-300">
+                                                {{ user.username|slice:12 }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    <li class="xl:hidden flex items-center">
+                                        <button class="focus:outline-none transform transition"
+                                            title="Toggle Menu"
+                                            x-cloak
+                                            x-show.transition="!sidebar"
+                                            @click="sidebar=true">
+                                            {% icon "menu" css_class="h-6 w-6" %}
+                                        </button>
+                                        <button class="focus:outline-none transform transition"
+                                            title="Toggle Menu"
+                                            x-cloak
+                                            x-show.transition="sidebar"
+                                            @click="sidebar=false">
+                                            {% icon "chevron_down" css_class="h-6 w-6" %}
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <div class="xl:hidden absolute py-6 bg-white dark:bg-black top-15 left-0 w-full shadow-xl z-50"
+                                x-cloak
+                                x-show.transition="sidebar"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-95">
+                                <div class="flex justify-center sm:justify-start sm:hidden mb-6"
+                                    @click.away="sidebar=false">
+
+                                    <form action="{% url 'podcasts:search_podcasts' %}"
+                                        method="get"
+                                        class="relative bg-transparent"
+                                        x-data="{search: ''}"
+                                        @htmx:before-request.window="search=''">
+                                        <input type="search"
+                                            x-model="search"
+                                            @click="$el.select()"
+                                            name="q"
+                                            autocomplete="off"
+                                            aria-label="Search"
+                                            placeholder="Search"
+                                            class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm">
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+                                            <button type="submit"
+                                                title="Search"
+                                                class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                                                {% icon "search" css_class="h-4 w-4" %}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {% include "_signup_cta.html" %}
+                        </header>
 {% endblock header %}
 {% block footer %}
 
@@ -38,10 +265,46 @@
         </div>
     {% endif %}
 
-    {% include "_footer.html" %}
+
+
+    <div class="relative pt-20">
+        <div class="space-y-1 bg-black text-white p-1 w-full text-xs lg:text-sm absolute bottom-0">
+            <div class="flex items-center flex-wrap justify-center space-x-3 font-semibold">
+                <div>
+                    <a class="text-gray-100 hover:text-blue-300"
+                        href="mailto:danjac2018@gmail.com">&copy; {% now 'Y' %} Dan Jacob</a>
+                </div>
+                <div>
+                    <a class="text-gray-100 hover:text-blue-300"
+                        target="_blank"
+                        rel="noopener"
+                        href="https://github.com/danjac/jcasts/">Source Code</a>
+
+                </div>
+                <div>
+                    <a class="text-gray-100 hover:text-blue-300"
+                        target="_blank"
+                        rel="noopener"
+                        href="https://github.com/danjac/jcasts/issues/">Report an Issue</a>
+
+                </div>
+
+            </div>
+            <div class="flex items-center flex-wrap justify-center space-x-3">
+                <p class="text-center font-semibold">
+                    Podcast audio recordings, show notes and artwork are the property of the individual owners
+                    and are neither affiliated with nor endorsed by {{ request.site.name }}.
+                </p>
+            </div>
+
+        </div>
+    </div>
     </div>
 
-    {% include "_javascripts.html" %}
+
+    {% django_htmx_script %}
+
+    <script defer src="{% static 'dist/bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
 
     </body>
 
