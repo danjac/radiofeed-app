@@ -1,2 +1,74 @@
-{% extends "layout.html" %}
-{% block title %} | Error {% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible"
+            content="IE=edge" />
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="copyright"
+            content="Dan Jacob {% now "Y" %}">
+        <meta name="robots"
+            content="nofollow">
+        <link rel="icon"
+            type="image/png"
+            href="{% static 'img/wave-ico.png' %}">
+
+        <link rel="apple-touch-icon image_src"
+            href="{% static 'img/apple-touch-icon.png' %}">
+
+        <link rel="stylesheet"
+            media="screen"
+            href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
+
+    </head>
+
+    <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm lg:text-base scroll-smooth">
+        <div class="flex flex-col h-screen">
+            <div class="flex-grow">
+
+                {% url 'podcasts:index' as home_url %}
+                <header class="bg-black text-white sticky top-0 w-full z-20 shadow">
+                    <nav class="flex items-center justify-between p-2">
+
+                        <ul class="flex items-center flex-shrink-0 space-x-3">
+                            <li>
+                                <a href="{{ home_url }}"
+                                    title="jCasts"
+                                    class="flex items-center">
+                                    <img src="{% static 'img/wave.png' %}"
+                                        height="32"
+                                        width="32"
+                                        class="h-6 w-6 lg:h-8 lg:w-8"
+                                        alt="jCasts">
+                                </a>
+                            </li>
+                            <li>
+
+                                <a class="font-bold text-lg lg:text-xl xl:text-2xl hover:text-blue-300"
+                                    title="jCasts Home Page"
+                                    href="{{ home_url }}">jCasts</a>
+                            </li>
+
+                        </ul>
+
+                    </nav>
+                </header>
+                <main class="w-full flex justify-center mt-12">
+                    <div class="p-3 border mx-auto w-4/5 lg:w-2/3 text-center">
+                        <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">An error has occurred</h1>
+                        {% block content %}{% endblock %}
+                    </div>
+                </main>
+
+            </div>
+
+
+
+        </body>
+
+    </html>
