@@ -15,25 +15,25 @@ Just run the Makefile to build and start the containers and run initial data mig
 
 To update podcast data and download episodes from their RSS feeds:
 
-> ./scripts/manage schedule_podcast_feeds
+> ./bin/manage schedule_podcast_feeds
 
 You can then generate podcast recommendations with this command:
 
-> ./scripts/manage make_recommendations
+> ./bin/manage make_recommendations
 
 You an also create a super user if you wish to access the Django admin:
 
-> ./scripts/manage createsuperuser
+> ./bin/manage createsuperuser
 
 You can access the development app in your browser at _http://localhost:8000_.
 
 To run unit tests:
 
-> ./scripts/runtests [...]
+> ./bin/runtests [...]
 
 This script takes the same arguments as _./python -m pytest_ e.g.:
 
-> ./scripts/runtests -x --ff
+> ./bin/runtests -x --ff
 
 For the common case:
 
@@ -82,4 +82,3 @@ The following commands can be set up to run using the scheduler:
 `python manage.py send_recommendation_emails`
 
 The _schedule_podcast_feeds_ command has a number of options so you can set up multiple schedules accordingly. For example the _--primary_ flag will sync any feeds subscribed by users, so it might be better to run that more often.
-
