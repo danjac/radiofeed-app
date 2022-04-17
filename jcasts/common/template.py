@@ -131,7 +131,7 @@ def signup_url(url: str) -> str:
 def icon(name: str, css_class: str = "") -> str:
     return format_html(
         template.loader.render_to_string(
-            f"icons/_{name}.svg",
+            f"icons/{name}.svg",
             {"css_class": css_class},
         )
     )
