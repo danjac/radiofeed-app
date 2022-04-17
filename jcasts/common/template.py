@@ -27,10 +27,9 @@ register = template.Library()
 
 @dataclasses.dataclass
 class ActiveLink:
-    url: str 
+    url: str
     match: bool = False
     exact: bool = False
-
 
 
 _validate_url = URLValidator(["http", "https"])
@@ -86,12 +85,12 @@ def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
 
     if context["request"].path == url:
-        return ActiveLink(url=url, match=True, exact=True)
+        return ActiveLink(url, match=True, exact=True)
 
     if context["request"].path.startswith(url):
-        return ActiveLink(url=url, match=True)
+        return ActiveLink(url, match=True)
 
-    return ActiveLink(url=url)
+    return ActiveLink(url)
 
 
 @register.simple_tag(takes_context=True)
@@ -100,9 +99,9 @@ def re_active_link(
 ) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
-        return ActiveLink(url=url, match=True)
+        return ActiveLink(url, match=True)
 
-    return ActiveLink(url=url)
+    return ActiveLink(url)
 
 
 @register.simple_tag
