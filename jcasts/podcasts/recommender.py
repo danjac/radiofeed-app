@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 NUM_MATCHES = 12
-NUM_RECENT_EPISODES = 6
 RELEVANCY_THRESHOLD = timedelta(days=90)
 
 Similarities = tuple[int, list[tuple[int, float]]]
