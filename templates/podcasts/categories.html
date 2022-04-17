@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load cache %}
 
 {% block title %} | Categories {% endblock %}
 
@@ -18,17 +17,15 @@
 
     <ul class="space-y-3 dark:divide-gray-500 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-3
     {% endif %}">
-        {% cache 3600 categories request.get_full_path %}
-            {% for category in categories %}
-                <li class="pt-3">
-                    <h2>
-                        <a href="{{ category.get_absolute_url }}"
-                            class="font-semibold lg:text-lg link">
-                            {{ category.name }}
-                        </a>
-                    </h2>
-                </li>
-            {% endfor %}
-        {% endcache %}
+        {% for category in categories %}
+            <li class="pt-3">
+                <h2>
+                    <a href="{{ category.get_absolute_url }}"
+                        class="font-semibold lg:text-lg link">
+                        {{ category.name }}
+                    </a>
+                </h2>
+            </li>
+        {% endfor %}
     </ul>
 {% endblock %}

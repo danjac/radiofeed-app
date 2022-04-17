@@ -1,12 +1,7 @@
 {% extends "podcasts/podcast_detail_base.html" %}
-{% load cache %}
 
 {% block title %}{{ block.super }} | Similar{% endblock %}
 
 {% block podcast_content %}
-
-    {% cache 3600 recommendations podcast.id %}
-        {% include "podcasts/_recommendations.html" with object_list=recommendations %}
-    {% endcache %}
-
+    {% include "podcasts/_recommendations.html" with object_list=recommendations %}
 {% endblock podcast_content %}
