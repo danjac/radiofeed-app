@@ -1,16 +1,18 @@
 {% if user.is_anonymous %}
-    <div id="signup-cta"
-        {% if hx_oob %}
-            hx-swap-oob="true"
-        {% endif %}
-        class="text-center p-3 bg-blue-700 text-white font-bold">
-        <a class="underline text-white hover:text-gray-300"
-            hx-disable="true"
-            href="{{ request.get_full_path|signup_url }}">Sign up</a> or
+    {% with path=request.get_full_path %}
+        <div id="signup-cta"
+            {% if hx_oob %}
+                hx-swap-oob="true"
+            {% endif %}
+            class="text-center p-3 bg-blue-700 text-white font-bold">
+            <a class="underline text-white hover:text-gray-300"
+                hx-disable="true"
+                href="{{ path|signup_url }}">Sign up</a> or
 
-        <a class="underline text-white hover:text-gray-300"
-            hx-disable="true"
-            href="{{ request.get_full_path|login_url }}">log in</a>
-        to follow your favorite podcasts and listen to episodes!
-    </div>
+            <a class="underline text-white hover:text-gray-300"
+                hx-disable="true"
+                href="{{ path|login_url }}">log in</a>
+            to follow your favorite podcasts and listen to episodes!
+        </div>
+    {% endwith %}
 {% endif %}
