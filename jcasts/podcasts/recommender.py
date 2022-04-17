@@ -22,17 +22,14 @@ from jcasts.podcasts.parsers.text_parser import get_stopwords
 logger = logging.getLogger(__name__)
 
 
-NUM_MATCHES = 12
-RELEVANCY_THRESHOLD = timedelta(days=90)
-
 Similarities = tuple[int, list[tuple[int, float]]]
 
 
-def recommend() -> None:
+def recommend(since: timedelta = timedelta(days=90), num_matches: int = 12) -> None:
 
-    podcasts = Podcast.objects.filter(
-        pub_date__gt=timezone.now() - RELEVANCY_THRESHOLD
-    ).exclude(extracted_text="")
+    podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
+        extracted_text=""
+    )
 
     Recommendation.objects.bulk_delete()
 
@@ -46,11 +43,16 @@ def recommend() -> None:
     ]
 
     for language in languages:
-        create_recommendations_for_language(podcasts, categories, language)
+        create_recommendations_for_language(
+            podcasts,
+            categories,
+            language,
+            num_matches,
+        )
 
 
 def create_recommendations_for_language(
-    podcasts: QuerySet, categories: QuerySet, language: str
+    podcasts: QuerySet, categories: QuerySet, language: str, num_matches: int
 ) -> None:
     logger.info("Recommendations for %s", language)
 
@@ -58,6 +60,7 @@ def create_recommendations_for_language(
         podcasts,
         categories,
         language,
+        num_matches,
     ):
 
         logger.info("Inserting %d recommendations:%s", len(matches), language)
@@ -70,7 +73,7 @@ def create_recommendations_for_language(
 
 
 def build_matches_dict(
-    podcasts: QuerySet, categories: QuerySet, language: str
+    podcasts: QuerySet, categories: QuerySet, language: str, num_matches: int
 ) -> dict[tuple[int, int], list[float]]:
 
     matches = collections.defaultdict(list)
@@ -80,7 +83,7 @@ def build_matches_dict(
     for category in categories:
         logger.info("Recommendations for %s:%s", language, category)
         for (podcast_id, recommended_id, similarity,) in find_similarities_for_podcasts(
-            podcasts.filter(categories=category), language
+            podcasts.filter(categories=category), language, num_matches
         ):
             matches[(podcast_id, recommended_id)].append(similarity)
 
@@ -100,13 +103,13 @@ def recommendations_from_matches(
 
 
 def find_similarities_for_podcasts(
-    podcasts: QuerySet, language: str
+    podcasts: QuerySet, language: str, num_matches: int
 ) -> Generator[tuple[int, int, float], None, None]:
 
     if not podcasts.exists():  # pragma: no cover
         return
 
-    for podcast_id, recommended in find_similarities(podcasts, language):
+    for podcast_id, recommended in find_similarities(podcasts, language, num_matches):
         for recommended_id, similarity in recommended:
             similarity = round(similarity, 2)
             if similarity > 0:
@@ -114,7 +117,7 @@ def find_similarities_for_podcasts(
 
 
 def find_similarities(
-    podcasts: QuerySet, language: str
+    podcasts: QuerySet, language: str, num_matches: int
 ) -> Generator[Similarities, None, None]:
     """Given a queryset, will yield tuples of
     (id, (similar_1, similar_2, ...)) based on text content.
@@ -140,21 +143,24 @@ def find_similarities(
     for index in df.index:
         try:
             yield find_similarity(
-                df, similar=cosine_sim[index], current_id=df.loc[index, "id"]
+                df,
+                similar=cosine_sim[index],
+                current_id=df.loc[index, "id"],
+                num_matches=num_matches,
             )
         except IndexError:  # pragma: no cover
             pass
 
 
 def find_similarity(
-    df: pandas.DataFrame, similar: list[float], current_id: int
+    df: pandas.DataFrame, similar: list[float], current_id: int, num_matches: int
 ) -> Similarities:
 
     sorted_similar = sorted(
         list(enumerate(similar)),
         key=operator.itemgetter(1),
         reverse=True,
-    )[:NUM_MATCHES]
+    )[:num_matches]
 
     matches = [
         (df.loc[row, "id"], similarity)
