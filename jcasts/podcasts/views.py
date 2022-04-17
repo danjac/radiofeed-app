@@ -250,9 +250,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 def get_podcast_or_404(podcast_id: int) -> Podcast:
-    return get_object_or_404(
-        Podcast.objects.filter(pub_date__isnull=False), pk=podcast_id
-    )
+    return get_object_or_404(Podcast, pub_date__isnull=False, pk=podcast_id)
 
 
 def get_podcast_detail_context(
