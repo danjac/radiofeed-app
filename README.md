@@ -29,11 +29,11 @@ You can access the development app in your browser at _http://localhost:8000_.
 
 To run unit tests:
 
-> ./bin/runtests [...]
+> ./bin/pytest [...]
 
 This script takes the same arguments as _./python -m pytest_ e.g.:
 
-> ./bin/runtests -x --ff
+> ./bin/pytest -x --ff
 
 For the common case:
 
