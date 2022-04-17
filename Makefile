@@ -16,26 +16,26 @@ logs:
 	docker-compose logs -f
 
 migrate:
-	./scripts/manage migrate
+	./bin/manage migrate
 
 superuser:
-	./scripts/manage createsuperuser
+	./bin/manage createsuperuser
 
 seed:
-	./scripts/manage seed_podcast_data
+	./bin/manage seed_podcast_data
 
 shell:
-	./scripts/manage shell_plus
+	./bin/manage shell_plus
 
 test:
-	./scripts/pytest
+	./bin/pytest
 
 coverage:
-	./scripts/pytest -v -x --cov --reuse-db --cov-report term-missing
-
-requirements:
-	pip-compile requirements.in
+	./bin/pytest -v -x --cov --reuse-db --cov-report term-missing
 
 upgrade:
 	pip-compile --upgrade requirements.in
-	./scripts/npm upgrade
+	./bin/npm upgrade
+
+requirements:
+	pip-compile requirements.in

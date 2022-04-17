@@ -3,4 +3,3 @@
 set -euo pipefail
 
 docker-compose exec honcho pytest $@
-
