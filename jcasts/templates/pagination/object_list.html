@@ -1,9 +1,9 @@
 {% extends "object_list/object_list.html" %}
 {% block extra_attrs %}id="{{ pagination_target }}"{% endblock %}
-{% block result_list %}
+{% block object_list %}
     {% include "pagination/pagination_links.html" %}
     {% with object_list=page_obj.object_list %}
         {{ block.super }}
     {% endwith %}
     {% include "pagination/pagination_links.html" %}
-{% endblock result_list %}
+{% endblock object_list %}

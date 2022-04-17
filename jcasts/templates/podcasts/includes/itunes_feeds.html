@@ -1,5 +1,5 @@
 {% extends "object_list/object_list.html" %}
-{% block result %}
+{% block object_list_item %}
     {% if object.podcast and object.podcast.pub_date %}
         {% include "podcasts/includes/podcast.html" with podcast=object.podcast %}
     {% else %}
