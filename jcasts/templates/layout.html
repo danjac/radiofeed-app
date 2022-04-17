@@ -6,6 +6,7 @@
     <html lang="en">
 
         <head>
+            {{ block.super }}
 
             {% with og_description=og_data.description|truncatewords:60|default:"Find your favorite podcasts" og_title=og_data.title|default:request.site.name %}
                 <meta charset="UTF-8">
