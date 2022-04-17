@@ -6,8 +6,7 @@ import re
 
 from urllib import parse
 
-import attr
-
+import dataclasses
 from django import template
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -26,11 +25,12 @@ from jcasts.common import cleaners
 register = template.Library()
 
 
-@attr.s(kw_only=True)
+@dataclasses.dataclass
 class ActiveLink:
-    url: str = attr.ib()
-    match: bool = attr.ib(default=False)
-    exact: bool = attr.ib(default=False)
+    url: str 
+    match: bool = False
+    exact: bool = False
+
 
 
 _validate_url = URLValidator(["http", "https"])

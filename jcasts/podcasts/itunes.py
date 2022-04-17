@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import base64
 import io
 import re
@@ -7,7 +8,6 @@ import re
 from typing import Generator
 from urllib.parse import urlparse
 
-import attr
 import lxml
 import requests
 
@@ -19,13 +19,13 @@ from jcasts.podcasts.parsers.feed_parser import get_user_agent
 RE_PODCAST_ID = re.compile(r"id(?P<id>[0-9]+)")
 
 
-@attr.s
+@dataclasses.dataclass
 class Feed:
-    rss: str = attr.ib()
-    url: str = attr.ib()
-    title: str = attr.ib(default="")
-    image: str = attr.ib(default="")
-    podcast: Podcast | None = attr.ib(default=None)
+    rss: str 
+    url: str 
+    title: str = ""
+    image: str = ""
+    podcast: Podcast | None = None
 
 
 def search_cached(search_term: str) -> list[Feed]:

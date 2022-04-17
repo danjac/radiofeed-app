@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import http
 import secrets
+import dataclasses
 
 from functools import lru_cache
 
@@ -38,13 +39,13 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-@attr.s(kw_only=True)
+@dataclasses.dataclass
 class ParseResult:
-    rss: str | None = attr.ib()
-    success: bool = attr.ib(default=False)
-    status: int | None = attr.ib(default=None)
-    result: str | None = attr.ib(default=None)
-    exception: Exception | None = attr.ib(default=None)
+    rss: str | None = None
+    success: bool = False
+    status: int | None = None
+    result: str | None = None
+    exception: Exception | None = None
 
     def __bool__(self) -> bool:
         return self.success
