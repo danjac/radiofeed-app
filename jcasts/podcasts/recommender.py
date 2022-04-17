@@ -91,14 +91,11 @@ def recommendations_from_matches(
     matches: dict[tuple[int, int], list[float]]
 ) -> Generator[Recommendation, None, None]:
     for (podcast_id, recommended_id), values in matches.items():
-        frequency = len(values)
-        similarity = statistics.median(values)
-
         yield Recommendation(
             podcast_id=podcast_id,
             recommended_id=recommended_id,
-            similarity=similarity,
-            frequency=frequency,
+            similarity=statistics.median(values),
+            frequency=len(values),
         )
 
 
