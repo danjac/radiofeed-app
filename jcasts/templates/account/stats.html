@@ -8,7 +8,7 @@
 
         <div class="flex justify-between pt-4">
             <div class="w-1/2">Joined</div>
-            <div class="w-1/2 font-bold text-right">{% include "_date.html" with value=user.date_joined %}</div>
+            <div class="w-1/2 font-bold text-right">{% include "includes/_date.html" with value=user.date_joined %}</div>
         </div>
 
         {% if stats.subscribed %}

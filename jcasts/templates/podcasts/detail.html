@@ -26,7 +26,7 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
 
                 <div class="h-28 w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36">
-                    {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-32 lg:w-32  xl:w-36 xl:h-36 border dark:border-gray-500" %}
+                    {% include "includes/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-32 lg:w-32  xl:w-36 xl:h-36 border dark:border-gray-500" %}
                 </div>
 
                 <div class="flex flex-col place-content-between h-24 lg:h-28 xl:32">
@@ -71,7 +71,7 @@
                 <a href="{{ podcast.get_latest_episode_url }}"
                     class="link"
                     title="Latest Episode">
-                    Latest episode released {% include "_date.html" with value=podcast.pub_date %}
+                    Latest episode released {% include "includes/_date.html" with value=podcast.pub_date %}
                 </a>
             </div>
 
@@ -91,7 +91,7 @@
 
             {% endwith %}
             {% cache 3600 podcast-description podcast.id %}
-                {% include "_markdown.html" with content=podcast.description %}
+                {% include "includes/_markdown.html" with content=podcast.description %}
             {% endcache %}
         </article>
     {% endwith %}
