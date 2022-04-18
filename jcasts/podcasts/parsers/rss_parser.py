@@ -284,7 +284,7 @@ class XPathFinder:
             try:
                 return self.findall(path)[0]
             except IndexError:
-                pass
+                continue
         return default
 
     def findall(self, path: str) -> list[str]:
