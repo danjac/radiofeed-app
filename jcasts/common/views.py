@@ -19,7 +19,7 @@ def health_check(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["POST"])
 def accept_cookies(request: HttpRequest) -> HttpResponse:
-    response = HttpResponseNoContent()
+    response = HttpResponse()
     response.set_cookie(
         "accept-cookies",
         value="true",

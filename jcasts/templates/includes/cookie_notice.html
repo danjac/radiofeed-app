@@ -1,8 +1,7 @@
 {% if not accept_cookies %}
     <div class="text-white bg-gray-800 opacity-90 w-full py-3 flex justify-center fixed bottom-0 z-50"
         id="accept-cookies"
-        x-data="{show: true}"
-        x-show="show">
+    >
         <div class="px-2">
             <div class="md:flex items-center">
                 <p class="mb-3 md:mb-0 md:mr-4 text-center md:text-start">
@@ -16,7 +15,8 @@
                         hx-post="{% url 'accept_cookies' %}"
                         hx-target="#accept-cookies"
                         hx-push-url="false"
-                        @click="show=false">
+                        hx-swap="outerHTML"
+                    >
                         Got it!
                     </button>
                 </div>
