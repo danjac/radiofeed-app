@@ -122,9 +122,7 @@
                 {% endif %}
             {% endwith %}
 
-            {% cache 3600 episode-description episode.id %}
-                {% include "includes/markdown.html" with content=episode.description %}
-            {% endcache %}
+            {% markdown episode.description %}
 
         </article>
     {% endwith %}

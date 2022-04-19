@@ -1,0 +1,12 @@
+{% if content %}
+    <div class="prose dark:prose-invert prose-sm lg:prose-base break-words"
+        x-init="{# fmt:off #}
+     $el.querySelectorAll('p,div,li').forEach(el => {
+        if (!el.innerText.trim()) {
+            el.parentNode.removeChild(el);
+        }
+     });
+    {# fmt:on #}">
+        {{ content }}
+    </div>
+{% endif %}

@@ -8,7 +8,7 @@ from jcasts.common.template import (
     format_duration,
     icon,
     login_url,
-    markup,
+    markdown,
     normalize_url,
     pagination_url,
     re_active_link,
@@ -201,16 +201,16 @@ class TestShareButtons:
 
 class TestMarkup:
     def test_value_none(self):
-        return markup(None) == ""
+        return markdown(None) == {"content": ""}
 
     def test_value_empty(self):
-        return markup("  ") == ""
+        return markdown("  ") == {"content": ""}
 
     def test_markdown(self):
-        return markup("*test*") == "<b>test</b>"
+        return markdown("*test*") == {"content": "<b>test</b>"}
 
     def test_html(self):
-        return markup("<p>test</p>") == "<p>test</p>"
+        return markdown("<p>test</p>") == {"content": "<p>test</p>"}
 
 
 class TestNormalizeUrl:
