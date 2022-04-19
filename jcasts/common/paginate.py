@@ -15,10 +15,10 @@ def paginate(
     **kwargs,
 ) -> Page:
 
-    paginator = Paginator(object_list, page_size, **kwargs)
-
     try:
-        return paginator.page(int(request.GET.get(param, 1)))
+        return Paginator(object_list, page_size, **kwargs).page(
+            int(request.GET.get(param, 1))
+        )
     except (ValueError, InvalidPage):
         raise Http404("Invalid page")
 
