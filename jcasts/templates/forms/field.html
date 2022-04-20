@@ -23,6 +23,10 @@
             {% endif %}
         {% endwith %}
         {% include "forms/errors.html" with errors=field.errors %}
-        {% include "forms/help_text.html" with help_text=field.help_text %}
+        {% if help_text %}
+            <p class="text-gray-600 dark:text-gray-300">
+                {{ help_text }}
+            </p>
+        {% endif %}
     </div>
 {% endif %}
