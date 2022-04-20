@@ -25,6 +25,7 @@ omit=[
     "*/wsgi.py"
 ]
 
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="jcasts.settings.test"
 addopts="-v -x --ff --reuse-db"
