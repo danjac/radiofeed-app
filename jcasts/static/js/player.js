@@ -26,23 +26,23 @@ document.addEventListener('alpine:init', () => {
             lastTimeUpdate: null,
             counters: {
                 current: '00:00:00',
-                duration: '00:00:00',
+                total: '00:00:00',
             },
             init() {
                 this.$watch('currentTime', (value) => {
-                    this.counters.current = this.formatDuration(value);
+                    this.counters.current = this.formatCounter(value);
                 });
 
                 this.$watch('duration', (value) => {
-                    this.counters.duration = this.formatDuration(value);
+                    this.counters.total = this.formatCounter(value);
                 });
 
                 this.$watch('playbackRate', (value) => {
                     this.$refs.audio.playbackRate = value;
                 });
 
-                this.counters.current = this.formatDuration(this.currentTime);
-                this.counters.duration = this.formatDuration(this.duration);
+                this.counters.current = this.formatCounter(this.currentTime);
+                this.counters.total = this.formatCounter(this.duration);
 
                 this.$refs.audio.currentTime = this.currentTime;
                 this.$refs.audio.load();
@@ -54,7 +54,7 @@ document.addEventListener('alpine:init', () => {
             get isInteractive() {
                 return this.isPlaying && !this.isError;
             },
-            formatDuration(value) {
+            formatCounter(value) {
                 if (isNaN(value) || value < 0) return '00:00:00';
                 const duration = Math.floor(value);
                 const hours = Math.floor(duration / 3600);

@@ -42,7 +42,7 @@
                         <div class="text-xs lg:text-sm text-center sm:hidden"
                             :class="{'animate-pulse text-gray-300': !isInteractive}">
                             <span x-text="counters.current"></span> /
-                            <span x-text="counters.duration"></span>
+                            <span x-text="counters.total"></span>
                         </div>
                     </div>
 
@@ -109,7 +109,7 @@
                                         :class="{'animate-pulse text-gray-300': !isInteractive}">
                                         <span x-text="counters.current"
                                             title="Current Time"></span> /
-                                        <span x-text="counters.duration"
+                                        <span x-text="counters.total"
                                             title="Time Remaining"></span>
                                     </div>
                                 </div>
