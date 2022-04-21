@@ -9,7 +9,7 @@
         "watch": "concurrently npm:watch-css npm:watch-js"
     },
     "dependencies": {
-        "alpinejs": "^3.9.6",
+        "alpinejs": "^3.10.2",
         "htmx.org": "^1.7.0"
     },
     "devDependencies": {
@@ -17,7 +17,7 @@
         "@tailwindcss/line-clamp": "^0.3.1",
         "@tailwindcss/typography": "^0.5.2",
         "concurrently": "^7.1.0",
-        "esbuild": "^0.14.36",
+        "esbuild": "^0.14.37",
         "tailwindcss": "^3.0.24"
     }
 }

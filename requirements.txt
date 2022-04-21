@@ -103,7 +103,7 @@ executing==0.8.3
     # via stack-data
 factory-boy==3.2.1
     # via -r requirements.in
-faker==13.3.4
+faker==13.3.5
     # via
     #   -r requirements.in
     #   factory-boy
