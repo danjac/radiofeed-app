@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from urllib.parse import urlparse
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
@@ -134,11 +135,11 @@ class Podcast(models.Model):
     explicit: bool = models.BooleanField(default=False)
     promoted: bool = models.BooleanField(default=False)
 
-    categories: list[Category] = models.ManyToManyField(Category, blank=True)
+    categories: list[Category] = models.ManyToManyField("podcasts.Category", blank=True)
 
     # received recommendation email
     recipients: list[User] = models.ManyToManyField(
-        User,
+        settings.AUTH_USER_MODEL,
         blank=True,
         related_name="recommended_podcasts",
     )
@@ -214,8 +215,8 @@ class Podcast(models.Model):
 
 class Subscription(TimeStampedModel):
 
-    user: User = models.ForeignKey(User, on_delete=models.CASCADE)
-    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -259,10 +260,15 @@ RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
 class Recommendation(models.Model):
 
     podcast: Podcast = models.ForeignKey(
-        Podcast, related_name="+", on_delete=models.CASCADE
+        "podcasts.Podcast",
+        related_name="+",
+        on_delete=models.CASCADE,
     )
+
     recommended: Podcast = models.ForeignKey(
-        Podcast, related_name="+", on_delete=models.CASCADE
+        "podcasts.Podcast",
+        related_name="+",
+        on_delete=models.CASCADE,
     )
 
     frequency: int = models.PositiveIntegerField(default=0)

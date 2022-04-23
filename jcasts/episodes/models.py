@@ -6,6 +6,7 @@ import pathlib
 from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
@@ -114,7 +115,7 @@ EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
     guid: str = models.TextField()
 
@@ -324,8 +325,8 @@ BookmarkManager = models.Manager.from_queryset(BookmarkQuerySet)
 
 class Bookmark(TimeStampedModel):
 
-    user: User = models.ForeignKey(User, on_delete=models.CASCADE)
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
     objects = BookmarkManager()
 
@@ -354,8 +355,8 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 class AudioLog(TimeStampedModel):
 
-    user: User = models.ForeignKey(User, on_delete=models.CASCADE)
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
     updated: datetime = models.DateTimeField()
     completed: datetime = models.DateTimeField(null=True, blank=True)
