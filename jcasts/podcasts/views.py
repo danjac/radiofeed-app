@@ -271,7 +271,7 @@ def render_subscribe_action(
 
     return TemplateResponse(
         request,
-        "podcasts/actions/subscribe_toggle.html",
+        "podcasts/includes/subscribe_toggle.html",
         {
             "podcast": podcast,
             "subscribed": subscribed,

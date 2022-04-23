@@ -34,7 +34,7 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["POST"])
 @ajax_login_required
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(request, episode_id, with_podcast=True)
+    episode = get_episode_or_404(request, episode_id)
 
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
@@ -61,7 +61,7 @@ def render_bookmark_action(
 ) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/actions/bookmark_toggle.html",
+        "episodes/includes/bookmark_toggle.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,
