@@ -21,8 +21,8 @@ RE_PODCAST_ID = re.compile(r"id(?P<id>[0-9]+)")
 
 @dataclasses.dataclass
 class Feed:
-    rss: str 
-    url: str 
+    rss: str
+    url: str
     title: str = ""
     image: str = ""
     podcast: Podcast | None = None
