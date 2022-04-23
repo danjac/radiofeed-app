@@ -17,7 +17,7 @@
         "@tailwindcss/line-clamp": "^0.3.1",
         "@tailwindcss/typography": "^0.5.2",
         "concurrently": "^7.1.0",
-        "esbuild": "^0.14.37",
+        "esbuild": "^0.14.38",
         "tailwindcss": "^3.0.24"
     }
 }
