@@ -74,7 +74,7 @@ services:
             'honcho',
             'start',
             '-f',
-            './Procfile.dev'
+            './Procfile.local'
         ]
 
 volumes:
