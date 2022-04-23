@@ -6,8 +6,6 @@ Werkzeug
 attrs
 bleach
 coverage
-cryptography
-decorator
 dj-database-url
 django-allauth
 django-anymail
@@ -27,7 +25,6 @@ django-widget-tweaks
 factory-boy
 gunicorn
 honcho
-html5lib
 ipython
 lxml
 nltk

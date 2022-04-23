@@ -39,13 +39,9 @@ coverage[toml]==6.3.2
     #   -r requirements.in
     #   pytest-cov
 cryptography==36.0.2
-    # via
-    #   -r requirements.in
-    #   pyjwt
+    # via pyjwt
 decorator==5.1.1
-    # via
-    #   -r requirements.in
-    #   ipython
+    # via ipython
 defusedxml==0.7.1
     # via python3-openid
 deprecated==1.2.13
@@ -110,8 +106,6 @@ faker==13.3.5
 gunicorn==20.1.0
     # via -r requirements.in
 honcho==1.1.0
-    # via -r requirements.in
-html5lib==1.1
     # via -r requirements.in
 idna==3.3
     # via requests
@@ -243,7 +237,6 @@ six==1.16.0
     # via
     #   asttokens
     #   bleach
-    #   html5lib
     #   python-dateutil
 sqlparse==0.4.2
     # via django
@@ -268,9 +261,7 @@ urllib3==1.26.9
 wcwidth==0.2.5
     # via prompt-toolkit
 webencodings==0.5.1
-    # via
-    #   bleach
-    #   html5lib
+    # via bleach
 werkzeug==2.1.1
     # via -r requirements.in
 whitenoise==6.0.0
