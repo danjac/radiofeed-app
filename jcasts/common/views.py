@@ -5,6 +5,7 @@ import datetime
 from django.conf import settings
 from django.http import FileResponse, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
@@ -62,7 +63,7 @@ def robots(request: HttpRequest) -> HttpResponse:
                         "/history/",
                     ]
                 ],
-                f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
+                f"Sitemap: {request.build_absolute_uri(reverse('sitemap'))}",
             ]
         ),
         content_type="text/plain",

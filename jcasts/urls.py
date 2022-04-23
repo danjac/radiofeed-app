@@ -26,6 +26,7 @@ urlpatterns = [
         "sitemap.xml",
         cache_page(settings.DEFAULT_CACHE_TIMEOUT)(sitemaps_views.index),
         {"sitemaps": sitemaps, "sitemap_url_name": "sitemaps"},
+        name="sitemap",
     ),
     path(
         "sitemap-<section>.xml",
