@@ -2,7 +2,12 @@ import socket
 
 from split_settings.tools import include
 
-from jcasts.settings.base import ADMIN_SITE_HEADER, INSTALLED_APPS, TEMPLATES
+from jcasts.settings.base import (
+    ADMIN_SITE_HEADER,
+    INSTALLED_APPS,
+    MIDDLEWARE,
+    TEMPLATES,
+)
 
 include("base.py")
 
@@ -12,7 +17,9 @@ DEBUG = True
 
 TEMPLATES[0]["OPTIONS"]["debug"] = True
 
-INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS
+INSTALLED_APPS = ["whitenoise.runserver_nostatic", "debug_toolbar"] + INSTALLED_APPS
+
+MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
 # internal Docker IP
 

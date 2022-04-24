@@ -39,3 +39,9 @@ urlpatterns = [
     path(f"{settings.ADMIN_URL}/postgres-metrics/", include("postgres_metrics.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
+
+if "debug_toolbar" in settings.INSTALLED_APPS:
+
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]

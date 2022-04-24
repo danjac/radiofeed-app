@@ -54,6 +54,7 @@ django==4.0.4
     #   django-allauth
     #   django-anymail
     #   django-cachalot
+    #   django-debug-toolbar
     #   django-extensions
     #   django-htmx
     #   django-model-utils
@@ -66,6 +67,8 @@ django-allauth==0.50.0
 django-anymail==8.5
     # via -r requirements.in
 django-cachalot==2.5.1
+    # via -r requirements.in
+django-debug-toolbar==3.2.4
     # via -r requirements.in
 django-environ==0.8.1
     # via -r requirements.in
@@ -239,7 +242,9 @@ six==1.16.0
     #   bleach
     #   python-dateutil
 sqlparse==0.4.2
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
 stack-data==0.2.0
     # via ipython
 threadpoolctl==3.1.0
