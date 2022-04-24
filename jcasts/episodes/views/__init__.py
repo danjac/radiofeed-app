@@ -26,18 +26,18 @@ def index(request: HttpRequest) -> HttpResponse:
         else set()
     )
 
-    podcast_qs = Podcast.objects.filter(pub_date__gt=since)
+    podcasts = Podcast.objects.filter(pub_date__gt=since)
 
     if subscribed and not promoted:
-        podcast_qs = podcast_qs.filter(pk__in=subscribed)
+        podcasts = podcasts.filter(pk__in=subscribed)
     else:
-        podcast_qs = podcast_qs.filter(promoted=True)
+        podcasts = podcasts.filter(promoted=True)
 
     episodes = (
         Episode.objects.filter(pub_date__gt=since)
         .select_related("podcast")
         .filter(
-            podcast__in=set(podcast_qs.values_list("pk", flat=True)),
+            podcast__in=set(podcasts.values_list("pk", flat=True)),
         )
         .order_by("-pub_date", "-id")
         .distinct()

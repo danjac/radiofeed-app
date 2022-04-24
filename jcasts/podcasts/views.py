@@ -29,20 +29,18 @@ def index(request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated
         else set()
     )
+
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
     promoted = "promoted" in request.GET or not subscribed
 
-    if promoted:
-        podcasts = podcasts.filter(promoted=True)
-    else:
-        podcasts = podcasts.filter(pk__in=subscribed)
-
     return render_paginated_list(
         request,
-        podcasts,
+        podcasts.filter(promoted=True)
+        if promoted
+        else podcasts.filter(pk__in=subscribed),
         "podcasts/index.html",
         "podcasts/includes/podcasts.html",
         {
