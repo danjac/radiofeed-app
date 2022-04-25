@@ -44,19 +44,15 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.filter(promoted=True)
 
-    episodes = (
+    return render_paginated_list(
+        request,
         Episode.objects.filter(pub_date__gt=since)
         .select_related("podcast")
         .filter(
             podcast__in=set(podcasts.values_list("pk", flat=True)),
         )
         .order_by("-pub_date", "-id")
-        .distinct()
-    )
-
-    return render_paginated_list(
-        request,
-        episodes,
+        .distinct(),
         "episodes/index.html",
         "episodes/includes/episodes.html",
         {
@@ -73,15 +69,11 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
 
-    episodes = (
-        Episode.objects.select_related("podcast")
-        .search(request.search.value)
-        .order_by("-rank", "-pub_date")
-    )
-
     return render_paginated_list(
         request,
-        episodes,
+        Episode.objects.select_related("podcast")
+        .search(request.search.value)
+        .order_by("-rank", "-pub_date"),
         "episodes/search.html",
         "episodes/includes/episodes.html",
     )
@@ -185,22 +177,17 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @login_required
 def history(request: HttpRequest) -> HttpResponse:
 
-    logs = (
-        AudioLog.objects.filter(user=request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("-updated")
+    logs = AudioLog.objects.filter(user=request.user).select_related(
+        "episode", "episode__podcast"
     )
 
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
-    if request.search:
-        logs = logs.search(request.search.value).order_by("-rank", "-updated")
-    else:
-        logs = logs.order_by("-updated" if newest_first else "updated")
-
     return render_paginated_list(
         request,
-        logs,
+        logs.search(request.search.value).order_by("-rank", "-updated")
+        if request.search
+        else logs.order_by("-updated" if newest_first else "updated"),
         "episodes/history.html",
         "episodes/includes/history.html",
         {
@@ -253,14 +240,11 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
-    if request.search:
-        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
-    else:
-        bookmarks = bookmarks.order_by("-created")
-
     return render_paginated_list(
         request,
-        bookmarks,
+        bookmarks.search(request.search.value).order_by("-rank", "-created")
+        if request.search
+        else bookmarks.order_by("-created"),
         "episodes/bookmarks.html",
         "episodes/includes/bookmarks.html",
     )
