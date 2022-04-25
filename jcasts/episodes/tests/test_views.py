@@ -43,12 +43,12 @@ class TestNewEpisodes:
         SubscriptionFactory(user=auth_user, podcast=episode.podcast)
 
         with django_assert_num_queries(7):
-            resp = client.get(episodes_url)
-        assert_ok(resp)
-        assert not resp.context_data["promoted"]
-        assert resp.context_data["has_subscriptions"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0] == episode
+            response = client.get(episodes_url)
+        assert_ok(response)
+        assert not response.context_data["promoted"]
+        assert response.context_data["has_subscriptions"]
+        assert len(response.context_data["page_obj"].object_list) == 1
+        assert response.context_data["page_obj"].object_list[0] == episode
 
     def test_user_has_subscribed_promoted(
         self, client, auth_user, django_assert_num_queries
@@ -62,23 +62,23 @@ class TestNewEpisodes:
         SubscriptionFactory(user=auth_user, podcast=episode.podcast)
 
         with django_assert_num_queries(7):
-            resp = client.get(episodes_url, {"promoted": True})
+            response = client.get(episodes_url, {"promoted": True})
 
-        assert_ok(resp)
-        assert resp.context_data["promoted"]
-        assert resp.context_data["has_subscriptions"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0].podcast == promoted
+        assert_ok(response)
+        assert response.context_data["promoted"]
+        assert response.context_data["has_subscriptions"]
+        assert len(response.context_data["page_obj"].object_list) == 1
+        assert response.context_data["page_obj"].object_list[0].podcast == promoted
 
     def _test_not_subscribed(self, client, django_assert_num_queries, num_queries):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
         with django_assert_num_queries(num_queries):
-            resp = client.get(episodes_url)
-        assert_ok(resp)
-        assert not resp.context_data["has_subscriptions"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
+            response = client.get(episodes_url)
+        assert_ok(response)
+        assert not response.context_data["has_subscriptions"]
+        assert len(response.context_data["page_obj"].object_list) == 1
 
 
 class TestSearchEpisodes:
@@ -86,8 +86,8 @@ class TestSearchEpisodes:
 
     def test_no_results(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(2):
-            resp = client.get(self.url, {"q": "test"})
-        assert_ok(resp)
+            response = client.get(self.url, {"q": "test"})
+        assert_ok(response)
 
     def test_search_empty(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
@@ -97,13 +97,13 @@ class TestSearchEpisodes:
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
         with django_assert_num_queries(3):
-            resp = client.get(
+            response = client.get(
                 self.url,
                 {"q": episode.title},
             )
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0] == episode
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 1
+        assert response.context_data["page_obj"].object_list[0] == episode
 
 
 class TestEpisodeDetail:
@@ -123,9 +123,9 @@ class TestEpisodeDetail:
         self, client, episode, prev_episode, next_episode, django_assert_num_queries
     ):
         with django_assert_num_queries(4):
-            resp = client.get(episode.get_absolute_url())
-        assert_ok(resp)
-        assert resp.context_data["episode"] == episode
+            response = client.get(episode.get_absolute_url())
+        assert_ok(response)
+        assert response.context_data["episode"] == episode
 
     def test_authenticated(
         self,
@@ -137,9 +137,9 @@ class TestEpisodeDetail:
         django_assert_num_queries,
     ):
         with django_assert_num_queries(7):
-            resp = client.get(episode.get_absolute_url())
-        assert_ok(resp)
-        assert resp.context_data["episode"] == episode
+            response = client.get(episode.get_absolute_url())
+        assert_ok(response)
+        assert response.context_data["episode"] == episode
 
 
 class TestStartPlayer:
@@ -190,8 +190,8 @@ class TestClosePlayer:
 
     def test_player_empty(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(3):
-            resp = client.post(self.url)
-        assert_ok(resp)
+            response = client.post(self.url)
+        assert_ok(response)
 
     def test_close(self, client, auth_user, player_episode, django_assert_num_queries):
 
@@ -203,8 +203,8 @@ class TestClosePlayer:
 
         # including savepoints
         with django_assert_num_queries(7):
-            resp = client.post(self.url)
-        assert_ok(resp)
+            response = client.post(self.url)
+        assert_ok(response)
 
         # do not mark complete
         log.refresh_from_db()
@@ -230,8 +230,8 @@ class TestPlayerComplete:
 
         # including savepoints
         with django_assert_num_queries(8):
-            resp = client.post(self.url)
-        assert_ok(resp)
+            response = client.post(self.url)
+        assert_ok(response)
 
         # do not mark complete
         log.refresh_from_db()
@@ -254,38 +254,38 @@ class TestPlayerTimeUpdate:
     ):
 
         with django_assert_num_queries(4):
-            resp = client.post(
+            response = client.post(
                 self.url,
                 {"current_time": "1030"},
             )
-        assert_no_content(resp)
+        assert_no_content(response)
 
     def test_player_not_running(
         self, client, auth_user, episode, django_assert_num_queries
     ):
 
         with django_assert_num_queries(3):
-            resp = client.post(
+            response = client.post(
                 self.url,
                 {"current_time": "1030"},
             )
-        assert_no_content(resp)
+        assert_no_content(response)
 
     def test_missing_data(
         self, client, auth_user, player_episode, django_assert_num_queries
     ):
 
         with django_assert_num_queries(3):
-            resp = client.post(self.url)
-        assert_bad_request(resp)
+            response = client.post(self.url)
+        assert_bad_request(response)
 
     def test_invalid_data(
         self, client, auth_user, player_episode, django_assert_num_queries
     ):
 
         with django_assert_num_queries(3):
-            resp = client.post(self.url, {"current_time": "xyz"})
-        assert_bad_request(resp)
+            response = client.post(self.url, {"current_time": "xyz"})
+        assert_bad_request(response)
 
 
 class TestBookmarks:
@@ -295,10 +295,10 @@ class TestBookmarks:
         BookmarkFactory.create_batch(3, user=auth_user)
 
         with django_assert_num_queries(5):
-            resp = client.get(self.url)
+            response = client.get(self.url)
 
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 3
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 3
 
     def test_search(self, client, auth_user, django_assert_num_queries):
 
@@ -313,18 +313,18 @@ class TestBookmarks:
         BookmarkFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
 
         with django_assert_num_queries(5):
-            resp = client.get(self.url, {"q": "testing"})
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 1
+            response = client.get(self.url, {"q": "testing"})
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 1
 
 
 class TestAddBookmark:
     def test_post(self, client, auth_user, episode, django_assert_num_queries):
 
         with django_assert_num_queries(5):
-            resp = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
+            response = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
 
-        assert_ok(resp)
+        assert_ok(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db(transaction=True)
@@ -333,8 +333,8 @@ class TestAddBookmark:
     ):
         BookmarkFactory(episode=episode, user=auth_user)
         with django_assert_num_queries(5):
-            resp = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
-        assert_conflict(resp)
+            response = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
+        assert_conflict(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -342,8 +342,10 @@ class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode, django_assert_num_queries):
         BookmarkFactory(user=auth_user, episode=episode)
         with django_assert_num_queries(5):
-            resp = client.delete(reverse("episodes:remove_bookmark", args=[episode.id]))
-        assert_ok(resp)
+            response = client.delete(
+                reverse("episodes:remove_bookmark", args=[episode.id])
+            )
+        assert_ok(response)
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -353,17 +355,17 @@ class TestHistory:
     def test_get(self, client, auth_user, django_assert_num_queries):
         AudioLogFactory.create_batch(3, user=auth_user)
         with django_assert_num_queries(5):
-            resp = client.get(self.url)
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 3
+            response = client.get(self.url)
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 3
 
     def test_get_oldest_first(self, client, auth_user, django_assert_num_queries):
         AudioLogFactory.create_batch(3, user=auth_user)
 
         with django_assert_num_queries(5):
-            resp = client.get(self.url, {"ordering": "asc"})
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 3
+            response = client.get(self.url, {"ordering": "asc"})
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 3
 
     def test_search(self, client, auth_user, django_assert_num_queries):
 
@@ -377,9 +379,9 @@ class TestHistory:
 
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
         with django_assert_num_queries(5):
-            resp = client.get(self.url, {"q": "testing"})
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 1
+            response = client.get(self.url, {"q": "testing"})
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 1
 
 
 class TestRemoveAudioLog:

@@ -47,9 +47,9 @@ class TestAboutPages:
 class TestAcceptCookies:
     def test_post(self, client, db, django_assert_num_queries):
         with django_assert_num_queries(1):
-            resp = client.post(reverse("accept_cookies"))
-        assert_ok(resp)
-        assert "accept-cookies" in resp.cookies
+            response = client.post(reverse("accept_cookies"))
+        assert_ok(response)
+        assert "accept-cookies" in response.cookies
 
 
 class TestErrorPages:
