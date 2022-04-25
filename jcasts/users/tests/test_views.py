@@ -12,19 +12,19 @@ class TestUserPreferences:
 
     def test_get(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(3):
-            resp = client.get(self.url)
-        assert_ok(resp)
+            response = client.get(self.url)
+        assert_ok(response)
 
     def test_post(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(4):
-            resp = client.post(
+            response = client.post(
                 self.url,
                 {
                     "send_email_notifications": False,
                     "autoplay": True,
                 },
             )
-        assert resp.url == self.url
+        assert response.url == self.url
 
         auth_user.refresh_from_db()
 
@@ -41,10 +41,10 @@ class TestUserStats:
         BookmarkFactory(user=auth_user)
 
         with django_assert_num_queries(8):
-            resp = client.get(reverse("users:stats"))
-        assert_ok(resp)
-        assert resp.context["stats"]["subscribed"] == 1
-        assert resp.context["stats"]["listened"] == 3
+            response = client.get(reverse("users:stats"))
+        assert_ok(response)
+        assert response.context["stats"]["subscribed"] == 1
+        assert response.context["stats"]["listened"] == 3
 
 
 class TestExportPodcastFeeds:
@@ -54,21 +54,21 @@ class TestExportPodcastFeeds:
 
     def test_export_opml(self, client, subscription, django_assert_num_queries):
         with django_assert_num_queries(4):
-            resp = client.get(reverse("users:export_podcast_feeds_opml"))
-        assert_ok(resp)
-        assert resp["Content-Type"] == "application/xml"
+            response = client.get(reverse("users:export_podcast_feeds_opml"))
+        assert_ok(response)
+        assert response["Content-Type"] == "application/xml"
 
     def test_export_csv(self, client, subscription, django_assert_num_queries):
         with django_assert_num_queries(4):
-            resp = client.get(reverse("users:export_podcast_feeds_csv"))
-        assert_ok(resp)
-        assert resp["Content-Type"] == "text/csv"
+            response = client.get(reverse("users:export_podcast_feeds_csv"))
+        assert_ok(response)
+        assert response["Content-Type"] == "text/csv"
 
     def test_export_json(self, client, subscription, django_assert_num_queries):
         with django_assert_num_queries(4):
-            resp = client.get(reverse("users:export_podcast_feeds_json"))
-        assert_ok(resp)
-        assert resp["Content-Type"] == "application/json"
+            response = client.get(reverse("users:export_podcast_feeds_json"))
+        assert_ok(response)
+        assert response["Content-Type"] == "application/json"
 
 
 class TestDeleteAccount:
@@ -77,18 +77,18 @@ class TestDeleteAccount:
     def test_get(self, client, auth_user, django_assert_num_queries):
         # make sure we don't accidentally delete account on get request
         with django_assert_num_queries(3):
-            resp = client.get(self.url)
-        assert_ok(resp)
+            response = client.get(self.url)
+        assert_ok(response)
         assert User.objects.exists()
 
     def test_post_unconfirmed(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(3):
-            resp = client.post(self.url)
-        assert_ok(resp)
+            response = client.post(self.url)
+        assert_ok(response)
         assert User.objects.exists()
 
     def test_post_confirmed(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(15):
-            resp = client.post(self.url, {"confirm-delete": True})
-        assert resp.url == settings.HOME_URL
+            response = client.post(self.url, {"confirm-delete": True})
+        assert response.url == settings.HOME_URL
         assert not User.objects.exists()
