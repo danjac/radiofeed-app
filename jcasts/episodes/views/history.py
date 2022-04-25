@@ -94,6 +94,5 @@ def render_history_action(
             "episode": episode,
             "listened": listened,
             "completed": completed,
-            "action": True,
         },
     )

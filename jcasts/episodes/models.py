@@ -312,6 +312,15 @@ class Episode(models.Model):
             ],
         }
 
+    def get_player_target(self) -> str:
+        return f"player-toggle-{self.id}"
+
+    def get_bookmark_target(self) -> str:
+        return f"bookmark-toggle-{self.id}"
+
+    def get_history_target(self) -> str:
+        return f"history-toggle-{self.id}"
+
 
 class BookmarkQuerySet(SearchMixin, models.QuerySet):
     search_vectors: list[tuple[str, str]] = [

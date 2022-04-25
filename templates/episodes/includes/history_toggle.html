@@ -1,6 +1,6 @@
-{% with ICON_CSS="h-5 w-5 lg:h-6 lg:w-6" %}
+{% with ICON_CSS="h-5 w-5 lg:h-6 lg:w-6" target=episode.get_history_target %}
     <div class="flex items-center space-x-3 lg:space-x-4"
-        id="history-toggle-{{ episode.id }}"
+        id="{{ target }}"
         hx-target="this"
         hx-swap="outerHTML"
         {% if hx_oob %}hx-swap-oob="true"
@@ -22,8 +22,8 @@
             </button>
         {% endif %}
     </div>
-{% endwith %}
 
-{% if action %}
-    {% include "includes/messages.html" with hx_oob=True %}
-{% endif %}
+    {% if request.htmx.target == target %}
+        {% include "includes/messages.html" with hx_oob=True %}
+    {% endif %}
+{% endwith %}

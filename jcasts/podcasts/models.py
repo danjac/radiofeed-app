@@ -212,6 +212,9 @@ class Podcast(models.Model):
             }
         return og_data
 
+    def get_subscribe_target(self) -> str:
+        return f"subscribe-toggle-{self.id}"
+
 
 class Subscription(TimeStampedModel):
 

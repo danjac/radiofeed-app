@@ -203,7 +203,7 @@
             </div>
         {% endwith %}
     {% endif %}
-    {% if player_action %}
+    {% if request.htmx.target == "player" %}
         {% include "episodes/includes/player_toggle.html" with hx_oob=True %}
         {% include "episodes/includes/history_toggle.html" with hx_oob=True %}
     {% endif %}

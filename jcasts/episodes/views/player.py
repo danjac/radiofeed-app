@@ -103,7 +103,6 @@ def render_player_action(
             "episode": episode,
             "current_time": current_time,
             "is_playing": is_playing,
-            "player_action": True,
             "completed": completed,
             "listened": timezone.now(),
         },

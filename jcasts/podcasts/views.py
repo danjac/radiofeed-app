@@ -273,6 +273,5 @@ def render_subscribe_action(
         {
             "podcast": podcast,
             "subscribed": subscribed,
-            "action": True,
         },
     )

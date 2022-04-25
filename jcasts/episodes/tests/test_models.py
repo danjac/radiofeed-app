@@ -439,6 +439,15 @@ class TestEpisodeModel:
             == expected
         )
 
+    def test_get_player_target(self):
+        assert Episode(id=12345).get_player_target() == "player-toggle-12345"
+
+    def test_get_history_target(self):
+        assert Episode(id=12345).get_history_target() == "history-toggle-12345"
+
+    def test_get_bookmark_target(self):
+        assert Episode(id=12345).get_bookmark_target() == "bookmark-toggle-12345"
+
 
 class TestBookmarkManager:
     def test_search(self, db):

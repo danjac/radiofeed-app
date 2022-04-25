@@ -147,3 +147,6 @@ class TestPodcastModel:
         og_data = podcast.get_opengraph_data(req)
         assert podcast.title in og_data["title"]
         assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
+
+    def test_get_subscribe_target(self):
+        return Podcast(id=12345).get_subscribe_target() == "subscribe-toggle-12345"
