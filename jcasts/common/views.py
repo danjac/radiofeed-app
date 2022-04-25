@@ -59,7 +59,7 @@ def robots(request: HttpRequest) -> HttpResponse:
                     f"Disallow: {url}"
                     for url in [
                         "/account/",
-                        "/favorites/",
+                        "/bookmarks/",
                         "/history/",
                     ]
                 ],
