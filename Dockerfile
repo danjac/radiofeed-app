@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER=1
 ENV PYTHONHASHSEED=random
 
-ENV NODE_VERSION 17.9.0
+ENV NODE_VERSION 18.0.0
 
 RUN curl "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" -O \
     && tar -xf "node-v$NODE_VERSION-linux-x64.tar.xz" \
