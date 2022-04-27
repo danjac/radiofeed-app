@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.conf import settings
-from django.core.paginator import InvalidPage, Page, Paginator
+from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest
 from django.template.response import TemplateResponse
@@ -10,39 +10,30 @@ from django.template.response import TemplateResponse
 def paginate(
     request: HttpRequest,
     object_list: list | QuerySet,
+    template_name: str,
+    pagination_template_name: str,
+    extra_context: dict | None = None,
+    target: str = "object-list",
     page_size: int = settings.DEFAULT_PAGE_SIZE,
     param: str = "page",
-    **kwargs,
-) -> Page:
+    **pagination_kwargs,
+) -> TemplateResponse:
+    """Renders a paginated response"""
 
     try:
-        return Paginator(object_list, page_size, **kwargs).page(
+        page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(
             int(request.GET.get(param, 1))
         )
     except (ValueError, InvalidPage):
         raise Http404("Invalid page")
 
-
-def render_paginated_list(
-    request: HttpRequest,
-    object_list: list | QuerySet,
-    template_name: str,
-    pagination_template_name: str,
-    extra_context: dict | None = None,
-    target: str = "object-list",
-    **pagination_kwargs,
-) -> TemplateResponse:
     return TemplateResponse(
         request,
         pagination_template_name
         if request.htmx and request.htmx.target == target
         else template_name,
         {
-            "page_obj": paginate(
-                request,
-                object_list,
-                **pagination_kwargs,
-            ),
+            "page_obj": page_obj,
             "pagination_target": target,
             "pagination_template": pagination_template_name,
         }

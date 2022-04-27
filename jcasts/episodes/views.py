@@ -20,7 +20,7 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.common.decorators import ajax_login_required
 from jcasts.common.http import HttpResponseConflict, HttpResponseNoContent
-from jcasts.common.paginate import render_paginated_list
+from jcasts.common.paginate import paginate
 from jcasts.episodes.models import AudioLog, Bookmark, Episode
 from jcasts.podcasts.models import Podcast
 
@@ -44,7 +44,7 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.filter(promoted=True)
 
-    return render_paginated_list(
+    return paginate(
         request,
         Episode.objects.filter(pub_date__gt=since)
         .select_related("podcast")
@@ -69,7 +69,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
 
-    return render_paginated_list(
+    return paginate(
         request,
         Episode.objects.select_related("podcast")
         .search(request.search.value)
@@ -183,7 +183,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
-    return render_paginated_list(
+    return paginate(
         request,
         logs.search(request.search.value).order_by("-rank", "-updated")
         if request.search
@@ -240,7 +240,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
-    return render_paginated_list(
+    return paginate(
         request,
         bookmarks.search(request.search.value).order_by("-rank", "-created")
         if request.search

@@ -40,7 +40,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
-if "debug_toolbar" in settings.INSTALLED_APPS:
+if "debug_toolbar" in settings.INSTALLED_APPS:  # pragma: no cover
 
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),

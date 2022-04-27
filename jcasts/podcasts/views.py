@@ -15,7 +15,7 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.common.decorators import ajax_login_required
 from jcasts.common.http import HttpResponseConflict
-from jcasts.common.paginate import render_paginated_list
+from jcasts.common.paginate import paginate
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
@@ -36,7 +36,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     promoted = "promoted" in request.GET or not subscribed
 
-    return render_paginated_list(
+    return paginate(
         request,
         podcasts.filter(promoted=True)
         if promoted
@@ -56,7 +56,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
-    return render_paginated_list(
+    return paginate(
         request,
         Podcast.objects.filter(pub_date__isnull=False)
         .search(request.search.value)
@@ -164,7 +164,7 @@ def episodes(
     else:
         episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
 
-    return render_paginated_list(
+    return paginate(
         request,
         episodes,
         "podcasts/episodes.html",
@@ -211,7 +211,7 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_paginated_list(
+    return paginate(
         request,
         podcasts,
         "podcasts/category_detail.html",
