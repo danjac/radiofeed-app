@@ -3,10 +3,11 @@ repos:
       rev: v4.2.0
       hooks:
           - id: trailing-whitespace
+            exclude: bundle.js|bundle.js.map|bundle.css
           - id: end-of-file-fixer
+            exclude: bundle.js|bundle.js.map|bundle.css
           - id: check-toml
           - id: check-yaml
-      exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/pycqa/isort
       rev: 5.10.1
       hooks:
