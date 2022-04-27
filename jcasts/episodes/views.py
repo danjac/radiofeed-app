@@ -54,7 +54,7 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date", "-id")
         .distinct(),
         "episodes/index.html",
-        "episodes/includes/episodes.html",
+        "episodes/pagination.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -75,7 +75,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         .search(request.search.value)
         .order_by("-rank", "-pub_date"),
         "episodes/search.html",
-        "episodes/includes/episodes.html",
+        "episodes/pagination.html",
     )
 
 
