@@ -7,7 +7,7 @@ from django.http import Http404, HttpRequest
 from django.template.response import TemplateResponse
 
 
-def paginate(
+def pagination_response(
     request: HttpRequest,
     object_list: list | QuerySet,
     template_name: str,
@@ -18,7 +18,7 @@ def paginate(
     param: str = "page",
     **pagination_kwargs,
 ) -> TemplateResponse:
-    """Renders a paginated response"""
+    """Renders a pagination_responsed response"""
 
     try:
         page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(

@@ -4,7 +4,7 @@ from django.http import Http404
 from django_htmx.middleware import HtmxDetails
 
 from jcasts.common.asserts import assert_ok
-from jcasts.common.paginate import paginate
+from jcasts.common.pagination import pagination_response
 from jcasts.podcasts.factories import PodcastFactory
 
 
@@ -13,14 +13,14 @@ def podcasts(db):
     return PodcastFactory.create_batch(30)
 
 
-class TestPaginate:
+class TestPaginationResponse:
     base_template = "podcasts/index.html"
     pagination_template = "podcasts/includes/podcasts.html"
 
     def test_render(self, rf, podcasts):
         req = rf.get("/")
         req.htmx = HtmxDetails(req)
-        resp = paginate(
+        resp = pagination_response(
             req,
             podcasts,
             self.base_template,
@@ -32,7 +32,7 @@ class TestPaginate:
     def test_render_htmx(self, rf, podcasts):
         req = rf.get("/", HTTP_HX_REQUEST="true")
         req.htmx = HtmxDetails(req)
-        resp = paginate(
+        resp = pagination_response(
             req,
             podcasts,
             self.base_template,
@@ -44,7 +44,7 @@ class TestPaginate:
     def test_render_htmx_pagination_target(self, rf, podcasts):
         req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="object-list")
         req.htmx = HtmxDetails(req)
-        resp = paginate(
+        resp = pagination_response(
             req,
             podcasts,
             self.base_template,
@@ -53,9 +53,9 @@ class TestPaginate:
         assert_ok(resp)
         assert resp.template_name == self.pagination_template
 
-    def test_paginate_invalid_page(self, rf, podcasts):
+    def test_invalid_page(self, rf, podcasts):
         with pytest.raises(Http404):
-            paginate(
+            pagination_response(
                 rf.get("/", {"page": "fubar"}),
                 podcasts,
                 self.base_template,
