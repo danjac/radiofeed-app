@@ -15,5 +15,4 @@ class Command(BaseCommand):
             for feed in itunes.crawl():
                 self.stdout.write(feed.title)
         except requests.RequestException as e:
-            print(e)
             raise CommandError from e
