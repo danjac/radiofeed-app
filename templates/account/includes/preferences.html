@@ -1,0 +1,23 @@
+
+<form method="post"
+    action="{{ request.path }}"
+    class="space-y-3"
+    novalidate
+    id="{{ target }}"
+    hx-target="this"
+    hx-swap="outerHTML"
+    hx-post="{{ request.path }}">
+
+    {% csrf_token %}
+    {{ form }}
+    <div>
+        <button class="inline-flex items-center btn btn-default">
+            {% icon "check" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+            Save Changes
+        </button>
+    </div>
+</form>
+
+{% if request.htmx.target == target %}
+    {% include "includes/messages.html" with hx_oob=True %}
+{% endif %}
