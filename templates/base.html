@@ -81,6 +81,7 @@
         </main>
     </div>
     {% if not request.htmx %}
+        </div>
         {% cookie_notice %}
 
         {% if user.is_authenticated %}
@@ -90,6 +91,7 @@
         {% endif %}
 
         {% include "includes/footer.html" %}
+        </div>
 
         {% django_htmx_script %}
 
