@@ -116,7 +116,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render_player_action(
+    return player_response(
         request,
         episode,
         current_time=log.current_time,
@@ -142,7 +142,7 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
                 current_time=0,
             )
 
-        return render_player_action(
+        return player_response(
             request,
             episode,
             completed=completed,
@@ -213,7 +213,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
         messages.success(request, "Episode marked complete")
 
-    return render_history_action(
+    return history_response(
         request,
         episode,
         listened=now,
@@ -231,7 +231,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         AudioLog.objects.filter(user=request.user, episode=episode).delete()
         messages.info(request, "Removed from History")
 
-    return render_history_action(request, episode)
+    return history_response(request, episode)
 
 
 @require_http_methods(["GET"])
@@ -261,7 +261,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "Added to Bookmarks")
-    return render_bookmark_action(request, episode, is_bookmarked=True)
+    return bookmark_response(request, episode, is_bookmarked=True)
 
 
 @require_http_methods(["DELETE"])
@@ -272,7 +272,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from Bookmarks")
-    return render_bookmark_action(request, episode, is_bookmarked=False)
+    return bookmark_response(request, episode, is_bookmarked=False)
 
 
 def get_episode_or_404(
@@ -290,7 +290,7 @@ def get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def render_player_action(
+def player_response(
     request: HttpRequest,
     episode: Episode,
     *,
@@ -312,7 +312,7 @@ def render_player_action(
     )
 
 
-def render_history_action(
+def history_response(
     request: HttpRequest,
     episode: Episode,
     listened: datetime | None = None,
@@ -329,7 +329,7 @@ def render_history_action(
     )
 
 
-def render_bookmark_action(
+def bookmark_response(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
     return TemplateResponse(
