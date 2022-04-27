@@ -234,6 +234,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "You are now subscribed to this podcast")
+
     return TemplateResponse(
         request,
         "podcasts/includes/subscribe_toggle.html",
