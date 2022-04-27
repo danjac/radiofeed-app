@@ -42,7 +42,7 @@ def index(request: HttpRequest) -> HttpResponse:
         if promoted
         else podcasts.filter(pk__in=subscribed),
         "podcasts/index.html",
-        "podcasts/pagination.html",
+        "podcasts/includes/pagination.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -65,7 +65,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "-pub_date",
         ),
         "podcasts/search.html",
-        "podcasts/pagination.html",
+        "podcasts/includes/pagination.html",
     )
 
 
@@ -168,7 +168,7 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
-        "episodes/pagination.html",
+        "episodes/includes/pagination.html",
         extra_context=None
         if request.htmx.target == "object-list"
         else get_podcast_detail_context(
@@ -217,7 +217,7 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        "podcasts/pagination.html",
+        "podcasts/includes/pagination.html",
         {"category": category},
     )
 
