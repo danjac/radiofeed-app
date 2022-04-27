@@ -6,6 +6,7 @@ repos:
           - id: end-of-file-fixer
           - id: check-toml
           - id: check-yaml
+      exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/pycqa/isort
       rev: 5.10.1
       hooks:
