@@ -234,7 +234,14 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "You are now subscribed to this podcast")
-    return subscribe_response(request, podcast, subscribed=True)
+    return TemplateResponse(
+        request,
+        "podcasts/includes/subscribe_toggle.html",
+        {
+            "podcast": podcast,
+            "subscribed": True,
+        },
+    )
 
 
 @require_http_methods(["POST"])
@@ -246,7 +253,14 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     messages.info(request, "You are no longer subscribed to this podcast")
 
-    return subscribe_response(request, podcast, subscribed=False)
+    return TemplateResponse(
+        request,
+        "podcasts/includes/subscribe_toggle.html",
+        {
+            "podcast": podcast,
+            "subscribed": False,
+        },
+    )
 
 
 def get_podcast_or_404(podcast_id: int) -> Podcast:
@@ -263,17 +277,3 @@ def get_podcast_detail_context(
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
         "num_episodes": Episode.objects.filter(podcast=podcast).count(),
     } | (extra_context or {})
-
-
-def subscribe_response(
-    request: HttpRequest, podcast: Podcast, subscribed: bool
-) -> TemplateResponse:
-
-    return TemplateResponse(
-        request,
-        "podcasts/includes/subscribe_toggle.html",
-        {
-            "podcast": podcast,
-            "subscribed": subscribed,
-        },
-    )

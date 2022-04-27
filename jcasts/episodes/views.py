@@ -116,11 +116,15 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return player_response(
+    return TemplateResponse(
         request,
-        episode,
-        current_time=log.current_time,
-        completed=log.completed,
+        "episodes/includes/player.html",
+        {
+            "episode": episode,
+            "is_playing": True,
+            "current_time": log.current_time,
+            "completed": log.completed,
+        },
     )
 
 
@@ -142,11 +146,14 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
                 current_time=0,
             )
 
-        return player_response(
+        return TemplateResponse(
             request,
-            episode,
-            completed=completed,
-            is_playing=False,
+            "episodes/includes/player.html",
+            {
+                "episode": episode,
+                "is_playing": False,
+                "completed": completed,
+            },
         )
 
     return HttpResponse()
@@ -213,11 +220,14 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
         messages.success(request, "Episode marked complete")
 
-    return history_response(
+    return TemplateResponse(
         request,
-        episode,
-        listened=now,
-        completed=now,
+        "episodes/includes/history_toggle.html",
+        {
+            "episode": episode,
+            "completed": now,
+            "listened": True,
+        },
     )
 
 
@@ -231,7 +241,11 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         AudioLog.objects.filter(user=request.user, episode=episode).delete()
         messages.info(request, "Removed from History")
 
-    return history_response(request, episode)
+    return TemplateResponse(
+        request,
+        "episodes/includes/history_toggle.html",
+        {"episode": episode},
+    )
 
 
 @require_http_methods(["GET"])
@@ -261,7 +275,15 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "Added to Bookmarks")
-    return bookmark_response(request, episode, is_bookmarked=True)
+
+    return TemplateResponse(
+        request,
+        "episodes/includes/bookmark_toggle.html",
+        {
+            "episode": episode,
+            "is_bookmarked": True,
+        },
+    )
 
 
 @require_http_methods(["DELETE"])
@@ -272,7 +294,15 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from Bookmarks")
-    return bookmark_response(request, episode, is_bookmarked=False)
+
+    return TemplateResponse(
+        request,
+        "episodes/includes/bookmark_toggle.html",
+        {
+            "episode": episode,
+            "is_bookmarked": False,
+        },
+    )
 
 
 def get_episode_or_404(
@@ -288,55 +318,3 @@ def get_episode_or_404(
     if with_current_time:
         qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
-
-
-def player_response(
-    request: HttpRequest,
-    episode: Episode,
-    *,
-    is_playing: bool = True,
-    completed: datetime | None = None,
-    current_time: int | None = None,
-):
-
-    return TemplateResponse(
-        request,
-        "episodes/includes/player.html",
-        {
-            "episode": episode,
-            "current_time": current_time,
-            "is_playing": is_playing,
-            "completed": completed,
-            "listened": timezone.now(),
-        },
-    )
-
-
-def history_response(
-    request: HttpRequest,
-    episode: Episode,
-    listened: datetime | None = None,
-    completed: datetime | None = None,
-) -> HttpResponse:
-    return TemplateResponse(
-        request,
-        "episodes/includes/history_toggle.html",
-        {
-            "episode": episode,
-            "listened": listened,
-            "completed": completed,
-        },
-    )
-
-
-def bookmark_response(
-    request: HttpRequest, episode: Episode, is_bookmarked: bool
-) -> HttpResponse:
-    return TemplateResponse(
-        request,
-        "episodes/includes/bookmark_toggle.html",
-        {
-            "episode": episode,
-            "is_bookmarked": is_bookmarked,
-        },
-    )
