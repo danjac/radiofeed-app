@@ -1,1 +1,103 @@
-{% extends request.htmx|yesno:"layout/hx_layout.html,layout/page_layout.html" %}
+{% spaceless %}
+    {% load static django_htmx player %}
+
+    {% if not request.htmx %}
+        <!DOCTYPE html>
+        <html lang="en">
+            <!--
+     __                           __
+    |__|  ____  _____     _______/  |_   ______
+    |  |_/ ___\ \__  \   /  ___/\   __\ /  ___/
+    |  |\  \___  / __ \_ \___ \  |  |   \___ \
+/\__|  | \___  >(____  //____  > |__|  /____  >
+\______|     \/      \/      \/             \/
+
+    -->
+            <head>
+    {% endif %}
+
+    <title>
+        {{ request.site.name }}{% block title %}{% endblock %}
+    </title>
+
+    {% if request.htmx %}
+        {% include "includes/signup_cta.html" with hx_oob=True %}
+    {% else %}
+        {% include "includes/meta.html" %}
+
+        <link rel="icon"
+            type="image/png"
+            href="{% static 'img/wave-ico.png' %}">
+
+        <link rel="apple-touch-icon image_src"
+            href="{% static 'img/apple-touch-icon.png' %}">
+
+        <link rel="stylesheet"
+            media="screen"
+            href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
+
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "url": "{% absolute_uri 'podcasts:index' %}",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?q={search_term_string}"
+                    },
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        </script>
+        </head>
+
+        <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm lg:text-base scroll-smooth"
+            hx-boost="true"
+            hx-target="#layout"
+            hx-swap="outerHTML show:window:top"
+            hx-indicator="#loader"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+            {% include "includes/hx_indicator.html" %}
+
+            <div class="flex flex-col h-screen">
+                <div class="flex-grow">
+                    {% include "includes/navbar.html" %}
+
+    {% endif %}
+
+    {% include "includes/messages.html" with hx_oob=request.htmx %}
+
+    <div hx-history-elt
+        id="layout"
+        class="flex relative p-2 pt-6 mx-auto xl:w-5/6 min-h-screen">
+        <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
+            {% include "includes/sidebar.html" %}
+        </aside>
+
+        <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% if not request.htmx %}
+        {% cookie_notice %}
+
+        {% if user.is_authenticated %}
+            <div id="player">
+                {% audio_player %}
+            </div>
+        {% endif %}
+
+        {% include "includes/footer.html" %}
+
+        {% django_htmx_script %}
+
+        <script defer src="{% static 'dist/bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
+
+        </body>
+
+        </html>
+    {% endif %}
+
+{% endspaceless %}
