@@ -23,9 +23,9 @@
             {% endif %}
         {% endwith %}
         {% include "forms/errors.html" with errors=field.errors %}
-        {% if help_text %}
+        {% if field.help_text %}
             <p class="text-gray-600 dark:text-gray-300">
-                {{ help_text }}
+                {{ field.help_text }}
             </p>
         {% endif %}
     </div>
