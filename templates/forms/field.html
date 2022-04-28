@@ -4,8 +4,8 @@
     {{ field }}
 {% else %}
     <div class="space-y-3">
-        {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" LABEL_CSS_CLASS=label_css_class|default:"flex items-center w-full font-semibold" %}
-            {% if field|widget_type == "checkboxinput" %}
+        {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" LABEL_CSS_CLASS=label_css_class|default:"flex items-center w-full font-semibold" widget_type=field|widget_type %}
+            {% if widget_type == "checkboxinput" %}
                 {% with css_class=css_class|default:'mr-3 dark:bg-gray-900' %}
                     <label class="{{ LABEL_CSS_CLASS }}">
                         {% render_field field class=css_class %}
