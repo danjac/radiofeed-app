@@ -164,7 +164,11 @@ def episodes(
     else:
         episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
 
-    extra_context = {"is_podcast_detail": True}
+    extra_context = {
+        "is_podcast_detail": True,
+        "newest_first": newest_first,
+        "oldest_first": not (newest_first),
+    }
 
     return pagination_response(
         request,
@@ -173,15 +177,7 @@ def episodes(
         "episodes/includes/pagination.html",
         extra_context=extra_context
         if request.htmx.target == "object-list"
-        else get_podcast_detail_context(
-            request,
-            podcast,
-            {
-                "newest_first": newest_first,
-                "oldest_first": not (newest_first),
-                **extra_context,
-            },
-        ),
+        else get_podcast_detail_context(request, podcast, extra_context),
     )
 
 
