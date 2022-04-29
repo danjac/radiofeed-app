@@ -2,7 +2,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ![desktop](/screenshots/desktop.png?raw=True)
 
-## Running jcasts on your local machine
+## Running podtracker on your local machine
 
 Local development requires:
 
@@ -56,7 +56,7 @@ Heroku deployment is supported. Deployment requires PostgreSQL and Redis buildpa
 The following environment variables should be set in your Heroku installation:
 
 ```
-    DJANGO_SETTINGS_MODULE='jcasts.settings.production'
+    DJANGO_SETTINGS_MODULE='podtracker.settings.production'
     ADMIN_URL='/some-random-url/'
     ADMINS='me@site.com'
     ALLOWED_HOSTS='my-domain'

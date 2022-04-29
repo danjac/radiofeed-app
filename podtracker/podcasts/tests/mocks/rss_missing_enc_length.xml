@@ -1,0 +1,1626 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss
+	version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+	xmlns:media="http://search.yahoo.com/mrss/"
+>
+	<channel>
+		<atom:link href="https://gomakethings.com/podcast/feed.rss" rel="self" type="application/rss+xml"/>
+		<title>The Vanilla JS Podcast</title>
+		<link>https://vanillajspodcast.com</link>
+		<pubDate>Sun, 14 Jan 2018 21:38:44 -4400</pubDate>
+		<lastBuildDate>Sun, 14 Jan 2018 21:38:44 -4400</lastBuildDate>
+		<ttl>60</ttl>
+		<language>en-us</language>
+		<copyright>All rights reserved</copyright>
+		<webMaster>chris@gomakethings.com</webMaster>
+		<description>A show about JavaScript for people who hate the complexity of modern front‑end web development.</description>
+		<itunes:subtitle>A show about JavaScript for people who hate the complexity of modern front‑end web development.</itunes:subtitle>
+		<itunes:summary>A show about JavaScript for people who hate the complexity of modern front‑end web development.</itunes:summary>
+		<itunes:owner>
+			<itunes:name>The Vanilla JS Podcast</itunes:name>
+			<itunes:email>chris@gomakethings.com</itunes:email>
+		</itunes:owner>
+		<itunes:author>Chris Ferdinandi</itunes:author>
+		<itunes:explicit>yes</itunes:explicit>
+		<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		<image>
+		  <url>https://vanillajspodcast.com/img/vanilla-js-podcast.jpg</url>
+		  <title>The Vanilla JS Podcast</title>
+		  <link>https://vanillajspodcast.com</link>
+		</image>
+		<itunes:category text="Technology"/><item>
+			<guid>https://vanillajspodcast.com/images-and-screen-readers/</guid>
+		    <title>Episode 71 - Images and screen readers</title>
+		    <pubDate>Tue, 24 Aug 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/images-and-screen-readers/</link>
+		    <itunes:duration>00:04:25</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about how to make images more accessible.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about how to make images more accessible.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about how to make images more accessible.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode71-images-and-screen-readers.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-mobile-is-the-web/</guid>
+		    <title>Episode 70 - The mobile IS the web</title>
+		    <pubDate>Tue, 17 Aug 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-mobile-is-the-web/</link>
+		    <itunes:duration>00:02:05</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about changes in how people are using the web, and why we should be building with more of a focus on mobile devices.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about changes in how people are using the web, and why we should be building with more of a focus on mobile devices.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about changes in how people are using the web, and why we should be building with more of a focus on mobile devices.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://twitter.com/seldo/status/1400567461976580099?s=20">Laurie&rsquo;s tweet</a></li>
+<li><a href="https://www.nielsen.com/us/en/insights/report/2020/the-nielsen-total-audience-report:-august-2020/">Nielsen Total Audience Report</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode70-the-mobile-is-the-web.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/sometimes-you-just-need-javascript/</guid>
+		    <title>Episode 69 - Sometimes you just need JavaScript</title>
+		    <pubDate>Tue, 10 Aug 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/sometimes-you-just-need-javascript/</link>
+		    <itunes:duration>00:02:46</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about how sometimes CSS and HTML can replace JavaScript, but sometimes they&rsquo;re not enough.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about how sometimes CSS and HTML can replace JavaScript, but sometimes they&rsquo;re not enough.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about how sometimes CSS and HTML can replace JavaScript, but sometimes they're not enough.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://calendar.perfplanet.com/2020/html-and-css-techniques-to-reduce-your-javascript/">HTML and CSS replacements for things that used to require JavaScript</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode69-sometimes-you-just-need-javascript.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/tech-interviews-suck/</guid>
+		    <title>Episode 68 - Tech interviews suck</title>
+		    <pubDate>Tue, 03 Aug 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/tech-interviews-suck/</link>
+		    <itunes:duration>00:02:28</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about why tech interviews suck so much, and how we might fix them.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about why tech interviews suck so much, and how we might fix them.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about why tech interviews suck so much, and how we might fix them.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://vanillajstoolkit.com/">The Vanilla JS Toolkit</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode68-tech-interviews-suck.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/accessibility-is-hard.-its-also-your-job./</guid>
+		    <title>Episode 67 - Accessibility is hard. It&#39;s also your job.</title>
+		    <pubDate>Tue, 27 Jul 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/accessibility-is-hard.-its-also-your-job./</link>
+		    <itunes:duration>00:05:55</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about accessibility, our role as web developers, and some tools that could make it easier.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about accessibility, our role as web developers, and some tools that could make it easier.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about accessibility, our role as web developers, and some tools that could make it easier.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://vanillajspodcast.com/theres-no-such-thing-as-a-website-or-web-app-that-doesnt-need-to-be-accessible/">Previous Episode: Theres no such thing as a website or web app that doesn&rsquo;t need to be accessible</a></li>
+<li><a href="https://www.w3.org/WAI/fundamentals/accessibility-intro/">A11Y Spec Documents</a></li>
+<li><a href="https://gomakethings.com/i-was-wrong-about-javascript-free-dropdowns/">I was wrong about dropdown menus</a></li>
+<li><a href="https://gomakethings.com/i-was-wrong-about-how-to-create-accessible-subtitles/">I was wrong about subheadings</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components">Web Components</a></li>
+<li><a href="https://webaim.org/projects/million/">WebAIM Accessibility Survey</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode67-a11y-is-hard-its-also-your-job.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-tools-you-use-dont-matter...-except-when-they-do/</guid>
+		    <title>Episode 66 - The tools you use don&#39;t matter... except when they do</title>
+		    <pubDate>Tue, 20 Jul 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-tools-you-use-dont-matter...-except-when-they-do/</link>
+		    <itunes:duration>00:02:23</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about the tools we use to build things for the web, when they matter, and when they don&rsquo;t.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about the tools we use to build things for the web, when they matter, and when they don&rsquo;t.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about the tools we use to build things for the web, when they matter, and when they don't.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://twitter.com/AbolitionOf/status/1372896425911062528">Dwayne&rsquo;s tweet</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode66-the-tools-you-use-dont-matter-except-when-they-do.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-modern-web-sucks-the-space-jam-website/</guid>
+		    <title>Episode 65 - The modern web sucks: the Space Jam website</title>
+		    <pubDate>Tue, 13 Jul 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-modern-web-sucks-the-space-jam-website/</link>
+		    <itunes:duration>00:02:50</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I look at a case study on why the web sucks, through the lens of the iconic Space Jam website.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I look at a case study on why the web sucks, through the lens of the iconic Space Jam website.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I look at a case study on why the web sucks, through the lens of the iconic Space Jam website.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://www.spacejam.com/1996/">The original Space Jam website</a></li>
+<li><a href="https://www.spacejam.com/">The new Space Jam website</a></li>
+<li><a href="https://mxb.dev/blog/space-jam/">Max&rsquo;s performance review</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode65-the-modern-web-sucks-space-jam.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/theres-no-such-thing-as-a-website-or-web-app-that-doesnt-need-to-be-accessible/</guid>
+		    <title>Episode 64 - Theres no such thing as a website or web app that doesn&#39;t need to be accessible</title>
+		    <pubDate>Mon, 22 Mar 2021 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/theres-no-such-thing-as-a-website-or-web-app-that-doesnt-need-to-be-accessible/</link>
+		    <itunes:duration>00:07:09</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about web accessibility, and whether or not everything we build needs to be accessible (spoiler, it does).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about web accessibility, and whether or not everything we build needs to be accessible (spoiler, it does).]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about web accessibility, and whether or not everything we build needs to be accessible (spoiler, it does).]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode64-theres-no-such-thing-as-a-website-or-web-app-that-doesnt-need-to-be-accessible.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/do-you-need-build-tools/</guid>
+		    <title>Episode 63 - Do you need build tools?</title>
+		    <pubDate>Tue, 12 Jan 2021 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/do-you-need-build-tools/</link>
+		    <itunes:duration>00:10:16</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about whether or not you need build tools as a web developer.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about whether or not you need build tools as a web developer.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about whether or not you need build tools as a web developer.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>GulpJS: <a href="https://gulpjs.com/">https://gulpjs.com/</a></li>
+<li>My GulpJS Boilerplate: <a href="https://github.com/cferdinandi/gulp-boilerplate/">https://github.com/cferdinandi/gulp-boilerplate/</a></li>
+<li>My Build Tool Boilerplate: <a href="https://github.com/cferdinandi/build-tool-boilerplate">https://github.com/cferdinandi/build-tool-boilerplate</a></li>
+<li>Hugo: <a href="https://gohugo.io/">https://gohugo.io/</a></li>
+<li>Rollup.js: <a href="http://rollupjs.org/guide/en/">http://rollupjs.org/guide/en/</a></li>
+<li>terser: <a href="https://terser.org/">https://terser.org/</a></li>
+<li>Sass: <a href="https://sass-lang.com/">https://sass-lang.com/</a></li>
+<li>SVGO: <a href="https://github.com/svg/svgo">https://github.com/svg/svgo</a></li>
+<li>Babel: <a href="https://babeljs.io/">https://babeljs.io/</a></li>
+<li>Typescript: <a href="https://www.typescriptlang.org/">https://www.typescriptlang.org/</a></li>
+<li>CodeKit: <a href="https://codekitapp.com/">https://codekitapp.com/</a></li>
+<li>Prepros: <a href="https://prepros.io/">https://prepros.io/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode63-do-you-need-build-tools.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/entropy-developer-experience-and-vanilla-js/</guid>
+		    <title>Episode 62 - Entropy, developer experience, and vanilla JS</title>
+		    <pubDate>Tue, 01 Dec 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/entropy-developer-experience-and-vanilla-js/</link>
+		    <itunes:duration>00:04:10</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about entropy, developer experience, and vanilla JS.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about entropy, developer experience, and vanilla JS.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about entropy, developer experience, and vanilla JS.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>&ldquo;Cheating Entropy with Native Web Technologies&rdquo; by Jim Nielsen: <a href="https://blog.jim-nielsen.com/2020/cheating-entropy-with-native-web-tech/">https://blog.jim-nielsen.com/2020/cheating-entropy-with-native-web-tech/</a></li>
+<li>The Lean Web: <a href="https://leanweb.dev">https://leanweb.dev</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode62-entropy-developer-experience-and-vanilla-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-challenges-of-being-ethical-in-tech/</guid>
+		    <title>Episode 61 - The challenges of being ethical in tech</title>
+		    <pubDate>Tue, 24 Nov 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/the-challenges-of-being-ethical-in-tech/</link>
+		    <itunes:duration>00:12:29</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about the challenges of being ethical in tech, and the hidden choices we don&rsquo;t even realize we&rsquo;re making.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about the challenges of being ethical in tech, and the hidden choices we don&rsquo;t even realize we&rsquo;re making.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about the challenges of being ethical in tech, and the hidden choices we don't even realize we're making.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Michael from the Good Place on the ethical dilemma of modern life: <a href="https://www.youtube.com/watch?v=R8m_5HDZF7w&amp;feature=youtu.be&amp;t=100">https://www.youtube.com/watch?v=R8m_5HDZF7w&amp;feature=youtu.be&amp;t=100</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode61-ethics-in-tech.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/mostly-html-some-css-and-a-little-js/</guid>
+		    <title>Episode 60 - Mostly HTML, some CSS, and a little JS</title>
+		    <pubDate>Tue, 17 Nov 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/mostly-html-some-css-and-a-little-js/</link>
+		    <itunes:duration>00:04:43</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about HTML, why its awesome, and my hope for the future of the web.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about HTML, why its awesome, and my hope for the future of the web.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about HTML, why its awesome, and my hope for the future of the web.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Progressively enhanced accordions: <a href="https://gomakethings.com/how-to-build-a-progressively-enhanced-accordion-component-with-vanilla-js/">https://gomakethings.com/how-to-build-a-progressively-enhanced-accordion-component-with-vanilla-js/</a></li>
+<li>Web Components: <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components">https://developer.mozilla.org/en-US/docs/Web/Web_Components</a></li>
+<li>An example of interactive HTML: <a href="https://gomakethings.com/mostly-html-some-css-and-a-little-js/">https://gomakethings.com/mostly-html-some-css-and-a-little-js/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode60-html-css-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/callbacks-vs.-custom-events-in-vanilla-js/</guid>
+		    <title>Episode 59 - Callbacks vs. custom events in vanilla JS</title>
+		    <pubDate>Tue, 10 Nov 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/callbacks-vs.-custom-events-in-vanilla-js/</link>
+		    <itunes:duration>00:07:25</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about callbacks vs. custom events: what they are, and when you should use one over the other.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about callbacks vs. custom events: what they are, and when you should use one over the other.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about callbacks vs. custom events: what they are, and when you should use one over the other.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Code examples: <a href="https://gomakethings.com/callbacks-vs.-custom-events-in-vanilla-js/">https://gomakethings.com/callbacks-vs.-custom-events-in-vanilla-js/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode59-callbacks-and-custom-events.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-end-of-internet-explorer/</guid>
+		    <title>Episode 58 - The end of Internet Explorer</title>
+		    <pubDate>Tue, 03 Nov 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-end-of-internet-explorer/</link>
+		    <itunes:duration>00:05:18</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about the end of Internet Explorer.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about the end of Internet Explorer.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about the end of Internet Explorer.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Microsoft&rsquo;s announcement about sunsetting IE support in MS365 apps: <a href="https://techcommunity.microsoft.com/t5/microsoft-365-blog/microsoft-365-apps-say-farewell-to-internet-explorer-11-and/ba-p/1591666">https://techcommunity.microsoft.com/t5/microsoft-365-blog/microsoft-365-apps-say-farewell-to-internet-explorer-11-and/ba-p/1591666</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode58-the-end-of-ie.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/how-performant-is-vanilla-js/</guid>
+		    <title>Episode 57 - How performant is vanilla JS?</title>
+		    <pubDate>Tue, 27 Oct 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/how-performant-is-vanilla-js/</link>
+		    <itunes:duration>00:06:44</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about vanilla JS performance, and working with code at scale.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about vanilla JS performance, and working with code at scale.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about vanilla JS performance, and working with code at scale.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Zach Leatherman about HTML vs. JS performance: <a href="https://twitter.com/zachleat/status/1169998370041208832">https://twitter.com/zachleat/status/1169998370041208832</a></li>
+<li>Jeremy Wagner&rsquo;s research on React vs. Preact vs. Vanilla JS performance: <a href="https://css-tricks.com/radeventlistener-a-tale-of-client-side-framework-performance/">https://css-tricks.com/radeventlistener-a-tale-of-client-side-framework-performance/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode57-how-performant-is-vanilla-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/when-should-you-use-a-framework/</guid>
+		    <title>Episode 56 - When should you use a framework?</title>
+		    <pubDate>Wed, 26 Aug 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/when-should-you-use-a-framework/</link>
+		    <itunes:duration>00:03:31</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about when you should use a framework (and when you should use vanilla JS instead).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about when you should use a framework (and when you should use vanilla JS instead).]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about when you should use a framework (and when you should use vanilla JS instead).
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://gomakethings.com/how-to-create-a-reactive-state-based-ui-component-with-vanilla-js-proxies/">State-based UI</a></li>
+<li><a href="https://gomakethings.com/dom-diffing-with-vanilla-js/">DOM Diffing</a></li>
+<li><a href="https://preactjs.com/">Preact</a></li>
+<li><a href="https://github.com/alpinejs/alpine/">AlpineJS</a></li>
+<li><a href="https://reefjs.com/">ReefJS</a></li>
+<li><a href="https://timkadlec.com/remembers/2020-04-21-the-cost-of-javascript-frameworks/">The cost of JavaScript frameworks</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode56-when-should-you-use-a-framework.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-most-common-myth-about-vanilla-js/</guid>
+		    <title>Episode 55 - The most common myth about vanilla JS</title>
+		    <pubDate>Wed, 19 Aug 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-most-common-myth-about-vanilla-js/</link>
+		    <itunes:duration>00:06:02</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about the most common myth about vanilla JS.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about the most common myth about vanilla JS.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about the most common myth about vanilla JS.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://dinerojs.com/">Dinero.js</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat">The <code>Intl.NumberFormat()</code> method</a></li>
+<li><a href="https://timkadlec.com/remembers/2020-04-21-the-cost-of-javascript-frameworks/">The cost of JavaScript frameworks</a></li>
+<li><a href="https://webaim.org/projects/million/">Frameworks and accessibility issues</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode55-the-most-common-myth-about-vanilla-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/code-get-stuck-research-repeat/</guid>
+		    <title>Episode 54 - Code get stuck research repeat</title>
+		    <pubDate>Mon, 29 Jun 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/code-get-stuck-research-repeat/</link>
+		    <itunes:duration>00:01:59</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about my development process.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about my development process.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about my development process.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Vanilla JS Projects: <a href="https://vanillajsprepschool.com">https://vanillajsprepschool.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode54-code-get-stuck-research-repeat.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/always-bet-on-html/</guid>
+		    <title>Episode 53 - Always bet on HTML</title>
+		    <pubDate>Tue, 23 Jun 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/always-bet-on-html/</link>
+		    <itunes:duration>00:08:29</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about HTML, the best language in the front end stack.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about HTML, the best language in the front end stack.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about HTML, the best language in the front end stack.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>HTML accordions/disclosures: <a href="https://vanillajstoolkit.com/reference/javascript-free/accordions/">https://vanillajstoolkit.com/reference/javascript-free/accordions/</a></li>
+<li>HTML autocomplete: <a href="https://vanillajstoolkit.com/reference/javascript-free/autocomplete/">https://vanillajstoolkit.com/reference/javascript-free/autocomplete/</a></li>
+<li>Hey Email: <a href="https://www.hey.com/">https://www.hey.com/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode53-always-bet-on-html.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/can-junior-developers-ask-too-many-questions/</guid>
+		    <title>Episode 52 - Can junior developers ask too many questions?</title>
+		    <pubDate>Tue, 26 May 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/can-junior-developers-ask-too-many-questions/</link>
+		    <itunes:duration>00:02:37</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I answer the question: can junior developers ask too many questions?]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I answer the question: can junior developers ask too many questions?]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I answer the question: can junior developers ask too many questions?]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode52-can-junior-developers-ask-too-many-questions.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/own-your-platform/</guid>
+		    <title>Episode 51 - Own your platform</title>
+		    <pubDate>Mon, 18 May 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/own-your-platform/</link>
+		    <itunes:duration>00:04:52</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about the importance of owning your platform on the web.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about the importance of owning your platform on the web.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about the importance of owning your platform on the web.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Laurie&rsquo;s original tweets: <a href="https://twitter.com/seldo/status/1256003526141960192">https://twitter.com/seldo/status/1256003526141960192</a></li>
+<li>Svelte: <a href="https://svelte.dev/">https://svelte.dev/</a></li>
+<li>ReefJS: <a href="https://reefjs.com">https://reefjs.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode51-own-your-platform.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/you-dont-get-a-free-pass-on-web-performance-just-because-you-built-an-app/</guid>
+		    <title>Episode 50 - You don&#39;t get a free pass on web performance just because you built an app</title>
+		    <pubDate>Thu, 07 May 2020 09:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/you-dont-get-a-free-pass-on-web-performance-just-because-you-built-an-app/</link>
+		    <itunes:duration>00:07:30</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about web performance, and whether or not web apps should be held to different standards than traditional websites.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about web performance, and whether or not web apps should be held to different standards than traditional websites.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about web performance, and whether or not web apps should be held to different standards than traditional websites.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>&ldquo;The Cost of JavaScript Frameworks&rdquo; by Tim Kadlec: <a href="https://timkadlec.com/remembers/2020-04-21-the-cost-of-javascript-frameworks/">https://timkadlec.com/remembers/2020-04-21-the-cost-of-javascript-frameworks/</a></li>
+<li>ReefJS: <a href="https://reefjs.com/">https://reefjs.com/</a></li>
+<li>Preact: <a href="https://preactjs.com/">https://preactjs.com/</a></li>
+<li>Svelte: <a href="http://svelte.dev/">http://svelte.dev/</a></li>
+<li>Maintainable CSS: <a href="https://maintainablecss.com/">https://maintainablecss.com/</a></li>
+<li>Inlining literally everything for better performance: <a href="https://gomakethings.com/inlining-literally-everything-for-better-performance/">https://gomakethings.com/inlining-literally-everything-for-better-performance/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode50-you-dont-get-a-free-pass-on-web-performance-just-because-you-built-an-app.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/how-to-make-the-transition-from-beginner-to-advanced-developer/</guid>
+		    <title>Episode 49 - How to make the transition from beginner to advanced developer</title>
+		    <pubDate>Tue, 07 Apr 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/how-to-make-the-transition-from-beginner-to-advanced-developer/</link>
+		    <itunes:duration>00:07:20</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about how to make the transition from beginner to advanced developer.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about how to make the transition from beginner to advanced developer.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about how to make the transition from beginner to advanced developer.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>The Vanilla JS Academy: <a href="https://vanillajsacademy.com">https://vanillajsacademy.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode49-how-to-make-the-transition-from-beginner-to-advanced-developer.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/everything-you-ever-wanted-to-know-about-polyfills/</guid>
+		    <title>Episode 48 - Everything you ever wanted to know about polyfills</title>
+		    <pubDate>Tue, 31 Mar 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/everything-you-ever-wanted-to-know-about-polyfills/</link>
+		    <itunes:duration>00:17:42</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about polyfills: what they are, why I love them, and how to write your own.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about polyfills: what they are, why I love them, and how to write your own.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about polyfills: what they are, why I love them, and how to write your own.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Polyfill.io: <a href="https://polyfill.io/">https://polyfill.io/</a></li>
+<li>Polyfill examples: <a href="https://gist.github.com/cferdinandi/e3bc14f7d9dece812d4124b9609ee3ea">https://gist.github.com/cferdinandi/e3bc14f7d9dece812d4124b9609ee3ea</a></li>
+<li>Vanilla JS Prep School: <a href="https://vanillajsprepschool.com/">https://vanillajsprepschool.com/</a></li>
+<li>Career Guide: <a href="https://gomakethings.com/career-guide/">https://gomakethings.com/career-guide/</a></li>
+<li>Pocket Guides &amp; Courses: <a href="https://vanillajsguides.com/">https://vanillajsguides.com/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode48-everything-you-ever-wanted-to-know-about-polyfills.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/we-are-the-helpers/</guid>
+		    <title>Episode 47 - We are the helpers</title>
+		    <pubDate>Tue, 24 Mar 2020 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/we-are-the-helpers/</link>
+		    <itunes:duration>00:08:56</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about Mr. Rogers, and helping in a time of crisis.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about Mr. Rogers, and helping in a time of crisis.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about Mr. Rogers, and helping in a time of crisis.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Stay the fuck home: <a href="https://staythefuckhome.com/">https://staythefuckhome.com/</a></li>
+<li>The Social Distance Game: <a href="https://socialdistancegame.com/">https://socialdistancegame.com/</a></li>
+<li>Feeding American: <a href="https://www.feedingamerica.org/find-your-local-foodbank">https://www.feedingamerica.org/find-your-local-foodbank</a></li>
+<li>The Web Developer Career Guide: <a href="https://gomakethings.com/career-guide">https://gomakethings.com/career-guide</a></li>
+<li>The Vanilla JS Guides Starter Bundle: <a href="https://vanillajsguides.com/starter-bundle/">https://vanillajsguides.com/starter-bundle/</a></li>
+<li>Vanilla JS Prep School: <a href="https://vanillajsprepschool.com">https://vanillajsprepschool.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode47-we-are-the-helpers.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/all-about-that-jamstack/</guid>
+		    <title>Episode 46 - All about that JAMStack</title>
+		    <pubDate>Tue, 17 Mar 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/all-about-that-jamstack/</link>
+		    <itunes:duration>00:19:24</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about the JAMStack: why it&rsquo;s awesome, why it&rsquo;s not, and some resources to get started.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about the JAMStack: why it&rsquo;s awesome, why it&rsquo;s not, and some resources to get started.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about the JAMStack: why it's awesome, why it's not, and some resources to get started.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Nicole Sullivan&rsquo;s OOCSS: <a href="https://www.slideshare.net/stubbornella/object-oriented-css">https://www.slideshare.net/stubbornella/object-oriented-css</a></li>
+<li>GitHub Pages: <a href="https://pages.github.com/">https://pages.github.com/</a></li>
+<li>Netlify: <a href="https://www.netlify.com/">https://www.netlify.com/</a></li>
+<li>DigitalOcean: <a href="https://www.digitalocean.com/">https://www.digitalocean.com/</a></li>
+<li>ServerPilot: <a href="https://serverpilot.io/">https://serverpilot.io/</a></li>
+<li>My hosting setup: <a href="https://gomakethings.com/automating-the-deployment-of-your-static-site-with-hugo-and-github/">https://gomakethings.com/automating-the-deployment-of-your-static-site-with-hugo-and-github/</a></li>
+<li>The GitHub desktop app: <a href="https://desktop.github.com/">https://desktop.github.com/</a></li>
+<li>Hugo: <a href="https://gohugo.io/">https://gohugo.io/</a></li>
+<li>My Hugo starter project: <a href="https://github.com/cferdinandi/hugo-starter">https://github.com/cferdinandi/hugo-starter</a></li>
+<li>Jekyll: <a href="https://jekyllrb.com/">https://jekyllrb.com/</a></li>
+<li>11ty: <a href="https://www.11ty.dev/">https://www.11ty.dev/</a></li>
+<li>Gatsby: <a href="https://www.gatsbyjs.org/">https://www.gatsbyjs.org/</a></li>
+<li>NetlifyCMS: <a href="https://www.netlifycms.org/">https://www.netlifycms.org/</a></li>
+<li>Forestry: <a href="https://forestry.io/">https://forestry.io/</a></li>
+<li>WordPress: <a href="https://wordpress.org/">https://wordpress.org/</a></li>
+<li>The WP Content API: <a href="https://developer.wordpress.org/rest-api/">https://developer.wordpress.org/rest-api/</a></li>
+<li>Creating a middleman API: <a href="https://gomakethings.com/keeping-credentials-secure-when-making-api-calls-with-javascript/">https://gomakethings.com/keeping-credentials-secure-when-making-api-calls-with-javascript/</a></li>
+<li>Headless WordPress: <a href="https://gomakethings.com/keeping-credentials-secure-when-making-api-calls-with-javascript/">https://gomakethings.com/keeping-credentials-secure-when-making-api-calls-with-javascript/</a></li>
+<li>Netlify Functions: <a href="https://docs.netlify.com/functions/overview/">https://docs.netlify.com/functions/overview/</a></li>
+<li>Cloudflare Workers: <a href="https://blog.cloudflare.com/introducing-cloudflare-workers/">https://blog.cloudflare.com/introducing-cloudflare-workers/</a></li>
+<li>My cronjob setup: <a href="https://gomakethings.com/how-to-schedule-posts-with-a-static-website/">https://gomakethings.com/how-to-schedule-posts-with-a-static-website/</a></li>
+<li>Hooks and triggers with Netlify: <a href="https://humanwhocodes.com/blog/2019/10/scheduling-jekyll-posts-netlify-github-actions/">https://humanwhocodes.com/blog/2019/10/scheduling-jekyll-posts-netlify-github-actions/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode46-all-about-that-jamstack.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/replacing-javascript-with-html-and-css/</guid>
+		    <title>Episode 45 - Replacing JavaScript with HTML and CSS</title>
+		    <pubDate>Tue, 10 Mar 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/replacing-javascript-with-html-and-css/</link>
+		    <itunes:duration>00:11:00</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about replacing JavaScript with HTML and CSS (and why it&rsquo;s a good thing).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about replacing JavaScript with HTML and CSS (and why it&rsquo;s a good thing).]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about replacing JavaScript with HTML and CSS (and why it's a good thing).
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>The <code>position: sticky</code> property: <a href="https://gomakethings.com/how-to-create-a-sticky-navigation-with-only-css/">https://gomakethings.com/how-to-create-a-sticky-navigation-with-only-css/</a></li>
+<li>The <code>scroll-margin-top</code> property: <a href="https://gomakethings.com/how-to-prevent-anchor-links-from-scrolling-behind-a-sticky-header-with-one-line-of-css/">https://gomakethings.com/how-to-prevent-anchor-links-from-scrolling-behind-a-sticky-header-with-one-line-of-css/</a></li>
+<li>The <code>scroll-behavior: smooth</code> property: <a href="https://gomakethings.com/how-to-animate-scrolling-to-anchor-links-with-one-line-of-css/">https://gomakethings.com/how-to-animate-scrolling-to-anchor-links-with-one-line-of-css/</a></li>
+<li>Autocomplete inputs with the <code>datalist</code> element: <a href="https://gomakethings.com/how-to-create-an-autocomplete-input-with-only-html/">https://gomakethings.com/how-to-create-an-autocomplete-input-with-only-html/</a></li>
+<li>Disclosure components with <code>details</code> and <code>summary</code>: <a href="https://gomakethings.com/javascript-free-accordions/">https://gomakethings.com/javascript-free-accordions/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode45-replacing-js-with-html-and-css.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/why-write-vanilla-js-when-you-can-just-use-insert-library-or-framework-here/</guid>
+		    <title>Episode 44 - Why write vanilla JS when you can just use [insert library or framework here]?</title>
+		    <pubDate>Tue, 03 Mar 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/why-write-vanilla-js-when-you-can-just-use-insert-library-or-framework-here/</link>
+		    <itunes:duration>00:04:51</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about why I write vanilla JS when there are so many third-party solutions that already exist.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about why I write vanilla JS when there are so many third-party solutions that already exist.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about why I write vanilla JS when there are so many third-party solutions that already exist.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://leanweb.dev/">The Lean Web</a></li>
+<li><a href="https://vanillajspodcast.com/tools-and-developer-habits/">Tools and developer habits</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode44-why-write-vanilla-js-when-third-party-tools-exist.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/fetch-vs.-xhr-performance-for-making-api-calls/</guid>
+		    <title>Episode 43 - fetch() vs. XHR performance for making API calls</title>
+		    <pubDate>Tue, 25 Feb 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/fetch-vs.-xhr-performance-for-making-api-calls/</link>
+		    <itunes:duration>00:05:14</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about something new I learned last week: that <code>fetch()</code> can actually be more performant than XHR for making API calls.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about something new I learned last week: that <code>fetch()</code> can actually be more performant than XHR for making API calls.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about something new I learned last week: that `fetch()` can actually be more performant than XHR for making API calls.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>My switch from XHR to <code>fetch()</code> - <a href="https://gomakethings.com/how-to-use-the-fetch-api-with-vanilla-js/">https://gomakethings.com/how-to-use-the-fetch-api-with-vanilla-js/</a></li>
+<li>Alex Russell on why <code>fetch()</code> can be faster - <a href="https://twitter.com/slightlylate/status/1185017213268287488">https://twitter.com/slightlylate/status/1185017213268287488</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode43-fetch-performance-vs-xhr.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/tools-and-developer-habits/</guid>
+		    <title>Episode 42 - Tools and developer habits</title>
+		    <pubDate>Tue, 11 Feb 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/tools-and-developer-habits/</link>
+		    <itunes:duration>00:07:58</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today’s episode, I talk about the tools we use, and the bad habits they create.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today’s episode, I talk about the tools we use, and the bad habits they create.]]></itunes:subtitle>
+		    <description><![CDATA[ In today’s episode, I talk about the tools we use, and the bad habits they create.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Event delegation: <a href="https://gomakethings.com/why-event-delegation-is-a-better-way-to-listen-for-events-in-vanilla-js/">https://gomakethings.com/why-event-delegation-is-a-better-way-to-listen-for-events-in-vanilla-js/</a></li>
+<li>Justin Makeig on why React works this way: <a href="https://twitter.com/jmakeig/status/1225487763778265088">https://twitter.com/jmakeig/status/1225487763778265088</a></li>
+<li>The WebAIM Survey: <a href="https://gomakethings.com/we-are-actively-destroying-the-web/">https://gomakethings.com/we-are-actively-destroying-the-web/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode42-tools-and-developer-habits.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/no-a-framework-is-not-faster-than-vanilla-js-dom-manipulation-but-it-can-be/</guid>
+		    <title>Episode 41 - No, a framework is not faster than vanilla JS DOM manipulation (but it can be)</title>
+		    <pubDate>Tue, 21 Jan 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/no-a-framework-is-not-faster-than-vanilla-js-dom-manipulation-but-it-can-be/</link>
+		    <itunes:duration>00:09:18</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today&rsquo;s episode, I talk about frameworks, DOM manipulation, and web performance.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today&rsquo;s episode, I talk about frameworks, DOM manipulation, and web performance.]]></itunes:subtitle>
+		    <description><![CDATA[ In today's episode, I talk about frameworks, DOM manipulation, and web performance.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Simple DOM Manipulation: <a href="https://codepen.io/cferdinandi/pen/abzjXMg">https://codepen.io/cferdinandi/pen/abzjXMg</a></li>
+<li>Marking as complete: <a href="https://codepen.io/cferdinandi/pen/dyPjryG">https://codepen.io/cferdinandi/pen/dyPjryG</a></li>
+<li>State-based UI: <a href="https://codepen.io/cferdinandi/pen/qBEyvPN">https://codepen.io/cferdinandi/pen/qBEyvPN</a></li>
+<li>Preact: <a href="https://preactjs.com/">https://preactjs.com/</a></li>
+<li>Svelte: <a href="https://svelte.dev/">https://svelte.dev/</a></li>
+<li>Reef: <a href="https://github.com/cferdinandi/reef">https://github.com/cferdinandi/reef</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode41-no-a-framework-is-not-faster-than-vanilla-js-dom-manipulation.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/i-3-the-cascade/</guid>
+		    <title>Episode 40 - I &lt;3 the cascade</title>
+		    <pubDate>Tue, 14 Jan 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/i-3-the-cascade/</link>
+		    <itunes:duration>00:03:52</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today&rsquo;s episode, I talk about <em>the cascade</em>&mdash;the &ldquo;C&rdquo; in CSS&mdash;and why it&rsquo;s awesome.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today&rsquo;s episode, I talk about <em>the cascade</em>&mdash;the &ldquo;C&rdquo; in CSS&mdash;and why it&rsquo;s awesome.]]></itunes:subtitle>
+		    <description><![CDATA[ In today's episode, I talk about <em>the cascade</em>&mdash;the "C" in CSS&mdash;and why it's awesome.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Code examples from this show: <a href="https://gomakethings.com/i-3-the-cascade/">https://gomakethings.com/i-3-the-cascade/</a></li>
+<li>Scoping in JavaScript: <a href="https://gomakethings.com/the-anatomy-of-an-immediately-invoked-function-expression/">https://gomakethings.com/the-anatomy-of-an-immediately-invoked-function-expression/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode40-i-love-the-cascade.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/html-is-a-living-language/</guid>
+		    <title>Episode 39 - HTML is a living language</title>
+		    <pubDate>Tue, 07 Jan 2020 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/html-is-a-living-language/</link>
+		    <itunes:duration>00:10:48</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today&rsquo;s episode, I talk about how HTML is a living language.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today&rsquo;s episode, I talk about how HTML is a living language.]]></itunes:subtitle>
+		    <description><![CDATA[ In today's episode, I talk about how HTML is a living language.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Alex Russell&rsquo;s tweet: <a href="https://twitter.com/slightlylate/status/1206765639777443840">https://twitter.com/slightlylate/status/1206765639777443840</a></li>
+<li>Browser-native date pickers: <a href="https://gomakethings.com/how-to-check-if-a-browser-supports-native-input-date-pickers/">https://gomakethings.com/how-to-check-if-a-browser-supports-native-input-date-pickers/</a></li>
+<li><code>picture</code> and <code>srcset</code>: <a href="https://gomakethings.com/better-responsive-images/">https://gomakethings.com/better-responsive-images/</a></li>
+<li><code>async</code> and <code>defer</code>: <a href="https://gomakethings.com/when-should-you-add-the-defer-attribute-to-the-script-element/">https://gomakethings.com/when-should-you-add-the-defer-attribute-to-the-script-element/</a></li>
+<li>Preloading: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content">https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content</a></li>
+<li>Lazy loading images and iframes: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes">https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes</a></li>
+<li>Images and aspect ratio: <a href="https://www.youtube.com/watch?v=4-d_SoCHeWE&amp;t=513s">https://www.youtube.com/watch?v=4-d_SoCHeWE&amp;t=513s</a></li>
+<li>Dave Rupert on <code>details</code> and <code>summary</code>: <a href="https://daverupert.com/2019/12/why-details-is-not-an-accordion/">https://daverupert.com/2019/12/why-details-is-not-an-accordion/</a></li>
+<li>Scott O&rsquo;Hara on the <code>dialog</code> element: <a href="https://www.scottohara.me/blog/2019/03/05/open-dialog.html">https://www.scottohara.me/blog/2019/03/05/open-dialog.html</a></li>
+<li>Adrian Rosselli&rsquo;s article on the <code>toast</code> element: <a href="https://adrianroselli.com/2019/06/scraping-burned-toast.html">https://adrianroselli.com/2019/06/scraping-burned-toast.html</a></li>
+<li>Jon Lunman&rsquo;s history of the browser wars: <a href="https://gomakethings.com/the-browser-wars-an-abridged-history/">https://gomakethings.com/the-browser-wars-an-abridged-history/</a></li>
+<li>The web is not dying: <a href="https://vanillajspodcast.com/the-web-is-not-dying/">https://vanillajspodcast.com/the-web-is-not-dying/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode39-html-is-a-living-language.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-defer-attribute/</guid>
+		    <title>Episode 38 - The defer attribute</title>
+		    <pubDate>Tue, 17 Dec 2019 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/the-defer-attribute/</link>
+		    <itunes:duration>00:06:36</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today&rsquo;s episode, I talk about the <code>defer</code> attribute: what it is, and when you should use it.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today&rsquo;s episode, I talk about the <code>defer</code> attribute: what it is, and when you should use it.]]></itunes:subtitle>
+		    <description><![CDATA[ In today's episode, I talk about the `defer` attribute: what it is, and when you should use it.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>&ldquo;You probably don&rsquo;t need a <code>DOMContentLoaded</code> event in your JavaScript&rdquo;: <a href="https://gomakethings.com/you-probably-dont-need-a-domcontentloaded-event-in-your-javascript/">https://gomakethings.com/you-probably-dont-need-a-domcontentloaded-event-in-your-javascript/</a></li>
+<li>Katie Sylor-Miller&rsquo;s conversation with me: <a href="https://twitter.com/ksylor/status/1202978748406095873">https://twitter.com/ksylor/status/1202978748406095873</a></li>
+<li>Aaron Peters&rsquo;s conversation with me: <a href="https://twitter.com/aaronpeters/status/1202977667361976320">https://twitter.com/aaronpeters/status/1202977667361976320</a></li>
+<li>Oh shit, git!?!: <a href="https://ohshitgit.com/">https://ohshitgit.com/</a></li>
+<li>&ldquo;Inlining literally everything for better performance&rdquo;: <a href="https://gomakethings.com/inlining-literally-everything-for-better-performance/">https://gomakethings.com/inlining-literally-everything-for-better-performance/</a></li>
+<li>Flavio on JS loading performance: <a href="https://flaviocopes.com/javascript-async-defer/">https://flaviocopes.com/javascript-async-defer/</a></li>
+<li>Steve Griffith on <code>async</code> and <code>defer</code>: <a href="https://www.youtube.com/watch?v=OKi3MX5N2mU">https://www.youtube.com/watch?v=OKi3MX5N2mU</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode38-the-defer-attribute.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/james-williamson-and-a-web-for-everyone/</guid>
+		    <title>Episode 37 - James Williamson and a web for everyone</title>
+		    <pubDate>Tue, 10 Dec 2019 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/james-williamson-and-a-web-for-everyone/</link>
+		    <itunes:duration>00:07:32</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In today&rsquo;s episode, I talk about James Williamson&rsquo;s vision for the future of the web, and how close to it (or far away from it) we&rsquo;ve come in the last five years.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In today&rsquo;s episode, I talk about James Williamson&rsquo;s vision for the future of the web, and how close to it (or far away from it) we&rsquo;ve come in the last five years.]]></itunes:subtitle>
+		    <description><![CDATA[ In today's episode, I talk about James Williamson's vision for the future of the web, and how close to it (or far away from it) we've come in the last five years.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>James Williamson&rsquo;s website: <a href="http://simpleprimate.com">http://simpleprimate.com</a></li>
+<li>A Web for Everyone Slides: <a href="https://www.slideshare.net/jameswillweb/everyone-39758731">https://www.slideshare.net/jameswillweb/everyone-39758731</a></li>
+<li>James&rsquo;s courses on LinkedIn Learning: <a href="https://www.lynda.com/James-Williamson/128-1.html">https://www.lynda.com/James-Williamson/128-1.html</a></li>
+<li>James&rsquo;s Obituary: <a href="http://www.charlestonfunerals.com/obituary/6786578">http://www.charlestonfunerals.com/obituary/6786578</a></li>
+<li>&ldquo;The Web Falls Apart&rdquo; by Baldur Bjarnason: <a href="https://www.baldurbjarnason.com/the-weakened-web/">https://www.baldurbjarnason.com/the-weakened-web/</a></li>
+<li>&ldquo;The Web is Not Dying&rdquo; podcast episode: <a href="https://vanillajspodcast.com/the-web-is-not-dying/">https://vanillajspodcast.com/the-web-is-not-dying/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode37-james-williamson-and-a-web-for-everyone.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-web-is-getting-slower/</guid>
+		    <title>Episode 36 - The web is getting slower</title>
+		    <pubDate>Tue, 10 Dec 2019 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/the-web-is-getting-slower/</link>
+		    <itunes:duration>00:09:56</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about how the web is getting slower, and what that means for us as web professionals.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about how the web is getting slower, and what that means for us as web professionals.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about how the web is getting slower, and what that means for us as web professionals.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Alex Russell&rsquo;s tweets: <a href="https://twitter.com/slightlylate/status/1190296699169689600">1</a> and <a href="https://twitter.com/slightlylate/status/1190313453195427841">2</a></li>
+<li><em>Location, Privilege and Performant Websites</em> by Stephanie Stimac: <a href="https://blog.stephaniestimac.com/posts/10-30-2019-performance/">https://blog.stephaniestimac.com/posts/10-30-2019-performance/</a></li>
+<li><em>The Lean Web</em>: <a href="https://leanweb.dev">https://leanweb.dev</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode36-the-web-is-getting-slower.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/running-a-trust-based-business/</guid>
+		    <title>Episode 35 - Running a trust-based business</title>
+		    <pubDate>Tue, 03 Dec 2019 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/running-a-trust-based-business/</link>
+		    <itunes:duration>00:07:29</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about how and why I run a trust-based business.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about how and why I run a trust-based business.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about how and why I run a trust-based business.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Location-Based Pricing: <a href="https://gomakethings.com/location-based-pricing/">https://gomakethings.com/location-based-pricing/</a></li>
+<li>Student discount: <a href="https://gomakethings.com/student-discount/">https://gomakethings.com/student-discount/</a></li>
+<li>Under-represented group discount: <a href="https://gomakethings.com/underrepresented-group-discount/">https://gomakethings.com/underrepresented-group-discount/</a></li>
+<li>Andy Bell on trust in a business: <a href="https://hankchizljaw.com/wrote/every-layout-how-it-works/">https://hankchizljaw.com/wrote/every-layout-how-it-works/</a></li>
+<li>The Every Layout Toolkit: <a href="https://every-layout.dev/">https://every-layout.dev/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode35-running-a-trust-based-business.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/learning-to-code-and-gradual-improvements/</guid>
+		    <title>Episode 34 - Learning to code and gradual improvements</title>
+		    <pubDate>Tue, 26 Nov 2019 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/learning-to-code-and-gradual-improvements/</link>
+		    <itunes:duration>00:08:05</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about learning to code, getting frustrated or burnt out in the process, and the importance of small, achievable goals.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about learning to code, getting frustrated or burnt out in the process, and the importance of small, achievable goals.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about learning to code, getting frustrated or burnt out in the process, and the importance of small, achievable goals.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode34-learning-to-code-and-gradual-improvements.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-web-is-not-dying/</guid>
+		    <title>Episode 33 - The web is not dying</title>
+		    <pubDate>Tue, 19 Nov 2019 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/the-web-is-not-dying/</link>
+		    <itunes:duration>00:24:09</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about whether or not the web is dying, some of the big challenges we face in keeping the web healthy, and the web as an agent of change.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about whether or not the web is dying, some of the big challenges we face in keeping the web healthy, and the web as an agent of change.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about whether or not the web is dying, some of the big challenges we face in keeping the web healthy, and the web as an agent of change.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Safari and Progressive Web Apps: <a href="https://medium.com/@firt/whats-new-on-ios-12-2-for-progressive-web-apps-75c348f8e945">https://medium.com/@firt/whats-new-on-ios-12-2-for-progressive-web-apps-75c348f8e945</a></li>
+<li>The Web is Getting Slower: <a href="https://gomakethings.com/the-web-is-getting-slower/">https://gomakethings.com/the-web-is-getting-slower/</a></li>
+<li>Progressive Web Apps: <a href="https://abookapart.com/products/progressive-web-apps">https://abookapart.com/products/progressive-web-apps</a></li>
+<li>Going Offline: <a href="https://abookapart.com/products/going-offline">https://abookapart.com/products/going-offline</a></li>
+<li>&ldquo;The Web Falls Apart&rdquo; by Baldur Bjarnason: <a href="https://www.baldurbjarnason.com/the-weakened-web/">https://www.baldurbjarnason.com/the-weakened-web/</a></li>
+<li>&ldquo;Hypertext as an Agent of Change&rdquo; by Mandy Brown: <a href="http://aworkinglibrary.com/writing/hypertext-as-an-agent-of-change/">http://aworkinglibrary.com/writing/hypertext-as-an-agent-of-change/</a></li>
+<li>WordPress: <a href="https://wordpress.com">https://wordpress.com</a></li>
+<li>Squarespace: <a href="https://www.squarespace.com">https://www.squarespace.com</a></li>
+<li>Using Static Site Generators: <a href="https://gomakethings.com/static-websites/">https://gomakethings.com/static-websites/</a></li>
+<li>DigitalOcean: <a href="https://www.digitalocean.com">https://www.digitalocean.com</a></li>
+<li>Netlify: <a href="https://www.netlify.com">https://www.netlify.com</a></li>
+<li>CodePen: <a href="https://codepen.io">https://codepen.io</a></li>
+<li>Glitch: <a href="https://glitch.com">https://glitch.com</a></li>
+<li>Will we be using the web in a century? <a href="https://twitter.com/rakshesha/status/1191096147642736640">https://twitter.com/rakshesha/status/1191096147642736640</a></li>
+<li>CGP Grey and asking the right questions: <a href="https://www.youtube.com/watch?v=LIS0IFmbZaI">https://www.youtube.com/watch?v=LIS0IFmbZaI</a></li>
+<li>The A11Y Project: <a href="https://a11yproject.com">https://a11yproject.com</a></li>
+<li>The Lean Web: <a href="https://leanweb.dev">https://leanweb.dev</a></li>
+<li>Fathom Analytics: <a href="https://usefathom.com">https://usefathom.com</a></li>
+<li>The Indie Web Movement: <a href="https://indieweb.org">https://indieweb.org</a></li>
+<li>The Hippocratic License: <a href="https://firstdonoharm.dev">https://firstdonoharm.dev</a></li>
+<li>The Contributor Covenant: <a href="https://www.contributor-covenant.org">https://www.contributor-covenant.org</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode33-the-web-is-not-dying.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-question-that-changed-my-career/</guid>
+		    <title>Episode 32 - The question that changed my career</title>
+		    <pubDate>Tue, 12 Nov 2019 10:30:00 -0500</pubDate>
+		    <link>https://vanillajspodcast.com/the-question-that-changed-my-career/</link>
+		    <itunes:duration>00:10:59</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about the question that changed my career.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about the question that changed my career.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about the question that changed my career.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode32-the-question-that-changed-my-career.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/how-i-structure-my-vanilla-js-projects/</guid>
+		    <title>Episode 31 - How I structure my vanilla JS projects</title>
+		    <pubDate>Tue, 05 Nov 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/how-i-structure-my-vanilla-js-projects/</link>
+		    <itunes:duration>00:08:49</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about how I structure my scripts, plugins, and larger vanilla JS projects. (I accidentally used the wrong mic for this one&mdash;sorry for the bad audio quality!)]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about how I structure my scripts, plugins, and larger vanilla JS projects. (I accidentally used the wrong mic for this one&mdash;sorry for the bad audio quality!)]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about how I structure my scripts, plugins, and larger vanilla JS projects. (I accidentally used the wrong mic for this one&mdash;sorry for the bad audio quality!)
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>How I structure my plugins: <a href="https://gomakethings.com/how-i-structure-my-javascript-plugins/">https://gomakethings.com/how-i-structure-my-javascript-plugins/</a></li>
+<li>My Gulp Boilerplate: <a href="https://github.com/cferdinandi/gulp-boilerplate">https://github.com/cferdinandi/gulp-boilerplate</a></li>
+<li>CodeKit: <a href="https://codekitapp.com/">https://codekitapp.com/</a></li>
+<li>Prepros: <a href="https://prepros.io/">https://prepros.io/</a></li>
+<li>Inlining literally everything for better performance: <a href="https://gomakethings.com/inlining-literally-everything-for-better-performance/">https://gomakethings.com/inlining-literally-everything-for-better-performance/</a></li>
+<li>Code splitting with vanilla JS: <a href="https://gomakethings.com/code-splitting-with-vanilla-js/">https://gomakethings.com/code-splitting-with-vanilla-js/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode31-how-i-structure-my-vanilla-js-projects.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/how-to-learn-javascript-when-youre-feeling-stuck/</guid>
+		    <title>Episode 30 - How to learn JavaScript when you&#39;re feeling stuck</title>
+		    <pubDate>Tue, 29 Oct 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/how-to-learn-javascript-when-youre-feeling-stuck/</link>
+		    <itunes:duration>00:04:53</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I look at why beginners feel stuck when they&rsquo;re trying to learn JavaScript, and some things you can do to bust out of your rut and keeping moving forward.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I look at why beginners feel stuck when they&rsquo;re trying to learn JavaScript, and some things you can do to bust out of your rut and keeping moving forward.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I look at why beginners feel stuck when they're trying to learn JavaScript, and some things you can do to bust out of your rut and keeping moving forward.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Vanilla JS Learning Roadmap and Projects: <a href="https://learnvanillajs.com/">https://learnvanillajs.com/</a></li>
+<li>Vanilla JS Academy: <a href="https://vanillajsacademy.com">https://vanillajsacademy.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode30-how-to-learn-js-when-youre-feeling-stuck.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/just-use-focus-styles-damnit/</guid>
+		    <title>Episode 29 - Just use focus styles, damnit!</title>
+		    <pubDate>Tue, 22 Oct 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/just-use-focus-styles-damnit/</link>
+		    <itunes:duration>00:04:33</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about focus styles, and why you should just use them, damnit.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about focus styles, and why you should just use them, damnit.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about focus styles, and why you should just use them, damnit.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Lea Verou&rsquo;s snippet: <a href="https://twitter.com/LeaVerou/status/1045768279753666562">https://twitter.com/LeaVerou/status/1045768279753666562</a></li>
+<li>Eric Bailey&rsquo;s presentation, &ldquo;If it&rsquo;s interactive, it needs a focus style&rdquo;: <a href="https://noti.st/ericwbailey/TcMJFP/slides">https://noti.st/ericwbailey/TcMJFP/slides</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode29-just-use-focus-styles-damnit.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/how-to-land-your-first-developer-job/</guid>
+		    <title>Episode 28 - How to land your first developer job</title>
+		    <pubDate>Tue, 15 Oct 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/how-to-land-your-first-developer-job/</link>
+		    <itunes:duration>00:18:43</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ I discuss how to land your first role as a web developer (or if you&rsquo;re already employed, how to find your next thing).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ I discuss how to land your first role as a web developer (or if you&rsquo;re already employed, how to find your next thing).]]></itunes:subtitle>
+		    <description><![CDATA[ I discuss how to land your first role as a web developer (or if you're already employed, how to find your next thing).
+
+<h2 id="links">Links</h2>
+
+<p>The Web Developer Career Guide: <a href="https://gomakethings.com/career-guide/">https://gomakethings.com/career-guide/</a>. Get it for free with the code <code>FREECAREER</code> at checkout.</p>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode28-how-to-land-your-first-developer-job.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/gatekeeping-and-the-tools-we-use/</guid>
+		    <title>Episode 27 - Gatekeeping and the tools we use</title>
+		    <pubDate>Tue, 08 Oct 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/gatekeeping-and-the-tools-we-use/</link>
+		    <itunes:duration>00:05:40</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ On this show, I talk about how the tools we use lock people out of the development process.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ On this show, I talk about how the tools we use lock people out of the development process.]]></itunes:subtitle>
+		    <description><![CDATA[ On this show, I talk about how the tools we use lock people out of the development process.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>The Developer Experience Bait-and-Switch: <a href="https://infrequently.org/2018/09/the-developer-experience-bait-and-switch/">https://infrequently.org/2018/09/the-developer-experience-bait-and-switch/</a></li>
+<li>I have resigned as the WordPress accessibility team lead: <a href="https://rianrietveld.com/2018/10/09/i-have-resigned-the-wordpress-accessibility-team/">https://rianrietveld.com/2018/10/09/i-have-resigned-the-wordpress-accessibility-team/</a></li>
+<li>Gutenberg A11Y Audit: <a href="https://wpcampus.org/2019/05/gutenberg-audit-results/">https://wpcampus.org/2019/05/gutenberg-audit-results/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode27-gatekeeping-and-tool-selection.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-ethics-of-the-tools-we-use/</guid>
+		    <title>Episode 26 - The ethics of the tools we use</title>
+		    <pubDate>Tue, 01 Oct 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-ethics-of-the-tools-we-use/</link>
+		    <itunes:duration>00:08:55</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about the ethics of the tools we use, and who we let use the things we make.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about the ethics of the tools we use, and who we let use the things we make.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about the ethics of the tools we use, and who we let use the things we make.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Brandon Eich donated to Prop 8: <a href="https://www.washingtontimes.com/news/2014/apr/3/prop-8-donation-does-mozilla-ceo-brenden-eich-comp/">https://www.washingtontimes.com/news/2014/apr/3/prop-8-donation-does-mozilla-ceo-brenden-eich-comp/</a></li>
+<li>Brave collects money without telling content creators: <a href="https://creators.brave.com/">https://creators.brave.com/</a></li>
+<li>Microsoft has a contract with ICE: <a href="https://www.nytimes.com/2018/07/26/technology/microsoft-ice-immigration.html">https://www.nytimes.com/2018/07/26/technology/microsoft-ice-immigration.html</a></li>
+<li>The Hippocratic License: <a href="https://firstdonoharm.dev/">https://firstdonoharm.dev/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode26-the-ethics-of-the-tools-we-use.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/were-all-just-fumbling-our-way-through-this/</guid>
+		    <title>Episode 25 - We&#39;re all just fumbling our way through this</title>
+		    <pubDate>Thu, 26 Sep 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/were-all-just-fumbling-our-way-through-this/</link>
+		    <itunes:duration>00:04:40</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ On today&rsquo;s show, I talk about imposter syndrom, what makes someone a senior developer, and being &ldquo;good enough.&rdquo;]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ On today&rsquo;s show, I talk about imposter syndrom, what makes someone a senior developer, and being &ldquo;good enough.&rdquo;]]></itunes:subtitle>
+		    <description><![CDATA[ On today's show, I talk about imposter syndrom, what makes someone a senior developer, and being "good enough."
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Jake Archibald&rsquo;s website: <a href="https://jakearchibald.com/">https://jakearchibald.com/</a></li>
+<li>Jake&rsquo;s developer screw up: <a href="https://twitter.com/jaffathecake/status/1176090548605788161">https://twitter.com/jaffathecake/status/1176090548605788161</a></li>
+<li>Alice Boxhall finding another mistake: <a href="https://twitter.com/sundress/status/1176091080938229761">https://twitter.com/sundress/status/1176091080938229761</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode25-were-all-just-fumbling-our-way-through-this.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/why-do-people-choose-frameworks-over-vanilla-js/</guid>
+		    <title>Episode 24 - Why do people choose frameworks over vanilla JS?</title>
+		    <pubDate>Tue, 24 Sep 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/why-do-people-choose-frameworks-over-vanilla-js/</link>
+		    <itunes:duration>00:08:52</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about why people choose frameworks over vanilla JS (and debunk some common myths).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about why people choose frameworks over vanilla JS (and debunk some common myths).]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about why people choose frameworks over vanilla JS (and debunk some common myths).
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Vanilla JS Academy: <a href="https://vanillajsacademy.com">https://vanillajsacademy.com</a></li>
+<li>ReefJS: <a href="https://github.com/cferdinandi/reef">https://github.com/cferdinandi/reef</a></li>
+<li>SvelteJS: <a href="https://svelte.dev/">https://svelte.dev/</a></li>
+<li>hyperHTML: <a href="https://viperhtml.js.org/hyperhtml/documentation/">https://viperhtml.js.org/hyperhtml/documentation/</a></li>
+<li>PreactJS: <a href="https://preactjs.com/">https://preactjs.com/</a></li>
+<li>JS Selector Performance: <a href="https://gomakethings.com/javascript-selector-performance/">https://gomakethings.com/javascript-selector-performance/</a></li>
+<li>Mozilla Developer Network: <a href="https://developer.mozilla.org/en-US/docs/Web/javascript">https://developer.mozilla.org/en-US/docs/Web/javascript</a></li>
+<li>The Vanilla JS Toolkit: <a href="https://vanillajstoolkit.com/">https://vanillajstoolkit.com/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode24-why-do-people-choose-frameworks-over-vanilla-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-nature-of-the-web/</guid>
+		    <title>Episode 23 - The nature of the web</title>
+		    <pubDate>Wed, 18 Sep 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-nature-of-the-web/</link>
+		    <itunes:duration>00:03:09</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about the nature of the web, and how trying to fight against the medium is the source of a lot of the pain we currently feel in front end development.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about the nature of the web, and how trying to fight against the medium is the source of a lot of the pain we currently feel in front end development.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about the nature of the web, and how trying to fight against the medium is the source of a lot of the pain we currently feel in front end development.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode23-the-nature-of-the-web.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/javascript-frameworks-are-better-for-accessibility-and-other-myths/</guid>
+		    <title>Episode 22 - JavaScript frameworks are better for accessibility (and other myths)</title>
+		    <pubDate>Tue, 10 Sep 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/javascript-frameworks-are-better-for-accessibility-and-other-myths/</link>
+		    <itunes:duration>00:03:14</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about the idea that frameworks are better for accessibility (and other framework myths).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about the idea that frameworks are better for accessibility (and other framework myths).]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about the idea that frameworks are better for accessibility (and other framework myths).
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>WebAIM&rsquo;s audit of the top million websites: <a href="https://webaim.org/projects/million/">https://webaim.org/projects/million/</a></li>
+<li>Addy Osmani&rsquo;s &ldquo;The Cost of JavaScript&rdquo; article: <a href="https://medium.com/@addyosmani/the-cost-of-javascript-in-2018-7d8950fbb5d4">https://medium.com/@addyosmani/the-cost-of-javascript-in-2018-7d8950fbb5d4</a></li>
+<li>DOMPurify: <a href="https://github.com/cure53/DOMPurify/">https://github.com/cure53/DOMPurify/</a></li>
+<li>sanitizeHTML() helper function: <a href="https://gomakethings.com/preventing-cross-site-scripting-attacks-when-using-innerhtml-in-vanilla-javascript/">https://gomakethings.com/preventing-cross-site-scripting-attacks-when-using-innerhtml-in-vanilla-javascript/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode22-javascript-frameworks-are-better-for-accessibility-and-other-myths.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/old-doesnt-mean-obsolete/</guid>
+		    <title>Episode 21 - Old doesn&#39;t mean obsolete</title>
+		    <pubDate>Wed, 04 Sep 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/old-doesnt-mean-obsolete/</link>
+		    <itunes:duration>00:01:51</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about industry&rsquo;s obsession with shiny new technology over older, stable solutions, and why that&rsquo;s a problem.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about industry&rsquo;s obsession with shiny new technology over older, stable solutions, and why that&rsquo;s a problem.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about industry's obsession with shiny new technology over older, stable solutions, and why that's a problem.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode21-old-doesnt-mean-obsolete.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/30k-of-javascript-isnt-that-much/</guid>
+		    <title>Episode 20 - 30k of JavaScript isn&#39;t that much</title>
+		    <pubDate>Thu, 29 Aug 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/30k-of-javascript-isnt-that-much/</link>
+		    <itunes:duration>00:02:48</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about JavaScript and file size.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about JavaScript and file size.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about JavaScript and file size.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>ReefJS: <a href="https://github.com/cferdinandi/reef">https://github.com/cferdinandi/reef</a></li>
+<li>The True Cost of JavaScript: <a href="https://medium.com/@addyosmani/the-cost-of-javascript-in-2018-7d8950fbb5d4">https://medium.com/@addyosmani/the-cost-of-javascript-in-2018-7d8950fbb5d4</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode20-30k-of-javascript-isnt-that-much.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/code-readability-is-more-important-than-brevity/</guid>
+		    <title>Episode 19 - Code readability is more important than brevity</title>
+		    <pubDate>Thu, 02 May 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/code-readability-is-more-important-than-brevity/</link>
+		    <itunes:duration>00:04:28</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about why readibility matters more than brevity.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about why readibility matters more than brevity.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about why readibility matters more than brevity.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Uglify: <a href="https://www.uglifyjs.net/">https://www.uglifyjs.net/</a></li>
+<li>Terser: <a href="https://github.com/terser-js/terser">https://github.com/terser-js/terser</a></li>
+<li>Function types: <a href="https://gomakethings.com/function-expressions-vs-function-declarations/">https://gomakethings.com/function-expressions-vs-function-declarations/</a></li>
+<li>Arrow Functions: <a href="https://gomakethings.com/an-introduction-to-es6-arrow-functions/">https://gomakethings.com/an-introduction-to-es6-arrow-functions/</a></li>
+<li>Ternary Operators: <a href="https://gomakethings.com/ternary-operators/">https://gomakethings.com/ternary-operators/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode19-code-readability-is-more-important-than-brevity.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/let-const-and-why-i-still-use-var/</guid>
+		    <title>Episode 18 - let, const, and why I still use var</title>
+		    <pubDate>Tue, 30 Apr 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/let-const-and-why-i-still-use-var/</link>
+		    <itunes:duration>00:04:07</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ Today, I&rsquo;m talking about let, const, and why I use var to define variables instead.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ Today, I&rsquo;m talking about let, const, and why I use var to define variables instead.]]></itunes:subtitle>
+		    <description><![CDATA[ Today, I'm talking about let, const, and why I use var to define variables instead.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><code>let</code> and <code>const</code> primer: <a href="https://gomakethings.com/let-var-and-const/">https://gomakethings.com/let-var-and-const/</a></li>
+<li>My approach to backwards compatibility: <a href="https://gomakethings.com/why-i-love-polyfills/">https://gomakethings.com/why-i-love-polyfills/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode18-let-and-const-and-why-i-still-use-var.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/accessibility-is-a-moral-obligation/</guid>
+		    <title>Episode 17 - Accessibility is a moral obligation</title>
+		    <pubDate>Thu, 25 Apr 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/accessibility-is-a-moral-obligation/</link>
+		    <itunes:duration>00:08:46</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ Today, I&rsquo;m talking about web accessibility as a moral obligation.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ Today, I&rsquo;m talking about web accessibility as a moral obligation.]]></itunes:subtitle>
+		    <description><![CDATA[ Today, I'm talking about web accessibility as a moral obligation.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>JS Jabber: <a href="https://devchat.tv/js-jabber/">https://devchat.tv/js-jabber/</a></li>
+<li>Chris DeMars: <a href="http://chrisdemars.com/">http://chrisdemars.com/</a></li>
+<li>A11Y Nutrition Cards - <a href="https://davatron5000.github.io/a11y-nutrition-cards/">https://davatron5000.github.io/a11y-nutrition-cards/</a></li>
+<li>Browser-Native Accordions: <a href="https://gomakethings.com/javascript-free-accordions/">https://gomakethings.com/javascript-free-accordions/</a></li>
+<li>Accessibility issues with the dialog element: <a href="https://www.scottohara.me/blog/2019/03/05/open-dialog.html">https://www.scottohara.me/blog/2019/03/05/open-dialog.html</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode17-accessibility-is-a-moral-obligation.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-lean-web/</guid>
+		    <title>Episode 16 - The Lean Web</title>
+		    <pubDate>Wed, 13 Feb 2019 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-lean-web/</link>
+		    <itunes:duration>00:34:15</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ Some thoughts I have on how to build a simpler, faster, world wide web. In this talk, I explore how our modern best practices are making the web worse, and share ideas on how to fix it. <a href="https://leanweb.dev">https://leanweb.dev</a>]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ Some thoughts I have on how to build a simpler, faster, world wide web. In this talk, I explore how our modern best practices are making the web worse, and share ideas on how to fix it. <a href="https://leanweb.dev">https://leanweb.dev</a>]]></itunes:subtitle>
+		    <description><![CDATA[ Some thoughts I have on how to build a simpler, faster, world wide web. In this talk, I explore how our modern best practices are making the web worse, and share ideas on how to fix it. https://leanweb.dev]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode16-the-lean-web.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-developer-experience-is-bullshit/</guid>
+		    <title>Episode 15 - The developer experience is bullshit</title>
+		    <pubDate>Fri, 21 Sep 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-developer-experience-is-bullshit/</link>
+		    <itunes:duration>00:06:31</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about why focusing on the developer experience is a straw man that leads to more and more JS bloat and a worse user experience.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about why focusing on the developer experience is a straw man that leads to more and more JS bloat and a worse user experience.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about why focusing on the developer experience is a straw man that leads to more and more JS bloat and a worse user experience.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>The Developer Experience Bait-and-Switch: <a href="https://infrequently.org/2018/09/the-developer-experience-bait-and-switch/">https://infrequently.org/2018/09/the-developer-experience-bait-and-switch/</a></li>
+<li>The Vanilla JS Academy: <a href="https://vanillajsacademy.com">https://vanillajsacademy.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode15-the-developer-experience-is-bullshit.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/how-to-be-a-great-javascript-developer/</guid>
+		    <title>Episode 14 - How to be a great JavaScript developer</title>
+		    <pubDate>Tue, 28 Aug 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/how-to-be-a-great-javascript-developer/</link>
+		    <itunes:duration>00:05:15</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about what it takes to be a great JavaScript developer.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about what it takes to be a great JavaScript developer.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about what it takes to be a great JavaScript developer.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>The Vanilla JS Academy: <a href="https://vanillajsacademy.com">https://vanillajsacademy.com</a></li>
+<li>Beakman&rsquo;s World on Wikipedia: <a href="https://en.wikipedia.org/wiki/Beakman%27s_World">https://en.wikipedia.org/wiki/Beakman%27s_World</a></li>
+<li>Beakman&rsquo;s World Clip: <a href="https://www.youtube.com/watch?v=aBmuQzlLr-g">https://www.youtube.com/watch?v=aBmuQzlLr-g</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode14-how-to-be-a-great-javascript-developer.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/why-i-still-use-xhr-instead-of-the-fetch-api/</guid>
+		    <title>Episode 13 - Why I still use XHR instead of the Fetch API</title>
+		    <pubDate>Tue, 14 Aug 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/why-i-still-use-xhr-instead-of-the-fetch-api/</link>
+		    <itunes:duration>00:13:25</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I discuss why I still use XHR instead of the Fetch API.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I discuss why I still use XHR instead of the Fetch API.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I discuss why I still use XHR instead of the Fetch API.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>The original article: <a href="https://gomakethings.com/why-i-still-use-xhr-instead-of-the-fetch-api/">https://gomakethings.com/why-i-still-use-xhr-instead-of-the-fetch-api/</a></li>
+<li>Promise-based XHR: <a href="https://gomakethings.com/promise-based-xhr/">https://gomakethings.com/promise-based-xhr/</a></li>
+<li>CSS-Tricks primer on Fetch: <a href="https://css-tricks.com/using-fetch/">https://css-tricks.com/using-fetch/</a></li>
+<li>MDN on Fetch: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch">https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch</a></li>
+<li>Atomic Promisified XHR Plugin: <a href="https://github.com/cferdinandi/atomic">https://github.com/cferdinandi/atomic</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode13-why-i-still-use-xhr-instead-of-fetch.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/how-to-plan-out-your-javascript-projects/</guid>
+		    <title>Episode 12 - How to plan out your JavaScript projects</title>
+		    <pubDate>Tue, 29 May 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/how-to-plan-out-your-javascript-projects/</link>
+		    <itunes:duration>00:05:35</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about why planning out your JavaScript projects makes it easier to write code, and how I do it.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about why planning out your JavaScript projects makes it easier to write code, and how I do it.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about why planning out your JavaScript projects makes it easier to write code, and how I do it.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode12-how-to-plan-out-your-javascript-projects.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/alternatives-to-css-in-js/</guid>
+		    <title>Episode 11 - Alternatives to CSS-in-JS</title>
+		    <pubDate>Mon, 21 May 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/alternatives-to-css-in-js/</link>
+		    <itunes:duration>00:15:05</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ A few weeks ago, I shared some reasons why I don&rsquo;t like CSS-in-JS. Today, I&rsquo;m talking about alternatives to it.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ A few weeks ago, I shared some reasons why I don&rsquo;t like CSS-in-JS. Today, I&rsquo;m talking about alternatives to it.]]></itunes:subtitle>
+		    <description><![CDATA[ A few weeks ago, I shared some reasons why I don't like CSS-in-JS. Today, I'm talking about alternatives to it.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Inlining Critical CSS: <a href="https://gomakethings.com/inlining-critical-css-for-better-web-performance/">https://gomakethings.com/inlining-critical-css-for-better-web-performance/</a></li>
+<li>OOCSS: <a href="https://github.com/stubbornella/oocss/wiki">https://github.com/stubbornella/oocss/wiki</a></li>
+<li>BEM: <a href="http://getbem.com/">http://getbem.com/</a></li>
+<li>Third-Party JS Plugins: <a href="https://vanillajstoolkit.com/plugins/">https://vanillajstoolkit.com/plugins/</a></li>
+<li>Gulp: <a href="https://gulpjs.com/">https://gulpjs.com/</a></li>
+<li>Prepos: <a href="https://prepros.io/">https://prepros.io/</a></li>
+<li>CodeKit: <a href="https://codekitapp.com/">https://codekitapp.com/</a></li>
+<li>Cutting the Mustard: <a href="http://responsivenews.co.uk/post/18948466399/cutting-the-mustard">http://responsivenews.co.uk/post/18948466399/cutting-the-mustard</a></li>
+<li>LoadJS: <a href="https://github.com/filamentgroup/loadJS">https://github.com/filamentgroup/loadJS</a></li>
+<li>Polyfills: <a href="https://vanillajstoolkit.com/polyfills/">https://vanillajstoolkit.com/polyfills/</a></li>
+<li>Polyfill.io: <a href="https://polyfill.io">https://polyfill.io</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode11-alternatives-to-css-in-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/whats-wrong-with-css-in-js/</guid>
+		    <title>Episode 10 - What&#39;s wrong with CSS-in-JS?</title>
+		    <pubDate>Thu, 26 Apr 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/whats-wrong-with-css-in-js/</link>
+		    <itunes:duration>00:14:29</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about CSS-in-JS, why I think its bad for the web, and how to address some of the legitimate problems it&rsquo;s trying to solve.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about CSS-in-JS, why I think its bad for the web, and how to address some of the legitimate problems it&rsquo;s trying to solve.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about CSS-in-JS, why I think its bad for the web, and how to address some of the legitimate problems it's trying to solve.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>Remy&rsquo;s tweet: <a href="https://twitter.com/rem/status/989069638553231360">https://twitter.com/rem/status/989069638553231360</a></li>
+<li>Christopher Chedeu&rsquo;s talk: <a href="https://speakerdeck.com/vjeux/react-css-in-js">https://speakerdeck.com/vjeux/react-css-in-js</a></li>
+<li>Christopher&rsquo;s Other Work: <a href="http://blog.vjeux.com/">http://blog.vjeux.com/</a></li>
+<li>Object Oriented CSS: <a href="https://github.com/stubbornella/oocss/wiki">https://github.com/stubbornella/oocss/wiki</a></li>
+<li>Inlining Critical CSS: <a href="https://gomakethings.com/inlining-critical-css-for-better-web-performance/">https://gomakethings.com/inlining-critical-css-for-better-web-performance/</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode10-whats-wrong-with-css-in-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/you-dont-have-to-know-everything/</guid>
+		    <title>Episode 9 - You don&#39;t have to know everything</title>
+		    <pubDate>Tue, 24 Apr 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/you-dont-have-to-know-everything/</link>
+		    <itunes:duration>00:03:07</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about the struggle to &ldquo;know everything&rdquo; as a developer, and the creeping sense that you&rsquo;re a fraud or don&rsquo;t belong that comes along with it.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about the struggle to &ldquo;know everything&rdquo; as a developer, and the creeping sense that you&rsquo;re a fraud or don&rsquo;t belong that comes along with it.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about the struggle to "know everything" as a developer, and the creeping sense that you're a fraud or don't belong that comes along with it.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://vanillaJSacademy.com">https://vanillaJSacademy.com</a></li>
+<li><a href="https://vanillaJStoolkit.com">https://vanillaJStoolkit.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode9-you-dont-have-to-know-everything.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/learning-how-to-think-in-javascript/</guid>
+		    <title>Episode 8 - Learning how to think in JavaScript</title>
+		    <pubDate>Mon, 16 Apr 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/learning-how-to-think-in-javascript/</link>
+		    <itunes:duration>00:08:03</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about learning how to think in JavaScript. I&rsquo;ll explore the benefits of working on lots of projects, the challenges, and a new program I&rsquo;m offering to help make it easier. Visit <a href="https://vanillajsacademy.com">https://vanillajsacademy.com</a> to learn more.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about learning how to think in JavaScript. I&rsquo;ll explore the benefits of working on lots of projects, the challenges, and a new program I&rsquo;m offering to help make it easier. Visit <a href="https://vanillajsacademy.com">https://vanillajsacademy.com</a> to learn more.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about learning how to think in JavaScript. I'll explore the benefits of working on lots of projects, the challenges, and a new program I'm offering to help make it easier. Visit https://vanillajsacademy.com to learn more.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode8-learning-how-to-think-in-javascript.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-problem-with-just-use-jquery/</guid>
+		    <title>Episode 7 - The problem with &#34;just use jQuery&#34;</title>
+		    <pubDate>Thu, 12 Apr 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-problem-with-just-use-jquery/</link>
+		    <itunes:duration>00:05:18</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about the phrase, &ldquo;Just use jQuery,&rdquo; why people use it, and the problems with relying on a library for simple tasks.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about the phrase, &ldquo;Just use jQuery,&rdquo; why people use it, and the problems with relying on a library for simple tasks.]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about the phrase, "Just use jQuery," why people use it, and the problems with relying on a library for simple tasks.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode6-the-benefits-of-using-a-javascript-framework.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/the-benefits-of-using-a-javascript-framework-seriously/</guid>
+		    <title>Episode 6 - The benefits of using a JavaScript framework (seriously)</title>
+		    <pubDate>Tue, 10 Apr 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/the-benefits-of-using-a-javascript-framework-seriously/</link>
+		    <itunes:duration>00:03:24</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about the benefits of JavaScript frameworks (crazy, right?).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about the benefits of JavaScript frameworks (crazy, right?).]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about the benefits of JavaScript frameworks (crazy, right?).
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://twitter.com/stubbornella/status/979377381008818176">https://twitter.com/stubbornella/status/979377381008818176</a></li>
+<li><a href="https://gomakethings.com">https://gomakethings.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode7-the-problem-with-just-use-jquery.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/youre-not-a-fraud/</guid>
+		    <title>Episode 5 - You&#39;re not a fraud</title>
+		    <pubDate>Wed, 04 Apr 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/youre-not-a-fraud/</link>
+		    <itunes:duration>00:02:07</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ In this episode, I talk about imposter syndrome, and whether or not Googling how to do things means you&rsquo;re not a &ldquo;real developer.&rdquo;]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ In this episode, I talk about imposter syndrome, and whether or not Googling how to do things means you&rsquo;re not a &ldquo;real developer.&rdquo;]]></itunes:subtitle>
+		    <description><![CDATA[ In this episode, I talk about imposter syndrome, and whether or not Googling how to do things means you're not a "real developer."
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li><a href="https://vanillajstoolkit.com">https://vanillajstoolkit.com</a></li>
+<li><a href="https://gomakethings.com">https://gomakethings.com</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode5-youre-not-a-fraud.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/easter-sale/</guid>
+		    <title>Episode 4 - Easter Sale</title>
+		    <pubDate>Fri, 30 Mar 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/easter-sale/</link>
+		    <itunes:duration>00:03:11</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ I&rsquo;m running an Easter Sale this weekend. If you&rsquo;ve been thinking about really digging into JavaScript this year, now through Monday you can get up to 50% off some of my most popular learning resources over at <a href="https://GoMakeThings.com">https://GoMakeThings.com</a>.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ I&rsquo;m running an Easter Sale this weekend. If you&rsquo;ve been thinking about really digging into JavaScript this year, now through Monday you can get up to 50% off some of my most popular learning resources over at <a href="https://GoMakeThings.com">https://GoMakeThings.com</a>.]]></itunes:subtitle>
+		    <description><![CDATA[ I'm running an Easter Sale this weekend. If you've been thinking about really digging into JavaScript this year, now through Monday you can get up to 50% off some of my most popular learning resources over at https://GoMakeThings.com.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode4-easter-sale.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/what-you-need-to-know-to-be-a-good-developer/</guid>
+		    <title>Episode 3 - What you need to know to be a good developer</title>
+		    <pubDate>Thu, 29 Mar 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/what-you-need-to-know-to-be-a-good-developer/</link>
+		    <itunes:duration>00:03:23</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ What you need to be a good front end web developer.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ What you need to be a good front end web developer.]]></itunes:subtitle>
+		    <description><![CDATA[ What you need to be a good front end web developer.]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode3-what-you-need-to-know-to-be-a-good-developer.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/polyfills-are-awesome-and-you-are-too/</guid>
+		    <title>Episode 2 - Polyfills are awesome (and you are too)</title>
+		    <pubDate>Tue, 27 Mar 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/polyfills-are-awesome-and-you-are-too/</link>
+		    <itunes:duration>00:05:54</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ Polyfills, why they&rsquo;re awesome, and how to use them.]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ Polyfills, why they&rsquo;re awesome, and how to use them.]]></itunes:subtitle>
+		    <description><![CDATA[ Polyfills, why they're awesome, and how to use them.
+
+<h2 id="links">Links</h2>
+
+<ul>
+<li>The Vanilla JS Toolkit: <a href="https://vanillajstoolkit.com">https://vanillajstoolkit.com</a></li>
+<li>The Mozilla Developer Network: <a href="https://developer.mozilla.org">https://developer.mozilla.org</a></li>
+<li>Remy Sharp&rsquo;s original post about polyfills: <a href="https://remysharp.com/2010/10/08/what-is-a-polyfill">https://remysharp.com/2010/10/08/what-is-a-polyfill</a></li>
+<li>Remy Sharp&rsquo;s polyfill collection: <a href="https://github.com/remy/polyfills">https://github.com/remy/polyfills</a></li>
+<li>Polyfill.io: <a href="https://polyfill.io">https://polyfill.io</a></li>
+</ul>
+]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode2-polyfills-are-awesome.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+		<item>
+			<guid>https://vanillajspodcast.com/i-3-vanilla-js/</guid>
+		    <title>Episode 1 - I &lt;3 vanilla JS</title>
+		    <pubDate>Mon, 26 Mar 2018 10:30:00 -0400</pubDate>
+		    <link>https://vanillajspodcast.com/i-3-vanilla-js/</link>
+		    <itunes:duration>00:03:40</itunes:duration>
+		    <itunes:author>Chris Ferdinandi</itunes:author>
+		    <itunes:explicit>yes</itunes:explicit>
+		    <itunes:summary><![CDATA[ Why I love vanilla JavaScript, and more specifically, why I think JavaScript is ruining the web (and what we can do about).]]></itunes:summary>
+			<itunes:subtitle><![CDATA[ Why I love vanilla JavaScript, and more specifically, why I think JavaScript is ruining the web (and what we can do about).]]></itunes:subtitle>
+		    <description><![CDATA[ Why I love vanilla JavaScript, and more specifically, why I think JavaScript is ruining the web (and what we can do about).]]></description>
+			<enclosure url="https://cdn.gomakethings.com/podcast/episode1-i-love-vanillla-js.mp3" length="" type="audio/mpeg" />
+			<itunes:image href="https://vanillajspodcast.com/img/vanilla-js-podcast.jpg"/>
+		</item>
+
+	</channel>
+</rss>

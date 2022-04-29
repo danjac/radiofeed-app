@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/"
+xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+>
+<channel>
+	<title>Mysterious Universe</title>
+	<atom:link href="https://mysteriousuniverse.org/feed/podcast/" rel="self" type="application/rss+xml" />
+	<link>https://mysteriousuniverse.org</link>
+	<description>Blog and Podcast specializing in offbeat news</description>
+	<lastBuildDate>Wed, 01 Jul 2020 15:25:26 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+
+<!-- podcast_generator="Blubrry PowerPress/8.3.3" mode="advanced" feedslug="podcast" Blubrry PowerPress Podcasting plugin for WordPress (https://www.blubrry.com/powerpress/) -->
+	<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+	<itunes:summary>Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.</itunes:summary>
+	<itunes:author>8th Kind</itunes:author>
+	<itunes:explicit>yes</itunes:explicit>
+	<itunes:image href="https://mysteriousuniverse.org/wp-content/uploads/2018/11/itunes_14k.jpg" />
+	<itunes:owner>
+		<itunes:name>8th Kind</itunes:name>
+		<itunes:email>sales@mysteriousuniverse.org</itunes:email>
+	</itunes:owner>
+	<managingEditor>sales@mysteriousuniverse.org (8th Kind)</managingEditor>
+	<copyright>8th Kind</copyright>
+	<itunes:subtitle>The latest news from the other side</itunes:subtitle>
+	<image>
+		<title>Mysterious Universe</title>
+		<url>https://mysteriousuniverse.org/wp-content/uploads/2018/11/itunes_14k.jpg</url>
+		<link>https://mysteriousuniverse.org</link>
+	</image>
+	<itunes:category text="Science">
+		<itunes:category text="Social Sciences" />
+	</itunes:category>
+	<googleplay:category text="Science &amp; Medicine"/>
+	<itunes:category text="Religion &amp; Spirituality">
+		<itunes:category text="Spirituality" />
+	</itunes:category>
+	<itunes:category text="Society &amp; Culture">
+		<itunes:category text="Philosophy" />
+	</itunes:category>
+	<rawvoice:subscribe feed="https://mysteriousuniverse.org/feed/podcast/" itunes="https://mysteriousuniverse.org/feed/podcast/"></rawvoice:subscribe>
+	<item>
+		<title>23.05 &#8211; MU Podcast &#8211; The Goblins of Langley</title>
+		<link>https://mysteriousuniverse.org/2020/02/23-05-mu-podcast-the-goblins-of-langley/</link>
+		<pubDate>Fri, 07 Feb 2020 16:07:07 +0000</pubDate>
+		<guid isPermaLink="false">https://mysteriousuniverse.org/?p=156881</guid>
+		<comments>https://mysteriousuniverse.org/2020/02/23-05-mu-podcast-the-goblins-of-langley/#respond</comments>
+		<wfw:commentRss>https://mysteriousuniverse.org/2020/02/23-05-mu-podcast-the-goblins-of-langley/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		<category><![CDATA[Podcasts]]></category>
+		<category><![CDATA[Season 23]]></category>
+		<category><![CDATA[alien abduction]]></category>
+		<category><![CDATA[Deep Space Frequencies]]></category>
+		<category><![CDATA[goblins]]></category>
+		<category><![CDATA[implants]]></category>
+		<category><![CDATA[MILABs]]></category>
+		<category><![CDATA[podcast]]></category>
+		<category><![CDATA[Psychic Spies]]></category>
+		<category><![CDATA[remote viewing]]></category>
+		<category><![CDATA[underground]]></category>
+		<description>&lt;img width=&quot;643&quot; height=&quot;440&quot; src=&quot;https://mysteriousuniverse.org/wp-content/uploads/2020/02/23.05_banner-643x440.jpg&quot; class=&quot;attachment-welcome_large size-welcome_large wp-post-image&quot; alt=&quot;&quot; /&gt;Remote viewing offers incredible experiences however it comes with inherent risks. On this episode we discuss the strange experiences of some high level remote viewers and their visions of “The Great War” and the “Death Traps”. Then for Plus+ members we look at the frequencies coming from the alien implants collected from abductees and the...  &lt;a class=&quot;excerpt-read-more&quot; href=&quot;https://mysteriousuniverse.org/2020/02/23-05-mu-podcast-the-goblins-of-langley/&quot; title=&quot;Read 23.05 – MU Podcast – The Goblins of Langley&quot;&gt;Read more »&lt;/a&gt;</description>
+		<content:encoded><![CDATA[<img width="643" height="440" src="https://mysteriousuniverse.org/wp-content/uploads/2020/02/23.05_banner-643x440.jpg" class="attachment-welcome_large size-welcome_large wp-post-image" alt="" /><p>Remote viewing offers incredible experiences however it comes with inherent risks. On this episode we discuss the strange experiences of some high level remote viewers and their visions of &#8220;The Great War&#8221; and the &#8220;Death Traps&#8221;.</p>
+<p>Then for Plus+ members we look at the frequencies coming from the alien implants collected from abductees and the deep space MILABs.</p>
+<h3>Sponsors</h3>
+<ul>
+<li><strong><a href="http://squarespace.com/" target="_blank" rel="noopener noreferrer">Squarespace</a></strong> – Turn your ideas into a reality. Create a professional website with Squarespace. Use the offer code <strong>MU</strong> to get <strong>10% off</strong>!</li>
+</ul>
+<h3>Links</h3>
+<ul>
+<li><a href="https://www.amazon.com/gp/product/B006GW5PHO/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=B006GW5PHO&amp;linkId=4ca509d6bf11da0ca5b6a8f7fe3ce5a6" target="_blank" rel="noopener noreferrer">Opening Minds: A Journey of Extraordinary Encounters, Crop Circles, and Resonance</a></li>
+<li><a href="https://www.amazon.com/gp/product/0451190262/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=0451190262&amp;linkId=bcf2c95288fcf318bd8a41b3c3a27574" target="_blank" rel="noopener noreferrer">Cosmic Voyage: True Evidence of Extraterrestrials Visiting Earth</a></li>
+<li><a href="https://www.amazon.com/gp/product/0440614058/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=0440614058&amp;linkId=f8f71400bce262fc6becec3a03d5d0b8" target="_blank" rel="noopener noreferrer">Remote Viewers: The Secret History of America&#8217;s Psychic Spies</a></li>
+<li><a href="https://mysteriousuniverse.org/2013/03/an-alien-base-in-alaska/" target="_blank" rel="noopener noreferrer">An Alien Base in Alaska?</a></li>
+<li><a href="https://www.bibliotecapleyades.net/bb/bluebook009.htm" target="_blank" rel="noopener noreferrer">Dr. Green and the Goblins of Langley</a></li>
+<li><a href="https://farsight.org/FarsightPress/War_In_Heaven_Farsight_Project_main_page.html" target="_blank" rel="noopener noreferrer">The War in Heaven</a></li>
+<li><a href="https://www.instagram.com/courtneybrownfarsight/" target="_blank" rel="noopener noreferrer">Courtney Brown</a></li>
+<li><a href="https://farsight.org/FarsightPress/Death_Traps_Farsight_Project_main_page.html" target="_blank" rel="noopener noreferrer">The Death Traps</a></li>
+<li><a href="https://www.amazon.com/gp/product/0451201051/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=0451201051&amp;linkId=0f38c9a145c3bb97c086fe7f1f94c0e9" target="_blank" rel="noopener noreferrer">Cosmic Explorers: Scientific Remote Viewing, Extraterrestrials, and a Message for Mankind</a></li>
+</ul>
+<h3>Plus+ Extension</h3>
+<h3>The extension of the show is EXCLUSIVE to Plus+ Members. To join, click <a href="http://mysteriousuniverse.org/plus" target="_blank" rel="noopener noreferrer">HERE</a>.</h3>
+<ul>
+<li><a href="https://newatlas.com/elon-musk-neuralink-brain-chips-2020/60627/" target="_blank" rel="noopener noreferrer">Elon Musk&#8217;s Neuralink</a></li>
+<li><a href="https://neuralink.com/" target="_blank" rel="noopener noreferrer">Neuralink</a></li>
+<li><a href="https://www.amazon.com/gp/product/1881532186/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=1881532186&amp;linkId=be0af95b2c200764e5e6e3cbdad95e9d" target="_blank" rel="noopener noreferrer">MILABS: Military Mind Control and Alien Abduction</a></li>
+<li><a href="http://www.alienjigsaw.com/milabs-psyops/MILABs-REABs-and-the-New-MKULTRA.html" target="_blank" rel="noopener noreferrer">MILAB Misdeeds</a></li>
+<li><a href="https://www.amazon.com/gp/product/B078ZTYXB9/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=B078ZTYXB9&amp;linkId=c1f775a2a632ace59335d4d1b3fb9860" target="_blank" rel="noopener noreferrer">The Aliens and the Scalpel</a></li>
+<li><a href="https://www.exopaedia.org/MILAB" target="_blank" rel="noopener noreferrer">MILAB</a></li>
+<li><a href="https://www.ststworld.com/jose-delgado/" target="_blank" rel="noopener noreferrer">Jose Delgado, Electric Brain Stimulation Tamed a Raging Bull with Radio Control</a></li>
+</ul>
+]]></content:encoded>
+	<itunes:subtitle>Remote viewing offers incredible experiences however it comes with inherent risks. On this episode we discuss the strange experiences of some high level remote viewers and their visions of “The Great War” and the “Death Traps”.</itunes:subtitle>
+		<itunes:summary><![CDATA[Remote viewing offers incredible experiences however it comes with inherent risks. On this episode we discuss the strange experiences of some high level remote viewers and their visions of &#8220;The Great War&#8221; and the &#8220;Death Traps&#8221;.<br />
+Then for Plus+ members we look at the frequencies coming from the alien implants collected from abductees and the deep space MILABs.<br />
+Sponsors<br />
+<br />
+* <a href="http://squarespace.com/" target="_blank" rel="noopener noreferrer">Squarespace</a> – Turn your ideas into a reality. Create a professional website with Squarespace. Use the offer code MU to get 10% off!<br />
+<br />
+Links<br />
+<br />
+* <a href="https://www.amazon.com/gp/product/B006GW5PHO/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=B006GW5PHO&amp;linkId=4ca509d6bf11da0ca5b6a8f7fe3ce5a6" target="_blank" rel="noopener noreferrer">Opening Minds: A Journey of Extraordinary Encounters, Crop Circles, and Resonance</a><br />
+* <a href="https://www.amazon.com/gp/product/0451190262/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=0451190262&amp;linkId=bcf2c95288fcf318bd8a41b3c3a27574" target="_blank" rel="noopener noreferrer">Cosmic Voyage: True Evidence of Extraterrestrials Visiting Earth</a><br />
+* <a href="https://www.amazon.com/gp/product/0440614058/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=0440614058&amp;linkId=f8f71400bce262fc6becec3a03d5d0b8" target="_blank" rel="noopener noreferrer">Remote Viewers: The Secret History of America&#8217;s Psychic Spies</a><br />
+* <a href="https://mysteriousuniverse.org/2013/03/an-alien-base-in-alaska/" target="_blank" rel="noopener noreferrer">An Alien Base in Alaska?</a><br />
+* <a href="https://www.bibliotecapleyades.net/bb/bluebook009.htm" target="_blank" rel="noopener noreferrer">Dr. Green and the Goblins of Langley</a><br />
+* <a href="https://farsight.org/FarsightPress/War_In_Heaven_Farsight_Project_main_page.html" target="_blank" rel="noopener noreferrer">The War in Heaven</a><br />
+* <a href="https://www.instagram.com/courtneybrownfarsight/" target="_blank" rel="noopener noreferrer">Courtney Brown</a><br />
+* <a href="https://farsight.org/FarsightPress/Death_Traps_Farsight_Project_main_page.html" target="_blank" rel="noopener noreferrer">The Death Traps</a><br />
+* <a href="https://www.amazon.com/gp/product/0451201051/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=0451201051&amp;linkId=0f38c9a145c3bb97c086fe7f1f94c0e9" target="_blank" rel="noopener noreferrer">Cosmic Explorers: Scientific Remote Viewing, Extraterrestrials, and a Message for Mankind</a><br />
+<br />
+Plus+ Extension<br />
+The extension of the show is EXCLUSIVE to Plus+ Members. To join, click <a href="http://mysteriousuniverse.org/plus" target="_blank" rel="noopener noreferrer">HERE</a>.<br />
+<br />
+* <a href="https://newatlas.com/elon-musk-neuralink-brain-chips-2020/60627/" target="_blank" rel="noopener noreferrer">Elon Musk&#8217;s Neuralink</a><br />
+* <a href="https://neuralink.com/" target="_blank" rel="noopener noreferrer">Neuralink</a><br />
+* <a href="https://www.amazon.com/gp/product/1881532186/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=1881532186&amp;linkId=be0af95b2c200764e5e6e3cbdad95e9d" target="_blank" rel="noopener noreferrer">MILABS: Military Mind Control and Alien Abduction</a><br />
+* <a href="http://www.alienjigsaw.com/milabs-psyops/MILABs-REABs-and-the-New-MKULTRA.html" target="_blank" rel="noopener noreferrer">MILAB Misdeeds</a><br />
+* <a href="https://www.amazon.com/gp/product/B078ZTYXB9/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=mysteruniver-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=B078ZTYXB9&amp;linkId=c1f775a2a632ace59335d4d1b3fb9860" target="_blank" ...]]></itunes:summary>
+		<itunes:author>8th Kind</itunes:author>
+		<itunes:image href="https://mysteriousuniverse.org/wp-content/uploads/2020/04/Mysterious-Universe-5.jpg" />
+		<itunes:season>23</itunes:season>
+		<itunes:episode>05</itunes:episode>
+		<itunes:title>The Goblins of Langley</itunes:title>
+		<itunes:duration>1:42:33</itunes:duration>
+		</item>
+</channel>
+</rss>
