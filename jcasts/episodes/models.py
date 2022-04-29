@@ -25,8 +25,6 @@ from jcasts.common.db import FastCountMixin, SearchMixin
 from jcasts.podcasts.models import Podcast
 from jcasts.users.models import User
 
-UNIQUE_CONSTRAINT = "unique_%(app_label)s_%(class)s"
-
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet:
@@ -147,7 +145,7 @@ class Episode(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                name=UNIQUE_CONSTRAINT,
+                name="unique_%(app_label)s_%(class)s",
                 fields=["podcast", "guid"],
             )
         ]
@@ -343,7 +341,7 @@ class Bookmark(TimeStampedModel):
 
         constraints = [
             models.UniqueConstraint(
-                name=UNIQUE_CONSTRAINT,
+                name="unique_%(app_label)s_%(class)s",
                 fields=["user", "episode"],
             )
         ]
@@ -376,7 +374,7 @@ class AudioLog(TimeStampedModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                name=UNIQUE_CONSTRAINT,
+                name="unique_%(app_label)s_%(class)s",
                 fields=["user", "episode"],
             ),
         ]
