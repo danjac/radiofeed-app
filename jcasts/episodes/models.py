@@ -52,7 +52,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         self, user: User, since: timedelta = timedelta(days=7)
     ) -> models.QuerySet:
         """Return all episodes for podcasts the user is following,
-        minus any the user has already queued/favorited/listened to."""
+        minus any the user has already bookmarked or listened to."""
 
         if not (
             podcast_ids := set(user.subscription_set.values_list("podcast", flat=True))
