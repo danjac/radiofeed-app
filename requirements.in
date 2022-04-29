@@ -13,6 +13,7 @@ django-cachalot
 django-debug-toolbar
 django-environ
 django-extensions
+django-health-check
 django-htmx
 django-model-utils
 django-object-actions
@@ -31,6 +32,7 @@ lxml
 nltk
 numpy
 pandas
+psutil
 psycopg2-binary
 pytest
 pytest-cov

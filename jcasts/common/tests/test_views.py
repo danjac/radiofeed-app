@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from jcasts.common.asserts import assert_no_content, assert_ok
+from jcasts.common.asserts import assert_ok
 
 
 class TestFavicon:
@@ -12,12 +12,6 @@ class TestRobots:
     def test_get(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
             assert_ok(client.get(reverse("robots")))
-
-
-class TestHealthCheck:
-    def test_get(self, db, client, django_assert_num_queries):
-        with django_assert_num_queries(1):
-            assert_no_content(client.get(reverse("health_check")))
 
 
 class TestSecurty:

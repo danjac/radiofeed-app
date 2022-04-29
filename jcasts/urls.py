@@ -36,6 +36,7 @@ urlpatterns = [
     ),
     path("account/", include("allauth.urls")),
     path("rq/", include("django_rq.urls")),
+    path("ht/", include("health_check.urls")),
     path(settings.ADMIN_URL + "/postgres-metrics/", include("postgres_metrics.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
