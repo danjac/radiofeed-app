@@ -30,17 +30,20 @@ def index(request: HttpRequest) -> HttpResponse:
         else set()
     )
 
+    promoted = "promoted" in request.GET or not subscribed
+
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
-    promoted = "promoted" in request.GET or not subscribed
+    if promoted:
+        podcasts = podcasts.filter(promoted=True)
+    else:
+        podcasts = podcasts.filter(pk__in=subscribed)
 
     return pagination_response(
         request,
-        podcasts.filter(promoted=True)
-        if promoted
-        else podcasts.filter(pk__in=subscribed),
+        podcasts,
         "podcasts/index.html",
         "podcasts/includes/pagination.html",
         {
@@ -56,14 +59,18 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
-    return pagination_response(
-        request,
+    podcasts = (
         Podcast.objects.filter(pub_date__isnull=False)
         .search(request.search.value)
         .order_by(
             "-rank",
             "-pub_date",
-        ),
+        )
+    )
+
+    return pagination_response(
+        request,
+        podcasts,
         "podcasts/search.html",
         "podcasts/includes/pagination.html",
     )
