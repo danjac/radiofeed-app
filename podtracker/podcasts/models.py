@@ -224,7 +224,7 @@ class Subscription(TimeStampedModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                name="unique_%(app_label)s_%(class)s",
+                name="unique_%(app_label)s_%(class)s_user_podcast",
                 fields=["user", "podcast"],
             )
         ]
