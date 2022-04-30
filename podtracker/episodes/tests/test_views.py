@@ -378,7 +378,7 @@ class TestHistory:
             )
 
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 1
