@@ -51,9 +51,7 @@ To add a new dependency, add it to **requirements.in** and then run `pip-compile
 
 ## Deployment
 
-Heroku deployment is supported. Deployment requires PostgreSQL and Redis buildpacks.
-
-The following environment variables should be set in your Heroku installation:
+The following environment variables should be set in your production installation:
 
 ```
     DJANGO_SETTINGS_MODULE='podtracker.settings.production'
@@ -69,11 +67,7 @@ The following environment variables should be set in your Heroku installation:
     CONTACT_EMAIL='me@site.com'
 ```
 
-You should also set up cron jobs using the scheduler add-on:
-
-https://devcenter.heroku.com/articles/scheduling-custom-django-management-commands#setup-heroku-scheduler
-
-The following commands can be set up to run using the scheduler:
+The following commands should be set up to run as cron jobs (or equivalent scheduled workers):
 
 `python manage.py schedule_podcast_feeds`
 
