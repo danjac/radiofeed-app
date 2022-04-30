@@ -62,12 +62,7 @@ services:
         volumes:
             - ./:/app
             - /app/node_modules
-        command: [
-            'honcho',
-            'start',
-            '-f',
-            './Procfile.local'
-        ]
+        command: 'honcho start'
 
 volumes:
     pg_data: {}
