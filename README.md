@@ -9,9 +9,9 @@ Local development requires:
 * docker
 * docker-compose
 
-Just run the Makefile to build and start the containers and run initial data migrations:
+Just run the Makefile to build and start the containers:
 
-> make
+> make up
 
 To update podcast data and download episodes from their RSS feeds:
 
