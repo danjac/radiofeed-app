@@ -1,18 +1,18 @@
 databases:
   - name: podtracker
-    plan: starter
+    plan: free
     databaseName: podtracker
     user: podtracker
 
 services:
   - type: redis
     name: redis
-    plan: starter
+    plan: free
     maxmemoryPolicy: noeviction # recommended policy for queues
     ipAllowList: [] # only allow internal connections
   - type: web
     name: app
-    plan: starter
+    plan: free
     env: python
     buildCommand: "./build.sh"
     startCommand: "gunicorn podtracker.wsgi"
@@ -36,7 +36,7 @@ services:
         value: "podtracker.settings.production"
   - type: worker
     name: worker
-    plan: starter
+    plan: free
     env: python
     buildCommand: "./build.sh"
     startCommand: "python manage.py rqworker mail default feeds feeds:frequent feeds:sporadic"
