@@ -97,7 +97,6 @@ services:
         build:
             context: .
             target: node
-        environment: *default-environment
         logging: *default-logging
         restart: on-failure
         privileged: true
