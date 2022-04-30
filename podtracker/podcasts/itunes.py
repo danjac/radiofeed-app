@@ -16,7 +16,7 @@ from django.core.cache import cache
 from podtracker.podcasts.models import Podcast
 from podtracker.podcasts.parsers.feed_parser import get_user_agent
 
-RE_PODCAST_ID = re.compile(r"id(?P<id>[0-9]+)")
+RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
 
 
 @dataclasses.dataclass
