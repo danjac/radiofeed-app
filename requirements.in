@@ -26,7 +26,6 @@ django-split-settings
 django-widget-tweaks
 factory-boy
 gunicorn
-honcho
 ipython
 lxml
 nltk

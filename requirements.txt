@@ -111,8 +111,6 @@ faker==13.6.0
     #   factory-boy
 gunicorn==20.1.0
     # via -r requirements.in
-honcho==1.1.0
-    # via -r requirements.in
 idna==3.3
     # via requests
 iniconfig==1.1.1

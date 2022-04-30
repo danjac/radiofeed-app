@@ -5,6 +5,13 @@ x-logging: &default-logging
         max-size: '100k'
         max-file: '3'
 
+x-environment: &default-environment
+    DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
+    EMAIL_HOST: mailhog
+    EMAIL_PORT: 1025
+    REDIS_URL: redis://redis:6379/0
+    SECRET_KEY: seekrit!
+
 services:
     postgres:
         image: postgres:14.1
@@ -38,20 +45,15 @@ services:
             - '8025:8025'
             - '1025:1025'
 
-    honcho:
+    webapp:
         build:
             context: .
-        environment:
-            DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
-            EMAIL_HOST: mailhog
-            EMAIL_PORT: 1025
-            REDIS_URL: redis://redis:6379/0
-            SECRET_KEY: seekrit!
+        environment: *default-environment
+        logging: *default-logging
         restart: on-failure
         privileged: true
         tty: true
         stop_grace_period: '3s'
-        logging: *default-logging
         ports:
             - '8000:8000'
         depends_on:
@@ -60,9 +62,39 @@ services:
             redis:
                 condition: service_healthy
         volumes:
-            - ./:/app
+            - ./:/app:z
+        command: >
+            sh -c "python manage.py migrate
+                   python manage.py runserver 0.0.0.0:8000"
+
+    worker:
+        build:
+            context: .
+        environment: *default-environment
+        logging: *default-logging
+        restart: on-failure
+        privileged: true
+        tty: true
+        stop_grace_period: '3s'
+        depends_on:
+            - webapp
+        volumes:
+            - ./:/app:z
+        command: 'python manage.py rqworker mail default feeds feeds:frequent feeds:sporadic'
+
+    watcher:
+        build:
+            context: .
+        environment: *default-environment
+        logging: *default-logging
+        restart: on-failure
+        privileged: true
+        tty: true
+        stop_grace_period: '3s'
+        volumes:
+            - ./:/app:z
             - /app/node_modules
-        command: 'honcho start'
+        command: 'npm run watch'
 
 volumes:
     pg_data: {}

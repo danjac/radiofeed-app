@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-docker-compose exec honcho npm $@
+docker-compose exec watcher npm $@

@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-docker-compose exec honcho pytest $@
+docker-compose exec webapp pytest $@
