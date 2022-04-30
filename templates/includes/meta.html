@@ -24,7 +24,7 @@
     <meta property="og:description"
         content="{{ og_description }}" />
     <meta property="og:url"
-        content="{% if og_data.url %}{{ og_data.url }}{% else %}http://{{ request.site.domain }}{% endif %}" />
+        content="{% if og_data.url %}{{ og_data.url }}{% else %}{% absolute_uri "podcasts:index" %}{% endif %}" />
     {% if og_data.image %}
         <meta property="og:image"
             content="{{ og_data.image }}" />
