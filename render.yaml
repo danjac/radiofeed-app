@@ -1,5 +1,6 @@
 databases:
   - name: podtracker
+    plan: starter
     databaseName: podtracker
     user: podtracker
 
@@ -11,6 +12,7 @@ services:
     ipAllowList: [] # only allow internal connections
   - type: web
     name: app
+    plan: starter
     env: python
     buildCommand: "./build.sh"
     startCommand: "gunicorn podtracker.wsgi"
@@ -34,6 +36,7 @@ services:
         value: "podtracker.settings.production"
   - type: worker
     name: worker
+    plan: starter
     env: python
     buildCommand: "./build.sh"
     startCommand: "python manage.py rqworker mail default feeds feeds:frequent feeds:sporadic"
