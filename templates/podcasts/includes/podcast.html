@@ -1,22 +1,30 @@
-{% extends "object_list/object.html" %}
-
-{% block cover_image %}
-    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
-{% endblock cover_image %}
-
-{% block title %}
-    <a href="{{ podcast.get_absolute_url }}"
-        class="link"
-        title="{{ podcast.cleaned_title }}">
-        {{ podcast.cleaned_title|truncatechars:180 }}
-    </a>
-{% endblock title %}
+<article class="border dark:border-gray-500 flex items-center space-x-3"
+    role="listitem">
 
 
-{% block subtitle %}
-    <a href="{{ podcast.get_latest_episode_url }}"
-        title="Latest Episode"
-        class="link font-semibold text-gray-600 dark:text-gray-300">
-        {% include "includes/date.html" with value=podcast.pub_date title="Latest Episode" %}
-    </a>
-{% endblock subtitle %}
+    {% with COVER_IMAGE_CSS="h-16 w-16 lg:h-20 lg:w-20" %}
+        <div class="{{ COVER_IMAGE_CSS }}">
+            {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
+        </div>
+    {% endwith %}
+
+
+    <div class="flex flex-col place-content-between h-14 lg:h-16">
+        <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-2xl 2xl:max-w-4xl font-bold line-clamp-2">
+            <a href="{{ podcast.get_absolute_url }}"
+                class="link"
+                title="{{ podcast.cleaned_title }}">
+                {{ podcast.cleaned_title|truncatechars:180 }}
+            </a>
+        </h2>
+
+        <h3 class="truncate w-60 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
+
+            <a href="{{ podcast.get_latest_episode_url }}"
+                title="Latest Episode"
+                class="link font-semibold text-gray-600 dark:text-gray-300">
+                {% include "includes/date.html" with value=podcast.pub_date title="Latest Episode" %}
+            </a>
+        </h3>
+    </div>
+</article>
