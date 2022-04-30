@@ -30,6 +30,14 @@ services:
             property: connectionString
       - key: SECRET_KEY
         generateValue: true
+      - key: ALLOWED_HOSTS
+        generateValue: true
+      - key: MAILGUN_API_KEY
+        generateValue: true
+      - key: MAILGUN_SENDER_DOMAIN
+        generateValue: true
+      - key: SENTRY_URL
+        generateValue: true
       - key: WEB_CONCURRENCY
         value: 4
       - key: DJANGO_SETTINGS_MODULE
@@ -53,6 +61,14 @@ services:
             name: redis
             property: connectionString
       - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        generateValue: true
+      - key: MAILGUN_API_KEY
+        generateValue: true
+      - key: MAILGUN_SENDER_DOMAIN
+        generateValue: true
+      - key: SENTRY_URL
         generateValue: true
       - key: DJANGO_SETTINGS_MODULE
         value: "podtracker.settings.production"
