@@ -16,6 +16,9 @@ logs:
 migrate:
 	./bin/manage migrate
 
+schedule:
+	./bin/manage schedule_podcast_feeds --primary && ./bin/manage schedule_podcast_feeds
+
 superuser:
 	./bin/manage createsuperuser
 
