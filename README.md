@@ -55,6 +55,8 @@ The following environment variables should be set in your production installatio
 
 ```
     DJANGO_SETTINGS_MODULE='podtracker.settings.production'
+    DATABASE_URL=''
+    REDIS_URL=''
     ADMIN_URL='/some-random-url/'
     ADMINS='me@site.com'
     ALLOWED_HOSTS='my-domain'
