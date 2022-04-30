@@ -66,6 +66,7 @@ class TestCrawl:
                 ).read_bytes()
 
             def raise_for_status(self):
+                # will always be OK
                 pass
 
         mocker.patch("requests.get", return_value=MockResponse())
@@ -87,6 +88,7 @@ class TestParseGenre:
             ).read_bytes()
 
         def raise_for_status(self):
+            # will always be OK
             pass
 
     @pytest.fixture
