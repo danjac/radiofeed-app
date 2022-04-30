@@ -47,7 +47,6 @@ services:
             EMAIL_PORT: 1025
             REDIS_URL: redis://redis:6379/0
             SECRET_KEY: seekrit!
-            TWITTER_ACCOUNT: casts_j
         restart: on-failure
         privileged: true
         tty: true
