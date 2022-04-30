@@ -6,7 +6,6 @@ databases:
 services:
   - type: redis
     name: redis
-    region: ohio
     plan: starter
     maxmemoryPolicy: noeviction # recommended policy for queues
     ipAllowList: [] # only allow internal connections
