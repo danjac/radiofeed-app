@@ -1,0 +1,22 @@
+databases:
+  - name: podtracker
+    databaseName: podtracker
+    user: podtracker
+
+services:
+  - type: web
+    name: podtracker
+    env: python
+    buildCommand: "./deploy.sh"
+    startCommand: "gunicorn podtracker.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: podtracker
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: DJANGO_SETTINGS_MODULE
+        value: "podtracker.settings.production"
