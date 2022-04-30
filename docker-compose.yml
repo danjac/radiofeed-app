@@ -48,6 +48,7 @@ services:
     webapp:
         build:
             context: .
+            target: django
         environment: *default-environment
         logging: *default-logging
         restart: on-failure
@@ -70,6 +71,7 @@ services:
     worker:
         build:
             context: .
+            target: django
         environment: *default-environment
         logging: *default-logging
         restart: on-failure
@@ -80,11 +82,21 @@ services:
             - webapp
         volumes:
             - ./:/app:z
-        command: 'python manage.py rqworker mail default feeds feeds:frequent feeds:sporadic'
+        command: [
+            'python',
+            'manage.py',
+            'rqworker',
+            'mail',
+            'default',
+            'feeds',
+            'feeds:frequent',
+            'feeds:sporadic'
+        ]
 
     watcher:
         build:
             context: .
+            target: node
         environment: *default-environment
         logging: *default-logging
         restart: on-failure
