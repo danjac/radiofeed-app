@@ -7,7 +7,7 @@ import environ
 
 from django.urls import reverse_lazy
 
-BASE_DIR = pathlib.Path(__file__).absolute().parents[2]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 env = environ.Env()
 
@@ -19,6 +19,7 @@ SECRET_KEY = env("SECRET_KEY")
 DATABASES = {
     "default": {
         **env.db(),
+        "ATOMIC_REQUESTS": True,
         "CONN_MAX_AGE": 60,
     },
 }
@@ -249,7 +250,7 @@ LOGGING = {
     },
 }
 
-PROJECT_METADATA = {
+PROJECT_SETTINGS = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
     "twitter": env("TWITTER_ACCOUNT", default=None),
     "host_country": env("HOST_COUNTRY", default="Finland"),

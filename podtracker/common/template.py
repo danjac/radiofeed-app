@@ -105,8 +105,8 @@ def re_active_link(
 
 
 @register.simple_tag
-def get_project_metadata() -> dict:
-    return settings.PROJECT_METADATA
+def get_project_settings() -> dict:
+    return settings.PROJECT_SETTINGS
 
 
 @register.filter

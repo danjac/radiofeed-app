@@ -10,37 +10,37 @@ class TestFavicon:
 
 class TestRobots:
     def test_get(self, db, client, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert_ok(client.get(reverse("robots")))
 
 
 class TestSecurty:
     def test_get(self, db, client, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert_ok(client.get(reverse("security")))
 
 
 class TestAboutPages:
     def test_faq(self, db, client, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert_ok(client.get(reverse("about:faq")))
 
     def test_credits(self, db, client, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert_ok(client.get(reverse("about:credits")))
 
     def test_shortcuts(self, db, client, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert_ok(client.get(reverse("about:shortcuts")))
 
     def test_terms(self, db, client, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert_ok(client.get(reverse("about:terms")))
 
 
 class TestAcceptCookies:
     def test_post(self, client, db, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             response = client.post(reverse("accept_cookies"))
         assert_ok(response)
         assert "accept-cookies" in response.cookies

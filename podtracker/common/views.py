@@ -70,7 +70,7 @@ def security(request):
     return HttpResponse(
         "\n".join(
             [
-                f"Contact: mailto:{settings.PROJECT_METADATA['contact_email']}",
+                f"Contact: mailto:{settings.PROJECT_SETTINGS['contact_email']}",
             ]
         ),
         content_type="text/plain",
