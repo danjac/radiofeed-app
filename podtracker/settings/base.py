@@ -19,6 +19,7 @@ SECRET_KEY = env("SECRET_KEY")
 DATABASES = {
     "default": {
         **env.db(),
+        "ATOMIC_REQUESTS": True,
         "CONN_MAX_AGE": 60,
     },
 }

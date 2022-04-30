@@ -20,7 +20,7 @@ podcasts_url = reverse_lazy("podcasts:index")
 class TestPodcasts:
     def test_anonymous(self, client, db, django_assert_num_queries):
         PodcastFactory.create_batch(3, promoted=True)
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(5):
             response = client.get(podcasts_url)
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
@@ -52,7 +52,7 @@ class TestPodcasts:
 
         PodcastFactory.create_batch(3)
         sub = SubscriptionFactory(user=auth_user)
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(8):
             response = client.get(podcasts_url)
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 1
@@ -61,11 +61,11 @@ class TestPodcasts:
 
 class TestLatestEpisode:
     def test_no_episode(self, client, podcast, django_assert_num_queries):
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(5):
             assert_not_found(client.get(podcast.get_latest_episode_url()))
 
     def test_ok(self, client, episode, django_assert_num_queries):
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(5):
             assert (
                 client.get(episode.podcast.get_latest_episode_url()).url
                 == episode.get_absolute_url()
@@ -74,7 +74,7 @@ class TestLatestEpisode:
 
 class TestSearchPodcasts:
     def test_search_empty(self, client, db, django_assert_num_queries):
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert (
                 client.get(
                     reverse("podcasts:search_podcasts"),
@@ -86,7 +86,7 @@ class TestSearchPodcasts:
     def test_search(self, client, db, faker, django_assert_num_queries):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(5):
             response = client.get(
                 reverse("podcasts:search_podcasts"),
                 {"q": podcast.title},
@@ -110,7 +110,7 @@ class TestSearchITunes:
             "podtracker.podcasts.itunes.search_cached", return_value=feeds
         )
 
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
         assert_ok(response)
 
@@ -123,7 +123,7 @@ class TestSearchITunes:
             side_effect=requests.RequestException,
         )
 
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
         assert_ok(response)
 
@@ -136,7 +136,7 @@ class TestPodcastSimilar:
     def test_get(self, client, db, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.get(
                 reverse("podcasts:podcast_similar", args=[podcast.id, podcast.slug])
             )
@@ -147,7 +147,7 @@ class TestPodcastSimilar:
 
 class TestPodcastDetail:
     def test_get_podcast_anonymous(self, client, podcast, django_assert_num_queries):
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.get(
                 reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
             )
@@ -157,7 +157,7 @@ class TestPodcastDetail:
     def test_get_podcast_authenticated(
         self, client, auth_user, podcast, django_assert_num_queries
     ):
-        with django_assert_num_queries(8):
+        with django_assert_num_queries(10):
             response = client.get(
                 reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
             )
@@ -175,7 +175,7 @@ class TestPodcastEpisodes:
     def test_get_episodes(self, client, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.get(self.url(podcast))
             assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
@@ -183,7 +183,7 @@ class TestPodcastEpisodes:
     def test_get_oldest_first(self, client, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.get(
                 self.url(podcast),
                 {"ordering": "asc"},
@@ -196,7 +196,7 @@ class TestPodcastEpisodes:
 
         episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
 
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(8):
             response = client.get(
                 self.url(podcast),
                 {"q": episode.title},
@@ -219,7 +219,7 @@ class TestCategoryList:
         CategoryFactory.create_batch(3)
         CategoryFactory(name="testing")
 
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(4):
             response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
         assert len(response.context_data["categories"]) == 1
@@ -228,7 +228,7 @@ class TestCategoryList:
 class TestCategoryDetail:
     def test_get(self, client, category, django_assert_num_queries):
         PodcastFactory.create_batch(12, categories=[category])
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(6):
             response = client.get(category.get_absolute_url())
         assert_ok(response)
         assert response.context_data["category"] == category
@@ -240,7 +240,7 @@ class TestCategoryDetail:
         )
         podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(6):
             response = client.get(category.get_absolute_url(), {"q": podcast.title})
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 1
@@ -254,7 +254,7 @@ class TestSubscribe:
     def test_subscribe(
         self, client, podcast, auth_user, url, django_assert_num_queries
     ):
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.post(url)
         assert_ok(response)
         assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
@@ -274,7 +274,7 @@ class TestSubscribe:
 class TestUnsubscribe:
     def test_unsubscribe(self, client, auth_user, podcast, django_assert_num_queries):
         SubscriptionFactory(user=auth_user, podcast=podcast)
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
         assert_ok(response)
         assert not Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
