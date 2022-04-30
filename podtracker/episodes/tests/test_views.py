@@ -32,10 +32,10 @@ def assert_not_playing(client, episode):
 
 class TestNewEpisodes:
     def test_anonymous_user(self, client, db, django_assert_num_queries):
-        self._test_not_subscribed(client, django_assert_num_queries, 4)
+        self._test_not_subscribed(client, django_assert_num_queries, 6)
 
     def test_not_subscribed(self, client, db, auth_user, django_assert_num_queries):
-        self._test_not_subscribed(client, django_assert_num_queries, 7)
+        self._test_not_subscribed(client, django_assert_num_queries, 9)
 
     def test_user_has_subscribed(self, client, auth_user, django_assert_num_queries):
         promoted = PodcastFactory(promoted=True)
@@ -46,7 +46,7 @@ class TestNewEpisodes:
         episode = EpisodeFactory()
         SubscriptionFactory(user=auth_user, podcast=episode.podcast)
 
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(9):
             response = client.get(episodes_url)
         assert_ok(response)
         assert not response.context_data["promoted"]
@@ -126,7 +126,7 @@ class TestEpisodeDetail:
     def test_anonymous(
         self, client, episode, prev_episode, next_episode, django_assert_num_queries
     ):
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(6):
             response = client.get(episode.get_absolute_url())
         assert_ok(response)
         assert response.context_data["episode"] == episode
@@ -354,7 +354,7 @@ class TestHistory:
 
     def test_get(self, client, auth_user, django_assert_num_queries):
         AudioLogFactory.create_batch(3, user=auth_user)
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.get(self.url)
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
@@ -362,7 +362,7 @@ class TestHistory:
     def test_get_oldest_first(self, client, auth_user, django_assert_num_queries):
         AudioLogFactory.create_batch(3, user=auth_user)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(7):
             response = client.get(self.url, {"ordering": "asc"})
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3

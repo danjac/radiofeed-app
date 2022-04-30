@@ -32,7 +32,7 @@ class TestPodcasts:
 
         PodcastFactory.create_batch(3, promoted=True)
         sub = SubscriptionFactory(user=auth_user).podcast
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(8):
             response = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
@@ -42,7 +42,7 @@ class TestPodcasts:
         """If user is not subscribed any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(8):
             response = client.get(podcasts_url)
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
@@ -65,7 +65,7 @@ class TestLatestEpisode:
             assert_not_found(client.get(podcast.get_latest_episode_url()))
 
     def test_ok(self, client, episode, django_assert_num_queries):
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(4):
             assert (
                 client.get(episode.podcast.get_latest_episode_url()).url
                 == episode.get_absolute_url()
@@ -210,7 +210,7 @@ class TestCategoryList:
 
     def test_get(self, db, client, django_assert_num_queries):
         CategoryFactory.create_batch(3)
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(4):
             response = client.get(self.url)
         assert_ok(response)
 
