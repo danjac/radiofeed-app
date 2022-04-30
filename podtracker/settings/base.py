@@ -249,7 +249,7 @@ LOGGING = {
     },
 }
 
-PROJECT_METADATA = {
+PROJECT_SETTINGS = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
     "twitter": env("TWITTER_ACCOUNT", default=None),
     "host_country": env("HOST_COUNTRY", default="Finland"),

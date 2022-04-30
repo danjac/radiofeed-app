@@ -77,20 +77,20 @@
 
         <h3>Contact Us</h3>
         <p class="flex items-center space-x-3">
-            {% get_project_metadata as project_metadata %}
+            {% get_project_settings as project_settings %}
 
-            {% if project_metadata.contact_email %}
+            {% if project_settings.contact_email %}
                 <a
                     target="_blank"
                     rel="noopener"
-                    href="mailto:{{ project_metadata.contact_email }}">Feedback</a>
+                    href="mailto:{{ project_settings.contact_email }}">Feedback</a>
             {% endif %}
 
-            {% if project_metadata.twitter %}
+            {% if project_settings.twitter %}
                 <a
                     target="_blank"
                     rel="noopener"
-                    href="https://twitter.com/{{ project_metadata.twitter }}">
+                    href="https://twitter.com/{{ project_settings.twitter }}">
                     Twitter
                 </a>
             {% endif %}
