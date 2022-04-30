@@ -337,7 +337,7 @@ def clean_text(text: str) -> str:
     """Remove HTML tags and entities, punctuation and numbers."""
     text = html.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
-    text = re.sub(r"[0-9]+", "", text)
+    text = re.sub(r"\d+", "", text)
     return text
 
 
