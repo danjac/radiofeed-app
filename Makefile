@@ -1,17 +1,17 @@
 build:
-	docker-compose -f local.yml build
+	docker-compose build
 
 up:
-	docker-compose -f local.yml up -d --remove-orphans --scale worker=2
+	docker-compose up -d --remove-orphans --scale worker=2
 
 down:
-	docker-compose -f local.yml down
+	docker-compose down
 
 restart:
-	docker-compose -f local.yml restart
+	docker-compose restart
 
 logs:
-	docker-compose -f local.yml logs -f
+	docker-compose logs -f
 
 migrate:
 	./bin/manage migrate

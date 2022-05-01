@@ -48,7 +48,6 @@ services:
     webapp:
         build:
             context: .
-            dockerfile: ./compose/local/Dockerfile
             target: django
         environment: *default-environment
         logging: *default-logging
@@ -72,7 +71,6 @@ services:
     worker:
         build:
             context: .
-            dockerfile: ./compose/local/Dockerfile
             target: django
         environment: *default-environment
         logging: *default-logging
@@ -95,10 +93,24 @@ services:
             'feeds:sporadic'
         ]
 
+    scheduler:
+        build:
+            context: .
+            target: django
+        logging: *default-logging
+        restart: on-failure
+        privileged: true
+        tty: true
+        stop_grace_period: '3s'
+        depends_on:
+            - worker
+        volumes:
+            - ./:/app:z
+        command: 'rqscheduler --host redis'
+
     watcher:
         build:
             context: .
-            dockerfile: ./compose/local/Dockerfile
             target: node
         logging: *default-logging
         restart: on-failure

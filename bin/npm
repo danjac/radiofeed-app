@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-docker-compose -f local.yml exec watcher npm $@
+docker-compose exec watcher npm $@
