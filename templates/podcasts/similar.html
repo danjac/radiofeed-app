@@ -3,5 +3,11 @@
 {% block title %}{{ block.super }} | Similar{% endblock %}
 
 {% block podcast_content %}
-    {% include "podcasts/includes/recommendations.html" with object_list=recommendations %}
+
+    <section class="space-y-3">
+        {% for recommendation in recommendations %}
+            {% include "podcasts/includes/podcast.html" with podcast=recommendation.recommended %}
+        {% endfor %}
+    </section>
+
 {% endblock podcast_content %}

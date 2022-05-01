@@ -1,2 +1,16 @@
-{% extends "pagination/object_list.html" %}
-{% block object %}{% include "podcasts/includes/podcast.html" with podcast=object %}{% endblock %}
+<section role="list"
+    class="space-y-3"
+    role="list"
+    id="{{ pagination_target }}">
+
+    {% include "includes/pagination_links.html" %}
+
+    {% for podcast in page_obj.object_list %}
+        {% include "podcasts/includes/podcast.html" %}
+    {% empty %}
+        {% include "includes/empty.html" %}
+    {% endfor %}
+
+    {% include "includes/pagination_links.html" %}
+
+</section>

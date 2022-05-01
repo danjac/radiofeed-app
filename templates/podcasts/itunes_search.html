@@ -3,5 +3,15 @@
 {% block title %} | Search | iTunes{% endblock %}
 
 {% block search_content %}
-    {% include "podcasts/includes/itunes_feeds.html" with object_list=feeds %}
+    <section class="space-y-3" role="list">
+        {% for feed in feeds %}
+            {% if feed.podcast and feed.podcast.pub_date %}
+                {% include "podcasts/includes/podcast.html" with podcast=feed.podcast %}
+            {% else %}
+                {% include "podcasts/includes/itunes_feed.html" %}
+            {% endif %}
+        {% empty %}
+            {% include "includes/empty.html" %}
+        {% endfor %}
+    </section>
 {% endblock %}
