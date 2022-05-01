@@ -112,6 +112,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "django_rq",
     "django_object_actions",
+    "scheduler",
     "podtracker.episodes",
     "podtracker.podcasts",
     "podtracker.users",

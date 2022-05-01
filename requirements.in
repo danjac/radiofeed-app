@@ -22,6 +22,7 @@ django-postgres-metrics
 django-ratelimit
 django-redis
 django-rq
+django-rq-scheduler
 django-split-settings
 django-widget-tweaks
 factory-boy
