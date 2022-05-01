@@ -5,12 +5,13 @@ from datetime import timedelta
 from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 from django.utils.datastructures import OrderedSet
-from django_rq import get_queue
+from django_rq import get_queue, job
 
 from podtracker.podcasts.models import Podcast
 from podtracker.podcasts.parsers import feed_parser
 
 
+@job
 def schedule_primary_feeds(**kwargs) -> int:
     """Any subscribed or promoted podcasts"""
     return schedule_podcast_feeds(
@@ -19,6 +20,7 @@ def schedule_primary_feeds(**kwargs) -> int:
     )
 
 
+@job
 def schedule_secondary_feeds(**kwargs) -> int:
     """Any (non-subscribed/promoted) podcasts"""
 

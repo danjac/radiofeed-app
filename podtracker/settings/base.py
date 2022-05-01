@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "widget_tweaks",
     "django_rq",
+    "scheduler",
     "django_object_actions",
     "podtracker.episodes",
     "podtracker.podcasts",
