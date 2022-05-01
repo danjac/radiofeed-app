@@ -68,7 +68,7 @@ services:
             sh -c "python manage.py migrate
                    python manage.py runserver 0.0.0.0:8000"
 
-    worker:
+    celeryworker:
         build:
             context: .
             target: django
@@ -78,22 +78,14 @@ services:
         privileged: true
         tty: true
         stop_grace_period: '3s'
+        ports: []
         depends_on:
             - webapp
         volumes:
             - ./:/app:z
-        command: [
-            'python',
-            'manage.py',
-            'rqworker',
-            'mail',
-            'default',
-            'feeds',
-            'feeds:frequent',
-            'feeds:sporadic'
-        ]
+        command: 'watchfiles celery.__main__.main --args -A config.celery_app worker -l INFO'
 
-    scheduler:
+    celerybeat:
         build:
             context: .
             target: django
@@ -102,11 +94,12 @@ services:
         privileged: true
         tty: true
         stop_grace_period: '3s'
+        ports: []
         depends_on:
-            - worker
+            - celeryworker
         volumes:
             - ./:/app:z
-        command: 'rqscheduler --host redis'
+        command: 'celery -A config.celery_app beat -l INFOrqscheduler --host redis'
 
     watcher:
         build:
