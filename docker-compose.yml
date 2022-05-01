@@ -97,6 +97,7 @@ services:
         build:
             context: .
             target: django
+        environment: *default-environment
         logging: *default-logging
         restart: on-failure
         privileged: true
@@ -106,7 +107,7 @@ services:
             - worker
         volumes:
             - ./:/app:z
-        command: 'rqscheduler --host redis'
+        command: 'python manage.py rqscheduler'
 
     watcher:
         build:

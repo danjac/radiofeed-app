@@ -22,11 +22,11 @@ django-postgres-metrics
 django-ratelimit
 django-redis
 django-rq
-django-rq-scheduler
 django-split-settings
 django-widget-tweaks
 factory-boy
 gunicorn
+hiredis
 ipython
 lxml
 nltk
@@ -45,6 +45,7 @@ python-dateutil
 redis
 requests
 rq
+rq-scheduler
 scikit-learn
 scipy
 sentry-sdk
