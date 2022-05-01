@@ -48,7 +48,7 @@ services:
     webapp:
         build:
             context: .
-            dockerfile: Dockerfile.local
+            dockerfile: ./compose/local/Dockerfile
             target: django
         environment: *default-environment
         logging: *default-logging
@@ -72,7 +72,7 @@ services:
     worker:
         build:
             context: .
-            dockerfile: Dockerfile.local
+            dockerfile: ./compose/local/Dockerfile
             target: django
         environment: *default-environment
         logging: *default-logging
@@ -98,7 +98,7 @@ services:
     watcher:
         build:
             context: .
-            dockerfile: Dockerfile.local
+            dockerfile: ./compose/local/Dockerfile
             target: node
         logging: *default-logging
         restart: on-failure

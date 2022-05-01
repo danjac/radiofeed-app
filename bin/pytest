@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-docker-compose exec webapp pytest $@
+docker-compose -f local.yml exec webapp pytest $@
