@@ -4,12 +4,12 @@ from datetime import timedelta
 
 from django.db.models import F, Q, QuerySet
 from django.utils import timezone
+from django.utils.datastructures import OrderedSet
 
 from podtracker.podcasts.models import Podcast
-from podtracker.podcasts.parsers import feed_parser
 
 
-def schedule_primary_feeds(**kwargs) -> int:
+def schedule_primary_feeds(**kwargs) -> list[int]:
     """Any subscribed or promoted podcasts"""
     return schedule_podcast_feeds(
         Podcast.objects.with_subscribed().filter(Q(promoted=True) | Q(subscribed=True)),
@@ -17,7 +17,7 @@ def schedule_primary_feeds(**kwargs) -> int:
     )
 
 
-def schedule_secondary_feeds(**kwargs) -> int:
+def schedule_secondary_feeds(**kwargs) -> list[int]:
     """Any (non-subscribed/promoted) podcasts"""
 
     return schedule_podcast_feeds(
@@ -35,7 +35,7 @@ def schedule_podcast_feeds(
     after: timedelta | None = None,
     before: timedelta | None = None,
     limit: int = 300,
-) -> int:
+) -> list[int]:
     now = timezone.now()
 
     q = Q()
@@ -49,7 +49,7 @@ def schedule_podcast_feeds(
     if after or before:
         q |= Q(pub_date__isnull=True)
 
-    podcast_ids = (
+    qs = (
         podcasts.filter(
             q,
             active=True,
@@ -64,6 +64,9 @@ def schedule_podcast_feeds(
         .distinct()[:limit],
     )
 
+    if not (podcast_ids := OrderedSet(qs)):
+        return []
+
     now = timezone.now()
 
     Podcast.objects.filter(pk__in=podcast_ids).update(
@@ -71,7 +74,4 @@ def schedule_podcast_feeds(
         updated=now,
     )
 
-    for counter, podcast_id in enumerate(podcast_ids, 1):
-        feed_parser.parse_podcast_feed.delay(podcast_id)
-
-    return counter
+    return podcast_ids
