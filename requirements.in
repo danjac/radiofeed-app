@@ -11,8 +11,6 @@ dj-database-url
 django-allauth
 django-anymail
 django-cachalot
-django-celery-beat
-django-celery-email
 django-debug-toolbar
 django-environ
 django-extensions
@@ -27,7 +25,6 @@ django-redis
 django-split-settings
 django-widget-tweaks
 factory-boy
-flower
 gunicorn
 hiredis
 ipython

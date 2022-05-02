@@ -101,7 +101,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "widget_tweaks",
     "django_object_actions",
-    "django_celery_beat",
+    # "django_celery_beat",
     "podtracker.episodes",
     "podtracker.podcasts",
     "podtracker.users",

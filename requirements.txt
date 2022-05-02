@@ -25,10 +25,7 @@ bleach==5.0.0
 brotli==1.0.9
     # via -r requirements.in
 celery==5.2.6
-    # via
-    #   -r requirements.in
-    #   django-celery-beat
-    #   flower
+    # via -r requirements.in
 certifi==2021.10.8
     # via
     #   requests
@@ -66,13 +63,12 @@ deprecated==1.2.13
     # via redis
 dj-database-url==0.5.0
     # via -r requirements.in
-django==3.2.13
+django==4.0.4
     # via
     #   -r requirements.in
     #   django-allauth
     #   django-anymail
     #   django-cachalot
-    #   django-celery-beat
     #   django-debug-toolbar
     #   django-extensions
     #   django-health-check
@@ -81,14 +77,11 @@ django==3.2.13
     #   django-permissions-policy
     #   django-redis
     #   django-rich
-    #   django-timezone-field
 django-allauth==0.50.0
     # via -r requirements.in
 django-anymail==8.5
     # via -r requirements.in
 django-cachalot==2.5.1
-    # via -r requirements.in
-django-celery-beat==2.2.1
     # via -r requirements.in
 django-debug-toolbar==3.3.0
     # via -r requirements.in
@@ -116,8 +109,6 @@ django-rich==1.2.0
     # via django-postgres-metrics
 django-split-settings==1.1.0
     # via -r requirements.in
-django-timezone-field==4.2.3
-    # via django-celery-beat
 django-widget-tweaks==1.4.12
     # via -r requirements.in
 execnet==1.9.0
@@ -130,14 +121,10 @@ faker==13.7.0
     # via
     #   -r requirements.in
     #   factory-boy
-flower==1.0.0
-    # via -r requirements.in
 gunicorn==20.1.0
     # via -r requirements.in
 hiredis==2.0.0
     # via -r requirements.in
-humanize==4.0.0
-    # via flower
 idna==3.3
     # via requests
 iniconfig==1.1.1
@@ -182,8 +169,6 @@ pickleshare==0.7.5
     # via ipython
 pluggy==1.0.0
     # via pytest
-prometheus-client==0.14.1
-    # via flower
 prompt-toolkit==3.0.29
     # via
     #   click-repl
@@ -233,22 +218,16 @@ pytest-randomly==3.11.0
     # via -r requirements.in
 pytest-xdist==2.5.0
     # via -r requirements.in
-python-crontab==2.6.0
-    # via django-celery-beat
 python-dateutil==2.8.2
     # via
     #   -r requirements.in
     #   faker
     #   pandas
-    #   python-crontab
 python3-openid==3.2.0
     # via django-allauth
 pytz==2022.1
     # via
     #   celery
-    #   django
-    #   django-timezone-field
-    #   flower
     #   pandas
 redis==4.2.2
     # via
@@ -292,8 +271,6 @@ tomli==2.0.1
     # via
     #   coverage
     #   pytest
-tornado==6.1
-    # via flower
 tqdm==4.64.0
     # via nltk
 traitlets==5.1.1

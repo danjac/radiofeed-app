@@ -85,22 +85,26 @@ services:
             - ./:/app:z
         command: 'celery -A podtracker.config.celery_app worker -l INFO'
 
-    celerybeat:
-        build:
-            context: .
-            target: django
-        environment: *default-environment
-        logging: *default-logging
-        restart: on-failure
-        privileged: true
-        tty: true
-        stop_grace_period: '3s'
-        ports: []
-        depends_on:
-            - celeryworker
-        volumes:
-            - ./:/app:z
-        command: 'celery -A podtracker.config.celery_app beat -l INFO'
+
+    # celerybeat currently not compatible with django 4:
+    # https://github.com/celery/django-celery-beat/issues/465
+
+    #celerybeat:
+        #build:
+            #context: .
+            #target: django
+        #environment: *default-environment
+        #logging: *default-logging
+        #restart: on-failure
+        #privileged: true
+        #tty: true
+        #stop_grace_period: '3s'
+        #ports: []
+        #depends_on:
+            #- celeryworker
+        #volumes:
+            #- ./:/app:z
+        #command: 'celery -A podtracker.config.celery_app beat -l INFO'
 
     watcher:
         build:
