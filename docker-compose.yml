@@ -83,7 +83,7 @@ services:
             - webapp
         volumes:
             - ./:/app:z
-        command: 'watchfiles celery.__main__.main --args -A config.celery_app worker -l INFO'
+        command: 'celery -A podtracker.celery_app worker -l INFO'
 
     celerybeat:
         build:
@@ -100,7 +100,7 @@ services:
             - celeryworker
         volumes:
             - ./:/app:z
-        command: 'celery -A config.celery_app beat -l INFOrqscheduler --host redis'
+        command: 'celery -A podtracker.celery_app beat -l INFO'
 
     watcher:
         build:

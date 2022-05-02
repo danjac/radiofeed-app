@@ -29,6 +29,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
+
 CACHES = {
     "default": {
         **env.cache("REDIS_URL"),
@@ -68,9 +69,8 @@ DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
-EMAIL_BACKEND = "podtracker.common.email.RqBackend"
-RQ_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-RQ_EMAIL_QUEUE = "mail"
+# EMAIL_BACKEND = "podtracker.common.email.RqBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
@@ -119,9 +119,8 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_htmx",
     "widget_tweaks",
-    "django_rq",
     "django_object_actions",
-    "scheduler",
+    "django_celery_beat",
     "podtracker.episodes",
     "podtracker.podcasts",
     "podtracker.users",
@@ -259,6 +258,21 @@ LOGGING = {
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
 }
+
+# Celery settings
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html
+
+if USE_TZ:
+    CELERY_TIMEZONE = TIME_ZONE
+
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL = REDIS_URL
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_TIME_LIMIT = 5 * 60
+CELERY_TASK_SOFT_TIME_LIMIT = 60
+
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 PROJECT_SETTINGS = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
