@@ -35,7 +35,7 @@ def schedule_podcast_feeds(
     after: timedelta | None = None,
     before: timedelta | None = None,
     limit: int = 300,
-) -> list[int]:
+) -> OrderedSet:
     now = timezone.now()
 
     q = Q()
@@ -65,7 +65,7 @@ def schedule_podcast_feeds(
     )
 
     if not (podcast_ids := OrderedSet(qs)):
-        return []
+        return OrderedSet()
 
     now = timezone.now()
 

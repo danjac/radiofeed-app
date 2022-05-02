@@ -39,6 +39,7 @@ def parse_podcast_feed(podcast_id: int) -> None:
 @shared_task
 def schedule_primary_feeds(**kwargs) -> None:
     for podcast_id in scheduler.schedule_primary_feeds(**kwargs):
+        print("podcast_id", podcast_id)
         parse_podcast_feed.delay(podcast_id)
 
 
