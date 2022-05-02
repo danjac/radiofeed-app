@@ -13,6 +13,7 @@ import pandas
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
+from django_rq import job
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -25,6 +26,7 @@ logger = logging.getLogger(__name__)
 Similarities = tuple[int, list[tuple[int, float]]]
 
 
+@job
 def recommend(since: timedelta = timedelta(days=90), num_matches: int = 12) -> None:
 
     podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(

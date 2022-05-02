@@ -5,7 +5,7 @@ from django.core.management import call_command
 from podtracker.users.factories import UserFactory
 
 
-class TestNewEpisodesEmails:
+class TestSendNewEpisodesEmails:
     def test_command(self, db, mocker):
 
         yes = UserFactory(send_email_notifications=True)

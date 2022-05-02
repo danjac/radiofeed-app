@@ -4,9 +4,8 @@
 .github export-ignore
 .pre-commit-config.yaml export-ignore
 
-assets/bundle.css -diff
-assets/bundle.js -diff
-assets/bundle.js.map -diff
+static/dist/bundle.css -diff
+static/dist/bundle.js -diff
+static/dist/bundle.js.map -diff
 
 * text=auto eol=lf
-

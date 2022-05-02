@@ -89,6 +89,7 @@ services:
         build:
             context: .
             target: django
+        environment: *default-environment
         logging: *default-logging
         restart: on-failure
         privileged: true
@@ -110,6 +111,7 @@ services:
         privileged: true
         tty: true
         stop_grace_period: '3s'
+        ports: []
         volumes:
             - ./:/app:z
             - /app/node_modules

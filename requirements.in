@@ -47,6 +47,7 @@ python-dateutil
 redis
 requests
 rq
+rq-scheduler
 scikit-learn
 scipy
 sentry-sdk
