@@ -1,4 +1,4 @@
-from huey.contrib.djhuery import db_task
+from huey.contrib.djhuey import db_task
 
 from podtracker.podcasts import emails, itunes, recommender, scheduler
 from podtracker.podcasts.parsers import feed_parser
