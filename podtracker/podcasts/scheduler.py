@@ -9,7 +9,7 @@ from django.utils.datastructures import OrderedSet
 from podtracker.podcasts.models import Podcast
 
 
-def schedule_primary_feeds(**kwargs) -> list[int]:
+def schedule_primary_feeds(**kwargs) -> OrderedSet:
     """Any subscribed or promoted podcasts"""
     return schedule_podcast_feeds(
         Podcast.objects.with_subscribed().filter(Q(promoted=True) | Q(subscribed=True)),
@@ -17,7 +17,7 @@ def schedule_primary_feeds(**kwargs) -> list[int]:
     )
 
 
-def schedule_secondary_feeds(**kwargs) -> list[int]:
+def schedule_secondary_feeds(**kwargs) -> OrderedSet:
     """Any (non-subscribed/promoted) podcasts"""
 
     return schedule_podcast_feeds(
@@ -49,22 +49,22 @@ def schedule_podcast_feeds(
     if after or before:
         q |= Q(pub_date__isnull=True)
 
-    qs = (
-        podcasts.filter(
-            q,
-            active=True,
-            queued__isnull=True,
+    if not (
+        podcast_ids := OrderedSet(
+            podcasts.filter(
+                q,
+                active=True,
+                queued__isnull=True,
+            )
+            .order_by(
+                F("parsed").asc(nulls_first=True),
+                F("pub_date").desc(nulls_first=True),
+                F("created").desc(),
+            )
+            .values_list("pk", flat=True)
+            .distinct()[:limit]
         )
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-            F("created").desc(),
-        )
-        .values_list("pk", flat=True)
-        .distinct()[:limit],
-    )
-
-    if not (podcast_ids := OrderedSet(qs)):
+    ):
         return OrderedSet()
 
     now = timezone.now()
