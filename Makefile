@@ -5,7 +5,7 @@ up:
 	docker-compose up -d --remove-orphans --scale worker=2
 
 down:
-	docker-compose down
+	docker-compose down --remove-orphans
 
 restart:
 	docker-compose restart

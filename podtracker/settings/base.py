@@ -121,7 +121,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "django_rq",
     "django_object_actions",
-    "scheduler",
+    "huey.contrib.djhuey",
     "podtracker.episodes",
     "podtracker.podcasts",
     "podtracker.users",
@@ -265,4 +265,11 @@ PROJECT_SETTINGS = {
     "twitter": env("TWITTER_ACCOUNT", default=None),
     "host_country": env("HOST_COUNTRY", default="Finland"),
     "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
+}
+
+# https://huey.readthedocs.io/en/latest/django.html
+
+HUEY = {
+    "connection": {"url": REDIS_URL},
+    "immediate": False,
 }

@@ -25,6 +25,7 @@ django-rq
 django-rq-scheduler
 django-split-settings
 django-widget-tweaks
+huey
 factory-boy
 gunicorn
 hiredis

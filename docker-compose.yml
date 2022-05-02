@@ -86,30 +86,8 @@ services:
         command: [
             'python',
             'manage.py',
-            'rqworker',
-            'mail',
-            'default',
-            'feeds',
-            'feeds:frequent',
-            'feeds:sporadic'
+            'run_huey',
         ]
-
-    scheduler:
-        build:
-            context: .
-            target: django
-        environment: *default-environment
-        logging: *default-logging
-        restart: on-failure
-        privileged: true
-        tty: true
-        stop_grace_period: '3s'
-        ports: []
-        depends_on:
-            - worker
-        volumes:
-            - ./:/app:z
-        command: 'python manage.py rqscheduler'
 
     watcher:
         build:

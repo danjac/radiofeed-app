@@ -124,6 +124,8 @@ gunicorn==20.1.0
     # via -r requirements.in
 hiredis==2.0.0
     # via -r requirements.in
+huey==2.4.3
+    # via -r requirements.in
 idna==3.3
     # via requests
 iniconfig==1.1.1
