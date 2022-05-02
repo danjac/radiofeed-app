@@ -8,7 +8,7 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
-from podtracker.podcasts import models, scheduler
+from podtracker.podcasts import models, tasks
 
 
 @admin.register(models.Category)
@@ -192,7 +192,14 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
-        count = scheduler.schedule_podcast_feeds(queryset)
+        count = queryset.count()
+
+        for podcast_id in queryset.values_list("pk", flat=True):
+            tasks.parse_podcast_feed.delay(podcast_id)
+
+        now = timezone.now()
+
+        queryset.update(queued=now, updated=now)
 
         self.message_user(
             request,
@@ -209,7 +216,10 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             self.message_user(request, "Podcast is inactive")
             return
 
-        scheduler.enqueue(obj.id)
+        obj.queued = obj.updated = timezone.now()
+        obj.save(update_fields=["queued", "updated"])
+
+        tasks.parse_podcast_feed.delay(obj.id)
 
         self.message_user(request, "Podcast has been queued for update")
 
