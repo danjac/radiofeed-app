@@ -32,8 +32,8 @@ def send_recommendations_emails() -> None:
 
 
 @shared_task
-def parse_podcast_feed(podcast_id: int) -> feed_parser.ParseResult:
-    return feed_parser.parse_podcast_feed(podcast_id)
+def parse_podcast_feed(podcast_id: int) -> None:
+    feed_parser.parse_podcast_feed(podcast_id)
 
 
 @shared_task
