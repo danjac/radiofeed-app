@@ -30,7 +30,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 REDIS_URL = env("REDIS_URL")
 
 CACHES = {
-    "default": env.cache("REDIS_URL"),
+    "default": {
+        **env.cache("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # Mimicing memcache behavior.
+            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
+            "IGNORE_EXCEPTIONS": True,
+            "PARSER_CLASS": "redis.connection.HiredisParser",
+        },
+    },
 }
 
 
