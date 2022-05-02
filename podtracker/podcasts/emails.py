@@ -7,6 +7,12 @@ from podtracker.users.emails import send_user_notification_email
 from podtracker.users.models import User
 
 
+@job
+def send_recommendations_emails() -> None:
+    for user in User.objects.filter(send_email_notifications=True, is_active=True):
+        send_recommendations_email.delay(user)
+
+
 @job("mail")
 def send_recommendations_email(user: User) -> None:
     """Sends email with 2 or 3 recommended podcasts, based on:
