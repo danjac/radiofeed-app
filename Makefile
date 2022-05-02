@@ -16,14 +16,12 @@ logs:
 migrate:
 	./bin/manage migrate
 
-schedule:
-	./bin/manage schedule_podcast_feeds --primary && ./bin/manage schedule_podcast_feeds
-
 superuser:
 	./bin/manage createsuperuser
 
 seed:
-	./bin/manage seed_podcast_data
+	./bin/manage loaddata podcasts podtracker/podcasts/fixtures/categories.json.gz
+	./bin/manage loaddata podcasts podtracker/podcasts/fixtures/podcasts.json.gz
 
 shell:
 	./bin/manage shell_plus
