@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-from podtracker.celery_app import app
+from celery import shared_task
+
 from podtracker.episodes.models import Episode
 from podtracker.users.emails import send_user_notification_email
 from podtracker.users.models import User
 
 
-@app.task
+@shared_task
 def send_new_episodes_emails(since: timedelta = timedelta(days=7)):
     for user in User.objects.filter(send_email_notifications=True, is_active=True):
         episodes = (

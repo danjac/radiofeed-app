@@ -10,13 +10,13 @@ from typing import Generator
 
 import pandas
 
+from celery import shared_task
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from podtracker.celery_app import app
 from podtracker.podcasts.models import Category, Podcast, Recommendation
 from podtracker.podcasts.parsers.text_parser import get_stopwords
 
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 Similarities = tuple[int, list[tuple[int, float]]]
 
 
-@app.task
+@shared_task
 def recommend(since: timedelta = timedelta(days=90), num_matches: int = 12) -> None:
 
     podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(

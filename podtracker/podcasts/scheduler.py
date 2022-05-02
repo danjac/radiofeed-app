@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from celery import shared_task
 from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 
-from podtracker.celery_app import app
 from podtracker.podcasts.models import Podcast
 from podtracker.podcasts.parsers import feed_parser
 
 
-@app.task
+@shared_task
 def schedule_primary_feeds(**kwargs) -> int:
     """Any subscribed or promoted podcasts"""
     return schedule_podcast_feeds(
@@ -19,7 +19,7 @@ def schedule_primary_feeds(**kwargs) -> int:
     )
 
 
-@app.task
+@shared_task
 def schedule_secondary_feeds(**kwargs) -> int:
     """Any (non-subscribed/promoted) podcasts"""
 

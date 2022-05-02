@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from podtracker.celery_app import app
+from celery import shared_task
+
 from podtracker.podcasts.models import Podcast, Recommendation
 from podtracker.users.emails import send_user_notification_email
 from podtracker.users.models import User
 
 
-@app.task
+@shared_task
 def send_recommendations_emails() -> None:
     for user in User.objects.filter(send_email_notifications=True, is_active=True):
         recommendations = (

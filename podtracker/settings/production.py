@@ -16,7 +16,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Mailgun settings
 
-RQ_EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
 MAILGUN_API_KEY = env("MAILGUN_API_KEY")
 MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")

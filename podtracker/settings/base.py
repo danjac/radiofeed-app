@@ -44,32 +44,11 @@ CACHES = {
 }
 
 
-RQ_QUEUES = {
-    "default": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "feeds": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "feeds:frequent": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "feeds:sporadic": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "mail": {
-        "USE_REDIS_CACHE": "default",
-    },
-}
-
-RQ_SHOW_ADMIN_LINK = True
-
 DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
-# EMAIL_BACKEND = "podtracker.common.email.RqBackend"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
@@ -113,6 +92,8 @@ INSTALLED_APPS = [
     "health_check",
     "health_check.db",
     "health_check.cache",
+    "health_check.contrib.celery",
+    "health_check.contrib.celery_ping",
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
@@ -262,9 +243,7 @@ LOGGING = {
 # Celery settings
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html
 
-if USE_TZ:
-    CELERY_TIMEZONE = TIME_ZONE
-
+CELERY_TIMEZONE = TIME_ZONE
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL = REDIS_URL
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
