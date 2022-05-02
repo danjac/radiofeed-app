@@ -25,7 +25,7 @@ DATABASES = {
 }
 
 # prevent deprecation warnings
-DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
