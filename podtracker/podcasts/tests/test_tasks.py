@@ -6,6 +6,7 @@ from podtracker.podcasts.tasks import (
     recommend,
     schedule_frequent_feeds,
     schedule_primary_feeds,
+    schedule_sporadic_feeds,
     send_recommendations_email,
     send_recommendations_emails,
 )
@@ -41,6 +42,12 @@ class TestTasks:
         self, mock_schedule_secondary_feeds, mock_parse_podcast_feed
     ):
         schedule_frequent_feeds()
+        mock_parse_podcast_feed.assert_called_with(1)
+
+    def test_schedule_sporadic_feeds(
+        self, mock_schedule_secondary_feeds, mock_parse_podcast_feed
+    ):
+        schedule_sporadic_feeds()
         mock_parse_podcast_feed.assert_called_with(1)
 
     def test_parse_podcast_feed(self, mock_parse_podcast_feed):
