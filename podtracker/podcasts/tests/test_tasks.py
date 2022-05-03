@@ -61,7 +61,7 @@ class TestTasks:
         send_recommendations_email(user.id)
         patched.assert_called_with(user)
 
-    def test_send_recommendations_email_no_user(self, mocker):
+    def test_send_recommendations_email_no_user(self, db, mocker):
         patched = mocker.patch(
             "podtracker.podcasts.tasks.emails.send_recommendations_email"
         )
