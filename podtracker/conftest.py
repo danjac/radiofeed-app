@@ -15,22 +15,18 @@ from podtracker.podcasts.factories import (
 from podtracker.users.factories import UserFactory
 
 
-class MockFeedQueue:
-    def __init__(self, *args, **kwargs):
-        self.enqueued = []
-
-    def enqueue(self, fn, podcast_id, *args, **kwargs):
-        self.enqueued.append(podcast_id)
-
-    def empty(self):
-        self.enqueued = []
-
-
 @pytest.fixture
-def mock_feed_queue(mocker):
-    queue = MockFeedQueue()
-    mocker.patch("podtracker.podcasts.scheduler.get_queue", return_value=queue)
-    return queue
+def mock_parse_feed(mocker):
+    class MockParseFeed:
+        def __init__(self, podcast_id):
+            print("setting podcast id", podcast_id)
+            self.podcast_id = podcast_id
+
+        def __call__(self):
+            print("calling mock parse...")
+            ...
+
+    mocker.patch("podtracker.podcasts.tasks.parse_podcast_feed", MockParseFeed)
 
 
 @pytest.fixture(scope="session")

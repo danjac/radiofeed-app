@@ -62,25 +62,21 @@ class TestPodcastAdmin:
         podcast.refresh_from_db()
         assert podcast.queued is None
 
-    def test_parse_podcast_feeds(self, mocker, podcast, admin, req):
-        mocker.patch("podtracker.podcasts.tasks.parse_podcast_feed.delay")
+    def test_parse_podcast_feeds(self, mock_parse_feed, podcast, admin, req):
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
-    def test_parse_podcast_feed(self, mocker, podcast, admin, req):
-        mocker.patch("podtracker.podcasts.tasks.parse_podcast_feed.delay")
+    def test_parse_podcast_feed(self, mock_parse_feed, podcast, admin, req):
 
         admin.parse_podcast_feed(req, podcast)
 
         assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
-    def test_parse_podcast_feed_queued(self, mocker, podcast, admin, req):
-        mocker.patch("podtracker.podcasts.tasks.parse_podcast_feed.delay")
+    def test_parse_podcast_feed_queued(self, mock_parse_feed, podcast, admin, req):
         podcast.queued = timezone.now()
         admin.parse_podcast_feed(req, podcast)
 
-    def test_parse_podcast_feed_inactive(self, mocker, podcast, admin, req):
-        mocker.patch("podtracker.podcasts.tasks.parse_podcast_feed.delay")
+    def test_parse_podcast_feed_inactive(self, mock_parse_feed, podcast, admin, req):
         podcast.active = False
         admin.parse_podcast_feed(req, podcast)
 

@@ -1,6 +1,6 @@
 from split_settings.tools import include
 
-from podtracker.config.settings.base import ALLOWED_HOSTS
+from podtracker.config.settings.base import ALLOWED_HOSTS, HUEY
 
 include("base.py")
 
@@ -12,14 +12,4 @@ ALLOWED_HOSTS += [".example.com"]
 
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 
-RQ_QUEUES = {
-    "default": {
-        "ASYNC": False,
-    },
-    "feeds": {
-        "ASYNC": False,
-    },
-    "mail": {
-        "ASYNC": False,
-    },
-}
+HUEY["immediate"] = True

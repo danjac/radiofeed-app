@@ -196,10 +196,13 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         count = queryset.count()
         now = timezone.now()
 
+        print("updating queued...")
+        queryset.update(updated=now, queued=now)
+
         for podcast_id in queryset.values_list("pk", flat=True):
+            print("podcast_id", podcast_id)
             parse_podcast_feed(podcast_id)()
 
-        queryset.update(updated=now, queued=now)
         self.message_user(
             request,
             f"{count} podcast(s) queued for update",
@@ -216,7 +219,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             return
 
         obj.queued = obj.updated = timezone.now()
-        obj.save(update_fields=["queued", "updated"])
+        obj.save()
 
         parse_podcast_feed(obj.id)()
         self.message_user(request, "Podcast has been queued for update")
