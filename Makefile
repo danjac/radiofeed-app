@@ -2,7 +2,7 @@ build:
 	docker-compose build
 
 up:
-	docker-compose up -d --remove-orphans --scale worker=2
+	docker-compose up -d --remove-orphans
 
 down:
 	docker-compose down --remove-orphans
