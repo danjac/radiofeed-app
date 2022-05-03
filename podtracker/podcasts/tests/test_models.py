@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.urls import reverse
+from django.utils import timezone
 
 from podtracker.episodes.factories import AudioLogFactory, BookmarkFactory
 from podtracker.podcasts.factories import (
@@ -97,6 +98,22 @@ class TestPodcastManager:
     def test_with_subscribed_false(self, db):
         PodcastFactory()
         assert not Podcast.objects.with_subscribed().first().subscribed
+
+    def test_published_has_podcasts(self, db):
+        PodcastFactory(pub_date=timezone.now())
+        assert Podcast.objects.published().exists()
+
+    def test_published_has_no_podcasts(self, db):
+        PodcastFactory(pub_date=None)
+        assert not Podcast.objects.published().exists()
+
+    def test_unpublished_has_podcasts(self, db):
+        PodcastFactory(pub_date=None)
+        assert Podcast.objects.unpublished().exists()
+
+    def test_unpublished_has_no_podcasts(self, db):
+        PodcastFactory(pub_date=timezone.now())
+        assert not Podcast.objects.unpublished().exists()
 
 
 class TestPodcastModel:

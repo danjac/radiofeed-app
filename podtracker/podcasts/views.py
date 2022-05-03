@@ -32,9 +32,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     promoted = "promoted" in request.GET or not subscribed
 
-    podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
-    )
+    podcasts = Podcast.objects.published().order_by("-pub_date").distinct()
 
     if promoted:
         podcasts = podcasts.filter(promoted=True)
@@ -60,7 +58,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
     podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False)
+        Podcast.objects.published()
         .search(request.search.value)
         .order_by(
             "-rank",
@@ -207,7 +205,7 @@ def category_detail(
 ) -> HttpResponse:
 
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    podcasts = category.podcast_set.published()
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
@@ -270,7 +268,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 def get_podcast_or_404(podcast_id: int) -> Podcast:
-    return get_object_or_404(Podcast, pub_date__isnull=False, pk=podcast_id)
+    return get_object_or_404(Podcast.objects.published(), pk=podcast_id)
 
 
 def get_podcast_detail_context(

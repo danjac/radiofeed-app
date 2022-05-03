@@ -68,6 +68,9 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
         )
 
+    def published(self) -> models.QuerySet:
+        return self.filter(pub_date__isnull=False)
+
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
