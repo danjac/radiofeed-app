@@ -83,11 +83,7 @@ services:
             - webapp
         volumes:
             - ./:/app:z
-        command: [
-            'python',
-            'manage.py',
-            'run_huey',
-        ]
+        command: 'python manage.py run_huey -w 2'
 
     watcher:
         build:
