@@ -1,4 +1,4 @@
-{% with ICON_CSS="h-5 w-5 lg:h-6 lg:w-6 mr-2" target=podcast.get_subscribe_target %}
+{% with ICON_CSS="h-5 w-5 md:h-6 md:w-6 mr-2" target=podcast.get_subscribe_target %}
     {% if user.is_authenticated %}
         <div id="{{ target }}"
             hx-target="this"

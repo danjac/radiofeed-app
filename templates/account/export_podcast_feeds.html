@@ -11,11 +11,11 @@
         class="space-y-3"
         hx-disable="true">
         {% csrf_token %}
-        <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-6">
+        <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
             {% for format,icon,export_url in formats %}
                 <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
                     href="{{ export_url }}">
-                    {% icon icon css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2"  %}
+                    {% icon icon css_class="h-4 w-4 md:h-5 md:w-5 mr-2"  %}
                     Export {{ format|upper }}
                 </a>
             {% endfor %}

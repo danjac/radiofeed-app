@@ -7,7 +7,7 @@
     {% with search_placeholder="Search: "|add:category.name %}
 
         <div class="sm:flex items-center justify-between mb-3 space-y-3 sm:space-y-0">
-            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl">
+            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
                 {{ category.name }} Podcasts
             </h1>
             {% if not request.search %}

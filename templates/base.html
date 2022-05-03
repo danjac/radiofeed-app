@@ -53,7 +53,7 @@
         </script>
         </head>
 
-        <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm lg:text-base scroll-smooth"
+        <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm md:text-base scroll-smooth"
             hx-boost="true"
             hx-target="#layout"
             hx-swap="outerHTML show:window:top"
@@ -76,7 +76,7 @@
             {% include "includes/sidebar.html" %}
         </aside>
 
-        <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
+        <main class="w-full xl:block md:w-4/5 md:mx-auto">
             {% block content %}{% endblock %}
         </main>
     </div>

@@ -3,7 +3,7 @@
 {% block title %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 
 {% block content %}
-    <h1 class="font-bold mb-6 text-lg lg:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
+    <h1 class="font-bold mb-6 text-lg md:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
 
     {% with podcast=episode.podcast %}
 
@@ -40,7 +40,7 @@
         {% endif %}
 
         <article class="space-y-3">
-            <h2 class="lg:text-lg">
+            <h2 class="md:text-lg">
                 <a href="{{ podcast.get_episodes_url }}"
                     title="See All Episodes for {{ podcast.cleaned_title }}"
                     class="link">
@@ -58,11 +58,11 @@
 
             <div class="flex items-center space-x-3 sm:space-x-6">
 
-                <div class="h-28 w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36">
-                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36 border dark:border-gray-500" url=podcast.get_detail_url %}
+                <div class="h-28 w-28 md:h-36 md:w-36">
+                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 md:w-36 md:h-36 border dark:border-gray-500" url=podcast.get_detail_url %}
                 </div>
 
-                <div class="flex flex-col place-content-between h-24 lg:h-28">
+                <div class="flex flex-col place-content-between h-24 md:h-28">
 
                     {% with completed=episode.completed listened=episode.listened %}
                         {% include "episodes/includes/player_toggle.html" %}

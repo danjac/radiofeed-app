@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0 border-b dark:border-gray-500 pb-3">
-        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl">
+        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
             Categories
         </h1>
         {% if not has_subscriptions %}
@@ -15,13 +15,13 @@
     </div>
 
 
-    <ul class="space-y-3 dark:divide-gray-500 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-3
+    <ul class="space-y-3 dark:divide-gray-500 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 md:grid-cols-3
     {% endif %}">
         {% for category in categories %}
             <li class="pt-3">
                 <h2>
                     <a href="{{ category.get_absolute_url }}"
-                        class="font-semibold lg:text-lg link">
+                        class="font-semibold md:text-lg link">
                         {{ category.name }}
                     </a>
                 </h2>

@@ -3,12 +3,12 @@
 {% block content %}
     {% if process == "connect" %}
 
-        <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">Connect to {{ provider.name }}</h1>
+        <h1 class="mb-3 font-bold text-lg md:text-xl xl:text-2xl">Connect to {{ provider.name }}</h1>
         <p class="mb-3">You are about to connect a new third party account from {{ provider.name }}.</p>
 
     {% else %}
 
-        <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">Sign In Via {{ provider.name }}</h1>
+        <h1 class="mb-3 font-bold text-lg md:text-xl xl:text-2xl">Sign In Via {{ provider.name }}</h1>
         <p class="mb-3">You are about to sign in using a third party account from {{ provider.name }}.</p>
 
     {% endif %}
@@ -18,7 +18,7 @@
         {% csrf_token %}
         <button class="inline-flex items-center btn btn-default"
             type="submit">
-            {% icon "login" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+            {% icon "login" css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
             {% if process == "connect" %}
                 Connect
             {% else %}

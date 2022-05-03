@@ -27,7 +27,7 @@
 
     </head>
 
-    <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm lg:text-base scroll-smooth">
+    <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm md:text-base scroll-smooth">
         {% url 'podcasts:index' as home_url %}
         <header class="bg-black text-white sticky top-0 w-full z-20 shadow">
             <nav class="flex items-center justify-between p-2">
@@ -40,13 +40,13 @@
                             <img src="{% static 'img/wave.png' %}"
                                 height="32"
                                 width="32"
-                                class="h-6 w-6 lg:h-8 lg:w-8"
+                                class="h-6 w-6 md:h-8 md:w-8"
                                 alt="Podtracker">
                         </a>
                     </li>
                     <li>
 
-                        <a class="font-bold text-lg lg:text-xl xl:text-2xl hover:text-blue-300"
+                        <a class="font-bold text-lg md:text-xl xl:text-2xl hover:text-blue-300"
                             title="Podtracker Home Page"
                             href="{{ home_url }}">Podtracker</a>
                     </li>
@@ -56,8 +56,8 @@
             </nav>
         </header>
         <main class="w-full flex justify-center mt-12">
-            <div class="p-3 border mx-auto w-4/5 lg:w-2/3 text-center">
-                <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">An error has occurred</h1>
+            <div class="p-3 border mx-auto w-4/5 md:w-2/3 text-center">
+                <h1 class="mb-3 font-bold text-lg md:text-xl xl:text-2xl">An error has occurred</h1>
                 {% block content %}{% endblock %}
             </div>
         </main>

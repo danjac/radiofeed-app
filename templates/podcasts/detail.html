@@ -7,7 +7,7 @@
         <article class="space-y-3 border-t dark:border-gray-500 pt-3">
 
             {% if podcast.owner %}
-                <h2 class="font-semibold flex-wrap lg:text-lg">
+                <h2 class="font-semibold flex-wrap md:text-lg">
                     {% if link %}
                         <a href="{{ link }}"
                             target="_blank"
@@ -24,11 +24,11 @@
 
             <div class="flex items-center space-x-3 sm:space-x-6">
 
-                <div class="h-28 w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36">
-                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-32 lg:w-32  xl:w-36 xl:h-36 border dark:border-gray-500" %}
+                <div class="h-28 w-28 md:h-36 md:w-36">
+                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 md:w-36 md:h-36 border dark:border-gray-500" %}
                 </div>
 
-                <div class="flex flex-col place-content-between h-24 lg:h-28 xl:32">
+                <div class="flex flex-col place-content-between h-24 md:h-28 xl:32">
                     {% include "podcasts/includes/subscribe_toggle.html" %}
                     <nav class="flex items-center space-x-3">
                         {% if link and link != podcast.rss %}
