@@ -85,15 +85,19 @@ class PubDateFilter(admin.SimpleListFilter):
         now = timezone.now()
         match self.value():
             case "yes":
-                return queryset.published()
+                return queryset.filter(pub_date__isnull=False)
             case "no":
-                return queryset.unpublished()
+                return queryset.filter(pub_date__isnull=True)
             case "new":
-                return queryset.unpublished().filter(parsed__isnull=True)
+                return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
             case "recent":
-                return queryset.published().filter(pub_date__gt=now - self.interval)
+                return queryset.filter(
+                    pub_date__isnull=False, pub_date__gt=now - self.interval
+                )
             case "sporadic":
-                return queryset.published().filter(pub_date__lt=now - self.interval)
+                return queryset.filter(
+                    pub_date__isnull=False, pub_date__lt=now - self.interval
+                )
             case _:
                 return queryset
 

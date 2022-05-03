@@ -162,8 +162,7 @@ def with_export_response_attachment(
 
 def get_podcasts_for_export(request: HttpRequest) -> Generator[Podcast, None, None]:
     return (
-        Podcast.objects.published()
-        .filter(
+        Podcast.objects.filter(
             subscription__user=request.user,
         )
         .distinct()
