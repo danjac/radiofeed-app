@@ -46,6 +46,14 @@ CACHES = {
 
 DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
+
+# https://huey.readthedocs.io/en/latest/django.html
+
+HUEY = {
+    "connection": {"url": REDIS_URL},
+    "immediate": False,
+}
+
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
@@ -242,11 +250,4 @@ PROJECT_SETTINGS = {
     "twitter": env("TWITTER_ACCOUNT", default=None),
     "host_country": env("HOST_COUNTRY", default="Finland"),
     "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
-}
-
-# https://huey.readthedocs.io/en/latest/django.html
-
-HUEY = {
-    "connection": {"url": REDIS_URL},
-    "immediate": False,
 }
