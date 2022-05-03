@@ -1,5 +1,5 @@
 from huey import crontab
-from huey.contrib.djhuey import db_task, periodic_task
+from huey.contrib.djhuey import db_periodic_task, db_task
 
 from podtracker.podcasts import emails, itunes, recommender, scheduler
 from podtracker.podcasts.parsers import feed_parser
@@ -37,13 +37,13 @@ def parse_podcast_feed(podcast_id: int) -> None:
     feed_parser.parse_podcast_feed(podcast_id)
 
 
-@periodic_task(crontab(minute="*/10"))
+@db_periodic_task(crontab(minute="*/10"))
 def schedule_primary_feeds(**kwargs) -> None:
     for podcast_id in scheduler.schedule_primary_feeds(**kwargs):
         parse_podcast_feed(podcast_id)()
 
 
-@periodic_task(crontab(hour="*/1", minute="0"))
+@db_periodic_task(crontab(hour="*/1", minute="0"))
 def schedule_secondary_feeds(**kwargs) -> None:
     for podcast_id in scheduler.schedule_secondary_feeds(**kwargs):
         parse_podcast_feed(podcast_id)()
