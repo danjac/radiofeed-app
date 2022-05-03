@@ -34,6 +34,7 @@ def send_recommendations_emails() -> None:
 
 @db_task()
 def parse_podcast_feed(podcast_id: int) -> None:
+    print("parsing podcast feed for real...", podcast_id)
     feed_parser.parse_podcast_feed(podcast_id)
 
 

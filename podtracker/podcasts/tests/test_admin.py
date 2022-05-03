@@ -37,6 +37,19 @@ def req(rf):
 
 
 class TestPodcastAdmin:
+    @pytest.fixture
+    def mock_parse_feed(self, mocker):
+        class MockParseFeed:
+            def __init__(self, podcast_id):
+                print("setting podcast id", podcast_id)
+                self.podcast_id = podcast_id
+
+            def __call__(self):
+                print("calling mock parse...")
+                ...
+
+        mocker.patch("podtracker.podcasts.admin.parse_podcast_feed", MockParseFeed)
+
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")

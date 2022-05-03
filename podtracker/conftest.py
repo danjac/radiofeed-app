@@ -15,20 +15,6 @@ from podtracker.podcasts.factories import (
 from podtracker.users.factories import UserFactory
 
 
-@pytest.fixture
-def mock_parse_feed(mocker):
-    class MockParseFeed:
-        def __init__(self, podcast_id):
-            print("setting podcast id", podcast_id)
-            self.podcast_id = podcast_id
-
-        def __call__(self):
-            print("calling mock parse...")
-            ...
-
-    mocker.patch("podtracker.podcasts.tasks.parse_podcast_feed", MockParseFeed)
-
-
 @pytest.fixture(scope="session")
 def faker():
     return Faker()
