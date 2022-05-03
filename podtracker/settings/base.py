@@ -232,7 +232,6 @@ LOGGING = {
     },
     "loggers": {
         "root": {"handlers": ["console"], "level": "INFO"},
-        "rq.worker": {"handlers": ["console"], "level": "DEBUG"},
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
