@@ -5,7 +5,6 @@ Markdown
 Werkzeug
 attrs
 bleach
-celery
 coverage
 dj-database-url
 django-allauth
