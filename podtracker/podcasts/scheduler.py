@@ -65,7 +65,7 @@ def schedule_podcast_feeds(
             .distinct()[:limit]
         )
     ):
-        return OrderedSet()
+        return podcast_ids
 
     now = timezone.now()
 
