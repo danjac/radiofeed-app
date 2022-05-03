@@ -1,28 +1,12 @@
 from __future__ import annotations
 
-from django_rq import job
-
 from podtracker.podcasts.models import Podcast, Recommendation
 from podtracker.users.emails import send_user_notification_email
 from podtracker.users.models import User
 
 
-@job
-def send_recommendations_emails() -> None:
-    for user in User.objects.filter(send_email_notifications=True, is_active=True):
-        send_recommendations_email.delay(user)
-
-
-@job("mail")
 def send_recommendations_email(user: User) -> None:
-    """Sends email with 2 or 3 recommended podcasts, based on:
-    - favorites
-    - follows
-    - play history
-    - play queue
 
-    Podcasts should be just recommended once to each user.
-    """
     recommendations = (
         Recommendation.objects.for_user(user)
         .order_by("-frequency", "-similarity")

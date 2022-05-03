@@ -7,7 +7,7 @@ import environ
 
 from django.urls import reverse_lazy
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[3]
 
 env = environ.Env()
 
@@ -29,6 +29,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
+
 CACHES = {
     "default": {
         **env.cache("REDIS_URL"),
@@ -43,34 +44,12 @@ CACHES = {
 }
 
 
-RQ_QUEUES = {
-    "default": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "feeds": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "feeds:frequent": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "feeds:sporadic": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "mail": {
-        "USE_REDIS_CACHE": "default",
-    },
-}
-
-RQ_SHOW_ADMIN_LINK = True
-
 DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
-EMAIL_BACKEND = "podtracker.common.email.RqBackend"
-RQ_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-RQ_EMAIL_QUEUE = "mail"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
@@ -90,7 +69,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-ROOT_URLCONF = "podtracker.urls"
+ROOT_URLCONF = "podtracker.config.urls"
 
 INSTALLED_APPS = [
     "postgres_metrics.apps.PostgresMetrics",
@@ -119,7 +98,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_htmx",
     "widget_tweaks",
-    "django_rq",
     "django_object_actions",
     "huey.contrib.djhuey",
     "podtracker.episodes",

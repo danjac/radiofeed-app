@@ -9,76 +9,6 @@ from podtracker.podcasts.factories import PodcastFactory, SubscriptionFactory
 from podtracker.podcasts.models import Podcast
 
 
-class TestEmptyQueue:
-    def test_empty_queue(self, db, mock_feed_queue):
-
-        podcast = PodcastFactory(queued=timezone.now(), feed_queue="feeds")
-        mock_feed_queue.enqueued.append(podcast.id)
-
-        scheduler.empty_queue("feeds")
-
-        assert podcast.id not in mock_feed_queue.enqueued
-        podcast.refresh_from_db()
-
-        assert podcast.feed_queue is None
-        assert podcast.queued is None
-
-    def test_empty_all_queues(self, db, mock_feed_queue):
-
-        podcast = PodcastFactory(queued=timezone.now(), feed_queue="feeds")
-        mock_feed_queue.enqueued.append(podcast.id)
-
-        scheduler.empty_all_queues()
-
-        assert podcast.id not in mock_feed_queue.enqueued
-        podcast.refresh_from_db()
-
-        assert podcast.feed_queue is None
-        assert podcast.queued is None
-
-
-class TestEnqueue:
-    def test_enqueue_one(self, db, mock_feed_queue, podcast):
-
-        assert scheduler.enqueue(podcast.id) == 1
-
-        assert podcast.id in mock_feed_queue.enqueued
-        assert (
-            Podcast.objects.filter(
-                queued__isnull=False, feed_queue__isnull=False
-            ).exists()
-            is True
-        )
-
-    def test_enqueue_many(self, db, mock_feed_queue):
-
-        podcasts = PodcastFactory.create_batch(3)
-        podcast_ids = [p.id for p in podcasts]
-
-        assert scheduler.enqueue(*podcast_ids) == 3
-
-        assert set(podcast_ids) == set(mock_feed_queue.enqueued)
-
-        assert (
-            Podcast.objects.filter(
-                queued__isnull=False, feed_queue__isnull=False
-            ).count()
-            == 3
-        )
-
-    def test_empty(self, db, mock_feed_queue):
-
-        assert scheduler.enqueue(*[]) == 0
-
-        assert not mock_feed_queue.enqueued
-        assert (
-            Podcast.objects.filter(
-                queued__isnull=False, feed_queue__isnull=False
-            ).exists()
-            is False
-        )
-
-
 class TestSchedulePodcastFeeds:
     @pytest.mark.parametrize(
         "pub_date,after,before,success",
@@ -98,7 +28,6 @@ class TestSchedulePodcastFeeds:
     def test_time_values(
         self,
         db,
-        mock_feed_queue,
         pub_date,
         after,
         before,
@@ -109,9 +38,10 @@ class TestSchedulePodcastFeeds:
 
         podcast = PodcastFactory(pub_date=now - pub_date if pub_date else None)
 
-        count = scheduler.schedule_podcast_feeds(
+        podcast_ids = scheduler.schedule_podcast_feeds(
             Podcast.objects.all(), after=after, before=before
         )
+        count = len(podcast_ids)
 
         assert Podcast.objects.filter(queued__isnull=False).exists() is success, (
             pub_date,
@@ -122,10 +52,9 @@ class TestSchedulePodcastFeeds:
 
         if success:
             assert count == 1
-            assert podcast.id in mock_feed_queue.enqueued
+            assert podcast.id in podcast_ids
         else:
             assert count == 0
-            assert podcast.id not in mock_feed_queue.enqueued
 
     @pytest.mark.parametrize(
         "active,success",
@@ -134,20 +63,20 @@ class TestSchedulePodcastFeeds:
             (False, False),
         ],
     )
-    def test_active(self, db, mock_feed_queue, active, success):
+    def test_active(self, db, active, success):
 
         podcast = PodcastFactory(active=active, promoted=True, pub_date=timezone.now())
 
-        count = scheduler.schedule_podcast_feeds(Podcast.objects.all())
+        podcast_ids = scheduler.schedule_podcast_feeds(Podcast.objects.all())
+        count = len(podcast_ids)
 
         Podcast.objects.filter(queued__isnull=False).exists() is success
 
         if success:
             assert count == 1
-            assert podcast.id in mock_feed_queue.enqueued
+            assert podcast.id in podcast_ids
         else:
             assert count == 0
-            assert podcast.id not in mock_feed_queue.enqueued
 
     @pytest.mark.parametrize(
         "queued,success",
@@ -156,19 +85,19 @@ class TestSchedulePodcastFeeds:
             (True, False),
         ],
     )
-    def test_queued(self, db, mock_feed_queue, queued, success):
+    def test_queued(self, db, queued, success):
         podcast = PodcastFactory(
             queued=timezone.now() if queued else None, promoted=True
         )
 
-        count = scheduler.schedule_podcast_feeds(Podcast.objects.all())
+        podcast_ids = scheduler.schedule_podcast_feeds(Podcast.objects.all())
+        count = len(podcast_ids)
 
         if success:
             assert count == 1
-            assert podcast.id in mock_feed_queue.enqueued
+            assert podcast.id in podcast_ids
         else:
             assert count == 0
-            assert podcast.id not in mock_feed_queue.enqueued
 
 
 class TestSchedulePrimaryFeeds:
@@ -184,7 +113,6 @@ class TestSchedulePrimaryFeeds:
     def test_promoted_or_subscribed(
         self,
         db,
-        mock_feed_queue,
         promoted,
         subscribed,
         success,
@@ -195,16 +123,16 @@ class TestSchedulePrimaryFeeds:
         if subscribed:
             SubscriptionFactory(podcast=podcast)
 
-        count = scheduler.schedule_primary_feeds()
+        podcast_ids = scheduler.schedule_primary_feeds()
+        count = len(podcast_ids)
 
         Podcast.objects.filter(queued__isnull=False).exists() is success
 
         if success:
             assert count == 1
-            assert podcast.id in mock_feed_queue.enqueued
+            assert podcast.id in podcast_ids
         else:
             assert count == 0
-            assert podcast.id not in mock_feed_queue.enqueued
 
 
 class TestScheduleSecondaryFeeds:
@@ -220,7 +148,6 @@ class TestScheduleSecondaryFeeds:
     def test_promoted_or_subscribed(
         self,
         db,
-        mock_feed_queue,
         promoted,
         subscribed,
         success,
@@ -231,13 +158,13 @@ class TestScheduleSecondaryFeeds:
         if subscribed:
             SubscriptionFactory(podcast=podcast)
 
-        count = scheduler.schedule_secondary_feeds()
+        podcast_ids = scheduler.schedule_secondary_feeds()
+        count = len(podcast_ids)
 
         Podcast.objects.filter(queued__isnull=False).exists() is success
 
         if success:
             assert count == 1
-            assert podcast.id in mock_feed_queue.enqueued
+            assert podcast.id in podcast_ids
         else:
             assert count == 0
-            assert podcast.id not in mock_feed_queue.enqueued

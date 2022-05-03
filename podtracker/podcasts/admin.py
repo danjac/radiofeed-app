@@ -200,7 +200,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             parse_podcast_feed(podcast_id)()
 
         queryset.update(updated=now, queued=now)
-
         self.message_user(
             request,
             f"{count} podcast(s) queued for update",
@@ -220,7 +219,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         obj.save(update_fields=["queued", "updated"])
 
         parse_podcast_feed(obj.id)()
-
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
