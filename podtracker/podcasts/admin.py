@@ -169,7 +169,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     readonly_fields = (
         "parsed",
         "queued",
-        "feed_queue",
         "pub_date",
         "modified",
         "etag",
@@ -186,7 +185,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     change_actions = ("parse_podcast_feed",)
 
     def dequeue(self, request: HttpRequest, queryset: QuerySet) -> None:
-        queryset.filter(queued__isnull=False).update(queued=None, feed_queue=None)
+        queryset.filter(queued__isnull=False).update(queued=None)
         self.message_user(request, "Podcasts removed from queue", messages.SUCCESS)
 
     dequeue.short_description = "Remove podcasts from queue"  # type: ignore
