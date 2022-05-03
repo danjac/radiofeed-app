@@ -11,7 +11,6 @@ from podtracker.podcasts.admin import (
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
-    QueuedFilter,
     ResultFilter,
     SubscribedFilter,
 )
@@ -39,16 +38,7 @@ def req(rf):
 class TestPodcastAdmin:
     @pytest.fixture
     def mock_parse_feed(self, mocker):
-        class MockParseFeed:
-            def __init__(self, podcast_id):
-                print("setting podcast id", podcast_id)
-                self.podcast_id = podcast_id
-
-            def __call__(self):
-                print("calling mock parse...")
-                ...
-
-        mocker.patch("podtracker.podcasts.admin.parse_podcast_feed", MockParseFeed)
+        return mocker.patch("podtracker.podcasts.admin.parse_podcast_feed")
 
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
@@ -69,29 +59,18 @@ class TestPodcastAdmin:
         ordering = admin.get_ordering(req)
         assert ordering == []
 
-    def test_dequeue(self, db, admin, req):
-        podcast = PodcastFactory(queued=timezone.now())
-        admin.dequeue(req, Podcast.objects.all())
-        podcast.refresh_from_db()
-        assert podcast.queued is None
-
     def test_parse_podcast_feeds(self, mock_parse_feed, podcast, admin, req):
         admin.parse_podcast_feeds(req, Podcast.objects.all())
-        assert Podcast.objects.filter(queued__isnull=False).count() == 1
+        mock_parse_feed.assert_called_with(podcast.id)
 
     def test_parse_podcast_feed(self, mock_parse_feed, podcast, admin, req):
-
         admin.parse_podcast_feed(req, podcast)
-
-        assert Podcast.objects.filter(queued__isnull=False).count() == 1
-
-    def test_parse_podcast_feed_queued(self, mock_parse_feed, podcast, admin, req):
-        podcast.queued = timezone.now()
-        admin.parse_podcast_feed(req, podcast)
+        mock_parse_feed.assert_called_with(podcast.id)
 
     def test_parse_podcast_feed_inactive(self, mock_parse_feed, podcast, admin, req):
         podcast.active = False
         admin.parse_podcast_feed(req, podcast)
+        mock_parse_feed.assert_not_called()
 
 
 class TestResultFilter:
@@ -176,21 +155,6 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
-
-
-class TestQueuedFilter:
-    def test_none(self, podcasts, admin, req):
-        PodcastFactory(queued=timezone.now())
-        f = QueuedFilter(req, {}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    def test_queued(self, podcasts, admin, req):
-        queued = PodcastFactory(queued=timezone.now())
-        f = QueuedFilter(req, {"queued": "yes"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert queued in qs
 
 
 class TestActiveFilter:

@@ -158,7 +158,6 @@ def parse_hit(
     # parsing result
 
     podcast.parsed = timezone.now()
-    podcast.queued = None
     podcast.result = Podcast.Result.SUCCESS  # type: ignore
     podcast.content_hash = content_hash
     podcast.exception = ""
@@ -231,7 +230,6 @@ def parse_miss(
         errors=errors,
         parsed=now,
         updated=now,
-        queued=None,
     )
 
     return ParseResult(

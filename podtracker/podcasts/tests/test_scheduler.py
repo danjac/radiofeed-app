@@ -43,13 +43,6 @@ class TestSchedulePodcastFeeds:
         )
         count = len(podcast_ids)
 
-        assert Podcast.objects.filter(queued__isnull=False).exists() is success, (
-            pub_date,
-            after,
-            before,
-            success,
-        )
-
         if success:
             assert count == 1
             assert podcast.id in podcast_ids
@@ -66,29 +59,6 @@ class TestSchedulePodcastFeeds:
     def test_active(self, db, active, success):
 
         podcast = PodcastFactory(active=active, promoted=True, pub_date=timezone.now())
-
-        podcast_ids = scheduler.schedule_podcast_feeds(Podcast.objects.all())
-        count = len(podcast_ids)
-
-        Podcast.objects.filter(queued__isnull=False).exists() is success
-
-        if success:
-            assert count == 1
-            assert podcast.id in podcast_ids
-        else:
-            assert count == 0
-
-    @pytest.mark.parametrize(
-        "queued,success",
-        [
-            (False, True),
-            (True, False),
-        ],
-    )
-    def test_queued(self, db, queued, success):
-        podcast = PodcastFactory(
-            queued=timezone.now() if queued else None, promoted=True
-        )
 
         podcast_ids = scheduler.schedule_podcast_feeds(Podcast.objects.all())
         count = len(podcast_ids)
@@ -126,8 +96,6 @@ class TestSchedulePrimaryFeeds:
         podcast_ids = scheduler.schedule_primary_feeds()
         count = len(podcast_ids)
 
-        Podcast.objects.filter(queued__isnull=False).exists() is success
-
         if success:
             assert count == 1
             assert podcast.id in podcast_ids
@@ -160,8 +128,6 @@ class TestScheduleSecondaryFeeds:
 
         podcast_ids = scheduler.schedule_secondary_feeds()
         count = len(podcast_ids)
-
-        Podcast.objects.filter(queued__isnull=False).exists() is success
 
         if success:
             assert count == 1

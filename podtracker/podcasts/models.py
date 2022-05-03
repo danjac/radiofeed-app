@@ -93,9 +93,6 @@ class Podcast(models.Model):
     # last parse time (success or fail)
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    # has been queued for parsing
-    queued: datetime | None = models.DateTimeField(null=True, blank=True)
-
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
 

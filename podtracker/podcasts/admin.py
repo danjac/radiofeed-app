@@ -115,21 +115,6 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
-class QueuedFilter(admin.SimpleListFilter):
-    title = "Queued"
-    parameter_name = "queued"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Queued"),)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        return (
-            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
-        )
-
-
 class SubscribedFilter(admin.SimpleListFilter):
     title = "Subscribed"
     parameter_name = "subscribed"
@@ -154,7 +139,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         SubscribedFilter,
         PromotedFilter,
         PubDateFilter,
-        QueuedFilter,
         ResultFilter,
     )
 
@@ -172,7 +156,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     readonly_fields = (
         "parsed",
-        "queued",
         "pub_date",
         "modified",
         "etag",
@@ -181,29 +164,15 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "content_hash",
     )
 
-    actions = (
-        "dequeue",
-        "parse_podcast_feeds",
-    )
+    actions = ("parse_podcast_feeds",)
 
     change_actions = ("parse_podcast_feed",)
-
-    def dequeue(self, request: HttpRequest, queryset: QuerySet) -> None:
-        queryset.filter(queued__isnull=False).update(queued=None)
-        self.message_user(request, "Podcasts removed from queue", messages.SUCCESS)
-
-    dequeue.short_description = "Remove podcasts from queue"  # type: ignore
 
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
         count = queryset.count()
-        now = timezone.now()
-
-        print("updating queued...")
-        queryset.update(updated=now, queued=now)
 
         for podcast_id in queryset.values_list("pk", flat=True):
-            print("podcast_id", podcast_id)
             parse_podcast_feed(podcast_id)()
 
         self.message_user(
@@ -213,16 +182,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         )
 
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
-        if obj.queued:
-            self.message_user(request, "Podcast has already been queued for update")
-            return
-
         if not obj.active:
             self.message_user(request, "Podcast is inactive")
             return
-
-        obj.queued = obj.updated = timezone.now()
-        obj.save()
 
         parse_podcast_feed(obj.id)()
         self.message_user(request, "Podcast has been queued for update")

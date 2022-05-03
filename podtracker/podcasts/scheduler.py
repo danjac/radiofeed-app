@@ -49,29 +49,13 @@ def schedule_podcast_feeds(
     if after or before:
         q |= Q(pub_date__isnull=True)
 
-    if not (
-        podcast_ids := OrderedSet(
-            podcasts.filter(
-                q,
-                active=True,
-                queued__isnull=True,
-            )
-            .order_by(
-                F("parsed").asc(nulls_first=True),
-                F("pub_date").desc(nulls_first=True),
-                F("created").desc(),
-            )
-            .values_list("pk", flat=True)
-            .distinct()[:limit]
+    return OrderedSet(
+        podcasts.filter(q, active=True)
+        .order_by(
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+            F("created").desc(),
         )
-    ):
-        return podcast_ids
-
-    now = timezone.now()
-
-    Podcast.objects.filter(pk__in=podcast_ids).update(
-        queued=now,
-        updated=now,
+        .values_list("pk", flat=True)
+        .distinct()[:limit]
     )
-
-    return podcast_ids
