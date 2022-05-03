@@ -13,13 +13,9 @@ Just run the Makefile to build and start the containers:
 
 > make up
 
-To update podcast data and download episodes from their RSS feeds:
+You can add some seed data (iTunes categories and sample podcasts):
 
-> ./bin/manage schedule_podcast_feeds
-
-You can then generate podcast recommendations with this command:
-
-> ./bin/manage make_recommendations
+> make seed
 
 You an also create a super user if you wish to access the Django admin:
 
