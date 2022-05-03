@@ -54,7 +54,7 @@ To add a new dependency, add it to **requirements.in** and then run `pip-compile
 The following environment variables should be set in your production installation:
 
 ```
-    DJANGO_SETTINGS_MODULE='podtracker.config.settings.production'
+    DJANGO_SETTINGS_MODULE='podtracker.settings.production'
     DATABASE_URL=''
     REDIS_URL=''
     ADMIN_URL='some-random-url/'

@@ -2,7 +2,7 @@ import socket
 
 from split_settings.tools import include
 
-from podtracker.config.settings.base import (
+from podtracker.settings.base import (
     ADMIN_SITE_HEADER,
     INSTALLED_APPS,
     MIDDLEWARE,

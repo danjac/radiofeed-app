@@ -27,7 +27,7 @@ omit=[
 
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="podtracker.config.settings.test"
+DJANGO_SETTINGS_MODULE="podtracker.settings.test"
 addopts="-v -x --ff --reuse-db -p no:warnings"
 testpaths="podtracker"
 

@@ -1,6 +1,6 @@
 from split_settings.tools import include
 
-from podtracker.config.settings.base import ALLOWED_HOSTS, HUEY
+from podtracker.settings.base import ALLOWED_HOSTS, HUEY
 
 include("base.py")
 

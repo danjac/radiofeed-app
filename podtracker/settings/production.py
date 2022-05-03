@@ -4,12 +4,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 from split_settings.tools import include
 
-from podtracker.config.settings.base import (
-    ADMIN_SITE_HEADER,
-    BASE_DIR,
-    INSTALLED_APPS,
-    env,
-)
+from podtracker.settings.base import ADMIN_SITE_HEADER, BASE_DIR, INSTALLED_APPS, env
 
 include("base.py")
 
