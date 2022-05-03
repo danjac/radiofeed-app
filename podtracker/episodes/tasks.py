@@ -13,7 +13,7 @@ from podtracker.users.models import User
 def send_new_episodes_emails():
     since = timedelta(days=7)
     for user in User.objects.filter(send_email_notifications=True, is_active=True):
-        send_new_episodes_email(user, since)()
+        send_new_episodes_email(user.id, since)()
 
 
 @db_task()
