@@ -38,9 +38,9 @@ repos:
           - id: djhtml
             args: [--tabwidth, '4']
           - id: djjs
-            exclude: bundle.js|bundle.js.map|node_modules/
+            exclude: bundle.js|bundle.js.map
           - id: djcss
-            exclude: bundle.css|node_modules/
+            exclude: bundle.css
     - repo: https://github.com/pre-commit/mirrors-mypy
       rev: 'v0.950'
       hooks:
