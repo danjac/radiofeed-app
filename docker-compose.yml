@@ -2,7 +2,7 @@ version: '3.8'
 
 x-logging: &default-logging
     options:
-        max-size: '100k'
+        max-size: '10k'
         max-file: '3'
 
 x-environment: &default-environment
