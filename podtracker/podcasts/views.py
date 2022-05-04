@@ -242,7 +242,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/includes/subscribe_toggle.html",
+        "podcasts/partials/subscribe_toggle.html",
         {
             "podcast": podcast,
             "subscribed": True,
@@ -261,7 +261,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/includes/subscribe_toggle.html",
+        "podcasts/partials/subscribe_toggle.html",
         {
             "podcast": podcast,
             "subscribed": False,

@@ -1,7 +1,0 @@
-{% with is_completed=episode.is_completed listened=episode.listened %}
-    {% if is_completed %}
-        Completed {% include "includes/date.html" with value=listened %}
-    {% else %}
-        Listened {% include "includes/date.html" with value=listened %}
-    {% endif %}
-{% endwith %}

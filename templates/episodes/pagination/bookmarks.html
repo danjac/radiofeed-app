@@ -2,13 +2,13 @@
     class="space-y-3"
     id="{{ pagination_target }}">
 
-    {% include "includes/pagination_links.html" %}
+    {% include "partials/pagination_links.html" %}
 
     {% for bookmark in page_obj.object_list %}
-        {% include "episodes/includes/episode.html" with episode=bookmark.episode %}
+        {% include "episodes/partials/episode.html" with episode=bookmark.episode %}
     {% empty %}
-        {% include "includes/empty.html" %}
+        {% include "partials/empty.html" %}
     {% endfor %}
 
-    {% include "includes/pagination_links.html" %}
+    {% include "partials/pagination_links.html" %}
 </section>

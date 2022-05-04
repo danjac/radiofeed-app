@@ -59,14 +59,14 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
 
                 <div class="h-28 w-28 md:h-36 md:w-36">
-                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 md:w-36 md:h-36 border dark:border-gray-500" url=podcast.get_detail_url %}
+                    {% include "partials/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 md:w-36 md:h-36 border dark:border-gray-500" url=podcast.get_detail_url %}
                 </div>
 
                 <div class="flex flex-col place-content-between h-24 md:h-28">
 
                     {% with completed=episode.completed listened=episode.listened %}
-                        {% include "episodes/includes/player_toggle.html" %}
-                        {% include "episodes/includes/actions.html" %}
+                        {% include "episodes/partials/player_toggle.html" %}
+                        {% include "episodes/partials/actions.html" %}
                     {% endwith %}
 
                     {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
@@ -75,18 +75,18 @@
             </div>
 
             <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-2 sm:space-x-3">
-                {% include "includes/date.html" with value=episode.pub_date title="Release Date" %}
-                {% include "episodes/includes/duration.html" %}
+                {% include "partials/date.html" with value=episode.pub_date title="Release Date" %}
+                {% include "episodes/partials/duration.html" %}
                 {% if episode.listened %}
                     <span class="hidden sm:inline-block">
-                        {% include "episodes/includes/listened.html" %}
+                        {% include "episodes/partials/listened.html" %}
                     </span>
                 {% endif %}
             </div>
 
             {% if episode.listened %}
                 <div class="font-semibold sm:hidden text-gray-600 dark:text-gray-300">
-                    {% include "episodes/includes/listened.html" %}
+                    {% include "episodes/partials/listened.html" %}
                 </div>
             {% endif %}
 

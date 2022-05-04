@@ -126,7 +126,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/player.html",
+        "episodes/partials/player.html",
         {
             "episode": episode,
             "is_playing": True,
@@ -156,7 +156,7 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
 
         return TemplateResponse(
             request,
-            "episodes/includes/player.html",
+            "episodes/partials/player.html",
             {
                 "episode": episode,
                 "is_playing": False,
@@ -233,7 +233,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/history_toggle.html",
+        "episodes/partials/history_toggle.html",
         {
             "episode": episode,
             "completed": now,
@@ -254,7 +254,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/history_toggle.html",
+        "episodes/partials/history_toggle.html",
         {"episode": episode},
     )
 
@@ -292,7 +292,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/bookmark_toggle.html",
+        "episodes/partials/bookmark_toggle.html",
         {
             "episode": episode,
             "is_bookmarked": True,
@@ -311,7 +311,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/bookmark_toggle.html",
+        "episodes/partials/bookmark_toggle.html",
         {
             "episode": episode,
             "is_bookmarked": False,

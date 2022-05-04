@@ -35,7 +35,7 @@ def user_preferences(
 
     return TemplateResponse(
         request,
-        "account/includes/preferences.html"
+        "account/partials/preferences.html"
         if request.htmx.target == target
         else "account/preferences.html",
         {

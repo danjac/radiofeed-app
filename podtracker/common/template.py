@@ -130,12 +130,12 @@ def icon(name: str, css_class: str = "") -> str:
     )
 
 
-@register.inclusion_tag("includes/markdown.html")
+@register.inclusion_tag("partials/markdown.html")
 def markdown(value: str | None) -> dict:
     return {"content": mark_safe(cleaners.markup(value))}  # nosec
 
 
-@register.inclusion_tag("includes/share_buttons.html", takes_context=True)
+@register.inclusion_tag("partials/share_buttons.html", takes_context=True)
 def share_buttons(context: dict, url: str, subject: str, css_class: str = "") -> dict:
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
@@ -151,7 +151,7 @@ def share_buttons(context: dict, url: str, subject: str, css_class: str = "") ->
     }
 
 
-@register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
+@register.inclusion_tag("partials/cookie_notice.html", takes_context=True)
 def cookie_notice(context: dict) -> dict:
     return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
 
