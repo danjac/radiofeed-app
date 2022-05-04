@@ -242,6 +242,7 @@ LOGGING = {
         "root": {"handlers": ["console"], "level": "INFO"},
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
         "django.request": {"handlers": ["console"], "level": "ERROR"},
+        "radiofeed.podcasts.tasks": {"handlers": ["console"], "level": "DEBUG"},
     },
 }
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 from datetime import timedelta
 
 from huey import crontab
@@ -9,6 +11,8 @@ from radiofeed.podcasts import emails, itunes, recommender, scheduler
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
+logger = logging.getLogger(__name__)
+
 
 @db_periodic_task(crontab(hour=3, minute=20))
 def recommend() -> None:
@@ -17,7 +21,8 @@ def recommend() -> None:
 
 @db_periodic_task(crontab(hour=5, minute=12))
 def crawl_itunes() -> None:
-    itunes.crawl()
+    for feed in itunes.crawl():
+        logger.debug(feed)
 
 
 @db_periodic_task(crontab(hour=9, minute=12, day_of_week=1))
