@@ -207,11 +207,11 @@ document.addEventListener('alpine:init', () => {
             restore() {
                 const stored = sessionStorage.getItem('player');
                 return stored
-                    ? JSON.parse(stored)
-                    : {
-                          playbackRate: this.defaultPlaybackRate,
-                          autoplay: false,
-                      };
+                ? JSON.parse(stored)
+                : {
+                    playbackRate: this.defaultPlaybackRate,
+                    autoplay: false,
+                };
             },
             store() {
                 sessionStorage.setItem(
