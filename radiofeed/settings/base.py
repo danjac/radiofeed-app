@@ -134,7 +134,7 @@ MIDDLEWARE = [
 
 DEFAULT_PAGE_SIZE = 30
 
-ADMIN_SITE_HEADER = "Podtracker Admin"
+ADMIN_SITE_HEADER = "Radiofeed Admin"
 
 # base Django admin URL (should be something obscure in production)
 
