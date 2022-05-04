@@ -2,7 +2,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ![desktop](/screenshots/desktop.png?raw=True)
 
-## Running podtracker on your local machine
+## Running radiofeed on your local machine
 
 Local development requires:
 
@@ -50,7 +50,7 @@ To add a new dependency, add it to **requirements.in** and then run `pip-compile
 The following environment variables should be set in your production installation:
 
 ```
-    DJANGO_SETTINGS_MODULE='podtracker.settings.production'
+    DJANGO_SETTINGS_MODULE='radiofeed.settings.production'
     DATABASE_URL=''
     REDIS_URL=''
     ADMIN_URL='some-random-url/'

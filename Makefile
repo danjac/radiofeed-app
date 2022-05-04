@@ -20,8 +20,8 @@ superuser:
 	./bin/manage createsuperuser
 
 seed:
-	./bin/manage loaddata podcasts podtracker/podcasts/fixtures/categories.json.gz
-	./bin/manage loaddata podcasts podtracker/podcasts/fixtures/podcasts.json.gz
+	./bin/manage loaddata podcasts radiofeed/podcasts/fixtures/categories.json.gz
+	./bin/manage loaddata podcasts radiofeed/podcasts/fixtures/podcasts.json.gz
 
 shell:
 	./bin/manage shell_plus
