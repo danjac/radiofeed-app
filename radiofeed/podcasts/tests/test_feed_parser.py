@@ -38,18 +38,6 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
-class TestFeedHeaders:
-    def test_has_etag(self):
-        podcast = Podcast(etag="abc123")
-        headers = feed_parser.get_feed_headers(podcast)
-        assert headers["If-None-Match"] == f'"{podcast.etag}"'
-
-    def test_is_modified(self):
-        podcast = Podcast(modified=timezone.now())
-        headers = feed_parser.get_feed_headers(podcast)
-        assert headers["If-Modified-Since"]
-
-
 class TestParsePodcastFeed:
 
     mock_file = "rss_mock.xml"
@@ -81,6 +69,16 @@ class TestParsePodcastFeed:
         ]
 
         feed_parser.get_categories_dict.cache_clear()
+
+    def test_has_etag(self):
+        podcast = Podcast(etag="abc123")
+        headers = feed_parser.FeedParser(podcast).get_feed_headers()
+        assert headers["If-None-Match"] == f'"{podcast.etag}"'
+
+    def test_is_modified(self):
+        podcast = Podcast(modified=timezone.now())
+        headers = feed_parser.FeedParser(podcast).get_feed_headers()
+        assert headers["If-Modified-Since"]
 
     def get_rss_content(self, filename=""):
         return (
