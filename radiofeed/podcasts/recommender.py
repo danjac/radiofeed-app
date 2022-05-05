@@ -50,7 +50,9 @@ class Recommender:
         self.language = language
         self.num_matches = num_matches
 
-    def recommend(self, podcasts: QuerySet, categories: QuerySet) -> int:
+    def recommend(
+        self, podcasts: QuerySet, categories: QuerySet
+    ) -> list[Recommendation]:
 
         logger.info("Recommendations for %s", self.language)
 
@@ -64,7 +66,7 @@ class Recommender:
                 ignore_conflicts=True,
             )
 
-        return 0
+        return []
 
     def build_matches_dict(
         self,
