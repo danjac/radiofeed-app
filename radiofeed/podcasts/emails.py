@@ -15,7 +15,7 @@ def send_recommendations_email(user: User) -> None:
 
     podcasts = Podcast.objects.filter(pk__in=list(recommendations)).distinct()[:3]
 
-    if len(podcasts) not in range(2, 3):
+    if len(podcasts) not in range(2, 4):
         return
 
     # save recommendations
