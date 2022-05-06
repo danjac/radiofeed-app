@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
-from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -166,9 +165,6 @@ class Podcast(models.Model):
 
     def get_latest_episode_url(self) -> str:
         return reverse("podcasts:latest_episode", args=[self.pk])
-
-    def get_domain(self) -> str:
-        return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
 
     @cached_property
     def cleaned_title(self) -> str:

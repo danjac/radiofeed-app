@@ -122,12 +122,6 @@ class TestPodcastModel:
         podcast = Podcast(description="<b>Test &amp; Code")
         assert podcast.cleaned_description == "Test & Code"
 
-    def test_get_domain(self):
-        assert Podcast(rss=self.rss).get_domain() == "example.com"
-
-    def test_get_domain_if_www(self):
-        assert Podcast(rss=self.rss).get_domain() == "example.com"
-
     def test_is_subscribed_anonymous(self, podcast):
         assert not podcast.is_subscribed(AnonymousUser())
 
