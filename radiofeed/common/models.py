@@ -24,7 +24,7 @@ class SiteConfiguration(SingletonModel):
     age_of_consent: int = models.PositiveSmallIntegerField(default=18)
 
     def __str__(self):
-        return f"Site Configuration: {self.site_name}"
+        return self.site_name
 
     class Meta:
         verbose_name = "Site Configuration"
