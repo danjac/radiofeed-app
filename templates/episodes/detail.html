@@ -1,6 +1,89 @@
 {% extends "base.html" %}
 
 {% block title %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
+{% block content_metadata %}
+    {% get_project_settings as settings %}
+    {% with podcast=episode.podcast %}
+        {% with episode_title=episode.cleaned_title|escapejs episode_description=episode.cleaned_description|default:podcast.cleaned_description|truncatechars:200|escapejs cover_url=episode.get_cover_url %}
+            {% if episode_description %}
+                <meta name="description"
+                    content="{{ episode_description }}" />
+            {% endif %}
+            {% if podcast.keywords %}
+                <meta name="keywords"
+                    content="{{ podcast.keywords.split|join:", " }}" />
+            {% endif %}
+
+            <meta name="og:type"
+                content="website" />
+            <meta name="og:title"
+                content="{{ episode_title }}" />
+            {% if episode_description %}
+                <meta name="og:description"
+                    content="{{ episode_description }}" />
+            {% endif %}
+            <meta name="og:url"
+                content="{% absolute_uri episode %}" />
+
+            {% if cover_url %}
+                <meta name="og:image"
+                    content="{{ cover_url }}" />
+                <meta name="og:image:alt"
+                    content="{{ episode_title }}" />
+                <meta name="og:image:height"
+                    content="200" />
+                <meta name="og:image:width"
+                    content="200" />
+            {% endif %}
+
+            <meta name="twitter:card"
+                content="{{ cover_url|yesno:'summary_large_image,summary' }}">
+
+            {% if cover_url %}
+                <meta name="twitter:image"
+                    content="{{ cover_url }}">
+            {% endif %}
+
+            <meta name="twitter:title"
+                content="{{ episode_title }}">
+            {% if episode_description %}
+                <meta name="twitter:description"
+                    content="{{ episode_description }}">
+            {% endif %}
+
+            {% if settings.twitter %}
+                <meta name="twitter:site"
+                    content="@{{ settings.twitter }}">
+            {% endif %}
+
+
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "NewsArticle",
+                    "mainEntityOfPage": {
+                        "@type": "WebPage",
+                        "@id": "{% absolute_uri podcast %}"
+                    },
+                    "url": "{% absolute_uri episode %}",
+                    "headline": "{{ episode_title }}",
+                    "description": "{{ episode_description }}",
+                    {% if cover_url %}
+                        "image": [
+                            "{{ cover_url }}"
+                        ],
+                    {% endif %}
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "{{ podcast.owner }}"
+                    }
+                }
+            </script>
+
+        {% endwith %}
+    {% endwith %}
+{% endblock content_metadata %}
+
 
 {% block json_ld %}
     {% with podcast=episode.podcast %}

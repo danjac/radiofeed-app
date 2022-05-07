@@ -11,7 +11,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
-from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
 from django.templatetags.static import static
 from django.urls import reverse
@@ -242,24 +241,6 @@ class Episode(models.Model):
     def is_completed(self) -> bool:
         """Use with the `with_current_time` QuerySet method"""
         return self.pc_complete > 99
-
-    def get_opengraph_data(self, request: HttpRequest, size: int = 200) -> dict:
-        og_data = {
-            "url": request.build_absolute_uri(self.get_absolute_url()),
-            "title": f"{request.site.name} | {self.podcast.cleaned_title} | {self.cleaned_title}",
-            "description": self.cleaned_description,
-            "keywords": ", ".join(self.keywords.split()),
-        }
-
-        if cover_url := self.get_cover_url():
-            og_data = {
-                **og_data,
-                "image": cover_url,
-                "image_height": size,
-                "image_width": size,
-            }
-
-        return og_data
 
     def is_explicit(self) -> bool:
         return self.explicit or self.podcast.explicit

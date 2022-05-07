@@ -2,7 +2,6 @@ import datetime
 
 import pytest
 
-from django.contrib.sites.models import Site
 from django.utils import timezone
 
 from radiofeed.episodes.factories import (
@@ -404,13 +403,6 @@ class TestEpisodeModel:
     def test_get_cover_url_if_none(self, db):
         episode = EpisodeFactory(podcast__cover_url=None)
         assert episode.get_cover_url() is None
-
-    def test_get_opengraph_data(self, rf, episode):
-        req = rf.get("/")
-        req.site = Site.objects.get_current()
-        data = episode.get_opengraph_data(req)
-        assert episode.title in data["title"]
-        assert data["url"] == "http://testserver" + episode.get_absolute_url()
 
     def test_is_bookmarked_anonymous(self, anonymous_user, episode):
         assert not episode.is_bookmarked(anonymous_user)

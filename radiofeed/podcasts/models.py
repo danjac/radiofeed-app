@@ -9,7 +9,6 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
@@ -182,24 +181,6 @@ class Podcast(models.Model):
         if user.is_anonymous:
             return False
         return Subscription.objects.filter(podcast=self, user=user).exists()
-
-    def get_opengraph_data(self, request: HttpRequest) -> dict:
-
-        og_data = {
-            "url": request.build_absolute_uri(self.get_absolute_url()),
-            "title": f"{request.site.name} | {self.cleaned_title}",
-            "description": self.cleaned_description,
-            "keywords": ", ".join(self.keywords.split()),
-        }
-
-        if self.cover_url:
-            og_data = {
-                **og_data,
-                "image": self.cover_url,
-                "image_height": 200,
-                "image_width": 200,
-            }
-        return og_data
 
     def get_subscribe_target(self) -> str:
         return f"subscribe-toggle-{self.id}"

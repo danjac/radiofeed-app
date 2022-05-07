@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.sites.models import Site
 from django.urls import reverse
 
 from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
@@ -134,13 +133,6 @@ class TestPodcastModel:
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()
         assert url == reverse("podcasts:latest_episode", args=[podcast.id])
-
-    def test_get_opengraph_data(self, rf, podcast):
-        req = rf.get("/")
-        req.site = Site.objects.get_current()
-        og_data = podcast.get_opengraph_data(req)
-        assert podcast.title in og_data["title"]
-        assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
 
     def test_get_subscribe_target(self):
         return Podcast(id=12345).get_subscribe_target() == "subscribe-toggle-12345"
