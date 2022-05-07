@@ -11,7 +11,7 @@
             {% endif %}
             {% if podcast.keywords %}
                 <meta name="keywords"
-                    content="{{ podcast.keywords.split|join:", " }}" />
+                    content="{{ podcast.keywords|escapejs }}" />
             {% endif %}
 
             <meta name="og:type"
@@ -83,37 +83,6 @@
         {% endwith %}
     {% endwith %}
 {% endblock content_metadata %}
-
-
-{% block json_ld %}
-    {% with podcast=episode.podcast %}
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "NewsArticle",
-                "mainEntityOfPage": {
-                    "@type": "WebPage",
-                    "@id": "{% absolute_uri podcast %}"
-                },
-                "url": "{% absolute_uri episode %}",
-                "headline": "{{ podcast.cleaned_title|escapejs }}",
-                "description": "{{ episode.cleaned_description|truncatechars:200|escapejs }}",
-                {% with cover_url=episode.get_cover_url %}
-                    {% if cover_url %}
-                        "image": [
-                            "{{ cover_url }}"
-                        ],
-                    {% endif %}
-                {% endwith %}
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "{{ podcast.owner }}"
-                }
-            }
-        </script>
-    {% endwith %}
-{% endblock json_ld %}
-
 
 {% block content %}
     <h1 class="font-bold mb-6 text-lg md:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
