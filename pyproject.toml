@@ -27,7 +27,7 @@ omit=[
 
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.settings.test"
+DJANGO_SETTINGS_MODULE="radiofeed.config.settings.test"
 addopts="-v -x --ff --reuse-db -p no:warnings"
 testpaths="radiofeed"
 

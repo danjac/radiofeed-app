@@ -60,11 +60,14 @@ django==4.0.4
     #   django-permissions-policy
     #   django-redis
     #   django-rich
+    #   django-solo
 django-allauth==0.50.0
     # via -r requirements.in
 django-anymail==8.5
     # via -r requirements.in
 django-cachalot==2.5.1
+    # via -r requirements.in
+django-countries==7.3.2
     # via -r requirements.in
 django-debug-toolbar==3.3.0
     # via -r requirements.in
@@ -90,6 +93,8 @@ django-redis==5.2.0
     # via -r requirements.in
 django-rich==1.2.0
     # via django-postgres-metrics
+django-solo==2.0.0
+    # via -r requirements.in
 django-split-settings==1.1.0
     # via -r requirements.in
 django-widget-tweaks==1.4.12
@@ -255,6 +260,8 @@ traitlets==5.1.1
     # via
     #   ipython
     #   matplotlib-inline
+typing-extensions==4.2.0
+    # via django-countries
 urllib3==1.26.9
     # via
     #   requests

@@ -7,7 +7,7 @@ import environ
 
 from django.urls import reverse_lazy
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[3]
 
 env = environ.Env()
 
@@ -46,6 +46,9 @@ CACHES = {
 
 DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
+SOLO_CACHE = "default"
+SOLO_CACHE_TIMEOUT = DEFAULT_CACHE_TIMEOUT
+
 
 # https://huey.readthedocs.io/en/latest/django.html
 
@@ -77,7 +80,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-ROOT_URLCONF = "radiofeed.urls"
+ROOT_URLCONF = "radiofeed.config.urls"
 
 INSTALLED_APPS = [
     "postgres_metrics.apps.PostgresMetrics",
@@ -97,19 +100,22 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.twitter",
     "cachalot",
+    "django_countries",
+    "django_extensions",
+    "django_htmx",
+    "django_object_actions",
     "health_check",
-    "health_check.db",
     "health_check.cache",
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
-    "django_extensions",
-    "django_htmx",
-    "widget_tweaks",
-    "django_object_actions",
+    "health_check.db",
     "huey.contrib.djhuey",
+    "solo",
+    "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.podcasts",
+    "radiofeed.settings",
     "radiofeed.users",
 ]
 
