@@ -252,8 +252,8 @@ LOGGING = {
 SITE_CONFIG = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
     "description": env("SITE_DESCRIPTION", default="Podcast aggregator site"),
-    "host_country": env("HOST_COUNTRY", default="Finland"),
+    "country": env("HOST_COUNTRY", default="Finland"),
     "keywords": env("SITE_KEYWORDS", default="podcasts, rss, feeds"),
-    "site_owner": env("SITE_OWNER", default=None),
+    "owner": env("SITE_OWNER", default=None),
     "twitter": env("TWITTER", default=None),
 }

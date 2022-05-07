@@ -32,6 +32,16 @@ class ActiveLink:
     exact: bool = False
 
 
+@dataclasses.dataclass
+class SiteConfig:
+    country: str
+    description: str
+    keywords: str
+    contact_email: str
+    owner: str | None = None
+    twitter: str | None = None
+
+
 _validate_url = URLValidator(["http", "https"])
 
 
@@ -54,8 +64,8 @@ def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
 
 
 @register.simple_tag
-def get_site_config() -> dict:
-    return settings.SITE_CONFIG
+def get_site_config() -> SiteConfig:
+    return SiteConfig(**settings.SITE_CONFIG)
 
 
 @register.simple_tag(takes_context=True)
