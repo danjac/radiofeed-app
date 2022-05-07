@@ -1,11 +1,12 @@
 {% extends "about/base.html" %}
-{% load socialaccount %}
+{% load socialaccount solo_tags %}
 
 {% block title %}{{ block.super }} | Terms {% endblock %}
 
 {% block about_content %}
 
     {% get_providers as socialaccount_providers %}
+        {% get_solo 'settings.SiteConfiguration' as site_config %}
 
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
         <p><em>Last updated: April 16, 2021</em></p>

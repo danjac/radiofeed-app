@@ -1,7 +1,6 @@
 {% spaceless %}
     {% load static django_htmx player solo_tags %}
 
-    {% get_solo 'settings.SiteConfiguration' as site_config %}
 
     {% if not request.htmx %}
         <!DOCTYPE html>
@@ -17,9 +16,12 @@ __________             .___.__        _____                 .___
             <head>
     {% endif %}
 
+    {% block title_tag %}
     <title>
+    {% get_solo 'settings.SiteConfiguration' as site_config %}
         {{ site_config.site_name }}{% block title %}{% endblock %}
     </title>
+    {% endblock title_tag %}
 
     {% if request.htmx %}
         {% include "partials/signup_cta.html" with hx_oob=True %}
@@ -51,6 +53,7 @@ __________             .___.__        _____                 .___
             content="index,follow">
 
         {% block content_metadata %}
+        {% get_solo 'settings.SiteConfiguration' as site_config %}
         {% with site_description=site_config.description|escapejs site_name=site_config.site_name|escapejs %}
 
             {% if site_description %}
