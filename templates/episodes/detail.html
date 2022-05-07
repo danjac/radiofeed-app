@@ -10,9 +10,9 @@
                 "@type": "NewsArticle",
                 "mainEntityOfPage": {
                     "@type": "WebPage",
-                    "@id": "{% absolute_uri podcast.get_absolute_url %}"
+                    "@id": "{% absolute_uri podcast %}"
                 },
-                "url": "{% absolute_uri podcast.get_absolute_url %}",
+                "url": "{% absolute_uri episode %}",
                 "headline": "{{ podcast.cleaned_title|escapejs }}",
                 "description": "{{ episode.cleaned_description|truncatechars:200|escapejs }}",
                 {% with cover_url=episode.get_cover_url %}
