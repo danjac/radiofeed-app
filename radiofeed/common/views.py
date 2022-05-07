@@ -69,7 +69,7 @@ def robots(request: HttpRequest) -> HttpResponse:
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def security(request):
-    config = SiteConfiguration.objects.get_solo()
+    config = SiteConfiguration.get_solo()
 
     return HttpResponse(
         "\n".join(
