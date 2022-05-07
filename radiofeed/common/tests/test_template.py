@@ -6,6 +6,7 @@ from radiofeed.common.template import (
     absolute_uri,
     active_link,
     format_duration,
+    get_site_config,
     icon,
     login_url,
     markdown,
@@ -20,6 +21,11 @@ from radiofeed.common.template import (
 EXAMPLE_HTTPS_URL = "https://example.com"
 EXAMPLE_HTTP_URL = "http://example.com"
 TESTSERVER_URL = "http://testserver"
+
+
+class TestGetSiteConfig:
+    def test_get_site_config(self, db):
+        assert get_site_config()
 
 
 class TestAbsoluteUri:
