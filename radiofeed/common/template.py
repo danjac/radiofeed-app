@@ -35,9 +35,6 @@ class ActiveLink:
 _validate_url = URLValidator(["http", "https"])
 
 
-HTTPS_SCHEME = "https://"
-
-
 @register.simple_tag(takes_context=True)
 def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
     """
@@ -162,7 +159,7 @@ def normalize_url(url: str | None) -> str:
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if not url:
         return ""
-    for value in (url, HTTPS_SCHEME + url):
+    for value in (url, "https://" + url):
         try:
             _validate_url(value)
             return value
@@ -173,10 +170,10 @@ def normalize_url(url: str | None) -> str:
 
 @register.filter
 def safe_url(url: str | None) -> str | None:
-    if not url or url.startswith(HTTPS_SCHEME):
+    if not url or url.startswith("https://"):
         return url
     if url.startswith("http://"):
-        return HTTPS_SCHEME + url[7:]
+        return "https://" + url[7:]
     return None
 
 
