@@ -35,21 +35,23 @@ __________             .___.__        _____                 .___
             media="screen"
             href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
 
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "url": "{% absolute_uri 'podcasts:index' %}",
-                "potentialAction": {
-                    "@type": "SearchAction",
-                    "target": {
-                        "@type": "EntryPoint",
-                        "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?q={search_term_string}"
-                    },
-                    "query-input": "required name=search_term_string"
+        {% block json_ld %}
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "url": "{% absolute_uri 'podcasts:index' %}",
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": {
+                            "@type": "EntryPoint",
+                            "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?q={search_term_string}"
+                        },
+                        "query-input": "required name=search_term_string"
+                    }
                 }
-            }
-        </script>
+            </script>
+        {% endblock json_ld %}
         </head>
 
         <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm md:text-base scroll-smooth"
