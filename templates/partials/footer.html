@@ -5,7 +5,7 @@
             <div>
                 <a class="text-gray-100 hover:text-blue-300"
                    href="mailto:{{ site_config.contact_email }}">
-                    {% if site_config.site_owner %}&copy; {% now 'Y' %} Dan Jacob{% else %}Contact{% endif %}
+                    {% if site_config.site_owner %}&copy; {% now 'Y' %}{{ site_config.site_owner }}{% else %}Contact{% endif %}
                 </a>
             </div>
             <div>
@@ -27,7 +27,7 @@
         <div class="flex items-center flex-wrap justify-center space-x-3">
             <p class="text-center font-semibold">
                 Podcast audio recordings, show notes and artwork are the property of the individual owners
-                and are neither affiliated with nor endorsed by {{ site_config.site_name }}.
+                and are neither affiliated with nor endorsed by {{ request.site.name }}.
             </p>
         </div>
     </div>

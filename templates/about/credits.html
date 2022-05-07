@@ -4,17 +4,18 @@
 
 {% block about_content %}
 {% get_site_config as site_config %}
+{% with site_name=request.site.name %}
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
         <h3>About Us</h3>
 
         <p>
-            <strong>{{ site_config.site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
+            <strong>{{ request.site.name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
         </p>
 
         <h3>Technology</h3>
 
-        <p><strong>{{ site_config.site_name }}</strong> is an
+        <p><strong>{{ request.site.name }}</strong> is an
             <a
                 target="_blank"
                 rel="noopener"
@@ -73,7 +74,7 @@
 
         <p>
             All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
-            nor endorsed by {{ site_config.site_name }}. All audio files are played directly from the source.
+            nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
         </p>
 
         <h3>Contact Us</h3>
@@ -86,11 +87,11 @@
                     href="mailto:{{ site_config.contact_email }}">Feedback</a>
             {% endif %}
 
-            {% if site_config.twitter_handle %}
+            {% if site_config.twitter %}
                 <a
                     target="_blank"
                     rel="noopener"
-                    href="https://twitter.com/{{ site_config.twitter_handle }}">
+                    href="https://twitter.com/{{ site_config.twitter }}">
                     Twitter
                 </a>
             {% endif %}
@@ -101,4 +102,5 @@
                 href="https://github.com/danjac/radiofeed/issues">Issues</a>
         </p>
     </div>
+{% endwith %}
 {% endblock about_content %}

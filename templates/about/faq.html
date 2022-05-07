@@ -4,8 +4,7 @@
 
 {% block about_content %}
 
-{% get_site_config as site_config %}
-{% with site_name=site_config.site_name %}
+{% with site_name=request.site.name %}
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
             <details class="mb-3">

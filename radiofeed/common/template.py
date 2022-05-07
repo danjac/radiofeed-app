@@ -21,7 +21,6 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from radiofeed.common import cleaners
-from radiofeed.common.models import SiteConfiguration
 
 register = template.Library()
 
@@ -58,8 +57,8 @@ def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
 
 
 @register.simple_tag
-def get_site_config() -> SiteConfiguration:
-    return SiteConfiguration.get_solo()
+def get_site_config() -> dict:
+    return settings.SITE_CONFIG
 
 
 @register.simple_tag(takes_context=True)

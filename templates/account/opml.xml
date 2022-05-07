@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-{% get_site_config as site_config %}
 
 <opml version="1.0">
 	<head>
-		<title>Podcasts for {{ user.username }} in {{ site_config.site_name }}</title>
+		<title>Podcasts for {{ user.username }} in {{ request.site.name }}</title>
 	</head>
 	<body>
 		<outline text="My Podcasts" title="My Podcasts">

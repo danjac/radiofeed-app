@@ -100,7 +100,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.twitter",
     "cachalot",
-    "django_countries",
     "django_extensions",
     "django_htmx",
     "django_object_actions",
@@ -111,9 +110,7 @@ INSTALLED_APPS = [
     "health_check.contrib.redis",
     "health_check.db",
     "huey.contrib.djhuey",
-    "solo",
     "widget_tweaks",
-    "radiofeed.common",
     "radiofeed.episodes",
     "radiofeed.podcasts",
     "radiofeed.users",
@@ -250,4 +247,13 @@ LOGGING = {
         "django.request": {"handlers": ["console"], "level": "ERROR"},
         "radiofeed.podcasts.tasks": {"handlers": ["console"], "level": "DEBUG"},
     },
+}
+
+SITE_CONFIG = {
+    "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
+    "description": env("SITE_DESCRIPTION", default="Podcast aggregator site"),
+    "host_country": env("HOST_COUNTRY", default="Finland"),
+    "keywords": env("SITE_KEYWORDS", default="podcasts, rss, feeds"),
+    "site_owner": env("SITE_OWNER", default=None),
+    "twitter": env("TWITTER", default=None),
 }
