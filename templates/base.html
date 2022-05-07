@@ -1,7 +1,7 @@
 {% spaceless %}
     {% load static django_htmx player solo_tags %}
 
-{% get_solo 'settings.SiteConfiguration' as site_config %}
+    {% get_solo 'settings.SiteConfiguration' as site_config %}
 
     {% if not request.htmx %}
         <!DOCTYPE html>

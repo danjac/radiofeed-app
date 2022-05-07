@@ -5,7 +5,9 @@
         <div class="flex items-center flex-wrap justify-center space-x-3 font-semibold">
             <div>
                 <a class="text-gray-100 hover:text-blue-300"
-                    href="mailto:danjac2018@gmail.com">&copy; {% now 'Y' %} Dan Jacob</a>
+                   href="mailto:{{ site_config.contact_email }}">
+                    {% if site_config.site_owner %}&copy; {% now 'Y' %} Dan Jacob{% else }Contact{% endif %}
+                </a>
             </div>
             <div>
                 <a class="text-gray-100 hover:text-blue-300"

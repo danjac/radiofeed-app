@@ -7,15 +7,21 @@ from solo.models import SingletonModel
 
 
 class SiteConfiguration(SingletonModel):
+    # metadata
     site_name: str = models.CharField(max_length=255, default="Radiofeed")
     description: str = models.TextField(blank=True)
     keywords: str = models.TextField(blank=True)
+
+    # site owner
+    site_owner: str = models.CharField(max_length=255, blank=True)
     contact_email: str = models.EmailField(default="admin@localhost")
-    host_country: str = CountryField(default="FI")
-    age_of_consent: int = models.PositiveSmallIntegerField(default=18)
     twitter_handle: str = models.CharField(
         max_length=100, blank=True, validators=[validate_slug]
     )
+
+    # legal stuff
+    host_country: str = CountryField(default="FI")
+    age_of_consent: int = models.PositiveSmallIntegerField(default=18)
 
     def __str__(self):
         return f"Site Configuration: {self.site_name}"
