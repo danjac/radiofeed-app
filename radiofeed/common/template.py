@@ -64,6 +64,7 @@ def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
 
 
 @register.simple_tag
+@functools.lru_cache
 def get_site_config() -> SiteConfig:
     return SiteConfig(**settings.SITE_CONFIG)
 
