@@ -1,5 +1,6 @@
 import pytest
 
+from radiofeed.podcasts.itunes import Feed
 from radiofeed.podcasts.tasks import (
     crawl_itunes,
     parse_podcast_feed,
@@ -74,7 +75,16 @@ class TestTasks:
         patched.assert_called()
 
     def test_crawl_itunes(self, mocker):
-        patched = mocker.patch("radiofeed.podcasts.tasks.itunes.crawl")
+        patched = mocker.patch(
+            "radiofeed.podcasts.tasks.itunes.crawl",
+            return_value=[
+                Feed(
+                    title="test podcast",
+                    rss="https://example.com/rss.xml",
+                    url="https://example.com/",
+                )
+            ],
+        )
         crawl_itunes()
         patched.assert_called()
 

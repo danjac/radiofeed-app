@@ -32,7 +32,7 @@ def crawl_itunes() -> None:
     Runs at 5:12 UTC every day
     """
     for feed in itunes.crawl():
-        logger.debug(feed)
+        logger.debug(feed.title)
 
 
 @db_periodic_task(crontab(hour=9, minute=12, day_of_week=1))
