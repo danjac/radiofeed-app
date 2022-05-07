@@ -1,5 +1,6 @@
 {% load static %}
-{% with site_name=request.site.name %}
+{% get_site_config as site_config %}
+{% with site_name=site_config.site_name %}
     {% url 'podcasts:index' as home_url %}
     <header class="bg-black text-white sticky top-0 w-full z-20 shadow"
         x-data="{sidebar: false}"
