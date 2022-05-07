@@ -12,7 +12,6 @@ class TestPodcastRecommender:
         PodcastFactory(
             title="Cool science podcast",
             keywords="science physics astronomy",
-            pub_date=None,
         )
 
         recommend()
@@ -27,10 +26,7 @@ class TestPodcastRecommender:
             title="Another cool science podcast",
             keywords="science physics astronomy",
         )
-        PodcastFactory(
-            title="Philosophy things",
-            keywords="thinking",
-        )
+        PodcastFactory(title="Philosophy things", keywords="thinking")
         recommend()
         recommendations = (
             Recommendation.objects.filter(podcast=podcast_1)

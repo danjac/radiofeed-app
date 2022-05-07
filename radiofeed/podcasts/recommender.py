@@ -28,7 +28,8 @@ Similarities = tuple[int, list[tuple[int, float]]]
 def recommend(since: timedelta = timedelta(days=90), num_matches: int = 12) -> None:
 
     podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
-        extracted_text=""
+        extracted_text="",
+        language="",
     )
 
     Recommendation.objects.bulk_delete()
@@ -36,12 +37,7 @@ def recommend(since: timedelta = timedelta(days=90), num_matches: int = 12) -> N
     categories = Category.objects.order_by("name")
 
     # separate by language, so we don't get false matches
-    for language in [
-        lang
-        for lang in podcasts.values_list(Lower("language"), flat=True).distinct()
-        if lang
-    ]:
-
+    for language in podcasts.values_list(Lower("language"), flat=True).distinct():
         Recommender(language, num_matches).recommend(podcasts, categories)
 
 
@@ -53,8 +49,6 @@ class Recommender:
     def recommend(
         self, podcasts: QuerySet, categories: QuerySet
     ) -> list[Recommendation]:
-
-        logger.info("Recommendations for %s", self.language)
 
         if matches := self.build_matches_dict(podcasts, categories):
 

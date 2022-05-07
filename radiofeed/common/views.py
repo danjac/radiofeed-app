@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
 
-from radiofeed.settings.models import SiteConfiguration
+from radiofeed.common.models import SiteConfiguration
 
 
 @require_http_methods(["POST"])

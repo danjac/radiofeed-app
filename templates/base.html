@@ -18,7 +18,7 @@ __________             .___.__        _____                 .___
 
     {% block title_tag %}
     <title>
-    {% get_solo 'settings.SiteConfiguration' as site_config %}
+    {% get_site_config as site_config %}
         {{ site_config.site_name }}{% block title %}{% endblock %}
     </title>
     {% endblock title_tag %}
@@ -53,7 +53,7 @@ __________             .___.__        _____                 .___
             content="index,follow">
 
         {% block content_metadata %}
-        {% get_solo 'settings.SiteConfiguration' as site_config %}
+        {% get_site_config as site_config %}
         {% with site_description=site_config.description|escapejs site_name=site_config.site_name|escapejs %}
 
             {% if site_description %}

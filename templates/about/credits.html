@@ -1,10 +1,9 @@
 {% extends "about/base.html" %}
-{% load solo_tags %}
 
 {% block title %}{{ block.super }} | Credits {% endblock %}
 
 {% block about_content %}
-{% get_solo 'settings.SiteConfiguration' as site_config %}
+{% get_site_config as site_config %}
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
         <h3>About Us</h3>

@@ -1,11 +1,10 @@
 {% extends "about/base.html" %}
-{% load solo_tags %}
 
 {% block title %}{{ block.super }} | Frequently Asked Questions {% endblock %}
 
 {% block about_content %}
 
-{% get_solo 'settings.SiteConfiguration' as site_config %}
+{% get_site_config as site_config %}
 {% with site_name=site_config.site_name %}
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
 

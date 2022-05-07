@@ -22,6 +22,7 @@ class TestCommands:
                     title="test 2",
                     url="https://example2.com",
                     rss=podcast.rss,
+                    podcast=podcast,
                 ),
             ],
         )
