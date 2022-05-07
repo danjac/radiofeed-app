@@ -60,4 +60,5 @@ The following environment variables should be set in your production installatio
     MAILGUN_SENDER_DOMAIN='my-domain'
     SECRET_KEY='<secret>'
     SENTRY_URL='<sentry-url>'
+    CONTACT_EMAIL='my-site@host.com'
 ```
