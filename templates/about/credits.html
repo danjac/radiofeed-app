@@ -1,19 +1,21 @@
 {% extends "about/base.html" %}
+{% load solo_tags %}
 
 {% block title %}{{ block.super }} | Credits {% endblock %}
 
 {% block about_content %}
+{% get_solo 'settings.SiteConfiguration' as site_config %}
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
         <h3>About Us</h3>
 
         <p>
-            <strong>{{ request.site.name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
+            <strong>{{ site_config.site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
         </p>
 
         <h3>Technology</h3>
 
-        <p><strong>{{ request.site.name }}</strong> is an
+        <p><strong>{{ site_config.site_name }}</strong> is an
             <a
                 target="_blank"
                 rel="noopener"
@@ -72,25 +74,24 @@
 
         <p>
             All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
-            nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
+            nor endorsed by {{ site_config.site_name }}. All audio files are played directly from the source.
         </p>
 
         <h3>Contact Us</h3>
         <p class="flex items-center space-x-3">
-            {% get_project_settings as project_settings %}
 
-            {% if project_settings.contact_email %}
+            {% if site_config.contact_email %}
                 <a
                     target="_blank"
                     rel="noopener"
-                    href="mailto:{{ project_settings.contact_email }}">Feedback</a>
+                    href="mailto:{{ site_config.contact_email }}">Feedback</a>
             {% endif %}
 
-            {% if project_settings.twitter %}
+            {% if site_config.twitter_handle %}
                 <a
                     target="_blank"
                     rel="noopener"
-                    href="https://twitter.com/{{ project_settings.twitter }}">
+                    href="https://twitter.com/{{ site_config.twitter_handle }}">
                     Twitter
                 </a>
             {% endif %}

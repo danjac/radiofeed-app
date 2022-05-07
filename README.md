@@ -60,7 +60,4 @@ The following environment variables should be set in your production installatio
     MAILGUN_SENDER_DOMAIN='my-domain'
     SECRET_KEY='<secret>'
     SENTRY_URL='<sentry-url>'
-    HOST_COUNTRY=''
-    TWITTER_ACCOUNT='my_twitter_handle'
-    CONTACT_EMAIL='me@site.com'
 ```

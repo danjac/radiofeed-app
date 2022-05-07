@@ -10,6 +10,8 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
 
+from radiofeed.settings.models import SiteConfiguration
+
 
 @require_http_methods(["POST"])
 def accept_cookies(request: HttpRequest) -> HttpResponse:
@@ -67,10 +69,12 @@ def robots(request: HttpRequest) -> HttpResponse:
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def security(request):
+    config = SiteConfiguration.objects.get_solo()
+
     return HttpResponse(
         "\n".join(
             [
-                f"Contact: mailto:{settings.PROJECT_SETTINGS['contact_email']}",
+                f"Contact: mailto:{config.contact_email}",
             ]
         ),
         content_type="text/plain",

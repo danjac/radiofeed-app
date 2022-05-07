@@ -251,10 +251,3 @@ LOGGING = {
         "radiofeed.podcasts.tasks": {"handlers": ["console"], "level": "DEBUG"},
     },
 }
-
-PROJECT_SETTINGS = {
-    "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
-    "twitter": env("TWITTER_ACCOUNT", default=None),
-    "host_country": env("HOST_COUNTRY", default="Finland"),
-    "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
-}

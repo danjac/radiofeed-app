@@ -2,7 +2,6 @@
 
 {% block title %} | {{ podcast.cleaned_title }}{% endblock %}
 {% block content_metadata %}
-    {% get_project_settings as settings %}
     {% with podcast_title=podcast.cleaned_title|escapejs podcast_description=podcast.cleaned_description|truncatechars:200|escapejs cover_url=podcast.cover_url %}
 
         {% if podcast_description %}
@@ -51,9 +50,9 @@
                 content="{{ podcast_description }}">
         {% endif %}
 
-        {% if settings.twitter %}
+        {% if site_config.twitter_handle %}
             <meta name="twitter:site"
-                content="@{{ settings.twitter }}">
+                content="@{{ site_config.twitter_handle }}">
         {% endif %}
 
         <script type="application/ld+json">

@@ -104,11 +104,6 @@ def re_active_link(
     return ActiveLink(url)
 
 
-@register.simple_tag
-def get_project_settings() -> dict:
-    return settings.PROJECT_SETTINGS
-
-
 @register.filter
 def login_url(url: str) -> str:
     return auth_redirect_url(url, reverse("account_login"))

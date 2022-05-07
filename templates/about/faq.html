@@ -1,11 +1,13 @@
 {% extends "about/base.html" %}
+{% load solo_tags %}
 
 {% block title %}{{ block.super }} | Frequently Asked Questions {% endblock %}
 
 {% block about_content %}
 
+{% get_solo 'settings.SiteConfiguration' as site_config %}
+{% with site_name=site_config.site_name %}
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
-        {% with site_name=request.site.name %}
 
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">What is {{ site_name }}?</summary>
@@ -147,6 +149,6 @@
                     your collection, bookmarks and history will also be <strong>permanently</strong> deleted.
                 </p>
             </details>
-        {% endwith %}
     </div>
+    {% endwith %}
 {% endblock %}

@@ -1,3 +1,5 @@
+{% load solo_tags %}
+{% get_solo 'settings.SiteConfiguration' as site_config %}
 <footer class="relative pt-20">
     <div class="space-y-1 bg-black text-white p-1 w-full text-xs md:text-sm absolute bottom-0">
         <div class="flex items-center flex-wrap justify-center space-x-3 font-semibold">
@@ -24,7 +26,7 @@
         <div class="flex items-center flex-wrap justify-center space-x-3">
             <p class="text-center font-semibold">
                 Podcast audio recordings, show notes and artwork are the property of the individual owners
-                and are neither affiliated with nor endorsed by {{ request.site.name }}.
+                and are neither affiliated with nor endorsed by {{ site_config.site_name }}.
             </p>
         </div>
     </div>
