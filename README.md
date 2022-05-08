@@ -2,48 +2,65 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ![desktop](/screenshots/desktop.png?raw=True)
 
-## Running radiofeed on your local machine
+## Running Radiofeed on your local machine
 
-Local development requires:
+For ease of local deployments a `docker-compose.yml` is provided which includes:
 
-* docker
-* docker-compose
+* PostgreSQL
+* Redis
+* Mailhog
 
-Just run the Makefile to build and start the containers:
+You can run this if you wish, or use a local install of PostgreSQL or Redis:
 
-> make up
+```bash
+    docker-compose build
+    docker-compose up -d
+```
 
-You can add some seed data (iTunes categories and sample podcasts):
+Copy the file `.env.example` to `.env` and set the variables accordingly.
 
-> make seed
+Create a Python virtualenv and install dependencies (you will need **Python 3.10** to run this application):
 
-You an also create a super user if you wish to access the Django admin:
+```bash
+    python -m venv venv && source venv/bin/activate
+    pip install -r requirements.txt
+```
 
-> ./bin/manage createsuperuser
+Install the NLTK corpora:
 
-You can access the development app in your browser at _http://localhost:8000_.
+```bash
+    mkdir ./venv/nltk
+    xargs python -m nltk.downloader -d ./venv/share/nltk_data <./nltk.txt
+```
 
-To run unit tests:
+Finally, run migrations and start the Django server:
 
-> ./bin/pytest [...]
+```bash
+    python manage.py migrate
+    python manage.py runserver
+```
 
-This script takes the same arguments as _./python -m pytest_ e.g.:
+Run tests using `pytest`:
 
-> ./bin/pytest -x --ff
+```bash
+    python -m pytest
+```
 
-For the common case:
+You can install default iTunes categories and approx 200 common podcasts from fixtures:
 
-> make test
+```bash
+    python manage.py loaddata podcasts radiofeed/podcasts/fixtures/categories.json.gz
+    python manage.py loaddata podcasts radiofeed/podcasts/fixtures/podcasts.json.gz
+```
 
-## Upgrade
+To run frontend builds first install dependencies and run the watch command in another terminal:
 
-To upgrade Python dependencies you should install pip-tools https://github.com/jazzband/pip-tools on your local machine (not the Docker container):
+```bash
+    npm ci
+    npm run watch
+```
 
-> pip install --user pip-tools
-
-Then just run `make upgrade`.
-
-To add a new dependency, add it to **requirements.in** and then run `pip-compile`. This will update *requirements.txt* accordingly. You can then rebuild the containers with `make build` and commit the changes to the repo.
+This will run `esbuild` and `tailwindcss` to watch for changes in your templates and assets.
 
 ## Deployment
 
@@ -62,3 +79,5 @@ The following environment variables should be set in your production installatio
     SENTRY_URL='<sentry-url>'
     CONTACT_EMAIL='my-site@host.com'
 ```
+
+A `Procfile` is provided for Heroku-like deployments (including Dokku, Railway etc).
