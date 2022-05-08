@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import dataclasses
-import functools
 import math
 import re
 
@@ -17,7 +16,6 @@ from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from radiofeed.common import cleaners
@@ -114,17 +112,6 @@ def login_url(url: str) -> str:
 @register.filter
 def signup_url(url: str) -> str:
     return auth_redirect_url(url, reverse("account_signup"))
-
-
-@register.simple_tag
-@functools.lru_cache
-def icon(name: str, css_class: str = "") -> str:
-    return format_html(
-        template.loader.render_to_string(
-            f"icons/{name}.svg",
-            {"css_class": css_class},
-        )
-    )
 
 
 @register.inclusion_tag("partials/markdown.html")

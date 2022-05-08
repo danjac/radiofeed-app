@@ -9,7 +9,7 @@
             <button title="Remove from Bookmarks"
                 class="link"
                 hx-delete="{% url 'episodes:remove_bookmark' episode.id %}">
-                {% icon "star_solid" css_class=ICON_CSS %}
+                {% include "icons/star_solid.svg" with css_class=ICON_CSS %}
             </button>
         {% else %}
             <button title="Add to Bookmarks"

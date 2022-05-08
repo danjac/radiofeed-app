@@ -7,7 +7,6 @@ from radiofeed.common.template import (
     active_link,
     format_duration,
     get_site_config,
-    icon,
     login_url,
     markdown,
     normalize_url,
@@ -102,11 +101,6 @@ class TestFormatDuration:
     )
     def test_format_duration(self, duration, expected):
         assert format_duration(duration) == expected
-
-
-class TestIcon:
-    def test_icon(self):
-        assert 'class="h-4 w-4"' in icon("star", css_class="h-4 w-4")
 
 
 class TestLoginUrl:

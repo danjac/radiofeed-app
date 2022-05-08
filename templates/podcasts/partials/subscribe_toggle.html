@@ -8,7 +8,7 @@
                 <button class="btn btn-secondary inline-flex items-center"
                     title="Unsubscribe from this Podcast"
                     hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
-                    {% icon "eye_slash" css_class=ICON_CSS %}
+                    {% include "icons/eye_slash.svg" with css_class=ICON_CSS %}
                     Unsubscribe
                 </button>
             {% else %}
