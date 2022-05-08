@@ -29,7 +29,7 @@ Create a Python virtualenv and install dependencies (you will need **Python 3.10
 Install the NLTK corpora:
 
 ```bash
-    mkdir ./venv/nltk
+    mkdir ./venv/nltk_data
     xargs python -m nltk.downloader -d ./venv/nltk_data <./nltk.txt
 ```
 
