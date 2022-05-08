@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 from django.contrib import admin, messages
-from django.db.models import QuerySet
+from django.db.models import Count, QuerySet
 from django.http import HttpRequest
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
@@ -18,8 +18,15 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "parent",
+        "num_podcasts",
     )
     search_fields = ("name",)
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        return super().get_queryset(request).annotate(num_podcasts=Count("podcast"))
+
+    def num_podcasts(self, obj: models.Category) -> int:
+        return obj.num_podcasts or 0
 
 
 class ActiveFilter(admin.SimpleListFilter):
