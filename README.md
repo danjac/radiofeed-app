@@ -29,8 +29,8 @@ Create a Python virtualenv and install dependencies (you will need **Python 3.10
 Install the NLTK corpora:
 
 ```bash
-    mkdir ./venv/share/nltk
-    xargs python -m nltk.downloader -d ./venv/share/nltk_data <./nltk.txt
+    mkdir ./venv/nltk
+    xargs python -m nltk.downloader -d ./venv/nltk_data <./nltk.txt
 ```
 
 Finally, run migrations and start the Django server:
