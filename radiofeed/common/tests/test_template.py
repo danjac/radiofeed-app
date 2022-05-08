@@ -12,7 +12,6 @@ from radiofeed.common.template import (
     normalize_url,
     pagination_url,
     re_active_link,
-    safe_url,
     share_buttons,
     signup_url,
 )
@@ -228,20 +227,6 @@ class TestNormalizeUrl:
 
     def test_already_complete(self):
         assert normalize_url(self.expected_url) == self.expected_url
-
-
-class TestSafeUrl:
-    def test_none(self):
-        assert safe_url(None) is None
-
-    def test_https(self):
-        assert safe_url(EXAMPLE_HTTPS_URL) == EXAMPLE_HTTPS_URL
-
-    def test_http(self):
-        assert safe_url(EXAMPLE_HTTP_URL) == EXAMPLE_HTTPS_URL
-
-    def test_ftp(self):
-        assert safe_url("ftp://example.com") is None
 
 
 class TestPaginationUrl:

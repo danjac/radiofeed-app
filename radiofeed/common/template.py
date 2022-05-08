@@ -144,24 +144,14 @@ def cookie_notice(context: dict) -> dict:
 @stringfilter
 def normalize_url(url: str | None) -> str:
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
-    if not url:
-        return ""
-    for value in (url, "https://" + url):
-        try:
-            _validate_url(value)
-            return value
-        except ValidationError:
-            continue
+    if url:
+        for value in (url, "https://" + url):
+            try:
+                _validate_url(value)
+                return value
+            except ValidationError:
+                continue
     return ""
-
-
-@register.filter
-def safe_url(url: str | None) -> str | None:
-    if not url or url.startswith("https://"):
-        return url
-    if url.startswith("http://"):
-        return "https://" + url[7:]
-    return None
 
 
 def auth_redirect_url(url: str, redirect_url: str) -> str:
