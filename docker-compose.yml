@@ -1,0 +1,47 @@
+version: '3.8'
+
+x-logging: &default-logging
+    options:
+        max-size: '10k'
+        max-file: '3'
+
+services:
+    postgres:
+        image: postgres:14.1
+        environment:
+            - POSTGRES_PASSWORD=password
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        stop_grace_period: '3s'
+        logging: *default-logging
+        healthcheck:
+            test: ['CMD', 'pg_isready', '-U', 'postgres']
+            interval: 1s
+            timeout: 3s
+            retries: 30
+        ports:
+            - '5432:5432'
+
+
+    redis:
+        image: redis:6.2.6-buster
+        stop_grace_period: '3s'
+        logging: *default-logging
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 1s
+            timeout: 3s
+            retries: 30
+        ports:
+            - '6379:6379'
+
+    mailhog:
+        image: mailhog/mailhog:v1.0.1
+        stop_grace_period: '3s'
+        logging: *default-logging
+        ports:
+            - '8025:8025'
+            - '1025:1025'
+
+volumes:
+    pg_data: {}
