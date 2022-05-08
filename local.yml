@@ -5,13 +5,6 @@ x-logging: &default-logging
         max-size: '10k'
         max-file: '3'
 
-x-environment: &default-environment
-    DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
-    EMAIL_HOST: mailhog
-    EMAIL_PORT: 1025
-    REDIS_URL: redis://redis:6379/0
-    SECRET_KEY: seekrit!
-
 services:
     postgres:
         image: postgres:14.1
@@ -26,6 +19,9 @@ services:
             interval: 1s
             timeout: 3s
             retries: 30
+        ports:
+            - '5432:5432'
+
 
     redis:
         image: redis:6.2.6-buster
@@ -36,6 +32,8 @@ services:
             interval: 1s
             timeout: 3s
             retries: 30
+        ports:
+            - '6379:6379'
 
     mailhog:
         image: mailhog/mailhog:v1.0.1
@@ -44,64 +42,6 @@ services:
         ports:
             - '8025:8025'
             - '1025:1025'
-
-    webapp:
-        build:
-            context: .
-            dockerfile: ./local/Dockerfile
-            target: django
-        environment: *default-environment
-        logging: *default-logging
-        restart: on-failure
-        privileged: true
-        tty: true
-        stop_grace_period: '3s'
-        ports:
-            - '8000:8000'
-        depends_on:
-            postgres:
-                condition: service_healthy
-            redis:
-                condition: service_healthy
-        volumes:
-            - ./:/app:z
-        command: >
-            sh -c "python manage.py migrate
-                   python manage.py runserver 0.0.0.0:8000"
-
-    worker:
-        build:
-            context: .
-            dockerfile: ./local/Dockerfile
-            target: django
-        environment: *default-environment
-        logging: *default-logging
-        restart: on-failure
-        privileged: true
-        tty: true
-        stop_grace_period: '3s'
-        ports: []
-        depends_on:
-            - webapp
-        volumes:
-            - ./:/app:z
-        command: 'python manage.py run_huey -w 2'
-
-    watcher:
-        build:
-            context: .
-            dockerfile: ./local/Dockerfile
-            target: node
-        logging: *default-logging
-        restart: on-failure
-        privileged: true
-        tty: true
-        stop_grace_period: '3s'
-        ports: []
-        volumes:
-            - ./:/app:z
-            - /app/node_modules
-        command: 'npm run watch'
 
 volumes:
     pg_data: {}
