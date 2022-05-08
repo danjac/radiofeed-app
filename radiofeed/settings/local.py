@@ -21,6 +21,4 @@ INSTALLED_APPS = ["whitenoise.runserver_nostatic", "debug_toolbar"] + INSTALLED_
 
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
-# internal Docker IP
-
-_, _, INTERNAL_IPS = socket.gethostbyname_ex(socket.gethostname())  # type: ignore
+INTERNAL_IPS = ["127.0.0.1"]

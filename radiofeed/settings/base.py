@@ -1,5 +1,4 @@
 import pathlib
-import socket
 
 from email.utils import getaddresses
 
@@ -65,11 +64,6 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
-# configure internal IPS inside docker container
-
-INTERNAL_IPS = [
-    ip[:-1] + "1" for ip in socket.gethostbyname_ex(socket.gethostname())[2]
-]
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
