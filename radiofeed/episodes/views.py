@@ -232,7 +232,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/partials/history_toggle.html",
+        "episodes/partials/audio_log_toggle.html",
         {
             "episode": episode,
             "completed": now,
@@ -253,7 +253,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/partials/history_toggle.html",
+        "episodes/partials/audio_log_toggle.html",
         {"episode": episode},
     )
 
