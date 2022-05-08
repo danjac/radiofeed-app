@@ -53,6 +53,13 @@ You can install default iTunes categories and approx 200 common podcasts from fi
     python manage.py loaddata podcasts radiofeed/podcasts/fixtures/podcasts.json.gz
 ```
 
+If you want to run scheduled jobs locally (using [Huey](https://huey.readthedocs.io/en/latest/)) run
+this in another terminal in your virtualenv:
+
+```bash
+    python manage.py run_huey -w 2
+```
+
 To run frontend builds first install dependencies and run the watch command in another terminal:
 
 ```bash
