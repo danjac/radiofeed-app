@@ -31,7 +31,7 @@
                                 <div class="flex items-center">
                                     {{ emailaddress.email }}
                                     {% if emailaddress.verified %}
-                                        {% icon "check" css_class="h-5 w-5 ml-2 text-green-500" %}
+                                        {% include "icons/check.svg" with css_class="h-5 w-5 ml-2 text-green-500" %}
                                     {% endif %}
                                 </div>
                             </div>
@@ -44,21 +44,21 @@
                         <button class="inline-flex items-center btn btn-default"
                             name="action_primary"
                             value="1">
-                            {% icon "sparkles" css_class=ICON_CSS %}
+                            {% include "icons/sparkles.svg" with css_class=ICON_CSS %}
                             Primary
                         </button>
 
                         <button class="inline-flex items-center btn btn-secondary"
                             name="action_send"
                             value="1">
-                            {% icon "mail" css_class=ICON_CSS %}
+                            {% include "icons/mail.svg" with css_class=ICON_CSS %}
                             Re-Verify
                         </button>
 
                         <button class="inline-flex items-center btn btn-danger"
                             name="action_remove"
                             value="1">
-                            {% icon "trash" css_class=ICON_CSS %}
+                            {% include "icons/trash.svg" with css_class=ICON_CSS %}
                             Remove
                         </button>
                     {% endwith %}
@@ -87,7 +87,7 @@
                 <button class="inline-flex items-center btn btn-default"
                     name="action_add"
                     value="true">
-                    {% icon "plus" css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                    {% include "icons/plus.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
                     Add E-Mail
                 </button>
             </div>

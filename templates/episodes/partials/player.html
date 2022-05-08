@@ -67,7 +67,7 @@
                                             class="{{ BUTTON_CSS }} mr-1 md:mr-2"
                                             :disabled="!isLoaded"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            {% icon "pause" css_class=ICON_CSS %}
+                                            {% include "icons/pause.svg" with css_class=ICON_CSS %}
                                         </button>
 
                                         <button title="Play"
@@ -75,7 +75,7 @@
                                             x-show="isPaused"
                                             class="{{ BUTTON_CSS }} mr-1 md:mr-2"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            {% icon "play" css_class=ICON_CSS %}
+                                            {% include "icons/play.svg" with css_class=ICON_CSS %}
                                         </button>
 
                                         <button title="Close Player"
@@ -84,7 +84,7 @@
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
                                             hx-swap="innerHTML">
-                                            {% icon "stop" css_class=ICON_CSS %}
+                                            {% include "icons/stop.svg" with css_class=ICON_CSS %}
                                         </button>
 
                                         <button class="hidden"
@@ -174,7 +174,7 @@
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 accesskey="r"
                                                 @click="window.location.reload()">
-                                                {% icon "refresh" css_class=ICON_CSS %}
+                                                {% include "icons/refresh.svg" with css_class=ICON_CSS %}
                                             </button>
                                         </div>
 

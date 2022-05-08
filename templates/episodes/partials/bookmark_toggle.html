@@ -15,7 +15,7 @@
             <button title="Add to Bookmarks"
                 class="link"
                 hx-post="{% url 'episodes:add_bookmark' episode.id %}">
-                {% icon "star" css_class=ICON_CSS %}
+                {% include "icons/star.svg" with css_class=ICON_CSS %}
             </button>
         {% endif %}
     </div>

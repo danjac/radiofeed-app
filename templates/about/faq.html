@@ -47,7 +47,7 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">What if I want to download an episode to my device?</summary>
                 <p>
-                    Click the download icon {% icon "download" css_class="inline h-4 w-4 md:h-6 md:w-6" %} on the episode page to save the audio file to your device. You can then
+                    Click the download icon {% include "icons/download.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %} on the episode page to save the audio file to your device. You can then
                     listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
                     play History.
                 </p>
@@ -75,7 +75,7 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">How do I remove an episode from my history?</summary>
                 <p>
-                    Go to the episode page and click the trash icon {% icon "trash" css_class="inline h-4 w-4 md:h-6 md:w-6" %}
+                    Go to the episode page and click the trash icon {% include "icons/trash.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %}
                     to permanently remove the episode from your History.
                 </p>
             </details>
@@ -98,7 +98,7 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">How do I save an episode to listen to later?</summary>
                 <p>
-                    Click the star icon {% icon "star" css_class="inline h-4 w-4 md:h-6 md:w-6" %}
+                    Click the star icon {% include "icons/star.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %}
                     in the episode page to add an episode to your <a class="link" href="{% url 'episodes:bookmarks' %}">Bookmarks</a>.
                     You can add episodes you want to listen to later, or favorites you want to listen to again.
                 </p>

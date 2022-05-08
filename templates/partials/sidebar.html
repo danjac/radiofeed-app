@@ -7,7 +7,7 @@
                     accesskey="p"
                     title="Podcasts"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% icon "rss" css_class=ICON_CSS %}
+                    {% include "icons/rss.svg" with css_class=ICON_CSS %}
                     Podcasts
                 </a>
             </li>
@@ -17,7 +17,7 @@
                     accesskey="n"
                     title="New Releases"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% icon "sparkles" css_class=ICON_CSS %}
+                    {% include "icons/sparkles.svg" with css_class=ICON_CSS %}
                     New Releases
                 </a>
             </li>
@@ -27,7 +27,7 @@
                     accesskey="c"
                     title="Categories"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% icon "tag" css_class=ICON_CSS %}
+                    {% include "icons/tag.svg" with css_class=ICON_CSS %}
                     Categories
                 </a>
             </li>
@@ -37,7 +37,7 @@
                     accesskey="f"
                     title="Bookmarks"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% icon "star" css_class=ICON_CSS %}
+                    {% include "icons/star.svg" with css_class=ICON_CSS %}
                     Bookmarks
                 </a>
             </li>
@@ -48,7 +48,7 @@
                     accesskey="h"
                     title="History"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% icon "database" css_class=ICON_CSS %}
+                    {% include "icons/database.svg" with css_class=ICON_CSS %}
                     History
                 </a>
             </li>
@@ -60,7 +60,7 @@
                         accesskey="s"
                         title="Settings"
                         class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                        {% icon "adjustments" css_class=ICON_CSS %}
+                        {% include "icons/adjustments.svg" with css_class=ICON_CSS %}
                         Settings
                     </a>
                 </li>
@@ -72,7 +72,7 @@
                     accesskey="a"
                     title="About"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% icon "info" css_class=ICON_CSS %}
+                    {% include "icons/info.svg" with css_class=ICON_CSS %}
                     About
                 </a>
             </li>
@@ -87,7 +87,7 @@
                         <button accesskey="l"
                             title="Logout"
                             class="{{ SIDEBAR_CSS }}">
-                            {% icon "logout" css_class=ICON_CSS %}
+                            {% include "icons/logout.svg" with css_class=ICON_CSS %}
                             Logout
                         </button>
                     </form>

@@ -81,7 +81,7 @@
                             <a class="inline-flex items-center link"
                                 title="{{ category.name }} Podcasts"
                                 href="{{ category.get_absolute_url }}">
-                                {% icon "tag" css_class="h-4 w-4 mr-2" %}
+                                {% include "icons/tag.svg" with css_class="h-4 w-4 mr-2" %}
                                 {{ category.name }}
                             </a>
                         {% endfor %}

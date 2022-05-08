@@ -10,7 +10,7 @@
                 <button title="Mark Complete"
                     class="link"
                     hx-post="{% url 'episodes:mark_complete' episode.id %}">
-                    {% icon "check" css_class=ICON_CSS %}
+                    {% include "icons/check.svg" with css_class=ICON_CSS %}
                 </button>
             {% endif %}
 
@@ -18,7 +18,7 @@
                 class="link"
                 hx-confirm="Are you sure you want to remove this episode from your History?"
                 hx-delete="{% url 'episodes:remove_audio_log' episode.id %}">
-                {% icon "trash" css_class=ICON_CSS %}
+                {% include "icons/trash.svg" with css_class=ICON_CSS %}
             </button>
         {% endif %}
     </div>

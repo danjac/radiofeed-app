@@ -62,7 +62,7 @@
                     <button type="submit"
                         title="Search"
                         class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-                        {% icon "search" css_class="h-4 w-4" %}
+                        {% include "icons/search.svg" with css_class="h-4 w-4" %}
                     </button>
                 </div>
             </form>
@@ -83,7 +83,7 @@
                         x-cloak
                         x-show.transition="!sidebar"
                         @click="sidebar=true">
-                        {% icon "menu" css_class="h-6 w-6" %}
+                        {% include "icons/menu.svg" with css_class="h-6 w-6" %}
                     </button>
                     <button class="focus:outline-none transform transition"
                         title="Toggle Menu"
@@ -124,7 +124,7 @@
                         <button type="submit"
                             title="Search"
                             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-                            {% icon "search" css_class="h-4 w-4" %}
+                            {% include "icons/search.svg" with css_class="h-4 w-4" %}
                         </button>
                     </div>
                 </form>
