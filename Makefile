@@ -14,27 +14,27 @@ logs:
 	docker-compose -f local.yml logs -f
 
 migrate:
-	./local/bin/manage migrate
+	./bin/manage migrate
 
 superuser:
-	./local/bin/manage createsuperuser
+	./bin/manage createsuperuser
 
 seed:
-	./local/bin/manage loaddata podcasts radiofeed/podcasts/fixtures/categories.json.gz
-	./local/bin/manage loaddata podcasts radiofeed/podcasts/fixtures/podcasts.json.gz
+	./bin/manage loaddata podcasts radiofeed/podcasts/fixtures/categories.json.gz
+	./bin/manage loaddata podcasts radiofeed/podcasts/fixtures/podcasts.json.gz
 
 shell:
-	./local/bin/manage shell_plus
+	./bin/manage shell_plus
 
 test:
-	./local/bin/pytest
+	./bin/pytest
 
 coverage:
-	./local/bin/pytest -v -x --cov --reuse-db --cov-report term-missing
+	./bin/pytest -v -x --cov --reuse-db --cov-report term-missing
 
 upgrade:
 	pip-compile --upgrade requirements.in
-	./local/bin/npm upgrade
+	./bin/npm upgrade
 
 requirements:
 	pip-compile requirements.in
