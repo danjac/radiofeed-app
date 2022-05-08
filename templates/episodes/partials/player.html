@@ -122,14 +122,14 @@
                                             @click="skipBack"
                                             :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            {% icon "skip_back_10" css_class=ICON_CSS %}
+                                            {% include "icons/skip_back_10.svg" with css_class=ICON_CSS %}
                                         </button>
 
                                         <button title="Skip forward 10 seconds"
                                             @click="skipForward"
                                             :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            {% icon "skip_forward_10" css_class=ICON_CSS %}
+                                            {% include "icons/skip_forward_10.svg" with css_class=ICON_CSS %}
                                         </button>
 
                                     </div>
@@ -142,14 +142,14 @@
                                                 @click="skipBack"
                                                 :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                {% icon "skip_back_10" css_class=ICON_CSS %}
+                                                {% include "icons/skip_back_10.svg" with css_class=ICON_CSS %}
                                             </button>
 
                                             <button title="Skip forward 10 seconds"
                                                 @click="skipForward"
                                                 :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                {% icon "skip_forward_10" css_class=ICON_CSS %}
+                                                {% include "icons/skip_forward_10.svg" with css_class=ICON_CSS %}
                                             </button>
 
                                         </div>

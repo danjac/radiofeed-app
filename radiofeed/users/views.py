@@ -54,9 +54,9 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         "account/export_podcast_feeds.html",
         {
             "formats": [
-                ("csv", "table", reverse("users:export_podcast_feeds_csv")),
-                ("json", "code", reverse("users:export_podcast_feeds_json")),
-                ("opml", "rss", reverse("users:export_podcast_feeds_opml")),
+                ("csv", "icons/table.svg", reverse("users:export_podcast_feeds_csv")),
+                ("json", "icons/code.svg", reverse("users:export_podcast_feeds_json")),
+                ("opml", "icons/rss.svg", reverse("users:export_podcast_feeds_opml")),
             ]
         },
     )
