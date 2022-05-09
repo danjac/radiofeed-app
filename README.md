@@ -37,6 +37,8 @@ python -m venv venv && \
     pip install -r requirements.txt
 ```
 
+We'll assume all Python commands from this point are run in the virtualenv.
+
 Install the NLTK corpora:
 
 ```bash
@@ -56,7 +58,7 @@ Run tests using `pytest`:
 python -m pytest
 ```
 
-You can install default iTunes categories and approx 200 common podcasts from fixtures:
+You can install default iTunes categories and approx 200 sample podcasts from fixtures:
 
 ```bash
 python manage.py loaddata podcasts \
