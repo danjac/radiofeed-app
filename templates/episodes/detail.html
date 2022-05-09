@@ -50,35 +50,36 @@
                 <meta name="twitter:description"
                     content="{{ episode_description }}">
             {% endif %}
-        {% if site_config.twitter %}
-            <meta name="twitter:site"
-                content="@{{ site_config.twitter }}">
-        {% endif %}
+            {% if site_config.twitter %}
+                <meta name="twitter:site"
+                    content="@{{ site_config.twitter }}">
+            {% endif %}
 
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "NewsArticle",
-                "mainEntityOfPage": {
-                    "@type": "WebPage",
-                    "@id": "{% absolute_uri podcast %}"
-                },
-                "url": "{% absolute_uri episode %}",
-                "headline": "{{ episode_title }}",
-                "description": "{{ episode_description }}",
-                {% if cover_url %}
-                    "image": [
-                        "{{ cover_url }}"
-                    ],
-                {% endif %}
-                {% if podcast.owner %}
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "{{ podcast.owner|escapejs }}"
+
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "NewsArticle",
+                    "mainEntityOfPage": {
+                        "@type": "WebPage",
+                        "@id": "{% absolute_uri podcast %}"
+                    },
+                    "url": "{% absolute_uri episode %}",
+                    "headline": "{{ episode_title }}",
+                    "description": "{{ episode_description }}",
+                    {% if cover_url %}
+                        "image": [
+                            "{{ cover_url }}"
+                        ],
+                    {% endif %}
+                    {% if podcast.owner %}
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "{{ podcast.owner|escapejs }}"
+                        }
+                    {% endif %}
                 }
-                {% endif %}
-            }
-        </script>
+            </script>
 
         {% endwith %}
     {% endwith %}
