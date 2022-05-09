@@ -4,21 +4,32 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ## Running Radiofeed on your local machine
 
+Radiofeed requires the following:
+
+* Python 3.10+
+* Node 16+
+
+### Additional requirements
+
 For ease of local development a `docker-compose.yml` is provided which includes:
 
 * PostgreSQL
 * Redis
 * Mailhog
 
-You can run this if you wish, or use a local install of PostgreSQL or Redis:
+Just run `docker-compose`:
 
 ```bash
 docker-compose build && docker-compose up -d
 ```
 
+You can use these images if you want, or use a local install of PostgreSQL or Redis.
+
+### Django setup
+
 Copy the file `.env.example` to `.env` and set the variables accordingly.
 
-Create a Python virtualenv and install dependencies (you will need **Python 3.10** to run this application):
+Create a Python virtualenv and install dependencies:
 
 ```bash
 python -m venv venv && \
@@ -58,6 +69,8 @@ If you want to run scheduled jobs locally (using [Huey](https://huey.readthedocs
 ```bash
 python manage.py run_huey -w 2
 ```
+
+### Frontend setup
 
 To run frontend builds first install dependencies and run the watch command in another terminal:
 
