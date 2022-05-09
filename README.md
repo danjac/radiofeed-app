@@ -4,7 +4,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ## Running Radiofeed on your local machine
 
-For ease of local deployments a `docker-compose.yml` is provided which includes:
+For ease of local development a `docker-compose.yml` is provided which includes:
 
 * PostgreSQL
 * Redis
