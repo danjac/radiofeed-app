@@ -73,10 +73,12 @@
                             "{{ cover_url }}"
                         ],
                     {% endif %}
+                    {% if podcast.owner %}
                     "publisher": {
                         "@type": "Organization",
-                        "name": "{{ podcast.owner }}"
+                        "name": "{{ podcast.owner|escapejs }}"
                     }
+                    {% endif %}
                 }
             </script>
 
