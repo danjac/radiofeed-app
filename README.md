@@ -53,8 +53,7 @@ python manage.py loaddata podcasts \
     radiofeed/podcasts/fixtures/podcasts.json.gz
 ```
 
-If you want to run scheduled jobs locally (using [Huey](https://huey.readthedocs.io/en/latest/)) run
-this in another terminal in your virtualenv:
+If you want to run scheduled jobs locally (using [Huey](https://huey.readthedocs.io/en/latest/)) run this in another terminal in your virtualenv:
 
 ```bash
 python manage.py run_huey -w 2
