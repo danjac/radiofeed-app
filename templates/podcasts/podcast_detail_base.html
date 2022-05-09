@@ -57,6 +57,7 @@
                 content="@{{ site_config.twitter }}">
         {% endif %}
 
+
         <script type="application/ld+json">
             {
                 "@context": "https://schema.org",
@@ -72,10 +73,10 @@
                     ],
                 {% endif %}
                 {% if podcast.owner %}
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "{{ podcast.owner|escapejs }}"
-                }
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "{{ podcast.owner|escapejs }}"
+                    }
                 {% endif %}
             }
         </script>
