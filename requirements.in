@@ -1,11 +1,9 @@
 Brotli
 Django
-Faker
 Markdown
 Werkzeug
 attrs
 bleach
-coverage
 dj-database-url
 django-allauth
 django-anymail
@@ -23,9 +21,7 @@ django-ratelimit
 django-redis
 django-split-settings
 django-widget-tweaks
-honcho
 huey
-factory-boy
 gunicorn
 hiredis
 ipython
@@ -35,13 +31,6 @@ numpy
 pandas
 psutil
 psycopg2-binary
-pytest
-pytest-cov
-pytest-django
-pytest-forked
-pytest-mock
-pytest-randomly
-pytest-xdist
 python-dateutil
 redis
 requests
