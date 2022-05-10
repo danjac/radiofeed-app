@@ -117,9 +117,7 @@ executing==0.8.3
     #   -r requirements/base.txt
     #   stack-data
 gunicorn==20.1.0
-    # via
-    #   -r requirements/base.txt
-    #   -r requirements/production.in
+    # via -r requirements/production.in
 hiredis==2.0.0
     # via -r requirements/base.txt
 huey==2.4.3
@@ -251,9 +249,7 @@ scipy==1.8.0
     #   -r requirements/base.txt
     #   scikit-learn
 sentry-sdk==1.5.12
-    # via
-    #   -r requirements/base.txt
-    #   -r requirements/production.in
+    # via -r requirements/production.in
 six==1.16.0
     # via
     #   -r requirements/base.txt

@@ -20,7 +20,6 @@ django-redis
 django-split-settings
 django-widget-tweaks
 huey
-gunicorn
 hiredis
 ipython
 lxml
@@ -34,5 +33,4 @@ redis
 requests
 scikit-learn
 scipy
-sentry-sdk
 whitenoise

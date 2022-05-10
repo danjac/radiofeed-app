@@ -32,7 +32,6 @@ certifi==2021.10.8
     # via
     #   -r requirements/base.txt
     #   requests
-    #   sentry-sdk
 cffi==1.15.0
     # via
     #   -r requirements/base.txt
@@ -130,8 +129,6 @@ faker==13.11.0
     # via
     #   -r requirements/local.in
     #   factory-boy
-gunicorn==20.1.0
-    # via -r requirements/base.txt
 hiredis==2.0.0
     # via -r requirements/base.txt
 honcho==1.1.0
@@ -296,8 +293,6 @@ scipy==1.8.0
     # via
     #   -r requirements/base.txt
     #   scikit-learn
-sentry-sdk==1.5.12
-    # via -r requirements/base.txt
 six==1.16.0
     # via
     #   -r requirements/base.txt
@@ -332,7 +327,6 @@ urllib3==1.26.9
     # via
     #   -r requirements/base.txt
     #   requests
-    #   sentry-sdk
 wcwidth==0.2.5
     # via
     #   -r requirements/base.txt

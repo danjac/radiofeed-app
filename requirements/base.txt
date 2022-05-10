@@ -19,9 +19,7 @@ bleach==5.0.0
 brotli==1.0.9
     # via -r requirements/base.in
 certifi==2021.10.8
-    # via
-    #   requests
-    #   sentry-sdk
+    # via requests
 cffi==1.15.0
     # via cryptography
 charset-normalizer==2.0.12
@@ -84,8 +82,6 @@ django-widget-tweaks==1.4.12
     # via -r requirements/base.in
 executing==0.8.3
     # via stack-data
-gunicorn==20.1.0
-    # via -r requirements/base.in
 hiredis==2.0.0
     # via -r requirements/base.in
 huey==2.4.3
@@ -175,8 +171,6 @@ scipy==1.8.0
     # via
     #   -r requirements/base.in
     #   scikit-learn
-sentry-sdk==1.5.12
-    # via -r requirements/base.in
 six==1.16.0
     # via
     #   asttokens
@@ -195,9 +189,7 @@ traitlets==5.2.0
     #   ipython
     #   matplotlib-inline
 urllib3==1.26.9
-    # via
-    #   requests
-    #   sentry-sdk
+    # via requests
 wcwidth==0.2.5
     # via prompt-toolkit
 webencodings==0.5.1
