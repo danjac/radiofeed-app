@@ -8,6 +8,7 @@ Radiofeed requires the following:
 
 * Python 3.10+
 * Node 16+
+* [Poetry](https://python-poetry.org)
 
 ### Additional requirements
 
@@ -29,15 +30,13 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 Copy the file `.env.example` to `.env` and set the variables accordingly.
 
-Create a Python virtualenv and install dependencies:
+To install dependencies:
 
 ```bash
-python -m venv venv && \
-    source venv/bin/activate && \
-    pip install -r local/requirements.txt
+poetry install
 ```
 
-We'll assume all Python commands from this point are run in the virtualenv.
+We'll assume all Python commands from this point are run in your Poetry environment.
 
 Install the NLTK corpora:
 
