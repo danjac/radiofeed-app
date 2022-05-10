@@ -1,5 +1,0 @@
--r base.txt
-
-django-anymail
-gunicorn
-sentry-sdk
