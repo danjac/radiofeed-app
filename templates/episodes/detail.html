@@ -89,37 +89,35 @@
 
     {% with podcast=episode.podcast %}
 
-        {% if previous_episode or next_episode %}
-            <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
-                role="navigation"
-                aria-label="Pagination">
-                {% if previous_episode %}
-                    <a class="link"
-                        href="{{ previous_episode.get_absolute_url }}"
-                        aria-label="{{ previous_episode.cleaned_title }}"
-                        title="{{ previous_episode.cleaned_title }}">
-                        Previous
-                    </a>
+        <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
+            role="navigation"
+            aria-label="Pagination">
+            {% if previous_episode %}
+                <a class="link"
+                    href="{{ previous_episode.get_absolute_url }}"
+                    aria-label="{{ previous_episode.cleaned_title }}"
+                    title="{{ previous_episode.cleaned_title }}">
+                    Previous
+                </a>
 
-                {% else %}
-                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                        title="Earliest Episode"
-                        aria-label="No More Episodes">Previous</span>
-                {% endif %}
-                {% if next_episode %}
-                    <a class="link"
-                        href="{{ next_episode.get_absolute_url }}"
-                        aria-label="{{ next_episode.cleaned_title }}"
-                        title="{{ next_episode.cleaned_title }}">
-                        Next
-                    </a>
-                {% else %}
-                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                        title="Latest Episode"
-                        aria-label="No More Episodes">Next</span>
-                {% endif %}
-            </nav>
-        {% endif %}
+            {% else %}
+                <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                    title="Earliest Episode"
+                    aria-label="No More Episodes">Previous</span>
+            {% endif %}
+            {% if next_episode %}
+                <a class="link"
+                    href="{{ next_episode.get_absolute_url }}"
+                    aria-label="{{ next_episode.cleaned_title }}"
+                    title="{{ next_episode.cleaned_title }}">
+                    Next
+                </a>
+            {% else %}
+                <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                    title="Latest Episode"
+                    aria-label="No More Episodes">Next</span>
+            {% endif %}
+        </nav>
 
         <article class="space-y-3">
             <h2 class="md:text-lg">
