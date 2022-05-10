@@ -206,7 +206,7 @@ def history(request: HttpRequest) -> HttpResponse:
         request,
         logs,
         "episodes/history.html",
-        "episodes/partials/history.html",
+        "episodes/partials/audio_logs.html",
         {
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
