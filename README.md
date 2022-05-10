@@ -73,7 +73,7 @@ The easiest way to run your local development environment is using [Honcho](honc
 honcho -f Procfile.local start
 ```
 
-This will run the following:
+This will start up:
 
 * Django development server
 * [Huey](huey.readthedocs.io/) for running scheduled tasks and queues
