@@ -49,16 +49,9 @@ mkdir ./venv/nltk_data && \
 Finally, run migrations and start the Django server:
 
 ```bash
-python manage.py migrate && python manage.py runserver
+python manage.py migrate
 ```
-
-Run tests using `pytest`:
-
-```bash
-python -m pytest
-```
-
-You can install default iTunes categories and approx 200 sample podcasts from fixtures:
+You can also install default iTunes categories and approx 200 sample podcasts from fixtures:
 
 ```bash
 python manage.py loaddata podcasts \
@@ -66,21 +59,26 @@ python manage.py loaddata podcasts \
     radiofeed/podcasts/fixtures/podcasts.json.gz
 ```
 
-If you want to run scheduled jobs locally (using [Huey](https://huey.readthedocs.io/en/latest/)) run this in another terminal:
-
-```bash
-python manage.py run_huey -w 2
-```
+This should provide some useful data to get started with.
 
 ### Frontend setup
 
-To run frontend builds first install dependencies and run the watch command in another terminal:
+To install frontend dependencies just run `npm ci`.
+
+### Running development environment
+
+The easiest way to run your local development environment is using [Honcho](honcho.readthedocs.io/):
 
 ```bash
-npm ci && npm run watch
+honcho -f Procfile.local start
 ```
 
-This will run `esbuild` and `tailwindcss` to watch for changes in your templates and assets.
+This will run the following:
+
+* Django development server
+* [Huey](huey.readthedocs.io/) for running scheduled tasks and queues
+* `tailwindcss` and `esbuild` for building frontend assets on the fly
+
 
 ## Deployment
 

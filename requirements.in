@@ -23,6 +23,7 @@ django-ratelimit
 django-redis
 django-split-settings
 django-widget-tweaks
+honcho
 huey
 factory-boy
 gunicorn
