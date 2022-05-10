@@ -44,12 +44,6 @@ CACHES = {
 }
 
 
-DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
-
-SOLO_CACHE = "default"
-SOLO_CACHE_TIMEOUT = DEFAULT_CACHE_TIMEOUT
-
-
 # https://huey.readthedocs.io/en/latest/django.html
 
 HUEY = {
@@ -63,7 +57,6 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
-
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
@@ -129,10 +122,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-DEFAULT_PAGE_SIZE = 30
-
-ADMIN_SITE_HEADER = "Radiofeed Admin"
 
 # base Django admin URL (should be something obscure in production)
 
@@ -243,6 +232,16 @@ LOGGING = {
         "radiofeed.podcasts.tasks": {"handlers": ["console"], "level": "DEBUG"},
     },
 }
+
+# Project specific
+
+DEFAULT_PAGE_SIZE = 30
+
+DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
+
+ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
+
+ENABLE_ITUNES_CRAWL = env.bool("ENABLE_ITUNES_CRAWL", default=False)
 
 SITE_CONFIG = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),

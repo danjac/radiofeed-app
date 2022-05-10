@@ -6,6 +6,7 @@ import requests
 
 from django.contrib import messages
 from django.db import IntegrityError
+from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -32,14 +33,13 @@ def index(request: HttpRequest) -> HttpResponse:
 
     promoted = "promoted" in request.GET or not subscribed
 
-    podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
-    )
+    podcasts = get_podcasts().order_by("-pub_date").distinct()
 
-    if promoted:
-        podcasts = podcasts.filter(promoted=True)
-    else:
-        podcasts = podcasts.filter(pk__in=subscribed)
+    podcasts = (
+        podcasts.filter(promoted=True)
+        if promoted
+        else podcasts.filter(pk__in=subscribed)
+    )
 
     return pagination_response(
         request,
@@ -60,7 +60,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
     podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False)
+        get_podcasts()
         .search(request.search.value)
         .order_by(
             "-rank",
@@ -166,10 +166,11 @@ def episodes(
 
     episodes = Episode.objects.filter(podcast=podcast).select_related("podcast")
 
-    if request.search:
-        episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
-    else:
-        episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
+    episodes = (
+        episodes.search(request.search.value).order_by("-rank", "-pub_date")
+        if request.search
+        else episodes.order_by("-pub_date" if newest_first else "pub_date")
+    )
 
     extra_context = {
         "is_podcast_detail": True,
@@ -207,16 +208,16 @@ def category_detail(
 ) -> HttpResponse:
 
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    podcasts = get_podcasts().filter(categories=category)
 
-    if request.search:
-        podcasts = podcasts.search(request.search.value).order_by(
+    podcasts = (
+        podcasts.search(request.search.value).order_by(
             "-rank",
             "-pub_date",
         )
-
-    else:
-        podcasts = podcasts.order_by("-pub_date")
+        if request.search
+        else podcasts.order_by("-pub_date")
+    )
 
     return pagination_response(
         request,
@@ -269,8 +270,12 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     )
 
 
+def get_podcasts() -> QuerySet:
+    return Podcast.objects.filter(pub_date__isnull=False)
+
+
 def get_podcast_or_404(podcast_id: int) -> Podcast:
-    return get_object_or_404(Podcast, pk=podcast_id, pub_date__isnull=False)
+    return get_object_or_404(get_podcasts(), pk=podcast_id)
 
 
 def get_podcast_detail_context(

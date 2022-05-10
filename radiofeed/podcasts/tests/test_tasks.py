@@ -74,7 +74,8 @@ class TestTasks:
         recommend()
         patched.assert_called()
 
-    def test_crawl_itunes(self, mocker):
+    def test_crawl_itunes_enabled(self, mocker, settings):
+        settings.ENABLE_ITUNES_CRAWL = True
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.itunes.crawl",
             return_value=[
@@ -87,6 +88,12 @@ class TestTasks:
         )
         crawl_itunes()
         patched.assert_called()
+
+    def test_crawl_itunes_disabled(self, mocker, settings):
+        settings.ENABLE_ITUNES_CRAWL = False
+        patched = mocker.patch("radiofeed.podcasts.tasks.itunes.crawl")
+        crawl_itunes()
+        patched.assert_not_called()
 
     def test_send_recommendations_emails(self, db, mocker):
         sent = []

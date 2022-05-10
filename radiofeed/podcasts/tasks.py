@@ -4,6 +4,7 @@ import logging
 
 from datetime import timedelta
 
+from django.conf import settings
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
@@ -31,8 +32,11 @@ def crawl_itunes() -> None:
 
     Runs at 5:12 UTC every day
     """
-    for feed in itunes.crawl():
-        logger.debug(feed.title)
+    if settings.ENABLE_ITUNES_CRAWL:
+        for feed in itunes.crawl():
+            logger.debug(feed.title)
+    else:
+        logger.debug("ENABLE_ITUNES_CRAWL is disabled")
 
 
 @db_periodic_task(crontab(hour=9, minute=12, day_of_week=1))
