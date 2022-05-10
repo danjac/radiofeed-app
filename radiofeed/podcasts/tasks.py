@@ -4,11 +4,10 @@ import logging
 
 from datetime import timedelta
 
-from django.conf import settings
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
-from radiofeed.podcasts import emails, itunes, recommender, scheduler
+from radiofeed.podcasts import emails, recommender, scheduler
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
@@ -23,20 +22,6 @@ def recommend() -> None:
     Runs 3:20 UTC every day
     """
     recommender.recommend()
-
-
-@db_periodic_task(crontab(hour=5, minute=12))
-def crawl_itunes() -> None:
-    """
-    Crawls iTunes site for new podcasts
-
-    Runs at 5:12 UTC every day
-    """
-    if settings.ENABLE_ITUNES_CRAWL:
-        for feed in itunes.crawl():
-            logger.debug(feed.title)
-    else:
-        logger.debug("ENABLE_ITUNES_CRAWL is disabled")
 
 
 @db_periodic_task(crontab(hour=9, minute=12, day_of_week=1))

@@ -241,8 +241,6 @@ DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
 ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
-ENABLE_ITUNES_CRAWL = env.bool("ENABLE_ITUNES_CRAWL", default=False)
-
 SITE_CONFIG = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
     "description": env("SITE_DESCRIPTION", default="Podcast aggregator site"),
