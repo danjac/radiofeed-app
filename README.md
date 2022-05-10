@@ -67,7 +67,7 @@ To install frontend dependencies just run `npm ci`.
 
 ### Running development environment
 
-The easiest way to run your local development environment is using [Honcho](honcho.readthedocs.io/):
+The easiest way to run your local development environment is using [Honcho](https://honcho.readthedocs.io/):
 
 ```bash
 honcho -f Procfile.local start
@@ -76,7 +76,7 @@ honcho -f Procfile.local start
 This will start up:
 
 * Django development server
-* [Huey](huey.readthedocs.io/) for running scheduled tasks and queues
+* [Huey](https://huey.readthedocs.io/) for running scheduled tasks and queues
 * `tailwindcss` and `esbuild` for building frontend assets on the fly
 
 Honcho should be installed in your virtualenv.
