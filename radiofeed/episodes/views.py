@@ -58,7 +58,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/pagination/episodes.html",
+        "episodes/partials/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -83,7 +83,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/search.html",
-        "episodes/pagination/episodes.html",
+        "episodes/partials/episodes.html",
     )
 
 
@@ -206,7 +206,7 @@ def history(request: HttpRequest) -> HttpResponse:
         request,
         logs,
         "episodes/history.html",
-        "episodes/pagination/history.html",
+        "episodes/partials/history.html",
         {
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
@@ -273,7 +273,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/pagination/bookmarks.html",
+        "episodes/partials/bookmarks.html",
     )
 
 
