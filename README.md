@@ -42,8 +42,7 @@ We'll assume all Python commands from this point are run in the virtualenv.
 Install the NLTK corpora:
 
 ```bash
-mkdir ./venv/nltk_data && \
-    xargs python -m nltk.downloader -d ./venv/nltk_data <./nltk.txt
+xargs python -m nltk.downloader <./nltk.txt
 ```
 
 Finally, run migrations and start the Django server:
@@ -51,6 +50,7 @@ Finally, run migrations and start the Django server:
 ```bash
 python manage.py migrate
 ```
+
 You can also install default iTunes categories and approx 200 sample podcasts from fixtures:
 
 ```bash
