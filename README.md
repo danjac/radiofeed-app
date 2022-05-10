@@ -79,6 +79,7 @@ This will run the following:
 * [Huey](huey.readthedocs.io/) for running scheduled tasks and queues
 * `tailwindcss` and `esbuild` for building frontend assets on the fly
 
+Honcho should be installed in your virtualenv.
 
 ## Deployment
 
