@@ -81,6 +81,12 @@ This will start up:
 
 Honcho should be installed in your virtualenv.
 
+Tests can be run with `pytest`:
+
+```bash
+python -m pytest
+```
+
 ## Deployment
 
 The following environment variables should be set in your production installation:
