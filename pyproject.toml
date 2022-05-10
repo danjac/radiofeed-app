@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "radiofeed-app"
 version = "0.1.0"
-description = ""
+description = "Podcast aggregator app"
 authors = ["Dan Jacob <danjac2018@gmail.com>"]
 license = "MIT"
 
@@ -64,6 +64,7 @@ pytest-xdist = "^2.5.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
 [tool.isort]
 default_section="THIRDPARTY"
 known_first_party="radiofeed"
