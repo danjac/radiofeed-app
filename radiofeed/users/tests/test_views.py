@@ -71,7 +71,11 @@ class TestImportPodcastFeeds:
             return_value=[podcast.rss],
         )
 
-        assert_ok(client.post(self.url, data={"opml": upload_file}))
+        response = client.post(self.url, data={"opml": upload_file})
+
+        assert_ok(response)
+
+        assert response["HX-Redirect"] == reverse("podcasts:index")
 
         assert Subscription.objects.filter(user=auth_user, podcast=podcast).exists()
 

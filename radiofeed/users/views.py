@@ -13,6 +13,7 @@ from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
@@ -153,9 +154,9 @@ def import_podcast_feeds_opml(
 
         if new_feeds:
             messages.success(request, f"{new_feeds} podcasts added to your collection")
+            return HttpResponseClientRedirect(reverse("podcasts:index"))
 
-        else:
-            messages.info(request, "No new podcasts found in OPML file")
+        messages.info(request, "No new podcasts found in OPML file")
 
     return TemplateResponse(
         request,
