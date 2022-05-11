@@ -85,38 +85,40 @@
 {% block content %}
     <h1 class="font-bold text-lg md:text-xl xl:text-2xl mb-6 text-center sm:text-left">{{ podcast.cleaned_title }}</h1>
     <div id="podcast-content">
-        <nav class="flex items-center mb-3 justify-center sm:justify-start">
-            <ul class="flex items-center space-x-6">
+        {% if num_episodes or has_similar %}
+            <nav class="flex items-center mb-3 justify-center sm:justify-start">
+                <ul class="flex items-center space-x-6">
 
-                {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
-                    {% active_link podcast.get_detail_url as link %}
-                    <li>
-                        <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                            href="{{ link.url }}"
-                            title="{{ podcast.cleaned_title }} | About">About</a>
-                    </li>
-
-                    {% if num_episodes %}
-                        {% active_link podcast.get_episodes_url as link %}
+                    {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
+                        {% active_link podcast.get_detail_url as link %}
                         <li>
                             <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                 href="{{ link.url }}"
-                                title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
+                                title="{{ podcast.cleaned_title }} | About">About</a>
                         </li>
-                    {% endif %}
 
-                    {% if has_similar %}
-                        {% active_link podcast.get_similar_url as link %}
-                        <li>
-                            <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                                href="{{ link.url }}"
-                                title="{{ podcast.cleaned_title }} | Similar">Similar</a>
-                        </li>
-                    {% endif %}
+                        {% if num_episodes %}
+                            {% active_link podcast.get_episodes_url as link %}
+                            <li>
+                                <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
+                                    href="{{ link.url }}"
+                                    title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
+                            </li>
+                        {% endif %}
 
-                {% endwith %}
-            </ul>
-        </nav>
+                        {% if has_similar %}
+                            {% active_link podcast.get_similar_url as link %}
+                            <li>
+                                <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
+                                    href="{{ link.url }}"
+                                    title="{{ podcast.cleaned_title }} | Similar">Similar</a>
+                            </li>
+                        {% endif %}
+
+                    {% endwith %}
+                </ul>
+            </nav>
+        {% endif %}
         {% block podcast_content %}{% endblock %}
     </div>
 {% endblock %}
