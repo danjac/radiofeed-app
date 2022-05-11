@@ -50,7 +50,7 @@ Finally, run migrations:
 python manage.py migrate
 ```
 
-You can also install default iTunes categories and approx 200 sample podcasts from fixtures:
+You can also install default iTunes categories and approx 1800 sample podcasts from fixtures:
 
 ```bash
 python manage.py loaddata podcasts \
