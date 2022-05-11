@@ -28,7 +28,7 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 ### Django setup
 
-Copy the file `.env.example` to `.env` and set the variables accordingly.
+Copy the file `.env.example` to `.env` and set the variables accordingly. These settings should work as-is with the Docker containers defined in `docker-compose.yml`.
 
 To install dependencies:
 
