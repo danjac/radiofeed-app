@@ -16,7 +16,22 @@ class UserPreferencesForm(forms.ModelForm):
 
 
 class OpmlUploadForm(forms.Form):
-    opml = forms.FileField(label="Upload an OPML file")
+    opml = forms.FileField(
+        label="Select OPML file",
+        widget=forms.FileInput(
+            attrs={
+                "accept": ",".join(
+                    [
+                        ".opml",
+                        ".xml",
+                        "application/xml",
+                        "text/x-opml+xml",
+                        "text/xml",
+                    ]
+                )
+            }
+        ),
+    )
 
     def parse_opml_feeds(self, limit: int = 300) -> list[str]:
         self.cleaned_data["opml"].seek(0)

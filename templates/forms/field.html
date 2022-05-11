@@ -17,9 +17,11 @@
                     for="{{ field.id_for_label }}">
                     {{ field.label }}
                 </label>
-                {% with css_class=css_class|default:'p-1 dark:bg-gray-900 dark:text-white text-sm md:text-base w-64' %}
-                    {% render_field field aria-label=field.label class=css_class %}
-                {% endwith %}
+                {% if widget_type == "fileinput" %}
+                    {% render_field field aria-label=field.label class="px-2 py-1 focus:outline-none focus:ring border dark:border-gray-500 rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm md:text-base" %}
+                {% else %}
+                    {% render_field field aria-label=field.label class="p-1 dark:bg-gray-900 dark:text-white text-sm md:text-base w-64" %}
+                {% endif %}
             {% endif %}
         {% endwith %}
         {% include "forms/errors.html" with errors=field.errors %}
