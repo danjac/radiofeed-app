@@ -1,0 +1,24 @@
+<form method="post"
+    action="{{ request.path }}"
+    class="space-y-3"
+    novalidate
+    enctype="multipart/form-data"
+    id="{{ target }}"
+    hx-encoding="multipart/form-data"
+    hx-target="this"
+    hx-swap="outerHTML"
+    hx-post="{{ request.path }}">
+
+    {% csrf_token %}
+    {{ form }}
+    <div>
+        <button class="inline-flex items-center btn btn-default">
+            {% include "icons/check.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+            Import OPML
+        </button>
+    </div>
+</form>
+
+{% if request.htmx.target == target %}
+    {% include "partials/messages.html" with hx_oob=True %}
+{% endif %}

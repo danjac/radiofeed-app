@@ -23,5 +23,10 @@ urlpatterns = [
         views.export_podcast_feeds_opml,
         name="export_podcast_feeds_opml",
     ),
+    path(
+        "account/import/opml/",
+        views.import_podcast_feeds_opml,
+        name="import_podcast_feeds_opml",
+    ),
     path("account/delete/", views.delete_account, name="delete_account"),
 ]

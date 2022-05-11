@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import io
-
 from datetime import datetime
 from typing import Generator
 
@@ -13,6 +11,7 @@ from django.core.validators import URLValidator
 from django.utils import timezone
 
 from radiofeed.podcasts.parsers.date_parser import parse_date
+from radiofeed.podcasts.parsers.xml_parser import XPathFinder, iterparse
 
 NAMESPACES: dict[str, str] = {
     "atom": "http://www.w3.org/2005/Atom",
@@ -165,14 +164,7 @@ class Feed:
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
 
     try:
-        for _, element in lxml.etree.iterparse(
-            io.BytesIO(content),
-            encoding="utf-8",
-            no_network=True,
-            resolve_entities=False,
-            recover=True,
-            events=("end",),
-        ):
+        for element in iterparse(content):
             if element.tag == "channel":
                 try:
                     return parse_channel(
@@ -181,7 +173,6 @@ def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
                     )
                 finally:
                     element.clear()
-
     except lxml.etree.XMLSyntaxError as e:
         raise RssParserError from e
 
@@ -267,31 +258,3 @@ def parse_item(finder: XPathFinder) -> Item:
         episode_type=finder.find("itunes:episodetype/text()", default="full"),
         keywords=finder.findall("category/text()"),
     )
-
-
-class XPathFinder:
-    def __init__(
-        self, element: lxml.etree.Element, namespaces: dict[str, str] | None = None
-    ):
-        self.element = element
-        self.namespaces = namespaces
-
-    def find(self, *paths: str, default: str = "") -> str:
-
-        """Find single attribute or text value. Returns
-        first matching value."""
-        for path in paths:
-            try:
-                return self.findall(path)[0]
-            except IndexError:
-                continue
-        return default
-
-    def findall(self, path: str) -> list[str]:
-        try:
-            return [
-                value.strip()
-                for value in self.element.xpath(path, namespaces=self.namespaces)
-            ]
-        except UnicodeDecodeError:
-            return []

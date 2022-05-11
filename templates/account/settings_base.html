@@ -21,6 +21,12 @@
                                 title="Export"
                                 href="{{ link.url }}">Export</a>
                         </li>
+                        {% active_link 'users:import_podcast_feeds_opml' as link %}
+                        <li>
+                            <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+                                title="Import"
+                                href="{{ link.url }}">Import</a>
+                        </li>
                         {% active_link 'users:stats' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
