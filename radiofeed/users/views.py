@@ -126,8 +126,6 @@ def import_podcast_feeds_opml(
     form = OpmlUploadForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
 
-        new_feeds = 0
-
         if feeds := form.parse_opml_feeds():
 
             podcasts = Podcast.objects.filter(rss__in=set(feeds))
@@ -150,11 +148,10 @@ def import_podcast_feeds_opml(
                     ignore_conflicts=True,
                 )
 
-                new_feeds = len(subscriptions)
-
-        if new_feeds:
-            messages.success(request, f"{new_feeds} podcasts added to your collection")
-            return HttpResponseClientRedirect(reverse("podcasts:index"))
+                messages.success(
+                    request, f"{len(subscriptions)} podcasts added to your collection"
+                )
+                return HttpResponseClientRedirect(reverse("podcasts:index"))
 
         messages.info(request, "No new podcasts found in OPML file")
 
