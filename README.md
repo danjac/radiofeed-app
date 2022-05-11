@@ -66,7 +66,7 @@ To install frontend dependencies just run `npm ci`.
 
 ### Running development environment
 
-The easiest way to run your local development environment is using [Honcho](https://honcho.readthedocs.io/):
+The easiest way to spin up your local development environment is using [Honcho](https://honcho.readthedocs.io/):
 
 ```bash
 honcho -f Procfile.local start
