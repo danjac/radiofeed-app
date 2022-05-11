@@ -132,7 +132,9 @@ class TestPodcastModel:
 
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()
-        assert url == reverse("podcasts:latest_episode", args=[podcast.id])
+        assert url == reverse(
+            "podcasts:latest_episode", args=[podcast.id, podcast.slug]
+        )
 
     def test_get_subscribe_target(self):
         return Podcast(id=12345).get_subscribe_target() == "subscribe-toggle-12345"

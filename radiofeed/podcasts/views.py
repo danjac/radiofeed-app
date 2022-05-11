@@ -97,7 +97,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def latest_episode(request: HttpRequest, podcast_id: int, slug: str) -> HttpResponse:
 
     if (
         episode := Episode.objects.filter(podcast=podcast_id)

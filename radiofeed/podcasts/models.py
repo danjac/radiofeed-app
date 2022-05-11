@@ -163,7 +163,7 @@ class Podcast(models.Model):
         return reverse("podcasts:podcast_similar", args=[self.pk, self.slug])
 
     def get_latest_episode_url(self) -> str:
-        return reverse("podcasts:latest_episode", args=[self.pk])
+        return reverse("podcasts:latest_episode", args=[self.pk, self.slug])
 
     @cached_property
     def cleaned_title(self) -> str:
