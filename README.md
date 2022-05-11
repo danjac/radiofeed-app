@@ -44,7 +44,7 @@ Install the NLTK corpora:
 xargs python -m nltk.downloader <./nltk.txt
 ```
 
-Finally, run migrations and start the Django server:
+Finally, run migrations:
 
 ```bash
 python manage.py migrate
