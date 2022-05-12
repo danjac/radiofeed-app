@@ -4,8 +4,8 @@
 
 {% block about_content %}
 
-{% with site_name=request.site.name %}
-    <div class="prose dark:prose-invert prose-sm md:prose break-words">
+    {% with site_name=request.site.name %}
+        <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">What is {{ site_name }}?</summary>
@@ -80,11 +80,17 @@
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">Can I export my collection?</summary>
+                <summary class="cursor-pointer focus:font-bold">Can I import my feeds from another podcast app?</summary>
                 <p>
-                    You can download your podcast feed collection in the <a class="link"
-                        href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <strong>Settings</strong> area.
-                    You can export your feeds in OPML, JSON or CSV format.
+                    If your podcast app supports <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> export, you can download the OPML file to your device and upload it to <strong>{{ request.site.name }}</strong> in the <a class="link"
+                        href="{% url 'users:import_export_podcast_feeds' %}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
+                </p>
+            </details>
+            <details class="mb-3">
+                <summary class="cursor-pointer focus:font-bold">Can I save my podcast subscriptions to my device?</summary>
+                <p>
+                    You can download your podcast feed collection in <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> format in the <a class="link"
+                        href="{% url 'users:import_export_podcast_feeds' %}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
                 </p>
             </details>
             <details class="mb-3">
@@ -147,6 +153,6 @@
                     your collection, bookmarks and history will also be <strong>permanently</strong> deleted.
                 </p>
             </details>
-    </div>
+        </div>
     {% endwith %}
 {% endblock %}
