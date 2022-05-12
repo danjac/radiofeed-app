@@ -102,7 +102,7 @@ def import_podcast_feeds(
                 new_feeds = len(subscriptions)
 
         if new_feeds:
-            messages.success(request, f"{new_feeds } podcasts added to your collection")
+            messages.success(request, f"{new_feeds} podcasts added to your collection")
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
