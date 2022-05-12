@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import csv
-
 from typing import Generator
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -46,81 +44,28 @@ def user_preferences(
     )
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["GET", "POST"])
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        return with_export_response_attachment(
+            SimpleTemplateResponse(
+                "account/opml.xml",
+                {"podcasts": get_podcasts_for_export(request)},
+                content_type="application/xml",
+            ),
+            "opml",
+        )
 
     return TemplateResponse(
         request,
         "account/export_podcast_feeds.html",
-        {
-            "formats": [
-                ("csv", "icons/table.svg", reverse("users:export_podcast_feeds_csv")),
-                ("json", "icons/code.svg", reverse("users:export_podcast_feeds_json")),
-                ("opml", "icons/rss.svg", reverse("users:export_podcast_feeds_opml")),
-            ]
-        },
-    )
-
-
-@require_http_methods(["GET"])
-@login_required
-def export_podcast_feeds_csv(request: HttpRequest) -> HttpResponse:
-
-    response = HttpResponse(content_type="text/csv")
-
-    writer = csv.writer(response)
-    writer.writerow(["Title", "RSS", "Website"])
-
-    for podcast in get_podcasts_for_export(request):
-        writer.writerow(
-            [
-                podcast.title,
-                podcast.rss,
-                podcast.link,
-            ]
-        )
-    return with_export_response_attachment(response, "csv")
-
-
-@require_http_methods(["GET"])
-@login_required
-def export_podcast_feeds_json(request: HttpRequest) -> HttpResponse:
-
-    return with_export_response_attachment(
-        JsonResponse(
-            {
-                "podcasts": [
-                    {
-                        "title": podcast.title,
-                        "rss": podcast.rss,
-                        "url": podcast.link,
-                    }
-                    for podcast in get_podcasts_for_export(request)
-                ]
-            }
-        ),
-        "json",
-    )
-
-
-@require_http_methods(["GET"])
-@login_required
-def export_podcast_feeds_opml(request: HttpRequest) -> HttpResponse:
-
-    return with_export_response_attachment(
-        SimpleTemplateResponse(
-            "account/opml.xml",
-            {"podcasts": get_podcasts_for_export(request)},
-            content_type="application/xml",
-        ),
-        "opml",
     )
 
 
 @require_http_methods(["GET", "POST"])
 @login_required
-def import_podcast_feeds_opml(
+def import_podcast_feeds(
     request: HttpRequest, target: str = "opml-import-form"
 ) -> HttpResponse:
     form = OpmlUploadForm(request.POST or None, request.FILES or None)
@@ -128,16 +73,9 @@ def import_podcast_feeds_opml(
 
         if feeds := form.parse_opml_feeds():
 
-            podcasts = Podcast.objects.filter(rss__in=set(feeds))
-
-            if subscribed := set(
-                Subscription.objects.filter(user=request.user).values_list(
-                    "podcast", flat=True
-                )
-            ):
-
-                podcasts = podcasts.exclude(pk__in=subscribed)
-
+            podcasts = Podcast.objects.filter(rss__in=set(feeds)).exclude(
+                subscription__user=request.user
+            )
             if podcasts.exists():
 
                 subscriptions = Subscription.objects.bulk_create(
@@ -157,9 +95,9 @@ def import_podcast_feeds_opml(
 
     return TemplateResponse(
         request,
-        "account/partials/opml_import.html"
+        "account/partials/import_podcast_feeds.html"
         if request.htmx.target == target
-        else "account/opml_import.html",
+        else "account/import_podcast_feeds.html",
         {
             "form": form,
             "target": target,

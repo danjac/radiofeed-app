@@ -19,13 +19,13 @@
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
                                 title="Export"
-                                href="{{ link.url }}">Export</a>
+                                href="{{ link.url }}">Export OPML</a>
                         </li>
-                        {% active_link 'users:import_podcast_feeds_opml' as link %}
+                        {% active_link 'users:import_podcast_feeds' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
                                 title="Import"
-                                href="{{ link.url }}">Import</a>
+                                href="{{ link.url }}">Import OPML</a>
                         </li>
                         {% active_link 'users:stats' as link %}
                         <li>

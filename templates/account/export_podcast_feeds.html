@@ -4,7 +4,7 @@
 
 {% block settings_content %}
     <p class="mb-3">
-        Export your podcast feeds in one of the supported formats.
+        Export your podcast feeds to an OPML file.
     </p>
     <form method="POST"
         action="{{ request.path }}"
@@ -12,13 +12,10 @@
         hx-disable="true">
         {% csrf_token %}
         <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
-            {% for format,icon,export_url in formats %}
-                <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
-                    href="{{ export_url }}">
-                    {% include icon with css_class="h-4 w-4 md:h-5 md:w-5 mr-2"  %}
-                    Export {{ format|upper }}
-                </a>
-            {% endfor %}
+            <button class="flex sm:inline-flex items-center justify-center btn btn-default">
+                {% include "icons/download.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2"  %}
+                Download OPML
+            </button>
         </div>
     </form>
 

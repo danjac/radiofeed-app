@@ -54,7 +54,7 @@ class TestUserStats:
 
 
 class TestImportPodcastFeeds:
-    url = reverse_lazy("users:import_podcast_feeds_opml")
+    url = reverse_lazy("users:import_podcast_feeds")
 
     @pytest.fixture
     def upload_file(self):
@@ -115,23 +115,16 @@ class TestImportPodcastFeeds:
 
 
 class TestExportPodcastFeeds:
+
+    url = reverse_lazy("users:export_podcast_feeds")
+
     def test_page(self, client, auth_user):
-        assert_ok(client.get(reverse("users:export_podcast_feeds")))
+        assert_ok(client.get(self.url))
 
     def test_export_opml(self, client, subscription):
-        response = client.get(reverse("users:export_podcast_feeds_opml"))
+        response = client.post(self.url)
         assert_ok(response)
         assert response["Content-Type"] == "application/xml"
-
-    def test_export_csv(self, client, subscription):
-        response = client.get(reverse("users:export_podcast_feeds_csv"))
-        assert_ok(response)
-        assert response["Content-Type"] == "text/csv"
-
-    def test_export_json(self, client, subscription):
-        response = client.get(reverse("users:export_podcast_feeds_json"))
-        assert_ok(response)
-        assert response["Content-Type"] == "application/json"
 
 
 class TestDeleteAccount:
