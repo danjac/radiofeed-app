@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Generator
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -58,13 +56,22 @@ def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["POST"])
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
-    return with_export_response_attachment(
-        SimpleTemplateResponse(
-            "account/opml.xml",
-            {"podcasts": get_podcasts_for_export(request)},
-            content_type="application/xml",
-        ),
-        "opml",
+    podcasts = (
+        Podcast.objects.filter(
+            subscription__user=request.user,
+        )
+        .distinct()
+        .order_by("title")
+        .iterator()
+    )
+
+    return SimpleTemplateResponse(
+        "account/opml.xml",
+        {"podcasts": podcasts},
+        content_type="application/xml",
+        headers={
+            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+        },
     )
 
 
@@ -141,25 +148,3 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         messages.info(request, "Your account has been deleted")
         return HttpResponseRedirect(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
-
-
-def with_export_response_attachment(
-    response: HttpResponse, extension: str
-) -> HttpResponse:
-
-    response[
-        "Content-Disposition"
-    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.{extension}"
-
-    return response
-
-
-def get_podcasts_for_export(request: HttpRequest) -> Generator[Podcast, None, None]:
-    return (
-        Podcast.objects.filter(
-            subscription__user=request.user,
-        )
-        .distinct()
-        .order_by("title")
-        .iterator()
-    )
