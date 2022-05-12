@@ -68,7 +68,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     return SimpleTemplateResponse(
         "account/podcasts.opml",
         {"podcasts": podcasts},
-        content_type="application/xml",
+        content_type="text/x-opml",
         headers={
             "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
         },

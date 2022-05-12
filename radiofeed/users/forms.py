@@ -25,7 +25,7 @@ class OpmlUploadForm(forms.Form):
                         ".opml",
                         ".xml",
                         "application/xml",
-                        "text/x-podcasts.opml",
+                        "text/x-opml",
                         "text/xml",
                     ]
                 )
