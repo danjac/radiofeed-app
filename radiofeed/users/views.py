@@ -66,7 +66,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     )
 
     return SimpleTemplateResponse(
-        "account/opml.xml",
+        "account/podcasts.opml",
         {"podcasts": podcasts},
         content_type="application/xml",
         headers={
