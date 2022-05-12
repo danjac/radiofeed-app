@@ -8,10 +8,8 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
-from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
@@ -44,32 +42,41 @@ def user_preferences(
     )
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET"])
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        return with_export_response_attachment(
-            SimpleTemplateResponse(
-                "account/opml.xml",
-                {"podcasts": get_podcasts_for_export(request)},
-                content_type="application/xml",
-            ),
-            "opml",
-        )
-
+def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
-        "account/export_podcast_feeds.html",
+        "account/import_export_podcast_feeds.html",
+        {
+            "form": OpmlUploadForm(),
+            "target": "opml-import-form",
+        },
     )
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["POST"])
+@login_required
+def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+    return with_export_response_attachment(
+        SimpleTemplateResponse(
+            "account/opml.xml",
+            {"podcasts": get_podcasts_for_export(request)},
+            content_type="application/xml",
+        ),
+        "opml",
+    )
+
+
+@require_http_methods(["POST"])
 @login_required
 def import_podcast_feeds(
     request: HttpRequest, target: str = "opml-import-form"
 ) -> HttpResponse:
-    form = OpmlUploadForm(request.POST or None, request.FILES or None)
-    if request.method == "POST" and form.is_valid():
+    form = OpmlUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+
+        new_feeds: int = 0
 
         if feeds := form.parse_opml_feeds():
 
@@ -85,19 +92,18 @@ def import_podcast_feeds(
                     ],
                     ignore_conflicts=True,
                 )
+                new_feeds = len(subscriptions)
 
-                messages.success(
-                    request, f"{len(subscriptions)} podcasts added to your collection"
-                )
-                return HttpResponseClientRedirect(reverse("podcasts:index"))
-
-        messages.info(request, "No new podcasts found in OPML file")
+        if new_feeds:
+            messages.success(request, f"{new_feeds } podcasts added to your collection")
+        else:
+            messages.info(request, "No new podcasts found in uploaded file")
 
     return TemplateResponse(
         request,
         "account/partials/import_podcast_feeds.html"
         if request.htmx.target == target
-        else "account/import_podcast_feeds.html",
+        else "account/import_export_podcast_feeds.html",
         {
             "form": form,
             "target": target,

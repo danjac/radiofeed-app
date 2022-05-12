@@ -53,15 +53,17 @@ class TestUserStats:
         assert response.context["stats"]["listened"] == 3
 
 
+class TestImportExportPodcastFeeds:
+    def test_get(self, client, auth_user):
+        assert_ok(client.get(reverse("users:import_export_podcast_feeds")))
+
+
 class TestImportPodcastFeeds:
     url = reverse_lazy("users:import_podcast_feeds")
 
     @pytest.fixture
     def upload_file(self):
         return SimpleUploadedFile("feeds.opml", b"content", content_type="text/xml")
-
-    def test_get(self, client, auth_user):
-        assert_ok(client.get(self.url))
 
     def test_post_has_new_feeds(self, client, auth_user, mocker, upload_file):
         podcast = PodcastFactory()
@@ -71,11 +73,7 @@ class TestImportPodcastFeeds:
             return_value=[podcast.rss],
         )
 
-        response = client.post(self.url, data={"opml": upload_file})
-
-        assert_ok(response)
-
-        assert response["HX-Redirect"] == reverse("podcasts:index")
+        assert_ok(client.post(self.url, data={"opml": upload_file}))
 
         assert Subscription.objects.filter(user=auth_user, podcast=podcast).exists()
 
@@ -117,9 +115,6 @@ class TestImportPodcastFeeds:
 class TestExportPodcastFeeds:
 
     url = reverse_lazy("users:export_podcast_feeds")
-
-    def test_page(self, client, auth_user):
-        assert_ok(client.get(self.url))
 
     def test_export_opml(self, client, subscription):
         response = client.post(self.url)

@@ -8,6 +8,11 @@ urlpatterns = [
     path("account/preferences/", views.user_preferences, name="preferences"),
     path("account/stats/", views.user_stats, name="stats"),
     path(
+        "account/feeds/import-export/",
+        views.import_export_podcast_feeds,
+        name="import_export_podcast_feeds",
+    ),
+    path(
         "account/feeds/export/",
         views.export_podcast_feeds,
         name="export_podcast_feeds",

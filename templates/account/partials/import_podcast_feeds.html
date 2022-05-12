@@ -1,5 +1,6 @@
+{% url 'users:import_podcast_feeds' as action_url %}
 <form method="post"
-    action="{{ request.path }}"
+    action="{{ action_url }}"
     class="space-y-3"
     novalidate
     enctype="multipart/form-data"
@@ -7,8 +8,7 @@
     hx-encoding="multipart/form-data"
     hx-target="this"
     hx-swap="outerHTML"
-    hx-post="{{ request.path }}">
-
+    hx-post="{{ action_url }}">
     {% csrf_token %}
     {{ form }}
     <div>
