@@ -119,7 +119,7 @@ class TestExportPodcastFeeds:
     def test_export_opml(self, client, subscription):
         response = client.post(self.url)
         assert_ok(response)
-        assert response["Content-Type"] == "application/xml"
+        assert response["Content-Type"] == "text/x-opml"
 
 
 class TestDeleteAccount:

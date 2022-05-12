@@ -52,56 +52,54 @@ __________             .___.__        _____                 .___
 
         {% block content_metadata %}
             {% get_site_config as site_config %}
-            {% with site_description=site_config.description site_name=request.site.name %}
 
-                {% if site_description %}
-                    <meta name="description"
-                        content="{{ site_description }}" />
-                {% endif %}
+            {% if site_config.description %}
+                <meta name="description"
+                    content="{{ site_config.description }}" />
+            {% endif %}
 
-                {% if site_config.keywords %}
-                    <meta name="keywords"
-                        content="{{ site_config.keywords }}" />
-                {% endif %}
+            {% if site_config.keywords %}
+                <meta name="keywords"
+                    content="{{ site_config.keywords }}" />
+            {% endif %}
 
-                <meta name="og:type"
-                    content="website" />
-                <meta name="og:title"
-                    content="{{ site_name }}" />
-                {% if site_description %}
-                    <meta name="og:description"
-                        content="{{ site_description }}" />
-                {% endif %}
-                <meta name="og:url"
-                    content="{% absolute_uri 'podcasts:index' %}" />
-                {% if site_description %}
-                    <meta name="twitter:description"
-                        content="{{ site_description }}">
-                {% endif %}
-                <meta name="twitter:card"
-                    content="summary">
-                {% if site_config.twitter %}
-                    <meta name="twitter:site"
-                        content="@{{ site_config.twitter }}">
-                {% endif %}
-                <meta name="twitter:title"
-                    content="{{ site_name }}">
-                <script type="application/ld+json">
-                    {
-                        "@context": "https://schema.org",
-                        "@type": "WebSite",
-                        "url": "{% absolute_uri 'podcasts:index' %}",
-                        "potentialAction": {
-                            "@type": "SearchAction",
-                            "target": {
-                                "@type": "EntryPoint",
-                                "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?q={search_term_string}"
-                            },
-                            "query-input": "required name=search_term_string"
-                        }
+            <meta name="og:type"
+                content="website" />
+            <meta name="og:title"
+                content="{{ site_name }}" />
+            {% if site_config.description %}
+                <meta name="og:description"
+                    content="{{ site_config.description }}" />
+            {% endif %}
+            <meta name="og:url"
+                content="{% absolute_uri 'podcasts:index' %}" />
+            {% if site_config.description %}
+                <meta name="twitter:description"
+                    content="{{ site_config.description }}">
+            {% endif %}
+            <meta name="twitter:card"
+                content="summary">
+            {% if site_config.twitter %}
+                <meta name="twitter:site"
+                    content="@{{ site_config.twitter }}">
+            {% endif %}
+            <meta name="twitter:title"
+                content="{{ request.site.name }}">
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "WebSite",
+                    "url": "{% absolute_uri 'podcasts:index' %}",
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": {
+                            "@type": "EntryPoint",
+                            "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?q={search_term_string}"
+                        },
+                        "query-input": "required name=search_term_string"
                     }
-                </script>
-            {% endwith %}
+                }
+            </script>
         {% endblock content_metadata %}
         </head>
 
