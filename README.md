@@ -69,7 +69,7 @@ To install frontend dependencies just run `npm ci`.
 The easiest way to spin up your local development environment is using [Honcho](https://honcho.readthedocs.io/):
 
 ```bash
-./start-honcho.sh
+honcho -f Procfile.local start
 ```
 
 This will start up:
