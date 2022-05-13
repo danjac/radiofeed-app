@@ -6,6 +6,8 @@ import hashlib
 import http
 import secrets
 
+from datetime import timedelta
+
 import attr
 import requests
 
@@ -170,6 +172,15 @@ class FeedParser:
         self.podcast.active = not feed.complete
         self.podcast.errors = 0
 
+        # decrement refresh interval 10%
+
+        seconds = self.podcast.refresh_interval.total_seconds()
+
+        self.podcast.refresh_interval = min(
+            timedelta(seconds=seconds - (seconds * 0.1)),
+            timedelta(hours=1),
+        )
+
         self.podcast.pub_date = max([item.pub_date for item in items if item.pub_date])
 
         # content
@@ -227,7 +238,17 @@ class FeedParser:
         errors = self.podcast.errors + 1 if exception else 0
         active = active and errors < PARSE_ERROR_LIMIT
 
+        # increment refresh interval 10%
+
+        seconds = self.podcast.refresh_interval.total_seconds()
+
+        interval = min(
+            timedelta(seconds=seconds + (seconds * 0.1)),
+            timedelta(days=30),
+        )
+
         Podcast.objects.filter(pk=self.podcast.id).update(
+            refresh_interval=interval,
             active=active,
             result=result,
             http_status=status,

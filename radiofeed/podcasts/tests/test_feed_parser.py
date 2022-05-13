@@ -127,6 +127,7 @@ class TestParsePodcastFeed:
         assert new_podcast.content_hash
         assert new_podcast.errors == 0
         assert new_podcast.title == "Mysterious Universe"
+        assert new_podcast.refresh_interval.total_seconds() == 3240
 
         assert (
             new_podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -147,6 +148,7 @@ class TestParsePodcastFeed:
         assert new_podcast.cover_url
 
         assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        assert new_podcast.refresh_interval.total_seconds() == 3240
 
         assigned_categories = [c.name for c in new_podcast.categories.all()]
 
@@ -181,6 +183,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified is None
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_complete(self, mocker, new_podcast, categories):
 
@@ -228,6 +231,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
         assert new_podcast.result == Podcast.Result.SUCCESS
+        assert new_podcast.refresh_interval.total_seconds() == 3240
 
         assert new_podcast.parsed
 
@@ -269,6 +273,7 @@ class TestParsePodcastFeed:
         assert new_podcast.errors == 0
         assert new_podcast.modified
         assert new_podcast.parsed
+        assert new_podcast.refresh_interval.total_seconds() == 3240
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories
@@ -297,6 +302,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_no_podcasts(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -317,6 +323,7 @@ class TestParsePodcastFeed:
         assert new_podcast.errors == 1
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.INVALID_RSS
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -338,6 +345,7 @@ class TestParsePodcastFeed:
         assert new_podcast.errors == 1
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.INVALID_RSS
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -353,6 +361,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified is None
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
@@ -369,6 +378,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_errors_past_limit(
         self, mocker, new_podcast, categories
@@ -389,6 +399,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -408,6 +419,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_http_server_error(
         self, mocker, new_podcast, categories
@@ -430,6 +442,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
+        assert new_podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_http_server_error_no_pub_date(
         self, mocker, new_podcast, categories
@@ -455,3 +468,4 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
+        assert new_podcast.refresh_interval.total_seconds() == 3960

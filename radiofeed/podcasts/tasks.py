@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import logging
 
-from datetime import timedelta
-
+from django.db.models import F, Q
+from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
-from radiofeed.podcasts import emails, recommender, scheduler
+from radiofeed.podcasts import emails, recommender
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
@@ -38,38 +39,23 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/12"))
-def schedule_primary_feeds() -> None:
-    """
-    Schedule all subscribed or promoted feeds
+def schedule_podcast_feeds() -> None:
 
-    Runs every 12 minutes
-    """
-    for podcast_id in scheduler.schedule_primary_feeds(limit=300):
-        parse_podcast_feed(podcast_id)()
-
-
-@db_periodic_task(crontab(minute="*/6"))
-def schedule_frequent_feeds() -> None:
-    """
-    Schedule podcast feeds newer than 2 weeks
-
-    Runs every 6 minutes
-    """
-    for podcast_id in scheduler.schedule_secondary_feeds(
-        after=timedelta(hours=336), before=timedelta(hours=3), limit=300
-    ):
-        parse_podcast_feed(podcast_id)()
-
-
-@db_periodic_task(crontab(minute="15,45"))
-def schedule_sporadic_feeds() -> None:
-    """
-    Schedule podcast feeds older than 2 weeks
-
-    Runs at 15 and 45 minutes past the hour
-    """
-    for podcast_id in scheduler.schedule_secondary_feeds(
-        before=timedelta(hours=336), limit=300
+    for podcast_id in (
+        Podcast.objects.filter(
+            Q(
+                parsed__isnull=True,
+            )
+            | Q(parsed__lt=timezone.now() - F("refresh_interval")),
+            active=True,
+        )
+        .order_by(
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+            F("created").desc(),
+        )
+        .values_list("pk", flat=True)
+        .distinct()[:300]
     ):
         parse_podcast_feed(podcast_id)()
 

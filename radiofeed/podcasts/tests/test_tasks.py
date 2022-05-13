@@ -1,11 +1,14 @@
+from datetime import timedelta
+
 import pytest
 
+from django.utils import timezone
+
+from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
     parse_podcast_feed,
     recommend,
-    schedule_frequent_feeds,
-    schedule_primary_feeds,
-    schedule_sporadic_feeds,
+    schedule_podcast_feeds,
     send_recommendations_email,
     send_recommendations_emails,
 )
@@ -14,44 +17,35 @@ from radiofeed.users.factories import UserFactory
 
 class TestTasks:
     @pytest.fixture
-    def mock_schedule_primary_feeds(self, mocker):
-        return mocker.patch(
-            "radiofeed.podcasts.tasks.scheduler.schedule_primary_feeds",
-            return_value=[1],
-        )
-
-    @pytest.fixture
-    def mock_schedule_secondary_feeds(self, mocker):
-        return mocker.patch(
-            "radiofeed.podcasts.tasks.scheduler.schedule_secondary_feeds",
-            return_value=[1],
-        )
-
-    @pytest.fixture
     def mock_parse_podcast_feed(self, mocker):
-        return mocker.patch("radiofeed.podcasts.tasks.feed_parser.parse_podcast_feed")
+        return mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
 
-    def test_schedule_primary_feeds(
-        self, mock_schedule_primary_feeds, mock_parse_podcast_feed
-    ):
-        schedule_primary_feeds()
-        mock_parse_podcast_feed.assert_called_with(1)
+    def test_schedule_podcast_feeds_not_parsed(self, db, mock_parse_podcast_feed):
+        podcast = PodcastFactory(parsed=None)
+        schedule_podcast_feeds()
+        mock_parse_podcast_feed.assert_called_with(podcast.id)
 
-    def test_schedule_frequent_feeds(
-        self, mock_schedule_secondary_feeds, mock_parse_podcast_feed
-    ):
-        schedule_frequent_feeds()
-        mock_parse_podcast_feed.assert_called_with(1)
+    def test_schedule_podcast_feeds_recently_parsed(self, db, mock_parse_podcast_feed):
+        PodcastFactory(parsed=timezone.now() - timedelta(minutes=12))
+        schedule_podcast_feeds()
+        mock_parse_podcast_feed.assert_not_called()
 
-    def test_schedule_sporadic_feeds(
-        self, mock_schedule_secondary_feeds, mock_parse_podcast_feed
-    ):
-        schedule_sporadic_feeds()
-        mock_parse_podcast_feed.assert_called_with(1)
+    def test_schedule_podcast_feeds_is_scheduled(self, db, mock_parse_podcast_feed):
+        podcast = PodcastFactory(parsed=timezone.now() - timedelta(hours=12))
+        schedule_podcast_feeds()
+        mock_parse_podcast_feed.assert_called_with(podcast.id)
 
-    def test_parse_podcast_feed(self, mock_parse_podcast_feed):
+    def test_schedule_podcast_feeds_inactive(self, db, mock_parse_podcast_feed):
+        PodcastFactory(parsed=timezone.now() - timedelta(hours=12), active=False)
+        schedule_podcast_feeds()
+        mock_parse_podcast_feed.assert_not_called()
+
+    def test_parse_podcast_feed(self, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.tasks.feed_parser.parse_podcast_feed"
+        )
         parse_podcast_feed(1)
-        mock_parse_podcast_feed.assert_called_with(1)
+        patched.assert_called_with(1)
 
     def test_send_recommendations_email(self, mocker, user):
         patched = mocker.patch(
