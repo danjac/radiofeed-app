@@ -1,4 +1,8 @@
-from radiofeed.parsers.text_parser import clean_text, extract_keywords, get_stopwords
+from radiofeed.podcasts.parsers.text_parser import (
+    clean_text,
+    extract_keywords,
+    get_stopwords,
+)
 
 
 class TestStopwords:

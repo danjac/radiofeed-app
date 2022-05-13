@@ -6,7 +6,8 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.parsers.rss_parser import (
+from radiofeed.podcasts.factories import FeedFactory, ItemFactory
+from radiofeed.podcasts.parsers.rss_parser import (
     Feed,
     Item,
     RssParserError,
@@ -18,7 +19,6 @@ from radiofeed.parsers.rss_parser import (
     parse_rss,
     url_or_none,
 )
-from radiofeed.podcasts.factories import FeedFactory, ItemFactory
 
 
 class TestConverters:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django import forms
 
-from radiofeed.parsers import opml_parser
+from radiofeed.podcasts.parsers import opml_parser
 from radiofeed.users.models import User
 
 

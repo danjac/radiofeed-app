@@ -2,7 +2,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.parsers import opml_parser
+from radiofeed.podcasts.parsers import opml_parser
 
 
 class TestOpmlParser:
