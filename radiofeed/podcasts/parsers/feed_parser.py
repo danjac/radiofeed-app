@@ -176,7 +176,7 @@ class FeedParser:
 
         seconds = self.podcast.refresh_interval.total_seconds()
 
-        self.podcast.refresh_interval = min(
+        self.podcast.refresh_interval = max(
             timedelta(seconds=seconds - (seconds * 0.1)),
             timedelta(hours=1),
         )
