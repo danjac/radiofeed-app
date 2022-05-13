@@ -244,7 +244,7 @@ class FeedParser:
 
         interval = min(
             timedelta(seconds=seconds + (seconds * 0.1)),
-            timedelta(days=30),
+            timedelta(days=3),
         )
 
         Podcast.objects.filter(pk=self.podcast.id).update(
