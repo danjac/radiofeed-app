@@ -10,8 +10,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 
-from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.xml_parser import XPathFinder, iterparse
+from radiofeed.parsers.date_parser import parse_date
+from radiofeed.parsers.xml_parser import XPathFinder, iterparse
 
 NAMESPACES: dict[str, str] = {
     "atom": "http://www.w3.org/2005/Atom",

@@ -16,8 +16,8 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed.episodes.models import Episode
+from radiofeed.parsers import date_parser, rss_parser, text_parser
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 

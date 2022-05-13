@@ -5,8 +5,8 @@ from typing import Generator
 import attr
 import lxml
 
-from radiofeed.podcasts.parsers.rss_parser import url_or_none
-from radiofeed.podcasts.parsers.xml_parser import XPathFinder, iterparse
+from radiofeed.parsers.rss_parser import url_or_none
+from radiofeed.parsers.xml_parser import XPathFinder, iterparse
 
 
 class OpmlParserError(ValueError):

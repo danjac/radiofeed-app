@@ -7,9 +7,9 @@ from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
+from radiofeed.parsers import feed_parser
 from radiofeed.podcasts import emails, recommender
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
 logger = logging.getLogger(__name__)
