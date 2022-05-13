@@ -151,12 +151,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     list_display = (
         "__str__",
-        "promoted",
         "parsed",
         "pub_date",
+        "refresh_interval",
     )
 
-    list_editable = ("promoted",)
     search_fields = ("title", "rss")
 
     raw_id_fields = ("recipients",)
