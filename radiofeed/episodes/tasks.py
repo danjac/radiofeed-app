@@ -14,7 +14,7 @@ def send_new_episodes_emails():
     """
     Sends new episodes from users' subscribed podcasts
 
-    Runs 6:17 UTC every Wednesday
+    Runs 06:17 UTC every Wednesday
     """
     since = timedelta(days=7)
     for user in User.objects.filter(send_email_notifications=True, is_active=True):
