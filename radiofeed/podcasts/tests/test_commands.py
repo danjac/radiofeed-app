@@ -1,6 +1,9 @@
+import pathlib
+
 from django.core.management import call_command
 
 from radiofeed.podcasts.itunes import Feed
+from radiofeed.podcasts.models import Podcast
 
 
 class TestCommands:
@@ -28,3 +31,11 @@ class TestCommands:
         )
         call_command("crawl_itunes")
         patched.assert_called()
+
+    def test_import_podcast_feeds(self, db):
+        call_command(
+            "import_podcast_feeds",
+            pathlib.Path(__file__).parent / "mocks" / "feeds.txt",
+        )
+
+        assert Podcast.objects.count() == 18
