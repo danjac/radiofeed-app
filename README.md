@@ -1,6 +1,5 @@
 This is the source code for a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself.
 
-
 ![desktop](/screenshots/desktop.png?raw=True)
 
 ## Running Radiofeed on your local machine
