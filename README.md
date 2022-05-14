@@ -88,7 +88,7 @@ python -m pytest
 
 ## Deployment
 
-The following environment variables should be set in your production installation:
+The following environment variables should be set in your production installation. Some providers may set some of these automatically e.g. `DATABASE_URL`:
 
 ```
 DJANGO_SETTINGS_MODULE='radiofeed.settings.production'
