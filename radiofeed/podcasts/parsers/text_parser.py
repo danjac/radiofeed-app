@@ -4,6 +4,7 @@ import html
 import re
 
 from functools import lru_cache
+from typing import Generator
 
 from django.template.defaultfilters import striptags
 from nltk.corpus import stopwords
@@ -351,5 +352,12 @@ def extract_keywords(language: str, text: str) -> list[str]:
     return [token for token in tokenize(text) if token and token not in stopwords]
 
 
-def tokenize(text: str) -> list[str]:
-    return [lemmatizer.lemmatize(token) for token in tokenizer.tokenize(text)]
+def tokenize(text: str) -> Generator[str, None, None]:
+
+    for token in tokenizer.tokenize(text):
+        try:
+            yield lemmatizer.lemmatize(token)
+        except AttributeError:
+            # threading issue:
+            # 'WordNetCorpusReader' object has no attribute '_LazyCorpusLoader__args'
+            pass

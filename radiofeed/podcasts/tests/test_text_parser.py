@@ -24,6 +24,13 @@ class TestExtractKeywords:
             "mat",
         ]
 
+    def test_extract_attribute_error(self, mocker):
+        mocker.patch(
+            "radiofeed.podcasts.parsers.text_parser.lemmatizer.lemmatize",
+            side_effect=AttributeError,
+        )
+        assert extract_keywords("en", "the cat sits on the mat") == []
+
 
 class TestCleanText:
     def test_remove_html_tags(self):
