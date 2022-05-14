@@ -16,9 +16,10 @@ class Command(BaseCommand):
     def handle(self, filename: str, *args, **kwargs):
         podcasts = Podcast.objects.bulk_create(
             [
-                Podcast(rss=feed.strip())
-                for feed in open(filename).read().splitlines()
-                if feed
+                Podcast(rss=feed)
+                for feed in filter(
+                    None, map(str.strip, open(filename).read().splitlines())
+                )
             ],
             ignore_conflicts=True,
         )
