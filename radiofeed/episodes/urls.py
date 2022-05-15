@@ -25,11 +25,8 @@ urlpatterns = [
     ),
     path(
         "player/complete/",
-        views.close_player,
+        views.player_complete,
         name="player_complete",
-        kwargs={
-            "mark_complete": True,
-        },
     ),
     path(
         "player/timeupdate/",

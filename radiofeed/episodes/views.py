@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -138,21 +138,10 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpResponse:
+def close_player(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.pop():
         episode = get_episode_or_404(request, episode_id)
-        completed: datetime | None = None
-
-        if mark_complete:
-
-            completed = timezone.now()
-
-            AudioLog.objects.filter(user=request.user, episode=episode).update(
-                completed=completed,
-                updated=completed,
-                current_time=0,
-            )
 
         return TemplateResponse(
             request,
@@ -160,7 +149,6 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
             {
                 "episode": episode,
                 "is_playing": False,
-                "completed": completed,
             },
         )
 
@@ -184,6 +172,21 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
         except (KeyError, ValueError):
             return HttpResponseBadRequest()
+
+    return HttpResponseNoContent()
+
+
+@require_http_methods(["POST"])
+@ajax_login_required
+def player_complete(request: HttpRequest) -> HttpResponse:
+
+    if episode_id := request.player.get():
+        now = timezone.now()
+        AudioLog.objects.filter(episode=episode_id, user=request.user).update(
+            completed=now,
+            updated=now,
+            current_time=0,
+        )
 
     return HttpResponseNoContent()
 

@@ -6,8 +6,9 @@
                 autoplay={{ start_player|yesno:'true,false' }},
                 mediaUrl='{{ episode.media_url }}',
                 currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
-                timeUpdateUrl='{% url 'episodes:player_time_update' %}',
                 csrfToken='{{ csrf_token }}',
+                completeUrl='{% url 'episodes:player_complete' %}',
+                timeUpdateUrl='{% url 'episodes:player_time_update' %}',
             ){# fmt:on #}"
                 @keydown.window="shortcuts"
                 class="pt-12 sm:pt-0 md:pt-6">
@@ -84,12 +85,6 @@
                                             hx-swap="innerHTML">
                                             {% include "icons/stop.svg" with css_class=ICON_CSS %}
                                         </button>
-
-                                        <button class="hidden"
-                                            x-ref="complete"
-                                            hx-post="{% url "episodes:player_complete" %}"
-                                            hx-target="#player"
-                                            hx-swap="innerHTML"></button>
 
                                     {% endwith %}
 

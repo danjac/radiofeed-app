@@ -204,15 +204,12 @@ class TestPlayerComplete:
         )
 
         response = client.post(self.url)
-        assert_ok(response)
+        assert_no_content(response)
 
-        # do not mark complete
         log.refresh_from_db()
 
         assert log.completed
         assert log.current_time == 0
-
-        assert_not_playing(client, player_episode)
 
 
 class TestPlayerTimeUpdate:

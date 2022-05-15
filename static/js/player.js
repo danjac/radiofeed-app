@@ -7,13 +7,15 @@ document.addEventListener("alpine:init", () => {
             autoplay = false,
             mediaSrc = null,
             currentTime = 0,
-            timeUpdateUrl = null,
-            csrfToken = null
+            csrfToken = null,
+            completeUrl = null,
+            timeUpdateUrl = null
         ) => ({
             autoplay,
             mediaSrc,
             currentTime,
             csrfToken,
+            completeUrl,
             timeUpdateUrl,
             duration: 0,
             isLoaded: false,
@@ -36,8 +38,6 @@ document.addEventListener("alpine:init", () => {
                 this.$watch("playbackRate", (value) => {
                     this.$refs.audio.playbackRate = value;
                 });
-
-                this.autoplay = autoplay;
 
                 this.counters.current = this.formatCounter(this.currentTime);
                 this.counters.total = this.formatCounter(this.duration);
@@ -179,7 +179,16 @@ document.addEventListener("alpine:init", () => {
                 this.saveSettings();
             },
             ended() {
-                this.$refs.complete.click();
+                this.currentTime = 0;
+                this.isPlaying = false;
+                this.isPaused = true;
+
+                fetch(this.completeUrl, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": this.csrfToken,
+                    },
+                });
             },
             incrementPlaybackRate() {
                 this.changePlaybackRate(0.1);
