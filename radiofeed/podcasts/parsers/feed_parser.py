@@ -182,16 +182,15 @@ class FeedParser:
         self.podcast.active = not feed.complete
         self.podcast.errors = 0
 
-        # decrement refresh interval 10%
+        pub_date = max([item.pub_date for item in items if item.pub_date])
 
-        seconds = self.podcast.refresh_interval.total_seconds()
-
-        self.podcast.refresh_interval = max(
-            timedelta(seconds=seconds - (seconds * 0.1)),
-            timedelta(hours=1),
+        self.podcast.refresh_interval = (
+            self.decrement_refresh_interval()
+            if self.podcast.pub_date is None or pub_date > self.podcast.pub_date
+            else self.increment_refresh_interval()
         )
 
-        self.podcast.pub_date = max([item.pub_date for item in items if item.pub_date])
+        self.podcast.pub_date = pub_date
 
         # content
 
@@ -250,15 +249,8 @@ class FeedParser:
 
         # increment refresh interval 10%
 
-        seconds = self.podcast.refresh_interval.total_seconds()
-
-        interval = min(
-            timedelta(seconds=seconds + (seconds * 0.1)),
-            timedelta(hours=24),
-        )
-
         Podcast.objects.filter(pk=self.podcast.id).update(
-            refresh_interval=interval,
+            refresh_interval=self.increment_refresh_interval(),
             active=active,
             result=result,
             http_status=status,
@@ -352,6 +344,22 @@ class FeedParser:
         if self.podcast.modified:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
+
+    def decrement_refresh_interval(self) -> timedelta:
+        seconds = self.podcast.refresh_interval.total_seconds()
+
+        return max(
+            timedelta(seconds=seconds - (seconds * 0.1)),
+            timedelta(hours=1),
+        )
+
+    def increment_refresh_interval(self) -> timedelta:
+        seconds = self.podcast.refresh_interval.total_seconds()
+
+        return min(
+            timedelta(seconds=seconds + (seconds * 0.1)),
+            timedelta(hours=24),
+        )
 
 
 def make_content_hash(content: bytes) -> str:

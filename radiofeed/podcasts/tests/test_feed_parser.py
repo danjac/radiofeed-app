@@ -1,3 +1,4 @@
+import datetime
 import http
 import pathlib
 
@@ -47,14 +48,6 @@ class TestParsePodcastFeed:
     updated = "Wed, 01 Jul 2020 15:25:26 +0000"
 
     @pytest.fixture
-    def new_podcast(self, db):
-        now = timezone.now()
-        return PodcastFactory(
-            cover_url=None,
-            pub_date=now,
-        )
-
-    @pytest.fixture
     def categories(self):
         yield [
             CategoryFactory(name=name)
@@ -92,18 +85,23 @@ class TestParsePodcastFeed:
         with pytest.raises(Podcast.DoesNotExist):
             result.raise_exception()
 
-    def test_parse_podcast_feed_ok(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_ok(self, db, mocker, categories):
+
+        # set date to before latest
+        podcast = PodcastFactory(pub_date=datetime.datetime(year=2020, month=3, day=1))
+
+        # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
 
         # test updated
-        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
+        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=new_podcast.rss,
+                url=podcast.rss,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -111,7 +109,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(new_podcast.id)
+        assert feed_parser.parse_podcast_feed(podcast.id)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -120,55 +118,51 @@ class TestParsePodcastFeed:
         episode = Episode.objects.get(guid=episode_guid)
         assert episode.title != episode_title
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert new_podcast.rss
-        assert new_podcast.active
-        assert new_podcast.content_hash
-        assert new_podcast.errors == 0
-        assert new_podcast.title == "Mysterious Universe"
-        assert new_podcast.refresh_interval.total_seconds() == 3600
+        assert podcast.rss
+        assert podcast.active
+        assert podcast.content_hash
+        assert podcast.errors == 0
+        assert podcast.title == "Mysterious Universe"
+        assert podcast.refresh_interval.total_seconds() == 3600
 
-        assert (
-            new_podcast.description == "Blog and Podcast specializing in offbeat news"
-        )
+        assert podcast.description == "Blog and Podcast specializing in offbeat news"
 
-        assert new_podcast.owner == "8th Kind"
+        assert podcast.owner == "8th Kind"
 
-        assert new_podcast.modified
-        assert new_podcast.modified.day == 1
-        assert new_podcast.modified.month == 7
-        assert new_podcast.modified.year == 2020
-        assert new_podcast.result == Podcast.Result.SUCCESS
+        assert podcast.modified
+        assert podcast.modified.day == 1
+        assert podcast.modified.month == 7
+        assert podcast.modified.year == 2020
+        assert podcast.result == Podcast.Result.SUCCESS
 
-        assert new_podcast.parsed
+        assert podcast.parsed
 
-        assert new_podcast.etag
-        assert new_podcast.explicit
-        assert new_podcast.cover_url
+        assert podcast.etag
+        assert podcast.explicit
+        assert podcast.cover_url
 
-        assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
-        assert new_podcast.refresh_interval.total_seconds() == 3600
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        assert podcast.refresh_interval.total_seconds() == 3600
 
-        assigned_categories = [c.name for c in new_podcast.categories.all()]
+        assigned_categories = [c.name for c in podcast.categories.all()]
 
         assert "Science" in assigned_categories
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    def test_parse_podcast_feed_same_content(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_same_content(self, db, mocker, categories):
 
         content = self.get_rss_content()
 
-        Podcast.objects.filter(pk=new_podcast.id).update(
-            content_hash=feed_parser.make_content_hash(content)
-        )
+        podcast = PodcastFactory(content_hash=feed_parser.make_content_hash(content))
 
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=new_podcast.rss,
+                url=podcast.rss,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -176,18 +170,16 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert not feed_parser.parse_podcast_feed(new_podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
-        new_podcast.refresh_from_db()
-        assert new_podcast.active
-        assert new_podcast.modified is None
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.NOT_MODIFIED
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        podcast.refresh_from_db()
+        assert podcast.active
+        assert podcast.modified is None
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.NOT_MODIFIED
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_podcast_another_feed_same_content(
-        self, mocker, new_podcast, categories
-    ):
+    def test_parse_podcast_another_feed_same_content(self, mocker, podcast, categories):
 
         content = self.get_rss_content()
 
@@ -196,7 +188,7 @@ class TestParsePodcastFeed:
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=new_podcast.rss,
+                url=podcast.rss,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -204,28 +196,28 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert not feed_parser.parse_podcast_feed(new_podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert not new_podcast.active
-        assert new_podcast.modified is None
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        assert not podcast.active
+        assert podcast.modified is None
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.DUPLICATE_FEED
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_podcast_feed_complete(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_complete(self, mocker, podcast, categories):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
 
         # test updated
-        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
+        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=new_podcast.rss,
+                url=podcast.rss,
                 content=self.get_rss_content("rss_mock_complete.xml"),
                 headers={
                     "ETag": "abc123",
@@ -233,7 +225,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(new_podcast.id)
+        assert feed_parser.parse_podcast_feed(podcast.id)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -242,44 +234,40 @@ class TestParsePodcastFeed:
         episode = Episode.objects.get(guid=episode_guid)
         assert episode.title != episode_title
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert new_podcast.rss
-        assert not new_podcast.active
-        assert new_podcast.errors == 0
-        assert new_podcast.title == "Mysterious Universe"
+        assert podcast.rss
+        assert not podcast.active
+        assert podcast.errors == 0
+        assert podcast.title == "Mysterious Universe"
 
-        assert (
-            new_podcast.description == "Blog and Podcast specializing in offbeat news"
-        )
+        assert podcast.description == "Blog and Podcast specializing in offbeat news"
 
-        assert new_podcast.owner == "8th Kind"
+        assert podcast.owner == "8th Kind"
 
-        assert new_podcast.modified
-        assert new_podcast.modified.day == 1
-        assert new_podcast.modified.month == 7
-        assert new_podcast.modified.year == 2020
-        assert new_podcast.result == Podcast.Result.SUCCESS
-        assert new_podcast.refresh_interval.total_seconds() == 3600
+        assert podcast.modified
+        assert podcast.modified.day == 1
+        assert podcast.modified.month == 7
+        assert podcast.modified.year == 2020
+        assert podcast.result == Podcast.Result.SUCCESS
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-        assert new_podcast.parsed
+        assert podcast.parsed
 
-        assert new_podcast.etag
-        assert new_podcast.explicit
-        assert new_podcast.cover_url
+        assert podcast.etag
+        assert podcast.explicit
+        assert podcast.cover_url
 
-        assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assigned_categories = [c.name for c in new_podcast.categories.all()]
+        assigned_categories = [c.name for c in podcast.categories.all()]
 
         assert "Science" in assigned_categories
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    def test_parse_podcast_feed_permanent_redirect(
-        self, mocker, new_podcast, categories
-    ):
+    def test_parse_podcast_feed_permanent_redirect(self, mocker, podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
@@ -292,23 +280,23 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert feed_parser.parse_podcast_feed(new_podcast.id)
-        assert Episode.objects.filter(podcast=new_podcast).count() == 20
+        assert feed_parser.parse_podcast_feed(podcast.id)
+        assert Episode.objects.filter(podcast=podcast).count() == 20
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert new_podcast.rss == self.redirect_rss
-        assert new_podcast.active
-        assert new_podcast.errors == 0
-        assert new_podcast.modified
-        assert new_podcast.parsed
-        assert new_podcast.refresh_interval.total_seconds() == 3600
+        assert podcast.rss == self.redirect_rss
+        assert podcast.active
+        assert podcast.errors == 0
+        assert podcast.modified
+        assert podcast.parsed
+        assert podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
-        self, mocker, new_podcast, categories
+        self, mocker, podcast, categories
     ):
         other = PodcastFactory(rss=self.redirect_rss)
-        current_rss = new_podcast.rss
+        current_rss = podcast.rss
 
         mocker.patch(
             self.mock_http_get,
@@ -322,179 +310,173 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert not feed_parser.parse_podcast_feed(new_podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert new_podcast.rss == current_rss
-        assert new_podcast.errors == 0
-        assert not new_podcast.active
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        assert podcast.rss == current_rss
+        assert podcast.errors == 0
+        assert not podcast.active
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.DUPLICATE_FEED
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_no_podcasts(self, mocker, new_podcast, categories):
+    def test_parse_no_podcasts(self, mocker, podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=new_podcast.rss,
+                url=podcast.rss,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
 
-        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast.id)
         assert not result
         with pytest.raises(ValueError):
             result.raise_exception()
 
-        new_podcast.refresh_from_db()
-        assert new_podcast.active
-        assert new_podcast.errors == 1
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.INVALID_RSS
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        podcast.refresh_from_db()
+        assert podcast.active
+        assert podcast.errors == 1
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.INVALID_RSS
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_empty_feed(self, mocker, new_podcast, categories):
+    def test_parse_empty_feed(self, mocker, podcast, categories):
 
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=new_podcast.rss,
+                url=podcast.rss,
                 content=self.get_rss_content("rss_empty_mock.xml"),
             ),
         )
 
-        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast.id)
         assert not result
         with pytest.raises(ValueError):
             result.raise_exception()
 
-        new_podcast.refresh_from_db()
-        assert new_podcast.active
-        assert new_podcast.errors == 1
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.INVALID_RSS
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        podcast.refresh_from_db()
+        assert podcast.active
+        assert podcast.errors == 1
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.INVALID_RSS
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_not_modified(self, mocker, podcast, categories):
         mocker.patch(
             self.mock_http_get,
-            return_value=MockResponse(
-                new_podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
-            ),
+            return_value=MockResponse(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED),
         )
-        assert not feed_parser.parse_podcast_feed(new_podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
-        new_podcast.refresh_from_db()
-        assert new_podcast.active
-        assert new_podcast.modified is None
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.NOT_MODIFIED
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        podcast.refresh_from_db()
+        assert podcast.active
+        assert podcast.modified is None
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.NOT_MODIFIED
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_error(self, mocker, podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast.id)
         assert result.success is False
 
         with pytest.raises(requests.RequestException):
             result.raise_exception()
 
-        new_podcast.refresh_from_db()
-        assert new_podcast.active
-        assert new_podcast.errors == 1
-        assert new_podcast.http_status is None
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.NETWORK_ERROR
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        podcast.refresh_from_db()
+        assert podcast.active
+        assert podcast.errors == 1
+        assert podcast.http_status is None
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.NETWORK_ERROR
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_podcast_feed_errors_past_limit(
-        self, mocker, new_podcast, categories
-    ):
-        Podcast.objects.filter(pk=new_podcast.id).update(errors=11)
+    def test_parse_podcast_feed_errors_past_limit(self, mocker, podcast, categories):
+        Podcast.objects.filter(pk=podcast.id).update(errors=11)
 
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast.id)
         assert result.success is False
 
         with pytest.raises(requests.RequestException):
             result.raise_exception()
 
-        new_podcast.refresh_from_db()
-        assert not new_podcast.active
-        assert new_podcast.errors == 12
-        assert new_podcast.http_status is None
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.NETWORK_ERROR
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        podcast.refresh_from_db()
+        assert not podcast.active
+        assert podcast.errors == 12
+        assert podcast.http_status is None
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.NETWORK_ERROR
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_http_gone(self, mocker, podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
-        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast.id)
         # no exception set for http errors
         result.raise_exception()
 
         assert result.success is False
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert not new_podcast.active
-        assert new_podcast.errors == 0
-        assert new_podcast.http_status == http.HTTPStatus.GONE
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.HTTP_ERROR
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        assert not podcast.active
+        assert podcast.errors == 0
+        assert podcast.http_status == http.HTTPStatus.GONE
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.HTTP_ERROR
+        assert podcast.refresh_interval.total_seconds() == 3960
 
-    def test_parse_podcast_feed_http_server_error(
-        self, mocker, new_podcast, categories
-    ):
+    def test_parse_podcast_feed_http_server_error(self, mocker, podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast.id)
 
         with pytest.raises(requests.HTTPError):
             result.raise_exception()
 
         assert result.success is False
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert new_podcast.active
-        assert new_podcast.errors == 1
-        assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.HTTP_ERROR
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        assert podcast.active
+        assert podcast.errors == 1
+        assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.HTTP_ERROR
+        assert podcast.refresh_interval.total_seconds() == 3960
 
     def test_parse_podcast_feed_http_server_error_no_pub_date(
-        self, mocker, new_podcast, categories
+        self, mocker, podcast, categories
     ):
         mocker.patch(
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        new_podcast.pub_date = None
-        new_podcast.save()
+        podcast.pub_date = None
+        podcast.save()
 
-        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast.id)
 
         with pytest.raises(requests.HTTPError):
             result.raise_exception()
 
         assert result.success is False
 
-        new_podcast.refresh_from_db()
+        podcast.refresh_from_db()
 
-        assert new_podcast.active
-        assert new_podcast.errors == 1
-        assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
-        assert new_podcast.parsed
-        assert new_podcast.result == Podcast.Result.HTTP_ERROR
-        assert new_podcast.refresh_interval.total_seconds() == 3960
+        assert podcast.active
+        assert podcast.errors == 1
+        assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
+        assert podcast.parsed
+        assert podcast.result == Podcast.Result.HTTP_ERROR
+        assert podcast.refresh_interval.total_seconds() == 3960
