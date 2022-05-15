@@ -188,19 +188,41 @@ class TestPodcastEpisodes:
 class TestCategoryList:
     url = reverse_lazy("podcasts:category_list")
 
-    def test_get(self, db, client):
+    def test_matching_podcasts(self, db, client):
+        for _ in range(3):
+            category = CategoryFactory()
+            category.podcast_set.add(PodcastFactory())
+
+        response = client.get(self.url)
+        assert_ok(response)
+        assert len(response.context_data["categories"]) == 3
+
+    def test_no_matching_podcasts(self, db, client):
         CategoryFactory.create_batch(3)
         response = client.get(self.url)
         assert_ok(response)
+        assert len(response.context_data["categories"]) == 0
 
     def test_search(self, client, category, faker):
 
         CategoryFactory.create_batch(3)
-        CategoryFactory(name="testing")
+
+        category = CategoryFactory(name="testing")
+        category.podcast_set.add(PodcastFactory())
 
         response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
         assert len(response.context_data["categories"]) == 1
+
+    def test_search_no_matching_podcasts(self, client, category, faker):
+
+        CategoryFactory.create_batch(3)
+
+        CategoryFactory(name="testing")
+
+        response = client.get(self.url, {"q": "testing"})
+        assert_ok(response)
+        assert len(response.context_data["categories"]) == 0
 
 
 class TestCategoryDetail:

@@ -6,7 +6,7 @@ import requests
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import QuerySet
+from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -192,7 +192,13 @@ def episodes(
 @require_http_methods(["GET"])
 def category_list(request: HttpRequest) -> HttpResponse:
 
-    categories = Category.objects.order_by("name")
+    categories = (
+        Category.objects.annotate(
+            has_podcasts=Exists(get_podcasts().filter(categories=OuterRef("pk")))
+        )
+        .filter(has_podcasts=True)
+        .order_by("name")
+    )
 
     if request.search:
         categories = categories.search(request.search.value)
