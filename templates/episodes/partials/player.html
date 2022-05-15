@@ -31,14 +31,14 @@
 
                     <div class="sm:hidden">
                         <a class="w-84 truncate block text-center"
-                            :class="{'hover:text-blue-500': isInteractive, 'animate-pulse text-gray-300': !isInteractive}"
+                            :class="{'hover:text-blue-500': isPlaying, 'animate-pulse text-gray-300': !isPlaying}"
                             href="{{ episode_url }}"
                             hx-swap="outerHTML show:window:top"
                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
 
                         </a>
                         <div class="text-xs md:text-sm text-center sm:hidden"
-                            :class="{'animate-pulse text-gray-300': !isInteractive}">
+                            :class="{'animate-pulse text-gray-300': !isPlaying}">
                             <span x-text="counters.current"></span> /
                             <span x-text="counters.total"></span>
                         </div>
@@ -98,13 +98,13 @@
                                 <div class="hidden sm:block">
                                     <div>
                                         <a class="truncate text-center block sm:w-80 md:w-96 md:w-auto md:max-w-xl xl:max-w-3xl"
-                                            :class="{'hover:text-blue-500': isInteractive, 'animate-pulse text-gray-300': !isInteractive}"
+                                            :class="{'hover:text-blue-500': isPlaying, 'animate-pulse text-gray-300': !isPlaying}"
                                             href="{{ episode_url }}"
                                             hx-swap="outerHTML show:window:top morpdom"
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                     </div>
                                     <div class="text-xs md:text-sm text-center"
-                                        :class="{'animate-pulse text-gray-300': !isInteractive}">
+                                        :class="{'animate-pulse text-gray-300': !isPlaying}">
                                         <span x-text="counters.current"
                                             title="Current Time"></span> /
                                         <span x-text="counters.total"
@@ -118,14 +118,14 @@
 
                                         <button title="Skip back 10 seconds"
                                             @click="skipBack"
-                                            :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
+                                            :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
                                             {% include "icons/skip_back_10.svg" with css_class=ICON_CSS %}
                                         </button>
 
                                         <button title="Skip forward 10 seconds"
                                             @click="skipForward"
-                                            :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
+                                            :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
                                             {% include "icons/skip_forward_10.svg" with css_class=ICON_CSS %}
                                         </button>
@@ -138,14 +138,14 @@
 
                                             <button title="Skip back 10 seconds"
                                                 @click="skipBack"
-                                                :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
+                                                :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
                                                 {% include "icons/skip_back_10.svg" with css_class=ICON_CSS %}
                                             </button>
 
                                             <button title="Skip forward 10 seconds"
                                                 @click="skipForward"
-                                                :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
+                                                :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
                                                 {% include "icons/skip_forward_10.svg" with css_class=ICON_CSS %}
                                             </button>
@@ -153,7 +153,7 @@
                                         </div>
 
                                         <div class="flex items-center space-x-2 mr-2 md:mr-3">
-                                            <button :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
+                                            <button :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 @click="decrementPlaybackRate"
                                                 title="Decrease Playback Rate">-</button>
@@ -163,7 +163,7 @@
                                             </div>
 
                                             <button class="{{ BUTTON_CSS }} inline-block"
-                                                :class="{'{{ INACTIVE_CSS }}': !isInteractive}"
+                                                :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 @click="incrementPlaybackRate"
                                                 title="Increase Playback Rate">+</button>
                                         </div>
@@ -190,8 +190,8 @@
                                     aria-label="Progress"
                                     min="0"
                                     :class="{# fmt:off #}{
-                                            'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer':isInteractive,
-                                            'bg-gray-800 dark:bg-gray-600 cursor-not-allowed': !isInteractive
+                                            'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer':isPlaying,
+                                            'bg-gray-800 dark:bg-gray-600 cursor-not-allowed': !isPlaying
                                         }{# fmt:on #}"
                                     class="h-2 mx-auto rounded-full w-full flex items-center focus:outline-none">
                             </div>
