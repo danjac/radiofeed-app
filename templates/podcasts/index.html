@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} | {{ promoted|yesno:"Trending,My" }} Podcasts {% endblock %}
+{% block title %} | {{ promoted|yesno:"Promoted,My" }} Podcasts {% endblock %}
 
 {% block content %}
     {% if has_subscriptions %}
@@ -8,7 +8,7 @@
             {% url 'podcasts:index' as index_url %}
             <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left mb-3 sm:mb-0">
                 {% if promoted %}
-                    Trending Podcasts
+                    Promoted
                 {% else %}
                     My Podcasts
                 {% endif %}
@@ -19,13 +19,13 @@
                         class="link">My Podcasts</a>
                 {% else %}
                     <a href="{{ index_url }}?promoted=true"
-                        class="link">Trending Podcasts</a>
+                        class="link">Promoted</a>
                 {% endif %}
             </div>
         </div>
     {% else %}
         <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left mb-6">
-            Trending Podcasts
+            Promoted
         </h1>
     {% endif %}
 

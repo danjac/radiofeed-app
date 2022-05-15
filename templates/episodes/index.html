@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %} | New Releases {% if promoted %} | Trending {% endif %} {% endblock %}
+{% block title %} | New Releases {% if promoted %} | Promoted {% endif %} {% endblock %}
 
 {% block content %}
 
     <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
         <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-            New Releases {% if promoted and has_subscriptions %} - Trending{% elif has_subscriptions %} - My Podcasts{% endif %}
+            New Releases {% if promoted and has_subscriptions %} - Promoted{% elif has_subscriptions %} - My Podcasts{% endif %}
         </h1>
         {% if not has_subscriptions %}
             <div class="flex items-center justify-center sm:justify-end space-x-3">
@@ -23,7 +23,7 @@
                         class="link">My Podcasts</a>
                 {% else %}
                     <a href="{% url 'episodes:index' %}?promoted=true"
-                        class="link">Trending Podcasts</a>
+                        class="link">Promoted</a>
                 {% endif %}
             </div>
 
