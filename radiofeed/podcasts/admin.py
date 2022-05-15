@@ -164,6 +164,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     raw_id_fields = ("recipients",)
 
     readonly_fields = (
+        "refresh_interval",
         "next_scheduled",
         "parsed",
         "pub_date",
