@@ -124,7 +124,7 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
-                const { playbackRate, autoplay } = this.restore();
+                const { playbackRate, autoplay } = this.loadSettings();
 
                 this.playbackRate = playbackRate || 1.0;
                 this.autoplay = autoplay || this.autoplay;
@@ -168,12 +168,12 @@ document.addEventListener("alpine:init", () => {
             resumed() {
                 this.isPaused = false;
                 this.isPlaying = true;
-                this.store();
+                this.saveSettings();
             },
             paused() {
                 this.isPlaying = false;
                 this.isPaused = true;
-                this.store();
+                this.saveSettings();
             },
             ended() {
                 this.$refs.complete.click();
@@ -196,18 +196,18 @@ document.addEventListener("alpine:init", () => {
             },
             setPlaybackRate(value) {
                 this.playbackRate = value;
-                this.store();
+                this.saveSettings();
             },
-            restore() {
-                const stored = sessionStorage.getItem("player");
-                return stored
-                ? JSON.parse(stored)
+            loadSettings() {
+                const settings = sessionStorage.getItem("player");
+                return settings
+                ? JSON.parse(settings)
                 : {
                     playbackRate: 1.0,
                     autoplay: false,
                 };
             },
-            store() {
+            saveSettings() {
                 sessionStorage.setItem(
                     "player",
                     JSON.stringify({
