@@ -123,8 +123,7 @@ document.addEventListener("alpine:init", () => {
                     }
                 }
             },
-            loaded(event) {
-                this.logAudioEvent(event);
+            loaded() {
                 if (this.isLoaded) {
                     return;
                 }
@@ -150,13 +149,11 @@ document.addEventListener("alpine:init", () => {
                 this.duration = this.$refs.audio.duration;
                 this.isLoaded = true;
             },
-            error(event) {
-                this.logAudioEvent(event);
+            error() {
                 this.isPlaying = false;
                 this.isError = true;
             },
-            timeUpdate(event) {
-                this.logAudioEvent(event);
+            timeUpdate() {
                 this.isPlaying = true;
                 this.currentTime = Math.floor(this.$refs.audio.currentTime);
                 const time = Math.round(this.currentTime);
@@ -173,29 +170,22 @@ document.addEventListener("alpine:init", () => {
                     });
                 }
             },
-            buffering(event) {
-                this.logAudioEvent(event);
+            buffering() {
                 this.isPlaying = false;
             },
-            resumed(event) {
-                this.logAudioEvent(event);
+            resumed() {
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.isError = false;
                 this.store();
             },
-            paused(event) {
-                this.logAudioEvent(event);
+            paused() {
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.store();
             },
-            ended(event) {
-                this.logAudioEvent(event);
+            ended() {
                 this.$refs.complete.click();
-            },
-            logAudioEvent(event) {
-                console.log("[Audio]", event.type);
             },
             incrementPlaybackRate() {
                 this.changePlaybackRate(0.1);
@@ -236,17 +226,17 @@ document.addEventListener("alpine:init", () => {
                 );
             },
             skip() {
-                if (!this.isPaused) {
+                if (this.isPlaying) {
                     this.$refs.audio.currentTime = this.currentTime;
                 }
             },
             skipBack() {
-                if (!this.isPaused) {
+                if (this.isPlaying) {
                     this.$refs.audio.currentTime -= 10;
                 }
             },
             skipForward() {
-                if (!this.isPaused) {
+                if (this.isPlaying) {
                     this.$refs.audio.currentTime += 10;
                 }
             },
