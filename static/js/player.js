@@ -21,8 +21,7 @@ document.addEventListener("alpine:init", () => {
             isPaused: false,
             isPlaying: false,
             playbackRate: 1.0,
-            defaultPlaybackRate: 1.0,
-            lastTimeUpdate: null,
+            timeUpdateAt: null,
             counters: {
                 current: "00:00:00",
                 total: "00:00:00",
@@ -131,7 +130,7 @@ document.addEventListener("alpine:init", () => {
 
                 const { playbackRate, autoplay } = this.restore();
 
-                this.playbackRate = playbackRate || this.defaultPlaybackRate;
+                this.playbackRate = playbackRate || 1.0;
                 this.autoplay = this.autoplay || autoplay;
 
                 if (this.autoplay) {
@@ -156,8 +155,8 @@ document.addEventListener("alpine:init", () => {
                 this.isPlaying = true;
                 this.currentTime = Math.floor(this.$refs.audio.currentTime);
                 const time = Math.round(this.currentTime);
-                if (time % 5 === 0 && this.lastTimeUpdate !== time) {
-                    this.lastTimeUpdate = time;
+                if (time % 5 === 0 && this.timeUpdateAt !== time) {
+                    this.timeUpdateAt = time;
                     fetch(this.timeUpdateUrl, {
                         method: "POST",
                         headers: {
@@ -190,7 +189,7 @@ document.addEventListener("alpine:init", () => {
                 this.changePlaybackRate(-0.1);
             },
             resetPlaybackRate() {
-                this.setPlaybackRate(this.defaultPlaybackRate);
+                this.setPlaybackRate(1.0);
             },
             changePlaybackRate(increment) {
                 const newValue = Math.max(
@@ -208,7 +207,7 @@ document.addEventListener("alpine:init", () => {
                 return stored
                 ? JSON.parse(stored)
                 : {
-                    playbackRate: this.defaultPlaybackRate,
+                    playbackRate: 1.0,
                     autoplay: false,
                 };
             },
