@@ -8,14 +8,12 @@ document.addEventListener("alpine:init", () => {
             mediaSrc = null,
             currentTime = 0,
             csrfToken = null,
-            completeUrl = null,
             timeUpdateUrl = null
         ) => ({
             autoplay,
             mediaSrc,
             currentTime,
             csrfToken,
-            completeUrl,
             timeUpdateUrl,
             duration: 0,
             isLoaded: false,
