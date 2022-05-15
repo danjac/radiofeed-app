@@ -24,11 +24,6 @@ urlpatterns = [
         name="close_player",
     ),
     path(
-        "player/complete/",
-        views.player_complete,
-        name="player_complete",
-    ),
-    path(
         "player/timeupdate/",
         views.player_time_update,
         name="player_time_update",

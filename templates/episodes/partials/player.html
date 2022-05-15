@@ -7,7 +7,6 @@
                 mediaUrl='{{ episode.media_url }}',
                 currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
                 csrfToken='{{ csrf_token }}',
-                completeUrl='{% url 'episodes:player_complete' %}',
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
             ){# fmt:on #}"
                 @keydown.window="shortcuts"

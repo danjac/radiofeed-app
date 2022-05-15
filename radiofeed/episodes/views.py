@@ -163,30 +163,16 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.get():
         try:
+            now = timezone.now()
 
             AudioLog.objects.filter(episode=episode_id, user=request.user).update(
-                completed=None,
-                updated=timezone.now(),
                 current_time=int(request.POST["current_time"]),
+                completed=now if "completed" in request.POST else None,
+                updated=now,
             )
 
         except (KeyError, ValueError):
             return HttpResponseBadRequest()
-
-    return HttpResponseNoContent()
-
-
-@require_http_methods(["POST"])
-@ajax_login_required
-def player_complete(request: HttpRequest) -> HttpResponse:
-
-    if episode_id := request.player.get():
-        now = timezone.now()
-        AudioLog.objects.filter(episode=episode_id, user=request.user).update(
-            completed=now,
-            updated=now,
-            current_time=0,
-        )
 
     return HttpResponseNoContent()
 

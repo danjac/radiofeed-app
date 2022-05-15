@@ -192,26 +192,6 @@ class TestClosePlayer:
         assert_not_playing(client, player_episode)
 
 
-class TestPlayerComplete:
-    url = reverse_lazy("episodes:player_complete")
-
-    def test_complete(self, client, auth_user, player_episode):
-
-        log = AudioLogFactory(
-            user=auth_user,
-            current_time=2000,
-            episode=player_episode,
-        )
-
-        response = client.post(self.url)
-        assert_no_content(response)
-
-        log.refresh_from_db()
-
-        assert log.completed
-        assert log.current_time == 0
-
-
 class TestPlayerTimeUpdate:
     url = reverse_lazy("episodes:player_time_update")
 
@@ -219,13 +199,31 @@ class TestPlayerTimeUpdate:
     def log(self, auth_user, player_episode):
         return AudioLogFactory(user=auth_user, episode=player_episode)
 
-    def test_is_running(self, client, auth_user, player_episode):
+    def test_is_running(self, client, auth_user, log):
 
         response = client.post(
             self.url,
             {"current_time": "1030"},
         )
         assert_no_content(response)
+
+        log.refresh_from_db()
+
+        assert not log.completed
+        assert log.current_time == 1030
+
+    def test_complete(self, client, auth_user, log):
+
+        response = client.post(
+            self.url,
+            {"current_time": "0", "completed": "true"},
+        )
+        assert_no_content(response)
+
+        log.refresh_from_db()
+
+        assert log.completed
+        assert log.current_time == 0
 
     def test_player_not_running(self, client, auth_user, episode):
 

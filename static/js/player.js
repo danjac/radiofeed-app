@@ -51,15 +51,7 @@ document.addEventListener("alpine:init", () => {
 
                 this.timer = setInterval(() => {
                     if (this.isPlaying) {
-                        fetch(this.timeUpdateUrl, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRFToken": this.csrfToken,
-                            },
-                            body: new URLSearchParams({
-                                current_time: this.currentTime,
-                            }),
-                        });
+                        this.sendTimeUpdate();
                     }
                 }, 5000);
             },
@@ -182,12 +174,18 @@ document.addEventListener("alpine:init", () => {
                 this.currentTime = 0;
                 this.isPlaying = false;
                 this.isPaused = true;
-
-                fetch(this.completeUrl, {
+                this.sendTimeUpdate(true);
+            },
+            sendTimeUpdate(completed) {
+                fetch(this.timeUpdateUrl, {
                     method: "POST",
                     headers: {
                         "X-CSRFToken": this.csrfToken,
                     },
+                    body: new URLSearchParams({
+                        current_time: this.currentTime,
+                            ...(completed ? { completed: true } : {}),
+                    }),
                 });
             },
             incrementPlaybackRate() {
