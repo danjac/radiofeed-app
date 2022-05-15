@@ -132,16 +132,26 @@ class FeedParser:
         if response.status_code == http.HTTPStatus.NOT_MODIFIED:
             raise NotModified(response=response)
 
+        # check if another feed already has new URL
         if (
             response.url != self.podcast.rss
             and Podcast.objects.filter(rss=response.url).exists()
         ):
             raise DuplicateFeed(response=response)
 
+        # check if content has changed (feed is not checking etag etc)
         if (
             content_hash := make_content_hash(response.content)
         ) == self.podcast.content_hash:
             raise NotModified(response=response)
+
+        # check if another feed has exact same content
+        if (
+            Podcast.objects.exclude(pk=self.podcast.id).filter(
+                content_hash=content_hash, active=True
+            )
+        ).exists():
+            raise DuplicateFeed(response=response)
 
         return response, content_hash, *rss_parser.parse_rss(response.content)
 

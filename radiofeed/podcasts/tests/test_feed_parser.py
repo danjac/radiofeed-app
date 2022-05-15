@@ -185,6 +185,35 @@ class TestParsePodcastFeed:
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
         assert new_podcast.refresh_interval.total_seconds() == 3960
 
+    def test_parse_podcast_another_feed_same_content(
+        self, mocker, new_podcast, categories
+    ):
+
+        content = self.get_rss_content()
+
+        PodcastFactory(content_hash=feed_parser.make_content_hash(content))
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=new_podcast.rss,
+                content=content,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+        assert not feed_parser.parse_podcast_feed(new_podcast.id)
+
+        new_podcast.refresh_from_db()
+
+        assert not new_podcast.active
+        assert new_podcast.modified is None
+        assert new_podcast.parsed
+        assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
+        assert new_podcast.refresh_interval.total_seconds() == 3960
+
     def test_parse_podcast_feed_complete(self, mocker, new_podcast, categories):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
