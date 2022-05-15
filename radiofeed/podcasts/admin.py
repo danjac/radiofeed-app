@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
+from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
@@ -154,7 +155,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "promoted",
         "parsed",
         "pub_date",
-        "refresh_interval",
     )
 
     list_editable = ("promoted",)
@@ -164,6 +164,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     raw_id_fields = ("recipients",)
 
     readonly_fields = (
+        "next_scheduled",
         "parsed",
         "pub_date",
         "modified",
@@ -200,3 +201,12 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
+
+    def next_scheduled(self, obj: models.Podcast) -> str:
+
+        if obj.active:
+            now = timezone.now()
+            scheduled = now if not obj.parsed else obj.parsed + obj.refresh_interval
+            return timeuntil(scheduled) if scheduled > now else "Pending"
+
+        return "-"

@@ -90,6 +90,33 @@ class TestPodcastAdmin:
         podcast_admin.parse_podcast_feed(req, podcast)
         mock_parse_feed.assert_not_called()
 
+    def test_next_scheduled_inactive(self, podcast_admin):
+        assert podcast_admin.next_scheduled(Podcast(active=False)) == "-"
+
+    def test_next_scheduled_active(self, podcast_admin):
+        assert (
+            podcast_admin.next_scheduled(
+                Podcast(
+                    active=True,
+                    parsed=timezone.now() - timedelta(hours=1),
+                    refresh_interval=timedelta(hours=2),
+                )
+            )
+            == "59\xa0minutes"
+        )
+
+    def test_next_scheduled_imminent(self, podcast_admin):
+        assert (
+            podcast_admin.next_scheduled(
+                Podcast(
+                    active=True,
+                    parsed=timezone.now() - timedelta(hours=2),
+                    refresh_interval=timedelta(hours=1),
+                )
+            )
+            == "Pending"
+        )
+
 
 class TestResultFilter:
     def test_no_filter(self, podcasts, podcast_admin, req):
