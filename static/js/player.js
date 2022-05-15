@@ -124,7 +124,6 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
-
                 const { playbackRate, autoplay } = this.restore();
 
                 this.playbackRate = playbackRate || 1.0;
