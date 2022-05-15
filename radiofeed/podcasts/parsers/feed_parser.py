@@ -247,8 +247,6 @@ class FeedParser:
         errors = self.podcast.errors + 1 if exception else 0
         active = active and errors < PARSE_ERROR_LIMIT
 
-        # increment refresh interval 10%
-
         Podcast.objects.filter(pk=self.podcast.id).update(
             refresh_interval=self.increment_refresh_interval(),
             active=active,
