@@ -129,6 +129,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         {
             "episode": episode,
             "is_playing": True,
+            "start_player": True,
             "current_time": log.current_time,
             "completed": log.completed,
         },
