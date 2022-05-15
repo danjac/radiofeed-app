@@ -20,7 +20,6 @@ document.addEventListener("alpine:init", () => {
             isPaused: false,
             isPlaying: false,
             playbackRate: 1.0,
-            timeUpdateAt: null,
             counters: {
                 current: "00:00:00",
                 total: "00:00:00",
@@ -49,6 +48,23 @@ document.addEventListener("alpine:init", () => {
                 if ("mediaSession" in navigator) {
                     navigator.mediaSession.metadata = this.getMediaMetadata();
                 }
+
+                this.timer = setInterval(() => {
+                    if (this.isPlaying) {
+                        fetch(this.timeUpdateUrl, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": this.csrfToken,
+                            },
+                            body: new URLSearchParams({
+                                current_time: this.currentTime,
+                            }),
+                        });
+                    }
+                }, 5000);
+            },
+            destroy() {
+                clearInterval(this.timer);
             },
             formatCounter(value) {
                 if (isNaN(value) || value < 0) return "00:00:00";
@@ -148,19 +164,6 @@ document.addEventListener("alpine:init", () => {
             timeUpdate() {
                 this.isPlaying = true;
                 this.currentTime = Math.floor(this.$refs.audio.currentTime);
-                const time = Math.round(this.currentTime);
-                if (time % 5 === 0 && this.timeUpdateAt !== time) {
-                    this.timeUpdateAt = time;
-                    fetch(this.timeUpdateUrl, {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": this.csrfToken,
-                        },
-                        body: new URLSearchParams({
-                            current_time: time,
-                        }),
-                    });
-                }
             },
             buffering() {
                 this.isPlaying = false;
