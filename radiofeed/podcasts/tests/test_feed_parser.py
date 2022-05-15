@@ -153,6 +153,73 @@ class TestParsePodcastFeed:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
+    def test_parse_podcast_feed_ok_no_pub_date(self, db, mocker, categories):
+
+        podcast = PodcastFactory(pub_date=None)
+
+        # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
+
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+        assert feed_parser.parse_podcast_feed(podcast.id)
+
+        # new episodes: 19
+        assert Episode.objects.count() == 20
+
+        # check episode updated
+        episode = Episode.objects.get(guid=episode_guid)
+        assert episode.title != episode_title
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.active
+        assert podcast.content_hash
+        assert podcast.errors == 0
+        assert podcast.title == "Mysterious Universe"
+        assert podcast.refresh_interval.total_seconds() == 3600
+
+        assert podcast.description == "Blog and Podcast specializing in offbeat news"
+
+        assert podcast.owner == "8th Kind"
+
+        assert podcast.modified
+        assert podcast.modified.day == 1
+        assert podcast.modified.month == 7
+        assert podcast.modified.year == 2020
+        assert podcast.result == Podcast.Result.SUCCESS
+
+        assert podcast.parsed
+
+        assert podcast.etag
+        assert podcast.explicit
+        assert podcast.cover_url
+
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        assert podcast.refresh_interval.total_seconds() == 3600
+
+        assigned_categories = [c.name for c in podcast.categories.all()]
+
+        assert "Science" in assigned_categories
+        assert "Religion & Spirituality" in assigned_categories
+        assert "Society & Culture" in assigned_categories
+        assert "Philosophy" in assigned_categories
+
     def test_parse_podcast_feed_same_content(self, db, mocker, categories):
 
         content = self.get_rss_content()
