@@ -111,12 +111,13 @@ def episode_detail(
 @ajax_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
+    now = timezone.now()
 
     log, _ = AudioLog.objects.update_or_create(
         episode=episode,
         user=request.user,
         defaults={
-            "listened": timezone.now(),
+            "listened": now,
         },
     )
 
@@ -130,6 +131,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             "is_playing": True,
             "start_player": True,
             "current_time": log.current_time,
+            "listened": now,
         },
     )
 
@@ -139,7 +141,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 def close_player(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.pop():
-        episode = get_episode_or_404(request, episode_id)
+        episode = get_episode_or_404(request, episode_id, with_current_time=True)
 
         return TemplateResponse(
             request,
@@ -147,6 +149,8 @@ def close_player(request: HttpRequest) -> HttpResponse:
             {
                 "episode": episode,
                 "is_playing": False,
+                "current_time": episode.current_time,
+                "listened": episode.listened,
             },
         )
 

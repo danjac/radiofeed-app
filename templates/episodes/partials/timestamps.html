@@ -1,0 +1,24 @@
+<div class="sm:flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-y-3 sm:space-y-0 sm:space-x-3" id="episode-timestamps-{{ epepisode.id }}" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+    <div class="flex items-center space-x-2 sm:space-x-3">
+        {% include "partials/date.html" with value=episode.pub_date title="Release Date" %}
+        {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
+            {% if duration %}
+                <div>
+                    {% if current_time > 60 and current_time < duration %}
+                        <span title="Completed">
+                            {{ current_time|format_duration }}
+                        </span> /
+                    {% endif %}
+                    <span title="Duration">
+                        {{ duration|format_duration }}
+                    </span>
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+    {% if listened %}
+        <div>
+            Listened {% include "partials/date.html" with value=listened %}
+    {% endif %}
+</div>
+</div>

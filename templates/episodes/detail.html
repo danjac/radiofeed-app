@@ -154,21 +154,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-2 sm:space-x-3">
-                {% include "partials/date.html" with value=episode.pub_date title="Release Date" %}
-                {% include "episodes/partials/duration.html" %}
-                {% if episode.listened %}
-                    <span class="hidden sm:inline-block">
-                        Listened {% include "partials/date.html" with value=episode.listened %}
-                    </span>
-                {% endif %}
-            </div>
-
-            {% if episode.listened %}
-                <div class="font-semibold sm:hidden text-gray-600 dark:text-gray-300">
-                    Listened {% include "partials/date.html" with value=episode.listened %}
-                </div>
-            {% endif %}
+            {% include "episodes/partials/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
 
             {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
                 {% if file_size or link or explicit %}
