@@ -14,7 +14,7 @@ from django_htmx.http import HttpResponseClientRedirect
 
 def ajax_login_required(view: Callable) -> Callable:
     """Use this decorator instead of @login_required
-    when handling HTMX partials and JSON requests.
+    when handling HTMX includes and JSON requests.
 
     If an HTMX request returns a client redirect to login page
     if user is not logged in, otherwise raises a 403.

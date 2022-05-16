@@ -16,7 +16,7 @@
     </div>
 
     {% if request.htmx.target == target %}
-        {% include "episodes/partials/timestamps.html" with hx_oob=True %}
-        {% include "partials/messages.html" with hx_oob=True %}
+        {% include "episodes/includes/timestamps.html" with hx_oob=True %}
+        {% include "includes/messages.html" with hx_oob=True %}
     {% endif %}
 {% endwith %}

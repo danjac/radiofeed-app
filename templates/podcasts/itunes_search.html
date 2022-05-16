@@ -6,12 +6,12 @@
     <section class="space-y-3" role="list">
         {% for feed in feeds %}
             {% if feed.podcast and feed.podcast.pub_date %}
-                {% include "podcasts/partials/podcast.html" with podcast=feed.podcast %}
+                {% include "podcasts/includes/podcast.html" with podcast=feed.podcast %}
             {% else %}
-                {% include "podcasts/partials/itunes_feed.html" %}
+                {% include "podcasts/includes/itunes_feed.html" %}
             {% endif %}
         {% empty %}
-            {% include "partials/empty.html" %}
+            {% include "includes/empty.html" %}
         {% endfor %}
     </section>
 {% endblock %}

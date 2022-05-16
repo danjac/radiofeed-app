@@ -30,7 +30,7 @@ def user_preferences(
 
     return TemplateResponse(
         request,
-        "account/partials/preferences.html"
+        "account/includes/preferences.html"
         if request.htmx.target == target
         else "account/preferences.html",
         {
@@ -108,7 +108,7 @@ def import_podcast_feeds(
 
     return TemplateResponse(
         request,
-        "account/partials/import_podcast_feeds.html"
+        "account/includes/import_podcast_feeds.html"
         if request.htmx.target == target
         else "account/import_export_podcast_feeds.html",
         {

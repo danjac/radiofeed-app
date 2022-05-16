@@ -48,7 +48,7 @@
 
                         {% with cover_url=podcast.cover_url %}
                             <div class="w-20 md:w-24">
-                                {% include "partials/cover_image.html" with size=24 css_class="h-16 w-16 md:h-20 md:w-20" alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="outerHTML show:window:top" %}
+                                {% include "includes/cover_image.html" with size=24 css_class="h-16 w-16 md:h-20 md:w-20" alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="outerHTML show:window:top" %}
                             </div>
                         {% endwith %}
 
@@ -196,8 +196,8 @@
         {% endwith %}
     {% endif %}
     {% if request.htmx.target == "player" %}
-        {% include "episodes/partials/audio_log_toggle.html" with hx_oob=True %}
-        {% include "episodes/partials/player_toggle.html" with hx_oob=True %}
-        {% include "episodes/partials/timestamps.html" with hx_oob=True %}
+        {% include "episodes/includes/audio_log_toggle.html" with hx_oob=True %}
+        {% include "episodes/includes/player_toggle.html" with hx_oob=True %}
+        {% include "episodes/includes/timestamps.html" with hx_oob=True %}
     {% endif %}
 {% endif %}

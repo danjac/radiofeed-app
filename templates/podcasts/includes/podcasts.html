@@ -1,0 +1,15 @@
+<section role="list"
+    class="space-y-3"
+    id="{{ pagination_target }}">
+
+    {% include "includes/pagination_links.html" %}
+
+    {% for podcast in page_obj.object_list %}
+        {% include "podcasts/includes/podcast.html" %}
+    {% empty %}
+        {% include "includes/empty.html" %}
+    {% endfor %}
+
+    {% include "includes/pagination_links.html" %}
+
+</section>

@@ -3,7 +3,7 @@
 
     {% with COVER_IMAGE_CSS="h-16 w-16 md:h-20 md:w-20" %}
         <div class="{{ COVER_IMAGE_CSS }}">
-            {% include "partials/cover_image.html" with cover_url=feed.image alt=feed.title size=20 css_class=COVER_IMAGE_CSS %}
+            {% include "includes/cover_image.html" with cover_url=feed.image alt=feed.title size=20 css_class=COVER_IMAGE_CSS %}
         </div>
     {% endwith %}
 
