@@ -50,41 +50,6 @@ document.addEventListener("alpine:init", () => {
             destroy() {
                 this.clearTimer();
             },
-            startTimer() {
-                this.timer = setInterval(() => {
-                    if (this.isPlaying) {
-                        this.sendTimeUpdate();
-                    }
-                }, 5000);
-            },
-            clearTimer() {
-                if (this.timer) {
-                    clearInterval(this.timer);
-                }
-            },
-            formatCounter(value) {
-                if (isNaN(value) || value < 0) return "00:00:00";
-                const duration = Math.floor(value);
-                const hours = Math.floor(duration / 3600);
-                const minutes = Math.floor((duration % 3600) / 60);
-                const seconds = Math.floor(duration % 60);
-                return [hours, minutes, seconds]
-                    .map((t) => t.toString().padStart(2, "0"))
-                    .join(":");
-            },
-            getMediaMetadata() {
-                const dataTag = document.getElementById("player-metadata");
-                if (!dataTag) {
-                    return null;
-                }
-
-                const metadata = JSON.parse(dataTag.textContent);
-
-                if (metadata && Object.keys(metadata).length > 0) {
-                    return new window.MediaMetadata(metadata);
-                }
-                return null;
-            },
             shortcuts(event) {
                 if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
                     return;
@@ -253,6 +218,41 @@ document.addEventListener("alpine:init", () => {
                 } else {
                     this.$refs.audio.pause();
                 }
+            },
+            startTimer() {
+                this.timer = setInterval(() => {
+                    if (this.isPlaying) {
+                        this.sendTimeUpdate();
+                    }
+                }, 5000);
+            },
+            clearTimer() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
+            },
+            formatCounter(value) {
+                if (isNaN(value) || value < 0) return "00:00:00";
+                const duration = Math.floor(value);
+                const hours = Math.floor(duration / 3600);
+                const minutes = Math.floor((duration % 3600) / 60);
+                const seconds = Math.floor(duration % 60);
+                return [hours, minutes, seconds]
+                    .map((t) => t.toString().padStart(2, "0"))
+                    .join(":");
+            },
+            getMediaMetadata() {
+                const dataTag = document.getElementById("player-metadata");
+                if (!dataTag) {
+                    return null;
+                }
+
+                const metadata = JSON.parse(dataTag.textContent);
+
+                if (metadata && Object.keys(metadata).length > 0) {
+                    return new window.MediaMetadata(metadata);
+                }
+                return null;
             },
         })
     );
