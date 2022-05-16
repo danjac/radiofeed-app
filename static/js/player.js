@@ -20,6 +20,7 @@ document.addEventListener("alpine:init", () => {
             isPaused: false,
             isPlaying: false,
             playbackRate: 1.0,
+            timer: null,
             counters: {
                 current: "00:00:00",
                 total: "00:00:00",
@@ -220,11 +221,13 @@ document.addEventListener("alpine:init", () => {
                 );
             },
             startTimer() {
-                this.timer = setInterval(() => {
-                    if (this.isPlaying) {
-                        this.sendTimeUpdate();
-                    }
-                }, 5000);
+                if (!this.timer) {
+                    this.timer = setInterval(() => {
+                        if (this.isPlaying) {
+                            this.sendTimeUpdate();
+                        }
+                    }, 5000);
+                }
             },
             clearTimer() {
                 if (this.timer) {
