@@ -50,6 +50,28 @@ document.addEventListener("alpine:init", () => {
             destroy() {
                 this.clearTimer();
             },
+            togglePlayPause() {
+                if (this.isPaused) {
+                    this.$refs.audio.play();
+                } else {
+                    this.$refs.audio.pause();
+                }
+            },
+            skip() {
+                if (this.isPlaying) {
+                    this.$refs.audio.currentTime = this.currentTime;
+                }
+            },
+            skipBack() {
+                if (this.isPlaying) {
+                    this.$refs.audio.currentTime -= 10;
+                }
+            },
+            skipForward() {
+                if (this.isPlaying) {
+                    this.$refs.audio.currentTime += 10;
+                }
+            },
             shortcuts(event) {
                 if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
                     return;
@@ -196,28 +218,6 @@ document.addEventListener("alpine:init", () => {
                         autoplay: this.isPlaying,
                     })
                 );
-            },
-            skip() {
-                if (this.isPlaying) {
-                    this.$refs.audio.currentTime = this.currentTime;
-                }
-            },
-            skipBack() {
-                if (this.isPlaying) {
-                    this.$refs.audio.currentTime -= 10;
-                }
-            },
-            skipForward() {
-                if (this.isPlaying) {
-                    this.$refs.audio.currentTime += 10;
-                }
-            },
-            togglePlayPause() {
-                if (this.isPaused) {
-                    this.$refs.audio.play();
-                } else {
-                    this.$refs.audio.pause();
-                }
             },
             startTimer() {
                 this.timer = setInterval(() => {
