@@ -42,7 +42,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         return self.annotate(
             completed=models.Subquery(logs.values("completed")),
             current_time=models.Subquery(logs.values("current_time")),
-            listened=models.Subquery(logs.values("updated")),
+            listened=models.Subquery(logs.values("listened")),
         )
 
     def recommended(
@@ -346,7 +346,7 @@ class AudioLog(TimeStampedModel):
     user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
-    updated: datetime = models.DateTimeField()
+    listened: datetime = models.DateTimeField()
     completed: datetime = models.DateTimeField(null=True, blank=True)
     current_time: int = models.IntegerField(default=0)
 
@@ -360,6 +360,6 @@ class AudioLog(TimeStampedModel):
             ),
         ]
         indexes = [
-            models.Index(fields=["-updated"]),
-            models.Index(fields=["updated"]),
+            models.Index(fields=["-listened"]),
+            models.Index(fields=["listened"]),
         ]

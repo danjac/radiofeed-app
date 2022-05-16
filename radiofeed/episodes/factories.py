@@ -35,7 +35,7 @@ class BookmarkFactory(DjangoModelFactory):
 class AudioLogFactory(DjangoModelFactory):
     episode = SubFactory(EpisodeFactory)
     user = SubFactory(UserFactory)
-    updated = LazyFunction(timezone.now)
+    listened = LazyFunction(timezone.now)
     current_time = 1000
 
     class Meta:

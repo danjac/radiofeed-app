@@ -123,25 +123,25 @@ class TestEpisodeManager:
         assert not episode.listened
 
     def test_with_current_time_if_played(self, user):
-        log = AudioLogFactory(user=user, current_time=20, updated=timezone.now())
+        log = AudioLogFactory(user=user, current_time=20, listened=timezone.now())
         episode = Episode.objects.with_current_time(user).first()
 
         assert episode.current_time == 20
         assert not episode.completed
-        assert episode.listened == log.updated
+        assert episode.listened == log.listened
 
     def test_with_current_time_if_completed(self, user):
         log = AudioLogFactory(
             user=user,
             current_time=20,
             completed=timezone.now(),
-            updated=timezone.now(),
+            listened=timezone.now(),
         )
         episode = Episode.objects.with_current_time(user).first()
 
         assert episode.current_time == 20
         assert episode.completed
-        assert episode.listened == log.updated
+        assert episode.listened == log.listened
 
     def test_search(self, db):
         EpisodeFactory(title="testing")
@@ -252,7 +252,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=50,
-            updated=timezone.now(),
+            listened=timezone.now(),
             completed=timezone.now(),
             episode=episode,
         )
@@ -264,7 +264,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=50,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         assert not Episode.objects.with_current_time(user).first().is_completed
@@ -273,7 +273,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=50,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         assert not Episode.objects.with_current_time(user).first().is_completed
@@ -282,7 +282,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=100,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         assert Episode.objects.with_current_time(user).first().is_completed
@@ -291,7 +291,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=50,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         with pytest.raises(AssertionError):
@@ -301,7 +301,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=50,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         assert Episode.objects.with_current_time(user).first().pc_complete == 50
@@ -310,7 +310,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=0,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         assert Episode.objects.with_current_time(user).first().pc_complete == 0
@@ -319,7 +319,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=0,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=EpisodeFactory(duration=""),
         )
         assert Episode.objects.with_current_time(user).first().pc_complete == 0
@@ -328,7 +328,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=120,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         assert Episode.objects.with_current_time(user).first().pc_complete == 100
@@ -338,7 +338,7 @@ class TestEpisodeModel:
         AudioLogFactory(
             user=user,
             current_time=50,
-            updated=now,
+            listened=now,
             completed=now,
             episode=episode,
         )
@@ -350,7 +350,7 @@ class TestEpisodeModel:
     def test_pc_complete_anonymous(self, anonymous_user, episode):
         AudioLogFactory(
             current_time=50,
-            updated=timezone.now(),
+            listened=timezone.now(),
             episode=episode,
         )
         assert (

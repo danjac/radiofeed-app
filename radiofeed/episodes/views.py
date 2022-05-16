@@ -117,7 +117,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         user=request.user,
         defaults={
             "completed": None,
-            "updated": timezone.now(),
+            "listened": timezone.now(),
         },
     )
 
@@ -171,7 +171,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
             AudioLog.objects.filter(episode=episode_id, user=request.user).update(
                 current_time=int(request.POST["current_time"]),
                 completed=now if "completed" in request.POST else None,
-                updated=now,
+                listened=now,
             )
 
         except (KeyError, ValueError):
@@ -191,9 +191,9 @@ def history(request: HttpRequest) -> HttpResponse:
     )
 
     if request.search:
-        logs = logs.search(request.search.value).order_by("-rank", "-updated")
+        logs = logs.search(request.search.value).order_by("-rank", "-listened")
     else:
-        logs = logs.order_by("-updated" if newest_first else "updated")
+        logs = logs.order_by("-listened" if newest_first else "listened")
 
     return pagination_response(
         request,
