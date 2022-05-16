@@ -46,15 +46,21 @@ document.addEventListener("alpine:init", () => {
                 if ("mediaSession" in navigator) {
                     navigator.mediaSession.metadata = this.getMediaMetadata();
                 }
-
+            },
+            destroy() {
+                this.clearTimer();
+            },
+            startTimer() {
                 this.timer = setInterval(() => {
                     if (this.isPlaying) {
                         this.sendTimeUpdate();
                     }
                 }, 5000);
             },
-            destroy() {
-                clearInterval(this.timer);
+            clearTimer() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
             },
             formatCounter(value) {
                 if (isNaN(value) || value < 0) return "00:00:00";
@@ -162,19 +168,22 @@ document.addEventListener("alpine:init", () => {
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.saveSettings();
+                this.startTimer();
             },
             paused() {
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveSettings();
+                this.clearTimer();
             },
             ended() {
                 this.currentTime = 0;
                 this.isPlaying = false;
                 this.isPaused = true;
-                this.sendTimeUpdate(true);
+                this.clearTimer();
+                this.sendTimeUpdate();
             },
-            sendTimeUpdate(completed) {
+            sendTimeUpdate() {
                 fetch(this.timeUpdateUrl, {
                     method: "POST",
                     headers: {
@@ -182,7 +191,6 @@ document.addEventListener("alpine:init", () => {
                     },
                     body: new URLSearchParams({
                         current_time: this.currentTime,
-                            ...(completed ? { completed: true } : {}),
                     }),
                 });
             },
