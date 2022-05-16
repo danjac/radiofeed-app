@@ -1,5 +1,5 @@
 <div class="sm:flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-y-3 sm:space-y-0 sm:space-x-3"
-    id="episode-timestamps-{{ epepisode.id }}"
+    id="episode-timestamps-{{ episode.id }}"
     {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     <div class="flex items-center space-x-2 sm:space-x-3">
         {% include "partials/date.html" with value=episode.pub_date title="Release Date" %}
