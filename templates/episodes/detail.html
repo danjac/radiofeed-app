@@ -144,10 +144,25 @@
 
                 <div class="flex flex-col place-content-between h-24 md:h-28">
 
-                    {% with listened=episode.listened %}
-                        {% include "episodes/partials/player_toggle.html" %}
-                        {% include "episodes/partials/actions.html" %}
-                    {% endwith %}
+                    {% include "episodes/partials/player_toggle.html" %}
+
+                    <div class="flex items-center space-x-3 md:space-x-4">
+                        <a download
+                            title="Download {{ episode.get_media_url_ext|upper }} File"
+                            href="{{ episode.media_url }}"
+                            class="link">
+                            {% if user.is_anonymous %}
+                                Download
+                            {% else %}
+                                {% include "icons/download.svg" with css_class="h-5 w-5 md:h-6 md:w-6" %}
+                            {% endif %}
+                        </a>
+
+                        {% if user.is_authenticated %}
+                            {% include "episodes/partials/bookmark_toggle.html" %}
+                            {% include "episodes/partials/audio_log_toggle.html" with listened=episode.listened %}
+                        {% endif %}
+                    </div>
 
                     {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
 
