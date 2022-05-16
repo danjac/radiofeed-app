@@ -6,14 +6,6 @@
         {% if hx_oob %}hx-swap-oob="true"
         {% endif %}>
         {% if listened and not is_playing %}
-            {% if not completed %}
-                <button title="Mark Complete"
-                    class="link"
-                    hx-post="{% url 'episodes:mark_complete' episode.id %}">
-                    {% include "icons/check.svg" with css_class=ICON_CSS %}
-                </button>
-            {% endif %}
-
             <button title="Remove from History"
                 class="link"
                 hx-confirm="Are you sure you want to remove this episode from your History?"

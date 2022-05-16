@@ -5,7 +5,7 @@
             player(
                 autoplay={{ start_player|yesno:'true,false' }},
                 mediaUrl='{{ episode.media_url }}',
-                currentTime={% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
+                currentTime={{ current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
             ){# fmt:on #}"

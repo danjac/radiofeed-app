@@ -27,12 +27,10 @@ from radiofeed.users.models import User
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet:
-
-        """Adds `completed`, `current_time` and `listened` annotations."""
+        """Adds `current_time` and `listened` annotations."""
 
         if user.is_anonymous:
             return self.annotate(
-                completed=models.Value(None, output_field=models.DateTimeField()),
                 current_time=models.Value(0, output_field=models.IntegerField()),
                 listened=models.Value(None, output_field=models.DateTimeField()),
             )
@@ -40,7 +38,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         logs = AudioLog.objects.filter(user=user, episode=models.OuterRef("pk"))
 
         return self.annotate(
-            completed=models.Subquery(logs.values("completed")),
             current_time=models.Subquery(logs.values("current_time")),
             listened=models.Subquery(logs.values("listened")),
         )
@@ -192,14 +189,6 @@ class Episode(models.Model):
         return strip_html(self.description)
 
     @cached_property
-    def current_time(self) -> int | None:
-        raise AssertionError("use with QuerySet method 'with_current_time'")
-
-    @cached_property
-    def completed(self) -> datetime | None:
-        raise AssertionError("use with QuerySet method 'with_current_time'")
-
-    @cached_property
     def duration_in_seconds(self) -> int:
         """Returns total number of seconds given string in [h:][m:]s format."""
 
@@ -215,32 +204,6 @@ class Episode(models.Model):
             )
         except ValueError:
             return 0
-
-    @cached_property
-    def pc_complete(self) -> int:
-        """Use with the `with_current_time` QuerySet method"""
-
-        # if marked complete just assume 100% done
-        if self.completed:
-            return 100
-
-        try:
-            return min(round((self.current_time / self.duration_in_seconds) * 100), 100)
-        except (TypeError, ZeroDivisionError):
-            return 0
-
-    @cached_property
-    def time_remaining(self) -> int:
-        return (
-            self.duration_in_seconds - (self.current_time or 0)
-            if self.duration_in_seconds
-            else 0
-        )
-
-    @cached_property
-    def is_completed(self) -> bool:
-        """Use with the `with_current_time` QuerySet method"""
-        return self.pc_complete > 99
 
     def is_explicit(self) -> bool:
         return self.explicit or self.podcast.explicit
@@ -347,7 +310,6 @@ class AudioLog(TimeStampedModel):
     episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
     listened: datetime = models.DateTimeField()
-    completed: datetime = models.DateTimeField(null=True, blank=True)
     current_time: int = models.IntegerField(default=0)
 
     objects = AudioLogManager()

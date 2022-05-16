@@ -116,7 +116,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         episode=episode,
         user=request.user,
         defaults={
-            "completed": None,
             "listened": timezone.now(),
         },
     )
@@ -131,7 +130,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             "is_playing": True,
             "start_player": True,
             "current_time": log.current_time,
-            "completed": log.completed,
         },
     )
 
@@ -143,15 +141,12 @@ def close_player(request: HttpRequest) -> HttpResponse:
     if episode_id := request.player.pop():
         episode = get_episode_or_404(request, episode_id)
 
-        log = AudioLog.objects.filter(user=request.user, episode=episode).first()
-
         return TemplateResponse(
             request,
             "episodes/partials/player.html",
             {
                 "episode": episode,
                 "is_playing": False,
-                "completed": log.completed if log else None,
             },
         )
 
@@ -166,12 +161,10 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.get():
         try:
-            now = timezone.now()
 
             AudioLog.objects.filter(episode=episode_id, user=request.user).update(
                 current_time=int(request.POST["current_time"]),
-                completed=now if "completed" in request.POST else None,
-                listened=now,
+                listened=timezone.now(),
             )
 
         except (KeyError, ValueError):
@@ -203,33 +196,6 @@ def history(request: HttpRequest) -> HttpResponse:
         {
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
-        },
-    )
-
-
-@require_http_methods(["POST"])
-@ajax_login_required
-def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
-
-    episode = get_episode_or_404(request, episode_id)
-
-    now = timezone.now()
-
-    if not request.player.has(episode.id):
-
-        AudioLog.objects.filter(user=request.user, episode=episode).update(
-            completed=now, current_time=0
-        )
-
-        messages.success(request, "Episode marked complete")
-
-    return TemplateResponse(
-        request,
-        "episodes/partials/audio_log_toggle.html",
-        {
-            "episode": episode,
-            "completed": now,
-            "listened": True,
         },
     )
 

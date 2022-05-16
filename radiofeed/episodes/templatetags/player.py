@@ -23,7 +23,6 @@ def audio_player(context: dict) -> dict:
         return {
             "request": request,
             "episode": log.episode,
-            "completed": log.completed,
             "current_time": log.current_time,
             "is_playing": True,
         }

@@ -30,11 +30,6 @@ urlpatterns = [
     ),
     path("history/", views.history, name="history"),
     path(
-        "history/<int:episode_id>/complete/",
-        views.mark_complete,
-        name="mark_complete",
-    ),
-    path(
         "history/<int:episode_id>/remove/",
         views.remove_audio_log,
         name="remove_audio_log",

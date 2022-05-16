@@ -183,10 +183,8 @@ class TestClosePlayer:
         response = client.post(self.url)
         assert_ok(response)
 
-        # do not mark complete
         log.refresh_from_db()
 
-        assert not log.completed
         assert log.current_time == 2000
 
         assert_not_playing(client, player_episode)
@@ -209,21 +207,7 @@ class TestPlayerTimeUpdate:
 
         log.refresh_from_db()
 
-        assert not log.completed
         assert log.current_time == 1030
-
-    def test_complete(self, client, auth_user, log):
-
-        response = client.post(
-            self.url,
-            {"current_time": "0", "completed": "true"},
-        )
-        assert_no_content(response)
-
-        log.refresh_from_db()
-
-        assert log.completed
-        assert log.current_time == 0
 
     def test_player_not_running(self, client, auth_user, episode):
 
@@ -355,36 +339,3 @@ class TestRemoveAudioLog:
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
-
-
-class TestMarkComplete:
-    def test_mark_complete(self, client, auth_user, episode):
-
-        log = AudioLogFactory(
-            user=auth_user,
-            episode=episode,
-            completed=None,
-            current_time=600,
-        )
-
-        assert_ok(client.post(reverse("episodes:mark_complete", args=[episode.id])))
-
-        log.refresh_from_db()
-
-        assert log.completed
-        assert log.current_time == 0
-
-    def test_is_playing(self, client, auth_user, player_episode):
-        """Do not remove log if episode is currently playing"""
-        log = AudioLogFactory(
-            user=auth_user,
-            episode=player_episode,
-            completed=None,
-            current_time=600,
-        )
-
-        assert_ok(client.post(reverse("episodes:mark_complete", args=[log.episode.id])))
-
-        log.refresh_from_db()
-        assert not log.completed
-        assert log.current_time == 600

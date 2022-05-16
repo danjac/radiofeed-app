@@ -130,8 +130,6 @@ def user_stats(request: HttpRequest) -> HttpResponse:
         {
             "stats": {
                 "listened": logs.count(),
-                "in_progress": logs.filter(completed__isnull=True).count(),
-                "completed": logs.filter(completed__isnull=False).count(),
                 "subscribed": Subscription.objects.filter(user=request.user).count(),
                 "bookmarks": Bookmark.objects.filter(user=request.user).count(),
             },
