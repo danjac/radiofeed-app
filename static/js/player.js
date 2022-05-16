@@ -232,6 +232,7 @@ document.addEventListener("alpine:init", () => {
             clearTimer() {
                 if (this.timer) {
                     clearInterval(this.timer);
+                    this.timer = null;
                 }
             },
             formatCounter(value) {
