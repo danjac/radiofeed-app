@@ -165,10 +165,8 @@ document.addEventListener("alpine:init", () => {
                 this.clearTimer();
             },
             ended() {
+                this.paused();
                 this.currentTime = 0;
-                this.isPlaying = false;
-                this.isPaused = true;
-                this.clearTimer();
                 this.sendTimeUpdate();
             },
             sendTimeUpdate() {
