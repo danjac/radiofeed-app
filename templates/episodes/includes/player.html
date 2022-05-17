@@ -15,12 +15,12 @@
                 <audio x-ref="audio"
                     preload="metadata"
                     :src="mediaSrc"
-                    @ended="ended"
-                    @error="error"
                     @loadedmetadata="loaded"
-                    @pause="paused"
-                    @play="resumed"
+                    @pause="pause"
+                    @play="play"
+                    @ended="ended"
                     @timeupdate="timeUpdate"
+                    @error="error"
                     @waiting="buffering"
                     @stalled="buffering"
                     @suspend="buffering">
@@ -98,12 +98,21 @@
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                     </div>
                                     <div class="text-xs md:text-sm text-center"
+                                        x-show="!playbackError"
+                                        x-cloak
                                         :class="{'animate-pulse text-gray-300': !isPlaying}">
                                         <span x-text="counters.current"
                                             title="Current Time"></span> /
                                         <span x-text="counters.total"
                                             title="Time Remaining"></span>
                                     </div>
+                                    <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
+                                        x-show="playbackError"
+                                        x-cloak>
+                                        Error: <span x-text="playbackError ? playbackError.message : ''"
+                                            title="Error"></span>
+                                    </div>
+
                                 </div>
 
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" ICON_CSS="h-6 w-6 md:h-7 md:w-7" %}

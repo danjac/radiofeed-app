@@ -19,8 +19,9 @@ document.addEventListener("alpine:init", () => {
             isLoaded: false,
             isPaused: false,
             isPlaying: false,
-            playbackRate: 1.0,
             timer: null,
+            playbackError: null,
+            playbackRate: 1.0,
             counters: {
                 current: "00:00:00",
                 total: "00:00:00",
@@ -126,6 +127,7 @@ document.addEventListener("alpine:init", () => {
 
                 const { playbackRate, autoplay } = this.loadState();
 
+                this.playbackError = null;
                 this.playbackRate = playbackRate || 1.0;
                 this.autoplay = autoplay || this.autoplay;
 
@@ -142,23 +144,19 @@ document.addEventListener("alpine:init", () => {
                 this.duration = this.$refs.audio.duration;
                 this.isLoaded = true;
             },
-            error() {
-                this.isPlaying = false;
-            },
             timeUpdate() {
                 this.isPlaying = true;
+                this.playbackError = null;
                 this.currentTime = Math.floor(this.$refs.audio.currentTime);
             },
-            buffering() {
-                this.isPlaying = false;
-            },
-            resumed() {
+            play() {
                 this.isPaused = false;
                 this.isPlaying = true;
+                this.playbackError = null;
                 this.saveState();
                 this.startTimer();
             },
-            paused() {
+            pause() {
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveState();
@@ -166,8 +164,31 @@ document.addEventListener("alpine:init", () => {
             },
             ended() {
                 this.currentTime = 0;
-                this.paused();
+                this.pause();
                 this.sendTimeUpdate();
+            },
+            buffering() {
+                this.isPlaying = false;
+            },
+            error(event) {
+                this.isPlaying = false;
+                this.playbackError = event.target.error;
+                console.error(this.playbackError);
+            },
+            startTimer() {
+                if (!this.timer) {
+                    this.timer = setInterval(() => {
+                        if (this.isPlaying) {
+                            this.sendTimeUpdate();
+                        }
+                    }, 5000);
+                }
+            },
+            clearTimer() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
             },
             sendTimeUpdate() {
                 fetch(this.timeUpdateUrl, {
@@ -217,21 +238,6 @@ document.addEventListener("alpine:init", () => {
                         autoplay: this.isPlaying,
                     })
                 );
-            },
-            startTimer() {
-                if (!this.timer) {
-                    this.timer = setInterval(() => {
-                        if (this.isPlaying) {
-                            this.sendTimeUpdate();
-                        }
-                    }, 5000);
-                }
-            },
-            clearTimer() {
-                if (this.timer) {
-                    clearInterval(this.timer);
-                    this.timer = null;
-                }
             },
             formatCounter(value) {
                 if (isNaN(value) || value < 0) return "00:00:00";
