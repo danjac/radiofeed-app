@@ -25,11 +25,11 @@ class TestOpmlUploadForm:
                 opml_parser.Outline(rss=None),
             ],
         )
-        assert form.parse_opml_feeds() == ["https://example.com/test.xml"]
+        assert list(form.parse_opml_feeds()) == ["https://example.com/test.xml"]
 
     def test_parse_opml_feed_error(self, mocker, form):
         mocker.patch(
             "radiofeed.users.forms.opml_parser.parse_opml",
             side_effect=opml_parser.OpmlParserError,
         )
-        assert form.parse_opml_feeds() == []
+        assert list(form.parse_opml_feeds()) == []
