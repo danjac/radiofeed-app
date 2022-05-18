@@ -356,7 +356,7 @@ class FeedParser:
 
         return min(
             timedelta(seconds=seconds + (seconds * 0.1)),
-            timedelta(hours=24),
+            timedelta(hours=6),
         )
 
 
