@@ -87,7 +87,7 @@ def import_podcast_feeds(
 
         if feeds := form.parse_opml_feeds():
 
-            podcasts = Podcast.objects.filter(rss__in=set(feeds)).exclude(
+            podcasts = Podcast.objects.filter(rss__in=feeds).exclude(
                 subscription__user=request.user
             )
             if podcasts.exists():
