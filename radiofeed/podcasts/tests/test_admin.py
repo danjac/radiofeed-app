@@ -179,6 +179,21 @@ class TestPubDateFilter:
         assert qs.count() == 1
         assert recent in qs
 
+    def test_scheduled(self, db, podcast_admin, req):
+        now = timezone.now()
+        PodcastFactory(
+            parsed=now - timedelta(minutes=5), refresh_interval=timedelta(hours=1)
+        )
+        scheduled = PodcastFactory(
+            parsed=now - timedelta(hours=3), refresh_interval=timedelta(hours=1)
+        )
+        new = PodcastFactory(parsed=None, refresh_interval=timedelta(hours=1))
+        f = PubDateFilter(req, {"pub_date": "scheduled"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 2
+        assert scheduled in qs
+        assert new in qs
+
     def test_sporadic(self, db, podcast_admin, req):
         now = timezone.now()
         sporadic = PodcastFactory(pub_date=now - timedelta(days=30))

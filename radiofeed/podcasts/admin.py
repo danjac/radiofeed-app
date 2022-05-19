@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 from django.contrib import admin, messages
-from django.db.models import Count, QuerySet
+from django.db.models import Count, F, Q, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
 from django.utils import timezone
@@ -85,7 +85,8 @@ class PubDateFilter(admin.SimpleListFilter):
             ("yes", "With pub date"),
             ("no", "With no pub date"),
             ("new", "Just added"),
-            ("recent", "Recent (> 14 days)"),
+            ("scheduled", "Scheduled"),
+            ("frequent", "Frequent (> 14 days)"),
             ("sporadic", "Sporadic (< 14 days)"),
         )
 
@@ -98,6 +99,13 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset.filter(pub_date__isnull=True)
             case "new":
                 return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
+            case "scheduled":
+                return queryset.filter(
+                    Q(
+                        parsed__isnull=True,
+                    )
+                    | Q(parsed__lt=timezone.now() - F("refresh_interval")),
+                )
             case "recent":
                 return queryset.filter(
                     pub_date__isnull=False, pub_date__gt=now - self.interval
