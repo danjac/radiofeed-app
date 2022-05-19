@@ -99,14 +99,7 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset.filter(pub_date__isnull=True)
             case "new":
                 return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
-            case "scheduled":
-                return queryset.filter(
-                    Q(
-                        parsed__isnull=True,
-                    )
-                    | Q(parsed__lt=timezone.now() - F("refresh_interval")),
-                )
-            case "recent":
+            case "frequent":
                 return queryset.filter(
                     pub_date__isnull=False, pub_date__gt=now - self.interval
                 )
@@ -116,6 +109,28 @@ class PubDateFilter(admin.SimpleListFilter):
                 )
             case _:
                 return queryset
+
+
+class ScheduledFilter(admin.SimpleListFilter):
+    title = "Scheduled"
+    parameter_name = "scheduled"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (("yes", "Scheduled"),)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        return (
+            queryset.filter(
+                Q(
+                    parsed__isnull=True,
+                )
+                | Q(parsed__lt=timezone.now() - F("refresh_interval")),
+            )
+            if self.value() == "yes"
+            else queryset
+        )
 
 
 class PromotedFilter(admin.SimpleListFilter):

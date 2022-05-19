@@ -13,6 +13,7 @@ from radiofeed.podcasts.admin import (
     PromotedFilter,
     PubDateFilter,
     ResultFilter,
+    ScheduledFilter,
     SubscribedFilter,
 )
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
@@ -170,29 +171,14 @@ class TestPubDateFilter:
         assert qs.count() == 1
         assert new in qs
 
-    def test_recent(self, db, podcast_admin, req):
+    def test_frequent(self, db, podcast_admin, req):
         now = timezone.now()
         PodcastFactory(pub_date=now - timedelta(days=30))
-        recent = PodcastFactory(pub_date=now - timedelta(days=3))
-        f = PubDateFilter(req, {"pub_date": "recent"}, Podcast, podcast_admin)
+        frequent = PodcastFactory(pub_date=now - timedelta(days=3))
+        f = PubDateFilter(req, {"pub_date": "frequent"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert recent in qs
-
-    def test_scheduled(self, db, podcast_admin, req):
-        now = timezone.now()
-        PodcastFactory(
-            parsed=now - timedelta(minutes=5), refresh_interval=timedelta(hours=1)
-        )
-        scheduled = PodcastFactory(
-            parsed=now - timedelta(hours=3), refresh_interval=timedelta(hours=1)
-        )
-        new = PodcastFactory(parsed=None, refresh_interval=timedelta(hours=1))
-        f = PubDateFilter(req, {"pub_date": "scheduled"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 2
-        assert scheduled in qs
-        assert new in qs
+        assert frequent in qs
 
     def test_sporadic(self, db, podcast_admin, req):
         now = timezone.now()
@@ -217,6 +203,36 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestScheduledFilter:
+    def test_scheduled(self, db, podcast_admin, req):
+        now = timezone.now()
+        PodcastFactory(
+            parsed=now - timedelta(minutes=5), refresh_interval=timedelta(hours=1)
+        )
+        scheduled = PodcastFactory(
+            parsed=now - timedelta(hours=3), refresh_interval=timedelta(hours=1)
+        )
+        new = PodcastFactory(parsed=None, refresh_interval=timedelta(hours=1))
+        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 2
+        assert scheduled in qs
+        assert new in qs
+
+    def test_all(self, db, podcast_admin, req):
+        now = timezone.now()
+        PodcastFactory(
+            parsed=now - timedelta(minutes=5), refresh_interval=timedelta(hours=1)
+        )
+        PodcastFactory(
+            parsed=now - timedelta(hours=3), refresh_interval=timedelta(hours=1)
+        )
+        PodcastFactory(parsed=None, refresh_interval=timedelta(hours=1))
+        f = ScheduledFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
 
 
 class TestActiveFilter:
