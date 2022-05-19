@@ -41,7 +41,7 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/12"))
-def schedule_recent_feeds() -> None:
+def schedule_frequent_feeds() -> None:
     """Schedules podcast feeds for update
 
     Runs every 12 minutes
