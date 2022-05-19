@@ -3,9 +3,8 @@ from __future__ import annotations
 from datetime import timedelta
 
 from django.contrib import admin, messages
-from django.db.models import Count, F, Q, QuerySet
+from django.db.models import Count, QuerySet
 from django.http import HttpRequest
-from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
@@ -110,28 +109,6 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class ScheduledFilter(admin.SimpleListFilter):
-    title = "Scheduled"
-    parameter_name = "scheduled"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Scheduled"),)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        return (
-            queryset.filter(
-                Q(
-                    parsed__isnull=True,
-                )
-                | Q(parsed__lt=timezone.now() - F("refresh_interval")),
-            )
-            if self.value() == "yes"
-            else queryset
-        )
-
-
 class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
@@ -170,7 +147,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PromotedFilter,
         PubDateFilter,
         ResultFilter,
-        ScheduledFilter,
     )
 
     list_display = (
@@ -188,8 +164,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     readonly_fields = (
         "parsed",
-        "refresh_interval",
-        "next_scheduled",
         "pub_date",
         "modified",
         "etag",
@@ -225,12 +199,3 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
-
-    def next_scheduled(self, obj: models.Podcast) -> str:
-
-        if obj.active:
-            now = timezone.now()
-            scheduled = now if not obj.parsed else obj.parsed + obj.refresh_interval
-            return timeuntil(scheduled) if scheduled > now else "Pending"
-
-        return "-"
