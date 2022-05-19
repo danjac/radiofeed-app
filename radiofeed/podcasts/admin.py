@@ -85,7 +85,6 @@ class PubDateFilter(admin.SimpleListFilter):
             ("yes", "With pub date"),
             ("no", "With no pub date"),
             ("new", "Just added"),
-            ("scheduled", "Scheduled"),
             ("frequent", "Frequent (> 14 days)"),
             ("sporadic", "Sporadic (< 14 days)"),
         )
