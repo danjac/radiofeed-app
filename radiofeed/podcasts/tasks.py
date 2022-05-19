@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import logging
 
-from django.db.models import F, Q
+from datetime import timedelta
+
+from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
@@ -39,27 +41,34 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/12"))
-def schedule_podcast_feeds() -> None:
+def schedule_recent_feeds() -> None:
     """Schedules podcast feeds for update
 
     Runs every 12 minutes
     """
 
     for podcast_id in (
-        Podcast.objects.filter(
-            Q(
-                parsed__isnull=True,
-            )
-            | Q(parsed__lt=timezone.now() - F("refresh_interval")),
-            active=True,
+        get_scheduled_podcasts()
+        .filter(
+            Q(pub_date__isnull=True)
+            | Q(pub_date__gt=timezone.now() - timedelta(days=14))
         )
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-            F("created").desc(),
-        )
-        .values_list("pk", flat=True)
-        .distinct()[:300]
+        .values_list("pk", flat=True)[:300]
+    ):
+        parse_podcast_feed(podcast_id)()
+
+
+@db_periodic_task(crontab(minute="15,45"))
+def schedule_sporadic_feeds() -> None:
+    """Schedules podcast feeds for update
+
+    Runs every 15 and 45 minutes past the hour
+    """
+
+    for podcast_id in (
+        get_scheduled_podcasts()
+        .filter(pub_date__lt=timezone.now() - timedelta(days=14))
+        .values_list("pk", flat=True)[:300]
     ):
         parse_podcast_feed(podcast_id)()
 
@@ -75,3 +84,17 @@ def send_recommendations_email(user_id: int) -> None:
         emails.send_recommendations_email(User.objects.get(pk=user_id))
     except User.DoesNotExist:
         pass
+
+
+def get_scheduled_podcasts() -> QuerySet:
+    return Podcast.objects.filter(
+        Q(
+            parsed__isnull=True,
+        )
+        | Q(parsed__lt=timezone.now() - F("refresh_interval")),
+        active=True,
+    ).order_by(
+        F("parsed").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
+        F("created").desc(),
+    )
