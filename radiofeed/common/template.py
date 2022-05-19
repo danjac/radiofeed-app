@@ -18,7 +18,7 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from radiofeed.common import cleaners
+from radiofeed.common import html
 
 register = template.Library()
 
@@ -116,7 +116,7 @@ def signup_url(url: str) -> str:
 
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
-    return {"content": mark_safe(cleaners.markup(value))}  # nosec
+    return {"content": mark_safe(html.markup(value))}  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)

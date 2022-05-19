@@ -15,8 +15,8 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
-from radiofeed.common.cleaners import strip_html
 from radiofeed.common.db import FastCountMixin, SearchMixin
+from radiofeed.common.html import strip_html
 from radiofeed.users.models import User
 
 
