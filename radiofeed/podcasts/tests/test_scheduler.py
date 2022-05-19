@@ -17,8 +17,11 @@ class TestScheduler:
         # not subscribed or promoted, ignore
         PodcastFactory()
 
-        # not scheduled
+        # not scheduled, ignore
         SubscriptionFactory(podcast__parsed=now - timedelta(minutes=30))
+
+        # not recent, ignore
+        SubscriptionFactory(podcast__pub_date=now - timedelta(days=15))
 
         podcasts = scheduler.get_primary_podcasts()
         assert podcasts.count() == 2
@@ -59,14 +62,8 @@ class TestScheduler:
 
         podcast = PodcastFactory(pub_date=now - timedelta(days=15))
 
-        # no pub date, ignroe
+        # no pub date, ignore
         PodcastFactory(pub_date=None)
-
-        # subscribed, ignore
-        SubscriptionFactory(podcast__pub_date=now - timedelta(days=15)).podcast
-
-        # promoted, ignore
-        PodcastFactory(promoted=True, pub_date=now - timedelta(days=15))
 
         # recent, ignore
         PodcastFactory(pub_date=now - timedelta(days=3))

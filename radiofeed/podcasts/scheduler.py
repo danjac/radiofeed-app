@@ -9,41 +9,48 @@ from radiofeed.podcasts.models import Podcast
 
 
 def get_primary_podcasts() -> QuerySet:
-    """Return any subscribed or promoted podcasts"""
-    return get_scheduled_podcasts().filter(Q(promoted=True) | Q(subscribed=True))
+    """Return any recent subscribed or promoted podcasts"""
+    return (
+        get_recent_podcasts()
+        .with_subscribed()
+        .filter(Q(promoted=True) | Q(subscribed=True))
+    )
 
 
 def get_frequent_podcasts() -> QuerySet:
     """Return any non-primary podcasts with pub date newer than 2 weeks"""
-    return get_scheduled_podcasts().filter(
-        Q(pub_date__isnull=True) | Q(pub_date__gt=timezone.now() - timedelta(days=14)),
-        promoted=False,
-        subscribed=False,
+    return (
+        get_recent_podcasts()
+        .with_subscribed()
+        .filter(
+            promoted=False,
+            subscribed=False,
+        )
     )
 
 
 def get_sporadic_podcasts() -> QuerySet:
-    """Return any non-primary podcasts with pub date older than 2 weeks"""
+    """Return any podcasts with pub date older than 2 weeks"""
     return get_scheduled_podcasts().filter(
         pub_date__lt=timezone.now() - timedelta(days=14),
-        promoted=False,
-        subscribed=False,
+    )
+
+
+def get_recent_podcasts() -> QuerySet:
+    return get_scheduled_podcasts().filter(
+        Q(pub_date__isnull=True) | Q(pub_date__gt=timezone.now() - timedelta(days=14)),
     )
 
 
 def get_scheduled_podcasts() -> QuerySet:
-    return (
-        Podcast.objects.filter(
-            Q(
-                parsed__isnull=True,
-            )
-            | Q(parsed__lt=timezone.now() - F("refresh_interval")),
-            active=True,
+    return Podcast.objects.filter(
+        Q(
+            parsed__isnull=True,
         )
-        .with_subscribed()
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-            F("created").desc(),
-        )
+        | Q(parsed__lt=timezone.now() - F("refresh_interval")),
+        active=True,
+    ).order_by(
+        F("parsed").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
+        F("created").desc(),
     )
