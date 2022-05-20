@@ -162,10 +162,6 @@ document.addEventListener("alpine:init", () => {
                 this.saveState();
                 this.clearTimer();
             },
-            ended() {
-                this.pause();
-                this.sendTimeUpdate();
-            },
             buffering() {
                 this.isPlaying = false;
             },
