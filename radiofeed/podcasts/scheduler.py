@@ -47,7 +47,7 @@ def get_scheduled_podcasts() -> QuerySet:
         Q(
             parsed__isnull=True,
         )
-        | Q(parsed__lt=timezone.now() - timedelta(hours=3)),
+        | Q(parsed__lt=timezone.now() - timedelta(hours=1)),
         active=True,
     ).order_by(
         F("parsed").asc(nulls_first=True),

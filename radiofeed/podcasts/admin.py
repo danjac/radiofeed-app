@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 from django.contrib import admin, messages
-from django.db.models import Count, Q, QuerySet
+from django.db.models import Count, QuerySet
 from django.http import HttpRequest
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
@@ -139,26 +139,6 @@ class SubscribedFilter(admin.SimpleListFilter):
         )
 
 
-class ScheduledFilter(admin.SimpleListFilter):
-    title = "Scheduled"
-    parameter_name = "scheduled"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Scheduled"),)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        return (
-            queryset.filter(
-                Q(parsed__isnull=True)
-                | Q(parsed__lt=timezone.now() - timedelta(hours=3))
-            )
-            if self.value() == "yes"
-            else queryset
-        )
-
-
 @admin.register(models.Podcast)
 class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
@@ -166,7 +146,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         SubscribedFilter,
         PromotedFilter,
         PubDateFilter,
-        ScheduledFilter,
         ResultFilter,
     )
 
