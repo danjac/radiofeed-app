@@ -163,7 +163,6 @@ document.addEventListener("alpine:init", () => {
                 this.clearTimer();
             },
             ended() {
-                this.currentTime = 0;
                 this.pause();
                 this.sendTimeUpdate();
             },
