@@ -107,9 +107,7 @@ warn_unused_ignores = false
 warn_redundant_casts = false
 warn_unused_configs = false
 warn_unreachable = true
-
-[[tool.mypy.plugins]]
-django_settings_module = "radiofeed.settings.test"
+plugins = ["mypy_django_plugin.main"]
 
 [[tool.mypy.overrides]]
 module="*.tests.*"
@@ -118,3 +116,6 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module="*.migrations.*"
 ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "radiofeed.settings.test"
