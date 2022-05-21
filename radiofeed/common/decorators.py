@@ -18,6 +18,7 @@ def ajax_login_required(view: Callable) -> Callable:
 
     If an HTMX request returns a client redirect to login page
     if user is not logged in, otherwise raises a 403.
+
     """
 
     @functools.wraps(view)
