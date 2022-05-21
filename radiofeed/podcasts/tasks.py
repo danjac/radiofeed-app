@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 
+from django.db.models import F
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
@@ -43,7 +44,17 @@ def schedule_podcast_feeds() -> None:
     Runs every 6 minutes
     """
 
-    for podcast_id in Podcast.objects.scheduled().values_list("pk", flat=True)[:300]:
+    for podcast_id in (
+        Podcast.objects.scheduled()
+        .filter(active=True)
+        .order_by(
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+            F("created").desc(),
+        )
+        .values_list("pk", flat=True)
+        .distinct()[:300]
+    ):
         parse_podcast_feed(podcast_id)()
 
 

@@ -69,43 +69,35 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
     def scheduled(
         self,
-        frequent_threshold: timedelta = timedelta(days=14),
-        frequent_period: timedelta = timedelta(hours=1),
-        sporadic_period: timedelta = timedelta(hours=3),
     ) -> models.QuerySet:
         """
         Returns podcasts scheduled for feed update.
 
         New podcasts (not yet polled): always run
-        Recent (last update < 14 days), subscribed or promoted podcasts: run once an hour
-        Sporadic (last update > 14 days) podcasts: run once every three hours
-
-        Podcasts are ordered based on last parsed first.
+        Subscribed or promoted podcasts: run once an hour
+        Recent (last update < 14 days): run every three hours
+        Sporadic (last update > 14 days) podcasts: run once every 6 hours
         """
         now = timezone.now()
 
-        return (
-            self.with_subscribed()
-            .filter(
-                models.Q(parsed__isnull=True)
-                | models.Q(
-                    models.Q(pub_date__gte=now - frequent_threshold)
-                    | models.Q(subscribed=True)
-                    | models.Q(promoted=True),
-                    parsed__lt=now - frequent_period,
-                )
-                | models.Q(
-                    pub_date__lt=now - frequent_threshold,
-                    parsed__lt=now - sporadic_period,
-                ),
-                active=True,
+        return self.with_subscribed().filter(
+            models.Q(parsed__isnull=True)
+            | models.Q(
+                models.Q(subscribed=True) | models.Q(promoted=True),
+                parsed__lt=now - timedelta(hours=1),
             )
-            .order_by(
-                models.F("parsed").asc(nulls_first=True),
-                models.F("pub_date").desc(nulls_first=True),
-                models.F("created").desc(),
+            | models.Q(
+                subscribed=False,
+                promoted=False,
+                pub_date__gt=now - timedelta(days=14),
+                parsed__lt=now - timedelta(hours=3),
             )
-            .distinct()
+            | models.Q(
+                subscribed=False,
+                promoted=False,
+                pub_date__lt=now - timedelta(days=14),
+                parsed__lt=now - timedelta(hours=6),
+            )
         )
 
 

@@ -51,6 +51,19 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
+class ScheduledFilter(admin.SimpleListFilter):
+    title = "Scheduled"
+    parameter_name = "scheduled"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (("yes", "Scheduled"),)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        return queryset.scheduled() if self.value() == "yes" else queryset
+
+
 class ResultFilter(admin.SimpleListFilter):
     title = "Result"
     parameter_name = "result"
@@ -147,6 +160,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PromotedFilter,
         PubDateFilter,
         ResultFilter,
+        ScheduledFilter,
     )
 
     list_display = (
