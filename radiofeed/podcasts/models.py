@@ -22,7 +22,9 @@ from radiofeed.users.models import User
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term: str, base_similarity: float = 0.2) -> models.QuerySet:
+    def search(
+        self, search_term: str, base_similarity: float = 0.2
+    ) -> models.QuerySet[Category]:
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -60,7 +62,7 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_subscribed(self) -> models.QuerySet:
+    def with_subscribed(self) -> models.QuerySet[Podcast]:
         return self.annotate(
             subscribed=models.Exists(
                 Subscription.objects.filter(podcast=models.OuterRef("pk"))
@@ -238,7 +240,7 @@ class RecommendationQuerySet(models.QuerySet):
         """More efficient quick delete"""
         return self._raw_delete(self.db)
 
-    def for_user(self, user: User) -> models.QuerySet:
+    def for_user(self, user: User) -> models.QuerySet[Recommendation]:
         podcast_ids: set[int] = (
             set(
                 user.bookmark_set.select_related("episode__podcast").values_list(
