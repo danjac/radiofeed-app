@@ -67,9 +67,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
         )
 
-    def scheduled(
-        self,
-    ) -> models.QuerySet:
+    def scheduled(self) -> models.QuerySet:
         """
         Returns podcasts scheduled for feed update.
 
