@@ -37,11 +37,11 @@ def send_recommendations_emails() -> None:
         send_recommendations_email(user_id)()
 
 
-@db_periodic_task(crontab(minute="*/6"))
+@db_periodic_task(crontab(minute="*/12"))
 def schedule_podcast_feeds() -> None:
     """Schedules podcast feeds for update
 
-    Runs every 6 minutes
+    Runs every 12 minutes
     """
 
     for podcast_id in (
