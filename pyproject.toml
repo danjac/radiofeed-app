@@ -107,6 +107,7 @@ warn_unused_ignores = false
 warn_redundant_casts = false
 warn_unused_configs = false
 warn_unreachable = true
+
 plugins = ["mypy_django_plugin.main"]
 
 [[tool.mypy.overrides]]
