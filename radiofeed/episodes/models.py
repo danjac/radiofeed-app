@@ -26,7 +26,7 @@ from radiofeed.users.models import User
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet:
+    def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet[Episode]:
         """Adds `current_time` and `listened` annotations."""
 
         if user.is_anonymous:
@@ -44,7 +44,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
     def recommended(
         self, user: User, since: timedelta = timedelta(days=7)
-    ) -> models.QuerySet:
+    ) -> models.QuerySet[Episode]:
         """Return all episodes for podcasts the user is following,
         minus any the user has already bookmarked or listened to."""
 
