@@ -74,7 +74,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         New podcasts (not yet polled): always run
         Subscribed or promoted podcasts: run once an hour
         Recent (last update < 14 days): run every three hours
-        Sporadic (last update > 14 days) podcasts: run once every 6 hours
+        Sporadic (last update > 14 days): run once every 6 hours
         """
         now = timezone.now()
 
