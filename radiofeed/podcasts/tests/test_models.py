@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
+from django.utils import timezone
 
 from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.factories import (
@@ -96,6 +99,58 @@ class TestPodcastManager:
     def test_with_subscribed_false(self, db):
         PodcastFactory()
         assert not Podcast.objects.with_subscribed().first().subscribed
+
+    def test_scheduled_not_parsed(self, db):
+        PodcastFactory(parsed=None)
+        assert Podcast.objects.scheduled().exists()
+
+    def test_scheduled_not_active(self, db):
+        PodcastFactory(parsed=None, active=False)
+        assert not Podcast.objects.scheduled().exists()
+
+    def test_scheduled_subscribed(self, db):
+        SubscriptionFactory(podcast__parsed=timezone.now() - timedelta(hours=2))
+        assert Podcast.objects.scheduled().exists()
+
+    def test_scheduled_subscribed_recent(self, db):
+        SubscriptionFactory(podcast__parsed=timezone.now() - timedelta(minutes=30))
+        assert not Podcast.objects.scheduled().exists()
+
+    def test_scheduled_promoted(self, db):
+        PodcastFactory(parsed=timezone.now() - timedelta(hours=2))
+        assert Podcast.objects.scheduled().exists()
+
+    def test_scheduled_promoted_recent(self, db):
+        PodcastFactory(parsed=timezone.now() - timedelta(minutes=30))
+        assert not Podcast.objects.scheduled().exists()
+
+    def test_scheduled_frequent(self, db):
+        PodcastFactory(
+            parsed=timezone.now() - timedelta(hours=2),
+            pub_date=timezone.now() - timedelta(days=7),
+        )
+        assert Podcast.objects.scheduled().exists()
+
+    def test_scheduled_frequent_recent(self, db):
+        PodcastFactory(
+            parsed=timezone.now() - timedelta(minutes=30),
+            pub_date=timezone.now() - timedelta(days=7),
+        )
+        assert not Podcast.objects.scheduled().exists()
+
+    def test_scheduled_sporadic(self, db):
+        PodcastFactory(
+            parsed=timezone.now() - timedelta(hours=4),
+            pub_date=timezone.now() - timedelta(days=21),
+        )
+        assert Podcast.objects.scheduled().exists()
+
+    def test_scheduled_sporadic_recent(self, db):
+        PodcastFactory(
+            parsed=timezone.now() - timedelta(hours=2),
+            pub_date=timezone.now() - timedelta(days=21),
+        )
+        assert not Podcast.objects.scheduled().exists()
 
 
 class TestPodcastModel:

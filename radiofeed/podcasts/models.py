@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.conf import settings
@@ -10,6 +10,7 @@ from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -64,6 +65,47 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             subscribed=models.Exists(
                 Subscription.objects.filter(podcast=models.OuterRef("pk"))
             )
+        )
+
+    def scheduled(
+        self,
+        frequent_threshold: timedelta = timedelta(days=14),
+        frequent_period: timedelta = timedelta(hours=1),
+        sporadic_period: timedelta = timedelta(hours=3),
+    ) -> models.QuerySet:
+        """
+        Returns podcasts scheduled for feed update.
+
+        New podcasts (not yet polled): always run
+        Recent (last update < 14 days), subscribed or promoted podcasts: run once an hour
+        Sporadic (last update > 14 days) podcasts: run once every three hours
+
+        Podcasts are ordered based on last parsed first.
+        """
+        now = timezone.now()
+
+        return (
+            self.with_subscribed()
+            .filter(
+                models.Q(parsed__isnull=True)
+                | models.Q(
+                    models.Q(pub_date__gte=now - frequent_threshold)
+                    | models.Q(subscribed=True)
+                    | models.Q(promoted=True),
+                    parsed__lt=now - frequent_period,
+                )
+                | models.Q(
+                    pub_date__lt=now - frequent_threshold,
+                    parsed__lt=now - sporadic_period,
+                ),
+                active=True,
+            )
+            .order_by(
+                models.F("parsed").asc(nulls_first=True),
+                models.F("pub_date").desc(nulls_first=True),
+                models.F("created").desc(),
+            )
+            .distinct()
         )
 
 

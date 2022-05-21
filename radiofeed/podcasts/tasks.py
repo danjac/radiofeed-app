@@ -5,7 +5,8 @@ import logging
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
-from radiofeed.podcasts import emails, recommender, scheduler
+from radiofeed.podcasts import emails, recommender
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
@@ -36,41 +37,13 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_primary_feeds() -> None:
-    """Schedules primary podcast feeds for update
+def schedule_podcast_feeds() -> None:
+    """Schedules podcast feeds for update
 
     Runs every 6 minutes
     """
 
-    for podcast_id in scheduler.get_primary_podcasts().values_list("pk", flat=True)[
-        :300
-    ]:
-        parse_podcast_feed(podcast_id)()
-
-
-@db_periodic_task(crontab(minute="*/12"))
-def schedule_frequent_feeds() -> None:
-    """Schedules podcast feeds for update
-
-    Runs every 12 minutes
-    """
-
-    for podcast_id in scheduler.get_frequent_podcasts().values_list("pk", flat=True)[
-        :300
-    ]:
-        parse_podcast_feed(podcast_id)()
-
-
-@db_periodic_task(crontab(minute="15,45"))
-def schedule_sporadic_feeds() -> None:
-    """Schedules podcast feeds for update
-
-    Runs every 15 and 45 minutes past the hour
-    """
-
-    for podcast_id in scheduler.get_sporadic_podcasts().values_list("pk", flat=True)[
-        :300
-    ]:
+    for podcast_id in Podcast.objects.scheduled().values_list("pk", flat=True)[:300]:
         parse_podcast_feed(podcast_id)()
 
 
