@@ -89,7 +89,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             | models.Q(
                 subscribed=False,
                 promoted=False,
-                pub_date__gt=now - timedelta(days=14),
+                pub_date__gte=now - timedelta(days=14),
                 parsed__lt=now - timedelta(hours=3),
             )
             | models.Q(
