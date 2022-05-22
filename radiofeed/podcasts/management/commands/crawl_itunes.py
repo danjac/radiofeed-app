@@ -1,3 +1,5 @@
+from argparse import ArgumentParser
+
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import itunes
@@ -8,9 +10,17 @@ class Command(BaseCommand):
     Crawls iTunes for new podcasts.
     """
 
-    def handle(self, *args, **kwargs):
-        for feed in itunes.crawl():
+    def add_arguments(self, parser: ArgumentParser) -> None:
+        parser.add_argument("--url", help="iTunes web page", default=None)
+
+    def handle(self, url: str | None = None, *args, **kwargs):
+        for counter, feed in enumerate(
+            itunes.parse_genre(url) if url else itunes.crawl()
+        ):
+
+            message = f"{counter}: {feed.title}"
+
             if feed.podcast:
-                self.stdout.write(feed.title)
+                self.stdout.write(message)
             else:
-                self.stdout.write(self.style.SUCCESS(feed.title))
+                self.stdout.write(self.style.SUCCESS(message))
