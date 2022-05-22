@@ -80,23 +80,37 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         """
         now = timezone.now()
 
-        return self.with_subscribed().filter(
-            models.Q(parsed__isnull=True)
-            | models.Q(
-                models.Q(subscribed=True) | models.Q(promoted=True),
-                parsed__lt=now - timedelta(hours=1),
+        return (
+            self.with_subscribed()
+            .annotate(
+                recent=models.Case(
+                    models.When(
+                        pub_date__gte=now - timedelta(days=14), then=models.Value(True)
+                    ),
+                    default=models.Value(False),
+                ),
+                priority=models.Case(
+                    models.When(
+                        models.Q(subscribed=True) | models.Q(promoted=True),
+                        then=models.Value(True),
+                    ),
+                    default=models.Value(False),
+                ),
             )
-            | models.Q(
-                models.Q(
-                    pub_date__gte=now - timedelta(days=14),
-                    parsed__lt=now - timedelta(hours=3),
+            .filter(
+                models.Q(parsed__isnull=True)
+                | models.Q(
+                    recent=True, priority=True, parsed__lt=now - timedelta(hours=1)
                 )
                 | models.Q(
-                    pub_date__lt=now - timedelta(days=14),
-                    parsed__lt=now - timedelta(hours=6),
-                ),
-                subscribed=False,
-                promoted=False,
+                    recent=False, priority=True, parsed__lt=now - timedelta(hours=3)
+                )
+                | models.Q(
+                    recent=True, priority=False, parsed__lt=now - timedelta(hours=3)
+                )
+                | models.Q(
+                    recent=False, priority=False, parsed__lt=now - timedelta(hours=6)
+                )
             )
         )
 
