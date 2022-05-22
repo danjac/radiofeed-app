@@ -91,8 +91,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         return self.with_subscribed().filter(
             models.Q(parsed__isnull=True)
             | models.Q(priority & recent, parsed__lt=now - timedelta(hours=1))
-            | models.Q(priority & ~recent, parsed__lt=now - timedelta(hours=3))
-            | models.Q(~priority & recent, parsed__lt=now - timedelta(hours=3))
+            | models.Q(priority | recent, parsed__lt=now - timedelta(hours=3))
             | models.Q(~priority & ~recent, parsed__lt=now - timedelta(hours=6))
         )
 
