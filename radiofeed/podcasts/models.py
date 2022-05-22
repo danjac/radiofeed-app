@@ -71,12 +71,17 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
     def scheduled(self) -> models.QuerySet[Podcast]:
         """
-        Returns podcasts scheduled for feed update.
+        Returns podcasts scheduled for feed update:
 
-        New podcasts (not yet polled): always run
-        Subscribed or promoted podcasts: run once an hour
-        Recent (last update < 14 days): run every three hours
-        Sporadic (last update > 14 days): run once every 6 hours
+        Subscribed and/or promoted podcasts:
+            - run once an hour if last update < 14 days
+            - run every 3 hours if last update > 14 days
+
+        Other podcasts:
+            - run every 3 hours if last update < 14 days
+            - run every 6 hours if last update > 14 days
+
+        New podcasts (parsed NULL) should be run immediately.
         """
         now = timezone.now()
 
