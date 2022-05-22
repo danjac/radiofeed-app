@@ -159,8 +159,8 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         SubscribedFilter,
         PromotedFilter,
         PubDateFilter,
-        ResultFilter,
         ScheduledFilter,
+        ResultFilter,
     )
 
     list_display = (
