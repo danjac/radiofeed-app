@@ -132,15 +132,9 @@ document.addEventListener("alpine:init", () => {
                 this.autoplay = autoplay || this.autoplay;
 
                 if (this.autoplay) {
-                    this.$refs.audio.play().catch((error) => {
-                        this.isPaused = true;
-                        this.isPlaying = false;
-                        this.playbackError = error;
-                        console.error(this.playbackError);
-                    });
+                    this.$refs.audio.play().catch(this.handleError);
                 } else {
-                    this.isPaused = true;
-                    this.isPlaying = false;
+                    this.pause();
                 }
 
                 this.duration = this.$refs.audio.duration;
@@ -173,9 +167,7 @@ document.addEventListener("alpine:init", () => {
                 this.isPlaying = false;
             },
             error(event) {
-                this.isPlaying = false;
-                this.playbackError = event.target.error;
-                console.error(this.playbackError);
+                this.handleError(event.target.error);
             },
             startTimer() {
                 if (!this.timer) {
@@ -250,6 +242,11 @@ document.addEventListener("alpine:init", () => {
                 return [hours, minutes, seconds]
                     .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
+            },
+            handleError(error) {
+                this.pause();
+                this.playbackError = error;
+                console.error(this.playbackError);
             },
             getMediaMetadata() {
                 const dataTag = document.getElementById("player-metadata");
