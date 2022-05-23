@@ -39,3 +39,10 @@ class TestCommands:
         )
 
         assert Podcast.objects.count() == 18
+
+    def test_export_podcast_feeds(self, mocker, podcast):
+        mocker.patch("builtins.open")
+        mock_writer = mocker.Mock()
+        mocker.patch("csv.writer", return_value=mock_writer)
+        call_command("export_podcast_feeds", "filename.txt")
+        mock_writer.writerow.assert_called_with([podcast.rss])

@@ -22,7 +22,7 @@ class Command(BaseCommand):
         with open(filename, "w") as fp:
             writer = csv.writer(fp)
             for counter, rss in enumerate(
-                Podcast.objects.values_list("rss", flat=True)
+                Podcast.objects.values_list("rss", flat=True), 1
             ):
                 writer.writerow([rss])
 
