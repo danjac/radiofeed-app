@@ -132,9 +132,11 @@ document.addEventListener("alpine:init", () => {
                 this.autoplay = autoplay || this.autoplay;
 
                 if (this.autoplay) {
-                    this.$refs.audio.play().catch(() => {
+                    this.$refs.audio.play().catch((error) => {
                         this.isPaused = true;
                         this.isPlaying = false;
+                        this.playbackError = error;
+                        console.error(this.playbackError);
                     });
                 } else {
                     this.isPaused = true;
