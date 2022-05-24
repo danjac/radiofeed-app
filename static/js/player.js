@@ -121,7 +121,8 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             loaded(event) {
-                this.handleEvent(event);
+                this.logEvent(event);
+
                 if (this.isLoaded) {
                     return;
                 }
@@ -142,13 +143,13 @@ document.addEventListener("alpine:init", () => {
                 this.isLoaded = true;
             },
             timeUpdate(event) {
-                this.handleEvent(event);
+                this.logEvent(event);
                 this.isPlaying = true;
                 this.playbackError = null;
                 this.currentTime = Math.floor(this.$refs.audio.currentTime);
             },
             play(event) {
-                this.handleEvent(event);
+                this.logEvent(event);
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.playbackError = null;
@@ -156,24 +157,24 @@ document.addEventListener("alpine:init", () => {
                 this.startTimer();
             },
             pause(event) {
-                this.handleEvent(event);
+                this.logEvent(event);
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveState();
                 this.clearTimer();
             },
             ended(event) {
-                this.handleEvent(event);
+                this.logEvent(event);
                 this.pause();
                 this.currentTime = 0;
                 this.sendTimeUpdate();
             },
             buffering(event) {
-                this.handleEvent(event);
+                this.logEvent(event);
                 this.isPlaying = false;
             },
             error(event) {
-                this.handleEvent(event);
+                this.logEvent(event);
                 this.handleError(event.target.error);
             },
             startTimer() {
@@ -263,7 +264,7 @@ document.addEventListener("alpine:init", () => {
                 }
                 return null;
             },
-            handleEvent(event) {
+            logEvent(event) {
                 if (event) {
                     console.log("[audio]", event.type);
                 }
