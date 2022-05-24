@@ -37,11 +37,11 @@ def send_recommendations_emails() -> None:
         send_recommendations_email(user_id)()
 
 
-@db_periodic_task(crontab(minute="*/12"))
+@db_periodic_task(crontab(minute="*/6"))
 def schedule_podcast_feeds() -> None:
     """Schedules podcast feeds for update
 
-    Runs every 12 minutes
+    Runs every 6 minutes
     """
 
     for podcast_id in (
@@ -53,7 +53,7 @@ def schedule_podcast_feeds() -> None:
             F("created").desc(),
         )
         .values_list("pk", flat=True)
-        .distinct()[:300]
+        .distinct()[:150]
     ):
         parse_podcast_feed(podcast_id)()
 
