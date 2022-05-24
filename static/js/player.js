@@ -120,7 +120,8 @@ document.addEventListener("alpine:init", () => {
                     }
                 }
             },
-            loaded() {
+            loaded(event) {
+                this.log(event);
                 if (this.isLoaded) {
                     return;
                 }
@@ -140,33 +141,38 @@ document.addEventListener("alpine:init", () => {
                 this.duration = this.$refs.audio.duration;
                 this.isLoaded = true;
             },
-            timeUpdate() {
+            timeUpdate(event) {
+                this.log(event);
                 this.isPlaying = true;
                 this.playbackError = null;
                 this.currentTime = Math.floor(this.$refs.audio.currentTime);
             },
-            play() {
+            play(event) {
+                this.log(event);
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.playbackError = null;
                 this.saveState();
                 this.startTimer();
             },
-            pause() {
+            pause(event) {
+                this.log(event);
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveState();
                 this.clearTimer();
             },
-            ended() {
-                this.pause();
+            ended(event) {
+                this.pause(event);
                 this.currentTime = 0;
                 this.sendTimeUpdate();
             },
-            buffering() {
+            buffering(event) {
+                this.log(event);
                 this.isPlaying = false;
             },
             error(event) {
+                this.log(event);
                 this.handleError(event.target.error);
             },
             startTimer() {
@@ -247,6 +253,9 @@ document.addEventListener("alpine:init", () => {
                 this.pause();
                 this.playbackError = error;
                 console.error(this.playbackError);
+            },
+            log(event) {
+                console.log("[audio]", event.type);
             },
             getMediaMetadata() {
                 const dataTag = document.getElementById("player-metadata");
