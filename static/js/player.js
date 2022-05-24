@@ -163,7 +163,8 @@ document.addEventListener("alpine:init", () => {
                 this.clearTimer();
             },
             ended(event) {
-                this.pause(event);
+                this.log(event);
+                this.pause();
                 this.currentTime = 0;
                 this.sendTimeUpdate();
             },
@@ -255,7 +256,9 @@ document.addEventListener("alpine:init", () => {
                 console.error(this.playbackError);
             },
             log(event) {
-                console.log("[audio]", event.type);
+                if (event) {
+                    console.log("[audio]", event.type);
+                }
             },
             getMediaMetadata() {
                 const dataTag = document.getElementById("player-metadata");
