@@ -121,7 +121,7 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             loaded(event) {
-                this.log(event);
+                this.handleEvent(event);
                 if (this.isLoaded) {
                     return;
                 }
@@ -142,13 +142,13 @@ document.addEventListener("alpine:init", () => {
                 this.isLoaded = true;
             },
             timeUpdate(event) {
-                this.log(event);
+                this.handleEvent(event);
                 this.isPlaying = true;
                 this.playbackError = null;
                 this.currentTime = Math.floor(this.$refs.audio.currentTime);
             },
             play(event) {
-                this.log(event);
+                this.handleEvent(event);
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.playbackError = null;
@@ -156,24 +156,24 @@ document.addEventListener("alpine:init", () => {
                 this.startTimer();
             },
             pause(event) {
-                this.log(event);
+                this.handleEvent(event);
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveState();
                 this.clearTimer();
             },
             ended(event) {
-                this.log(event);
+                this.handleEvent(event);
                 this.pause();
                 this.currentTime = 0;
                 this.sendTimeUpdate();
             },
             buffering(event) {
-                this.log(event);
+                this.handleEvent(event);
                 this.isPlaying = false;
             },
             error(event) {
-                this.log(event);
+                this.handleEvent(event);
                 this.handleError(event.target.error);
             },
             startTimer() {
@@ -250,16 +250,6 @@ document.addEventListener("alpine:init", () => {
                     .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
             },
-            handleError(error) {
-                this.pause();
-                this.playbackError = error;
-                console.error(this.playbackError);
-            },
-            log(event) {
-                if (event) {
-                    console.log("[audio]", event.type);
-                }
-            },
             getMediaMetadata() {
                 const dataTag = document.getElementById("player-metadata");
                 if (!dataTag) {
@@ -272,6 +262,16 @@ document.addEventListener("alpine:init", () => {
                     return new window.MediaMetadata(metadata);
                 }
                 return null;
+            },
+            handleEvent(event) {
+                if (event) {
+                    console.log("[audio]", event.type);
+                }
+            },
+            handleError(error) {
+                this.pause();
+                this.playbackError = error;
+                console.error(this.playbackError);
             },
         })
     );
