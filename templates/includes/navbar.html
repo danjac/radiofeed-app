@@ -76,23 +76,23 @@
                             {{ user.username|slice:12 }}
                         </a>
                     </li>
+                    <li class="xl:hidden flex items-center">
+                        <button class="focus:outline-none transform transition"
+                            title="Toggle Menu"
+                            x-cloak
+                            x-show.transition="!sidebar"
+                            @click="sidebar=true">
+                            {% include "icons/menu.svg" with css_class="h-6 w-6" %}
+                        </button>
+                        <button class="focus:outline-none transform transition"
+                            title="Toggle Menu"
+                            x-cloak
+                            x-show.transition="sidebar"
+                            @click="sidebar=false">
+                            {% include "icons/chevron_down.svg" with css_class="h-6 w-6" %}
+                        </button>
+                    </li>
                 {% endif %}
-                <li class="xl:hidden flex items-center">
-                    <button class="focus:outline-none transform transition"
-                        title="Toggle Menu"
-                        x-cloak
-                        x-show.transition="!sidebar"
-                        @click="sidebar=true">
-                        {% include "icons/menu.svg" with css_class="h-6 w-6" %}
-                    </button>
-                    <button class="focus:outline-none transform transition"
-                        title="Toggle Menu"
-                        x-cloak
-                        x-show.transition="sidebar"
-                        @click="sidebar=false">
-                        {% include "icons/chevron_down.svg" with css_class="h-6 w-6" %}
-                    </button>
-                </li>
             </ul>
         </nav>
         <div class="xl:hidden absolute py-6 bg-white dark:bg-black top-15 left-0 w-full shadow-xl z-50"
@@ -129,7 +129,9 @@
                     </div>
                 </form>
             </div>
-            {% include "includes/sidebar.html" %}
+            {% if user.is_authenticated %}
+                {% include "includes/sidebar.html" %}
+            {% endif %}
         </div>
         {% include "includes/signup_cta.html" %}
     </header>

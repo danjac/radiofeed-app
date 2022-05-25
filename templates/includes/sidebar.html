@@ -53,18 +53,16 @@
                 </a>
             </li>
 
-            {% if user.is_authenticated %}
-                <li>
-                    {% re_active_link 'users:preferences' '/account/*' as link %}
-                    <a href="{{ link.url }}"
-                        accesskey="s"
-                        title="Settings"
-                        class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                        {% include "icons/adjustments.svg" with css_class=ICON_CSS %}
-                        Settings
-                    </a>
-                </li>
-            {% endif %}
+            <li>
+                {% re_active_link 'users:preferences' '/account/*' as link %}
+                <a href="{{ link.url }}"
+                    accesskey="s"
+                    title="Settings"
+                    class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    {% include "icons/adjustments.svg" with css_class=ICON_CSS %}
+                    Settings
+                </a>
+            </li>
 
             <li>
                 {% re_active_link 'about:faq' '/about/*' as link %}
@@ -77,22 +75,20 @@
                 </a>
             </li>
 
-            {% if user.is_authenticated %}
-                <li>
-                    <form class="inline-block"
-                        hx-disable="true"
-                        action="{% url 'account_logout' %}"
-                        method="post">
-                        {% csrf_token %}
-                        <button accesskey="l"
-                            title="Logout"
-                            class="{{ SIDEBAR_CSS }}">
-                            {% include "icons/logout.svg" with css_class=ICON_CSS %}
-                            Logout
-                        </button>
-                    </form>
-                </li>
-            {% endif %}
+            <li>
+                <form class="inline-block"
+                    hx-disable="true"
+                    action="{% url 'account_logout' %}"
+                    method="post">
+                    {% csrf_token %}
+                    <button accesskey="l"
+                        title="Logout"
+                        class="{{ SIDEBAR_CSS }}">
+                        {% include "icons/logout.svg" with css_class=ICON_CSS %}
+                        Logout
+                    </button>
+                </form>
+            </li>
 
         </ul>
     </nav>
