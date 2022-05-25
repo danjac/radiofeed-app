@@ -50,7 +50,6 @@ document.addEventListener("alpine:init", () => {
                 this.clearTimer();
             },
             loaded(event) {
-                this.logEvent(event);
 
                 if (this.isLoaded) {
                     return;
@@ -74,13 +73,11 @@ document.addEventListener("alpine:init", () => {
                 this.isLoaded = true;
             },
             timeUpdate(event) {
-                this.logEvent(event);
                 this.isPlaying = true;
                 this.playbackError = null;
                 this.runtime = Math.floor(this.$refs.audio.currentTime);
             },
             play(event) {
-                this.logEvent(event);
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.playbackError = null;
@@ -88,24 +85,20 @@ document.addEventListener("alpine:init", () => {
                 this.startTimer();
             },
             pause(event) {
-                this.logEvent(event);
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveState();
                 this.clearTimer();
             },
             ended(event) {
-                this.logEvent(event);
                 this.pause();
                 this.runtime = 0;
                 this.sendTimeUpdate();
             },
             buffering(event) {
-                this.logEvent(event);
                 this.isPlaying = false;
             },
             error(event) {
-                this.logEvent(event);
                 this.handleError(event.target.error);
             },
             togglePlayPause() {
@@ -262,11 +255,6 @@ document.addEventListener("alpine:init", () => {
                     return new window.MediaMetadata(metadata);
                 }
                 return null;
-            },
-            logEvent(event) {
-                if (event) {
-                    console.log("[audio]", event.type);
-                }
             },
             handleError(error) {
                 this.pause();
