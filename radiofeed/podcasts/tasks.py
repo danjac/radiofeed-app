@@ -38,15 +38,14 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_podcast_feeds() -> None:
+def schedule_podcast_feeds(limit: int = 150) -> None:
     """Schedules podcast feeds for update
 
     Runs every 6 minutes
     """
 
     for podcast_id in (
-        Podcast.objects.with_subscribed()
-        .scheduled()
+        Podcast.objects.scheduled()
         .filter(active=True)
         .order_by(
             F("promoted").desc(),
@@ -56,7 +55,7 @@ def schedule_podcast_feeds() -> None:
             F("created").desc(),
         )
         .values_list("pk", flat=True)
-        .distinct()[:150]
+        .distinct()[:limit]
     ):
         parse_podcast_feed(podcast_id)()
 

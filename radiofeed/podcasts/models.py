@@ -73,21 +73,35 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         """
         Returns podcasts scheduled for feed update:
 
+        Subscribed/promoted:
+
+        Last pub date < 14 days ago: once an hour
+        Last pub date > 14 days ago: once every 3 hours
+
+        Other podcasts:
+
         Last pub date < 14 days ago: once every 3 hours
         Last pub date > 14 days ago: once every 6 hours
 
         New podcasts (parsed NULL) should be run immediately.
         """
+
         now = timezone.now()
 
-        return self.filter(
+        recent = models.Q(pub_date__gte=now - timedelta(days=14))
+        priority = models.Q(subscribed=True) | models.Q(promoted=True)
+
+        return self.with_subscribed().filter(
             models.Q(parsed__isnull=True)
             | models.Q(
-                pub_date__gte=now - timedelta(days=14),
+                models.Q(recent & priority),
+                parsed__lt=now - timedelta(hours=1),
+            )
+            | models.Q(
+                models.Q(recent | priority),
                 parsed__lt=now - timedelta(hours=3),
             )
             | models.Q(
-                pub_date__lt=now - timedelta(days=14),
                 parsed__lt=now - timedelta(hours=6),
             )
         )
