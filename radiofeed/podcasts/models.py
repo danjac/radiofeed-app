@@ -73,7 +73,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         """
         Returns podcasts scheduled for feed update:
 
-        Last pub date < 24 hours ago: once per hour
         Last pub date < 14 days ago: once every 3 hours
         Last pub date > 14 days ago: once every 6 hours
 
