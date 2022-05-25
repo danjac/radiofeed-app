@@ -15,6 +15,7 @@ document.addEventListener("alpine:init", () => {
             currentTime,
             csrfToken,
             timeUpdateUrl,
+            runtime: 0,
             duration: 0,
             isLoaded: false,
             isPaused: false,
@@ -27,7 +28,7 @@ document.addEventListener("alpine:init", () => {
                 total: "00:00:00",
             },
             init() {
-                this.$watch("currentTime", (value) => {
+                this.$watch("runtime", (value) => {
                     this.counters.current = this.formatCounter(value);
                 });
 
@@ -38,11 +39,6 @@ document.addEventListener("alpine:init", () => {
                 this.$watch("playbackRate", (value) => {
                     this.$refs.audio.playbackRate = value;
                 });
-
-                this.$refs.audio.currentTime = this.currentTime;
-
-                this.counters.current = this.formatCounter(this.currentTime);
-                this.counters.total = this.formatCounter(this.duration);
 
                 this.$refs.audio.load();
 
@@ -81,7 +77,7 @@ document.addEventListener("alpine:init", () => {
                 this.logEvent(event);
                 this.isPlaying = true;
                 this.playbackError = null;
-                this.currentTime = Math.floor(this.$refs.audio.currentTime);
+                this.runtime = Math.floor(this.$refs.audio.currentTime);
             },
             play(event) {
                 this.logEvent(event);
@@ -101,7 +97,7 @@ document.addEventListener("alpine:init", () => {
             ended(event) {
                 this.logEvent(event);
                 this.pause();
-                this.currentTime = 0;
+                this.runtime = 0;
                 this.sendTimeUpdate();
             },
             buffering(event) {
@@ -121,7 +117,7 @@ document.addEventListener("alpine:init", () => {
             },
             skip() {
                 if (this.isPlaying) {
-                    this.$refs.audio.currentTime = this.currentTime;
+                    this.$refs.audio.currentTime = this.runtime;
                 }
             },
             skipBack() {
@@ -202,7 +198,7 @@ document.addEventListener("alpine:init", () => {
                         "X-CSRFToken": this.csrfToken,
                     },
                     body: new URLSearchParams({
-                        current_time: this.currentTime,
+                        current_time: this.runtime,
                     }),
                 });
             },

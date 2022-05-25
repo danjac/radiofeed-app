@@ -39,6 +39,8 @@
 
                         </a>
                         <div class="text-xs md:text-sm text-center sm:hidden"
+                            x-cloak
+                            x-show="isLoaded"
                             :class="{'animate-pulse text-gray-300': !isPlaying}">
                             <span x-text="counters.current"></span> /
                             <span x-text="counters.total"></span>
@@ -99,7 +101,7 @@
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                     </div>
                                     <div class="text-xs md:text-sm text-center"
-                                        x-show="!playbackError"
+                                        x-show="!playbackError && isLoaded"
                                         x-cloak
                                         :class="{'animate-pulse text-gray-300': !isPlaying}">
                                         <span x-text="counters.current"
@@ -186,7 +188,7 @@
                             <div class="w-full h-3">
                                 <input type="range"
                                     x-ref="range"
-                                    x-model="currentTime"
+                                    x-model="runtime"
                                     :max="duration"
                                     :disabled="isPaused || !isLoaded"
                                     @change="skip"
