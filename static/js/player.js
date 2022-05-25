@@ -42,6 +42,8 @@ document.addEventListener("alpine:init", () => {
                 this.counters.current = this.formatCounter(this.currentTime);
                 this.counters.total = this.formatCounter(this.duration);
 
+                console.log("[audio] init", this);
+
                 this.$refs.audio.currentTime = this.currentTime;
                 this.$refs.audio.load();
 
@@ -50,7 +52,65 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             destroy() {
+                console.log("[audio] destroy", this);
                 this.clearTimer();
+            },
+            loaded(event) {
+                this.logEvent(event);
+
+                if (this.isLoaded) {
+                    return;
+                }
+
+                const { playbackRate, autoplay } = this.loadState();
+
+                this.playbackError = null;
+                this.playbackRate = playbackRate || 1.0;
+                this.autoplay = autoplay || this.autoplay;
+
+                if (this.autoplay) {
+                    this.$refs.audio.play().catch(this.handleError);
+                } else {
+                    this.pause();
+                }
+
+                this.duration = this.$refs.audio.duration;
+                this.isLoaded = true;
+            },
+            timeUpdate(event) {
+                this.logEvent(event);
+                this.isPlaying = true;
+                this.playbackError = null;
+                this.currentTime = Math.floor(this.$refs.audio.currentTime);
+            },
+            play(event) {
+                this.logEvent(event);
+                this.isPaused = false;
+                this.isPlaying = true;
+                this.playbackError = null;
+                this.saveState();
+                this.startTimer();
+            },
+            pause(event) {
+                this.logEvent(event);
+                this.isPlaying = false;
+                this.isPaused = true;
+                this.saveState();
+                this.clearTimer();
+            },
+            ended(event) {
+                this.logEvent(event);
+                this.pause();
+                this.currentTime = 0;
+                this.sendTimeUpdate();
+            },
+            buffering(event) {
+                this.logEvent(event);
+                this.isPlaying = false;
+            },
+            error(event) {
+                this.logEvent(event);
+                this.handleError(event.target.error);
             },
             togglePlayPause() {
                 if (this.isPaused) {
@@ -119,63 +179,6 @@ document.addEventListener("alpine:init", () => {
                             return;
                     }
                 }
-            },
-            loaded(event) {
-                this.logEvent(event);
-
-                if (this.isLoaded) {
-                    return;
-                }
-
-                const { playbackRate, autoplay } = this.loadState();
-
-                this.playbackError = null;
-                this.playbackRate = playbackRate || 1.0;
-                this.autoplay = autoplay || this.autoplay;
-
-                if (this.autoplay) {
-                    this.$refs.audio.play().catch(this.handleError);
-                } else {
-                    this.pause();
-                }
-
-                this.duration = this.$refs.audio.duration;
-                this.isLoaded = true;
-            },
-            timeUpdate(event) {
-                this.logEvent(event);
-                this.isPlaying = true;
-                this.playbackError = null;
-                this.currentTime = Math.floor(this.$refs.audio.currentTime);
-            },
-            play(event) {
-                this.logEvent(event);
-                this.isPaused = false;
-                this.isPlaying = true;
-                this.playbackError = null;
-                this.saveState();
-                this.startTimer();
-            },
-            pause(event) {
-                this.logEvent(event);
-                this.isPlaying = false;
-                this.isPaused = true;
-                this.saveState();
-                this.clearTimer();
-            },
-            ended(event) {
-                this.logEvent(event);
-                this.pause();
-                this.currentTime = 0;
-                this.sendTimeUpdate();
-            },
-            buffering(event) {
-                this.logEvent(event);
-                this.isPlaying = false;
-            },
-            error(event) {
-                this.logEvent(event);
-                this.handleError(event.target.error);
             },
             startTimer() {
                 if (!this.timer) {
