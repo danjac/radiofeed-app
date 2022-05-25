@@ -48,6 +48,8 @@ def schedule_podcast_feeds() -> None:
         Podcast.objects.scheduled()
         .filter(active=True)
         .order_by(
+            F("promoted").desc(),
+            F("subscribed").desc(),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
