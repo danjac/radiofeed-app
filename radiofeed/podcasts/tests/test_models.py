@@ -109,7 +109,7 @@ class TestPodcastManager:
     @pytest.mark.parametrize(
         "parsed,pub_date,exists",
         [
-            (timedelta(hours=2), timedelta(hours=6), True),
+            (timedelta(hours=2), timedelta(hours=6), False),
             (timedelta(hours=3), timedelta(days=7), True),
             (timedelta(hours=2), timedelta(days=7), False),
             (timedelta(minutes=30), timedelta(days=7), False),
