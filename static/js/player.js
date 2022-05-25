@@ -42,7 +42,6 @@ document.addEventListener("alpine:init", () => {
                 this.counters.current = this.formatCounter(this.currentTime);
                 this.counters.total = this.formatCounter(this.duration);
 
-                this.$refs.audio.currentTime = this.currentTime;
                 this.$refs.audio.load();
 
                 if ("mediaSession" in navigator) {
@@ -64,6 +63,8 @@ document.addEventListener("alpine:init", () => {
                 this.playbackError = null;
                 this.playbackRate = playbackRate || 1.0;
                 this.autoplay = autoplay || this.autoplay;
+
+                this.$refs.audio.currentTime = this.currentTime;
 
                 if (this.autoplay) {
                     this.$refs.audio.play().catch(this.handleError);
