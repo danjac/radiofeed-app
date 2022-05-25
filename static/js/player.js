@@ -42,8 +42,6 @@ document.addEventListener("alpine:init", () => {
                 this.counters.current = this.formatCounter(this.currentTime);
                 this.counters.total = this.formatCounter(this.duration);
 
-                console.log("[audio] init", this);
-
                 this.$refs.audio.currentTime = this.currentTime;
                 this.$refs.audio.load();
 
@@ -52,7 +50,6 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             destroy() {
-                console.log("[audio] destroy", this);
                 this.clearTimer();
             },
             loaded(event) {
