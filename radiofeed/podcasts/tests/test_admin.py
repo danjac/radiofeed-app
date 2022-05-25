@@ -216,7 +216,9 @@ class TestScheduledFilter:
 
         now = timezone.now()
 
-        PodcastFactory(pub_date=now, parsed=now - timedelta(hours=1))
+        PodcastFactory(
+            pub_date=now - timedelta(days=15), parsed=now - timedelta(hours=1)
+        )
         podcast = PodcastFactory(pub_date=now, parsed=now - timedelta(hours=6))
 
         f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)

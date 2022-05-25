@@ -45,7 +45,8 @@ def schedule_podcast_feeds() -> None:
     """
 
     for podcast_id in (
-        Podcast.objects.scheduled()
+        Podcast.objects.with_subscribed()
+        .scheduled()
         .filter(active=True)
         .order_by(
             F("promoted").desc(),

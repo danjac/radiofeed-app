@@ -109,6 +109,7 @@ class TestPodcastManager:
     @pytest.mark.parametrize(
         "parsed,pub_date,exists",
         [
+            (timedelta(hours=2), timedelta(hours=6), True),
             (timedelta(hours=3), timedelta(days=7), True),
             (timedelta(hours=2), timedelta(days=7), False),
             (timedelta(minutes=30), timedelta(days=7), False),
@@ -119,38 +120,6 @@ class TestPodcastManager:
     def test_scheduled(self, db, parsed, pub_date, exists):
         now = timezone.now()
         PodcastFactory(
-            parsed=now - parsed,
-            pub_date=now - pub_date,
-        )
-        assert Podcast.objects.scheduled().exists() == exists
-
-    @pytest.mark.parametrize(
-        "parsed,pub_date,exists",
-        [
-            (timedelta(hours=2), timedelta(days=7), True),
-            (timedelta(minutes=30), timedelta(days=7), False),
-            (timedelta(hours=2), timedelta(days=15), False),
-        ],
-    )
-    def test_scheduled_subscribed(self, db, parsed, pub_date, exists):
-        now = timezone.now()
-        SubscriptionFactory(
-            podcast__parsed=now - parsed, podcast__pub_date=now - pub_date
-        )
-        assert Podcast.objects.scheduled().exists() == exists
-
-    @pytest.mark.parametrize(
-        "parsed,pub_date,exists",
-        [
-            (timedelta(hours=2), timedelta(days=7), True),
-            (timedelta(minutes=30), timedelta(days=7), False),
-            (timedelta(hours=2), timedelta(days=15), False),
-        ],
-    )
-    def test_scheduled_promoted(self, db, parsed, pub_date, exists):
-        now = timezone.now()
-        PodcastFactory(
-            promoted=True,
             parsed=now - parsed,
             pub_date=now - pub_date,
         )
