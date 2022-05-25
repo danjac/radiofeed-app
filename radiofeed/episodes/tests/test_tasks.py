@@ -17,21 +17,11 @@ class TestTasks:
         patched.assert_not_called()
 
     def test_send_new_episodes_emails(self, db, mocker):
-        sent = []
+        user = UserFactory(send_email_notifications=True)
+        UserFactory(send_email_notifications=False)
 
-        class MockSend:
-            def __init__(self, user_id, *args, **kwargs):
-                self.user_id = user_id
-
-            def __call__(self):
-                sent.append(self.user_id)
-
-        send = UserFactory(send_email_notifications=True)
-        not_send = UserFactory(send_email_notifications=False)
-
-        mocker.patch("radiofeed.episodes.tasks.send_new_episodes_email", MockSend)
+        patched = mocker.patch("radiofeed.episodes.tasks.send_new_episodes_email.map")
 
         send_new_episodes_emails()
 
-        assert send.id in sent
-        assert not_send.id not in sent
+        patched.assert_called_with([(user.id, timedelta(days=7))])

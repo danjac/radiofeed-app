@@ -31,10 +31,12 @@ def send_recommendations_emails() -> None:
 
     Runs at 09:12 UTC every Monday
     """
-    for user_id in User.objects.filter(
-        send_email_notifications=True, is_active=True
-    ).values_list("pk", flat=True):
-        send_recommendations_email(user_id)()
+    send_recommendations_email.map(
+        User.objects.filter(
+            send_email_notifications=True,
+            is_active=True,
+        ).values_list("pk")
+    )
 
 
 @db_periodic_task(crontab(minute="*/6"))
@@ -44,7 +46,7 @@ def schedule_podcast_feeds(limit: int = 150) -> None:
     Runs every 6 minutes
     """
 
-    for podcast_id in (
+    parse_podcast_feed.map(
         Podcast.objects.scheduled()
         .filter(active=True)
         .order_by(
@@ -54,10 +56,9 @@ def schedule_podcast_feeds(limit: int = 150) -> None:
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
         )
-        .values_list("pk", flat=True)
+        .values_list("pk")
         .distinct()[:limit]
-    ):
-        parse_podcast_feed(podcast_id)()
+    )
 
 
 @db_task()

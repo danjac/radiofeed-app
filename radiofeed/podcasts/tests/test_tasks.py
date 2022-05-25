@@ -13,13 +13,13 @@ from radiofeed.users.factories import UserFactory
 
 class TestTasks:
     @pytest.fixture
-    def mock_parse_podcast_feed(self, mocker):
-        return mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
-
-    def test_schedule_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
+    def test_schedule_podcast_feeds(self, db, mocker):
         podcast = PodcastFactory(parsed=None)
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
+
         schedule_podcast_feeds()
-        mock_parse_podcast_feed.assert_called_with(podcast.id)
+
+        patched.assert_called_with([podcast.id])
 
     def test_parse_podcast_feed(self, mocker):
         patched = mocker.patch(
@@ -48,21 +48,12 @@ class TestTasks:
         patched.assert_called()
 
     def test_send_recommendations_emails(self, db, mocker):
-        sent = []
+        UserFactory(send_email_notifications=True)
+        UserFactory(send_email_notifications=False)
 
-        class MockSend:
-            def __init__(self, user_id):
-                self.user_id = user_id
-
-            def __call__(self):
-                sent.append(self.user_id)
-
-        send = UserFactory(send_email_notifications=True)
-        not_send = UserFactory(send_email_notifications=False)
-
-        mocker.patch("radiofeed.podcasts.tasks.send_recommendations_email", MockSend)
+        patched = mocker.patch(
+            "radiofeed.podcasts.tasks.send_recommendations_email.map"
+        )
 
         send_recommendations_emails()
-
-        assert send.id in sent
-        assert not_send.id not in sent
+        patched.assert_called()
