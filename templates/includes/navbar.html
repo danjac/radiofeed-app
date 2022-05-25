@@ -92,6 +92,17 @@
                             {% include "icons/chevron_down.svg" with css_class="h-6 w-6" %}
                         </button>
                     </li>
+                {% else %}
+                    <li>
+                        <a href="{% url 'about:faq' %}"
+                            title="About this Site"
+                            class="flex items-center font-bold hover:text-blue-300">
+                            {% include "icons/info.svg" with css_class="h-6 w-6 md:mr-2" %}
+                            <span class="hidden md:inline-block">
+                                About
+                            </span>
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </nav>
