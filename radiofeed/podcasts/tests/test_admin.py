@@ -78,7 +78,7 @@ class TestPodcastAdmin:
 
     def test_parse_podcast_feeds(self, mock_parse_feed, podcast, podcast_admin, req):
         podcast_admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_parse_feed.assert_called_with(podcast.id)
+        mock_parse_feed.map.assert_called()
 
     def test_parse_podcast_feed(self, mock_parse_feed, podcast, podcast_admin, req):
         podcast_admin.parse_podcast_feed(req, podcast)
