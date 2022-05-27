@@ -252,14 +252,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.success(request, "Added to Bookmarks")
 
-    return TemplateResponse(
-        request,
-        "episodes/buttons/bookmark.html",
-        {
-            "episode": episode,
-            "is_bookmarked": True,
-        },
-    )
+    return render_bookmark_buttons(request, episode, True)
 
 
 @require_http_methods(["DELETE"])
@@ -271,14 +264,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from Bookmarks")
 
-    return TemplateResponse(
-        request,
-        "episodes/buttons/bookmark.html",
-        {
-            "episode": episode,
-            "is_bookmarked": False,
-        },
-    )
+    return render_bookmark_buttons(request, episode, False)
 
 
 def get_episode_or_404(
@@ -294,3 +280,16 @@ def get_episode_or_404(
     if with_current_time:
         qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
+
+
+def render_bookmark_buttons(
+    request: HttpRequest, episode: Episode, is_bookmarked: bool
+) -> TemplateResponse:
+    return TemplateResponse(
+        request,
+        "episodes/buttons/bookmark.html",
+        {
+            "episode": episode,
+            "is_bookmarked": is_bookmarked,
+        },
+    )

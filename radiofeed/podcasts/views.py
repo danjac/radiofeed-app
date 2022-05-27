@@ -149,7 +149,7 @@ def podcast_detail(
             request,
             podcast,
             {
-                "subscribed": podcast.is_subscribed(request.user),
+                "is_subscribed": podcast.is_subscribed(request.user),
             },
         ),
     )
@@ -246,15 +246,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "You are now subscribed to this podcast")
-
-    return TemplateResponse(
-        request,
-        "podcasts/buttons/subscribe.html",
-        {
-            "podcast": podcast,
-            "subscribed": True,
-        },
-    )
+    return render_subscribe_buttons(request, podcast, True)
 
 
 @require_http_methods(["POST"])
@@ -264,16 +256,9 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
 
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
-    messages.info(request, "You are no longer subscribed to this podcast")
 
-    return TemplateResponse(
-        request,
-        "podcasts/buttons/subscribe.html",
-        {
-            "podcast": podcast,
-            "subscribed": False,
-        },
-    )
+    messages.info(request, "You are no longer subscribed to this podcast")
+    return render_subscribe_buttons(request, podcast, False)
 
 
 def get_podcasts() -> QuerySet:
@@ -293,3 +278,16 @@ def get_podcast_detail_context(
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
         "num_episodes": Episode.objects.filter(podcast=podcast).count(),
     } | (extra_context or {})
+
+
+def render_subscribe_buttons(
+    request: HttpRequest, podcast: Podcast, is_subscribed: bool
+) -> TemplateResponse:
+    return TemplateResponse(
+        request,
+        "podcasts/buttons/subscribe.html",
+        {
+            "podcast": podcast,
+            "is_subscribed": is_subscribed,
+        },
+    )
