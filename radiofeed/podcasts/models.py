@@ -223,7 +223,7 @@ class Podcast(models.Model):
         return Subscription.objects.filter(podcast=self, user=user).exists()
 
     def get_subscribe_target(self) -> str:
-        return f"subscribe-toggle-{self.id}"
+        return f"subscribe-buttons-{self.id}"
 
 
 class Subscription(TimeStampedModel):

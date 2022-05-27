@@ -166,13 +166,12 @@ class TestPodcastManager:
 
 
 class TestPodcastModel:
-    rss = "https://example.com/rss.xml"
-
     def test_str(self):
         assert str(Podcast(title="title")) == "title"
 
     def test_str_title_empty(self):
-        assert str(Podcast(title="", rss=self.rss)) == self.rss
+        rss = "https://example.com/rss.xml"
+        assert str(Podcast(title="", rss=rss)) == rss
 
     def test_slug(self):
         assert Podcast(title="Testing").slug == "testing"
@@ -204,4 +203,4 @@ class TestPodcastModel:
         )
 
     def test_get_subscribe_target(self):
-        return Podcast(id=12345).get_subscribe_target() == "subscribe-toggle-12345"
+        return Podcast(id=12345).get_subscribe_target() == "subscribe-buttons-12345"

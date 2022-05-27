@@ -255,13 +255,13 @@ class Episode(models.Model):
         }
 
     def get_player_target(self) -> str:
-        return f"player-toggle-{self.id}"
+        return f"player-buttons-{self.id}"
 
     def get_bookmark_target(self) -> str:
-        return f"bookmark-toggle-{self.id}"
+        return f"bookmark-buttons-{self.id}"
 
     def get_history_target(self) -> str:
-        return f"history-toggle-{self.id}"
+        return f"history-buttons-{self.id}"
 
 
 class BookmarkQuerySet(SearchMixin, models.QuerySet):
