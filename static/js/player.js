@@ -50,7 +50,6 @@ document.addEventListener("alpine:init", () => {
                 this.clearTimer();
             },
             loaded(event) {
-
                 if (this.isLoaded) {
                     return;
                 }
@@ -61,41 +60,41 @@ document.addEventListener("alpine:init", () => {
                 this.playbackRate = playbackRate || 1.0;
                 this.autoplay = autoplay || this.autoplay;
 
-                this.$refs.audio.currentTime = this.currentTime;
+                event.target.currentTime = this.runtime = this.currentTime;
 
                 if (this.autoplay) {
-                    this.$refs.audio.play().catch(this.handleError.bind(this));
+                    event.target.play().catch(this.handleError.bind(this));
                 } else {
                     this.pause();
                 }
 
-                this.duration = this.$refs.audio.duration;
+                this.duration = event.target.duration;
                 this.isLoaded = true;
             },
             timeUpdate(event) {
                 this.isPlaying = true;
                 this.playbackError = null;
-                this.runtime = Math.floor(this.$refs.audio.currentTime);
+                this.runtime = Math.floor(event.target.currentTime);
             },
-            play(event) {
+            play() {
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.playbackError = null;
                 this.saveState();
                 this.startTimer();
             },
-            pause(event) {
+            pause() {
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveState();
                 this.clearTimer();
             },
-            ended(event) {
+            ended() {
                 this.pause();
                 this.runtime = 0;
                 this.sendTimeUpdate();
             },
-            buffering(event) {
+            buffering() {
                 this.isPlaying = false;
             },
             error(event) {
@@ -113,15 +112,16 @@ document.addEventListener("alpine:init", () => {
                     this.$refs.audio.currentTime = this.runtime;
                 }
             },
-            skipBack() {
+            skipTo(seconds) {
                 if (this.isPlaying) {
-                    this.$refs.audio.currentTime -= 10;
+                    this.$refs.audio.currentTime += seconds;
                 }
             },
+            skipBack() {
+                this.skipTo(-10);
+            },
             skipForward() {
-                if (this.isPlaying) {
-                    this.$refs.audio.currentTime += 10;
-                }
+                this.skipTo(10);
             },
             shortcuts(event) {
                 if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
