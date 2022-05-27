@@ -37,7 +37,6 @@
                             href="{{ episode_url }}"
                             hx-swap="outerHTML show:window:top"
                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
-
                         </a>
 
                         <div class="text-xs text-center"
@@ -56,7 +55,7 @@
 
                         <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
-                            x-show="playbackError && isLoaded">
+                            x-show="playbackError">
                             <span x-text="playbackError ? playbackError.message : 'Error'"></span>
                         </div>
 
@@ -133,7 +132,7 @@
 
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
-                                        x-show="playbackError && isLoaded">
+                                        x-show="playbackError">
                                         <span x-text="playbackError ? playbackError.message : 'Error'"></span>
                                     </div>
 
