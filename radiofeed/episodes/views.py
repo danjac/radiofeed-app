@@ -236,7 +236,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/pagination/episodes.html",
+        "episodes/pagination/bookmarks.html",
     )
 
 
