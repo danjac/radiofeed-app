@@ -58,7 +58,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/episode_list.html",
+        "episodes/pagination/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -83,7 +83,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/search.html",
-        "episodes/episode_list.html",
+        "episodes/pagination/episodes.html",
     )
 
 
@@ -196,7 +196,7 @@ def history(request: HttpRequest) -> HttpResponse:
         request,
         logs,
         "episodes/history.html",
-        "episodes/history_list.html",
+        "episodes/pagination/history.html",
         {
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
@@ -216,7 +216,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/history_buttons.html",
+        "episodes/buttons/history.html",
         {"episode": episode},
     )
 
@@ -236,7 +236,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/bookmark_list.html",
+        "episodes/pagination/episodes.html",
     )
 
 
@@ -254,7 +254,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/bookmark_buttons.html",
+        "episodes/buttons/bookmark.html",
         {
             "episode": episode,
             "is_bookmarked": True,
@@ -273,7 +273,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/bookmark_buttons.html",
+        "episodes/buttons/bookmark.html",
         {
             "episode": episode,
             "is_bookmarked": False,
