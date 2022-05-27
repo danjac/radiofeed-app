@@ -1,5 +1,3 @@
-import pytest
-
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
     parse_podcast_feed,
@@ -12,14 +10,13 @@ from radiofeed.users.factories import UserFactory
 
 
 class TestTasks:
-    @pytest.fixture
     def test_schedule_podcast_feeds(self, db, mocker):
         podcast = PodcastFactory(parsed=None)
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
         schedule_podcast_feeds()
 
-        patched.assert_called_with([podcast.id])
+        assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
 
     def test_parse_podcast_feed(self, mocker):
         patched = mocker.patch(
@@ -48,7 +45,7 @@ class TestTasks:
         patched.assert_called()
 
     def test_send_recommendations_emails(self, db, mocker):
-        UserFactory(send_email_notifications=True)
+        user = UserFactory(send_email_notifications=True)
         UserFactory(send_email_notifications=False)
 
         patched = mocker.patch(
@@ -56,4 +53,4 @@ class TestTasks:
         )
 
         send_recommendations_emails()
-        patched.assert_called()
+        assert list(patched.mock_calls[0][1][0]) == [(user.id,)]
