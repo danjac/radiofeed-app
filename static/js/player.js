@@ -128,23 +128,20 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
+                const handleEvent = (fn) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    fn.bind(this)();
+                };
+
                 if (!event.ctrlKey && !event.altKey) {
                     switch (event.code) {
                         case "Space":
-                            event.preventDefault();
-                            event.stopPropagation();
-                            this.togglePlayPause();
-                            return;
+                            return handleEvent(this.togglePlayPause);
                         case "ArrowRight":
-                            event.preventDefault();
-                            event.stopPropagation();
-                            this.skipForward();
-                            return;
+                            return handleEvent(this.skipForward);
                         case "ArrowLeft":
-                            event.preventDefault();
-                            event.stopPropagation();
-                            this.skipBack();
-                            return;
+                            return handleEvent(this.skipBack);
                     }
                 }
 
@@ -152,20 +149,11 @@ document.addEventListener("alpine:init", () => {
                 if (event.altKey) {
                     switch (event.key) {
                         case "+":
-                            event.preventDefault();
-                            event.stopPropagation();
-                            this.incrementPlaybackRate();
-                            return;
+                            return handleEvent(this.incrementPlaybackRate);
                         case "-":
-                            event.preventDefault();
-                            event.stopPropagation();
-                            this.decrementPlaybackRate();
-                            return;
+                            return handleEvent(this.decrementPlaybackRate);
                         case "0":
-                            event.preventDefault();
-                            event.stopPropagation();
-                            this.resetPlaybackRate();
-                            return;
+                            return handleEvent(this.resetPlaybackRate);
                     }
                 }
             },
