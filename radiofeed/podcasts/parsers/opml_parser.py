@@ -28,10 +28,10 @@ def parse_opml(content: bytes) -> Generator[Outline, None, None]:
             if element.tag == "outline":
                 finder = XPathFinder(element)
                 yield Outline(
-                    title=finder.find("@title"),
-                    rss=finder.find("@xmlUrl"),
-                    url=finder.find("@htmlUrl"),
-                    text=finder.find("@text"),
+                    title=finder.first("@title"),
+                    rss=finder.first("@xmlUrl"),
+                    url=finder.first("@htmlUrl"),
+                    text=finder.first("@text"),
                 )
                 element.clear()
     except lxml.etree.XMLSyntaxError as e:

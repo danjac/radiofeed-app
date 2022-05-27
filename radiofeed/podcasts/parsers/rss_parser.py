@@ -193,23 +193,23 @@ def parse_channel(
 
 def parse_feed(finder: XPathFinder) -> Feed:
     return Feed(
-        title=finder.find("title/text()"),
-        link=finder.find("link/text()"),
-        language=finder.find("language/text()", default="en"),
-        complete=finder.find("itunes:complete/text()"),
-        explicit=finder.find("itunes:explicit/text()"),
-        cover_url=finder.find("itunes:image/@href", "image/url/text()"),
-        funding_url=finder.find("podcast:funding/@url"),
-        funding_text=finder.find("podcast:funding/text()"),
-        description=finder.find(
+        title=finder.first("title/text()"),
+        link=finder.first("link/text()"),
+        language=finder.first("language/text()", default="en"),
+        complete=finder.first("itunes:complete/text()"),
+        explicit=finder.first("itunes:explicit/text()"),
+        cover_url=finder.first("itunes:image/@href", "image/url/text()"),
+        funding_url=finder.first("podcast:funding/@url"),
+        funding_text=finder.first("podcast:funding/text()"),
+        description=finder.first(
             "description/text()",
             "itunes:summary/text()",
         ),
-        owner=finder.find(
+        owner=finder.first(
             "itunes:author/text()",
             "itunes:owner/itunes:name/text()",
         ),
-        categories=finder.findall("//itunes:category/@text"),
+        categories=finder.all("//itunes:category/@text"),
     )
 
 
@@ -228,33 +228,33 @@ def parse_items(
 
 def parse_item(finder: XPathFinder) -> Item:
     return Item(
-        guid=finder.find("guid/text()"),
-        title=finder.find("title/text()"),
-        link=finder.find("link/text()"),
-        pub_date=finder.find("pubDate/text()"),
-        media_url=finder.find(
+        guid=finder.first("guid/text()"),
+        title=finder.first("title/text()"),
+        link=finder.first("link/text()"),
+        pub_date=finder.first("pubDate/text()"),
+        media_url=finder.first(
             "enclosure//@url",
             "media:content//@url",
         ),
-        media_type=finder.find(
+        media_type=finder.first(
             "enclosure//@type",
             "media:content//@type",
         ),
-        length=finder.find(
+        length=finder.first(
             "enclosure//@length",
             "media:content//@fileSize",
         ),
-        explicit=finder.find("itunes:explicit/text()"),
-        cover_url=finder.find("itunes:image/@href"),
-        episode=finder.find("itunes:episode/text()"),
-        season=finder.find("itunes:season/text()"),
-        description=finder.find(
+        explicit=finder.first("itunes:explicit/text()"),
+        cover_url=finder.first("itunes:image/@href"),
+        episode=finder.first("itunes:episode/text()"),
+        season=finder.first("itunes:season/text()"),
+        description=finder.first(
             "content:encoded/text()",
             "description/text()",
             "itunes:summary/text()",
             default="",
         ),
-        duration=finder.find("itunes:duration/text()"),
-        episode_type=finder.find("itunes:episodetype/text()", default="full"),
-        keywords=finder.findall("category/text()"),
+        duration=finder.first("itunes:duration/text()"),
+        episode_type=finder.first("itunes:episodetype/text()", default="full"),
+        keywords=finder.all("category/text()"),
     )
