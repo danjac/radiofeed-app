@@ -6,7 +6,7 @@
 
     <section class="space-y-3">
         {% for recommendation in recommendations %}
-            {% include "podcasts/includes/podcast.html" with podcast=recommendation.recommended %}
+            {% include "podcasts/podcast.html" with podcast=recommendation.recommended %}
         {% endfor %}
     </section>
 

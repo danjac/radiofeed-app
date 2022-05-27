@@ -4,7 +4,7 @@
 
     {% with COVER_IMAGE_CSS="h-16 w-16 md:h-20 md:w-20" %}
         <div class="{{ COVER_IMAGE_CSS }}">
-            {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
+            {% include "cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
         </div>
     {% endwith %}
 
@@ -23,7 +23,7 @@
             <a href="{{ podcast.get_latest_episode_url }}"
                 title="Latest Episode"
                 class="link font-semibold text-gray-600 dark:text-gray-300">
-                {% include "includes/date.html" with value=podcast.pub_date title="Latest Episode" %}
+                {% include "date.html" with value=podcast.pub_date title="Latest Episode" %}
             </a>
         </h3>
     </div>

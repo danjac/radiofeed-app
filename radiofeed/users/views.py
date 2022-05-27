@@ -30,7 +30,7 @@ def user_preferences(
 
     return TemplateResponse(
         request,
-        "account/includes/preferences.html"
+        "account/forms/preferences.html"
         if request.htmx.target == target
         else "account/preferences.html",
         {
@@ -49,28 +49,6 @@ def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         {
             "form": OpmlUploadForm(),
             "target": "opml-import-form",
-        },
-    )
-
-
-@require_http_methods(["POST"])
-@login_required
-def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
-    podcasts = (
-        Podcast.objects.filter(
-            subscription__user=request.user,
-        )
-        .distinct()
-        .order_by("title")
-        .iterator()
-    )
-
-    return SimpleTemplateResponse(
-        "account/podcasts.opml",
-        {"podcasts": podcasts},
-        content_type="text/x-opml",
-        headers={
-            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
         },
     )
 
@@ -108,12 +86,34 @@ def import_podcast_feeds(
 
     return TemplateResponse(
         request,
-        "account/includes/import_podcast_feeds.html"
+        "account/forms/import_podcast_feeds.html"
         if request.htmx.target == target
         else "account/import_export_podcast_feeds.html",
         {
             "form": form,
             "target": target,
+        },
+    )
+
+
+@require_http_methods(["POST"])
+@login_required
+def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+    podcasts = (
+        Podcast.objects.filter(
+            subscription__user=request.user,
+        )
+        .distinct()
+        .order_by("title")
+        .iterator()
+    )
+
+    return SimpleTemplateResponse(
+        "account/podcasts.opml",
+        {"podcasts": podcasts},
+        content_type="text/x-opml",
+        headers={
+            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
         },
     )
 

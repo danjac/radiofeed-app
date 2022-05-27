@@ -4,10 +4,10 @@
     {% with COVER_IMAGE_CSS="h-16 w-16 md:h-20 md:w-20" %}
         <div class="{{ COVER_IMAGE_CSS }}">
             {% if is_podcast_detail %}
-                {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url css_class=COVER_IMAGE_CSS %}
+                {% include "cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url css_class=COVER_IMAGE_CSS %}
             {% else %}
                 {% with podcast=episode.podcast %}
-                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
+                    {% include "cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url css_class=COVER_IMAGE_CSS %}
                 {% endwith %}
             {% endif %}
         </div>
@@ -24,7 +24,7 @@
         </h2>
         <h3 class="truncate w-60 sm:w-auto sm:max-w-md md:max-w-lg md:max-w-xl xl:max-w-2xl 2xl:max-w-3xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
             {% if is_podcast_detail %}
-                {% include "includes/date.html" with value=episode.pub_date title="Release Date" %}
+                {% include "date.html" with value=episode.pub_date title="Release Date" %}
             {% else %}
                 {% with podcast=episode.podcast %}
                     <a href="{{ podcast.get_episodes_url }}"

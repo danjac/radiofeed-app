@@ -2,7 +2,7 @@
     id="episode-timestamps-{{ episode.id }}"
     {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     <div class="flex items-center space-x-2 sm:space-x-3">
-        {% include "includes/date.html" with value=episode.pub_date title="Release Date" %}
+        {% include "date.html" with value=episode.pub_date title="Release Date" %}
         {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
             {% if duration %}
                 <div>
@@ -20,7 +20,7 @@
     </div>
     {% if listened %}
         <div>
-            Listened {% include "includes/date.html" with value=listened %}
+            Listened {% include "date.html" with value=listened %}
         </div>
     {% endif %}
 </div>

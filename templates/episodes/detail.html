@@ -139,12 +139,12 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
 
                 <div class="h-28 w-28 md:h-36 md:w-36">
-                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 md:w-36 md:h-36 border dark:border-gray-500" url=podcast.get_detail_url %}
+                    {% include "cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 md:w-36 md:h-36 border dark:border-gray-500" url=podcast.get_detail_url %}
                 </div>
 
                 <div class="flex flex-col place-content-between h-24 md:h-28">
 
-                    {% include "episodes/includes/player_toggle.html" %}
+                    {% include "episodes/player_buttons.html" %}
 
                     <div class="flex items-center space-x-3 md:space-x-4">
                         <a download
@@ -159,8 +159,8 @@
                         </a>
 
                         {% if user.is_authenticated %}
-                            {% include "episodes/includes/bookmark_toggle.html" %}
-                            {% include "episodes/includes/audio_log_toggle.html" with listened=episode.listened %}
+                            {% include "episodes/bookmark_buttons.html" %}
+                            {% include "episodes/history_buttons.html" with listened=episode.listened %}
                         {% endif %}
                     </div>
 
@@ -169,7 +169,7 @@
                 </div>
             </div>
 
-            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
+            {% include "episodes/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
 
             {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
                 {% if file_size or link or explicit %}

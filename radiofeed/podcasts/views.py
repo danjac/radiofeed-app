@@ -45,7 +45,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/index.html",
-        "podcasts/includes/podcasts.html",
+        "podcasts/podcast_list.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -72,7 +72,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/search.html",
-        "podcasts/includes/podcasts.html",
+        "podcasts/podcast_list.html",
     )
 
 
@@ -182,7 +182,7 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
-        "episodes/includes/episodes.html",
+        "episodes/episode_list.html",
         extra_context=extra_context
         if request.htmx.target == "object-list"
         else get_podcast_detail_context(request, podcast, extra_context),
@@ -229,7 +229,7 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        "podcasts/includes/podcasts.html",
+        "podcasts/podcast_list.html",
         {"category": category},
     )
 
@@ -249,7 +249,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/includes/subscribe_toggle.html",
+        "podcasts/subscribe_buttons.html",
         {
             "podcast": podcast,
             "subscribed": True,
@@ -268,7 +268,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/includes/subscribe_toggle.html",
+        "podcasts/subscribe_buttons.html",
         {
             "podcast": podcast,
             "subscribed": False,

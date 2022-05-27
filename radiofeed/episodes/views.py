@@ -58,7 +58,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/includes/episodes.html",
+        "episodes/episode_list.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -83,7 +83,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/search.html",
-        "episodes/includes/episodes.html",
+        "episodes/episode_list.html",
     )
 
 
@@ -125,7 +125,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/player.html",
+        "episodes/player.html",
         {
             "episode": episode,
             "is_playing": True,
@@ -145,7 +145,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
         return TemplateResponse(
             request,
-            "episodes/includes/player.html",
+            "episodes/player.html",
             {
                 "episode": episode,
                 "is_playing": False,
@@ -196,7 +196,7 @@ def history(request: HttpRequest) -> HttpResponse:
         request,
         logs,
         "episodes/history.html",
-        "episodes/includes/audio_logs.html",
+        "episodes/history_list.html",
         {
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
@@ -216,7 +216,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/audio_log_toggle.html",
+        "episodes/history_buttons.html",
         {"episode": episode},
     )
 
@@ -236,7 +236,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/includes/bookmarks.html",
+        "episodes/bookmark_list.html",
     )
 
 
@@ -254,7 +254,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/bookmark_toggle.html",
+        "episodes/bookmark_buttons.html",
         {
             "episode": episode,
             "is_bookmarked": True,
@@ -273,7 +273,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "episodes/includes/bookmark_toggle.html",
+        "episodes/bookmark_buttons.html",
         {
             "episode": episode,
             "is_bookmarked": False,

@@ -22,7 +22,7 @@ __________             .___.__        _____                 .___
     {% endblock title_tag %}
 
     {% if request.htmx %}
-        {% include "includes/signup_cta.html" with hx_oob=True %}
+        {% include "signup_cta.html" with hx_oob=True %}
     {% else %}
         <link rel="icon"
             type="image/png"
@@ -109,22 +109,22 @@ __________             .___.__        _____                 .___
             hx-swap="outerHTML show:window:top"
             hx-indicator="#loader"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-            {% include "includes/hx_indicator.html" %}
+            {% include "hx_indicator.html" %}
 
             <div class="flex flex-col h-screen">
                 <div class="flex-grow">
-                    {% include "includes/navbar.html" %}
+                    {% include "navbar.html" %}
 
     {% endif %}
 
-    {% include "includes/messages.html" with hx_oob=request.htmx %}
+    {% include "messages.html" with hx_oob=request.htmx %}
 
     <div hx-history-elt
         id="layout"
         class="flex relative p-2 pt-6 mx-auto min-h-screen xl:w-5/6">
         {% if user.is_authenticated %}
             <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
-                {% include "includes/sidebar.html" %}
+                {% include "sidebar.html" %}
             </aside>
         {% endif %}
 
@@ -142,7 +142,7 @@ __________             .___.__        _____                 .___
             </div>
         {% endif %}
 
-        {% include "includes/footer.html" %}
+        {% include "footer.html" %}
         </div>
 
         {% django_htmx_script %}
