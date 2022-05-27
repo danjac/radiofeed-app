@@ -11,7 +11,7 @@
                 {% include "podcasts/itunes_feed.html" %}
             {% endif %}
         {% empty %}
-            {% include "empty_list.html" %}
+            {% include "pagination/empty.html" %}
         {% endfor %}
     </section>
 {% endblock %}

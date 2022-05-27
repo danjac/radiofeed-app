@@ -2,13 +2,13 @@
     class="space-y-3"
     id="{{ pagination_target }}">
 
-    {% include "pagination_links.html" %}
+    {% include "pagination/links.html" %}
 
     {% for episode in page_obj.object_list %}
         {% include "episodes/episode.html" %}
     {% empty %}
-        {% include "empty_list.html" %}
+        {% include "pagination/empty.html" %}
     {% endfor %}
 
-    {% include "pagination_links.html" %}
+    {% include "pagination/links.html" %}
 </section>
