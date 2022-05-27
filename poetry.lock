@@ -363,7 +363,7 @@ python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.10.0"
+version = "4.11.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 category = "main"
 optional = false
@@ -1690,8 +1690,8 @@ django-object-actions = [
     {file = "django_object_actions-4.0.0-py3-none-any.whl", hash = "sha256:d87b4bb8a31e8485291acae39ceede40316091914d24bfb3073b54138f409313"},
 ]
 django-permissions-policy = [
-    {file = "django-permissions-policy-4.10.0.tar.gz", hash = "sha256:61a1dbdd5d60192caf75907469b774cdc618aedf2733765457183dd402f0a329"},
-    {file = "django_permissions_policy-4.10.0-py3-none-any.whl", hash = "sha256:84d37298fcb7d07aab312db0e6c8453f925a92105c9033a4659053a802dc2b4c"},
+    {file = "django-permissions-policy-4.11.0.tar.gz", hash = "sha256:f9ee4d93c11e18bc66c131994c57479af6df7b8e3e13ad778aa48ebd620dec75"},
+    {file = "django_permissions_policy-4.11.0-py3-none-any.whl", hash = "sha256:659e388c20b9e14e563ca738283177bb13782887873e8a3fec2357cbf64d8ce5"},
 ]
 django-postgres-metrics = [
     {file = "django-postgres-metrics-0.13.1.tar.gz", hash = "sha256:ca9df75d01f0b2951d25246454cfa6441a7503675ceea4a1a8731381dd824acb"},
