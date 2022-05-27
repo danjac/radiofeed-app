@@ -7,7 +7,7 @@
     {% for podcast in page_obj.object_list %}
         {% include "podcasts/podcast.html" %}
     {% empty %}
-        {% include "empty.html" %}
+        {% include "empty_list.html" %}
     {% endfor %}
 
     {% include "pagination_links.html" %}
