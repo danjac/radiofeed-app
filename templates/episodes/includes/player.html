@@ -31,6 +31,7 @@
                     x-show="mediaSrc">
 
                     <div class="sm:hidden">
+
                         <a class="w-84 truncate block text-center"
                             :class="{'hover:text-blue-500': isPlaying, 'animate-pulse text-gray-300': !isPlaying}"
                             href="{{ episode_url }}"
@@ -38,18 +39,27 @@
                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
 
                         </a>
-                        <div class="text-xs md:text-sm text-center sm:hidden"
+
+                        <div class="text-xs text-center"
                             x-cloak
                             x-show="!playbackError && isLoaded"
                             :class="{'animate-pulse text-gray-300': !isPlaying}">
                             <span x-text="counters.current"></span> /
                             <span x-text="counters.total"></span>
                         </div>
-                        <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
+
+                        <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
-                            x-show="playbackError">
+                            x-show="!playbackError && !isLoaded">
+                            Loading...
+                        </div>
+
+                        <div class="text-xs text-center animate-pulse text-gray-300"
+                            x-cloak
+                            x-show="playbackError && isLoaded">
                             <span x-text="playbackError ? playbackError.message : 'Error'"></span>
                         </div>
+
                     </div>
 
                     <div class="flex items-center space-x-2 sm:space-x-0">
@@ -114,9 +124,16 @@
                                         <span x-text="counters.total"
                                             title="Time Remaining"></span>
                                     </div>
+
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
-                                        x-show="playbackError">
+                                        x-show="!playbackError && !isLoaded">
+                                        Loading...
+                                    </div>
+
+                                    <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
+                                        x-cloak
+                                        x-show="playbackError && isLoaded">
                                         <span x-text="playbackError ? playbackError.message : 'Error'"></span>
                                     </div>
 
