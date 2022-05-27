@@ -60,7 +60,7 @@ document.addEventListener("alpine:init", () => {
                 this.playbackRate = playbackRate || 1.0;
                 this.autoplay = autoplay || this.autoplay;
 
-                event.target.currentTime = this.runtime = this.currentTime;
+                event.target.currentTime = this.currentTime;
 
                 if (this.autoplay) {
                     event.target.play().catch(this.handleError.bind(this));
