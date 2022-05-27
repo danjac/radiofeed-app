@@ -141,10 +141,10 @@
                 </form>
             </div>
             {% if user.is_authenticated %}
-                {% include "sidebar.html" %}
+                {% include "includes/sidebar.html" %}
             {% endif %}
         </div>
-        {% include "signup_cta.html" %}
+        {% include "includes/signup_cta.html" %}
     </header>
 
 {% endwith %}

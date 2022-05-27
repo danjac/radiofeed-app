@@ -65,7 +65,7 @@
 
                         {% with cover_url=podcast.cover_url %}
                             <div class="w-20 md:w-24">
-                                {% include "cover_image.html" with size=24 css_class="h-16 w-16 md:h-20 md:w-20" alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="outerHTML show:window:top" %}
+                                {% include "includes/cover_image.html" with size=24 css_class="h-16 w-16 md:h-20 md:w-20" alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="outerHTML show:window:top" %}
                             </div>
                         {% endwith %}
 
