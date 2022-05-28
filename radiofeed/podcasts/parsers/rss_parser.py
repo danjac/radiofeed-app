@@ -171,7 +171,6 @@ def parse_item(finder: XPathFinder) -> Item:
             "content:encoded/text()",
             "description/text()",
             "itunes:summary/text()",
-            default="",
         ),
         duration=parse_duration(finder.first("itunes:duration/text()")),
         episode_type=finder.first("itunes:episodetype/text()", default="full"),
