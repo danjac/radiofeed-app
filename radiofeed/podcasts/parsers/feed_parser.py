@@ -268,7 +268,11 @@ class FeedParser:
         guids = dict(qs.values_list("guid", "pk"))
 
         episodes = [
-            Episode(pk=guids.get(item.guid), podcast=self.podcast, **dataclasses.asdict(item))
+            Episode(
+                pk=guids.get(item.guid),
+                podcast=self.podcast,
+                **dataclasses.asdict(item),
+            )
             for item in items
         ]
 
