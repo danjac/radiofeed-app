@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -123,16 +123,12 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return TemplateResponse(
+    return render_player(
         request,
-        "episodes/player.html",
-        {
-            "episode": episode,
-            "is_playing": True,
-            "start_player": True,
-            "current_time": log.current_time,
-            "listened": now,
-        },
+        episode,
+        is_playing=True,
+        current_time=log.current_time,
+        listened=now,
     )
 
 
@@ -141,17 +137,15 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 def close_player(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.pop():
+
         episode = get_episode_or_404(request, episode_id, with_current_time=True)
 
-        return TemplateResponse(
+        return render_player(
             request,
-            "episodes/player.html",
-            {
-                "episode": episode,
-                "is_playing": False,
-                "current_time": episode.current_time,
-                "listened": episode.listened,
-            },
+            episode,
+            is_playing=False,
+            current_time=episode.current_time,
+            listened=episode.listened,
         )
 
     return HttpResponse()
@@ -280,6 +274,27 @@ def get_episode_or_404(
     if with_current_time:
         qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
+
+
+def render_player(
+    request: HttpRequest,
+    episode: Episode,
+    *,
+    is_playing: bool,
+    current_time: datetime,
+    listened: datetime,
+) -> TemplateResponse:
+    return TemplateResponse(
+        request,
+        "episodes/player.html",
+        {
+            "episode": episode,
+            "is_playing": is_playing,
+            "start_player": is_playing,
+            "current_time": current_time,
+            "listened": listened,
+        },
+    )
 
 
 def render_bookmark_buttons(
