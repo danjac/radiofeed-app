@@ -132,8 +132,8 @@ def parse_items(
         try:
             yield parse_item(XPathFinder(item, namespaces))
 
-        except (ValueError, TypeError):
-            pass
+        except ValueError:
+            continue
 
 
 def parse_item(finder: XPathFinder) -> Item:
