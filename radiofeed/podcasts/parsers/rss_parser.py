@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import dataclasses
+
 from datetime import datetime
 from typing import Generator
 
-import attr
 import lxml.etree
 
 from django.core.exceptions import ValidationError
@@ -25,140 +26,49 @@ NAMESPACES: dict[str, str] = {
 _validate_url = URLValidator(["http", "https"])
 
 
-def is_explicit(value: str | None) -> bool:
-    return (value or "").casefold() in ("clean", "yes")
-
-
-def is_complete(value: str | None) -> bool:
-    return (value or "").casefold() == "yes"
-
-
-def int_or_none(value: str | None) -> int | None:
-
-    if value is None:
-        return None
-
-    try:
-        if (result := int(value)) in range(-2147483648, 2147483647):
-            return result
-
-    except ValueError:
-        ...
-
-    return None
-
-
-def list_to_str(value: list[str]) -> str:
-    return " ".join(value or [])
-
-
-def language_code(value: str) -> str:
-    return value[:2]
-
-
-def url_or_none(value: str | None) -> str | None:
-    try:
-        _validate_url(value)
-        return value
-    except ValidationError:
-        return None
-
-
-def duration(value: str | None) -> str:
-    if not value:
-        return ""
-    try:
-        # plain seconds value
-        return str(int(value))
-    except ValueError:
-        pass
-    try:
-        return ":".join(
-            [
-                str(v)
-                for v in [int(v) for v in value.split(":")[:3]]
-                if v in range(0, 60)
-            ]
-        )
-    except ValueError:
-        return ""
-
-
-def is_url(inst: object, attr: attr.Attribute, value: str | None) -> None:
-    try:
-        _validate_url(value)
-    except ValidationError as e:
-        raise ValueError from e
-
-
-def not_empty(inst: object, attr: attr.Attribute, value: str | None) -> None:
-    if not value:
-        raise ValueError(f"{attr} is empty")
-
-
 class RssParserError(ValueError):
     ...
 
 
-@attr.s(kw_only=True)
+@dataclasses.dataclass
 class Item:
 
-    guid: str = attr.ib(validator=not_empty)
-    title: str = attr.ib(validator=not_empty)
-    link: str | None = attr.ib(default=None, converter=url_or_none)
+    guid: str
+    title: str
+    media_url: str
+    media_type: str
 
-    # https://github.com/python/mypy/issues/6172
-    pub_date: datetime | None = attr.ib(converter=parse_date)  # type: ignore
+    link: str | None = None
+    pub_date: datetime | None = None
+    explicit: bool = False
 
-    media_url: str = attr.ib(validator=is_url)
-    media_type: str = attr.ib()
+    length: int | None = None
+    season: int | None = None
+    episode: int | None = None
+    cover_url: str | None = None
 
-    explicit: bool = attr.ib(converter=is_explicit)
-
-    length: int | None = attr.ib(default=None, converter=int_or_none)
-    season: int | None = attr.ib(default=None, converter=int_or_none)
-    episode: int | None = attr.ib(default=None, converter=int_or_none)
-
-    cover_url: str | None = attr.ib(default=None, converter=url_or_none)
-
-    episode_type: str = attr.ib(default="full")
-    duration: str = attr.ib(default="", converter=duration)
-
-    description: str = attr.ib(default="")
-    keywords: str = attr.ib(default="", converter=list_to_str)
-
-    @pub_date.validator
-    def is_pub_date_ok(self, attr: attr.Attribute, value: str | None) -> None:
-        if not value or value > timezone.now():
-            raise ValueError("not a valid pub date")
-
-    @media_type.validator
-    def is_audio(self, attr: attr.Attribute, value: str | None) -> None:
-        if not (value or "").startswith("audio/"):
-            raise ValueError("not a valid audio enclosure")
+    episode_type: str = ""
+    duration: str = ""
+    description: str = ""
+    keywords: str = ""
 
 
-@attr.s(kw_only=True)
+@dataclasses.dataclass
 class Feed:
 
-    title: str | None = attr.ib(validator=not_empty)
+    title: str
+    language: str
 
-    language: str = attr.ib(default="en", converter=language_code)
+    link: str | None = None
+    cover_url: str | None = None
+    funding_text: str = ""
+    funding_url: str | None = None
+    owner: str = ""
+    description: str = ""
+    complete: bool = False
+    explicit: bool = False
 
-    link: str | None = attr.ib(default=None, converter=url_or_none)
-
-    cover_url: str | None = attr.ib(default=None, converter=url_or_none)
-
-    funding_text: str = attr.ib(default="")
-    funding_url: str | None = attr.ib(default=None, converter=url_or_none)
-
-    owner: str = attr.ib(default="")
-    description: str = attr.ib(default="")
-
-    complete: bool = attr.ib(default=False, converter=is_complete)
-    explicit: bool = attr.ib(default=False, converter=is_explicit)
-
-    categories: list[str] = attr.ib(default=list)
+    categories: list[str] = dataclasses.field(default_factory=list)
 
 
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
@@ -193,13 +103,12 @@ def parse_channel(
 
 def parse_feed(finder: XPathFinder) -> Feed:
     return Feed(
-        title=finder.first("title/text()"),
-        link=finder.first("link/text()"),
-        language=finder.first("language/text()", default="en"),
-        complete=finder.first("itunes:complete/text()"),
-        explicit=finder.first("itunes:explicit/text()"),
-        cover_url=finder.first("itunes:image/@href", "image/url/text()"),
-        funding_url=finder.first("podcast:funding/@url"),
+        title=finder.first("title/text()", required=True),
+        link=parse_url(finder.first("link/text()")),
+        language=finder.first("language/text()", default="en")[:2],
+        explicit=parse_explicit(finder.first("itunes:explicit/text()")),
+        cover_url=parse_url(finder.first("itunes:image/@href", "image/url/text()")),
+        funding_url=parse_url(finder.first("podcast:funding/@url")),
         funding_text=finder.first("podcast:funding/text()"),
         description=finder.first(
             "description/text()",
@@ -209,6 +118,7 @@ def parse_feed(finder: XPathFinder) -> Feed:
             "itunes:author/text()",
             "itunes:owner/itunes:name/text()",
         ),
+        complete=finder.first("itunes:complete/text()").casefold() == "yes",
         categories=finder.all("//itunes:category/@text"),
     )
 
@@ -228,33 +138,99 @@ def parse_items(
 
 def parse_item(finder: XPathFinder) -> Item:
     return Item(
-        guid=finder.first("guid/text()"),
-        title=finder.first("title/text()"),
-        link=finder.first("link/text()"),
-        pub_date=finder.first("pubDate/text()"),
-        media_url=finder.first(
-            "enclosure//@url",
-            "media:content//@url",
+        guid=finder.first("guid/text()", required=True),
+        title=finder.first("title/text()", required=True),
+        pub_date=parse_date(finder.first("pubDate/text()", required=True)),
+        link=parse_url(finder.first("link/text()")),
+        media_url=parse_url(
+            finder.first(
+                "enclosure//@url",
+                "media:content//@url",
+                required=True,
+            ),
+            raises=True,
         ),
-        media_type=finder.first(
-            "enclosure//@type",
-            "media:content//@type",
+        media_type=parse_audio(
+            finder.first(
+                "enclosure//@type",
+                "media:content//@type",
+                required=True,
+            )
         ),
-        length=finder.first(
-            "enclosure//@length",
-            "media:content//@fileSize",
+        length=parse_int(
+            finder.first(
+                "enclosure//@length",
+                "media:content//@fileSize",
+            )
         ),
-        explicit=finder.first("itunes:explicit/text()"),
-        cover_url=finder.first("itunes:image/@href"),
-        episode=finder.first("itunes:episode/text()"),
-        season=finder.first("itunes:season/text()"),
+        explicit=parse_explicit(finder.first("itunes:explicit/text()")),
+        cover_url=parse_url(finder.first("itunes:image/@href")),
+        episode=parse_int(finder.first("itunes:episode/text()")),
+        season=parse_int(finder.first("itunes:season/text()")),
         description=finder.first(
             "content:encoded/text()",
             "description/text()",
             "itunes:summary/text()",
             default="",
         ),
-        duration=finder.first("itunes:duration/text()"),
+        duration=parse_duration(finder.first("itunes:duration/text()")),
         episode_type=finder.first("itunes:episodetype/text()", default="full"),
-        keywords=finder.all("category/text()"),
+        keywords=" ".join(finder.all("category/text()")),
     )
+
+
+def parse_audio(value: str) -> str:
+    if not value.startswith("audio/"):
+        raise ValueError("not a valid audio enclosure")
+    return value
+
+
+def parse_pub_date(value: str) -> datetime:
+    if not (pub_date := parse_date(value)) or pub_date > timezone.now():
+        raise ValueError("not a valid pub date")
+    return pub_date
+
+
+def parse_explicit(value: str) -> bool:
+    return value.casefold() in ("clean", "yes")
+
+
+def parse_url(value: str, raises: bool = False) -> str | None:
+    try:
+        _validate_url(value)
+        return value
+    except ValidationError as e:
+        if raises:
+            raise ValueError from e
+    return None
+
+
+def parse_int(value: str) -> int | None:
+
+    try:
+        if (result := int(value)) in range(-2147483648, 2147483647):
+            return result
+
+    except ValueError:
+        return None
+
+
+def parse_duration(value: str) -> str:
+    if not value:
+        return ""
+    try:
+        # plain seconds value
+        return str(int(value))
+    except ValueError:
+        pass
+
+    try:
+        return ":".join(
+            [
+                str(v)
+                for v in [int(v) for v in value.split(":")[:3]]
+                if v in range(0, 60)
+            ]
+        )
+    except ValueError:
+        return ""

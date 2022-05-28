@@ -27,15 +27,16 @@ class XPathFinder:
         self.element = element
         self.namespaces = namespaces
 
-    def first(self, *paths: str, default: str = "") -> str:
+    def first(self, *paths: str, default: str = "", required: bool = False) -> str:
+        """Find single attribute or text value. Returns first matching value."""
 
-        """Find single attribute or text value. Returns
-        first matching value."""
         for path in paths:
             try:
                 return self.all(path)[0]
             except IndexError:
                 continue
+        if required:
+            raise ValueError(f"No value found for {paths}")
         return default
 
     def all(self, path: str) -> list[str]:

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import dataclasses
+
 from typing import Generator
 
-import attr
 import lxml
 
-from radiofeed.podcasts.parsers.rss_parser import url_or_none
+from radiofeed.podcasts.parsers.rss_parser import parse_url
 from radiofeed.podcasts.parsers.xml_parser import XPathFinder, iterparse
 
 
@@ -13,13 +14,13 @@ class OpmlParserError(ValueError):
     ...
 
 
-@attr.s(kw_only=True)
+@dataclasses.dataclass
 class Outline:
 
-    title: str | None = attr.ib(default="")
-    text: str = attr.ib(default="")
-    rss: str | None = attr.ib(default=None, converter=url_or_none)
-    url: str | None = attr.ib(default=None, converter=url_or_none)
+    title: str = ""
+    text: str = ""
+    rss: str | None = None
+    url: str | None = None
 
 
 def parse_opml(content: bytes) -> Generator[Outline, None, None]:
@@ -29,8 +30,8 @@ def parse_opml(content: bytes) -> Generator[Outline, None, None]:
                 finder = XPathFinder(element)
                 yield Outline(
                     title=finder.first("@title"),
-                    rss=finder.first("@xmlUrl"),
-                    url=finder.first("@htmlUrl"),
+                    rss=parse_url(finder.first("@xmlUrl")),
+                    url=parse_url(finder.first("@htmlUrl")),
                     text=finder.first("@text"),
                 )
                 element.clear()

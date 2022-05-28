@@ -6,7 +6,6 @@ import hashlib
 import http
 import secrets
 
-import attr
 import requests
 
 from django.db import transaction
@@ -269,7 +268,7 @@ class FeedParser:
         guids = dict(qs.values_list("guid", "pk"))
 
         episodes = [
-            Episode(pk=guids.get(item.guid), podcast=self.podcast, **attr.asdict(item))
+            Episode(pk=guids.get(item.guid), podcast=self.podcast, **dataclasses.asdict(item))
             for item in items
         ]
 

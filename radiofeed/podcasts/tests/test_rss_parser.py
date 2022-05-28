@@ -6,26 +6,49 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.podcasts.factories import FeedFactory, ItemFactory
 from radiofeed.podcasts.parsers.rss_parser import (
-    Feed,
-    Item,
     RssParserError,
-    duration,
-    int_or_none,
-    is_explicit,
-    is_url,
-    not_empty,
+    parse_audio,
+    parse_duration,
+    parse_explicit,
+    parse_int,
+    parse_pub_date,
     parse_rss,
-    url_or_none,
+    parse_url,
 )
 
 
 class TestConverters:
+    def test_parse_pub_date_is_invalid(self):
+        with pytest.raises(ValueError):
+            parse_pub_date("test")
+
+    def test_parse_pub_date_is_future(self):
+        with pytest.raises(ValueError):
+            parse_pub_date((timezone.now() + timedelta(days=3)).strftime("%c"))
+
+    def test_parse_pub_date_is_valid(self):
+        assert parse_pub_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+    @pytest.mark.parametrize(
+        "value,raises",
+        [
+            ("", True),
+            ("video/mp4", True),
+            ("audio/mp3", False),
+        ],
+    )
+    def test_parse_audio(self, value, raises):
+        if raises:
+            with pytest.raises(ValueError):
+                parse_audio(value)
+        else:
+            assert parse_audio(value) == value
+
     @pytest.mark.parametrize(
         "value,expected",
         [
-            (None, ""),
+            ("", ""),
             ("invalid", ""),
             ("300", "300"),
             ("10:30", "10:30"),
@@ -33,8 +56,8 @@ class TestConverters:
             ("10:30:99", "10:30"),
         ],
     )
-    def test_duration(self, value, expected):
-        assert duration(value) == expected
+    def test_parse_duration(self, value, expected):
+        assert parse_duration(value) == expected
 
     @pytest.mark.parametrize(
         "value,expected",
@@ -43,12 +66,12 @@ class TestConverters:
             ("0", 0),
             ("-111111111111111", None),
             ("111111111111111", None),
-            (None, None),
+            ("", None),
             ("a string", None),
         ],
     )
-    def test_int_or_none(self, value, expected):
-        assert int_or_none(value) == expected
+    def test_parse_int(self, value, expected):
+        assert parse_int(value) == expected
 
     @pytest.mark.parametrize(
         "value,expected",
@@ -58,8 +81,23 @@ class TestConverters:
             (None, None),
         ],
     )
-    def test_url_or_none(self, value, expected):
-        assert url_or_none(value) == expected
+    def test_parse_url(self, value, expected):
+        assert parse_url(value) == expected
+
+    @pytest.mark.parametrize(
+        "value,raises",
+        [
+            ("http://example.com", False),
+            ("example", True),
+            ("", True),
+        ],
+    )
+    def test_parse_url_raises(self, value, raises):
+        if raises:
+            with pytest.raises(ValueError):
+                parse_url(value, raises=True)
+        else:
+            assert parse_url(value, raises=True) == value
 
     @pytest.mark.parametrize(
         "value,expected",
@@ -67,46 +105,11 @@ class TestConverters:
             ("clean", True),
             ("yes", True),
             ("no", False),
-            (None, False),
+            ("", False),
         ],
     )
-    def test_is_explicit(self, value, expected):
-        assert is_explicit(value) is expected
-
-
-class TestValidators:
-    @pytest.mark.parametrize(
-        "value,exc",
-        [
-            (None, ValueError),
-            ("example", ValueError),
-            ("ftp://example.com", ValueError),
-            ("http://example.com", None),
-            ("https://example.com", None),
-        ],
-    )
-    def test_is_url(self, value, exc):
-        if exc:
-            with pytest.raises(exc):
-                is_url(None, "url", None)
-        else:
-            is_url(None, "url", value)
-
-    @pytest.mark.parametrize(
-        "value,exc",
-        [
-            (None, ValueError),
-            (False, ValueError),
-            ("", ValueError),
-            ("ok", None),
-        ],
-    )
-    def test_not_empty(self, value, exc):
-        if exc:
-            with pytest.raises(exc):
-                not_empty(None, "url", None)
-        else:
-            not_empty(None, "url", value)
+    def test_parse_explicit(self, value, expected):
+        assert parse_explicit(value) is expected
 
 
 class TestRssParser:
@@ -174,76 +177,3 @@ class TestRssParser:
 
     def read_mock_file(self, mock_filename):
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
-
-
-class TestFeed:
-    def test_ok(self):
-        Feed(**FeedFactory())
-
-    def test_empty_link(self):
-        feed = Feed(**FeedFactory(link=""))
-        assert feed.link is None
-
-    def test_missing_title(self):
-        with pytest.raises(ValueError):
-            Feed(**FeedFactory(title=None))
-
-    def test_explicit_true(self):
-        feed = Feed(**FeedFactory(explicit="yes"))
-        assert feed.explicit
-
-    def test_explicit_false(self):
-        feed = Feed(**FeedFactory(explicit="no"))
-        assert not feed.explicit
-
-
-class TestItem:
-    def test_ok(self):
-        item = Item(**ItemFactory())
-        assert not item.explicit
-
-    def test_not_audio(self):
-        with pytest.raises(ValueError):
-            Item(**ItemFactory(media_type="video/mp4"))
-
-    def test_pub_date_none(self):
-        with pytest.raises(ValueError):
-            Item(**ItemFactory(pub_date=None))
-
-    def test_pub_date_gt_now(self):
-        with pytest.raises(ValueError):
-            Item(
-                **ItemFactory(pub_date=(timezone.now() + timedelta(days=3)).isoformat())
-            )
-
-    def test_explicit_true(self):
-        item = Item(**ItemFactory(explicit="yes"))
-        assert item.explicit
-
-    def test_explicit_false(self):
-        item = Item(**ItemFactory(explicit="no"))
-        assert not item.explicit
-
-    def test_empty_duration(self):
-        item = Item(**ItemFactory(duration=""))
-        assert item.duration == ""
-
-    def test_invalid_duration(self):
-        item = Item(**ItemFactory(duration="https://example.com"))
-        assert item.duration == ""
-
-    def test_duration_seconds_only(self):
-        item = Item(**ItemFactory(duration="1000"))
-        assert item.duration == "1000"
-
-    def test_duration_h_m(self):
-        item = Item(**ItemFactory(duration="10:20"))
-        assert item.duration == "10:20"
-
-    def test_duration_h_m_over_60(self):
-        item = Item(**ItemFactory(duration="10:90"))
-        assert item.duration == "10"
-
-    def test_duration_h_m_s(self):
-        item = Item(**ItemFactory(duration="10:30:30"))
-        assert item.duration == "10:30:30"
