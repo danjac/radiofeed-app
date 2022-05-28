@@ -126,7 +126,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     return render_player(
         request,
         episode,
-        is_playing=True,
+        start_player=True,
         current_time=log.current_time,
         listened=now,
     )
@@ -143,7 +143,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
         return render_player(
             request,
             episode,
-            is_playing=False,
+            start_player=False,
             current_time=episode.current_time,
             listened=episode.listened,
         )
@@ -280,7 +280,7 @@ def render_player(
     request: HttpRequest,
     episode: Episode,
     *,
-    is_playing: bool,
+    start_player: bool,
     current_time: datetime,
     listened: datetime,
 ) -> TemplateResponse:
@@ -289,8 +289,8 @@ def render_player(
         "episodes/player.html",
         {
             "episode": episode,
-            "is_playing": is_playing,
-            "start_player": is_playing,
+            "start_player": start_player,
+            "is_playing": start_player,
             "current_time": current_time,
             "listened": listened,
         },
