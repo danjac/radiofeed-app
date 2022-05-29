@@ -247,5 +247,4 @@ SITE_CONFIG = {
     "country": env("HOST_COUNTRY", default="Finland"),
     "keywords": env("SITE_KEYWORDS", default="podcasts, rss, feeds"),
     "owner": env("SITE_OWNER", default=None),
-    "twitter": env("TWITTER", default=None),
 }
