@@ -140,7 +140,7 @@ def parse_item(finder: XPathFinder) -> Item:
     return Item(
         guid=finder.first("guid/text()", required=True),
         title=finder.first("title/text()", required=True),
-        pub_date=parse_date(finder.first("pubDate/text()", required=True)),
+        pub_date=parse_pub_date(finder.first("pubDate/text()", required=True)),
         link=parse_url(finder.first("link/text()")),
         media_url=parse_url(
             finder.first(

@@ -19,9 +19,13 @@ from radiofeed.podcasts.parsers.rss_parser import (
 
 
 class TestConverters:
-    def test_parse_pub_date_is_invalid(self):
+    def test_parse_pub_date_is_not_date(self):
         with pytest.raises(ValueError):
             parse_pub_date("test")
+
+    def test_parse_pub_date_is_invalid_date(self):
+        with pytest.raises(ValueError):
+            parse_pub_date("Sun, 28 Apr 2013 15:12:352 CST")
 
     def test_parse_pub_date_is_future(self):
         with pytest.raises(ValueError):
@@ -141,6 +145,11 @@ class TestRssParser:
         "filename,title,num_items",
         [
             ("rss_missing_enc_length.xml", "The Vanilla JS Podcast", 71),
+            (
+                "rss_bad_pub_date.xml",
+                "Old Time Radio Mystery Theater",
+                69,
+            ),
             (
                 "rss_mock_large.xml",
                 "AAA United Public Radio & UFO Paranormal Radio Network",
