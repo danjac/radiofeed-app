@@ -9,11 +9,6 @@ from radiofeed.podcasts.models import Podcast
 
 
 def schedule_recent_feeds() -> QuerySet[Podcast]:
-    """Schedules podcast feeds for update.
-
-    Runs every 6 minutes
-    """
-
     return schedule_podcast_feeds(
         Podcast.objects.filter(
             Q(pub_date__isnull=True)
@@ -23,11 +18,6 @@ def schedule_recent_feeds() -> QuerySet[Podcast]:
 
 
 def schedule_sporadic_feeds() -> QuerySet[Podcast]:
-    """Schedules sporadic podcast feeds for update.
-
-    Runs every 15 and 45 minutes past the hour
-    """
-
     return schedule_podcast_feeds(
         Podcast.objects.filter(
             pub_date__lt=timezone.now() - timedelta(days=14),
