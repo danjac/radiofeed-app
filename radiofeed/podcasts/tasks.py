@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 from django.db.models import QuerySet
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
@@ -10,8 +8,6 @@ from radiofeed.podcasts import emails, recommender, scheduler
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
-
-logger = logging.getLogger(__name__)
 
 
 @db_periodic_task(crontab(hour=3, minute=20))
