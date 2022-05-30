@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import logging
 
-from django.db.models import F
+from datetime import timedelta
+
+from django.db.models import Exists, F, OuterRef, Q
+from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
@@ -41,17 +44,31 @@ def send_recommendations_emails() -> None:
 
 @db_periodic_task(crontab(minute="*/6"))
 def schedule_podcast_feeds(limit: int = 360) -> None:
-    """Schedules podcast feeds for update
+    """Schedules podcast feeds for update.
+
+    Should include all active podcasts last updated > 1 hour ago.
 
     Runs every 6 minutes
     """
+    now = timezone.now()
 
     parse_podcast_feed.map(
-        Podcast.objects.scheduled()
-        .filter(active=True)
+        Podcast.objects.with_subscribed()
+        .annotate(
+            recent=Exists(
+                Podcast.objects.filter(
+                    pub_date__gte=now - timedelta(days=14), pk=OuterRef("pk")
+                )
+            )
+        )
+        .filter(
+            Q(parsed__isnull=True) | Q(parsed__lt=now + timedelta(hours=1)),
+            active=True,
+        )
         .order_by(
             F("subscribed").desc(),
             F("promoted").desc(),
+            F("recent").desc(),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),

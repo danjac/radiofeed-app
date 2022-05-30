@@ -13,7 +13,6 @@ from radiofeed.podcasts.admin import (
     PromotedFilter,
     PubDateFilter,
     ResultFilter,
-    ScheduledFilter,
     SubscribedFilter,
 )
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
@@ -198,33 +197,6 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert inactive in qs
-
-
-class TestScheduledFilter:
-    def test_subscribed_filter_none(self, db, podcast_admin, req):
-
-        now = timezone.now()
-
-        PodcastFactory(pub_date=now, parsed=now - timedelta(hours=1))
-        PodcastFactory(pub_date=now, parsed=now - timedelta(hours=6))
-
-        f = ScheduledFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 2
-
-    def test_subscribed_filter_true(self, db, podcast_admin, req):
-
-        now = timezone.now()
-
-        PodcastFactory(
-            pub_date=now - timedelta(days=15), parsed=now - timedelta(hours=1)
-        )
-        podcast = PodcastFactory(pub_date=now, parsed=now - timedelta(hours=6))
-
-        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == podcast
 
 
 class TestSubscribedFilter:
