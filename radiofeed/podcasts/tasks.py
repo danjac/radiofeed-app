@@ -2,14 +2,11 @@ from __future__ import annotations
 
 import logging
 
-from datetime import timedelta
-
-from django.db.models import F, Q, QuerySet
-from django.utils import timezone
+from django.db.models import QuerySet
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
-from radiofeed.podcasts import emails, recommender
+from radiofeed.podcasts import emails, recommender, scheduler
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
@@ -49,12 +46,7 @@ def schedule_recent_feeds():
     Runs every 6 minutes
     """
 
-    schedule_podcast_feeds(
-        Podcast.objects.filter(
-            Q(pub_date__isnull=True)
-            | Q(pub_date__gte=timezone.now() - timedelta(days=14)),
-        )
-    )
+    schedule_podcast_feeds(scheduler.schedule_recent_feeds())
 
 
 @db_periodic_task(crontab(minute="15,45"))
@@ -64,30 +56,11 @@ def schedule_sporadic_feeds():
     Runs every 15 and 45 minutes past the hour
     """
 
-    schedule_podcast_feeds(
-        Podcast.objects.filter(
-            pub_date__lt=timezone.now() - timedelta(days=14),
-        )
-    )
+    schedule_podcast_feeds(scheduler.schedule_sporadic_feeds())
 
 
 def schedule_podcast_feeds(podcasts: QuerySet[Podcast], limit: int = 360) -> None:
-    parse_podcast_feed.map(
-        podcasts.with_subscribed()
-        .filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - timedelta(hours=1)),
-            active=True,
-        )
-        .order_by(
-            F("subscribed").desc(),
-            F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-            F("created").desc(),
-        )
-        .values_list("pk")
-        .distinct()[:limit]
-    )
+    parse_podcast_feed.map(podcasts.values_list("pk").distinct()[:limit])
 
 
 @db_task()
