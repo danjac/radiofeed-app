@@ -40,7 +40,7 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_recent_feeds():
+def schedule_recent_feeds() -> None:
     """Schedules podcast feeds for update.
 
     Runs every 6 minutes
@@ -50,7 +50,7 @@ def schedule_recent_feeds():
 
 
 @db_periodic_task(crontab(minute="15,45"))
-def schedule_sporadic_feeds():
+def schedule_sporadic_feeds() -> None:
     """Schedules sporadic podcast feeds for update.
 
     Runs every 15 and 45 minutes past the hour
