@@ -4,7 +4,7 @@ import logging
 
 from datetime import timedelta
 
-from django.db.models import Exists, F, OuterRef, Q, QuerySet
+from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
@@ -51,7 +51,8 @@ def schedule_recent_feeds():
 
     schedule_podcast_feeds(
         Podcast.objects.filter(
-            pub_date__gte=timezone.now() - timedelta(days=14),
+            Q(pub_date__isnull=True)
+            | Q(pub_date__gte=timezone.now() - timedelta(days=14)),
         )
     )
 
@@ -73,7 +74,10 @@ def schedule_sporadic_feeds():
 def schedule_podcast_feeds(podcasts: QuerySet[Podcast], limit: int = 360) -> None:
     parse_podcast_feed.map(
         podcasts.with_subscribed()
-        .filter(active=True)
+        .filter(
+            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - timedelta(hours=1)),
+            active=True,
+        )
         .order_by(
             F("subscribed").desc(),
             F("promoted").desc(),

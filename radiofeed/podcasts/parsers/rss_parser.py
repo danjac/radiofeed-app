@@ -35,7 +35,7 @@ class Item:
 
     guid: str
     title: str
-    media_url: str
+    media_url: str | None
     media_type: str
 
     link: str | None = None
@@ -209,9 +209,9 @@ def parse_int(value: str) -> int | None:
     try:
         if (result := int(value)) in range(-2147483648, 2147483647):
             return result
-
     except ValueError:
-        return None
+        pass
+    return None
 
 
 def parse_duration(value: str) -> str:
