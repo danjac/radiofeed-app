@@ -1,8 +1,13 @@
+from datetime import timedelta
+
+from django.utils import timezone
+
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
     parse_podcast_feed,
     recommend,
-    schedule_podcast_feeds,
+    schedule_recent_feeds,
+    schedule_sporadic_feeds,
     send_recommendations_email,
     send_recommendations_emails,
 )
@@ -10,11 +15,19 @@ from radiofeed.users.factories import UserFactory
 
 
 class TestTasks:
-    def test_schedule_podcast_feeds(self, db, mocker):
-        podcast = PodcastFactory(parsed=None)
+    def test_schedule_recent_feeds(self, db, mocker):
+        podcast = PodcastFactory(pub_date=timezone.now() - timedelta(days=7))
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
-        schedule_podcast_feeds()
+        schedule_recent_feeds()
+
+        assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+
+    def test_schedule_sporadic_feeds(self, db, mocker):
+        podcast = PodcastFactory(pub_date=timezone.now() - timedelta(days=21))
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
+
+        schedule_sporadic_feeds()
 
         assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
 

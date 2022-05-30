@@ -4,7 +4,7 @@ import logging
 
 from datetime import timedelta
 
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import Exists, F, OuterRef, Q, QuerySet
 from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
@@ -43,32 +43,40 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_podcast_feeds(limit: int = 360) -> None:
+def schedule_recent_feeds():
     """Schedules podcast feeds for update.
-
-    Should include all active podcasts last updated > 1 hour ago.
 
     Runs every 6 minutes
     """
-    now = timezone.now()
 
+    schedule_podcast_feeds(
+        Podcast.objects.filter(
+            pub_date__gte=timezone.now() - timedelta(days=14),
+        )
+    )
+
+
+@db_periodic_task(crontab(minute="15,45"))
+def schedule_sporadic_feeds():
+    """Schedules sporadic podcast feeds for update.
+
+    Runs every 15 and 45 minutes past the hour
+    """
+
+    schedule_podcast_feeds(
+        Podcast.objects.filter(
+            pub_date__lt=timezone.now() - timedelta(days=14),
+        )
+    )
+
+
+def schedule_podcast_feeds(podcasts: QuerySet[Podcast], limit: int = 360) -> None:
     parse_podcast_feed.map(
-        Podcast.objects.with_subscribed()
-        .annotate(
-            recent=Exists(
-                Podcast.objects.filter(
-                    pub_date__gte=now - timedelta(days=14), pk=OuterRef("pk")
-                )
-            )
-        )
-        .filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=now + timedelta(hours=1)),
-            active=True,
-        )
+        podcasts.with_subscribed()
+        .filter(active=True)
         .order_by(
             F("subscribed").desc(),
             F("promoted").desc(),
-            F("recent").desc(),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
