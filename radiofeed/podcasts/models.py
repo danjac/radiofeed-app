@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
@@ -10,7 +10,6 @@ from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify

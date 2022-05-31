@@ -6,7 +6,7 @@ from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
     parse_podcast_feed,
     recommend,
-    schedule_recent_feeds,
+    schedule_frequent_feeds,
     schedule_sporadic_feeds,
     send_recommendations_email,
     send_recommendations_emails,
@@ -15,11 +15,11 @@ from radiofeed.users.factories import UserFactory
 
 
 class TestTasks:
-    def test_schedule_recent_feeds(self, db, mocker):
+    def test_schedule_frequent_feeds(self, db, mocker):
         podcast = PodcastFactory(pub_date=timezone.now() - timedelta(days=7))
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
-        schedule_recent_feeds()
+        schedule_frequent_feeds()
 
         assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
 
