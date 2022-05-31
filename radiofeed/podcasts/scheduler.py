@@ -7,29 +7,34 @@ from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
 
+RECENT_THRESHOLD = timedelta(days=14)
 
-def schedule_recent_feeds() -> QuerySet[Podcast]:
+
+def schedule_recent_feeds(
+    threshold: timedelta = RECENT_THRESHOLD,
+) -> QuerySet[Podcast]:
     return schedule_podcast_feeds(
         Podcast.objects.filter(
-            Q(pub_date__isnull=True)
-            | Q(pub_date__gte=timezone.now() - timedelta(days=14)),
+            Q(pub_date__isnull=True) | Q(pub_date__gte=timezone.now() - threshold)
         )
     )
 
 
-def schedule_sporadic_feeds() -> QuerySet[Podcast]:
+def schedule_sporadic_feeds(
+    threshold: timedelta = RECENT_THRESHOLD,
+) -> QuerySet[Podcast]:
     return schedule_podcast_feeds(
-        Podcast.objects.filter(
-            pub_date__lt=timezone.now() - timedelta(days=14),
-        )
+        Podcast.objects.filter(pub_date__lt=timezone.now() - threshold)
     )
 
 
-def schedule_podcast_feeds(podcasts: QuerySet[Podcast]) -> QuerySet[Podcast]:
+def schedule_podcast_feeds(
+    podcasts: QuerySet[Podcast], interval: timedelta = timedelta(hours=1)
+) -> QuerySet[Podcast]:
     return (
         podcasts.with_subscribed()
         .filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - timedelta(hours=1)),
+            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - interval),
             active=True,
         )
         .order_by(
