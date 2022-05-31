@@ -49,6 +49,8 @@ CACHES = {
 HUEY = {
     "connection": {"url": REDIS_URL},
     "immediate": False,
+    "results": False,
+    "store_none": False,
 }
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
