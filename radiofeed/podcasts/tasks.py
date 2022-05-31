@@ -55,7 +55,7 @@ def schedule_sporadic_feeds() -> None:
     schedule_podcast_feeds(scheduler.schedule_sporadic_feeds())
 
 
-def schedule_podcast_feeds(podcasts: QuerySet[Podcast], limit: int = 360) -> None:
+def schedule_podcast_feeds(podcasts: QuerySet[Podcast], limit: int = 200) -> None:
     parse_podcast_feed.map(podcasts.values_list("pk").distinct()[:limit])
 
 
