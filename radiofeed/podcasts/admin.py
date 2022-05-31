@@ -193,7 +193,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             self.message_user(request, "Podcast is inactive")
             return
 
-        parse_podcast_feed(obj.id)()
+        parse_podcast_feed(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
