@@ -4,7 +4,7 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
     parse_podcast_feed,
     recommend,
@@ -17,66 +17,16 @@ from radiofeed.users.factories import UserFactory
 
 class TestTasks:
     @pytest.mark.parametrize(
-        "pub_date,parsed,called",
+        "parsed,active,called",
         [
-            (timedelta(days=7), timedelta(hours=1), True),
-            (timedelta(days=15), timedelta(hours=1), False),
-            (timedelta(days=15), timedelta(hours=3), True),
+            (timedelta(hours=3), True, True),
+            (timedelta(hours=3), False, False),
+            (timedelta(minutes=30), True, False),
         ],
     )
-    def test_schedule_podcast_feeds_promoted(
-        self, db, mocker, pub_date, parsed, called
-    ):
+    def test_schedule_podcast_feeds(self, db, mocker, parsed, active, called):
         now = timezone.now()
-        podcast = PodcastFactory(
-            promoted=True, pub_date=now - pub_date, parsed=now - parsed
-        )
-        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
-
-        schedule_podcast_feeds()
-
-        if called:
-            assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
-        else:
-            assert list(patched.mock_calls[0][1][0]) == []
-
-    @pytest.mark.parametrize(
-        "pub_date,parsed,called",
-        [
-            (timedelta(days=7), timedelta(hours=1), True),
-            (timedelta(days=15), timedelta(hours=1), False),
-            (timedelta(days=15), timedelta(hours=3), True),
-        ],
-    )
-    def test_schedule_podcast_feeds_subscribed(
-        self, db, mocker, pub_date, parsed, called
-    ):
-        now = timezone.now()
-        podcast = SubscriptionFactory(
-            podcast__pub_date=now - pub_date, podcast__parsed=now - parsed
-        ).podcast
-        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
-
-        schedule_podcast_feeds()
-
-        if called:
-            assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
-        else:
-            assert list(patched.mock_calls[0][1][0]) == []
-
-    @pytest.mark.parametrize(
-        "pub_date,parsed,called",
-        [
-            (timedelta(days=7), timedelta(hours=3), True),
-            (timedelta(days=7), timedelta(hours=1), False),
-            (timedelta(days=15), timedelta(hours=1), False),
-            (timedelta(days=15), timedelta(hours=3), False),
-            (timedelta(days=15), timedelta(hours=6), True),
-        ],
-    )
-    def test_schedule_podcast_feeds(self, db, mocker, pub_date, parsed, called):
-        now = timezone.now()
-        podcast = PodcastFactory(pub_date=now - pub_date, parsed=now - parsed)
+        podcast = PodcastFactory(parsed=now - parsed, active=active)
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
         schedule_podcast_feeds()

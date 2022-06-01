@@ -39,31 +39,23 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_podcast_feeds(limit: int = 180) -> None:
+def schedule_podcast_feeds(limit: int = 360) -> None:
     """Schedules podcast feeds for update.
 
     Runs every 6 minutes
     """
-    now = timezone.now()
-
-    recent = Q(pub_date__gte=now - timedelta(days=14))
-    priority = Q(subscribed=True) | Q(promoted=True)
 
     parse_podcast_feed.map(
         Podcast.objects.with_subscribed()
         .filter(
-            Q(parsed__isnull=True)
-            | Q(pub_date__isnull=True)
-            | Q(recent & priority, parsed__lt=now - timedelta(hours=1))
-            | Q(recent | priority, parsed__lt=now - timedelta(hours=3))
-            | Q(parsed__lt=now - timedelta(hours=6)),
+            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - timedelta(hours=1)),
             active=True,
         )
         .order_by(
             F("subscribed").desc(),
             F("promoted").desc(),
-            F("pub_date").desc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
             F("created").desc(),
         )
         .values_list("pk")
