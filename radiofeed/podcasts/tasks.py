@@ -39,16 +39,18 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_podcast_feeds(limit: int = 360) -> None:
+def schedule_podcast_feeds(limit: int = 300) -> None:
     """Schedules podcast feeds for update.
 
     Runs every 6 minutes
     """
+    now = timezone.now()
 
     parse_podcast_feed.map(
         Podcast.objects.with_subscribed()
         .filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - timedelta(hours=1)),
+            Q(pub_date__isnull=True) | Q(pub_date__gte=now - timedelta(days=90)),
+            Q(parsed__isnull=True) | Q(parsed__lt=now - timedelta(hours=1)),
             active=True,
         )
         .order_by(

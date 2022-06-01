@@ -143,23 +143,13 @@ class TestPubDateFilter:
         assert qs.count() == 1
         assert new in qs
 
-    def test_frequent(self, db, podcast_admin, req):
+    def test_dead(self, db, podcast_admin, req):
         now = timezone.now()
-        PodcastFactory(pub_date=now - timedelta(days=30))
-        frequent = PodcastFactory(pub_date=now - timedelta(days=3))
-        f = PubDateFilter(req, {"pub_date": "frequent"}, Podcast, podcast_admin)
+        podcast = PodcastFactory(pub_date=now - timedelta(days=99))
+        f = PubDateFilter(req, {"pub_date": "dead"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert frequent in qs
-
-    def test_sporadic(self, db, podcast_admin, req):
-        now = timezone.now()
-        sporadic = PodcastFactory(pub_date=now - timedelta(days=30))
-        PodcastFactory(pub_date=now - timedelta(days=3))
-        f = PubDateFilter(req, {"pub_date": "sporadic"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert sporadic in qs
+        assert podcast in qs
 
 
 class TestPromotedFilter:

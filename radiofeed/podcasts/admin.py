@@ -84,8 +84,7 @@ class PubDateFilter(admin.SimpleListFilter):
             ("yes", "With pub date"),
             ("no", "With no pub date"),
             ("new", "Just added"),
-            ("frequent", "Frequent (> 14 days)"),
-            ("sporadic", "Sporadic (< 14 days)"),
+            ("dead", "Dead (Last update > 90 days)"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
@@ -97,13 +96,9 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset.filter(pub_date__isnull=True)
             case "new":
                 return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
-            case "frequent":
+            case "dead":
                 return queryset.filter(
-                    pub_date__isnull=False, pub_date__gt=now - self.interval
-                )
-            case "sporadic":
-                return queryset.filter(
-                    pub_date__isnull=False, pub_date__lt=now - self.interval
+                    pub_date__isnull=False, pub_date__lte=now - timedelta(days=90)
                 )
             case _:
                 return queryset
