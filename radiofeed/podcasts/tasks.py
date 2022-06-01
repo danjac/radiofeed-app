@@ -53,6 +53,7 @@ def schedule_podcast_feeds(limit: int = 180) -> None:
         Podcast.objects.with_subscribed()
         .filter(
             Q(parsed__isnull=True)
+            | Q(pub_date__isnull=True)
             | Q(recent & priority, parsed__lt=now - timedelta(hours=1))
             | Q(recent | priority, parsed__lt=now - timedelta(hours=3))
             | Q(parsed__lt=now - timedelta(hours=6)),
