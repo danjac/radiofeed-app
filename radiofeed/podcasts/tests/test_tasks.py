@@ -1,14 +1,14 @@
 from datetime import timedelta
 
+import pytest
+
 from django.utils import timezone
 
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.tasks import (
     parse_podcast_feed,
     recommend,
-    schedule_frequent_feeds,
-    schedule_priority_feeds,
-    schedule_sporadic_feeds,
+    schedule_podcast_feeds,
     send_recommendations_email,
     send_recommendations_emails,
 )
@@ -16,37 +16,75 @@ from radiofeed.users.factories import UserFactory
 
 
 class TestTasks:
-    def test_schedule_priority_feeds_promoted(self, db, mocker):
-        podcast = PodcastFactory(promoted=True)
+    @pytest.mark.parametrize(
+        "pub_date,parsed,called",
+        [
+            (timedelta(days=7), timedelta(hours=1), True),
+            (timedelta(days=15), timedelta(hours=1), False),
+            (timedelta(days=15), timedelta(hours=3), True),
+        ],
+    )
+    def test_schedule_podcast_feeds_promoted(
+        self, db, mocker, pub_date, parsed, called
+    ):
+        now = timezone.now()
+        podcast = PodcastFactory(
+            promoted=True, pub_date=now - pub_date, parsed=now - parsed
+        )
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
-        schedule_priority_feeds()
+        schedule_podcast_feeds()
 
-        assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+        if called:
+            assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+        else:
+            assert list(patched.mock_calls[0][1][0]) == []
 
-    def test_schedule_priority_feeds_subscribed(self, db, mocker):
-        podcast = SubscriptionFactory().podcast
+    @pytest.mark.parametrize(
+        "pub_date,parsed,called",
+        [
+            (timedelta(days=7), timedelta(hours=1), True),
+            (timedelta(days=15), timedelta(hours=1), False),
+            (timedelta(days=15), timedelta(hours=3), True),
+        ],
+    )
+    def test_schedule_podcast_feeds_subscribed(
+        self, db, mocker, pub_date, parsed, called
+    ):
+        now = timezone.now()
+        podcast = SubscriptionFactory(
+            podcast__pub_date=now - pub_date, podcast__parsed=now - parsed
+        ).podcast
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
-        schedule_priority_feeds()
+        schedule_podcast_feeds()
 
-        assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+        if called:
+            assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+        else:
+            assert list(patched.mock_calls[0][1][0]) == []
 
-    def test_schedule_frequent_feeds(self, db, mocker):
-        podcast = PodcastFactory(pub_date=timezone.now() - timedelta(days=7))
+    @pytest.mark.parametrize(
+        "pub_date,parsed,called",
+        [
+            (timedelta(days=7), timedelta(hours=3), True),
+            (timedelta(days=7), timedelta(hours=1), False),
+            (timedelta(days=15), timedelta(hours=1), False),
+            (timedelta(days=15), timedelta(hours=3), False),
+            (timedelta(days=15), timedelta(hours=6), True),
+        ],
+    )
+    def test_schedule_podcast_feeds(self, db, mocker, pub_date, parsed, called):
+        now = timezone.now()
+        podcast = PodcastFactory(pub_date=now - pub_date, parsed=now - parsed)
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
-        schedule_frequent_feeds()
+        schedule_podcast_feeds()
 
-        assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
-
-    def test_schedule_sporadic_feeds(self, db, mocker):
-        podcast = PodcastFactory(pub_date=timezone.now() - timedelta(days=21))
-        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
-
-        schedule_sporadic_feeds()
-
-        assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+        if called:
+            assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+        else:
+            assert list(patched.mock_calls[0][1][0]) == []
 
     def test_parse_podcast_feed(self, mocker):
         patched = mocker.patch(

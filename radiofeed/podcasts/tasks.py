@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, Q
 from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
@@ -38,54 +38,26 @@ def send_recommendations_emails() -> None:
     )
 
 
-@db_periodic_task(crontab(minute="*/10"))
-def schedule_priority_feeds() -> None:
-    """Schedules promoted or subscribed podcast feeds for update.
-
-    Runs every 10 minutes
-    """
-
-    schedule_podcast_feeds(
-        Podcast.objects.with_subscribed().filter(Q(promoted=True) | Q(subscribed=True))
-    )
-
-
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_frequent_feeds() -> None:
-    """Schedules frequent podcast feeds for update.
+def schedule_podcast_feeds(limit: int = 180) -> None:
+    """Schedules podcast feeds for update.
 
     Runs every 6 minutes
     """
+    now = timezone.now()
 
-    schedule_podcast_feeds(
-        Podcast.objects.with_subscribed().filter(
-            Q(pub_date__isnull=True)
-            | Q(pub_date__gte=timezone.now() - timedelta(days=14)),
-            promoted=False,
-            subscribed=False,
-        )
-    )
+    recent = Q(pub_date__gte=now - timedelta(days=14))
+    priority = Q(subscribed=True) | Q(promoted=True)
 
-
-@db_periodic_task(crontab(minute="15,45"))
-def schedule_sporadic_feeds() -> None:
-    """Schedules sporadic podcast feeds for update.
-
-    Runs every 15 and 45 minutes past the hour
-    """
-
-    schedule_podcast_feeds(
-        Podcast.objects.with_subscribed().filter(
-            pub_date__lt=timezone.now() - timedelta(days=14),
-            promoted=False,
-            subscribed=False,
-        )
-    )
-
-
-def schedule_podcast_feeds(podcasts: QuerySet[Podcast], limit: int = 180) -> None:
     parse_podcast_feed.map(
-        podcasts.filter(active=True)
+        Podcast.objects.with_subscribed()
+        .filter(
+            Q(parsed__isnull=True)
+            | Q(recent & priority, parsed__lt=now - timedelta(hours=1))
+            | Q(recent | priority, parsed__lt=now - timedelta(hours=3))
+            | Q(parsed__lt=now - timedelta(hours=6)),
+            active=True,
+        )
         .order_by(
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
