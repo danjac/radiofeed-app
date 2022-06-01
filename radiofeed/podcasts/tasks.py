@@ -38,17 +38,31 @@ def send_recommendations_emails() -> None:
     )
 
 
+@db_periodic_task(crontab(minute="*/10"))
+def schedule_priority_feeds() -> None:
+    """Schedules promoted or subscribed podcast feeds for update.
+
+    Runs every 10 minutes
+    """
+
+    schedule_podcast_feeds(
+        Podcast.objects.with_subscribed().filter(Q(promoted=True) | Q(subscribed=True))
+    )
+
+
 @db_periodic_task(crontab(minute="*/6"))
 def schedule_frequent_feeds() -> None:
-    """Schedules podcast feeds for update.
+    """Schedules frequent podcast feeds for update.
 
     Runs every 6 minutes
     """
 
     schedule_podcast_feeds(
-        Podcast.objects.filter(
+        Podcast.objects.with_subscribed().filter(
             Q(pub_date__isnull=True)
-            | Q(pub_date__gte=timezone.now() - timedelta(days=14))
+            | Q(pub_date__gte=timezone.now() - timedelta(days=14)),
+            promoted=False,
+            subscribed=False,
         )
     )
 
@@ -61,20 +75,18 @@ def schedule_sporadic_feeds() -> None:
     """
 
     schedule_podcast_feeds(
-        Podcast.objects.filter(pub_date__lt=timezone.now() - timedelta(days=14))
+        Podcast.objects.with_subscribed().filter(
+            pub_date__lt=timezone.now() - timedelta(days=14),
+            promoted=False,
+            subscribed=False,
+        )
     )
 
 
 def schedule_podcast_feeds(podcasts: QuerySet[Podcast], limit: int = 180) -> None:
     parse_podcast_feed.map(
-        podcasts.with_subscribed()
-        .filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - timedelta(hours=1)),
-            active=True,
-        )
+        podcasts.filter(active=True)
         .order_by(
-            F("subscribed").desc(),
-            F("promoted").desc(),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
