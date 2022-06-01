@@ -61,8 +61,8 @@ def schedule_podcast_feeds(limit: int = 180) -> None:
         .order_by(
             F("subscribed").desc(),
             F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
+            F("parsed").asc(nulls_first=True),
             F("created").desc(),
         )
         .values_list("pk")
