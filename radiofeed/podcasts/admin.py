@@ -5,7 +5,6 @@ from datetime import timedelta
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
-from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.podcasts import models
@@ -84,11 +83,9 @@ class PubDateFilter(admin.SimpleListFilter):
             ("yes", "With pub date"),
             ("no", "With no pub date"),
             ("new", "Just added"),
-            ("dead", "Dead (Last update > 90 days)"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        now = timezone.now()
         match self.value():
             case "yes":
                 return queryset.filter(pub_date__isnull=False)
@@ -96,10 +93,6 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset.filter(pub_date__isnull=True)
             case "new":
                 return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
-            case "dead":
-                return queryset.filter(
-                    pub_date__isnull=False, pub_date__lte=now - timedelta(days=90)
-                )
             case _:
                 return queryset
 
@@ -159,6 +152,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     readonly_fields = (
         "parsed",
+        "refresh_interval",
         "pub_date",
         "modified",
         "etag",

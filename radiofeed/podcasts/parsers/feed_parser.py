@@ -6,6 +6,8 @@ import hashlib
 import http
 import secrets
 
+from datetime import timedelta
+
 import requests
 
 from django.db import transaction
@@ -172,6 +174,7 @@ class FeedParser:
         # parsing result
 
         self.podcast.parsed = timezone.now()
+        self.podcast.refresh_interval = timedelta(hours=1)
         self.podcast.result = self.podcast.Result.SUCCESS  # type: ignore
         self.podcast.content_hash = content_hash
         self.podcast.exception = ""
@@ -243,6 +246,7 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
+            refresh_interval=self.increment_refresh_interval(),
         )
 
         return ParseResult(
@@ -334,6 +338,10 @@ class FeedParser:
         if self.podcast.modified:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
+
+    def increment_refresh_interval(self) -> timedelta:
+        seconds = self.podcast.refresh_interval.total_seconds()
+        return min(timedelta(seconds=seconds + (seconds * 0.1)), timedelta(hours=24))
 
 
 def make_content_hash(content: bytes) -> str:
