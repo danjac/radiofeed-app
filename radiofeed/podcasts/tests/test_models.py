@@ -1,7 +1,8 @@
-
+from datetime import timedelta
 
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
+from django.utils import timezone
 
 from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.factories import (
@@ -113,6 +114,18 @@ class TestPodcastModel:
 
     def test_slug_if_title_empty(self):
         assert Podcast().slug == "no-title"
+
+    def test_get_scheduled_pub_date_none(self):
+        assert Podcast(pub_date=None).get_scheduled() is None
+
+    def test_get_scheduled_pub_date_not_none(self):
+        assert (
+            Podcast(
+                pub_date=timezone.now() - timedelta(days=3),
+                refresh_interval=timedelta(days=7),
+            ).get_scheduled()
+            - timezone.now()
+        ).days == 3
 
     def test_cleaned_title(self):
         podcast = Podcast(title="<b>Test &amp; Code")

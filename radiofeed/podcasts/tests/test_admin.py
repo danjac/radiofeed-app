@@ -1,8 +1,10 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
 
 from django.contrib.admin.sites import AdminSite
+from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
     ActiveFilter,
@@ -51,6 +53,28 @@ class TestPodcastAdmin:
     @pytest.fixture
     def mock_parse_feed(self, mocker):
         return mocker.patch("radiofeed.podcasts.admin.parse_podcast_feed")
+
+    def test_scheduled_is_none(self, podcast_admin):
+        assert podcast_admin.scheduled(Podcast(pub_date=None)) == "-"
+
+    def test_scheduled_is_past(self, podcast_admin):
+        assert (
+            podcast_admin.scheduled(
+                Podcast(pub_date=timezone.now() - timedelta(hours=3))
+            )
+            == "-"
+        )
+
+    def test_scheduled_is_future(self, podcast_admin):
+        assert (
+            podcast_admin.scheduled(
+                Podcast(
+                    pub_date=timezone.now() - timedelta(days=3),
+                    refresh_interval=timedelta(days=7),
+                )
+            )
+            == "3\xa0days, 23\xa0hours"
+        )
 
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
