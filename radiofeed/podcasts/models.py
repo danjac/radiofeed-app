@@ -189,11 +189,6 @@ class Podcast(models.Model):
     def get_subscribe_target(self) -> str:
         return f"subscribe-buttons-{self.id}"
 
-    def get_scheduled(self) -> datetime | None:
-        if not self.pub_date:
-            return None
-        return self.pub_date + self.refresh_interval
-
 
 class Subscription(TimeStampedModel):
 

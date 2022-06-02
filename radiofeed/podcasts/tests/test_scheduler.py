@@ -39,6 +39,24 @@ class TestSchedulePodcastsForUpdate:
 
         assert not scheduler.schedule_podcasts_for_update().exists()
 
+    def test_scheduled_older_than_two_weeks(self, db):
+        now = timezone.now()
+        PodcastFactory(
+            parsed=now - timedelta(hours=14),
+            pub_date=now - timedelta(days=15),
+            refresh_interval=timedelta(days=14),
+        )
+        assert scheduler.schedule_podcasts_for_update().exists()
+
+    def test_not_scheduled_older_than_two_weeks(self, db):
+        now = timezone.now()
+        PodcastFactory(
+            parsed=now - timedelta(hours=7),
+            pub_date=now - timedelta(days=15),
+            refresh_interval=timedelta(days=14),
+        )
+        assert scheduler.schedule_podcasts_for_update().exists()
+
     def test_promoted_scheduled(self, db):
         PodcastFactory(parsed=timezone.now() - timedelta(hours=1), promoted=True)
         assert scheduler.schedule_podcasts_for_update().exists()

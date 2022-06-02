@@ -32,7 +32,8 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
             | Q(
                 Q(subscribed=True) | Q(promoted=True),
                 parsed__lt=now - DEFAULT_INTERVAL,
-            ),
+            )
+            | Q(parsed__lt=now - MAX_INTERVAL),
             active=True,
         )
         .order_by(
