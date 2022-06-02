@@ -11,18 +11,32 @@ class TestSchedulePodcastsForUpdate:
         PodcastFactory(parsed=None)
         assert scheduler.schedule_podcasts_for_update().exists()
 
+    def test_pub_date_is_null(self, db):
+        PodcastFactory(parsed=timezone.now(), pub_date=None)
+        assert scheduler.schedule_podcasts_for_update().exists()
+
     def test_inactive(self, db):
         PodcastFactory(parsed=None, active=False)
         assert not scheduler.schedule_podcasts_for_update().exists()
 
     def test_scheduled(self, db):
+        now = timezone.now()
         PodcastFactory(
-            pub_date=timezone.now() - timedelta(hours=1),
+            parsed=now - timedelta(hours=1),
+            pub_date=now - timedelta(days=7),
+            refresh_interval=timedelta(days=7),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
     def test_not_scheduled(self, db):
-        PodcastFactory(pub_date=timezone.now() - timedelta(minutes=30))
+        now = timezone.now()
+
+        PodcastFactory(
+            parsed=now - timedelta(hours=1),
+            pub_date=now - timedelta(days=4),
+            refresh_interval=timedelta(days=7),
+        )
+
         assert not scheduler.schedule_podcasts_for_update().exists()
 
     def test_promoted_scheduled(self, db):
