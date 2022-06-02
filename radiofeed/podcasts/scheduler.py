@@ -15,12 +15,6 @@ DEFAULT_INTERVAL = timedelta(hours=1)
 def schedule_podcasts_for_update() -> QuerySet[Podcast]:
 
     now = timezone.now()
-    """
-    Example:
-        podcast pub date - 3 days ago
-        refresh interval - 7 days
-        next scheduled = 4 days from now
-    """
 
     return (
         Podcast.objects.with_subscribed()
@@ -43,8 +37,8 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
         .order_by(
             F("subscribed").desc(),
             F("promoted").desc(),
-            F("scheduled").asc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
+            F("scheduled").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
         )
