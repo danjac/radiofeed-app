@@ -16,11 +16,13 @@ class TestSchedulePodcastsForUpdate:
         assert not scheduler.schedule_podcasts_for_update().exists()
 
     def test_scheduled(self, db):
-        PodcastFactory(parsed=timezone.now() - timedelta(hours=1))
+        PodcastFactory(
+            pub_date=timezone.now() - timedelta(hours=1),
+        )
         assert scheduler.schedule_podcasts_for_update().exists()
 
     def test_not_scheduled(self, db):
-        PodcastFactory(parsed=timezone.now() - timedelta(minutes=30))
+        PodcastFactory(pub_date=timezone.now() - timedelta(minutes=30))
         assert not scheduler.schedule_podcasts_for_update().exists()
 
     def test_promoted_scheduled(self, db):
