@@ -80,13 +80,6 @@ class TestParsePodcastFeed:
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)
         ).read_bytes()
 
-    def test_parse_podcast_feed_podcast_not_found(self, db):
-        result = feed_parser.parse_podcast_feed(1234)
-        assert result.success is False
-
-        with pytest.raises(Podcast.DoesNotExist):
-            result.raise_exception()
-
     def test_parse_podcast_feed_ok(self, db, mocker, categories):
 
         # set date to before latest
@@ -111,7 +104,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast.id)
+        assert feed_parser.parse_podcast_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -178,7 +171,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast.id)
+        assert feed_parser.parse_podcast_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -239,7 +232,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert not feed_parser.parse_podcast_feed(podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -265,7 +258,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert not feed_parser.parse_podcast_feed(podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -294,7 +287,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast.id)
+        assert feed_parser.parse_podcast_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -350,7 +343,7 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast.id)
+        assert feed_parser.parse_podcast_feed(podcast)
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
@@ -380,7 +373,7 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert not feed_parser.parse_podcast_feed(podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -400,7 +393,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        result = feed_parser.parse_podcast_feed(podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast)
         assert not result
         with pytest.raises(ValueError):
             result.raise_exception()
@@ -422,7 +415,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        result = feed_parser.parse_podcast_feed(podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast)
         assert not result
         with pytest.raises(ValueError):
             result.raise_exception()
@@ -439,7 +432,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=MockResponse(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED),
         )
-        assert not feed_parser.parse_podcast_feed(podcast.id)
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -451,7 +444,7 @@ class TestParsePodcastFeed:
     def test_parse_podcast_feed_error(self, mocker, podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        result = feed_parser.parse_podcast_feed(podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast)
         assert result.success is False
 
         with pytest.raises(requests.RequestException):
@@ -466,18 +459,22 @@ class TestParsePodcastFeed:
         assert podcast.refresh_interval > timedelta(hours=1)
 
     def test_parse_podcast_feed_errors_past_limit(self, mocker, podcast, categories):
-        Podcast.objects.filter(pk=podcast.id).update(errors=11)
+
+        podcast.errors = 11
 
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        result = feed_parser.parse_podcast_feed(podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast)
+
         assert result.success is False
 
         with pytest.raises(requests.RequestException):
             result.raise_exception()
 
         podcast.refresh_from_db()
+
         assert not podcast.active
+
         assert podcast.errors == 12
         assert podcast.http_status is None
         assert podcast.parsed
@@ -489,7 +486,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
-        result = feed_parser.parse_podcast_feed(podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast)
         # no exception set for http errors
         result.raise_exception()
 
@@ -509,7 +506,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        result = feed_parser.parse_podcast_feed(podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast)
 
         with pytest.raises(requests.HTTPError):
             result.raise_exception()
@@ -535,7 +532,7 @@ class TestParsePodcastFeed:
         podcast.pub_date = None
         podcast.save()
 
-        result = feed_parser.parse_podcast_feed(podcast.id)
+        result = feed_parser.parse_podcast_feed(podcast)
 
         with pytest.raises(requests.HTTPError):
             result.raise_exception()

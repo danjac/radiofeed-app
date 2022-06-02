@@ -4,6 +4,7 @@ from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
 from radiofeed.podcasts import emails, recommender, scheduler
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
@@ -47,7 +48,10 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
 
 @db_task()
 def parse_podcast_feed(podcast_id: int) -> None:
-    feed_parser.parse_podcast_feed(podcast_id)
+    try:
+        feed_parser.parse_podcast_feed(Podcast.objects.get(active=True, pk=podcast_id))
+    except Podcast.DoesNotExist:
+        pass
 
 
 @db_task()

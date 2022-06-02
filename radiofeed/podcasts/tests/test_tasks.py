@@ -23,12 +23,19 @@ class TestTasks:
 
         assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
 
-    def test_parse_podcast_feed(self, mocker):
+    def test_parse_podcast_feed(self, podcast, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.feed_parser.parse_podcast_feed"
         )
-        parse_podcast_feed(1)
-        patched.assert_called_with(1)
+        parse_podcast_feed(podcast.id)
+        patched.assert_called_with(podcast)
+
+    def test_parse_podcast_feed_podcast_not_found(self, db, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.tasks.feed_parser.parse_podcast_feed"
+        )
+        parse_podcast_feed(1234)
+        patched.assert_not_called()
 
     def test_send_recommendations_email(self, mocker, user):
         patched = mocker.patch(
@@ -37,7 +44,7 @@ class TestTasks:
         send_recommendations_email(user.id)
         patched.assert_called_with(user)
 
-    def test_send_recommendations_email_no_user(self, db, mocker):
+    def test_send_recommendations_email_user_not_found(self, db, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.emails.send_recommendations_email"
         )

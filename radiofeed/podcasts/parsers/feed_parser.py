@@ -54,22 +54,15 @@ class ParseResult:
             raise self.exception
 
 
-@transaction.atomic
-def parse_podcast_feed(podcast_id: int) -> ParseResult:
-
-    try:
-        return FeedParser(
-            Podcast.objects.filter(active=True).get(pk=podcast_id)
-        ).parse()
-
-    except Podcast.DoesNotExist as e:
-        return ParseResult(rss=None, success=False, exception=e)
+def parse_podcast_feed(podcast: Podcast) -> ParseResult:
+    return FeedParser(podcast).parse()
 
 
 class FeedParser:
     def __init__(self, podcast: Podcast):
         self.podcast = podcast
 
+    @transaction.atomic
     def parse(self) -> ParseResult:
         try:
             return self.parse_hit(*self.parse_content())
