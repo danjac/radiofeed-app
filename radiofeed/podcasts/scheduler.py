@@ -54,14 +54,14 @@ def calculate_refresh_interval(pub_dates: list[datetime]) -> timedelta:
             intervals.append((head - pub_date).total_seconds())
             head = pub_date
 
-        interval = timedelta(seconds=statistics.mean(intervals))
+        interval = max(timedelta(seconds=statistics.mean(intervals)), DEFAULT_INTERVAL)
         latest = max(pub_dates)
         now = timezone.now()
 
         while latest + interval < now:
             interval = increment_refresh_interval(interval)
 
-        return max(interval, DEFAULT_INTERVAL)
+        return interval
 
     except ValueError:
         return timedelta(hours=1)

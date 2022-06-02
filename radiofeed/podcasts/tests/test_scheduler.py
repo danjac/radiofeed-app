@@ -106,3 +106,9 @@ class TestCalculateRefreshInterval:
         ]
 
         assert scheduler.calculate_refresh_interval(pub_dates).days == 30
+
+    def test_no_diffs(self):
+
+        pub_dates = [timezone.now() - timedelta(days=3)] * 10
+
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 3
