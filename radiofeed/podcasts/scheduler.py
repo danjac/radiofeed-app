@@ -37,8 +37,8 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
         .order_by(
             F("subscribed").desc(),
             F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
             F("scheduled").asc(nulls_first=True),
+            F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
         )
@@ -54,7 +54,14 @@ def calculate_refresh_interval(pub_dates: list[datetime]) -> timedelta:
             intervals.append((head - pub_date).total_seconds())
             head = pub_date
 
-        return max(timedelta(seconds=statistics.mean(intervals)), DEFAULT_INTERVAL)
+        interval = timedelta(seconds=statistics.mean(intervals))
+        latest = max(pub_dates)
+        now = timezone.now()
+
+        while latest + interval < now:
+            interval = increment_refresh_interval(interval)
+
+        return max(interval, DEFAULT_INTERVAL)
 
     except ValueError:
         return timedelta(hours=1)

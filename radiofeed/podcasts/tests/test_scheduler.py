@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.utils import timezone
 
@@ -69,12 +69,12 @@ class TestCalculateRefreshInterval:
 
     def test_just_one_date(self):
 
-        assert scheduler.calculate_refresh_interval(
-            [datetime(year=2022, month=6, day=1)]
-        ) == timedelta(hours=1)
+        assert scheduler.calculate_refresh_interval([timezone.now()]) == timedelta(
+            hours=1
+        )
 
     def test_two_dates(self):
-        dt = datetime(year=2022, month=6, day=1)
+        dt = timezone.now()
 
         pub_dates = [
             dt,
@@ -85,7 +85,7 @@ class TestCalculateRefreshInterval:
 
     def test_sufficent_dates(self):
 
-        dt = datetime(year=2022, month=6, day=1)
+        dt = timezone.now()
 
         pub_dates = [
             dt,
@@ -94,3 +94,15 @@ class TestCalculateRefreshInterval:
         ]
 
         assert scheduler.calculate_refresh_interval(pub_dates) == timedelta(days=3)
+
+    def test_latest_before_now(self):
+
+        dt = timezone.now()
+
+        pub_dates = [
+            dt - timedelta(days=30),
+            dt - timedelta(days=36),
+            dt - timedelta(days=40),
+        ]
+
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 30
