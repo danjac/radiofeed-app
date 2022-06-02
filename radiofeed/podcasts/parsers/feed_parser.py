@@ -6,8 +6,6 @@ import hashlib
 import http
 import secrets
 
-from datetime import timedelta
-
 import requests
 
 from django.db import transaction
@@ -15,6 +13,7 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed.episodes.models import Episode
+from radiofeed.podcasts import scheduler
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
 
@@ -174,7 +173,6 @@ class FeedParser:
         # parsing result
 
         self.podcast.parsed = timezone.now()
-        self.podcast.refresh_interval = self.decrement_refresh_interval()
         self.podcast.result = self.podcast.Result.SUCCESS  # type: ignore
         self.podcast.content_hash = content_hash
         self.podcast.exception = ""
@@ -182,7 +180,10 @@ class FeedParser:
         self.podcast.active = not feed.complete
         self.podcast.errors = 0
 
-        self.podcast.pub_date = max([item.pub_date for item in items if item.pub_date])
+        pub_dates = [item.pub_date for item in items if item.pub_date]
+
+        self.podcast.pub_date = max(pub_dates)
+        self.podcast.refresh_interval = scheduler.calculate_refresh_interval(pub_dates)
 
         # content
 
@@ -246,7 +247,9 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
-            refresh_interval=self.increment_refresh_interval(),
+            refresh_interval=scheduler.increment_refresh_interval(
+                self.podcast.refresh_interval
+            ),
         )
 
         return ParseResult(
@@ -338,14 +341,6 @@ class FeedParser:
         if self.podcast.modified:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
-
-    def decrement_refresh_interval(self) -> timedelta:
-        seconds = self.podcast.refresh_interval.total_seconds()
-        return max(timedelta(seconds=seconds - (seconds * 0.1)), timedelta(hours=1))
-
-    def increment_refresh_interval(self) -> timedelta:
-        seconds = self.podcast.refresh_interval.total_seconds()
-        return min(timedelta(seconds=seconds + (seconds * 0.1)), timedelta(hours=24))
 
 
 def make_content_hash(content: bytes) -> str:

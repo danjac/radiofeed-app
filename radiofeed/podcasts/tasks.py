@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from django.db.models import F, Q
-from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
-from radiofeed.podcasts import emails, recommender
-from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts import emails, recommender, scheduler
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
@@ -42,23 +39,9 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
 
     Runs every 6 minutes
     """
-    now = timezone.now()
 
     parse_podcast_feed.map(
-        Podcast.objects.with_subscribed()
-        .filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=now - F("refresh_interval")),
-            active=True,
-        )
-        .order_by(
-            F("subscribed").desc(),
-            F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-            F("created").desc(),
-        )
-        .values_list("pk")
-        .distinct()[:limit]
+        scheduler.schedule_podcasts_for_update().values_list("pk").distinct()[:limit]
     )
 
 
