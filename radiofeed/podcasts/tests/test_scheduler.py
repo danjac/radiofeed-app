@@ -46,11 +46,6 @@ class TestIncrementRefreshInterval:
             hours=1, minutes=6
         )
 
-    def test_increment_past_maximum(self):
-        assert scheduler.increment_refresh_interval(timedelta(hours=24)) == timedelta(
-            hours=24
-        )
-
 
 class TestCalculateRefreshInterval:
     def test_no_dates(self):
