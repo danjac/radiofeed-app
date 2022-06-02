@@ -64,7 +64,7 @@ def calculate_refresh_interval(pub_dates: list[datetime]) -> timedelta:
         return interval
 
     except ValueError:
-        return timedelta(hours=1)
+        return DEFAULT_INTERVAL
 
 
 def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
