@@ -47,11 +47,23 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
 
 def calculate_refresh_interval(pub_dates: list[datetime]) -> timedelta:
 
-    if not pub_dates:
+    try:
+        head, *tail = sorted(pub_dates, reverse=True)
+    except ValueError:
         return DEFAULT_INTERVAL
 
-    interval = avg_refresh_interval(pub_dates)
-    latest = max(pub_dates)
+    latest = head
+    intervals: list[float] = []
+
+    for pub_date in tail:
+        intervals.append((head - pub_date).total_seconds())
+        head = pub_date
+
+    try:
+        interval = max(timedelta(seconds=statistics.mean(intervals)), DEFAULT_INTERVAL)
+    except ValueError:
+        interval = DEFAULT_INTERVAL
+
     now = timezone.now()
 
     while latest + interval < now:
@@ -63,17 +75,3 @@ def calculate_refresh_interval(pub_dates: list[datetime]) -> timedelta:
 def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
     seconds = refresh_interval.total_seconds()
     return timedelta(seconds=seconds + (seconds * 0.1))
-
-
-def avg_refresh_interval(pub_dates: list[datetime]) -> timedelta:
-    try:
-        head, *tail = sorted(pub_dates, reverse=True)
-        intervals: list[float] = []
-
-        for pub_date in tail:
-            intervals.append((head - pub_date).total_seconds())
-            head = pub_date
-
-        return max(timedelta(seconds=statistics.mean(intervals)), DEFAULT_INTERVAL)
-    except ValueError:
-        return DEFAULT_INTERVAL
