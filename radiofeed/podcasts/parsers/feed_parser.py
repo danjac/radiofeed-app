@@ -247,7 +247,7 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
-            refresh_interval=scheduler.increment_refresh_interval(
+            refresh_interval=scheduler.recalculate_refresh_interval(
                 self.podcast.refresh_interval
             ),
         )

@@ -10,6 +10,7 @@ from django.utils import timezone
 from radiofeed.podcasts.models import Podcast
 
 DEFAULT_INTERVAL = timedelta(hours=1)
+MAX_INTERVAL = timedelta(days=14)
 
 
 def schedule_podcasts_for_update() -> QuerySet[Podcast]:
@@ -73,9 +74,17 @@ def calculate_refresh_interval(
     while latest + interval < now:
         interval = increment_refresh_interval(interval)
 
-    return interval
+    return refresh_interval_within_bounds(interval)
+
+
+def recalculate_refresh_interval(refresh_interval: timedelta) -> timedelta:
+    return refresh_interval_within_bounds(increment_refresh_interval(refresh_interval))
 
 
 def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
     seconds = refresh_interval.total_seconds()
     return timedelta(seconds=seconds + (seconds * 0.1))
+
+
+def refresh_interval_within_bounds(refresh_interval: timedelta) -> timedelta:
+    return min(max(refresh_interval, DEFAULT_INTERVAL), MAX_INTERVAL)

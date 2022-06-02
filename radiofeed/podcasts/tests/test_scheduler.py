@@ -56,10 +56,15 @@ class TestSchedulePodcastsForUpdate:
         assert not scheduler.schedule_podcasts_for_update().exists()
 
 
-class TestIncrementRefreshInterval:
-    def test_increment(self):
-        assert scheduler.increment_refresh_interval(timedelta(hours=1)) == timedelta(
+class TestRecalculateRefreshInterval:
+    def test_recalculate(self):
+        assert scheduler.recalculate_refresh_interval(timedelta(hours=1)) == timedelta(
             hours=1, minutes=6
+        )
+
+    def test_recalculate_over_max(self):
+        assert scheduler.recalculate_refresh_interval(timedelta(days=14)) == timedelta(
+            days=14
         )
 
 
@@ -105,7 +110,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=40),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 30
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 14
 
     def test_no_diffs(self):
 
