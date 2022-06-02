@@ -65,47 +65,10 @@ class FeedParser:
     @transaction.atomic
     def parse(self) -> ParseResult:
         try:
-            return self.parse_hit(*self.parse_content())
+            return self.handle_successful_update(*self.parse_content())
 
-        except NotModified as e:
-            return self.parse_miss(
-                result=Podcast.Result.NOT_MODIFIED,  # type: ignore
-                status=e.response.status_code,
-            )
-
-        except DuplicateFeed as e:
-            return self.parse_miss(
-                result=Podcast.Result.DUPLICATE_FEED,  # type: ignore
-                status=e.response.status_code,
-                active=False,
-            )
-
-        except requests.HTTPError as e:
-
-            if e.response.status_code == http.HTTPStatus.GONE:
-                return self.parse_miss(
-                    result=Podcast.Result.HTTP_ERROR,  # type: ignore
-                    status=e.response.status_code,
-                    active=False,
-                )
-
-            return self.parse_miss(
-                result=Podcast.Result.HTTP_ERROR,  # type: ignore
-                status=e.response.status_code,
-                exception=e,
-            )
-
-        except requests.RequestException as e:
-            return self.parse_miss(
-                result=Podcast.Result.NETWORK_ERROR,  # type: ignore
-                exception=e,
-            )
-
-        except rss_parser.RssParserError as e:
-            return self.parse_miss(
-                result=Podcast.Result.INVALID_RSS,  # type: ignore
-                exception=e,
-            )
+        except Exception as e:
+            return self.handle_exception(e)
 
     def parse_content(
         self,
@@ -146,7 +109,7 @@ class FeedParser:
 
         return response, content_hash, *rss_parser.parse_rss(response.content)
 
-    def parse_hit(
+    def handle_successful_update(
         self,
         response: requests.Response,
         content_hash: str,
@@ -211,7 +174,7 @@ class FeedParser:
         self.podcast.save()
 
         # episodes
-        self.parse_episodes(items)
+        self.update_episodes(items)
 
         return ParseResult(
             rss=self.podcast.rss,
@@ -219,41 +182,7 @@ class FeedParser:
             status=response.status_code,
         )
 
-    def parse_miss(
-        self,
-        *,
-        active: bool = True,
-        status: int | None = None,
-        result: Podcast.Result | None = None,
-        exception: Exception | None = None,
-    ) -> ParseResult:
-
-        now = timezone.now()
-
-        errors = self.podcast.errors + 1 if exception else 0
-        active = active and errors < PARSE_ERROR_LIMIT
-
-        Podcast.objects.filter(pk=self.podcast.id).update(
-            active=active,
-            result=result,
-            http_status=status,
-            errors=errors,
-            parsed=now,
-            updated=now,
-            refresh_interval=scheduler.increment_refresh_interval(
-                self.podcast.refresh_interval
-            ),
-        )
-
-        return ParseResult(
-            rss=self.podcast.rss,
-            success=False,
-            status=status,
-            exception=exception,
-            result=result.value if result else None,
-        )
-
-    def parse_episodes(
+    def update_episodes(
         self, items: list[rss_parser.Item], batch_size: int = 500
     ) -> None:
         """Remove any episodes no longer in feed, update any current and
@@ -334,6 +263,86 @@ class FeedParser:
         if self.podcast.modified:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
+
+    def handle_exception(self, e: Exception) -> ParseResult:
+
+        match e:
+
+            case NotModified():
+                return self.handle_unsuccessful_update(
+                    Podcast.Result.NOT_MODIFIED,  # type: ignore
+                    http_status=e.response.status_code,
+                )
+
+            case DuplicateFeed():
+                return self.handle_unsuccessful_update(
+                    Podcast.Result.DUPLICATE_FEED,  # type: ignore
+                    active=False,
+                    http_status=e.response.status_code,
+                )
+
+            case requests.HTTPError():
+                if e.response.status_code == http.HTTPStatus.GONE:
+
+                    return self.handle_unsuccessful_update(
+                        Podcast.Result.HTTP_ERROR,  # type: ignore
+                        active=False,
+                        http_status=e.response.status_code,
+                    )
+
+                return self.handle_unsuccessful_update(
+                    Podcast.Result.HTTP_ERROR,  # type: ignore
+                    http_status=e.response.status_code,
+                    exception=e,
+                )
+
+            case requests.RequestException():
+
+                return self.handle_unsuccessful_update(
+                    Podcast.Result.NETWORK_ERROR, exception=e  # type: ignore
+                )
+
+            case rss_parser.RssParserError():
+                return self.handle_unsuccessful_update(
+                    Podcast.Result.INVALID_RSS, exception=e  # type: ignore
+                )
+
+            case _:
+                raise
+
+    def handle_unsuccessful_update(
+        self,
+        result: Podcast.Result,
+        *,
+        active: bool = True,
+        http_status: http.HTTPStatus | None = None,
+        exception: Exception | None = None,
+    ):
+
+        now = timezone.now()
+
+        errors = self.podcast.errors + 1 if exception else 0
+        active = active and errors < PARSE_ERROR_LIMIT
+
+        Podcast.objects.filter(pk=self.podcast.id).update(
+            active=active,
+            result=result,
+            http_status=http_status,
+            errors=errors,
+            parsed=now,
+            updated=now,
+            refresh_interval=scheduler.increment_refresh_interval(
+                self.podcast.refresh_interval
+            ),
+        )
+
+        return ParseResult(
+            rss=self.podcast.rss,
+            success=False,
+            status=http_status,
+            exception=exception,
+            result=result.value if result else None,
+        )
 
 
 def make_content_hash(content: bytes) -> str:

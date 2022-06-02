@@ -487,9 +487,6 @@ class TestParsePodcastFeed:
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
         result = feed_parser.parse_podcast_feed(podcast)
-        # no exception set for http errors
-        result.raise_exception()
-
         assert result.success is False
 
         podcast.refresh_from_db()
