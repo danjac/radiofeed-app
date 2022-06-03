@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import statistics
-
 from datetime import datetime, timedelta
+
+import numpy
 
 from django.db.models import DateTimeField, ExpressionWrapper, F, Q, QuerySet
 from django.utils import timezone
@@ -13,6 +13,14 @@ DEFAULT_INTERVAL = timedelta(hours=1)
 
 
 def schedule_podcasts_for_update() -> QuerySet[Podcast]:
+    """Returns podcasts scheduled for feed update:
+
+    1. Any podcasts with pub_date or parsed NULL (i.e. recently added)
+    2. Any subscribed or promoted podcasts last updated > 1 hour ago
+    3. Any podcasts where distance between last pub date + refresh interval > current time
+    4. Any podcasts last updated > 14 days ago
+
+    """
 
     now = timezone.now()
 
@@ -49,6 +57,13 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
 def calculate_refresh_interval(
     pub_dates: list[datetime], since: timedelta = timedelta(days=90)
 ) -> timedelta:
+    """Calculates the mean time interval between pub dates of individual
+    episodes in a podcast.
+
+    If the distance between the latest pub date and interval is less than
+    the current time, the interval is incremented by 10% until latest pub date+interval
+    is > than current time.
+    """
 
     try:
         head, *tail = sorted(pub_dates, reverse=True)
@@ -67,7 +82,7 @@ def calculate_refresh_interval(
         head = pub_date
 
     try:
-        interval = max(timedelta(seconds=statistics.mean(intervals)), DEFAULT_INTERVAL)
+        interval = max(timedelta(seconds=numpy.mean(intervals)), DEFAULT_INTERVAL)
     except ValueError:
         interval = DEFAULT_INTERVAL
 
@@ -78,5 +93,6 @@ def calculate_refresh_interval(
 
 
 def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
+    """Increments refresh interval by 10%"""
     seconds = refresh_interval.total_seconds()
     return timedelta(seconds=seconds + (seconds * 0.1))
