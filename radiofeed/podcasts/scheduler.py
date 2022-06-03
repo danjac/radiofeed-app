@@ -18,9 +18,9 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
 
     1. Any podcasts with pub_date or parsed NULL (i.e. recently added)
     2. Any subscribed or promoted podcasts last updated > 1 hour ago
-    3. Any podcasts where distance between last pub date + refresh interval > current time
+    3. Any podcasts where distance between last pub date + refresh interval > current time and
+        distance < 14 days
     4. Any podcasts last updated > 14 days ago
-
     """
 
     now = timezone.now()
