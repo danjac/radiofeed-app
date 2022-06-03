@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import numpy
 
-from django.db.models import DateTimeField, ExpressionWrapper, F, Q, QuerySet
+from django.db.models import Count, DateTimeField, ExpressionWrapper, F, Q, QuerySet
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
@@ -25,26 +25,26 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
     now = timezone.now()
 
     return (
-        Podcast.objects.with_subscribed()
-        .annotate(
+        Podcast.objects.annotate(
+            subscribers=Count("subscription"),
             scheduled=ExpressionWrapper(
                 F("pub_date") + F("refresh_interval"),
                 output_field=DateTimeField(),
-            )
+            ),
         )
         .filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
             | Q(scheduled__lte=now)
             | Q(
-                Q(subscribed=True) | Q(promoted=True),
+                Q(subscribers__gt=0) | Q(promoted=True),
                 parsed__lt=now - DEFAULT_INTERVAL,
             )
             | Q(parsed__lt=now - timedelta(days=14)),
             active=True,
         )
         .order_by(
-            F("subscribed").desc(),
+            F("subscribers").desc(),
             F("promoted").desc(),
             F("scheduled").asc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
