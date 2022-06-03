@@ -259,36 +259,33 @@ class FeedParser:
 
                 return self.handle_unsuccessful_update(
                     Podcast.Result.DUPLICATE_FEED,  # type: ignore
-                    active=False,
                     http_status=e.response.status_code,
+                    active=False,
                 )
 
             case requests.HTTPError():
 
-                return (
-                    self.handle_unsuccessful_update(
-                        Podcast.Result.HTTP_ERROR,  # type: ignore
-                        active=False,
-                        http_status=e.response.status_code,
-                    )
-                    if e.response.status_code == http.HTTPStatus.GONE
-                    else self.handle_unsuccessful_update(
-                        Podcast.Result.HTTP_ERROR,  # type: ignore
-                        http_status=e.response.status_code,
-                        exception=e,
-                    )
+                active = e.response.status_code != http.HTTPStatus.GONE
+
+                return self.handle_unsuccessful_update(
+                    Podcast.Result.HTTP_ERROR,  # type: ignore
+                    http_status=e.response.status_code,
+                    active=active,
+                    error=active,
                 )
 
             case requests.RequestException():
 
                 return self.handle_unsuccessful_update(
-                    Podcast.Result.NETWORK_ERROR, exception=e  # type: ignore
+                    Podcast.Result.NETWORK_ERROR,  # type: ignore
+                    error=True,
                 )
 
             case rss_parser.RssParserError():
 
                 return self.handle_unsuccessful_update(
-                    Podcast.Result.INVALID_RSS, exception=e  # type: ignore
+                    Podcast.Result.INVALID_RSS,  # type: ignore
+                    error=True,
                 )
 
             case _:
@@ -299,13 +296,13 @@ class FeedParser:
         result: Podcast.Result,
         *,
         active: bool = True,
+        error: bool = False,
         http_status: http.HTTPStatus | None = None,
-        exception: Exception | None = None,
     ) -> bool:
 
         now = timezone.now()
 
-        errors = self.podcast.errors + 1 if exception else 0
+        errors = self.podcast.errors + 1 if error else 0
         active = active and errors < PARSE_ERROR_LIMIT
 
         Podcast.objects.filter(pk=self.podcast.id).update(
