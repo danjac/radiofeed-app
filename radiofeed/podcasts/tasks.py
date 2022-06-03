@@ -49,7 +49,7 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
 @db_task()
 def parse_podcast_feed(podcast_id: int) -> None:
     try:
-        feed_parser.parse_podcast_feed(Podcast.objects.get(active=True, pk=podcast_id))
+        feed_parser.parse_podcast_feed(Podcast.objects.get(pk=podcast_id))
     except Podcast.DoesNotExist:
         pass
 
