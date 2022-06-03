@@ -14,7 +14,7 @@ class TestSchedulePodcastsForUpdate:
         assert scheduler.schedule_podcasts_for_update().exists()
 
     def test_pub_date_is_null(self, db):
-        PodcastFactory(parsed=timezone.now(), pub_date=None)
+        PodcastFactory(parsed=timezone.now() - timedelta(hours=2), pub_date=None)
         assert scheduler.schedule_podcasts_for_update().exists()
 
     def test_inactive(self, db):

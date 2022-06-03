@@ -35,10 +35,11 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
         )
         .filter(
             Q(parsed__isnull=True)
-            | Q(pub_date__isnull=True)
-            | Q(scheduled__range=(now - MAX_INTERVAL, now))
             | Q(
-                Q(subscribers__gt=0) | Q(promoted=True),
+                Q(subscribers__gt=0)
+                | Q(promoted=True)
+                | Q(pub_date__isnull=True)
+                | Q(pub_date__gte=now - MAX_INTERVAL, scheduled__lt=now),
                 parsed__lt=now - MIN_INTERVAL,
             )
             | Q(parsed__lt=now - MAX_INTERVAL),
