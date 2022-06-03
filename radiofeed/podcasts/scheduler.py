@@ -62,14 +62,18 @@ def calculate_refresh_interval(
     """Calculates the mean time interval between pub dates of individual
     episodes in a podcast.
 
-    If the distance between the latest pub date and interval is less than
-    the current time, the interval is incremented by 10% until latest pub date+interval
-    is > than current time.
+    If latest pub date > 2 weeks returns max interval of 14 days.
     """
 
+    now = timezone.now()
+
     try:
+
+        if max(pub_dates) < now - MAX_INTERVAL:
+            return MAX_INTERVAL
+
         head, *tail = sorted(pub_dates, reverse=True)
-        relevant = timezone.now() - since
+        relevant = now - since
 
         intervals: list[float] = []
 
@@ -77,16 +81,13 @@ def calculate_refresh_interval(
             intervals.append((head - pub_date).total_seconds())
             head = pub_date
 
-        return within_bounds(timedelta(seconds=numpy.mean(intervals)))
+        return min(
+            max(
+                timedelta(seconds=numpy.mean(intervals)),
+                MIN_INTERVAL,
+            ),
+            MAX_INTERVAL,
+        )
+
     except ValueError:
         return MIN_INTERVAL
-
-
-def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
-    """Increments refresh interval by 10%"""
-    seconds = refresh_interval.total_seconds()
-    return within_bounds(timedelta(seconds=seconds + (seconds * 0.1)))
-
-
-def within_bounds(interval: timedelta) -> timedelta:
-    return min(max(interval, MIN_INTERVAL), MAX_INTERVAL)

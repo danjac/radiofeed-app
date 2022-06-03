@@ -98,18 +98,6 @@ class TestSchedulePodcastsForUpdate:
         assert not scheduler.schedule_podcasts_for_update().exists()
 
 
-class TestIncrementRefreshInterval:
-    def test_increment(self):
-        assert scheduler.increment_refresh_interval(timedelta(hours=1)) == timedelta(
-            hours=1, minutes=6
-        )
-
-    def test_increment_over_max(self):
-        assert scheduler.increment_refresh_interval(timedelta(days=14)) == timedelta(
-            days=14
-        )
-
-
 class TestCalculateRefreshInterval:
     def test_no_dates(self):
         assert scheduler.calculate_refresh_interval([]) == timedelta(hours=1)
@@ -142,7 +130,7 @@ class TestCalculateRefreshInterval:
 
         assert scheduler.calculate_refresh_interval(pub_dates) == timedelta(days=3)
 
-    def test_latest_not_relevant(self):
+    def test_latest_more_than_90_days(self):
 
         dt = timezone.now()
 
@@ -152,11 +140,9 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=100),
         ]
 
-        assert scheduler.calculate_refresh_interval(
-            pub_dates
-        ).total_seconds() == pytest.approx(3600)
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 14
 
-    def test_latest_before_now(self):
+    def test_latest_more_than_30_days(self):
 
         dt = timezone.now()
 
@@ -166,7 +152,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=40),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 5
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 14
 
     def test_over_max(self):
 
