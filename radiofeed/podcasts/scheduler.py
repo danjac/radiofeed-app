@@ -48,7 +48,6 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
         .order_by(
             F("subscribers").desc(),
             F("promoted").desc(),
-            F("scheduled").asc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
