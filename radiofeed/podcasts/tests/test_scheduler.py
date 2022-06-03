@@ -135,6 +135,18 @@ class TestCalculateRefreshInterval:
 
         assert scheduler.calculate_refresh_interval(pub_dates) == timedelta(days=3)
 
+    def test_latest_not_relevant(self):
+
+        dt = timezone.now()
+
+        pub_dates = [
+            dt - timedelta(days=90),
+            dt - timedelta(days=96),
+            dt - timedelta(days=100),
+        ]
+
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 93
+
     def test_latest_before_now(self):
 
         dt = timezone.now()
