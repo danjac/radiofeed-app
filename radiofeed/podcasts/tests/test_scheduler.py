@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+import pytest
+
 from django.utils import timezone
 
 from radiofeed.podcasts import scheduler
@@ -43,8 +45,8 @@ class TestSchedulePodcastsForUpdate:
         now = timezone.now()
         PodcastFactory(
             parsed=now - timedelta(days=14),
-            pub_date=now - timedelta(days=80),
-            refresh_interval=timedelta(days=90),
+            pub_date=now - timedelta(days=60),
+            refresh_interval=timedelta(days=14),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
@@ -52,8 +54,8 @@ class TestSchedulePodcastsForUpdate:
         now = timezone.now()
         PodcastFactory(
             parsed=now - timedelta(days=7),
-            pub_date=now - timedelta(days=80),
-            refresh_interval=timedelta(days=90),
+            pub_date=now - timedelta(days=60),
+            refresh_interval=timedelta(days=14),
         )
         assert not scheduler.schedule_podcasts_for_update().exists()
 
@@ -102,6 +104,11 @@ class TestIncrementRefreshInterval:
             hours=1, minutes=6
         )
 
+    def test_increment_over_max(self):
+        assert scheduler.increment_refresh_interval(timedelta(days=14)) == timedelta(
+            days=14
+        )
+
 
 class TestCalculateRefreshInterval:
     def test_no_dates(self):
@@ -145,7 +152,9 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=100),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 93
+        assert scheduler.calculate_refresh_interval(
+            pub_dates
+        ).total_seconds() == pytest.approx(3600)
 
     def test_latest_before_now(self):
 
@@ -157,10 +166,24 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=40),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 30
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 5
+
+    def test_over_max(self):
+
+        dt = timezone.now()
+
+        pub_dates = [
+            dt - timedelta(days=10),
+            dt - timedelta(days=30),
+            dt - timedelta(days=60),
+        ]
+
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 14
 
     def test_no_diffs(self):
 
         pub_dates = [timezone.now() - timedelta(days=3)] * 10
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 3
+        assert scheduler.calculate_refresh_interval(
+            pub_dates
+        ).total_seconds() == pytest.approx(3600)

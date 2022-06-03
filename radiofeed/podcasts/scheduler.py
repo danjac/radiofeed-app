@@ -9,7 +9,8 @@ from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
 
-DEFAULT_INTERVAL = timedelta(hours=1)
+MAX_INTERVAL = timedelta(days=14)
+MIN_INTERVAL = timedelta(hours=1)
 
 
 def schedule_podcasts_for_update() -> QuerySet[Podcast]:
@@ -35,12 +36,12 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
         .filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
-            | Q(scheduled__lte=now)
+            | Q(scheduled__range=(now - MAX_INTERVAL, now))
             | Q(
                 Q(subscribers__gt=0) | Q(promoted=True),
-                parsed__lt=now - DEFAULT_INTERVAL,
+                parsed__lt=now - MIN_INTERVAL,
             )
-            | Q(parsed__lt=now - timedelta(days=14)),
+            | Q(parsed__lt=now - MAX_INTERVAL),
             active=True,
         )
         .order_by(
@@ -67,32 +68,24 @@ def calculate_refresh_interval(
 
     try:
         head, *tail = sorted(pub_dates, reverse=True)
+        relevant = timezone.now() - since
+
+        intervals: list[float] = []
+
+        for pub_date in filter(lambda pub_date: pub_date > relevant, tail):
+            intervals.append((head - pub_date).total_seconds())
+            head = pub_date
+
+        return within_bounds(timedelta(seconds=numpy.mean(intervals)))
     except ValueError:
-        return DEFAULT_INTERVAL
-
-    latest = head
-
-    now = timezone.now()
-    relevant = now - since
-
-    intervals: list[float] = []
-
-    for pub_date in filter(lambda pub_date: pub_date > relevant, tail):
-        intervals.append((head - pub_date).total_seconds())
-        head = pub_date
-
-    try:
-        interval = max(timedelta(seconds=numpy.mean(intervals)), DEFAULT_INTERVAL)
-    except ValueError:
-        interval = DEFAULT_INTERVAL
-
-    while latest + interval < now:
-        interval = increment_refresh_interval(interval)
-
-    return interval
+        return MIN_INTERVAL
 
 
 def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
     """Increments refresh interval by 10%"""
     seconds = refresh_interval.total_seconds()
-    return timedelta(seconds=seconds + (seconds * 0.1))
+    return within_bounds(timedelta(seconds=seconds + (seconds * 0.1)))
+
+
+def within_bounds(interval: timedelta) -> timedelta:
+    return min(max(interval, MIN_INTERVAL), MAX_INTERVAL)
