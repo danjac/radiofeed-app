@@ -38,23 +38,7 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-@dataclasses.dataclass
-class ParseResult:
-    rss: str | None = None
-    success: bool = False
-    status: int | None = None
-    result: str | None = None
-    exception: Exception | None = None
-
-    def __bool__(self) -> bool:
-        return self.success
-
-    def raise_exception(self) -> None:
-        if self.exception:
-            raise self.exception
-
-
-def parse_podcast_feed(podcast: Podcast) -> ParseResult:
+def parse_podcast_feed(podcast: Podcast) -> bool:
     return FeedParser(podcast).parse()
 
 
@@ -63,7 +47,7 @@ class FeedParser:
         self.podcast = podcast
 
     @transaction.atomic
-    def parse(self) -> ParseResult:
+    def parse(self) -> bool:
         try:
             return self.handle_successful_update(*self.parse_content())
 
@@ -115,7 +99,7 @@ class FeedParser:
         content_hash: str,
         feed: rss_parser.Feed,
         items: list[rss_parser.Item],
-    ) -> ParseResult:
+    ) -> bool:
 
         # feed status
 
@@ -176,11 +160,7 @@ class FeedParser:
         # episodes
         self.update_episodes(items)
 
-        return ParseResult(
-            rss=self.podcast.rss,
-            success=True,
-            status=response.status_code,
-        )
+        return True
 
     def update_episodes(
         self, items: list[rss_parser.Item], batch_size: int = 500
@@ -264,17 +244,19 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
 
-    def handle_exception(self, e: Exception) -> ParseResult:
+    def handle_exception(self, e: Exception) -> bool:
 
         match e:
 
             case NotModified():
+
                 return self.handle_unsuccessful_update(
                     Podcast.Result.NOT_MODIFIED,  # type: ignore
                     http_status=e.response.status_code,
                 )
 
             case DuplicateFeed():
+
                 return self.handle_unsuccessful_update(
                     Podcast.Result.DUPLICATE_FEED,  # type: ignore
                     active=False,
@@ -282,18 +264,19 @@ class FeedParser:
                 )
 
             case requests.HTTPError():
-                if e.response.status_code == http.HTTPStatus.GONE:
 
-                    return self.handle_unsuccessful_update(
+                return (
+                    self.handle_unsuccessful_update(
                         Podcast.Result.HTTP_ERROR,  # type: ignore
                         active=False,
                         http_status=e.response.status_code,
                     )
-
-                return self.handle_unsuccessful_update(
-                    Podcast.Result.HTTP_ERROR,  # type: ignore
-                    http_status=e.response.status_code,
-                    exception=e,
+                    if e.response.status_code == http.HTTPStatus.GONE
+                    else self.handle_unsuccessful_update(
+                        Podcast.Result.HTTP_ERROR,  # type: ignore
+                        http_status=e.response.status_code,
+                        exception=e,
+                    )
                 )
 
             case requests.RequestException():
@@ -303,6 +286,7 @@ class FeedParser:
                 )
 
             case rss_parser.RssParserError():
+
                 return self.handle_unsuccessful_update(
                     Podcast.Result.INVALID_RSS, exception=e  # type: ignore
                 )
@@ -317,7 +301,7 @@ class FeedParser:
         active: bool = True,
         http_status: http.HTTPStatus | None = None,
         exception: Exception | None = None,
-    ):
+    ) -> bool:
 
         now = timezone.now()
 
@@ -336,13 +320,7 @@ class FeedParser:
             ),
         )
 
-        return ParseResult(
-            rss=self.podcast.rss,
-            success=False,
-            status=http_status,
-            exception=exception,
-            result=result.value if result else None,
-        )
+        return False
 
 
 def make_content_hash(content: bytes) -> str:

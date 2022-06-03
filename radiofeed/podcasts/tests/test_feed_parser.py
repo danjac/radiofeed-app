@@ -393,10 +393,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        result = feed_parser.parse_podcast_feed(podcast)
-        assert not result
-        with pytest.raises(ValueError):
-            result.raise_exception()
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -415,10 +412,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        result = feed_parser.parse_podcast_feed(podcast)
-        assert not result
-        with pytest.raises(ValueError):
-            result.raise_exception()
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -444,11 +438,7 @@ class TestParsePodcastFeed:
     def test_parse_podcast_feed_error(self, mocker, podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        result = feed_parser.parse_podcast_feed(podcast)
-        assert result.success is False
-
-        with pytest.raises(requests.RequestException):
-            result.raise_exception()
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -464,12 +454,7 @@ class TestParsePodcastFeed:
 
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        result = feed_parser.parse_podcast_feed(podcast)
-
-        assert result.success is False
-
-        with pytest.raises(requests.RequestException):
-            result.raise_exception()
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -486,8 +471,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
-        result = feed_parser.parse_podcast_feed(podcast)
-        assert result.success is False
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -503,12 +487,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        result = feed_parser.parse_podcast_feed(podcast)
-
-        with pytest.raises(requests.HTTPError):
-            result.raise_exception()
-
-        assert result.success is False
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -529,12 +508,7 @@ class TestParsePodcastFeed:
         podcast.pub_date = None
         podcast.save()
 
-        result = feed_parser.parse_podcast_feed(podcast)
-
-        with pytest.raises(requests.HTTPError):
-            result.raise_exception()
-
-        assert result.success is False
+        assert not feed_parser.parse_podcast_feed(podcast)
 
         podcast.refresh_from_db()
 
