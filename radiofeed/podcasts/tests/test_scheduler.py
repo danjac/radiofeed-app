@@ -58,19 +58,41 @@ class TestSchedulePodcastsForUpdate:
         assert not scheduler.schedule_podcasts_for_update().exists()
 
     def test_promoted_scheduled(self, db):
-        PodcastFactory(parsed=timezone.now() - timedelta(hours=1), promoted=True)
+        now = timezone.now()
+        PodcastFactory(
+            promoted=True,
+            parsed=now - timedelta(hours=1),
+            pub_date=now - timedelta(days=1),
+            refresh_interval=timedelta(days=7),
+        )
         assert scheduler.schedule_podcasts_for_update().exists()
 
     def test_promoted_not_scheduled(self, db):
-        PodcastFactory(parsed=timezone.now() - timedelta(minutes=30), promoted=True)
+        now = timezone.now()
+        PodcastFactory(
+            promoted=True,
+            parsed=now - timedelta(minutes=30),
+            pub_date=now - timedelta(days=1),
+            refresh_interval=timedelta(days=7),
+        )
         assert not scheduler.schedule_podcasts_for_update().exists()
 
     def test_subscribed_scheduled(self, db):
-        SubscriptionFactory(podcast__parsed=timezone.now() - timedelta(hours=1))
+        now = timezone.now()
+        SubscriptionFactory(
+            podcast__parsed=now - timedelta(hours=1),
+            podcast__pub_date=now - timedelta(days=1),
+            podcast__refresh_interval=timedelta(days=7),
+        )
         assert scheduler.schedule_podcasts_for_update().exists()
 
     def test_subscribed_not_scheduled(self, db):
-        SubscriptionFactory(podcast__parsed=timezone.now() - timedelta(minutes=30))
+        now = timezone.now()
+        SubscriptionFactory(
+            podcast__parsed=now - timedelta(minutes=30),
+            podcast__pub_date=now - timedelta(days=1),
+            podcast__refresh_interval=timedelta(days=7),
+        )
         assert not scheduler.schedule_podcasts_for_update().exists()
 
 
