@@ -11,7 +11,6 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **kwargs):
-        for_update: list[Podcast] = []
         for counter, podcast in enumerate(
             Podcast.objects.filter(active=True).iterator()
         ):
@@ -23,5 +22,4 @@ class Command(BaseCommand):
                     )
                 )
             )
-            for_update.append(podcast)
-        Podcast.objects.bulk_update(for_update, fields=["refresh_interval"])
+            podcast.save(update_fields=["refresh_interval"])
