@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import itertools
+
 from datetime import datetime, timedelta
 
 import numpy
@@ -71,14 +73,17 @@ def calculate_refresh_interval(
         if max(pub_dates) < now - MAX_INTERVAL:
             return MAX_INTERVAL
 
-        head, *tail = sorted(pub_dates, reverse=True)
         relevant = now - since
 
-        intervals: list[float] = []
-
-        for pub_date in filter(lambda pub_date: pub_date > relevant, tail):
-            intervals.append((head - pub_date).total_seconds())
-            head = pub_date
+        intervals = [
+            (a - b).total_seconds()
+            for a, b in itertools.pairwise(
+                filter(
+                    lambda pub_date: pub_date > relevant,
+                    sorted(pub_dates, reverse=True),
+                )
+            )
+        ]
 
         return min(
             max(
