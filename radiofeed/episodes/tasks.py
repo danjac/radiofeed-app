@@ -10,12 +10,6 @@ from radiofeed.users.models import User
 
 @shared_task
 def send_new_episodes_emails(since=timedelta(days=7)):
-    """
-    Sends new episodes from users' subscribed podcasts
-
-    Runs 06:17 UTC every Wednesday
-    """
-
     for user_id in User.objects.filter(
         send_email_notifications=True, is_active=True
     ).values_list("pk", flat=True):

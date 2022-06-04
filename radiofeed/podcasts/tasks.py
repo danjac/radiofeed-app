@@ -10,21 +10,11 @@ from radiofeed.users.models import User
 
 @shared_task
 def recommend() -> None:
-    """
-    Generates podcast recommendations
-
-    Runs 03:20 UTC every day
-    """
     recommender.recommend()
 
 
 @shared_task
 def send_recommendations_emails() -> None:
-    """
-    Sends recommended podcasts to users
-
-    Runs at 09:12 UTC every Monday
-    """
     for user_id in User.objects.filter(
         send_email_notifications=True,
         is_active=True,
@@ -34,10 +24,6 @@ def send_recommendations_emails() -> None:
 
 @shared_task
 def schedule_podcast_feeds(limit: int = 300) -> None:
-    """Schedules podcast feeds for update.
-
-    Runs every 6 minutes
-    """
     for podcast_id in (
         scheduler.schedule_podcasts_for_update()
         .values_list("pk", flat=True)
