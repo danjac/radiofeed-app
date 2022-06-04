@@ -75,7 +75,7 @@ honcho -f Procfile.local start
 This will start up:
 
 * Django development server
-* [Huey](https://huey.readthedocs.io/) for running scheduled tasks and queues
+* Celery worker and scheduler
 * `tailwindcss` and `esbuild` for building frontend assets on the fly
 
 Honcho should be installed in your virtualenv.
