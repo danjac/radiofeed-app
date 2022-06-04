@@ -10,7 +10,7 @@ class Command(BaseCommand):
     Reschedules refresh intervals of podcasts
     """
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs) -> None:
         for counter, podcast in enumerate(
             Podcast.objects.filter(active=True).iterator()
         ):

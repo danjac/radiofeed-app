@@ -34,19 +34,19 @@ class TestCommands:
         call_command("crawl_itunes")
         patched.assert_called()
 
-    def test_import_podcast_feeds(self, db):
+    def test_import_podcasts(self, db):
         call_command(
-            "import_podcast_feeds",
+            "import_podcasts",
             pathlib.Path(__file__).parent / "mocks" / "feeds.txt",
         )
 
         assert Podcast.objects.count() == 18
 
-    def test_export_podcast_feeds(self, mocker, podcast):
+    def test_export_podcasts(self, mocker, podcast):
         mocker.patch("builtins.open")
         mock_writer = mocker.Mock()
         mocker.patch("csv.writer", return_value=mock_writer)
-        call_command("export_podcast_feeds", "filename.txt")
+        call_command("export_podcasts", "filename.txt")
         mock_writer.writerow.assert_called_with([podcast.rss])
 
     def test_reschedule_podcast_feeds(self, mocker, podcast):
