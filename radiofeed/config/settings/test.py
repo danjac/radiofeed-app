@@ -1,6 +1,6 @@
 from split_settings.tools import include
 
-from radiofeed.config.settings.base import ALLOWED_HOSTS
+from radiofeed.config.settings.base import ALLOWED_HOSTS, HUEY
 
 include("base.py")
 
@@ -13,3 +13,5 @@ ALLOWED_HOSTS += [".example.com"]
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+HUEY["immediate"] = True

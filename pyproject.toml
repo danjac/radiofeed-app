@@ -88,9 +88,7 @@ omit=[
     "**/factories.py",
     "*/migrations/*",
     "*/tests/*",
-    "*/settings/*",
-    "*/celery_app",
-    "*/wsgi.py"
+    "*/config/*",
 ]
 
 [tool.pytest.ini_options]
