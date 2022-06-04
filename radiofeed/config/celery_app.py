@@ -3,7 +3,7 @@ import os
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.settings.local")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.config.settings.local")
 
 app = Celery("radiofeed")
 

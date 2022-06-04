@@ -91,7 +91,7 @@ python -m pytest
 The following environment variables should be set in your production installation. Some providers may set some of these automatically e.g. `DATABASE_URL`:
 
 ```
-DJANGO_SETTINGS_MODULE='radiofeed.settings.production'
+DJANGO_SETTINGS_MODULE='radiofeed.config.settings.production'
 DATABASE_URL=''
 REDIS_URL=''
 ADMIN_URL='some-random-url/'

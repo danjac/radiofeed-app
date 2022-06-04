@@ -1,8 +1,6 @@
-import socket
-
 from split_settings.tools import include
 
-from radiofeed.settings.base import (
+from radiofeed.config.settings.base import (
     ADMIN_SITE_HEADER,
     INSTALLED_APPS,
     MIDDLEWARE,

@@ -1,6 +1,6 @@
 from split_settings.tools import include
 
-from radiofeed.settings.base import ALLOWED_HOSTS
+from radiofeed.config.settings.base import ALLOWED_HOSTS
 
 include("base.py")
 
