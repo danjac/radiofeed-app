@@ -1,4 +1,5 @@
 web: python manage.py runserver
-worker: python manage.py run_huey -w 4
+worker: celery -A radiofeed.celery_app worker -l INFO
+scheduler: celery -A radiofeed.celery_app beat -l INFO
 watch-css: npm run watch:css
 watch-js: npm run watch:js
