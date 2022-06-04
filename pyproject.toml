@@ -92,7 +92,7 @@ omit=[
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.config.settings.test"
+DJANGO_SETTINGS_MODULE="radiofeed.settings.test"
 addopts="-v -x --ff --reuse-db -p no:warnings --tb=short"
 testpaths="radiofeed"
 
@@ -117,4 +117,4 @@ module="*.migrations.*"
 ignore_errors = true
 
 [tool.django-stubs]
-django_settings_module = "radiofeed.config.settings.test"
+django_settings_module = "radiofeed.settings.test"
