@@ -81,7 +81,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.twitter",
     "cachalot",
-    "django_celery_beat",
     "django_extensions",
     "django_htmx",
     "django_object_actions",
@@ -91,6 +90,7 @@ INSTALLED_APPS = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "health_check.db",
+    "huey.contrib.djhuey",
     "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.podcasts",
@@ -226,16 +226,16 @@ LOGGING = {
     },
 }
 
-# Celery
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html
+# Huey
 
-CELERY_TIMEZONE = TIME_ZONE
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL = REDIS_URL
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_TASK_TIME_LIMIT = 5 * 60
-CELERY_TASK_SOFT_TIME_LIMIT = 60
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+# https://huey.readthedocs.io/en/latest/django.html
+
+HUEY = {
+    "connection": {"url": REDIS_URL},
+    "immediate": False,
+    "results": False,
+    "store_none": False,
+}
 
 # Project specific
 
