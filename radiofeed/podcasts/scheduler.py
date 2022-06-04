@@ -90,7 +90,7 @@ def calculate_refresh_interval(
 
         return min(
             max(
-                timedelta(seconds=numpy.mean(list(intervals))),
+                timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
                 MIN_INTERVAL,
             ),
             MAX_INTERVAL,
