@@ -163,7 +163,7 @@ class FeedParser:
         return True
 
     def update_episodes(
-        self, items: list[rss_parser.Item], batch_size: int = 500
+        self, items: list[rss_parser.Item], batch_size: int = 100
     ) -> None:
         """Remove any episodes no longer in feed, update any current and
         add new"""
