@@ -1,5 +1,7 @@
 import pathlib
 
+from datetime import timedelta
+
 from django.core.management import call_command
 
 from radiofeed.podcasts.itunes import Feed
@@ -46,3 +48,12 @@ class TestCommands:
         mocker.patch("csv.writer", return_value=mock_writer)
         call_command("export_podcast_feeds", "filename.txt")
         mock_writer.writerow.assert_called_with([podcast.rss])
+
+    def test_reschedule_podcast_feeds(self, mocker, podcast):
+        mocker.patch(
+            "radiofeed.podcasts.scheduler.calculate_refresh_interval",
+            return_value=timedelta(days=7),
+        )
+        call_command("reschedule_podcast_feeds")
+        podcast.refresh_from_db()
+        assert podcast.refresh_interval == timedelta(days=7)
