@@ -75,19 +75,22 @@ def calculate_refresh_interval(
 
         relevant = now - since
 
-        intervals = [
-            (a - b).total_seconds()
-            for a, b in itertools.pairwise(
-                filter(
-                    lambda pub_date: pub_date > relevant,
-                    sorted(pub_dates, reverse=True),
+        intervals = filter(
+            None,
+            [
+                (a - b).total_seconds()
+                for a, b in itertools.pairwise(
+                    filter(
+                        lambda pub_date: pub_date > relevant,
+                        sorted(pub_dates + [now], reverse=True),
+                    )
                 )
-            )
-        ]
+            ],
+        )
 
         return min(
             max(
-                timedelta(seconds=numpy.mean(intervals)),
+                timedelta(seconds=numpy.mean(list(intervals))),
                 MIN_INTERVAL,
             ),
             MAX_INTERVAL,

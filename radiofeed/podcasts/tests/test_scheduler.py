@@ -1,7 +1,5 @@
 from datetime import timedelta
 
-import pytest
-
 from django.utils import timezone
 
 from radiofeed.podcasts import scheduler
@@ -112,23 +110,23 @@ class TestCalculateRefreshInterval:
         dt = timezone.now()
 
         pub_dates = [
-            dt,
             dt - timedelta(days=3),
+            dt - timedelta(days=6),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates) == timedelta(days=3)
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 3
 
     def test_sufficent_dates(self):
 
         dt = timezone.now()
 
         pub_dates = [
-            dt,
             dt - timedelta(days=3),
             dt - timedelta(days=6),
+            dt - timedelta(days=9),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates) == timedelta(days=3)
+        assert scheduler.calculate_refresh_interval(pub_dates).days == 3
 
     def test_latest_more_than_90_days(self):
 
@@ -168,8 +166,9 @@ class TestCalculateRefreshInterval:
 
     def test_no_diffs(self):
 
-        pub_dates = [timezone.now() - timedelta(days=3)] * 10
-
-        assert scheduler.calculate_refresh_interval(
-            pub_dates
-        ).total_seconds() == pytest.approx(3600)
+        assert (
+            scheduler.calculate_refresh_interval(
+                [timezone.now() - timedelta(days=3)] * 10
+            ).days
+            == 3
+        )
