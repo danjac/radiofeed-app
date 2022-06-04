@@ -20,8 +20,8 @@ class TestTasks:
         user = UserFactory(send_email_notifications=True)
         UserFactory(send_email_notifications=False)
 
-        patched = mocker.patch("radiofeed.episodes.tasks.send_new_episodes_email.map")
+        patched = mocker.patch("radiofeed.episodes.tasks.send_new_episodes_email.delay")
 
         send_new_episodes_emails()
 
-        patched.assert_called_with([(user.id, timedelta(days=7))])
+        patched.assert_called_with(user.id, timedelta(days=7))

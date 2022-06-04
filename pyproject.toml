@@ -86,10 +86,11 @@ multi_line_output=3
 [tool.coverage.run]
 source=["radiofeed"]
 omit=[
+    "**/factories.py",
     "*/migrations/*",
     "*/tests/*",
     "*/settings/*",
-    "**/factories.py",
+    "*/celery_app",
     "*/wsgi.py"
 ]
 
