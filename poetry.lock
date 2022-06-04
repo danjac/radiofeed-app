@@ -94,27 +94,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "bx-django-utils"
-version = "22"
-description = "Various Django utility functions"
-category = "main"
-optional = false
-python-versions = ">=3.6,<4.0.0"
-
-[package.dependencies]
-bx_py_utils = ">=52"
-django = "*"
-python-stdnum = "*"
-
-[[package]]
-name = "bx-py-utils"
-version = "64"
-description = "Various Python utility functions"
-category = "main"
-optional = false
-python-versions = ">=3.6,<4.0.0"
-
-[[package]]
 name = "certifi"
 version = "2022.5.18.1"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -362,20 +341,6 @@ python-versions = ">=3.7"
 
 [package.dependencies]
 Django = ">=3.2"
-
-[[package]]
-name = "django-huey-monitor"
-version = "0.5.0"
-description = "Django based tool for monitoring huey task queue: https://github.com/coleifer/huey"
-category = "main"
-optional = false
-python-versions = ">=3.7,<4.0.0"
-
-[package.dependencies]
-bx_django_utils = "*"
-bx_py_utils = "*"
-django = "*"
-huey = "*"
 
 [[package]]
 name = "django-model-utils"
@@ -1089,19 +1054,6 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 six = ">=1.5"
 
 [[package]]
-name = "python-stdnum"
-version = "1.17"
-description = "Python module to handle standardized numbers and codes"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.extras]
-soap = ["zeep"]
-soap-alt = ["suds"]
-soap-fallback = ["pysimplesoap"]
-
-[[package]]
 name = "python3-openid"
 version = "3.2.0"
 description = "OpenID support for modern servers and consumers."
@@ -1440,7 +1392,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "e39427424926738d2060115967d804bb75976a24dc72faa567b250f34e732fcf"
+content-hash = "0bcac3fb23fbd4b7404fd628be2f3ff51c5414f9cf94070e68f7ef3f8e08f2fe"
 
 [metadata.files]
 appnope = [
@@ -1538,14 +1490,6 @@ brotli = [
     {file = "Brotli-1.0.9-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:9749a124280a0ada4187a6cfd1ffd35c350fb3af79c706589d98e088c5044267"},
     {file = "Brotli-1.0.9-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:76ffebb907bec09ff511bb3acc077695e2c32bc2142819491579a695f77ffd4d"},
     {file = "Brotli-1.0.9.zip", hash = "sha256:4d1b810aa0ed773f81dceda2cc7b403d01057458730e309856356d4ef4188438"},
-]
-bx-django-utils = [
-    {file = "bx_django_utils-22-py3-none-any.whl", hash = "sha256:77b8554f2c91474352a89198ab9e571df26184f62e1baae65b04f5356b77da1e"},
-    {file = "bx_django_utils-22.tar.gz", hash = "sha256:d225027b418a446349379d799542cf8cd2701784c9f6585af06a77f082eb76d5"},
-]
-bx-py-utils = [
-    {file = "bx_py_utils-64-py3-none-any.whl", hash = "sha256:923b06c4241a7cdfb3fe26753cb9d054b31c3466b3688371a6cab93cf8a683b3"},
-    {file = "bx_py_utils-64.tar.gz", hash = "sha256:59071c712fc511138adbc5ef41495e29ec6efb59740fe10078f815574aa68c42"},
 ]
 certifi = [
     {file = "certifi-2022.5.18.1-py3-none-any.whl", hash = "sha256:f1d53542ee8cbedbe2118b5686372fb33c297fcd6379b050cca0ef13a597382a"},
@@ -1736,10 +1680,6 @@ django-health-check = [
 django-htmx = [
     {file = "django-htmx-1.11.0.tar.gz", hash = "sha256:aab226778ba409d0cf019c549b9fc6881b8a7b10555cd535fba6499c2cef707c"},
     {file = "django_htmx-1.11.0-py3-none-any.whl", hash = "sha256:9e6403869f41d3a86d356a01aee852e0de03ccfe64c8dab836324d473fb3caf8"},
-]
-django-huey-monitor = [
-    {file = "django-huey-monitor-0.5.0.tar.gz", hash = "sha256:2f1f7900c3d51887c4d26ce7c0ade957f41455effc46234460f66257d235819f"},
-    {file = "django_huey_monitor-0.5.0-py3-none-any.whl", hash = "sha256:1051379bc73a1d112c64af6b278646c26dc52c545afb9ee7b6ff1523b1e43b21"},
 ]
 django-model-utils = [
     {file = "django-model-utils-4.2.0.tar.gz", hash = "sha256:e7a95e102f9c9653427eadab980d5d59e1dea972913b9c9e01ac37f86bba0ddf"},
@@ -2211,10 +2151,6 @@ pytest-xdist = [
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
-]
-python-stdnum = [
-    {file = "python-stdnum-1.17.tar.gz", hash = "sha256:374e2b5e13912ccdbf50b0b23fca2c3e0531174805c32d74e145f37756328340"},
-    {file = "python_stdnum-1.17-py2.py3-none-any.whl", hash = "sha256:a46e6cf9652807314d369b654b255c86a59f93d18be2834f3d567ed1a346c547"},
 ]
 python3-openid = [
     {file = "python3-openid-3.2.0.tar.gz", hash = "sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf"},
