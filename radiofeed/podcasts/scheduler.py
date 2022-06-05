@@ -25,19 +25,14 @@ def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
                 models.F("pub_date") + models.F("update_interval"),
                 output_field=models.DateTimeField(),
             ),
-            priority=models.Case(
-                models.When(
-                    models.Q(promoted=True) | models.Q(subscribers__gt=0), then=True
-                ),
-                default=False,
-            ),
         )
         .filter(
             models.Q(parsed__isnull=True)
             | models.Q(parsed__lt=now - MAX_INTERVAL)
             | models.Q(
                 models.Q(pub_date__isnull=True)
-                | models.Q(priority=True)
+                | models.Q(subscribers__gt=0)
+                | models.Q(promoted=True)
                 | models.Q(scheduled__lt=now, pub_date__gte=now - MAX_INTERVAL),
                 parsed__lt=now - MIN_INTERVAL,
             ),

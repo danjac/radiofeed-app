@@ -17,7 +17,7 @@ class TestTasks:
         podcast = PodcastFactory()
         mocker.patch(
             "radiofeed.podcasts.scheduler.schedule_podcasts_for_update",
-            return_value=Podcast.objects.annotate(priority=Value(False)),
+            return_value=Podcast.objects.annotate(subscribers=Value(0)),
         )
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
 
@@ -26,11 +26,24 @@ class TestTasks:
             podcast.id, increment_update_interval_on_failure=True
         )
 
-    def test_schedule_podcast_feeds_priority(self, db, mocker):
+    def test_schedule_podcast_feeds_promoted(self, db, mocker):
+        podcast = PodcastFactory(promoted=True)
+        mocker.patch(
+            "radiofeed.podcasts.scheduler.schedule_podcasts_for_update",
+            return_value=Podcast.objects.annotate(subscribers=Value(0)),
+        )
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
+
+        schedule_podcast_feeds()
+        patched.assert_called_with(
+            podcast.id, increment_update_interval_on_failure=False
+        )
+
+    def test_schedule_podcast_feeds_subscribers(self, db, mocker):
         podcast = PodcastFactory()
         mocker.patch(
             "radiofeed.podcasts.scheduler.schedule_podcasts_for_update",
-            return_value=Podcast.objects.annotate(priority=Value(True)),
+            return_value=Podcast.objects.annotate(subscribers=Value(1)),
         )
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
 

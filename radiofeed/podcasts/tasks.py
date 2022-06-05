@@ -41,15 +41,15 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
     Runs every 12 minutes
     """
 
-    for podcast_id, priority in (
+    for podcast_id, subscribers, promoted in (
         scheduler.schedule_podcasts_for_update()
-        .values_list("pk", "priority")
+        .values_list("pk", "subscribers", "promoted")
         .distinct()[:limit]
     ):
 
         parse_podcast_feed(
             podcast_id,
-            increment_update_interval_on_failure=not (priority),
+            increment_update_interval_on_failure=subscribers == 0 and not promoted,
         )
 
 
