@@ -45,21 +45,12 @@ class FeedParser:
         self.podcast = podcast
 
     @transaction.atomic
-    def parse(
-        self,
-        *,
-        increment_update_interval_on_failure: bool = False,
-        parse_error_limit: int = 3,
-    ) -> bool:
+    def parse(self) -> bool:
         try:
             return self.handle_successful_update(*self.parse_content())
 
         except Exception as e:
-            return self.handle_unsuccessful_update(
-                e,
-                increment_update_interval_on_failure,
-                parse_error_limit,
-            )
+            return self.handle_unsuccessful_update(e)
 
     def parse_content(
         self,
@@ -248,12 +239,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
 
-    def handle_unsuccessful_update(
-        self,
-        e: Exception,
-        increment_update_interval_on_failure: bool,
-        parse_error_limit: int,
-    ) -> bool:
+    def handle_unsuccessful_update(self, e: Exception) -> bool:
 
         result = None
         active = True
@@ -294,13 +280,7 @@ class FeedParser:
         now = timezone.now()
 
         errors = self.podcast.errors + 1 if error else 0
-        active = active and errors < parse_error_limit
-
-        update_interval = (
-            scheduler.increment_update_interval(self.podcast.update_interval)
-            if increment_update_interval_on_failure
-            else self.podcast.update_interval
-        )
+        active = active and errors < 3
 
         Podcast.objects.filter(pk=self.podcast.id).update(
             active=active,
@@ -309,7 +289,9 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
-            update_interval=update_interval,
+            update_interval=scheduler.increment_update_interval(
+                self.podcast.update_interval
+            ),
         )
 
         return False

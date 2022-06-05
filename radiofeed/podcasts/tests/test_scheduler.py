@@ -5,7 +5,7 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.podcasts import scheduler
-from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import PodcastFactory
 
 
 class TestSchedulePodcastsForUpdate:
@@ -41,59 +41,21 @@ class TestSchedulePodcastsForUpdate:
 
         assert not scheduler.schedule_podcasts_for_update().exists()
 
-    def test_scheduled_older_than_two_weeks(self, db):
+    def test_scheduled_older_than_one_month(self, db):
         now = timezone.now()
         PodcastFactory(
-            parsed=now - timedelta(days=14),
+            parsed=now - timedelta(days=30),
             pub_date=now - timedelta(days=60),
-            update_interval=timedelta(days=14),
+            update_interval=timedelta(days=30),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
-    def test_not_scheduled_older_than_two_weeks(self, db):
+    def test_not_scheduled_older_than_one_month(self, db):
         now = timezone.now()
         PodcastFactory(
             parsed=now - timedelta(days=7),
             pub_date=now - timedelta(days=60),
-            update_interval=timedelta(days=14),
-        )
-        assert not scheduler.schedule_podcasts_for_update().exists()
-
-    def test_promoted_scheduled(self, db):
-        now = timezone.now()
-        PodcastFactory(
-            promoted=True,
-            parsed=now - timedelta(hours=1),
-            pub_date=now - timedelta(days=1),
-            update_interval=timedelta(days=7),
-        )
-        assert scheduler.schedule_podcasts_for_update().exists()
-
-    def test_promoted_not_scheduled(self, db):
-        now = timezone.now()
-        PodcastFactory(
-            promoted=True,
-            parsed=now - timedelta(minutes=30),
-            pub_date=now - timedelta(days=1),
-            update_interval=timedelta(days=7),
-        )
-        assert not scheduler.schedule_podcasts_for_update().exists()
-
-    def test_subscribed_scheduled(self, db):
-        now = timezone.now()
-        SubscriptionFactory(
-            podcast__parsed=now - timedelta(hours=1),
-            podcast__pub_date=now - timedelta(days=1),
-            podcast__update_interval=timedelta(days=7),
-        )
-        assert scheduler.schedule_podcasts_for_update().exists()
-
-    def test_subscribed_not_scheduled(self, db):
-        now = timezone.now()
-        SubscriptionFactory(
-            podcast__parsed=now - timedelta(minutes=30),
-            podcast__pub_date=now - timedelta(days=1),
-            podcast__update_interval=timedelta(days=7),
+            update_interval=timedelta(days=30),
         )
         assert not scheduler.schedule_podcasts_for_update().exists()
 
@@ -105,7 +67,7 @@ class TestIncrementRefreshInterval:
         ).total_seconds() == pytest.approx(66 * 60)
 
     def test_increment_past_max(self):
-        assert scheduler.increment_update_interval(timedelta(days=14)).days == 14
+        assert scheduler.increment_update_interval(timedelta(days=30)).days == 30
 
 
 class TestCalculateRefreshInterval:
@@ -150,7 +112,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=100),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 14
+        assert scheduler.calculate_update_interval(pub_dates).days == 30
 
     def test_latest_more_than_30_days(self):
 
@@ -162,19 +124,19 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=40),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 14
+        assert scheduler.calculate_update_interval(pub_dates).days == 30
 
     def test_over_max(self):
 
         dt = timezone.now()
 
         pub_dates = [
-            dt - timedelta(days=10),
-            dt - timedelta(days=30),
-            dt - timedelta(days=60),
+            dt - timedelta(days=33),
+            dt - timedelta(days=66),
+            dt - timedelta(days=99),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 14
+        assert scheduler.calculate_update_interval(pub_dates).days == 30
 
     def test_no_diffs(self):
 

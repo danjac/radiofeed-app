@@ -41,22 +41,15 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
     Runs every 12 minutes
     """
 
-    for podcast_id, subscribers, promoted in (
-        scheduler.schedule_podcasts_for_update()
-        .values_list("pk", "subscribers", "promoted")
-        .distinct()[:limit]
-    ):
-
-        parse_podcast_feed(
-            podcast_id,
-            increment_update_interval_on_failure=subscribers == 0 and not promoted,
-        )
+    parse_podcast_feed.map(
+        scheduler.schedule_podcasts_for_update().values_list("pk").distinct()[:limit]
+    )
 
 
 @db_task()
-def parse_podcast_feed(podcast_id: int, **kwargs) -> None:
+def parse_podcast_feed(podcast_id: int) -> None:
     try:
-        feed_parser.parse_podcast_feed(Podcast.objects.get(pk=podcast_id), **kwargs)
+        feed_parser.parse_podcast_feed(Podcast.objects.get(pk=podcast_id))
     except Podcast.DoesNotExist:
         pass
 

@@ -4,14 +4,12 @@ import itertools
 
 from datetime import datetime, timedelta
 
-import numpy
-
 from django.db import models
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
 
-MAX_INTERVAL = timedelta(days=14)
+MAX_INTERVAL = timedelta(days=30)
 MIN_INTERVAL = timedelta(hours=1)
 
 
@@ -20,7 +18,6 @@ def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
 
     return (
         Podcast.objects.annotate(
-            subscribers=models.Count("subscription"),
             scheduled=models.ExpressionWrapper(
                 models.F("pub_date") + models.F("update_interval"),
                 output_field=models.DateTimeField(),
@@ -31,16 +28,12 @@ def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
             | models.Q(parsed__lt=now - MAX_INTERVAL)
             | models.Q(
                 models.Q(pub_date__isnull=True)
-                | models.Q(subscribers__gt=0)
-                | models.Q(promoted=True)
                 | models.Q(scheduled__lt=now, pub_date__gte=now - MAX_INTERVAL),
                 parsed__lt=now - MIN_INTERVAL,
             ),
             active=True,
         )
         .order_by(
-            models.F("subscribers").desc(),
-            models.F("promoted").desc(),
             models.F("parsed").asc(nulls_first=True),
             models.F("pub_date").desc(nulls_first=True),
             models.F("created").desc(),
@@ -78,19 +71,13 @@ def calculate_update_interval(
                 for a, b in itertools.pairwise(
                     filter(
                         lambda pub_date: pub_date > relevant,
-                        sorted(pub_dates + [now], reverse=True),
+                        sorted(pub_dates, reverse=True),
                     )
                 )
             ],
         )
 
-        return min(
-            max(
-                timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
-                MIN_INTERVAL,
-            ),
-            MAX_INTERVAL,
-        )
+        return min(max(timedelta(seconds=min(intervals)), MIN_INTERVAL), MAX_INTERVAL)
 
     except ValueError:
         return MIN_INTERVAL
