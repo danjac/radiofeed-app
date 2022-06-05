@@ -333,7 +333,7 @@ django = ">=2.2"
 
 [[package]]
 name = "django-htmx"
-version = "1.11.0"
+version = "1.12.0"
 description = "Extensions for using Django with htmx."
 category = "main"
 optional = false
@@ -363,7 +363,7 @@ python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.11.0"
+version = "4.12.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 category = "main"
 optional = false
@@ -413,7 +413,7 @@ hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
 name = "django-rich"
-version = "1.3.0"
+version = "1.4.0"
 description = "Extensions for using Rich with Django."
 category = "main"
 optional = false
@@ -1360,7 +1360,7 @@ watchdog = ["watchdog"]
 
 [[package]]
 name = "whitenoise"
-version = "6.1.0"
+version = "6.2.0"
 description = "Radically simplified static file serving for WSGI applications"
 category = "main"
 optional = false
@@ -1678,8 +1678,8 @@ django-health-check = [
     {file = "django_health_check-3.16.5-py2.py3-none-any.whl", hash = "sha256:8d66781a0ea82b1a8b44878187b38a27370e94f18287312e39be0593e72d8983"},
 ]
 django-htmx = [
-    {file = "django-htmx-1.11.0.tar.gz", hash = "sha256:aab226778ba409d0cf019c549b9fc6881b8a7b10555cd535fba6499c2cef707c"},
-    {file = "django_htmx-1.11.0-py3-none-any.whl", hash = "sha256:9e6403869f41d3a86d356a01aee852e0de03ccfe64c8dab836324d473fb3caf8"},
+    {file = "django-htmx-1.12.0.tar.gz", hash = "sha256:33750914939e8fbd214e36fb0976003e06f4cadc92007cbe5c49f59e32e58de6"},
+    {file = "django_htmx-1.12.0-py3-none-any.whl", hash = "sha256:e8351b9251642a5a550a18c6958727ea9b33574bb412b1900fa5ab0d5dd9db40"},
 ]
 django-model-utils = [
     {file = "django-model-utils-4.2.0.tar.gz", hash = "sha256:e7a95e102f9c9653427eadab980d5d59e1dea972913b9c9e01ac37f86bba0ddf"},
@@ -1690,8 +1690,8 @@ django-object-actions = [
     {file = "django_object_actions-4.0.0-py3-none-any.whl", hash = "sha256:d87b4bb8a31e8485291acae39ceede40316091914d24bfb3073b54138f409313"},
 ]
 django-permissions-policy = [
-    {file = "django-permissions-policy-4.11.0.tar.gz", hash = "sha256:f9ee4d93c11e18bc66c131994c57479af6df7b8e3e13ad778aa48ebd620dec75"},
-    {file = "django_permissions_policy-4.11.0-py3-none-any.whl", hash = "sha256:659e388c20b9e14e563ca738283177bb13782887873e8a3fec2357cbf64d8ce5"},
+    {file = "django-permissions-policy-4.12.0.tar.gz", hash = "sha256:1f10fc354110fef9270fbabbbf8d5358a6d6f5380c79f0dfba56dd41e45b1936"},
+    {file = "django_permissions_policy-4.12.0-py3-none-any.whl", hash = "sha256:88ee9cb345898414a6ad3f2eb0d8284c67decdfc43c6fc5331531b7c39809d8c"},
 ]
 django-postgres-metrics = [
     {file = "django-postgres-metrics-0.13.1.tar.gz", hash = "sha256:ca9df75d01f0b2951d25246454cfa6441a7503675ceea4a1a8731381dd824acb"},
@@ -1706,8 +1706,8 @@ django-redis = [
     {file = "django_redis-5.2.0-py3-none-any.whl", hash = "sha256:1d037dc02b11ad7aa11f655d26dac3fb1af32630f61ef4428860a2e29ff92026"},
 ]
 django-rich = [
-    {file = "django-rich-1.3.0.tar.gz", hash = "sha256:4ac43014d3d98e994cd7553f73f515a8c81c932d2f412c237d7e2c00842e9e4e"},
-    {file = "django_rich-1.3.0-py3-none-any.whl", hash = "sha256:ef139bf31e1381a93684f8043ab5554f5273dbb8c5d452d33a0ab2ec6e5a196b"},
+    {file = "django-rich-1.4.0.tar.gz", hash = "sha256:10a5d9e9b62228b683d51584e4c2a5aa9f838176364a90c8cd79688aadca9f4c"},
+    {file = "django_rich-1.4.0-py3-none-any.whl", hash = "sha256:b418926692bf92222006ba846cc2a4aace484401398cd79fde013b11e9a23fa9"},
 ]
 django-split-settings = [
     {file = "django-split-settings-1.1.0.tar.gz", hash = "sha256:6b3aed89667a95525152026eab93a9f038ff22df6883006318b8b4a3d0ca6888"},
@@ -2362,8 +2362,8 @@ werkzeug = [
     {file = "Werkzeug-2.1.2.tar.gz", hash = "sha256:1ce08e8093ed67d638d63879fd1ba3735817f7a80de3674d293f5984f25fb6e6"},
 ]
 whitenoise = [
-    {file = "whitenoise-6.1.0-py3-none-any.whl", hash = "sha256:2067fe9008a3cd7d0d75f75c9240b54f5f59996ca285cbeab18fc1e89949e30d"},
-    {file = "whitenoise-6.1.0.tar.gz", hash = "sha256:6ccc6d1ad6fb688a398ea65d97db47f018ea0be7da75e146e8f2e837a04ba590"},
+    {file = "whitenoise-6.2.0-py3-none-any.whl", hash = "sha256:8e9c600a5c18bd17655ef668ad55b5edf6c24ce9bdca5bf607649ca4b1e8e2c2"},
+    {file = "whitenoise-6.2.0.tar.gz", hash = "sha256:8fa943c6d4cd9e27673b70c21a07b0aa120873901e099cd46cab40f7cc96d567"},
 ]
 wrapt = [
     {file = "wrapt-1.14.1-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:1b376b3f4896e7930f1f772ac4b064ac12598d1c38d04907e696cc4d794b43d3"},
