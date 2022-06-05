@@ -80,6 +80,15 @@ class TestParsePodcastFeed:
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)
         ).read_bytes()
 
+    def test_parse_podcast_feed_unhandled_exception(self, podcast, mocker):
+
+        mocker.patch(
+            "radiofeed.podcasts.parsers.feed_parser.FeedParser.parse_content",
+            side_effect=ValueError,
+        )
+        with pytest.raises(ValueError):
+            feed_parser.FeedParser(podcast).parse()
+
     def test_parse_podcast_feed_ok(self, db, mocker, categories):
 
         # set date to before latest

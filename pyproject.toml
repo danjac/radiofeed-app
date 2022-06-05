@@ -88,7 +88,8 @@ omit=[
     "**/factories.py",
     "*/migrations/*",
     "*/tests/*",
-    "*/config/*",
+    "*/settings/*",
+    "*/wsgi.py",
 ]
 
 [tool.pytest.ini_options]

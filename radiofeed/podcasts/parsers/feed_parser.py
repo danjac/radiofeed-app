@@ -19,8 +19,6 @@ from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
-PARSE_ERROR_LIMIT = 3  # max errors before podcast is "dead"
-
 USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0",
@@ -39,23 +37,30 @@ class DuplicateFeed(requests.RequestException):
 
 
 def parse_podcast_feed(
-    podcast: Podcast, increment_refresh_interval: bool = False
+    podcast: Podcast, increment_refresh_interval_on_failure: bool = False
 ) -> bool:
-    return FeedParser(podcast, increment_refresh_interval).parse()
+    return FeedParser(podcast).parse(increment_refresh_interval_on_failure)
 
 
 class FeedParser:
-    def __init__(self, podcast: Podcast, increment_refresh_interval: bool = False):
+    def __init__(self, podcast: Podcast):
         self.podcast = podcast
-        self.increment_refresh_interval = increment_refresh_interval
 
     @transaction.atomic
-    def parse(self) -> bool:
+    def parse(
+        self,
+        increment_refresh_interval_on_failure: bool = False,
+        parse_error_limit: int = 3,
+    ) -> bool:
         try:
             return self.handle_successful_update(*self.parse_content())
 
         except Exception as e:
-            return self.handle_exception(e)
+            return self.handle_unsuccessful_update(
+                e,
+                increment_refresh_interval_on_failure,
+                parse_error_limit,
+            )
 
     def parse_content(
         self,
@@ -247,70 +252,57 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
 
-    def handle_exception(self, e: Exception) -> bool:
+    def handle_unsuccessful_update(
+        self,
+        e: Exception,
+        increment_refresh_interval_on_failure: bool,
+        parse_error_limit: int,
+    ) -> bool:
+
+        result = None
+        active = True
+        error = False
+
+        try:
+            http_status = e.response.status_code  # type: ignore
+        except AttributeError:
+            http_status = None
 
         match e:
 
             case NotModified():
-
-                return self.handle_unsuccessful_update(
-                    Podcast.Result.NOT_MODIFIED,  # type: ignore
-                    http_status=e.response.status_code,
-                )
+                result = Podcast.Result.NOT_MODIFIED
 
             case DuplicateFeed():
-
-                return self.handle_unsuccessful_update(
-                    Podcast.Result.DUPLICATE_FEED,  # type: ignore
-                    http_status=e.response.status_code,
-                    active=False,
-                )
+                result = Podcast.Result.DUPLICATE_FEED
+                active = False
 
             case requests.HTTPError():
 
-                active = e.response.status_code != http.HTTPStatus.GONE
-
-                return self.handle_unsuccessful_update(
-                    Podcast.Result.HTTP_ERROR,  # type: ignore
-                    http_status=e.response.status_code,
-                    active=active,
-                    error=active,
-                )
+                result = Podcast.Result.HTTP_ERROR
+                active = error = http_status != http.HTTPStatus.GONE
 
             case requests.RequestException():
 
-                return self.handle_unsuccessful_update(
-                    Podcast.Result.NETWORK_ERROR,  # type: ignore
-                    error=True,
-                )
+                result = Podcast.Result.NETWORK_ERROR
+                error = True
 
             case rss_parser.RssParserError():
 
-                return self.handle_unsuccessful_update(
-                    Podcast.Result.INVALID_RSS,  # type: ignore
-                    error=True,
-                )
+                result = Podcast.Result.INVALID_RSS
+                error = True
 
             case _:
                 raise
 
-    def handle_unsuccessful_update(
-        self,
-        result: Podcast.Result,
-        *,
-        active: bool = True,
-        error: bool = False,
-        http_status: http.HTTPStatus | None = None,
-    ) -> bool:
-
         now = timezone.now()
 
         errors = self.podcast.errors + 1 if error else 0
-        active = active and errors < PARSE_ERROR_LIMIT
+        active = active and errors < parse_error_limit
 
         refresh_interval = (
             scheduler.increment_refresh_interval(self.podcast.refresh_interval)
-            if self.increment_refresh_interval
+            if increment_refresh_interval_on_failure
             else self.podcast.refresh_interval
         )
 

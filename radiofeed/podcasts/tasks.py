@@ -50,11 +50,11 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
 
 @db_task()
 def parse_podcast_feed(
-    podcast_id: int, increment_refresh_interval: bool = False
+    podcast_id: int, increment_refresh_interval_on_failure: bool = False
 ) -> None:
     try:
         feed_parser.parse_podcast_feed(
-            Podcast.objects.get(pk=podcast_id), increment_refresh_interval
+            Podcast.objects.get(pk=podcast_id), increment_refresh_interval_on_failure
         )
     except Podcast.DoesNotExist:
         pass
