@@ -4,12 +4,14 @@ import itertools
 
 from datetime import datetime, timedelta
 
+import numpy
+
 from django.db import models
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
 
-MAX_INTERVAL = timedelta(days=30)
+MAX_INTERVAL = timedelta(days=14)
 MIN_INTERVAL = timedelta(hours=1)
 
 
@@ -77,7 +79,13 @@ def calculate_update_interval(
             ],
         )
 
-        return min(max(timedelta(seconds=min(intervals)), MIN_INTERVAL), MAX_INTERVAL)
+        return min(
+            max(
+                timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
+                MIN_INTERVAL,
+            ),
+            MAX_INTERVAL,
+        )
 
     except ValueError:
         return MIN_INTERVAL

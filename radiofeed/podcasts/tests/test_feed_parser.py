@@ -148,7 +148,7 @@ class TestParsePodcastFeed:
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assert podcast.update_interval == timedelta(days=30)
+        assert podcast.update_interval == timedelta(days=14)
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 
@@ -215,7 +215,7 @@ class TestParsePodcastFeed:
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assert podcast.update_interval == timedelta(days=30)
+        assert podcast.update_interval == timedelta(days=14)
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 
@@ -328,7 +328,7 @@ class TestParsePodcastFeed:
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assert podcast.update_interval == timedelta(days=30)
+        assert podcast.update_interval == timedelta(days=14)
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 
@@ -360,7 +360,7 @@ class TestParsePodcastFeed:
         assert podcast.errors == 0
         assert podcast.modified
         assert podcast.parsed
-        assert podcast.update_interval == timedelta(days=30)
+        assert podcast.update_interval == timedelta(days=14)
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
         self, mocker, podcast, categories

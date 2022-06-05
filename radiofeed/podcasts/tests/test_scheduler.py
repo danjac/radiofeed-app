@@ -67,7 +67,7 @@ class TestIncrementRefreshInterval:
         ).total_seconds() == pytest.approx(66 * 60)
 
     def test_increment_past_max(self):
-        assert scheduler.increment_update_interval(timedelta(days=30)).days == 30
+        assert scheduler.increment_update_interval(timedelta(days=30)).days == 14
 
 
 class TestCalculateRefreshInterval:
@@ -112,9 +112,9 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=100),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 30
+        assert scheduler.calculate_update_interval(pub_dates).days == 14
 
-    def test_latest_more_than_30_days(self):
+    def test_latest_more_than_14_days(self):
 
         dt = timezone.now()
 
@@ -124,7 +124,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=40),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 30
+        assert scheduler.calculate_update_interval(pub_dates).days == 14
 
     def test_over_max(self):
 
@@ -136,13 +136,13 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=99),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 30
+        assert scheduler.calculate_update_interval(pub_dates).days == 14
 
     def test_no_diffs(self):
 
         assert (
             scheduler.calculate_update_interval(
                 [timezone.now() - timedelta(days=3)] * 10
-            ).days
-            == 3
+            ).total_seconds()
+            == 3600
         )
