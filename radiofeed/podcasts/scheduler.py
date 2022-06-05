@@ -6,16 +6,7 @@ from datetime import datetime, timedelta
 
 import numpy
 
-from django.db.models import (
-    Case,
-    Count,
-    DateTimeField,
-    ExpressionWrapper,
-    F,
-    Q,
-    QuerySet,
-    When,
-)
+from django.db import models
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
@@ -24,38 +15,40 @@ MAX_INTERVAL = timedelta(days=14)
 MIN_INTERVAL = timedelta(hours=1)
 
 
-def schedule_podcasts_for_update() -> QuerySet[Podcast]:
+def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
     now = timezone.now()
 
     return (
         Podcast.objects.annotate(
-            subscribers=Count("subscription"),
-            scheduled=ExpressionWrapper(
-                F("pub_date") + F("refresh_interval"),
-                output_field=DateTimeField(),
+            subscribers=models.Count("subscription"),
+            scheduled=models.ExpressionWrapper(
+                models.F("pub_date") + models.F("refresh_interval"),
+                output_field=models.DateTimeField(),
             ),
-            priority=Case(
-                When(Q(promoted=True) | Q(subscribers__gt=0), then=True),
+            priority=models.Case(
+                models.When(
+                    models.Q(promoted=True) | models.Q(subscribers__gt=0), then=True
+                ),
                 default=False,
             ),
         )
         .filter(
-            Q(parsed__isnull=True)
-            | Q(parsed__lt=now - MAX_INTERVAL)
-            | Q(
-                Q(pub_date__isnull=True)
-                | Q(priority=True)
-                | Q(scheduled__lt=now, pub_date__gte=now - MAX_INTERVAL),
+            models.Q(parsed__isnull=True)
+            | models.Q(parsed__lt=now - MAX_INTERVAL)
+            | models.Q(
+                models.Q(pub_date__isnull=True)
+                | models.Q(priority=True)
+                | models.Q(scheduled__lt=now, pub_date__gte=now - MAX_INTERVAL),
                 parsed__lt=now - MIN_INTERVAL,
             ),
             active=True,
         )
         .order_by(
-            F("subscribers").desc(),
-            F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-            F("created").desc(),
+            models.F("subscribers").desc(),
+            models.F("promoted").desc(),
+            models.F("parsed").asc(nulls_first=True),
+            models.F("pub_date").desc(nulls_first=True),
+            models.F("created").desc(),
         )
     )
 
