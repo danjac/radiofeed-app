@@ -16,15 +16,6 @@ MIN_INTERVAL = timedelta(hours=1)
 
 
 def schedule_podcasts_for_update() -> QuerySet[Podcast]:
-    """Returns podcasts scheduled for feed update:
-
-    1. Any podcasts with pub_date or parsed NULL (i.e. recently added)
-    2. Any subscribed or promoted podcasts last updated > 1 hour ago
-    3. Any podcasts where distance between last pub date + refresh interval > current time and
-        distance < 14 days
-    4. Any podcasts last updated > 14 days ago
-    """
-
     now = timezone.now()
 
     return (
@@ -37,14 +28,13 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
         )
         .filter(
             Q(parsed__isnull=True)
+            | Q(parsed__lt=now - MAX_INTERVAL)
             | Q(
-                Q(subscribers__gt=0)
-                | Q(promoted=True)
-                | Q(pub_date__isnull=True)
-                | Q(pub_date__gte=now - MAX_INTERVAL, scheduled__lt=now),
+                Q(pub_date__isnull=True)
+                | Q(Q(subscribers__gt=0) | Q(promoted=True))
+                | Q(scheduled__lt=now, parsed__lt=F("scheduled")),
                 parsed__lt=now - MIN_INTERVAL,
-            )
-            | Q(parsed__lt=now - MAX_INTERVAL),
+            ),
             active=True,
         )
         .order_by(

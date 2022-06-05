@@ -28,6 +28,24 @@ class TestSchedulePodcastsForUpdate:
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
+    def test_scheduled_parsed_gt_scheduled(self, db):
+        now = timezone.now()
+        PodcastFactory(
+            parsed=now - timedelta(days=1),
+            pub_date=now - timedelta(days=8),
+            refresh_interval=timedelta(days=7),
+        )
+        assert not scheduler.schedule_podcasts_for_update().exists()
+
+    def test_scheduled_parsed_lt_scheduled(self, db):
+        now = timezone.now()
+        PodcastFactory(
+            parsed=now - timedelta(days=2),
+            pub_date=now - timedelta(days=8),
+            refresh_interval=timedelta(days=7),
+        )
+        assert scheduler.schedule_podcasts_for_update().exists()
+
     def test_not_scheduled(self, db):
         now = timezone.now()
 
