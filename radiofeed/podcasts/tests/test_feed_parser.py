@@ -420,7 +420,9 @@ class TestParsePodcastFeed:
             ),
         )
 
-        assert not feed_parser.parse_podcast_feed(podcast, True)
+        assert not feed_parser.parse_podcast_feed(
+            podcast, increment_refresh_interval_on_failure=True
+        )
 
         podcast.refresh_from_db()
         assert podcast.active

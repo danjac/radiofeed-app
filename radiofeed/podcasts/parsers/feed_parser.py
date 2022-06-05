@@ -36,10 +36,8 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def parse_podcast_feed(
-    podcast: Podcast, increment_refresh_interval_on_failure: bool = False
-) -> bool:
-    return FeedParser(podcast).parse(increment_refresh_interval_on_failure)
+def parse_podcast_feed(podcast: Podcast, **kwargs) -> bool:
+    return FeedParser(podcast).parse(**kwargs)
 
 
 class FeedParser:
@@ -49,6 +47,7 @@ class FeedParser:
     @transaction.atomic
     def parse(
         self,
+        *,
         increment_refresh_interval_on_failure: bool = False,
         parse_error_limit: int = 3,
     ) -> bool:

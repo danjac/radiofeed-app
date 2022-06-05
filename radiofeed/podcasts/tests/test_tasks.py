@@ -19,18 +19,32 @@ class TestTasks:
             "radiofeed.podcasts.scheduler.schedule_podcasts_for_update",
             return_value=Podcast.objects.annotate(priority=Value(False)),
         )
-        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
 
         schedule_podcast_feeds()
+        patched.assert_called_with(
+            podcast.id, increment_refresh_interval_on_failure=True
+        )
 
-        assert list(patched.mock_calls[0][1][0]) == [(podcast.id, False)]
+    def test_schedule_podcast_feeds_priority(self, db, mocker):
+        podcast = PodcastFactory()
+        mocker.patch(
+            "radiofeed.podcasts.scheduler.schedule_podcasts_for_update",
+            return_value=Podcast.objects.annotate(priority=Value(True)),
+        )
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
+
+        schedule_podcast_feeds()
+        patched.assert_called_with(
+            podcast.id, increment_refresh_interval_on_failure=False
+        )
 
     def test_parse_podcast_feed(self, podcast, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.feed_parser.parse_podcast_feed"
         )
         parse_podcast_feed(podcast.id)
-        patched.assert_called_with(podcast, False)
+        patched.assert_called_with(podcast)
 
     def test_parse_podcast_feed_podcast_not_found(self, db, mocker):
         patched = mocker.patch(

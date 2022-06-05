@@ -41,21 +41,22 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
     Runs every 12 minutes
     """
 
-    parse_podcast_feed.map(
+    for podcast_id, priority in (
         scheduler.schedule_podcasts_for_update()
         .values_list("pk", "priority")
         .distinct()[:limit]
-    )
+    ):
+
+        parse_podcast_feed(
+            podcast_id,
+            increment_refresh_interval_on_failure=not (priority),
+        )
 
 
 @db_task()
-def parse_podcast_feed(
-    podcast_id: int, increment_refresh_interval_on_failure: bool = False
-) -> None:
+def parse_podcast_feed(podcast_id: int, **kwargs) -> None:
     try:
-        feed_parser.parse_podcast_feed(
-            Podcast.objects.get(pk=podcast_id), increment_refresh_interval_on_failure
-        )
+        feed_parser.parse_podcast_feed(Podcast.objects.get(pk=podcast_id), **kwargs)
     except Podcast.DoesNotExist:
         pass
 
