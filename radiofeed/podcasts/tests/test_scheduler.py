@@ -41,23 +41,16 @@ class TestSchedulePodcastsForUpdate:
 
         assert not scheduler.schedule_podcasts_for_update().exists()
 
-    def test_scheduled_older_than_one_month(self, db):
+    def test_not_scheduled_last_parsed_week_ago(self, db):
         now = timezone.now()
-        PodcastFactory(
-            parsed=now - timedelta(days=30),
-            pub_date=now - timedelta(days=60),
-            update_interval=timedelta(days=30),
-        )
-        assert scheduler.schedule_podcasts_for_update().exists()
 
-    def test_not_scheduled_older_than_one_month(self, db):
-        now = timezone.now()
         PodcastFactory(
             parsed=now - timedelta(days=7),
-            pub_date=now - timedelta(days=60),
-            update_interval=timedelta(days=30),
+            pub_date=now - timedelta(days=4),
+            update_interval=timedelta(days=14),
         )
-        assert not scheduler.schedule_podcasts_for_update().exists()
+
+        assert scheduler.schedule_podcasts_for_update().exists()
 
 
 class TestIncrementRefreshInterval:
@@ -65,9 +58,6 @@ class TestIncrementRefreshInterval:
         assert scheduler.increment_update_interval(
             timedelta(hours=1)
         ).total_seconds() == pytest.approx(66 * 60)
-
-    def test_increment_past_max(self):
-        assert scheduler.increment_update_interval(timedelta(days=30)).days == 14
 
 
 class TestCalculateRefreshInterval:
@@ -112,37 +102,13 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=100),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 14
-
-    def test_latest_more_than_14_days(self):
-
-        dt = timezone.now()
-
-        pub_dates = [
-            dt - timedelta(days=30),
-            dt - timedelta(days=36),
-            dt - timedelta(days=40),
-        ]
-
-        assert scheduler.calculate_update_interval(pub_dates).days == 14
-
-    def test_over_max(self):
-
-        dt = timezone.now()
-
-        pub_dates = [
-            dt - timedelta(days=33),
-            dt - timedelta(days=66),
-            dt - timedelta(days=99),
-        ]
-
-        assert scheduler.calculate_update_interval(pub_dates).days == 14
+        assert scheduler.calculate_update_interval(pub_dates).days == 33
 
     def test_no_diffs(self):
 
         assert (
             scheduler.calculate_update_interval(
                 [timezone.now() - timedelta(days=3)] * 10
-            ).total_seconds()
-            == 3600
+            ).days
+            == 3
         )
