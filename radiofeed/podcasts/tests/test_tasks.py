@@ -1,3 +1,5 @@
+from django.db.models import Value
+
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tasks import (
@@ -15,20 +17,20 @@ class TestTasks:
         podcast = PodcastFactory()
         mocker.patch(
             "radiofeed.podcasts.scheduler.schedule_podcasts_for_update",
-            return_value=Podcast.objects.all(),
+            return_value=Podcast.objects.annotate(priority=Value(False)),
         )
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
         schedule_podcast_feeds()
 
-        assert list(patched.mock_calls[0][1][0]) == [(podcast.id,)]
+        assert list(patched.mock_calls[0][1][0]) == [(podcast.id, False)]
 
     def test_parse_podcast_feed(self, podcast, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.feed_parser.parse_podcast_feed"
         )
         parse_podcast_feed(podcast.id)
-        patched.assert_called_with(podcast)
+        patched.assert_called_with(podcast, False)
 
     def test_parse_podcast_feed_podcast_not_found(self, db, mocker):
         patched = mocker.patch(

@@ -42,14 +42,20 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
     """
 
     parse_podcast_feed.map(
-        scheduler.schedule_podcasts_for_update().values_list("pk").distinct()[:limit]
+        scheduler.schedule_podcasts_for_update()
+        .values_list("pk", "priority")
+        .distinct()[:limit]
     )
 
 
 @db_task()
-def parse_podcast_feed(podcast_id: int) -> None:
+def parse_podcast_feed(
+    podcast_id: int, increment_refresh_interval: bool = False
+) -> None:
     try:
-        feed_parser.parse_podcast_feed(Podcast.objects.get(pk=podcast_id))
+        feed_parser.parse_podcast_feed(
+            Podcast.objects.get(pk=podcast_id), increment_refresh_interval
+        )
     except Podcast.DoesNotExist:
         pass
 

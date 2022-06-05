@@ -6,7 +6,16 @@ from datetime import datetime, timedelta
 
 import numpy
 
-from django.db.models import Count, DateTimeField, ExpressionWrapper, F, Q, QuerySet
+from django.db.models import (
+    Case,
+    Count,
+    DateTimeField,
+    ExpressionWrapper,
+    F,
+    Q,
+    QuerySet,
+    When,
+)
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
@@ -25,14 +34,18 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
                 F("pub_date") + F("refresh_interval"),
                 output_field=DateTimeField(),
             ),
+            priority=Case(
+                When(Q(promoted=True) | Q(subscribers__gt=0), then=True),
+                default=False,
+            ),
         )
         .filter(
             Q(parsed__isnull=True)
             | Q(parsed__lt=now - MAX_INTERVAL)
             | Q(
                 Q(pub_date__isnull=True)
-                | Q(Q(subscribers__gt=0) | Q(promoted=True))
-                | Q(scheduled__lt=now, parsed__lt=F("scheduled")),
+                | Q(priority=True)
+                | Q(scheduled__lt=now, pub_date__gte=now - MAX_INTERVAL),
                 parsed__lt=now - MIN_INTERVAL,
             ),
             active=True,
@@ -45,6 +58,11 @@ def schedule_podcasts_for_update() -> QuerySet[Podcast]:
             F("created").desc(),
         )
     )
+
+
+def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
+    seconds = refresh_interval.total_seconds()
+    return min(timedelta(seconds=seconds + (seconds * 0.1)), MAX_INTERVAL)
 
 
 def calculate_refresh_interval(

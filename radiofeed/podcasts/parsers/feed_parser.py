@@ -38,13 +38,16 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def parse_podcast_feed(podcast: Podcast) -> bool:
-    return FeedParser(podcast).parse()
+def parse_podcast_feed(
+    podcast: Podcast, increment_refresh_interval: bool = False
+) -> bool:
+    return FeedParser(podcast, increment_refresh_interval).parse()
 
 
 class FeedParser:
-    def __init__(self, podcast: Podcast):
+    def __init__(self, podcast: Podcast, increment_refresh_interval: bool = False):
         self.podcast = podcast
+        self.increment_refresh_interval = increment_refresh_interval
 
     @transaction.atomic
     def parse(self) -> bool:
@@ -305,6 +308,12 @@ class FeedParser:
         errors = self.podcast.errors + 1 if error else 0
         active = active and errors < PARSE_ERROR_LIMIT
 
+        refresh_interval = (
+            scheduler.increment_refresh_interval(self.podcast.refresh_interval)
+            if self.increment_refresh_interval
+            else self.podcast.refresh_interval
+        )
+
         Podcast.objects.filter(pk=self.podcast.id).update(
             active=active,
             result=result,
@@ -312,6 +321,7 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
+            refresh_interval=refresh_interval,
         )
 
         return False

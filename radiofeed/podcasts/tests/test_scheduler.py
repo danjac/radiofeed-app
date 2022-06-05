@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+import pytest
+
 from django.utils import timezone
 
 from radiofeed.podcasts import scheduler
@@ -24,24 +26,6 @@ class TestSchedulePodcastsForUpdate:
         PodcastFactory(
             parsed=now - timedelta(hours=1),
             pub_date=now - timedelta(days=7),
-            refresh_interval=timedelta(days=7),
-        )
-        assert scheduler.schedule_podcasts_for_update().exists()
-
-    def test_scheduled_parsed_gt_scheduled(self, db):
-        now = timezone.now()
-        PodcastFactory(
-            parsed=now - timedelta(days=1),
-            pub_date=now - timedelta(days=8),
-            refresh_interval=timedelta(days=7),
-        )
-        assert not scheduler.schedule_podcasts_for_update().exists()
-
-    def test_scheduled_parsed_lt_scheduled(self, db):
-        now = timezone.now()
-        PodcastFactory(
-            parsed=now - timedelta(days=2),
-            pub_date=now - timedelta(days=8),
             refresh_interval=timedelta(days=7),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
@@ -112,6 +96,16 @@ class TestSchedulePodcastsForUpdate:
             podcast__refresh_interval=timedelta(days=7),
         )
         assert not scheduler.schedule_podcasts_for_update().exists()
+
+
+class TestIncrementRefreshInterval:
+    def test_increment(self):
+        assert scheduler.increment_refresh_interval(
+            timedelta(hours=1)
+        ).total_seconds() == pytest.approx(66 * 60)
+
+    def test_increment_past_max(self):
+        assert scheduler.increment_refresh_interval(timedelta(days=14)).days == 14
 
 
 class TestCalculateRefreshInterval:
