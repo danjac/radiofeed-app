@@ -118,12 +118,9 @@ class FeedParser:
             response.headers.get("Last-Modified")
         )
 
-        # parsing result
-
         self.podcast.parsed = timezone.now()
         self.podcast.result = self.podcast.Result.SUCCESS  # type: ignore
         self.podcast.content_hash = content_hash
-        self.podcast.exception = ""
 
         self.podcast.active = not feed.complete
         self.podcast.errors = 0
