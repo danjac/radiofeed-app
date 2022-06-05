@@ -22,7 +22,7 @@ def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
         Podcast.objects.annotate(
             subscribers=models.Count("subscription"),
             scheduled=models.ExpressionWrapper(
-                models.F("pub_date") + models.F("refresh_interval"),
+                models.F("pub_date") + models.F("update_interval"),
                 output_field=models.DateTimeField(),
             ),
             priority=models.Case(
@@ -53,12 +53,12 @@ def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
     )
 
 
-def increment_refresh_interval(refresh_interval: timedelta) -> timedelta:
-    seconds = refresh_interval.total_seconds()
+def increment_update_interval(update_interval: timedelta) -> timedelta:
+    seconds = update_interval.total_seconds()
     return min(timedelta(seconds=seconds + (seconds * 0.1)), MAX_INTERVAL)
 
 
-def calculate_refresh_interval(
+def calculate_update_interval(
     pub_dates: list[datetime], since: timedelta = timedelta(days=90)
 ) -> timedelta:
     """Calculates the mean time interval between pub dates of individual

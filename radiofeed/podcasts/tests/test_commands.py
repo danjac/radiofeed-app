@@ -51,9 +51,9 @@ class TestCommands:
 
     def test_reschedule_podcast_feeds(self, mocker, podcast):
         mocker.patch(
-            "radiofeed.podcasts.scheduler.calculate_refresh_interval",
+            "radiofeed.podcasts.scheduler.calculate_update_interval",
             return_value=timedelta(days=7),
         )
         call_command("reschedule_podcast_feeds")
         podcast.refresh_from_db()
-        assert podcast.refresh_interval == timedelta(days=7)
+        assert podcast.update_interval == timedelta(days=7)

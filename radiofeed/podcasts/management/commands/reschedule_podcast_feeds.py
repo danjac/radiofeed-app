@@ -15,11 +15,11 @@ class Command(BaseCommand):
             Podcast.objects.filter(active=True).iterator()
         ):
             self.stdout.write(f"{counter}: {podcast.title}")
-            podcast.refresh_interval = scheduler.calculate_refresh_interval(
+            podcast.update_interval = scheduler.calculate_update_interval(
                 list(
                     Episode.objects.filter(podcast=podcast).values_list(
                         "pub_date", flat=True
                     )
                 )
             )
-            podcast.save(update_fields=["refresh_interval"])
+            podcast.save(update_fields=["update_interval"])

@@ -49,7 +49,7 @@ def schedule_podcast_feeds(limit: int = 300) -> None:
 
         parse_podcast_feed(
             podcast_id,
-            increment_refresh_interval_on_failure=not (priority),
+            increment_update_interval_on_failure=not (priority),
         )
 
 

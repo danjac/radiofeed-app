@@ -48,7 +48,7 @@ class FeedParser:
     def parse(
         self,
         *,
-        increment_refresh_interval_on_failure: bool = False,
+        increment_update_interval_on_failure: bool = False,
         parse_error_limit: int = 3,
     ) -> bool:
         try:
@@ -57,7 +57,7 @@ class FeedParser:
         except Exception as e:
             return self.handle_unsuccessful_update(
                 e,
-                increment_refresh_interval_on_failure,
+                increment_update_interval_on_failure,
                 parse_error_limit,
             )
 
@@ -127,7 +127,7 @@ class FeedParser:
         pub_dates = [item.pub_date for item in items if item.pub_date]
 
         self.podcast.pub_date = max(pub_dates)
-        self.podcast.refresh_interval = scheduler.calculate_refresh_interval(pub_dates)
+        self.podcast.update_interval = scheduler.calculate_update_interval(pub_dates)
 
         # content
 
@@ -251,7 +251,7 @@ class FeedParser:
     def handle_unsuccessful_update(
         self,
         e: Exception,
-        increment_refresh_interval_on_failure: bool,
+        increment_update_interval_on_failure: bool,
         parse_error_limit: int,
     ) -> bool:
 
@@ -296,10 +296,10 @@ class FeedParser:
         errors = self.podcast.errors + 1 if error else 0
         active = active and errors < parse_error_limit
 
-        refresh_interval = (
-            scheduler.increment_refresh_interval(self.podcast.refresh_interval)
-            if increment_refresh_interval_on_failure
-            else self.podcast.refresh_interval
+        update_interval = (
+            scheduler.increment_update_interval(self.podcast.update_interval)
+            if increment_update_interval_on_failure
+            else self.podcast.update_interval
         )
 
         Podcast.objects.filter(pk=self.podcast.id).update(
@@ -309,7 +309,7 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
-            refresh_interval=refresh_interval,
+            update_interval=update_interval,
         )
 
         return False

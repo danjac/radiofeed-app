@@ -23,7 +23,7 @@ class TestTasks:
 
         schedule_podcast_feeds()
         patched.assert_called_with(
-            podcast.id, increment_refresh_interval_on_failure=True
+            podcast.id, increment_update_interval_on_failure=True
         )
 
     def test_schedule_podcast_feeds_priority(self, db, mocker):
@@ -36,7 +36,7 @@ class TestTasks:
 
         schedule_podcast_feeds()
         patched.assert_called_with(
-            podcast.id, increment_refresh_interval_on_failure=False
+            podcast.id, increment_update_interval_on_failure=False
         )
 
     def test_parse_podcast_feed(self, podcast, mocker):

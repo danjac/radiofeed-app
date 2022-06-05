@@ -26,7 +26,7 @@ class TestSchedulePodcastsForUpdate:
         PodcastFactory(
             parsed=now - timedelta(hours=1),
             pub_date=now - timedelta(days=7),
-            refresh_interval=timedelta(days=7),
+            update_interval=timedelta(days=7),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
@@ -36,7 +36,7 @@ class TestSchedulePodcastsForUpdate:
         PodcastFactory(
             parsed=now - timedelta(hours=1),
             pub_date=now - timedelta(days=4),
-            refresh_interval=timedelta(days=7),
+            update_interval=timedelta(days=7),
         )
 
         assert not scheduler.schedule_podcasts_for_update().exists()
@@ -46,7 +46,7 @@ class TestSchedulePodcastsForUpdate:
         PodcastFactory(
             parsed=now - timedelta(days=14),
             pub_date=now - timedelta(days=60),
-            refresh_interval=timedelta(days=14),
+            update_interval=timedelta(days=14),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
@@ -55,7 +55,7 @@ class TestSchedulePodcastsForUpdate:
         PodcastFactory(
             parsed=now - timedelta(days=7),
             pub_date=now - timedelta(days=60),
-            refresh_interval=timedelta(days=14),
+            update_interval=timedelta(days=14),
         )
         assert not scheduler.schedule_podcasts_for_update().exists()
 
@@ -65,7 +65,7 @@ class TestSchedulePodcastsForUpdate:
             promoted=True,
             parsed=now - timedelta(hours=1),
             pub_date=now - timedelta(days=1),
-            refresh_interval=timedelta(days=7),
+            update_interval=timedelta(days=7),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
@@ -75,7 +75,7 @@ class TestSchedulePodcastsForUpdate:
             promoted=True,
             parsed=now - timedelta(minutes=30),
             pub_date=now - timedelta(days=1),
-            refresh_interval=timedelta(days=7),
+            update_interval=timedelta(days=7),
         )
         assert not scheduler.schedule_podcasts_for_update().exists()
 
@@ -84,7 +84,7 @@ class TestSchedulePodcastsForUpdate:
         SubscriptionFactory(
             podcast__parsed=now - timedelta(hours=1),
             podcast__pub_date=now - timedelta(days=1),
-            podcast__refresh_interval=timedelta(days=7),
+            podcast__update_interval=timedelta(days=7),
         )
         assert scheduler.schedule_podcasts_for_update().exists()
 
@@ -93,28 +93,28 @@ class TestSchedulePodcastsForUpdate:
         SubscriptionFactory(
             podcast__parsed=now - timedelta(minutes=30),
             podcast__pub_date=now - timedelta(days=1),
-            podcast__refresh_interval=timedelta(days=7),
+            podcast__update_interval=timedelta(days=7),
         )
         assert not scheduler.schedule_podcasts_for_update().exists()
 
 
 class TestIncrementRefreshInterval:
     def test_increment(self):
-        assert scheduler.increment_refresh_interval(
+        assert scheduler.increment_update_interval(
             timedelta(hours=1)
         ).total_seconds() == pytest.approx(66 * 60)
 
     def test_increment_past_max(self):
-        assert scheduler.increment_refresh_interval(timedelta(days=14)).days == 14
+        assert scheduler.increment_update_interval(timedelta(days=14)).days == 14
 
 
 class TestCalculateRefreshInterval:
     def test_no_dates(self):
-        assert scheduler.calculate_refresh_interval([]) == timedelta(hours=1)
+        assert scheduler.calculate_update_interval([]) == timedelta(hours=1)
 
     def test_just_one_date(self):
 
-        assert scheduler.calculate_refresh_interval([timezone.now()]) == timedelta(
+        assert scheduler.calculate_update_interval([timezone.now()]) == timedelta(
             hours=1
         )
 
@@ -126,7 +126,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=6),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 3
+        assert scheduler.calculate_update_interval(pub_dates).days == 3
 
     def test_sufficent_dates(self):
 
@@ -138,7 +138,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=9),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 3
+        assert scheduler.calculate_update_interval(pub_dates).days == 3
 
     def test_latest_more_than_90_days(self):
 
@@ -150,7 +150,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=100),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 14
+        assert scheduler.calculate_update_interval(pub_dates).days == 14
 
     def test_latest_more_than_30_days(self):
 
@@ -162,7 +162,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=40),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 14
+        assert scheduler.calculate_update_interval(pub_dates).days == 14
 
     def test_over_max(self):
 
@@ -174,12 +174,12 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=60),
         ]
 
-        assert scheduler.calculate_refresh_interval(pub_dates).days == 14
+        assert scheduler.calculate_update_interval(pub_dates).days == 14
 
     def test_no_diffs(self):
 
         assert (
-            scheduler.calculate_refresh_interval(
+            scheduler.calculate_update_interval(
                 [timezone.now() - timedelta(days=3)] * 10
             ).days
             == 3
