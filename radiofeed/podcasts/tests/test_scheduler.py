@@ -38,43 +38,18 @@ class TestSchedulePodcastsForUpdate:
                 True,
             ),
             (
-                timedelta(days=3),
-                timedelta(hours=4),
-                True,
-            ),
-            (
-                timedelta(days=7),
-                timedelta(hours=4),
-                False,
-            ),
-            (
-                timedelta(days=7),
-                timedelta(hours=24),
-                True,
-            ),
-            (
                 timedelta(days=8),
+                timedelta(hours=3),
+                True,
+            ),
+            (
+                timedelta(days=14),
                 timedelta(hours=23),
                 False,
             ),
             (
-                timedelta(days=8),
-                timedelta(hours=24),
-                True,
-            ),
-            (
                 timedelta(days=14),
                 timedelta(hours=24),
-                False,
-            ),
-            (
-                timedelta(days=14),
-                timedelta(hours=25),
-                False,
-            ),
-            (
-                timedelta(days=14),
-                timedelta(days=7),
                 True,
             ),
         ],

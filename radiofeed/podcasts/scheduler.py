@@ -29,18 +29,11 @@ def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
             | models.Q(pub_date__isnull=True)
             | models.Q(
                 pub_date__lt=now - timedelta(days=14),
-                parsed__lt=now - timedelta(days=7),
-            )
-            | models.Q(
-                pub_date__range=(
-                    now - timedelta(days=14),
-                    now - timedelta(days=7),
-                ),
                 parsed__lt=now - timedelta(hours=24),
             )
             | models.Q(
                 pub_date__range=(
-                    now - timedelta(days=7),
+                    now - timedelta(days=14),
                     now - timedelta(hours=24),
                 ),
                 parsed__lt=now - timedelta(hours=3),
