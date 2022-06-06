@@ -1,90 +1,55 @@
 from __future__ import annotations
 
-import itertools
-
-from datetime import datetime, timedelta
-
-import numpy
+from datetime import timedelta
 
 from django.db import models
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
 
-MIN_INTERVAL = timedelta(hours=1)
-
 
 def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
     """
-    Schedules podcast for updates from RSS feed sources.
+    Schedules active podcasts for updates from RSS feed sources.
 
-    Check all podcasts where their last pub date + update interval
-    is less than current time. On each "miss" we increment the
-    update interval.
+    Just added (parsed or pub date NULL): check always
 
-    All active podcasts should also be checked at least weekly.
+    Last pub date < 24 hours: check once an hour
+    Last pub date < 1 week: check 8 times a day (every 3 hours)
+    Last pub date < 2 weeks: check once a day
+
+    Older: check once a week
     """
     now = timezone.now()
 
-    return (
-        Podcast.objects.annotate(
-            scheduled=models.ExpressionWrapper(
-                models.F("pub_date") + models.F("update_interval"),
-                output_field=models.DateTimeField(),
+    return Podcast.objects.filter(
+        models.Q(parsed__isnull=True)
+        | models.Q(pub_date__isnull=True)
+        | models.Q(
+            pub_date__lt=now - timedelta(days=14),
+            parsed__lt=now - timedelta(days=7),
+        )
+        | models.Q(
+            pub_date__range=(
+                now - timedelta(days=14),
+                now - timedelta(days=7),
             ),
+            parsed__lt=now - timedelta(hours=24),
         )
-        .filter(
-            models.Q(parsed__isnull=True)
-            | models.Q(pub_date__isnull=True)
-            | models.Q(scheduled__lt=now, parsed__lt=now - MIN_INTERVAL)
-            | models.Q(parsed__lt=now - timedelta(days=7)),
-            active=True,
+        | models.Q(
+            pub_date__range=(
+                now - timedelta(days=7),
+                now - timedelta(hours=24),
+            ),
+            parsed__lt=now - timedelta(hours=3),
         )
-        .order_by(
-            models.F("parsed").asc(nulls_first=True),
-            models.F("pub_date").desc(nulls_first=True),
-            models.F("created").desc(),
-        )
+        | models.Q(
+            pub_date__gt=now - timedelta(hours=24),
+            parsed__lt=now - timedelta(hours=1),
+        ),
+        active=True,
+    ).order_by(
+        models.F("parsed").asc(nulls_first=True),
+        models.F("pub_date").desc(nulls_first=True),
+        models.F("created").desc(),
     )
-
-
-def increment_update_interval(update_interval: timedelta) -> timedelta:
-    seconds = update_interval.total_seconds()
-    return timedelta(seconds=seconds + (seconds * 0.1))
-
-
-def calculate_update_interval(
-    pub_dates: list[datetime], since: timedelta = timedelta(days=90)
-) -> timedelta:
-    """Calculates the mean time interval between pub dates of individual
-    episodes in a podcast.
-    """
-
-    now = timezone.now()
-
-    intervals = filter(
-        None,
-        [
-            (a - b).total_seconds()
-            for a, b in itertools.pairwise(
-                sorted(pub_dates + [now], reverse=True),
-            )
-        ],
-    )
-
-    try:
-
-        latest = max(pub_dates)
-
-        interval = max(
-            timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
-            MIN_INTERVAL,
-        )
-
-        while (latest + interval) < now:
-            interval = increment_update_interval(interval)
-
-        return interval
-
-    except ValueError:
-        return MIN_INTERVAL
