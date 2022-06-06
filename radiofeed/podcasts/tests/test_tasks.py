@@ -1,8 +1,14 @@
-from radiofeed.podcasts.models import Podcast
+from datetime import timedelta
+
+import pytest
+
+from django.utils import timezone
+
+from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
     parse_podcast_feed,
+    parse_podcast_feeds,
     recommend,
-    schedule_podcast_feeds,
     send_recommendations_email,
     send_recommendations_emails,
 )
@@ -10,15 +16,64 @@ from radiofeed.users.factories import UserFactory
 
 
 class TestTasks:
-    def test_schedule_podcast_feeds(self, db, mocker):
-        mocker.patch(
-            "radiofeed.podcasts.scheduler.schedule_podcasts_for_update",
-            return_value=Podcast.objects.all(),
-        )
+    @pytest.mark.parametrize(
+        "pub_date,parsed,called",
+        [
+            (
+                timedelta(hours=3),
+                timedelta(hours=2),
+                True,
+            ),
+            (
+                timedelta(hours=24),
+                timedelta(hours=2),
+                False,
+            ),
+            (
+                timedelta(hours=3),
+                timedelta(minutes=30),
+                False,
+            ),
+            (
+                timedelta(hours=24),
+                timedelta(hours=1),
+                False,
+            ),
+            (
+                timedelta(hours=24),
+                timedelta(hours=4),
+                True,
+            ),
+            (
+                timedelta(days=8),
+                timedelta(hours=3),
+                True,
+            ),
+            (
+                timedelta(days=14),
+                timedelta(hours=23),
+                False,
+            ),
+            (
+                timedelta(days=14),
+                timedelta(hours=24),
+                True,
+            ),
+        ],
+    )
+    def test_parse_podcast_feeds(self, db, mocker, pub_date, parsed, called):
+        now = timezone.now()
+
+        podcast = PodcastFactory(pub_date=now - pub_date, parsed=now - parsed)
+
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
-        schedule_podcast_feeds()
-        patched.assert_called()
+        parse_podcast_feeds()
+
+        if called:
+            patched.mock_calls[0][1][0] == [(podcast.id,)]
+        else:
+            patched.mock_calls[0][1][0] == []
 
     def test_parse_podcast_feed(self, podcast, mocker):
         patched = mocker.patch(

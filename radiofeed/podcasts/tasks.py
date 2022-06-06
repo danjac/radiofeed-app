@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
+from django.db import models
+from django.utils import timezone
 from huey import crontab
 from huey.contrib.djhuey import db_periodic_task, db_task
 
-from radiofeed.podcasts import emails, recommender, scheduler
+from radiofeed.podcasts import emails, recommender
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
@@ -35,14 +39,44 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def schedule_podcast_feeds(limit: int = 360) -> None:
+def parse_podcast_feeds(limit: int = 360) -> None:
     """Schedules podcast feeds for update.
 
     Runs every 6 minutes
     """
+    now = timezone.now()
 
     parse_podcast_feed.map(
-        scheduler.schedule_podcasts_for_update().values_list("pk").distinct()[:limit]
+        Podcast.objects.annotate(subscribers=models.Count("subscription"))
+        .filter(
+            models.Q(parsed__isnull=True)
+            | models.Q(pub_date__isnull=True)
+            | models.Q(
+                pub_date__lt=now - timedelta(days=14),
+                parsed__lt=now - timedelta(hours=24),
+            )
+            | models.Q(
+                pub_date__range=(
+                    now - timedelta(days=14),
+                    now - timedelta(hours=24),
+                ),
+                parsed__lt=now - timedelta(hours=3),
+            )
+            | models.Q(
+                pub_date__gt=now - timedelta(hours=24),
+                parsed__lt=now - timedelta(hours=1),
+            ),
+            active=True,
+        )
+        .order_by(
+            models.F("subscribers").desc(),
+            models.F("promoted").desc(),
+            models.F("parsed").asc(nulls_first=True),
+            models.F("pub_date").desc(nulls_first=True),
+            models.F("created").desc(),
+        )
+        .values_list("pk")
+        .distinct()[:limit]
     )
 
 
