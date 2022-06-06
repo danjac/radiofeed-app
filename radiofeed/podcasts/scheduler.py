@@ -11,14 +11,6 @@ from radiofeed.podcasts.models import Podcast
 def schedule_podcasts_for_update() -> models.QuerySet[Podcast]:
     """
     Schedules active podcasts for updates from RSS feed sources.
-
-    Just added (parsed or pub date NULL): check always
-
-    Last pub date < 24 hours: check once an hour
-    Last pub date < 1 week: check 8 times a day (every 3 hours)
-    Last pub date < 2 weeks: check once a day
-
-    Older: check once a week
     """
     now = timezone.now()
 
