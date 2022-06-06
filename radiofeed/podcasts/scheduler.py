@@ -74,10 +74,17 @@ def calculate_update_interval(
 
     try:
 
-        return max(
+        latest = max(pub_dates)
+
+        interval = max(
             timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
             MIN_INTERVAL,
         )
+
+        while (latest + interval) < now:
+            interval = increment_update_interval(interval)
+
+        return interval
 
     except ValueError:
         return MIN_INTERVAL

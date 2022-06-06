@@ -102,7 +102,7 @@ class TestCalculateRefreshInterval:
             dt - timedelta(days=100),
         ]
 
-        assert scheduler.calculate_update_interval(pub_dates).days == 33
+        assert scheduler.calculate_update_interval(pub_dates).days == 95
 
     def test_no_diffs(self):
 
