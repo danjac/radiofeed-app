@@ -8,6 +8,7 @@ from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
     parse_frequent_feeds,
     parse_podcast_feed,
+    parse_recent_feeds,
     parse_sporadic_feeds,
     recommend,
     send_recommendations_email,
@@ -34,6 +35,60 @@ class TestTasks:
                 timedelta(hours=3),
                 timedelta(hours=2),
                 True,
+            ),
+            (
+                timedelta(hours=24),
+                timedelta(hours=2),
+                False,
+            ),
+            (
+                timedelta(hours=3),
+                timedelta(minutes=30),
+                False,
+            ),
+            (
+                timedelta(hours=24),
+                timedelta(hours=3),
+                False,
+            ),
+        ],
+    )
+    def test_parse_recent_feeds(self, db, mocker, pub_date, parsed, called):
+        now = timezone.now()
+
+        podcast = PodcastFactory(
+            pub_date=now - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
+        )
+
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
+
+        parse_recent_feeds()
+
+        calls = list(patched.mock_calls[0][1][0])
+
+        if called:
+            assert calls == [(podcast.id,)]
+        else:
+            assert calls == []
+
+    @pytest.mark.parametrize(
+        "pub_date,parsed,called",
+        [
+            (
+                None,
+                timedelta(minutes=30),
+                False,
+            ),
+            (
+                timedelta(minutes=30),
+                None,
+                False,
+            ),
+            (
+                timedelta(hours=3),
+                timedelta(hours=2),
+                False,
             ),
             (
                 timedelta(hours=24),
@@ -84,10 +139,12 @@ class TestTasks:
 
         parse_frequent_feeds()
 
+        calls = list(patched.mock_calls[0][1][0])
+
         if called:
-            patched.mock_calls[0][1][0] == [(podcast.id,)]
+            assert calls == [(podcast.id,)]
         else:
-            patched.mock_calls[0][1][0] == []
+            assert calls == []
 
     @pytest.mark.parametrize(
         "pub_date,parsed,called",
@@ -141,10 +198,12 @@ class TestTasks:
 
         parse_sporadic_feeds()
 
+        calls = list(patched.mock_calls[0][1][0])
+
         if called:
-            patched.mock_calls[0][1][0] == [(podcast.id,)]
+            assert calls == [(podcast.id,)]
         else:
-            patched.mock_calls[0][1][0] == []
+            assert calls == []
 
     def test_parse_podcast_feed(self, podcast, mocker):
         patched = mocker.patch(

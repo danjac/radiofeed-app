@@ -39,8 +39,8 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def parse_frequent_feeds() -> None:
-    """Parse frequent feeds (last pub date < 14 days).
+def parse_recent_feeds() -> None:
+    """Parse recent feeds (last pub date < 24 hours or new feeds).
 
     Runs every 6 minutes.
     """
@@ -51,13 +51,25 @@ def parse_frequent_feeds() -> None:
             models.Q(pub_date__isnull=True)
             | models.Q(parsed__isnull=True)
             | models.Q(
-                pub_date__range=(now - timedelta(days=14), now - timedelta(hours=24)),
-                parsed__lt=now - timedelta(hours=3),
-            )
-            | models.Q(
                 pub_date__gt=now - timedelta(hours=24),
                 parsed__lt=now - timedelta(hours=1),
             ),
+        )
+    )
+
+
+@db_periodic_task(crontab(minute="*/10"))
+def parse_frequent_feeds() -> None:
+    """Parse frequent feeds (last pub date < 14 days and > 24 hours).
+
+    Runs every 10 minutes.
+    """
+    now = timezone.now()
+
+    parse_podcast_feeds(
+        Podcast.objects.filter(
+            pub_date__range=(now - timedelta(days=14), now - timedelta(hours=24)),
+            parsed__lt=now - timedelta(hours=3),
         )
     )
 
