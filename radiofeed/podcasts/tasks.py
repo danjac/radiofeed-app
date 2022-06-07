@@ -13,6 +13,67 @@ from radiofeed.podcasts.parsers import feed_parser
 from radiofeed.users.models import User
 
 
+@db_periodic_task(crontab(minute="*/6"))
+def parse_podcast_feeds(limit: int = 300) -> None:
+    """Parse podcast RSS feeds.
+
+    Runs every 6 minutes.
+    """
+    now = timezone.now()
+
+    parse_podcast_feed.map(
+        Podcast.objects.annotate(
+            subscribers=models.Count("subscription"),
+            freshness=models.Case(
+                # new podcasts: just added
+                models.When(
+                    models.Q(pub_date__isnull=True) | models.Q(parsed__isnull=True),
+                    then=3,
+                ),
+                # recent: last updated > 3 days ago
+                models.When(
+                    models.Q(
+                        pub_date__gte=now - timedelta(days=3),
+                        parsed__lt=now - timedelta(hours=1),
+                    ),
+                    then=2,
+                ),
+                # frequent: last updated 3-14 days ago
+                models.When(
+                    models.Q(
+                        pub_date__range=(
+                            now - timedelta(days=14),
+                            now - timedelta(days=3),
+                        ),
+                        parsed__lt=now - timedelta(hours=3),
+                    ),
+                    then=1,
+                ),
+                # sporadic: last updated 14 days ago
+                models.When(
+                    models.Q(
+                        pub_date__lt=now - timedelta(days=14),
+                        parsed__lt=now - timedelta(hours=8),
+                    ),
+                    then=0,
+                ),
+                default=-1,
+            ),
+        )
+        .filter(active=True, freshness__gte=0)
+        .order_by(
+            models.F("freshness").desc(),
+            models.F("subscribers").desc(),
+            models.F("promoted").desc(),
+            models.F("parsed").asc(nulls_first=True),
+            models.F("pub_date").desc(nulls_first=True),
+            models.F("created").desc(),
+        )
+        .values_list("pk")
+        .distinct()[:limit]
+    )
+
+
 @db_periodic_task(crontab(hour=3, minute=20))
 def recommend() -> None:
     """
@@ -35,58 +96,6 @@ def send_recommendations_emails() -> None:
             send_email_notifications=True,
             is_active=True,
         ).values_list("pk")
-    )
-
-
-@db_periodic_task(crontab(minute="*/6"))
-def parse_frequent_feeds() -> None:
-    """Parse frequent feeds (last pub date < 14 days or new feeds).
-
-    Runs every 6 minutes.
-    """
-    now = timezone.now()
-
-    parse_podcast_feeds(
-        Podcast.objects.filter(
-            models.Q(pub_date__isnull=True)
-            | models.Q(parsed__isnull=True)
-            | models.Q(
-                pub_date__gte=now - timedelta(days=14),
-                parsed__lt=now - timedelta(hours=3),
-            )
-        )
-    )
-
-
-@db_periodic_task(crontab(minute="15,15"))
-def parse_sporadic_feeds() -> None:
-    """Parse sporadic feeds (last pub date > 14 days).
-
-    Runs every 15 and 45 minutes past the hour.
-    """
-    now = timezone.now()
-
-    parse_podcast_feeds(
-        Podcast.objects.filter(
-            pub_date__lt=now - timedelta(days=14),
-            parsed__lt=now - timedelta(hours=24),
-        )
-    )
-
-
-def parse_podcast_feeds(podcasts: models.QuerySet[Podcast], limit: int = 300) -> None:
-    parse_podcast_feed.map(
-        podcasts.annotate(subscribers=models.Count("subscription"))
-        .filter(active=True)
-        .order_by(
-            models.F("subscribers").desc(),
-            models.F("promoted").desc(),
-            models.F("parsed").asc(nulls_first=True),
-            models.F("pub_date").desc(nulls_first=True),
-            models.F("created").desc(),
-        )
-        .values_list("pk")
-        .distinct()[:limit]
     )
 
 

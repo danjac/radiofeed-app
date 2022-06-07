@@ -1,10 +1,8 @@
-from datetime import timedelta
 from unittest import mock
 
 import pytest
 
 from django.contrib.admin.sites import AdminSite
-from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
     ActiveFilter,
@@ -83,13 +81,6 @@ class TestPodcastAdmin:
         podcast_admin.parse_podcast_feed(req, podcast)
         mock_parse_feed.assert_called_with(podcast.id)
 
-    def test_parse_podcast_feed_inactive(
-        self, mock_parse_feed, podcast, podcast_admin, req
-    ):
-        podcast.active = False
-        podcast_admin.parse_podcast_feed(req, podcast)
-        mock_parse_feed.assert_not_called()
-
 
 class TestResultFilter:
     def test_no_filter(self, podcasts, podcast_admin, req):
@@ -142,26 +133,6 @@ class TestPubDateFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert new in qs
-
-    def test_frequent(self, db, podcast_admin, req):
-        now = timezone.now()
-        PodcastFactory(pub_date=None)
-        PodcastFactory(pub_date=now - timedelta(days=15))
-        podcast = PodcastFactory(pub_date=now - timedelta(days=7))
-        f = PubDateFilter(req, {"pub_date": "frequent"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_sporadic(self, db, podcast_admin, req):
-        now = timezone.now()
-        PodcastFactory(pub_date=None)
-        PodcastFactory(pub_date=now - timedelta(days=7))
-        podcast = PodcastFactory(pub_date=now - timedelta(days=15))
-        f = PubDateFilter(req, {"pub_date": "sporadic"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
 
 
 class TestPromotedFilter:

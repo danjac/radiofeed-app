@@ -5,7 +5,6 @@ from datetime import timedelta
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
-from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.podcasts import models
@@ -84,13 +83,9 @@ class PubDateFilter(admin.SimpleListFilter):
             ("yes", "With pub date"),
             ("no", "With no pub date"),
             ("new", "Just added"),
-            ("frequent", "Frequent (> 14 days)"),
-            ("sporadic", "Sporadic (< 14 days)"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-
-        interval = timezone.now() - timedelta(days=14)
 
         match self.value():
             case "yes":
@@ -99,10 +94,6 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset.filter(pub_date__isnull=True)
             case "new":
                 return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
-            case "frequent":
-                return queryset.filter(pub_date__gte=interval)
-            case "sporadic":
-                return queryset.filter(pub_date__lt=interval)
             case _:
                 return queryset
 
@@ -189,10 +180,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         )
 
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
-        if not obj.active:
-            self.message_user(request, "Podcast is inactive")
-            return
-
         parse_podcast_feed(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
