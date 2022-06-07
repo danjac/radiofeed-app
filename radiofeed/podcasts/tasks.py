@@ -46,12 +46,14 @@ def parse_frequent_feeds() -> None:
     """
     now = timezone.now()
 
+    recent = models.Q(pub_date__gte=now - timedelta(hours=3))
+
     parse_podcast_feeds(
         Podcast.objects.with_subscribers()
         .annotate(
             recent=models.Exists(
                 Podcast.objects.filter(
-                    pub_date__gte=timezone.now() - timedelta(hours=3),
+                    recent,
                     pk=models.OuterRef("pk"),
                 )
             ),
@@ -64,7 +66,7 @@ def parse_frequent_feeds() -> None:
                 parsed__lt=now - timedelta(hours=3),
             )
             | models.Q(
-                pub_date__gte=now - timedelta(hours=3),
+                recent,
                 parsed__lt=now - timedelta(hours=1),
             ),
             active=True,

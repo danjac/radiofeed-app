@@ -31,9 +31,9 @@ class TestTasks:
                 True,
             ),
             (
-                timedelta(hours=3),
                 timedelta(hours=2),
-                False,
+                timedelta(hours=2),
+                True,
             ),
             (
                 timedelta(hours=24),
