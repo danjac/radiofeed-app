@@ -32,7 +32,7 @@ class TestTasks:
             ),
             (
                 timedelta(hours=2),
-                timedelta(hours=2),
+                timedelta(hours=3),
                 True,
             ),
             (

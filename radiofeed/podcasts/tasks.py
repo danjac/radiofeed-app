@@ -46,38 +46,14 @@ def parse_frequent_feeds() -> None:
     """
     now = timezone.now()
 
-    recent = models.Q(pub_date__gte=now - timedelta(hours=3))
-
     parse_podcast_feeds(
-        Podcast.objects.with_subscribers()
-        .annotate(
-            recent=models.Exists(
-                Podcast.objects.filter(
-                    recent,
-                    pk=models.OuterRef("pk"),
-                )
-            ),
-        )
-        .filter(
+        Podcast.objects.with_subscribers().filter(
             models.Q(pub_date__isnull=True)
             | models.Q(parsed__isnull=True)
             | models.Q(
                 pub_date__gte=now - timedelta(days=14),
                 parsed__lt=now - timedelta(hours=3),
             )
-            | models.Q(
-                recent,
-                parsed__lt=now - timedelta(hours=1),
-            ),
-            active=True,
-        )
-        .order_by(
-            models.F("subscribers").desc(),
-            models.F("promoted").desc(),
-            models.F("recent").desc(),
-            models.F("parsed").asc(nulls_first=True),
-            models.F("pub_date").desc(nulls_first=True),
-            models.F("created").desc(),
         )
     )
 
@@ -91,23 +67,27 @@ def parse_sporadic_feeds() -> None:
     now = timezone.now()
 
     parse_podcast_feeds(
-        Podcast.objects.with_subscribers()
-        .filter(
+        Podcast.objects.with_subscribers().filter(
             pub_date__lt=now - timedelta(days=14),
             parsed__lt=now - timedelta(hours=24),
-            active=True,
-        )
-        .order_by(
-            "-subscribers",
-            "-promoted",
-            "-parsed",
-            "-pub_date",
         )
     )
 
 
 def parse_podcast_feeds(podcasts: models.QuerySet[Podcast], limit: int = 300) -> None:
-    parse_podcast_feed.map(podcasts.values_list("pk").distinct()[:limit])
+    parse_podcast_feed.map(
+        podcasts.with_subscribers()
+        .filter(active=True)
+        .order_by(
+            models.F("subscribers").desc(),
+            models.F("promoted").desc(),
+            models.F("parsed").asc(nulls_first=True),
+            models.F("pub_date").desc(nulls_first=True),
+            models.F("created").desc(),
+        )
+        .values_list("pk")
+        .distinct()[:limit]
+    )
 
 
 @db_task()
