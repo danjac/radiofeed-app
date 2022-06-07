@@ -6,8 +6,9 @@ from django.utils import timezone
 
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.tasks import (
+    parse_frequent_feeds,
     parse_podcast_feed,
-    parse_podcast_feeds,
+    parse_sporadic_feeds,
     recommend,
     send_recommendations_email,
     send_recommendations_emails,
@@ -19,6 +20,16 @@ class TestTasks:
     @pytest.mark.parametrize(
         "pub_date,parsed,called",
         [
+            (
+                None,
+                timedelta(minutes=30),
+                True,
+            ),
+            (
+                timedelta(minutes=30),
+                None,
+                True,
+            ),
             (
                 timedelta(hours=3),
                 timedelta(hours=2),
@@ -57,18 +68,78 @@ class TestTasks:
             (
                 timedelta(days=14),
                 timedelta(hours=24),
+                False,
+            ),
+        ],
+    )
+    def test_parse_frequent_feeds(self, db, mocker, pub_date, parsed, called):
+        now = timezone.now()
+
+        podcast = PodcastFactory(
+            pub_date=now - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
+        )
+
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
+
+        parse_frequent_feeds()
+
+        if called:
+            patched.mock_calls[0][1][0] == [(podcast.id,)]
+        else:
+            patched.mock_calls[0][1][0] == []
+
+    @pytest.mark.parametrize(
+        "pub_date,parsed,called",
+        [
+            (
+                None,
+                timedelta(minutes=30),
+                False,
+            ),
+            (
+                timedelta(minutes=30),
+                None,
+                False,
+            ),
+            (
+                timedelta(hours=3),
+                timedelta(hours=2),
+                False,
+            ),
+            (
+                timedelta(hours=24),
+                timedelta(hours=4),
+                False,
+            ),
+            (
+                timedelta(days=8),
+                timedelta(hours=3),
+                False,
+            ),
+            (
+                timedelta(days=14),
+                timedelta(hours=23),
+                False,
+            ),
+            (
+                timedelta(days=14),
+                timedelta(hours=24),
                 True,
             ),
         ],
     )
-    def test_parse_podcast_feeds(self, db, mocker, pub_date, parsed, called):
+    def test_parse_sporadic_feeds(self, db, mocker, pub_date, parsed, called):
         now = timezone.now()
 
-        podcast = PodcastFactory(pub_date=now - pub_date, parsed=now - parsed)
+        podcast = PodcastFactory(
+            pub_date=now - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
+        )
 
         patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
 
-        parse_podcast_feeds()
+        parse_sporadic_feeds()
 
         if called:
             patched.mock_calls[0][1][0] == [(podcast.id,)]

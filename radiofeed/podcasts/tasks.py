@@ -39,35 +39,50 @@ def send_recommendations_emails() -> None:
 
 
 @db_periodic_task(crontab(minute="*/6"))
-def parse_podcast_feeds(limit: int = 360) -> None:
-    """Schedules podcast feeds for update.
+def parse_frequent_feeds() -> None:
+    """Parse frequent feeds (last pub date < 14 days).
 
-    Runs every 6 minutes
+    Runs every 6 minutes.
     """
     now = timezone.now()
 
-    parse_podcast_feed.map(
-        Podcast.objects.annotate(subscribers=models.Count("subscription"))
-        .filter(
-            models.Q(parsed__isnull=True)
-            | models.Q(pub_date__isnull=True)
+    parse_podcast_feeds(
+        Podcast.objects.filter(
+            models.Q(pub_date__isnull=True)
+            | models.Q(parsed__isnull=True)
             | models.Q(
-                pub_date__lt=now - timedelta(days=14),
-                parsed__lt=now - timedelta(hours=24),
-            )
-            | models.Q(
-                pub_date__range=(
-                    now - timedelta(days=14),
-                    now - timedelta(hours=24),
-                ),
+                pub_date__range=(now - timedelta(days=14), now - timedelta(hours=24)),
                 parsed__lt=now - timedelta(hours=3),
             )
             | models.Q(
                 pub_date__gt=now - timedelta(hours=24),
                 parsed__lt=now - timedelta(hours=1),
             ),
-            active=True,
         )
+    )
+
+
+@db_periodic_task(crontab(minute="15,15"))
+def parse_sporadic_feeds() -> None:
+    """Parse sporadic feeds (last pub date > 14 days).
+
+    Runs every 15 and 45 minutes past the hour.
+    """
+    now = timezone.now()
+
+    parse_podcast_feeds(
+        Podcast.objects.filter(
+            pub_date__lt=now - timedelta(days=14),
+            parsed__lt=now - timedelta(hours=24),
+        ),
+    )
+
+
+def parse_podcast_feeds(podcasts: models.QuerySet[Podcast], limit: int = 300) -> None:
+
+    parse_podcast_feed.map(
+        podcasts.annotate(subscribers=models.Count("subscription"))
+        .filter(active=True)
         .order_by(
             models.F("subscribers").desc(),
             models.F("promoted").desc(),
