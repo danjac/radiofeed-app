@@ -121,7 +121,7 @@ class SubscribedFilter(admin.SimpleListFilter):
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         return (
-            queryset.with_subscribed().filter(subscribed=True)
+            queryset.with_subscribers().filter(subscribers__gt=0)
             if self.value() == "yes"
             else queryset
         )

@@ -61,12 +61,8 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_subscribed(self) -> models.QuerySet[Podcast]:
-        return self.annotate(
-            subscribed=models.Exists(
-                Subscription.objects.filter(podcast=models.OuterRef("pk"))
-            )
-        )
+    def with_subscribers(self) -> models.QuerySet[Podcast]:
+        return self.annotate(subscribers=models.Count("subscription"))
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
