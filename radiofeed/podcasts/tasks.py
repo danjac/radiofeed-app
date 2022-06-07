@@ -40,7 +40,7 @@ def send_recommendations_emails() -> None:
 
 @db_periodic_task(crontab(minute="*/6"))
 def parse_frequent_feeds() -> None:
-    """Parse recent feeds (last pub date < 14 days or new feeds).
+    """Parse frequent feeds (last pub date < 14 days or new feeds).
 
     Runs every 6 minutes.
     """
