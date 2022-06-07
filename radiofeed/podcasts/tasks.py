@@ -47,7 +47,7 @@ def parse_frequent_feeds() -> None:
     now = timezone.now()
 
     parse_podcast_feeds(
-        Podcast.objects.with_subscribers().filter(
+        Podcast.objects.filter(
             models.Q(pub_date__isnull=True)
             | models.Q(parsed__isnull=True)
             | models.Q(
@@ -67,7 +67,7 @@ def parse_sporadic_feeds() -> None:
     now = timezone.now()
 
     parse_podcast_feeds(
-        Podcast.objects.with_subscribers().filter(
+        Podcast.objects.filter(
             pub_date__lt=now - timedelta(days=14),
             parsed__lt=now - timedelta(hours=24),
         )
