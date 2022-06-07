@@ -29,7 +29,4 @@ def send_new_episodes_emails(since=timedelta(days=7)):
 
 @db_task()
 def send_new_episodes_email(user_id: int, since: timedelta) -> None:
-    try:
-        emails.send_new_episodes_email(User.objects.get(pk=user_id), since)
-    except User.DoesNotExist:
-        pass
+    emails.send_new_episodes_email(User.objects.get(pk=user_id), since)

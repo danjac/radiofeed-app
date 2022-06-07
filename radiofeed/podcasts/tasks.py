@@ -97,15 +97,9 @@ def parse_podcast_feeds(podcasts: models.QuerySet[Podcast], limit: int = 300) ->
 
 @db_task()
 def parse_podcast_feed(podcast_id: int) -> None:
-    try:
-        feed_parser.parse_podcast_feed(Podcast.objects.get(pk=podcast_id))
-    except Podcast.DoesNotExist:
-        pass
+    feed_parser.parse_podcast_feed(Podcast.objects.get(pk=podcast_id))
 
 
 @db_task()
 def send_recommendations_email(user_id: int) -> None:
-    try:
-        emails.send_recommendations_email(User.objects.get(pk=user_id))
-    except User.DoesNotExist:
-        pass
+    emails.send_recommendations_email(User.objects.get(pk=user_id))
