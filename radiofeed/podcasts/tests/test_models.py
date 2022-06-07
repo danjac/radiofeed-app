@@ -89,13 +89,6 @@ class TestPodcastManager:
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
 
-    def test_with_subscribers_true(self, db):
-        SubscriptionFactory()
-        assert Podcast.objects.with_subscribers().first().subscribers == 1
-
-    def test_with_subscribers_false(self, db, podcast):
-        assert Podcast.objects.with_subscribers().first().subscribers == 0
-
 
 class TestPodcastModel:
     def test_str(self):

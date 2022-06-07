@@ -76,7 +76,7 @@ def parse_sporadic_feeds() -> None:
 
 def parse_podcast_feeds(podcasts: models.QuerySet[Podcast], limit: int = 300) -> None:
     parse_podcast_feed.map(
-        podcasts.with_subscribers()
+        podcasts.annotate(subscribers=models.Count("subscription"))
         .filter(active=True)
         .order_by(
             models.F("subscribers").desc(),
