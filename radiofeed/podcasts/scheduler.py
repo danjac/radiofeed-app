@@ -95,7 +95,7 @@ def reschedule_podcast_feeds() -> int:
                 )
             )
             podcast.update_interval = calculate_update_interval(pub_dates)
-            podcast.parsed = min(podcast.pub_date, now - Podcast.MAX_UPDATE_INTERVAL)
+            podcast.parsed = max(podcast.pub_date, now - Podcast.MAX_UPDATE_INTERVAL)
             yield podcast
 
     return Podcast.objects.bulk_update(
