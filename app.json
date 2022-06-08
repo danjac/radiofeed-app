@@ -5,25 +5,21 @@
         "dokku-redis",
         "dokku-postgres"
     ],
-"env": {
-    "DJANGO_SETTINGS_MODULE": "radiofeed.settings.production"
-  },
-  "cron": [
-    {
-      "command": "python manage.py parse_podcast_feeds --limit=60",
-      "schedule": "*/6 * * * *"
+    "env": {
+        "DJANGO_SETTINGS_MODULE": "radiofeed.settings.production"
     },
-    {
-      "command": "python manage.py send_recommendation_emails",
-      "schedule": "15 9 * * 1"
-    },
-    {
-      "command": "python manage.py send_new_episode_emails",
-      "schedule": "15 9 * * 3"
-    },
-    {
-      "command": "python manage.py make_recommendations",
-      "schedule": "15 6 * * *"
-    }
-  ]
+    "cron": [
+        {
+          "command": "python manage.py parse_podcast_feeds --limit=60",
+          "schedule": "*/6 * * * *"
+        },
+        {
+          "command": "python manage.py send_recommendation_emails",
+          "schedule": "15 9 * * 1"
+        },
+        {
+          "command": "python manage.py recommend",
+          "schedule": "15 6 * * *"
+        }
+    ]
 }

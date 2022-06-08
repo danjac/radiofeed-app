@@ -16,10 +16,10 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument("limit", help="Limit (per CPU)", type=int)
+        parser.add_argument("--limit", help="Limit (per CPU)", type=int, default=100)
 
     def handle(self, *args, **kwargs) -> None:
-        limit = round(multiprocessing.cpu_count() * (kwargs["limit"]))
+        limit = round(multiprocessing.cpu_count() * kwargs["limit"])
 
         parse_podcast_feed.map(
             scheduler.schedule_podcast_feeds().values_list("pk").distinct()[:limit]
