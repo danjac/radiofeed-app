@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed.episodes.models import Episode
+from radiofeed.podcasts import scheduler
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
 
@@ -117,6 +118,7 @@ class FeedParser:
         pub_dates = [item.pub_date for item in items if item.pub_date]
 
         self.podcast.pub_date = max(pub_dates)
+        self.podcast.update_interval = scheduler.calculate_update_interval(pub_dates)
 
         # content
 
@@ -287,6 +289,9 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
+            update_interval=scheduler.increment_update_interval(
+                self.podcast.update_interval
+            ),
         )
 
         return False

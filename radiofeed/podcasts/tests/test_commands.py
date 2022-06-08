@@ -46,3 +46,10 @@ class TestCommands:
         mocker.patch("csv.writer", return_value=mock_writer)
         call_command("export_podcasts", "filename.txt")
         mock_writer.writerow.assert_called_with([podcast.rss])
+
+    def test_reschedule_podcast_feeds(self, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.scheduler.reschedule_podcast_feeds", return_value=100
+        )
+        call_command("reschedule_podcast_feeds")
+        patched.assert_called()
