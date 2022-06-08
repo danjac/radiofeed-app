@@ -62,9 +62,7 @@ def calculate_update_interval(pub_dates: list[datetime]) -> timedelta:
             None,
             [
                 (a - b).total_seconds()
-                for a, b in itertools.pairwise(
-                    sorted(pub_dates + [timezone.now()], reverse=True)
-                )
+                for a, b in itertools.pairwise(sorted(pub_dates, reverse=True))
             ],
         )
 

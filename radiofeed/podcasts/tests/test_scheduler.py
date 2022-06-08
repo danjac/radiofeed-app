@@ -95,8 +95,8 @@ class TestCalculateUpdateInterval:
         assert (
             scheduler.calculate_update_interval(
                 [timezone.now() - timedelta(days=3)]
-            ).days
-            == 3
+            ).total_seconds()
+            == 3600
         )
 
     def test_multiple_pub_dates(self):
