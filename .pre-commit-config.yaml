@@ -8,6 +8,7 @@ repos:
             exclude: bundle.js|bundle.js.map|bundle.css
           - id: check-toml
           - id: check-yaml
+          - id: check-json
     - repo: https://github.com/pycqa/isort
       rev: 5.10.1
       hooks:

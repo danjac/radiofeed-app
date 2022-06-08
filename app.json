@@ -14,12 +14,16 @@
           "schedule": "*/6 * * * *"
         },
         {
+          "command": "python manage.py recommend",
+          "schedule": "15 6 * * *"
+        },
+        {
           "command": "python manage.py send_recommendation_emails",
           "schedule": "15 9 * * 1"
         },
         {
-          "command": "python manage.py recommend",
-          "schedule": "15 6 * * *"
+          "command": "python manage.py send_new_episodes_emails",
+          "schedule": "15 9 * * 3"
         }
     ]
 }
