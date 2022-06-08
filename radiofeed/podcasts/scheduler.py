@@ -17,6 +17,12 @@ from radiofeed.podcasts.models import Podcast
 def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
     now = timezone.now()
 
+    # example: 14 days ago, interval 7 days
+    # will keep executing about 12 times until interval > 30
+    # better:
+    # 1. if pub date + interval < now
+    #
+
     return (
         Podcast.objects.annotate(
             subscribers=models.Count("subscription"),
@@ -52,28 +58,33 @@ def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
 
 def calculate_update_interval(pub_dates: list[datetime]) -> timedelta:
 
-    try:
-
-        intervals = filter(
-            None,
-            [
-                (a - b).total_seconds()
-                for a, b in itertools.pairwise(
-                    sorted(pub_dates + [timezone.now()], reverse=True)
-                )
-            ],
-        )
-
-        return min(
-            max(
-                timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
-                Podcast.MIN_UPDATE_INTERVAL,
-            ),
-            Podcast.MAX_UPDATE_INTERVAL,
-        )
-
-    except ValueError:
+    if not pub_dates:
         return Podcast.MIN_UPDATE_INTERVAL
+
+    intervals = filter(
+        None,
+        [
+            (a - b).total_seconds()
+            for a, b in itertools.pairwise(sorted(pub_dates, reverse=True))
+        ],
+    )
+
+    try:
+        interval = timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float)))
+    except ValueError:
+        interval = Podcast.MIN_UPDATE_INTERVAL
+
+    latest = max(pub_dates)
+    now = timezone.now()
+
+    # example: we calculate interval of 7 days
+    # but last pub date was 21 days ago
+    # so interval = 21 days
+
+    if latest + interval < now:
+        interval = now - latest
+
+    return min(max(interval, Podcast.MIN_UPDATE_INTERVAL), Podcast.MAX_UPDATE_INTERVAL)
 
 
 def increment_update_interval(interval: timedelta, increment: float = 1.2) -> timedelta:
