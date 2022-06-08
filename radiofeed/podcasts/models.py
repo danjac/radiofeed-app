@@ -196,13 +196,10 @@ class Podcast(models.Model):
         if self.parsed is None:
             return None
 
-        scheduled = self.pub_date + self.update_interval
+        if self.pub_date < timezone.now() - self.MAX_UPDATE_INTERVAL:
+            return self.parsed + self.MAX_UPDATE_INTERVAL
 
-        return (
-            scheduled
-            if scheduled > timezone.now() - self.MAX_UPDATE_INTERVAL
-            else self.parsed + self.MAX_UPDATE_INTERVAL
-        )
+        return self.pub_date + self.update_interval
 
 
 class Subscription(TimeStampedModel):

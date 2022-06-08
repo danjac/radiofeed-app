@@ -33,7 +33,8 @@ def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
                 pub_date__isnull=True,
             )
             | models.Q(
-                scheduled__range=(now - Podcast.MAX_UPDATE_INTERVAL, now),
+                scheduled__lt=now,
+                pub_date__gte=now - Podcast.MAX_UPDATE_INTERVAL,
                 parsed__lt=now - Podcast.MIN_UPDATE_INTERVAL,
             )
             | models.Q(parsed__lt=now - Podcast.MAX_UPDATE_INTERVAL),
