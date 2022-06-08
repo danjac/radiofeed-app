@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
@@ -76,9 +76,6 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
-    MIN_UPDATE_INTERVAL = timedelta(hours=1)
-    MAX_UPDATE_INTERVAL = timedelta(days=30)
-
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
@@ -90,8 +87,6 @@ class Podcast(models.Model):
 
     # last parse time (success or fail)
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
-
-    update_interval: timedelta = models.DurationField(default=MIN_UPDATE_INTERVAL)
 
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
