@@ -5,6 +5,8 @@ from datetime import timedelta
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
+from django.template.defaultfilters import timeuntil
+from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.podcasts import models
@@ -157,6 +159,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "parsed",
         "pub_date",
         "update_interval",
+        "scheduled",
         "modified",
         "etag",
         "http_status",
@@ -183,6 +186,16 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
         parse_podcast_feed(obj.id)
         self.message_user(request, "Podcast has been queued for update")
+
+    def scheduled(self, obj: models.Podcast) -> str:
+
+        if not obj.active:
+            return "-"
+
+        if (scheduled := obj.get_scheduled()) is None or scheduled < timezone.now():
+            return "Pending"
+
+        return timeuntil(scheduled)
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]

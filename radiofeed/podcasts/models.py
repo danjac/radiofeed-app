@@ -10,6 +10,7 @@ from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -76,6 +77,9 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
+    MIN_UPDATE_INTERVAL = timedelta(hours=1)
+    MAX_UPDATE_INTERVAL = timedelta(days=30)
+
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
@@ -88,7 +92,7 @@ class Podcast(models.Model):
     # last parse time (success or fail)
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    update_interval: timedelta = models.DurationField(default=timedelta(hours=1))
+    update_interval: timedelta = models.DurationField(default=MIN_UPDATE_INTERVAL)
 
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
@@ -183,6 +187,22 @@ class Podcast(models.Model):
 
     def get_subscribe_target(self) -> str:
         return f"subscribe-buttons-{self.id}"
+
+    def get_scheduled(self) -> datetime | None:
+
+        if self.pub_date is None:
+            return None
+
+        if self.parsed is None:
+            return None
+
+        scheduled = self.pub_date + self.update_interval
+
+        return (
+            scheduled
+            if scheduled > timezone.now() - self.MAX_UPDATE_INTERVAL
+            else self.parsed + self.MAX_UPDATE_INTERVAL
+        )
 
 
 class Subscription(TimeStampedModel):

@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
+from django.utils import timezone
 
 from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.factories import (
@@ -129,3 +132,48 @@ class TestPodcastModel:
 
     def test_get_subscribe_target(self):
         return Podcast(id=12345).get_subscribe_target() == "subscribe-buttons-12345"
+
+    def test_get_scheduled_pub_date_none(self):
+        assert (
+            Podcast(pub_date=None, parsed=timezone.now(), active=True).get_scheduled()
+            is None
+        )
+
+    def test_get_scheduled_parsed_none(self):
+        assert (
+            Podcast(pub_date=timezone.now(), parsed=None, active=True).get_scheduled()
+            is None
+        )
+
+    def test_get_scheduled_pub_date_more_than_now(self):
+        now = timezone.now()
+        assert (
+            Podcast(
+                pub_date=now - timedelta(days=3),
+                update_interval=timedelta(days=7),
+                parsed=now,
+            ).get_scheduled()
+            - now
+        ).days == 4
+
+    def test_get_scheduled_pub_date_less_than_now(self):
+        now = timezone.now()
+        assert (
+            now
+            - Podcast(
+                pub_date=now - timedelta(days=10),
+                update_interval=timedelta(days=7),
+                parsed=now,
+            ).get_scheduled()
+        ).days == 3
+
+    def test_get_scheduled_pub_date_less_than_30_days(self):
+        now = timezone.now()
+        assert (
+            Podcast(
+                pub_date=now - timedelta(days=60),
+                update_interval=timedelta(days=7),
+                parsed=now - timedelta(days=7),
+            ).get_scheduled()
+            - now
+        ).days == 23

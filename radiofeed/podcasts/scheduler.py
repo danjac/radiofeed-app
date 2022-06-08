@@ -13,9 +13,6 @@ from django.utils import timezone
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Podcast
 
-MIN_INTERVAL = timedelta(hours=1)
-MAX_INTERVAL = timedelta(days=30)
-
 
 def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
     now = timezone.now()
@@ -36,10 +33,10 @@ def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
                 pub_date__isnull=True,
             )
             | models.Q(
-                scheduled__range=(now - MAX_INTERVAL, now),
-                parsed__lt=now - MIN_INTERVAL,
+                scheduled__range=(now - Podcast.MAX_UPDATE_INTERVAL, now),
+                parsed__lt=now - Podcast.MIN_UPDATE_INTERVAL,
             )
-            | models.Q(parsed__lt=now - MAX_INTERVAL),
+            | models.Q(parsed__lt=now - Podcast.MAX_UPDATE_INTERVAL),
             active=True,
         )
         .order_by(
@@ -69,17 +66,20 @@ def calculate_update_interval(pub_dates: list[datetime]) -> timedelta:
         return min(
             max(
                 timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
-                MIN_INTERVAL,
+                Podcast.MIN_UPDATE_INTERVAL,
             ),
-            MAX_INTERVAL,
+            Podcast.MAX_UPDATE_INTERVAL,
         )
 
     except ValueError:
-        return MIN_INTERVAL
+        return Podcast.MIN_UPDATE_INTERVAL
 
 
 def increment_update_interval(interval: timedelta, increment: float = 1.2) -> timedelta:
-    return min(timedelta(seconds=interval.total_seconds() * increment), MAX_INTERVAL)
+    return min(
+        timedelta(seconds=interval.total_seconds() * increment),
+        Podcast.MAX_UPDATE_INTERVAL,
+    )
 
 
 def reschedule_podcast_feeds() -> int:
