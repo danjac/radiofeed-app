@@ -22,11 +22,8 @@ class Command(BaseCommand):
         parser.add_argument("--limit", help="Limit (per CPU)", type=int, default=100)
 
     def handle(self, *args, **kwargs) -> None:
-        parse_podcast_feed.map(
-            self.get_podcasts()
-            .values_list("pk")
-            .distinct()[: self.get_total_limit_from_cpus(kwargs["limit"])]
-        )
+        limit = round(multiprocessing.cpu_count() * kwargs["limit"])
+        parse_podcast_feed.map(self.get_podcasts().values_list("pk").distinct()[:limit])
 
     def get_podcasts(self) -> models.QuerySet[Podcast]:
         now = timezone.now()
@@ -76,6 +73,3 @@ class Command(BaseCommand):
                 models.F("pub_date").desc(nulls_first=True),
             )
         )
-
-    def get_total_limit_from_cpus(self, limit: int) -> int:
-        return round(multiprocessing.cpu_count() * limit)
