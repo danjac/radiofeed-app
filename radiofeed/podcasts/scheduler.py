@@ -85,16 +85,24 @@ def increment_update_interval(interval: timedelta, increment: float = 1.2) -> ti
 
 
 def reschedule_podcast_feeds() -> int:
+    now = timezone.now()
+
     def _get_podcasts() -> Generator[Podcast, None, None]:
-        for podcast in Podcast.objects.filter(active=True):
+        for podcast in Podcast.objects.filter(active=True, pub_date__isnull=False):
             pub_dates = list(
                 Episode.objects.filter(podcast=podcast).values_list(
                     "pub_date", flat=True
                 )
             )
             podcast.update_interval = calculate_update_interval(pub_dates)
+            podcast.parsed = min(podcast.pub_date, now - Podcast.MAX_UPDATE_INTERVAL)
             yield podcast
 
     return Podcast.objects.bulk_update(
-        _get_podcasts(), fields=["update_interval"], batch_size=100
+        _get_podcasts(),
+        fields=[
+            "update_interval",
+            "parsed",
+        ],
+        batch_size=100,
     )
