@@ -17,17 +17,15 @@ from radiofeed.podcasts.models import Podcast
 def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
     now = timezone.now()
 
-    # example: 14 days ago, interval 7 days
-    # will keep executing about 12 times until interval > 30
-    # better:
-    # 1. if pub date + interval < now
-    #
-
     return (
         Podcast.objects.annotate(
             subscribers=models.Count("subscription"),
             scheduled=models.ExpressionWrapper(
                 models.F("pub_date") + models.F("update_interval"),
+                output_field=models.DateTimeField(),
+            ),
+            scheduled_from=models.ExpressionWrapper(
+                now - models.F("update_interval"),
                 output_field=models.DateTimeField(),
             ),
         )
@@ -39,11 +37,12 @@ def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
                 pub_date__isnull=True,
             )
             | models.Q(
+                scheduled__gt=models.F("scheduled_from"),
                 scheduled__lt=now,
-                pub_date__gte=now - Podcast.MAX_UPDATE_INTERVAL,
-                parsed__lt=now - Podcast.MIN_UPDATE_INTERVAL,
             )
-            | models.Q(parsed__lt=now - Podcast.MAX_UPDATE_INTERVAL),
+            | models.Q(
+                parsed__lt=models.F("scheduled_from"),
+            ),
             active=True,
         )
         .order_by(
@@ -57,34 +56,27 @@ def schedule_podcast_feeds() -> models.QuerySet[Podcast]:
 
 
 def calculate_update_interval(pub_dates: list[datetime]) -> timedelta:
-
-    if not pub_dates:
-        return Podcast.MIN_UPDATE_INTERVAL
-
-    intervals = filter(
-        None,
-        [
-            (a - b).total_seconds()
-            for a, b in itertools.pairwise(sorted(pub_dates, reverse=True))
-        ],
-    )
-
     try:
-        interval = timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float)))
+
+        intervals = filter(
+            None,
+            [
+                (a - b).total_seconds()
+                for a, b in itertools.pairwise(
+                    sorted(pub_dates + [timezone.now()], reverse=True)
+                )
+            ],
+        )
+
+        return min(
+            max(
+                timedelta(seconds=numpy.mean(numpy.fromiter(intervals, float))),
+                Podcast.MIN_UPDATE_INTERVAL,
+            ),
+            Podcast.MAX_UPDATE_INTERVAL,
+        )
     except ValueError:
-        interval = Podcast.MIN_UPDATE_INTERVAL
-
-    latest = max(pub_dates)
-    now = timezone.now()
-
-    # example: we calculate interval of 7 days
-    # but last pub date was 21 days ago
-    # so interval = 21 days
-
-    if latest + interval < now:
-        interval = now - latest
-
-    return min(max(interval, Podcast.MIN_UPDATE_INTERVAL), Podcast.MAX_UPDATE_INTERVAL)
+        return Podcast.MIN_UPDATE_INTERVAL
 
 
 def increment_update_interval(interval: timedelta, increment: float = 1.2) -> timedelta:

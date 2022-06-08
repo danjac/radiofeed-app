@@ -10,7 +10,6 @@ from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -187,19 +186,6 @@ class Podcast(models.Model):
 
     def get_subscribe_target(self) -> str:
         return f"subscribe-buttons-{self.id}"
-
-    def get_scheduled(self) -> datetime | None:
-
-        if self.pub_date is None:
-            return None
-
-        if self.parsed is None:
-            return None
-
-        if self.pub_date < timezone.now() - self.MAX_UPDATE_INTERVAL:
-            return self.parsed + self.MAX_UPDATE_INTERVAL
-
-        return self.pub_date + self.update_interval
 
 
 class Subscription(TimeStampedModel):

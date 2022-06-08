@@ -1,10 +1,8 @@
-from datetime import timedelta
 from unittest import mock
 
 import pytest
 
 from django.contrib.admin.sites import AdminSite
-from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
     ActiveFilter,
@@ -82,46 +80,6 @@ class TestPodcastAdmin:
     def test_parse_podcast_feed(self, mock_parse_feed, podcast, podcast_admin, req):
         podcast_admin.parse_podcast_feed(req, podcast)
         mock_parse_feed.assert_called_with(podcast.id)
-
-    def test_scheduled(self, podcast_admin):
-        now = timezone.now()
-        assert (
-            podcast_admin.scheduled(
-                Podcast(
-                    pub_date=now - timedelta(days=3),
-                    update_interval=timedelta(days=7),
-                    parsed=now,
-                )
-            )
-            == "3\xa0days, 23\xa0hours"
-        )
-
-    def test_scheduled_pending(self, podcast_admin):
-        now = timezone.now()
-        assert (
-            podcast_admin.scheduled(
-                Podcast(
-                    pub_date=now - timedelta(days=9),
-                    update_interval=timedelta(days=7),
-                    parsed=now,
-                )
-            )
-            == "Pending"
-        )
-
-    def test_scheduled_inactive(self, podcast_admin):
-        now = timezone.now()
-        assert (
-            podcast_admin.scheduled(
-                Podcast(
-                    pub_date=now - timedelta(days=3),
-                    update_interval=timedelta(days=7),
-                    parsed=now,
-                    active=False,
-                )
-            )
-            == "-"
-        )
 
 
 class TestResultFilter:
