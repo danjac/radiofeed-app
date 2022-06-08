@@ -41,7 +41,7 @@
 
                         <div class="text-xs text-center"
                             x-cloak
-                            x-show="!playbackError && isLoaded"
+                            x-show="!isError && isLoaded"
                             :class="{'animate-pulse text-gray-300': !isPlaying}">
                             <span x-text="counters.current"></span> /
                             <span x-text="counters.total"></span>
@@ -49,14 +49,14 @@
 
                         <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
-                            x-show="!playbackError && !isLoaded">
+                            x-show="!isError && !isLoaded">
                             Loading...
                         </div>
 
                         <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
-                            x-show="playbackError">
-                            <span x-text="playbackError ? playbackError.message : 'Error'"></span>
+                            x-show="isError">
+                            Error
                         </div>
 
                     </div>
@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="text-xs md:text-sm text-center"
                                         x-cloak
-                                        x-show="!playbackError && isLoaded"
+                                        x-show="!isError && isLoaded"
                                         :class="{'animate-pulse text-gray-300': !isPlaying}">
                                         <span x-text="counters.current"
                                             title="Current Time"></span> /
@@ -126,14 +126,14 @@
 
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
-                                        x-show="!playbackError && !isLoaded">
+                                        x-show="!isError && !isLoaded">
                                         Loading...
                                     </div>
 
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
-                                        x-show="playbackError">
-                                        <span x-text="playbackError ? playbackError.message : 'Error'"></span>
+                                        x-show="isError">
+                                        Error
                                     </div>
 
                                 </div>
@@ -181,16 +181,16 @@
                                         <div class="flex items-center space-x-2 mr-2 md:mr-3">
                                             <button :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} inline-block"
-                                                @click="decrementPlaybackRate"
+                                                @click="decrementRate"
                                                 title="Decrease Playback Rate">-</button>
                                             <div class="mr-1 md:mr-2 tracking-tight player--interactive"
                                                 title="Playback Rate">
-                                                x<span x-text="playbackRate.toFixed(1)"></span>
+                                                x<span x-text="rate.toFixed(1)"></span>
                                             </div>
 
                                             <button class="{{ BUTTON_CSS }} inline-block"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
-                                                @click="incrementPlaybackRate"
+                                                @click="incrementRate"
                                                 title="Increase Playback Rate">+</button>
                                         </div>
                                         <div class="flex items-center">

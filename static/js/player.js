@@ -17,12 +17,12 @@ document.addEventListener("alpine:init", () => {
             timeUpdateUrl,
             runtime: 0,
             duration: 0,
+            rate: 1.0,
+            isError: false,
             isLoaded: false,
             isPaused: false,
             isPlaying: false,
             timer: null,
-            playbackError: null,
-            playbackRate: 1.0,
             counters: {
                 current: "00:00:00",
                 total: "00:00:00",
@@ -36,8 +36,8 @@ document.addEventListener("alpine:init", () => {
                     this.counters.total = this.formatCounter(value);
                 });
 
-                this.$watch("playbackRate", (value) => {
-                    this.$refs.audio.playbackRate = value;
+                this.$watch("rate", (value) => {
+                    this.$refs.audio.rate = value;
                 });
 
                 this.$refs.audio.load();
@@ -54,10 +54,10 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
-                const { playbackRate, autoplay } = this.loadState();
+                const { rate, autoplay } = this.loadState();
 
-                this.playbackError = null;
-                this.playbackRate = playbackRate || 1.0;
+                this.isError = false;
+                this.rate = rate || 1.0;
                 this.autoplay = autoplay || this.autoplay;
 
                 event.target.currentTime = this.currentTime;
@@ -73,13 +73,13 @@ document.addEventListener("alpine:init", () => {
             },
             timeUpdate(event) {
                 this.isPlaying = true;
-                this.playbackError = null;
+                this.isError = false;
                 this.runtime = Math.floor(event.target.currentTime);
             },
             play() {
                 this.isPaused = false;
                 this.isPlaying = true;
-                this.playbackError = null;
+                this.isError = false;
                 this.saveState();
                 this.startTimer();
             },
@@ -149,11 +149,11 @@ document.addEventListener("alpine:init", () => {
                 if (event.altKey) {
                     switch (event.key) {
                         case "+":
-                            return handleEvent(this.incrementPlaybackRate);
+                            return handleEvent(this.incrementRate);
                         case "-":
-                            return handleEvent(this.decrementPlaybackRate);
+                            return handleEvent(this.decrementRate);
                         case "0":
-                            return handleEvent(this.resetPlaybackRate);
+                            return handleEvent(this.resetRate);
                     }
                 }
             },
@@ -183,24 +183,24 @@ document.addEventListener("alpine:init", () => {
                     }),
                 });
             },
-            incrementPlaybackRate() {
-                this.changePlaybackRate(0.1);
+            incrementRate() {
+                this.changeRate(0.1);
             },
-            decrementPlaybackRate() {
-                this.changePlaybackRate(-0.1);
+            decrementRate() {
+                this.changeRate(-0.1);
             },
-            resetPlaybackRate() {
-                this.setPlaybackRate(1.0);
+            resetRate() {
+                this.setRate(1.0);
             },
-            changePlaybackRate(increment) {
+            changeRate(increment) {
                 const newValue = Math.max(
                     0.5,
-                    Math.min(2.0, parseFloat(this.playbackRate) + increment)
+                    Math.min(2.0, parseFloat(this.rate) + increment)
                 );
-                this.setPlaybackRate(newValue);
+                this.setRate(newValue);
             },
-            setPlaybackRate(value) {
-                this.playbackRate = value;
+            setRate(value) {
+                this.rate = value;
                 this.saveState();
             },
             loadState() {
@@ -208,7 +208,7 @@ document.addEventListener("alpine:init", () => {
                 return state
                 ? JSON.parse(state)
                 : {
-                    playbackRate: 1.0,
+                    rate: 1.0,
                     autoplay: false,
                 };
             },
@@ -216,7 +216,7 @@ document.addEventListener("alpine:init", () => {
                 sessionStorage.setItem(
                     "player",
                     JSON.stringify({
-                        playbackRate: this.playbackRate,
+                        rate: this.rate,
                         autoplay: this.isPlaying,
                     })
                 );
@@ -246,8 +246,8 @@ document.addEventListener("alpine:init", () => {
             },
             handleError(error) {
                 this.pause();
-                this.playbackError = error;
-                console.log(this.playbackError);
+                this.isError = true;
+                console.err(error);
             },
         })
     );
