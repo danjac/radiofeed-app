@@ -30,12 +30,12 @@ def parse_podcast_feeds(interval: timedelta = timedelta(minutes=6)) -> None:
     )
 
 
-@db_periodic_task(crontab(hour=3, minute=20))
+@db_periodic_task(crontab(hour=18, minute=20))
 def recommend() -> None:
     """
     Generates podcast recommendations
 
-    Runs 03:20 UTC every day
+    Runs 18:20 UTC every day
     """
     recommender.recommend()
 
