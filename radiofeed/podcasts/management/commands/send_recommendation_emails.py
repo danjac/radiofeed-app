@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.podcasts.tasks import send_recommendations_email
+from radiofeed.podcasts.emails import send_recommendations_email
 from radiofeed.users.models import User
 
 
@@ -12,9 +12,7 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **kwargs) -> None:
-        send_recommendations_email.map(
-            User.objects.filter(
-                send_email_notifications=True,
-                is_active=True,
-            ).values_list("pk")
-        )
+        for user_id in User.objects.email_notification_recipients().values_list(
+            "pk", flat=True
+        ):
+            send_recommendations_email.delay(user_id)

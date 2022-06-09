@@ -11,6 +11,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
+from django_rq import job
 
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
@@ -35,8 +36,9 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def parse_podcast_feed(podcast: Podcast, **kwargs) -> bool:
-    return FeedParser(podcast).parse(**kwargs)
+@job("feeds")
+def parse_podcast_feed(podcast_id: int, **kwargs) -> bool:
+    return FeedParser(Podcast.objects.get(pk=podcast_id)).parse(**kwargs)
 
 
 class FeedParser:

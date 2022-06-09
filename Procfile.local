@@ -1,4 +1,4 @@
 web: python manage.py runserver
-worker: python manage.py run_huey -w 4
+worker: python manage.py rqworker default emails feeds
 watch-css: npm run watch:css
 watch-js: npm run watch:js

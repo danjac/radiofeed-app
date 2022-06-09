@@ -14,7 +14,7 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 class TestSendNewEpisodesEmail:
     def test_no_subscriptions(self, user, mailoutbox):
 
-        send_new_episodes_email(user, timedelta(days=7))
+        send_new_episodes_email(user.id, timedelta(days=7))
         assert len(mailoutbox) == 0
 
     def test_already_listened_or_bookmarked(self, user, mailoutbox):
@@ -29,14 +29,14 @@ class TestSendNewEpisodesEmail:
             user=user, episode__podcast=SubscriptionFactory(user=user).podcast
         )
 
-        send_new_episodes_email(user, timedelta(days=7))
+        send_new_episodes_email(user.id, timedelta(days=7))
         assert len(mailoutbox) == 0
 
     def test_send_insufficient_episodes(self, user, mailoutbox):
         podcast = SubscriptionFactory(user=user).podcast
         EpisodeFactory(podcast=podcast)
 
-        send_new_episodes_email(user, timedelta(days=7))
+        send_new_episodes_email(user.id, timedelta(days=7))
 
         assert len(mailoutbox) == 0
 
@@ -50,7 +50,7 @@ class TestSendNewEpisodesEmail:
                 ).podcast
             )
 
-        send_new_episodes_email(user, timedelta(days=7))
+        send_new_episodes_email(user.id, timedelta(days=7))
 
         assert len(mailoutbox) == 0
 
@@ -58,7 +58,7 @@ class TestSendNewEpisodesEmail:
         for _ in range(3):
             EpisodeFactory(podcast=SubscriptionFactory(user=user).podcast)
 
-        send_new_episodes_email(user, timedelta(days=7))
+        send_new_episodes_email(user.id, timedelta(days=7))
 
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [user.email]

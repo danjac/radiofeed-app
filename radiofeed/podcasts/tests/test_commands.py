@@ -59,11 +59,11 @@ class TestCommands:
         UserFactory(send_email_notifications=False)
 
         patched = mocker.patch(
-            "radiofeed.podcasts.tasks.send_recommendations_email.map"
+            "radiofeed.podcasts.emails.send_recommendations_email.delay"
         )
 
         call_command("send_recommendation_emails")
-        assert list(patched.mock_calls[0][1][0]) == [(user.id,)]
+        patched.assert_called_with(user.id)
 
     @pytest.mark.parametrize(
         "active,pub_date,parsed,called",
@@ -145,12 +145,12 @@ class TestCommands:
             parsed=now - parsed if parsed else None,
         )
 
-        patched = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed.map")
+        patched = mocker.patch(
+            "radiofeed.podcasts.parsers.feed_parser.parse_podcast_feed.delay"
+        )
 
         call_command("parse_podcast_feeds")
-
-        calls = list(patched.mock_calls[0][1][0])
         if called:
-            assert calls == [(podcast.id,)]
+            patched.assert_called_with(podcast.id)
         else:
-            assert calls == []
+            patched.assert_not_called()

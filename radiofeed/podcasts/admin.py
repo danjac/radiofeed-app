@@ -8,7 +8,7 @@ from django.http import HttpRequest
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.podcasts import models
-from radiofeed.podcasts.tasks import parse_podcast_feed
+from radiofeed.podcasts.parsers import feed_parser
 
 
 @admin.register(models.Category)
@@ -171,7 +171,8 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
         count = queryset.count()
 
-        parse_podcast_feed.map(queryset.values_list("pk"))
+        for podcast_id in queryset.values_list("pk"):
+            feed_parser.parse_podcast_feed.delay(podcast_id)
 
         self.message_user(
             request,
@@ -180,7 +181,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         )
 
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
-        parse_podcast_feed(obj.id)
+        feed_parser.parse_podcast_feed.delay(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:

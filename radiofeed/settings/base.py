@@ -84,13 +84,13 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_htmx",
     "django_object_actions",
+    "django_rq",
     "health_check",
     "health_check.cache",
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "health_check.db",
-    "huey.contrib.djhuey",
     "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.podcasts",
@@ -214,28 +214,43 @@ TEMPLATES: list[dict] = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "rq_console": {
+            "format": "%(asctime)s %(message)s",
+            "datefmt": "%H:%M:%S",
+        },
+    },
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
         "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+        "rq_console": {
+            "level": "DEBUG",
+            "class": "rq.utils.ColorizingStreamHandler",
+            "formatter": "rq_console",
+            "exclude": ["%(asctime)s"],
+        },
     },
     "loggers": {
         "root": {"handlers": ["console"], "level": "INFO"},
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
         "django.request": {"handlers": ["console"], "level": "ERROR"},
-        "radiofeed.podcasts.tasks": {"handlers": ["console"], "level": "DEBUG"},
+        "rq.worker": {"handlers": ["rq_console"], "level": "DEBUG"},
     },
 }
 
-# Huey
+# RQ
+# https://github.com/rq/django-rq
 
-# https://huey.readthedocs.io/en/latest/django.html
-
-HUEY = {
-    "connection": {"url": REDIS_URL},
-    "immediate": False,
-    "results": False,
-    "store_none": False,
+RQ_QUEUES = {
+    queue: {"USE_REDIS_CACHE": "default"}
+    for queue in (
+        "default",
+        "emails",
+        "feeds",
+    )
 }
+
+RQ_SHOW_ADMIN_LINK = True
 
 # Project specific
 

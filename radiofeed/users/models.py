@@ -5,6 +5,9 @@ from django.db import models
 
 
 class UserQuerySet(models.QuerySet):
+    def email_notification_recipients(self) -> models.QuerySet:
+        return self.filter(is_active=True, send_email_notifications=True)
+
     def for_email(self, email: str) -> models.QuerySet:
         """Returns users matching this email address, including both
         primary and secondary email addresses

@@ -50,7 +50,9 @@ class TestCategoryAdmin:
 class TestPodcastAdmin:
     @pytest.fixture
     def mock_parse_feed(self, mocker):
-        return mocker.patch("radiofeed.podcasts.admin.parse_podcast_feed")
+        return mocker.patch(
+            "radiofeed.podcasts.parsers.feed_parser.parse_podcast_feed.delay"
+        )
 
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
@@ -75,7 +77,7 @@ class TestPodcastAdmin:
 
     def test_parse_podcast_feeds(self, mock_parse_feed, podcast, podcast_admin, req):
         podcast_admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_parse_feed.map.assert_called()
+        mock_parse_feed.assert_called()
 
     def test_parse_podcast_feed(self, mock_parse_feed, podcast, podcast_admin, req):
         podcast_admin.parse_podcast_feed(req, podcast)

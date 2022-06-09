@@ -111,7 +111,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast)
+        assert feed_parser.parse_podcast_feed(podcast.id)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -176,7 +176,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast)
+        assert feed_parser.parse_podcast_feed(podcast.id)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -235,7 +235,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -260,7 +260,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
 
@@ -288,7 +288,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast)
+        assert feed_parser.parse_podcast_feed(podcast.id)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -342,7 +342,7 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert feed_parser.parse_podcast_feed(podcast)
+        assert feed_parser.parse_podcast_feed(podcast.id)
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
@@ -371,7 +371,7 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
 
@@ -390,7 +390,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -408,7 +408,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -421,7 +421,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=MockResponse(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED),
         )
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -432,7 +432,7 @@ class TestParsePodcastFeed:
     def test_parse_podcast_feed_error(self, mocker, podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -441,13 +441,13 @@ class TestParsePodcastFeed:
         assert podcast.parsed
         assert podcast.result == Podcast.Result.NETWORK_ERROR
 
-    def test_parse_podcast_feed_errors_past_limit(self, mocker, podcast, categories):
+    def test_parse_podcast_feed_errors_past_limit(self, db, mocker, categories):
 
-        podcast.errors = 11
+        podcast = PodcastFactory(errors=11)
 
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
 
@@ -463,7 +463,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
 
@@ -478,7 +478,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
 
@@ -498,7 +498,7 @@ class TestParsePodcastFeed:
         podcast.pub_date = None
         podcast.save()
 
-        assert not feed_parser.parse_podcast_feed(podcast)
+        assert not feed_parser.parse_podcast_feed(podcast.id)
 
         podcast.refresh_from_db()
 
