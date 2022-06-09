@@ -1,14 +1,33 @@
 from __future__ import annotations
 
-from radiofeed.podcasts.models import Podcast, Recommendation
+from radiofeed.episodes.models import AudioLog, Bookmark
+from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.emails import send_user_notification_email
 from radiofeed.users.models import User
 
 
 def send_recommendations_email(user: User) -> None:
 
+    podcast_ids: set[int] = (
+        set(
+            Bookmark.objects.filter(user=user)
+            .select_related("episode__podcast")
+            .values_list("episode__podcast", flat=True)
+        )
+        | set(
+            AudioLog.objects.filter(user=user)
+            .select_related("episode__podcast")
+            .values_list("episode__podcast", flat=True)
+        )
+        | set(Subscription.objects.filter(user=user).values_list("podcast", flat=True))
+    )
+
     recommendations = (
-        Recommendation.objects.for_user(user)
+        Recommendation.objects.filter(podcast__pk__in=podcast_ids)
+        .exclude(
+            recommended__pk__in=podcast_ids
+            | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
+        )
         .order_by("-frequency", "-similarity")
         .values_list("recommended", flat=True)
     )
@@ -18,10 +37,7 @@ def send_recommendations_email(user: User) -> None:
     if len(podcasts) not in range(2, 4):
         return
 
-    # save recommendations
-
-    if podcasts:
-        user.recommended_podcasts.add(*podcasts)
+    user.recommended_podcasts.add(*podcasts)
 
     send_user_notification_email(
         user,

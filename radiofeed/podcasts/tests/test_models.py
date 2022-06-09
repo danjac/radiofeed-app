@@ -1,12 +1,10 @@
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 
-from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.factories import (
     CategoryFactory,
     PodcastFactory,
     RecommendationFactory,
-    SubscriptionFactory,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.users.factories import UserFactory
@@ -17,36 +15,6 @@ class TestRecommendationManager:
         RecommendationFactory.create_batch(3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
-
-    def test_for_user(self, user):
-
-        following = SubscriptionFactory(user=user).podcast
-        favorited = BookmarkFactory(user=user).episode.podcast
-        listened = AudioLogFactory(user=user).episode.podcast
-
-        received = RecommendationFactory(
-            podcast=SubscriptionFactory(user=user).podcast
-        ).recommended
-        user.recommended_podcasts.add(received)
-
-        first = RecommendationFactory(podcast=following).recommended
-        second = RecommendationFactory(podcast=favorited).recommended
-        third = RecommendationFactory(podcast=listened).recommended
-
-        # not connected
-        RecommendationFactory()
-
-        # already following, listened to or favorited
-        RecommendationFactory(recommended=following)
-        RecommendationFactory(recommended=favorited)
-        RecommendationFactory(recommended=listened)
-
-        recommended = [r.recommended for r in Recommendation.objects.for_user(user)]
-
-        assert len(recommended) == 3
-        assert first in recommended
-        assert second in recommended
-        assert third in recommended
 
 
 class TestCategoryManager:

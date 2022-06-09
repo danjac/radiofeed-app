@@ -203,26 +203,6 @@ class RecommendationQuerySet(models.QuerySet):
         """More efficient quick delete"""
         return self._raw_delete(self.db)
 
-    def for_user(self, user: User) -> models.QuerySet[Recommendation]:
-        podcast_ids: set[int] = (
-            set(
-                user.bookmark_set.select_related("episode__podcast").values_list(
-                    "episode__podcast", flat=True
-                )
-            )
-            | set(
-                user.audiolog_set.select_related("episode__podcast").values_list(
-                    "episode__podcast", flat=True
-                )
-            )
-            | set(user.subscription_set.values_list("podcast", flat=True))
-        )
-
-        return self.filter(podcast__pk__in=podcast_ids).exclude(
-            recommended__pk__in=podcast_ids
-            | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
-        )
-
 
 RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
 

@@ -1,23 +1,6 @@
 from radiofeed.podcasts.emails import send_recommendations_email
 from radiofeed.podcasts.factories import RecommendationFactory, SubscriptionFactory
 
-# from radiofeed.users.factories import UserFactory
-
-# class TestSendRecommendationEmails:
-# def test_send_emails(self, db, mocker):
-# yes = UserFactory(send_email_notifications=True)
-# UserFactory(send_email_notifications=False)
-# UserFactory(send_email_notifications=True, is_active=False)
-
-# mock_send = mocker.patch(
-# "radiofeed.podcasts.emails.send_recommendations_email.delay"
-# )
-
-# send_recommendations_emails()
-
-# assert len(mock_send.mock_calls) == 1
-# assert mock_send.call_args == ((yes,),)
-
 
 class TestSendRecommendationEmail:
     def test_send_if_no_recommendations(self, user, mailoutbox):
