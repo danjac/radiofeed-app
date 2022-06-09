@@ -14,7 +14,7 @@
           "schedule": "*/6 * * * *"
         },
         {
-          "command": "python manage.py recommend",
+          "command": "python manage.py create_recommendations",
           "schedule": "15 6 * * *"
         },
         {

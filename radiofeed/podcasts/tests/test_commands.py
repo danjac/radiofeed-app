@@ -14,9 +14,9 @@ from radiofeed.users.factories import UserFactory
 
 
 class TestCommands:
-    def test_recommend(self, mocker):
+    def test_create_recommendations(self, mocker):
         patched = mocker.patch("radiofeed.podcasts.recommender.recommend")
-        call_command("recommend")
+        call_command("create_recommendations")
         patched.assert_called()
 
     def test_crawl_itunes(self, mocker, podcast):
