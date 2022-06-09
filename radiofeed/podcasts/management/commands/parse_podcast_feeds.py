@@ -33,14 +33,6 @@ class Command(BaseCommand):
     def get_podcasts(self) -> models.QuerySet[Podcast]:
         now = timezone.now()
 
-        one_hour_ago = now - timedelta(hours=1)
-        three_hours_ago = now - timedelta(hours=3)
-        eight_hours_ago = now - timedelta(hours=8)
-
-        one_day_ago = now - timedelta(hours=24)
-        one_week_ago = now - timedelta(days=7)
-        two_weeks_ago = now - timedelta(days=14)
-
         return (
             Podcast.objects.annotate(
                 subscribers=models.Count("subscription"),
@@ -54,29 +46,29 @@ class Command(BaseCommand):
                 )
                 # last pub date < 24 hours: check every hour
                 | models.Q(
-                    pub_date__gt=one_day_ago,
-                    parsed__lt=one_hour_ago,
+                    pub_date__gt=now - timedelta(hours=24),
+                    parsed__lt=now - timedelta(hours=1),
                 )
                 # last pub date 1-7 days: check every 3 hours
                 | models.Q(
                     pub_date__range=(
-                        one_week_ago,
-                        one_day_ago,
+                        now - timedelta(days=7),
+                        now - timedelta(hours=24),
                     ),
-                    parsed__lt=three_hours_ago,
+                    parsed__lt=now - timedelta(hours=3),
                 )
                 # last pub date 7-14 days: check every 8 hours
                 | models.Q(
                     pub_date__range=(
-                        two_weeks_ago,
-                        one_week_ago,
+                        now - timedelta(days=14),
+                        now - timedelta(days=7),
                     ),
-                    parsed__lt=eight_hours_ago,
+                    parsed__lt=now - timedelta(hours=8),
                 )
                 # last pub date > 14 days: check once a day
                 | models.Q(
-                    pub_date__lt=two_weeks_ago,
-                    parsed__lt=one_day_ago,
+                    pub_date__lt=now - timedelta(days=14),
+                    parsed__lt=now - timedelta(hours=24),
                 ),
                 active=True,
             )
