@@ -18,15 +18,19 @@ def send_new_episodes_email(
     interval: timedelta,
     min_episodes: int = 3,
     max_episodes: int = 6,
-):
-    user = User.objects.email_notification_recipients().get(pk=user_id)
+) -> bool:
+
+    if (
+        user := User.objects.email_notification_recipients().filter(pk=user_id).first()
+    ) is None:
+        return False
 
     if not (
         podcast_ids := set(
             Subscription.objects.filter(user=user).values_list("podcast", flat=True)
         )
     ):
-        return
+        return False
 
     since = timezone.now() - interval
 
@@ -54,7 +58,7 @@ def send_new_episodes_email(
     )
 
     if not episode_ids:
-        return
+        return False
 
     episodes = (
         Episode.objects.filter(pk__in=episode_ids, pub_date__gte=since)
@@ -65,7 +69,7 @@ def send_new_episodes_email(
     )[:max_episodes]
 
     if len(episodes) < min_episodes:
-        return
+        return False
 
     send_user_notification_email(
         user,
@@ -76,3 +80,5 @@ def send_new_episodes_email(
             "episodes": episodes,
         },
     )
+
+    return True

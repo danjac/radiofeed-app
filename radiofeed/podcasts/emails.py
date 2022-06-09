@@ -13,9 +13,12 @@ def send_recommendations_email(
     user_id: int,
     min_podcasts: int = 2,
     max_podcasts: int = 3,
-) -> None:
+) -> bool:
 
-    user = User.objects.email_notification_recipients().get(pk=user_id)
+    if (
+        user := User.objects.email_notification_recipients().filter(pk=user_id).first()
+    ) is None:
+        return False
 
     podcast_ids: set[int] = (
         set(
@@ -46,7 +49,7 @@ def send_recommendations_email(
     ]
 
     if len(podcasts) < min_podcasts:
-        return
+        return False
 
     user.recommended_podcasts.add(*podcasts)
 
@@ -59,3 +62,5 @@ def send_recommendations_email(
             "podcasts": podcasts,
         },
     )
+
+    return True
