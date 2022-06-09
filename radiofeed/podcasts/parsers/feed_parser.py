@@ -113,7 +113,6 @@ class FeedParser:
         )
 
         self.podcast.parsed = timezone.now()
-        self.podcast.queued = None
         self.podcast.result = self.podcast.Result.SUCCESS  # type: ignore
         self.podcast.content_hash = content_hash
 
@@ -293,7 +292,6 @@ class FeedParser:
             errors=errors,
             parsed=now,
             updated=now,
-            queued=None,
         )
 
         return False
