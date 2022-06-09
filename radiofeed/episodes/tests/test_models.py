@@ -10,7 +10,6 @@ from radiofeed.episodes.factories import (
     EpisodeFactory,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.podcasts.factories import SubscriptionFactory
 from radiofeed.podcasts.models import Podcast
 
 
@@ -74,37 +73,6 @@ class TestEpisodeManager:
         )
 
         assert Episode.objects.get_previous_episode(episode) is None
-
-    def test_recommended_no_follows(self, db, user):
-
-        assert Episode.objects.recommended(user).count() == 0
-
-    def test_recommended(self, db, user):
-
-        podcast = SubscriptionFactory(user=user).podcast
-        # ok
-        first = EpisodeFactory(podcast=podcast)
-
-        # not following
-        EpisodeFactory()
-
-        # listened
-        AudioLogFactory(episode__podcast=podcast, user=user)
-
-        # favorite
-        BookmarkFactory(episode__podcast=podcast, user=user)
-
-        # trailer
-        EpisodeFactory(podcast=podcast, episode_type="trailer")
-
-        # too old
-        EpisodeFactory(
-            podcast=podcast, pub_date=timezone.now() - datetime.timedelta(days=30)
-        )
-
-        episodes = Episode.objects.recommended(user)
-        assert episodes.count() == 1
-        assert episodes.first() == first
 
     def test_with_current_time_if_anonymous(self, db, anonymous_user):
         EpisodeFactory()

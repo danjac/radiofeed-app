@@ -6,7 +6,11 @@ from radiofeed.users.emails import send_user_notification_email
 from radiofeed.users.models import User
 
 
-def send_recommendations_email(user: User) -> None:
+def send_recommendations_email(
+    user: User,
+    min_podcasts: int = 2,
+    max_podcasts: int = 3,
+) -> None:
 
     podcast_ids: set[int] = (
         set(
@@ -32,9 +36,11 @@ def send_recommendations_email(user: User) -> None:
         .values_list("recommended", flat=True)
     )
 
-    podcasts = Podcast.objects.filter(pk__in=list(recommendations)).distinct()[:3]
+    podcasts = Podcast.objects.filter(pk__in=list(recommendations)).distinct()[
+        :max_podcasts
+    ]
 
-    if len(podcasts) not in range(2, 4):
+    if len(podcasts) < min_podcasts:
         return
 
     user.recommended_podcasts.add(*podcasts)

@@ -1,39 +1,38 @@
 from datetime import timedelta
 
+from django.utils import timezone
+
 from radiofeed.episodes.emails import send_new_episodes_email
-from radiofeed.episodes.factories import EpisodeFactory
+from radiofeed.episodes.factories import (
+    AudioLogFactory,
+    BookmarkFactory,
+    EpisodeFactory,
+)
 from radiofeed.podcasts.factories import SubscriptionFactory
-
-# from radiofeed.users.factories import UserFactory
-
-# class TestSendNewEpisodesEmails:
-# def test_command(self, db, mocker):
-
-# yes = UserFactory(send_email_notifications=True)
-# UserFactory(send_email_notifications=False)
-# UserFactory(send_email_notifications=True, is_active=False)
-
-# mock_send = mocker.patch("radiofeed.episodes.emails.send_new_episodes_email")
-
-# send_new_episodes_emails()
-
-# assert len(mock_send.mock_calls) == 1
-# assert mock_send.call_args == (
-# (
-# yes,
-# timedelta(days=7),
-# ),
-# )
 
 
 class TestSendNewEpisodesEmail:
-    def test_send_if_no_episodes(self, user, mailoutbox):
-        """If no recommendations, don't send."""
+    def test_no_subscriptions(self, user, mailoutbox):
 
         send_new_episodes_email(user, timedelta(days=7))
         assert len(mailoutbox) == 0
 
-    def test_send_if_insufficient_episodes(self, user, mailoutbox):
+    def test_already_listened_or_bookmarked(self, user, mailoutbox):
+
+        BookmarkFactory(
+            user=user, episode__podcast=SubscriptionFactory(user=user).podcast
+        )
+        AudioLogFactory(
+            user=user, episode__podcast=SubscriptionFactory(user=user).podcast
+        )
+        AudioLogFactory(
+            user=user, episode__podcast=SubscriptionFactory(user=user).podcast
+        )
+
+        send_new_episodes_email(user, timedelta(days=7))
+        assert len(mailoutbox) == 0
+
+    def test_send_insufficient_episodes(self, user, mailoutbox):
         podcast = SubscriptionFactory(user=user).podcast
         EpisodeFactory(podcast=podcast)
 
@@ -41,10 +40,23 @@ class TestSendNewEpisodesEmail:
 
         assert len(mailoutbox) == 0
 
-    def test_send_if_sufficient_episodes(self, user, mailoutbox):
+    def test_no_episodes_within_time_range(self, user, mailoutbox):
+        pub_date = timezone.now() - timedelta(days=14)
+
         for _ in range(3):
-            podcast = SubscriptionFactory(user=user).podcast
-            EpisodeFactory(podcast=podcast)
+            EpisodeFactory(
+                podcast=SubscriptionFactory(
+                    user=user, podcast__pub_date=pub_date
+                ).podcast
+            )
+
+        send_new_episodes_email(user, timedelta(days=7))
+
+        assert len(mailoutbox) == 0
+
+    def test_sufficient_episodes(self, user, mailoutbox):
+        for _ in range(3):
+            EpisodeFactory(podcast=SubscriptionFactory(user=user).podcast)
 
         send_new_episodes_email(user, timedelta(days=7))
 

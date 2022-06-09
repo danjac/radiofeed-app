@@ -3,7 +3,7 @@ from __future__ import annotations
 import mimetypes
 import pathlib
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -14,7 +14,6 @@ from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
@@ -40,45 +39,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         return self.annotate(
             current_time=models.Subquery(logs.values("current_time")),
             listened=models.Subquery(logs.values("listened")),
-        )
-
-    def recommended(
-        self, user: User, since: timedelta = timedelta(days=7)
-    ) -> models.QuerySet[Episode]:
-        """Return all episodes for podcasts the user is following,
-        minus any the user has already bookmarked or listened to."""
-
-        if not (
-            podcast_ids := set(user.subscription_set.values_list("podcast", flat=True))
-        ):
-            return self.none()
-
-        min_pub_date = timezone.now() - since
-
-        episodes = (
-            self.filter(pub_date__gte=min_pub_date)
-            .exclude(episode_type__iexact="trailer")
-            .order_by("-pub_date", "-id")
-        )
-
-        if excluded := (
-            set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))
-            | set(Bookmark.objects.filter(user=user).values_list("episode", flat=True))
-        ):
-            episodes = episodes.exclude(pk__in=excluded)
-
-        episode_ids = set(
-            Podcast.objects.filter(pk__in=podcast_ids, pub_date__gte=min_pub_date)
-            .annotate(
-                latest_episode=models.Subquery(
-                    episodes.filter(podcast=models.OuterRef("pk")).values("pk")[:1]
-                )
-            )
-            .values_list("latest_episode", flat=True)
-        )
-
-        return (
-            self.filter(pk__in=episode_ids).distinct() if episode_ids else self.none()
         )
 
     def get_next_episode(self, episode: Episode) -> Episode | None:
