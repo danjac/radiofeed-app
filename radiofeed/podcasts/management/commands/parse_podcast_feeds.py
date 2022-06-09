@@ -63,7 +63,7 @@ class Command(BaseCommand):
                         now - timedelta(days=14),
                         now - timedelta(days=7),
                     ),
-                    parsed__lt=now - timedelta(hours=8),
+                    parsed__lt=now - timedelta(hours=6),
                 )
                 # last pub date > 14 days: check once a day
                 | models.Q(
