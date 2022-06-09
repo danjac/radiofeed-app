@@ -15,9 +15,9 @@ def send_recommendations_email(
     max_podcasts: int = 3,
 ) -> bool:
 
-    if (
-        user := User.objects.email_notification_recipients().filter(pk=user_id).first()
-    ) is None:
+    try:
+        user = User.objects.email_notification_recipients().get(pk=user_id)
+    except User.DoesNotExist:
         return False
 
     podcast_ids: set[int] = (

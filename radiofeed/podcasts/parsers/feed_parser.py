@@ -38,7 +38,10 @@ class DuplicateFeed(requests.RequestException):
 
 @job("feeds")
 def parse_podcast_feed(podcast_id: int, **kwargs) -> bool:
-    return FeedParser(Podcast.objects.get(pk=podcast_id)).parse(**kwargs)
+    try:
+        return FeedParser(Podcast.objects.get(pk=podcast_id)).parse(**kwargs)
+    except Podcast.DoesNotExist:
+        return False
 
 
 class FeedParser:

@@ -20,9 +20,9 @@ def send_new_episodes_email(
     max_episodes: int = 6,
 ) -> bool:
 
-    if (
-        user := User.objects.email_notification_recipients().filter(pk=user_id).first()
-    ) is None:
+    try:
+        user = User.objects.email_notification_recipients().get(pk=user_id)
+    except User.DoesNotExist:
         return False
 
     if not (

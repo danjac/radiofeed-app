@@ -63,6 +63,9 @@ class TestParsePodcastFeed:
 
         feed_parser.get_categories_dict.cache_clear()
 
+    def test_podcast_does_not_exist(self, db):
+        assert not feed_parser.parse_podcast_feed(1234)
+
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
         headers = feed_parser.FeedParser(podcast).get_feed_headers()
