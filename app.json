@@ -8,6 +8,14 @@
     "env": {
         "DJANGO_SETTINGS_MODULE": "radiofeed.settings.production"
     },
+  "formation": {
+        "web": {
+            "quantity": 1
+        },
+        "worker": {
+            "quantity": 4
+        }
+    },
     "cron": [
         {
           "command": "python manage.py parse_podcast_feeds --limit=60",
