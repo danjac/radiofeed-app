@@ -112,13 +112,25 @@ class TestCommands:
             ),
             (
                 True,
+                timedelta(days=8),
+                timedelta(hours=9),
+                True,
+            ),
+            (
+                True,
                 timedelta(days=14),
                 timedelta(hours=8),
                 False,
             ),
             (
                 True,
-                timedelta(days=14),
+                timedelta(days=15),
+                timedelta(hours=8),
+                False,
+            ),
+            (
+                True,
+                timedelta(days=15),
                 timedelta(hours=24),
                 True,
             ),
