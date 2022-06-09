@@ -23,11 +23,21 @@ class Command(BaseCommand):
         parser.add_argument("--limit", help="Limit (per CPU)", type=int, default=100)
 
     def handle(self, *args, **kwargs) -> None:
+        for_update: set[int] = set()
+
         for podcast_id in itertools.islice(
             self.get_podcasts().values_list("pk", flat=True).distinct(),
             round(multiprocessing.cpu_count() * kwargs["limit"]),
         ):
             parse_podcast_feed.delay(podcast_id)
+            for_update.add(podcast_id)
+
+        now = timezone.now()
+
+        Podcast.objects.filter(pk__in=for_update).update(
+            queued=now,
+            updated=now,
+        )
 
     def get_podcasts(self) -> models.QuerySet[Podcast]:
         now = timezone.now()
@@ -69,6 +79,7 @@ class Command(BaseCommand):
                     pub_date__lt=now - timedelta(days=14),
                     parsed__lt=now - timedelta(hours=24),
                 ),
+                queued__isnull=True,
                 active=True,
             )
             .order_by(

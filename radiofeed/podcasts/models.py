@@ -85,6 +85,9 @@ class Podcast(models.Model):
     # latest episode pub date from RSS feed
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    # queued for parsing
+    queued: datetime | None = models.DateTimeField(null=True, blank=True)
+
     # last parse time (success or fail)
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
