@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import multiprocessing
 
 from argparse import ArgumentParser
@@ -22,8 +23,12 @@ class Command(BaseCommand):
         parser.add_argument("--limit", help="Limit (per CPU)", type=int, default=100)
 
     def handle(self, *args, **kwargs) -> None:
-        limit = round(multiprocessing.cpu_count() * kwargs["limit"])
-        parse_podcast_feed.map(self.get_podcasts().values_list("pk").distinct()[:limit])
+        parse_podcast_feed.map(
+            itertools.islice(
+                self.get_podcasts().values_list("pk").distinct(),
+                round(multiprocessing.cpu_count() * kwargs["limit"]),
+            )
+        )
 
     def get_podcasts(self) -> models.QuerySet[Podcast]:
         now = timezone.now()
