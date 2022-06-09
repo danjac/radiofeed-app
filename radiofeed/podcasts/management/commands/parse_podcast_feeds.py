@@ -79,7 +79,7 @@ class Command(BaseCommand):
                     pub_date__lt=now - timedelta(days=14),
                     parsed__lt=now - timedelta(hours=24),
                 ),
-                queued__isnull=True,
+                # queued__isnull=True,
                 active=True,
             )
             .order_by(
