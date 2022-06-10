@@ -4,7 +4,6 @@ import dataclasses
 import functools
 import hashlib
 import http
-import itertools
 import secrets
 
 import requests
@@ -165,7 +164,6 @@ class FeedParser:
         self,
         items: list[rss_parser.Item],
         batch_size: int = 100,
-        max_episodes: int = 1000,
     ) -> None:
         """Remove any episodes no longer in feed, update any current and
         add new"""
@@ -190,12 +188,9 @@ class FeedParser:
         # update existing content
 
         Episode.objects.bulk_update(
-            itertools.islice(
-                filter(
-                    lambda episode: episode.guid in guids,
-                    episodes,
-                ),
-                max_episodes,
+            filter(
+                lambda episode: episode.guid in guids,
+                episodes,
             ),
             fields=[
                 "cover_url",
@@ -218,12 +213,9 @@ class FeedParser:
         # new episodes
 
         Episode.objects.bulk_create(
-            itertools.islice(
-                filter(
-                    lambda episode: episode.guid not in guids,
-                    episodes,
-                ),
-                max_episodes,
+            filter(
+                lambda episode: episode.guid not in guids,
+                episodes,
             ),
             ignore_conflicts=True,
             batch_size=batch_size,
