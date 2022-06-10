@@ -40,11 +40,10 @@ def send_recommendations_email(
             recommended__pk__in=podcast_ids
             | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
         )
-        .order_by("-frequency", "-similarity")
         .values_list("recommended", flat=True)
     )
 
-    podcasts = Podcast.objects.filter(pk__in=list(recommendations)).distinct()[
+    podcasts = Podcast.objects.filter(pk__in=set(recommendations)).distinct()[
         :max_podcasts
     ]
 
