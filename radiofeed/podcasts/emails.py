@@ -34,7 +34,7 @@ def send_recommendations_email(
         | set(Subscription.objects.filter(user=user).values_list("podcast", flat=True))
     )
 
-    recommendations = (
+    recommended_ids: set[int] = (
         Recommendation.objects.filter(podcast__pk__in=podcast_ids)
         .exclude(
             recommended__pk__in=podcast_ids
@@ -43,9 +43,7 @@ def send_recommendations_email(
         .values_list("recommended", flat=True)
     )
 
-    podcasts = Podcast.objects.filter(pk__in=set(recommendations)).distinct()[
-        :max_podcasts
-    ]
+    podcasts = Podcast.objects.filter(pk__in=recommended_ids).distinct()[:max_podcasts]
 
     if len(podcasts) < min_podcasts:
         return False
