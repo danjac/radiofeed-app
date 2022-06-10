@@ -5,6 +5,7 @@ import functools
 import hashlib
 import http
 import itertools
+import operator
 import secrets
 
 import requests
@@ -184,18 +185,22 @@ class FeedParser:
                 podcast=self.podcast,
                 **dataclasses.asdict(item),
             )
-            for item in items
+            for item in itertools.islice(
+                sorted(
+                    items,
+                    key=operator.attrgetter("pub_date"),
+                    reverse=True,
+                ),
+                max_episodes,
+            )
         ]
 
         # update existing content
 
         Episode.objects.bulk_update(
-            itertools.islice(
-                filter(
-                    lambda episode: episode.guid in guids,
-                    episodes,
-                ),
-                max_episodes,
+            filter(
+                lambda episode: episode.guid in guids,
+                episodes,
             ),
             fields=[
                 "cover_url",
@@ -218,12 +223,9 @@ class FeedParser:
         # new episodes
 
         Episode.objects.bulk_create(
-            itertools.islice(
-                filter(
-                    lambda episode: episode.guid not in guids,
-                    episodes,
-                ),
-                max_episodes,
+            filter(
+                lambda episode: episode.guid not in guids,
+                episodes,
             ),
             ignore_conflicts=True,
             batch_size=batch_size,
