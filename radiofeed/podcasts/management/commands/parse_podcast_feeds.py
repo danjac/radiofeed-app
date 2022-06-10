@@ -8,6 +8,7 @@ from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 from django.db import models
+from django.db.models.functions import ExtractDay
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
@@ -31,11 +32,22 @@ class Command(BaseCommand):
             parse_podcast_feed.delay(podcast_id)
 
     def get_podcasts(self) -> models.QuerySet[Podcast]:
+        """Retrieve podcasts for update.
+
+        Algorithm: fetch podcasts where number of hours since last updated
+        is at least number of days since the last pub date (within range of 1-24 hours).
+
+        Examples:
+                last pub date 3 hours ago: last updated > 1 hour ago
+                last pub date 3 days ago: last updated > 3 hours ago
+                last pub date 30 days ago: last updated > 24 hours ago
+        """
         now = timezone.now()
 
         return (
             Podcast.objects.annotate(
                 subscribers=models.Count("subscription"),
+                days_since_last_pub_date=ExtractDay(now - models.F("pub_date")),
             )
             .filter(
                 models.Q(
@@ -44,31 +56,18 @@ class Command(BaseCommand):
                 | models.Q(
                     pub_date__isnull=True,
                 )
-                # last pub date < 24 hours: check every hour
                 | models.Q(
-                    pub_date__gt=now - timedelta(hours=24),
+                    days_since_last_pub_date__lt=1,
                     parsed__lt=now - timedelta(hours=1),
                 )
-                # last pub date 1-7 days: check every 3 hours
                 | models.Q(
-                    pub_date__range=(
-                        now - timedelta(days=7),
-                        now - timedelta(hours=24),
-                    ),
-                    parsed__lt=now - timedelta(hours=3),
-                )
-                # last pub date 7-14 days: check every 8 hours
-                | models.Q(
-                    pub_date__range=(
-                        now - timedelta(days=14),
-                        now - timedelta(days=7),
-                    ),
-                    parsed__lt=now - timedelta(hours=6),
-                )
-                # last pub date > 14 days: check once a day
-                | models.Q(
-                    pub_date__lt=now - timedelta(days=14),
+                    days_since_last_pub_date__gt=24,
                     parsed__lt=now - timedelta(hours=24),
+                )
+                | models.Q(
+                    days_since_last_pub_date__range=(1, 24),
+                    parsed__lt=now
+                    - timedelta(hours=1) * models.F("days_since_last_pub_date"),
                 ),
                 active=True,
             )
