@@ -106,3 +106,31 @@ CONTACT_EMAIL='my-site@host.com'
 ```
 
 A `Procfile` is provided for Heroku-like deployments (including Dokku, Railway etc).
+
+### Crons
+
+In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
+
+Parse podcast RSS feeds:
+
+```bash
+*/6 * * * * python manage.py parse_podcast_feeds --limit=120
+```
+
+Generate similar recommendations for each podcast:
+
+```bash
+15 6 * * * python manage.py create_recommendations
+```
+
+Send podcast recommendations to users:
+
+```bash
+15 9 * * 1 python manage.py send_recommendation_emails
+```
+
+Send suggestions for new episodes to users:
+
+```bash
+15 9 * * 3 python manage.py send_new_episodes_emails
+```
