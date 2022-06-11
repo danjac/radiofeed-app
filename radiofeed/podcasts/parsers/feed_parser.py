@@ -5,6 +5,7 @@ import functools
 import hashlib
 import http
 import itertools
+import operator
 import secrets
 
 import requests
@@ -46,6 +47,8 @@ def parse_podcast_feed(podcast_id: int, **kwargs) -> bool:
 
 
 class FeedParser:
+    MAX_EPISODES: int = 1000
+
     def __init__(self, podcast: Podcast):
         self.podcast = podcast
 
@@ -180,7 +183,14 @@ class FeedParser:
                 podcast=self.podcast,
                 **dataclasses.asdict(item),
             )
-            for item in items
+            for item in itertools.islice(
+                sorted(
+                    items,
+                    key=operator.attrgetter("pub_date"),
+                    reverse=True,
+                ),
+                self.MAX_EPISODES,
+            )
         ]
 
         guids = set(guids_dct.keys())
