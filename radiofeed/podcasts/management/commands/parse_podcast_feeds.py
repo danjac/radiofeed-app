@@ -25,20 +25,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs) -> None:
 
-        podcasts = self.get_podcasts()
-
-        # add all eligible podcasts to queue
-
-        podcasts.filter(queued__isnull=True).update(queued=timezone.now())
+        podcast_ids = set()
 
         # parse podcasts up to CPU-based limit
 
         for podcast_id in itertools.islice(
-            podcasts.annotate(subscribers=models.Count("subscription"))
+            self.get_podcasts()
+            .annotate(subscribers=models.Count("subscription"))
             .order_by(
                 models.F("subscribers").desc(),
                 models.F("promoted").desc(),
-                models.F("queued").asc(nulls_first=True),
                 models.F("parsed").asc(nulls_first=True),
                 models.F("pub_date").desc(nulls_first=True),
             )
@@ -47,6 +43,9 @@ class Command(BaseCommand):
             round(multiprocessing.cpu_count() * kwargs["limit"]),
         ):
             parse_podcast_feed.delay(podcast_id)
+            podcast_ids.add(podcast_id)
+
+        Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
     def get_podcasts(self) -> models.QuerySet[Podcast]:
         """Retrieve podcasts for update.
@@ -83,5 +82,6 @@ class Command(BaseCommand):
                 parsed__lt=now
                 - timedelta(hours=1) * models.F("days_since_last_pub_date"),
             ),
+            queued__isnull=True,
             active=True,
         )

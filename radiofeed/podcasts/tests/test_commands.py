@@ -66,15 +66,17 @@ class TestCommands:
         patched.assert_called_with(user.id)
 
     @pytest.mark.parametrize(
-        "active,pub_date,parsed,called",
+        "active,queued,pub_date,parsed,called",
         [
             (
                 True,
+                False,
                 None,
                 None,
                 True,
             ),
             (
+                False,
                 False,
                 None,
                 None,
@@ -82,65 +84,84 @@ class TestCommands:
             ),
             (
                 True,
+                False,
                 timedelta(hours=3),
                 timedelta(hours=1),
                 True,
             ),
             (
                 True,
+                True,
+                timedelta(hours=3),
+                timedelta(hours=1),
+                False,
+            ),
+            (
+                True,
+                False,
                 timedelta(hours=3),
                 timedelta(minutes=30),
                 False,
             ),
             (
                 True,
+                False,
                 timedelta(days=3),
                 timedelta(hours=3),
                 True,
             ),
             (
                 True,
+                False,
                 timedelta(days=3),
                 timedelta(hours=1),
                 False,
             ),
             (
                 True,
+                False,
                 timedelta(days=8),
                 timedelta(hours=8),
                 True,
             ),
             (
                 True,
+                False,
                 timedelta(days=8),
                 timedelta(hours=9),
                 True,
             ),
             (
                 True,
+                False,
                 timedelta(days=14),
                 timedelta(hours=8),
                 False,
             ),
             (
                 True,
+                False,
                 timedelta(days=15),
                 timedelta(hours=8),
                 False,
             ),
             (
                 True,
+                False,
                 timedelta(days=15),
                 timedelta(hours=24),
                 True,
             ),
         ],
     )
-    def test_parse_podcast_feeds(self, db, mocker, active, pub_date, parsed, called):
+    def test_parse_podcast_feeds(
+        self, db, mocker, active, queued, pub_date, parsed, called
+    ):
         now = timezone.now()
 
         podcast = PodcastFactory(
             active=active,
+            queued=now if queued else None,
             pub_date=now - pub_date if pub_date else None,
             parsed=now - parsed if parsed else None,
         )
@@ -154,3 +175,5 @@ class TestCommands:
             patched.assert_called_with(podcast.id)
         else:
             patched.assert_not_called()
+
+        assert Podcast.objects.filter(queued__isnull=False).exists() == called or queued
