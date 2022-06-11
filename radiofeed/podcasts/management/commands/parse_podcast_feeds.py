@@ -42,7 +42,6 @@ class Command(BaseCommand):
         for podcast_id in podcast_ids:
             parse_podcast_feed.delay(podcast_id)
 
-        Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
         self.stdout.write(f"{len(podcast_ids)} podcasts queued for update")
 
     def get_podcasts(self) -> models.QuerySet[Podcast]:
