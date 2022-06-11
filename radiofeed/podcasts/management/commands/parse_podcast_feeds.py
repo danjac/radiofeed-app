@@ -25,8 +25,25 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs) -> None:
 
+        podcasts = self.get_podcasts()
+
+        # add all eligible podcasts to queue
+
+        podcasts.filter(queued__isnull=True).update(queued=timezone.now())
+
+        # parse podcasts up to CPU-based limit
+
         for podcast_id in itertools.islice(
-            self.get_podcasts().values_list("pk", flat=True).distinct(),
+            podcasts.annotate(subscribers=models.Count("subscription"))
+            .order_by(
+                models.F("subscribers").desc(),
+                models.F("promoted").desc(),
+                models.F("queued").asc(nulls_first=True),
+                models.F("parsed").asc(nulls_first=True),
+                models.F("pub_date").desc(nulls_first=True),
+            )
+            .values_list("pk", flat=True)
+            .distinct(),
             round(multiprocessing.cpu_count() * kwargs["limit"]),
         ):
             parse_podcast_feed.delay(podcast_id)
@@ -44,37 +61,27 @@ class Command(BaseCommand):
         """
         now = timezone.now()
 
-        return (
-            Podcast.objects.annotate(
-                subscribers=models.Count("subscription"),
-                days_since_last_pub_date=ExtractDay(now - models.F("pub_date")),
+        return Podcast.objects.annotate(
+            days_since_last_pub_date=ExtractDay(now - models.F("pub_date")),
+        ).filter(
+            models.Q(
+                parsed__isnull=True,
             )
-            .filter(
-                models.Q(
-                    parsed__isnull=True,
-                )
-                | models.Q(
-                    pub_date__isnull=True,
-                )
-                | models.Q(
-                    days_since_last_pub_date__lt=1,
-                    parsed__lt=now - timedelta(hours=1),
-                )
-                | models.Q(
-                    days_since_last_pub_date__gt=24,
-                    parsed__lt=now - timedelta(hours=24),
-                )
-                | models.Q(
-                    days_since_last_pub_date__range=(1, 24),
-                    parsed__lt=now
-                    - timedelta(hours=1) * models.F("days_since_last_pub_date"),
-                ),
-                active=True,
+            | models.Q(
+                pub_date__isnull=True,
             )
-            .order_by(
-                models.F("subscribers").desc(),
-                models.F("promoted").desc(),
-                models.F("parsed").asc(nulls_first=True),
-                models.F("pub_date").desc(nulls_first=True),
+            | models.Q(
+                days_since_last_pub_date__lt=1,
+                parsed__lt=now - timedelta(hours=1),
             )
+            | models.Q(
+                days_since_last_pub_date__gt=24,
+                parsed__lt=now - timedelta(hours=24),
+            )
+            | models.Q(
+                days_since_last_pub_date__range=(1, 24),
+                parsed__lt=now
+                - timedelta(hours=1) * models.F("days_since_last_pub_date"),
+            ),
+            active=True,
         )
