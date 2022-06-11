@@ -93,7 +93,7 @@ class PubDateFilter(admin.SimpleListFilter):
             case "no":
                 return queryset.filter(pub_date__isnull=True)
             case "new":
-                return queryset.filter(pub_date__isnull=True, parsed__isnull=True)
+                return queryset.filter(pub_date__isnull=True)
             case _:
                 return queryset
 
@@ -109,6 +109,21 @@ class PromotedFilter(admin.SimpleListFilter):
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
+
+
+class QueuedFilter(admin.SimpleListFilter):
+    title = "Queued"
+    parameter_name = "queued"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (("yes", "Queued"),)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
 
 
 class SubscribedFilter(admin.SimpleListFilter):
@@ -137,6 +152,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         SubscribedFilter,
         PromotedFilter,
         PubDateFilter,
+        QueuedFilter,
         ResultFilter,
     )
 

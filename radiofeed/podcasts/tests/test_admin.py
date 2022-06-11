@@ -3,6 +3,7 @@ from unittest import mock
 import pytest
 
 from django.contrib.admin.sites import AdminSite
+from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
     ActiveFilter,
@@ -10,6 +11,7 @@ from radiofeed.podcasts.admin import (
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
+    QueuedFilter,
     ResultFilter,
     SubscribedFilter,
 )
@@ -150,6 +152,21 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestQueuedFilter:
+    def test_none(self, podcasts, podcast_admin, req):
+        PodcastFactory(queued=timezone.now())
+        f = QueuedFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_true(self, podcasts, podcast_admin, req):
+        queued = PodcastFactory(queued=timezone.now())
+        f = QueuedFilter(req, {"queued": "yes"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == queued
 
 
 class TestActiveFilter:
