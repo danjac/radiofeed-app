@@ -188,7 +188,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
         count = queryset.count()
 
-        for podcast_id in queryset.values_list("pk"):
+        for podcast_id in queryset.values_list("pk", flat=True):
             feed_parser.parse_podcast_feed.delay(podcast_id)
 
         self.message_user(
