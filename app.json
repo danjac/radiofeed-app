@@ -18,8 +18,8 @@
     },
     "cron": [
         {
-          "command": "python manage.py parse_podcast_feeds --limit=1200",
-          "schedule": "0 * * * *"
+          "command": "python manage.py parse_podcast_feeds --limit=120",
+          "schedule": "*/6 * * * *"
         },
         {
           "command": "python manage.py create_recommendations",
