@@ -193,12 +193,12 @@ class FeedParser:
             )
         ]
 
-        guids = set(guids_dct.keys())
+        guids = frozenset(guids_dct.keys())
 
         self.update_episodes(episodes, guids)
         self.create_episodes(episodes, guids)
 
-    def create_episodes(self, episodes: list[Episode], guids: set[str]) -> None:
+    def create_episodes(self, episodes: list[Episode], guids: frozenset[str]) -> None:
 
         # new episodes
         for_create = iter(episodes)
@@ -218,7 +218,7 @@ class FeedParser:
 
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
-    def update_episodes(self, episodes: list[Episode], guids: set[str]) -> None:
+    def update_episodes(self, episodes: list[Episode], guids: frozenset[str]) -> None:
 
         for_update = iter(episodes)
 
