@@ -25,25 +25,30 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs) -> None:
 
-        podcast_ids = set()
+        podcast_ids = frozenset(
+            itertools.islice(
+                self.get_podcasts()
+                .annotate(subscribers=models.Count("subscription"))
+                .order_by(
+                    models.F("subscribers").desc(),
+                    models.F("promoted").desc(),
+                    models.F("parsed").asc(nulls_first=True),
+                    models.F("pub_date").desc(nulls_first=True),
+                )
+                .values_list("pk", flat=True)
+                .distinct(),
+                round(multiprocessing.cpu_count() * kwargs["limit"]),
+            )
+        )
+
+        # add to queue
+
+        Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
         # parse podcasts up to CPU-based limit
 
-        for podcast_id in itertools.islice(
-            self.get_podcasts()
-            .annotate(subscribers=models.Count("subscription"))
-            .order_by(
-                models.F("subscribers").desc(),
-                models.F("promoted").desc(),
-                models.F("parsed").asc(nulls_first=True),
-                models.F("pub_date").desc(nulls_first=True),
-            )
-            .values_list("pk", flat=True)
-            .distinct(),
-            round(multiprocessing.cpu_count() * kwargs["limit"]),
-        ):
+        for podcast_id in podcast_ids:
             parse_podcast_feed.delay(podcast_id)
-            podcast_ids.add(podcast_id)
 
         Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
         self.stdout.write(f"{len(podcast_ids)} podcasts queued for update")
