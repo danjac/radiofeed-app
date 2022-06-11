@@ -176,8 +176,7 @@ class TestParsePodcastFeed:
         )
         assert feed_parser.parse_podcast_feed(podcast.id)
 
-        # new episodes: 19
-        assert Episode.objects.count() == 1000
+        assert Episode.objects.count() == 4940
 
         podcast.refresh_from_db()
 
