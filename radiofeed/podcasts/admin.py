@@ -159,8 +159,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_display = (
         "__str__",
         "promoted",
-        "parsed",
         "pub_date",
+        "parsed",
+        "queued",
     )
 
     list_editable = ("promoted",)
