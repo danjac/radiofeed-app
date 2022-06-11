@@ -191,7 +191,6 @@ class FeedParser:
 
     def create_episodes(self, episodes: list[Episode], guids: frozenset[str]) -> None:
 
-        # new episodes
         for_create = iter(episodes)
 
         while True:
