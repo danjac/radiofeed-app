@@ -134,3 +134,5 @@ Send suggestions for new episodes to users:
 ```bash
 15 9 * * 3 python manage.py send_new_episodes_emails
 ```
+
+An `app.json` configuration with these cron schedules is included for Dokku deployment.
