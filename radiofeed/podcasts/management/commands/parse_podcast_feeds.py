@@ -46,6 +46,7 @@ class Command(BaseCommand):
             podcast_ids.add(podcast_id)
 
         Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+        self.stdout.write(f"{len(podcast_ids)} podcasts queued for update")
 
     def get_podcasts(self) -> models.QuerySet[Podcast]:
         """Retrieve podcasts for update.
