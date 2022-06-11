@@ -156,6 +156,34 @@ class TestParsePodcastFeed:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
+    def test_parse_podcast_feed_high_num_episodes(self, db, mocker, categories):
+
+        podcast = PodcastFactory()
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content("rss_high_num_episodes.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+        assert feed_parser.parse_podcast_feed(podcast.id)
+
+        # new episodes: 19
+        assert Episode.objects.count() == 1000
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.active
+        assert podcast.content_hash
+        assert podcast.errors == 0
+        assert podcast.title == "Armstrong & Getty On Demand"
+
     def test_parse_podcast_feed_ok_no_pub_date(self, db, mocker, categories):
 
         podcast = PodcastFactory(pub_date=None)
