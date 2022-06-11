@@ -5,7 +5,6 @@ import functools
 import hashlib
 import http
 import itertools
-import operator
 import secrets
 
 import requests
@@ -158,16 +157,11 @@ class FeedParser:
         self.podcast.save()
 
         # episodes
-        self.update_episodes(items)
+        self.sync_episodes(items)
 
         return True
 
-    def update_episodes(
-        self,
-        items: list[rss_parser.Item],
-        batch_size: int = 1000,
-        max_episodes: int = 1000,
-    ) -> None:
+    def sync_episodes(self, items: list[rss_parser.Item]) -> None:
         """Remove any episodes no longer in feed, update any current and
         add new"""
 
@@ -177,59 +171,77 @@ class FeedParser:
         qs.exclude(guid__in=[item.guid for item in items]).delete()
 
         # determine new/current items
-        guids = dict(qs.values_list("guid", "pk"))
+        guids_dct = dict(qs.values_list("guid", "pk"))
 
+        # update existing content
         episodes = [
             Episode(
-                pk=guids.get(item.guid),
+                pk=guids_dct.get(item.guid),
                 podcast=self.podcast,
                 **dataclasses.asdict(item),
             )
-            for item in itertools.islice(
-                sorted(
-                    items,
-                    key=operator.attrgetter("pub_date"),
-                    reverse=True,
-                ),
-                max_episodes,
-            )
+            for item in items
         ]
 
-        # update existing content
+        guids = set(guids_dct.keys())
 
-        Episode.objects.bulk_update(
-            filter(
-                lambda episode: episode.guid in guids,
-                episodes,
-            ),
-            fields=[
-                "cover_url",
-                "description",
-                "duration",
-                "episode",
-                "episode_type",
-                "explicit",
-                "keywords",
-                "length",
-                "media_type",
-                "media_url",
-                "pub_date",
-                "season",
-                "title",
-            ],
-            batch_size=batch_size,
-        )
+        self.update_episodes(episodes, guids)
+        self.create_episodes(episodes, guids)
+
+    def create_episodes(self, episodes: list[Episode], guids: set[str]) -> None:
 
         # new episodes
+        for_create = iter(episodes)
 
-        Episode.objects.bulk_create(
-            filter(
-                lambda episode: episode.guid not in guids,
-                episodes,
-            ),
-            ignore_conflicts=True,
-            batch_size=batch_size,
-        )
+        while True:
+            batch = list(
+                itertools.islice(
+                    filter(
+                        lambda episode: episode.guid not in guids,
+                        for_create,
+                    ),
+                    100,
+                )
+            )
+            if not batch:
+                return
+
+            Episode.objects.bulk_create(batch, ignore_conflicts=True)
+
+    def update_episodes(self, episodes: list[Episode], guids: set[str]) -> None:
+
+        for_update = iter(episodes)
+
+        while True:
+            batch = list(
+                itertools.islice(
+                    filter(
+                        lambda episode: episode.guid in guids,
+                        for_update,
+                    ),
+                    100,
+                )
+            )
+            if not batch:
+                return
+            Episode.objects.bulk_update(
+                batch,
+                fields=[
+                    "cover_url",
+                    "description",
+                    "duration",
+                    "episode",
+                    "episode_type",
+                    "explicit",
+                    "keywords",
+                    "length",
+                    "media_type",
+                    "media_url",
+                    "pub_date",
+                    "season",
+                    "title",
+                ],
+            )
 
     def extract_text(
         self, categories: list[Category], items: list[rss_parser.Item]
