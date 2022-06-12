@@ -382,11 +382,11 @@ def get_podcast_feeds_for_update() -> QuerySet[Podcast]:
                 parsed__lt=now - timedelta(hours=1),
             )
             | Q(
-                days_since_last_pub_date__gt=24,
-                parsed__lt=now - timedelta(hours=24),
+                days_since_last_pub_date__gt=30,
+                parsed__lt=now - timedelta(hours=30),
             )
             | Q(
-                days_since_last_pub_date__range=(1, 24),
+                days_since_last_pub_date__range=(1, 30),
                 parsed__lt=now - timedelta(hours=1) * F("days_since_last_pub_date"),
             ),
             queued__isnull=True,
