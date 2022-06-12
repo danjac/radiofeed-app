@@ -55,23 +55,9 @@ class TestEnqueue:
         mock_queue.enqueue.assert_called_with(
             feed_parser.parse_podcast_feed,
             args=(podcast.id,),
-            on_failure=feed_parser.on_failure,
         )
         podcast.refresh_from_db()
         assert podcast.queued
-
-
-class TestOnFailure:
-    def test_on_failure(self, db):
-        podcast = PodcastFactory(parsed=None, queued=timezone.now())
-
-        job = mock.Mock()
-        job.args = (podcast.id,)
-
-        feed_parser.on_failure(job)
-        podcast.refresh_from_db()
-        assert podcast.parsed
-        assert podcast.queued is None
 
 
 class TestSchedulePodcastFeedsForUpdate:

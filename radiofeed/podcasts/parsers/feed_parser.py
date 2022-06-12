@@ -18,7 +18,6 @@ from django.db.models.functions import ExtractDay
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
-from rq.job import Job
 
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
@@ -43,70 +42,6 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-@dataclasses.dataclass
-class ParseResult:
-
-    result: str | None = None
-    http_status: int | None = None
-
-    @classmethod
-    def from_podcast(cls, podcast: Podcast) -> ParseResult:
-        return cls(result=podcast.result, http_status=podcast.http_status)  # type: ignore
-
-    @classmethod
-    def from_exception(cls, e: Exception) -> ParseResult:
-        try:
-            http_status = e.response.status_code  # type: ignore
-        except AttributeError:
-            http_status = None
-
-        result = None
-
-        match e:
-
-            case NotModified():
-                result = Podcast.Result.NOT_MODIFIED
-
-            case DuplicateFeed():
-                result = Podcast.Result.DUPLICATE_FEED
-
-            case requests.HTTPError():
-                result = (
-                    Podcast.Result.REMOVED
-                    if http_status == http.HTTPStatus.GONE
-                    else Podcast.Result.HTTP_ERROR
-                )
-
-            case requests.RequestException():
-                result = Podcast.Result.NETWORK_ERROR
-
-            case rss_parser.RssParserError():
-                result = Podcast.Result.INVALID_RSS
-
-            case _:
-                raise
-
-        return cls(result=result, http_status=http_status)  # type: ignore
-
-    def __bool__(self) -> bool:
-        return self.result == Podcast.Result.SUCCESS
-
-    @property
-    def active(self) -> bool:
-        return self.result not in (
-            Podcast.Result.DUPLICATE_FEED,
-            Podcast.Result.REMOVED,
-        )
-
-    @property
-    def error(self) -> bool:
-        return self.result in (
-            Podcast.Result.HTTP_ERROR,
-            Podcast.Result.INVALID_RSS,
-            Podcast.Result.NETWORK_ERROR,
-        )
-
-
 @job("feeds")
 def parse_podcast_feed(podcast_id: int, **kwargs) -> ParseResult:
     try:
@@ -129,17 +64,13 @@ def schedule_podcast_feeds_for_update(limit: int, **job_kwargs) -> frozenset[int
 
 
 def enqueue(*podcast_ids: int, **job_kwargs) -> None:
+
     queue = get_queue("feeds")
 
     Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
     for podcast_id in podcast_ids:
-        queue.enqueue(
-            parse_podcast_feed,
-            args=(podcast_id,),
-            on_failure=on_failure,
-            **job_kwargs,
-        )
+        queue.enqueue(parse_podcast_feed, args=(podcast_id,), **job_kwargs)
 
 
 class FeedParser:
@@ -367,6 +298,70 @@ class FeedParser:
         return result
 
 
+@dataclasses.dataclass
+class ParseResult:
+
+    result: str | None = None
+    http_status: int | None = None
+
+    @classmethod
+    def from_podcast(cls, podcast: Podcast) -> ParseResult:
+        return cls(result=podcast.result, http_status=podcast.http_status)  # type: ignore
+
+    @classmethod
+    def from_exception(cls, e: Exception) -> ParseResult:
+        try:
+            http_status = e.response.status_code  # type: ignore
+        except AttributeError:
+            http_status = None
+
+        result = None
+
+        match e:
+
+            case NotModified():
+                result = Podcast.Result.NOT_MODIFIED
+
+            case DuplicateFeed():
+                result = Podcast.Result.DUPLICATE_FEED
+
+            case requests.HTTPError():
+                result = (
+                    Podcast.Result.REMOVED
+                    if http_status == http.HTTPStatus.GONE
+                    else Podcast.Result.HTTP_ERROR
+                )
+
+            case requests.RequestException():
+                result = Podcast.Result.NETWORK_ERROR
+
+            case rss_parser.RssParserError():
+                result = Podcast.Result.INVALID_RSS
+
+            case _:
+                raise
+
+        return cls(result=result, http_status=http_status)  # type: ignore
+
+    def __bool__(self) -> bool:
+        return self.result == Podcast.Result.SUCCESS
+
+    @property
+    def active(self) -> bool:
+        return self.result not in (
+            Podcast.Result.DUPLICATE_FEED,
+            Podcast.Result.REMOVED,
+        )
+
+    @property
+    def error(self) -> bool:
+        return self.result in (
+            Podcast.Result.HTTP_ERROR,
+            Podcast.Result.INVALID_RSS,
+            Podcast.Result.NETWORK_ERROR,
+        )
+
+
 def get_podcast_feeds_for_update() -> QuerySet[Podcast]:
     now = timezone.now()
 
@@ -423,14 +418,3 @@ def make_content_hash(content: bytes) -> str:
 
 def get_user_agent() -> str:
     return secrets.choice(USER_AGENTS)
-
-
-def on_failure(job: Job, *args, **kwargs) -> None:
-
-    now = timezone.now()
-
-    Podcast.objects.filter(pk=job.args[0]).update(
-        parsed=now,
-        updated=now,
-        queued=None,
-    )
