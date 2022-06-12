@@ -8,6 +8,7 @@ import itertools
 import secrets
 
 from datetime import timedelta
+from typing import Generator, Iterable
 
 import requests
 
@@ -194,7 +195,9 @@ class FeedParser:
 
         return True
 
-    def sync_episodes(self, items: list[rss_parser.Item]) -> None:
+    def sync_episodes(
+        self, items: list[rss_parser.Item], batch_size: int = 100
+    ) -> None:
         """Remove any episodes no longer in feed, update any current and
         add new"""
 
@@ -204,58 +207,22 @@ class FeedParser:
         qs.exclude(guid__in=[item.guid for item in items]).delete()
 
         # determine new/current items
-        guids_dct = dict(qs.values_list("guid", "pk"))
+        guids = dict(qs.values_list("guid", "pk"))
 
         # update existing content
         episodes = [
             Episode(
-                pk=guids_dct.get(item.guid),
+                pk=guids.get(item.guid),
                 podcast=self.podcast,
                 **dataclasses.asdict(item),
             )
             for item in items
         ]
 
-        guids = frozenset(guids_dct.keys())
-
-        self.update_episodes(episodes, guids)
-        self.create_episodes(episodes, guids)
-
-    def create_episodes(self, episodes: list[Episode], guids: frozenset[str]) -> None:
-
-        for_create = iter(episodes)
-
-        while True:
-            batch = list(
-                itertools.islice(
-                    filter(
-                        lambda episode: episode.guid not in guids,
-                        for_create,
-                    ),
-                    100,
-                )
-            )
-            if not batch:
-                return
-
-            Episode.objects.bulk_create(batch, ignore_conflicts=True)
-
-    def update_episodes(self, episodes: list[Episode], guids: frozenset[str]) -> None:
-
-        for_update = iter(episodes)
-
-        while True:
-            batch = list(
-                itertools.islice(
-                    filter(
-                        lambda episode: episode.guid in guids,
-                        for_update,
-                    ),
-                    100,
-                )
-            )
-            if not batch:
-                return
+        for batch in get_batch(
+            filter(lambda episode: episode.guid in guids, episodes),
+            batch_size,
+        ):
             Episode.objects.bulk_update(
                 batch,
                 fields=[
@@ -274,6 +241,12 @@ class FeedParser:
                     "title",
                 ],
             )
+
+        for batch in get_batch(
+            filter(lambda episode: episode.guid not in guids, episodes),
+            batch_size,
+        ):
+            Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def extract_text(
         self, categories: list[Category], items: list[rss_parser.Item]
@@ -360,25 +333,6 @@ class FeedParser:
         return False
 
 
-def make_content_hash(content: bytes) -> str:
-    return hashlib.sha256(content).hexdigest()
-
-
-def get_user_agent() -> str:
-    return secrets.choice(USER_AGENTS)
-
-
-def on_failure(job: Job, *args, **kwargs) -> None:
-
-    now = timezone.now()
-
-    Podcast.objects.filter(pk=job.args[0]).update(
-        parsed=now,
-        updated=now,
-        queued=None,
-    )
-
-
 def get_podcast_feeds_for_update() -> QuerySet[Podcast]:
     now = timezone.now()
 
@@ -421,3 +375,30 @@ def get_podcast_feeds_for_update() -> QuerySet[Podcast]:
 @functools.lru_cache
 def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
+
+
+def get_batch(items: Iterable, batch_size: int) -> Generator[list, None, None]:
+    while True:
+        if batch := list(itertools.islice(items, batch_size)):
+            yield batch
+        else:
+            return
+
+
+def make_content_hash(content: bytes) -> str:
+    return hashlib.sha256(content).hexdigest()
+
+
+def get_user_agent() -> str:
+    return secrets.choice(USER_AGENTS)
+
+
+def on_failure(job: Job, *args, **kwargs) -> None:
+
+    now = timezone.now()
+
+    Podcast.objects.filter(pk=job.args[0]).update(
+        parsed=now,
+        updated=now,
+        queued=None,
+    )
