@@ -1,6 +1,7 @@
 import pathlib
 
 from datetime import timedelta
+from unittest import mock
 
 import pytest
 
@@ -13,13 +14,15 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import UserFactory
 
 
-class TestCommands:
-    def test_create_recommendations(self, mocker):
+class TestCreateRecommendations:
+    def test_command(self, mocker):
         patched = mocker.patch("radiofeed.podcasts.recommender.recommend")
         call_command("create_recommendations")
         patched.assert_called()
 
-    def test_crawl_itunes(self, mocker, podcast):
+
+class TestCrawlItunes:
+    def test_command(self, mocker, podcast):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.crawl",
             return_value=[
@@ -39,7 +42,9 @@ class TestCommands:
         call_command("crawl_itunes")
         patched.assert_called()
 
-    def test_import_podcasts(self, db):
+
+class TestImportPodcasts:
+    def test_command(self, db):
         call_command(
             "import_podcasts",
             pathlib.Path(__file__).parent / "mocks" / "feeds.txt",
@@ -47,14 +52,18 @@ class TestCommands:
 
         assert Podcast.objects.count() == 18
 
-    def test_export_podcasts(self, mocker, podcast):
+
+class TestExportPodcasts:
+    def test_command(self, mocker, podcast):
         mocker.patch("builtins.open")
         mock_writer = mocker.Mock()
         mocker.patch("csv.writer", return_value=mock_writer)
         call_command("export_podcasts", "filename.txt")
         mock_writer.writerow.assert_called_with([podcast.rss])
 
-    def test_send_recommendations_emails(self, db, mocker):
+
+class TestSendRecommendationsEmails:
+    def test_command(self, db, mocker):
         user = UserFactory(send_email_notifications=True)
         UserFactory(send_email_notifications=False)
 
@@ -65,6 +74,8 @@ class TestCommands:
         call_command("send_recommendation_emails")
         patched.assert_called_with(user.id)
 
+
+class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
         "active,queued,pub_date,parsed,called",
         [
@@ -154,26 +165,28 @@ class TestCommands:
             ),
         ],
     )
-    def test_parse_podcast_feeds(
-        self, db, mocker, active, queued, pub_date, parsed, called
-    ):
+    def test_command(self, db, mocker, active, queued, pub_date, parsed, called):
         now = timezone.now()
 
-        podcast = PodcastFactory(
+        PodcastFactory(
             active=active,
             queued=now if queued else None,
             pub_date=now - pub_date if pub_date else None,
             parsed=now - parsed if parsed else None,
         )
 
-        patched = mocker.patch(
-            "radiofeed.podcasts.parsers.feed_parser.parse_podcast_feed.delay"
+        mock_queue = mock.Mock()
+
+        mocker.patch(
+            "radiofeed.podcasts.management.commands.parse_podcast_feeds.get_queue",
+            return_value=mock_queue,
         )
 
         call_command("parse_podcast_feeds")
+
         if called:
-            patched.assert_called_with(podcast.id)
+            mock_queue.enqueue.assert_called()
         else:
-            patched.assert_not_called()
+            mock_queue.enqueue.assert_not_called()
 
         assert Podcast.objects.filter(queued__isnull=False).exists() == called or queued

@@ -2,6 +2,8 @@ import datetime
 import http
 import pathlib
 
+from unittest import mock
+
 import pytest
 import requests
 
@@ -65,6 +67,17 @@ class TestParsePodcastFeed:
 
     def test_podcast_does_not_exist(self, db):
         assert not feed_parser.parse_podcast_feed(1234)
+
+    def test_on_failure(self, db):
+        podcast = PodcastFactory(parsed=None, queued=timezone.now())
+
+        job = mock.Mock()
+        job.args = (podcast.id,)
+
+        feed_parser.on_failure(job)
+        podcast.refresh_from_db()
+        assert podcast.parsed
+        assert podcast.queued is None
 
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")

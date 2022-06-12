@@ -13,6 +13,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
+from rq.job import Job
 
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
@@ -334,6 +335,17 @@ def make_content_hash(content: bytes) -> str:
 
 def get_user_agent() -> str:
     return secrets.choice(USER_AGENTS)
+
+
+def on_failure(job: Job, *args, **kwargs) -> None:
+
+    now = timezone.now()
+
+    Podcast.objects.filter(pk=job.args[0]).update(
+        parsed=now,
+        updated=now,
+        queued=None,
+    )
 
 
 @functools.lru_cache

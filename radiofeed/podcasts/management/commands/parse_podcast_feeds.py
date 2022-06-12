@@ -10,9 +10,10 @@ from django.core.management.base import BaseCommand
 from django.db import models
 from django.db.models.functions import ExtractDay
 from django.utils import timezone
+from django_rq import get_queue
 
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.feed_parser import parse_podcast_feed
+from radiofeed.podcasts.parsers import feed_parser
 
 
 class Command(BaseCommand):
@@ -22,6 +23,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument("--limit", help="Limit (per CPU)", type=int, default=100)
+        parser.add_argument("--timeout", help="Timeout(seconds)", type=int, default=300)
 
     def handle(self, *args, **kwargs) -> None:
 
@@ -39,8 +41,15 @@ class Command(BaseCommand):
 
         Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
+        queue = get_queue("feeds")
+
         for podcast_id in podcast_ids:
-            parse_podcast_feed.delay(podcast_id)
+            queue.enqueue(
+                feed_parser.parse_podcast_feed,
+                args=(podcast_id,),
+                on_failure=feed_parser.on_failure,
+                timeout=kwargs["timeout"],
+            )
 
         self.stdout.write(f"{len(podcast_ids)} podcasts queued for update")
 
