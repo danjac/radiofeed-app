@@ -206,10 +206,10 @@ class FeedParser:
         # remove any episodes that may have been deleted on the podcast
         qs.exclude(guid__in=[item.guid for item in items]).delete()
 
-        # determine new/current items
+        # determine new/current items based on presence of guid
+
         guids = dict(qs.values_list("guid", "pk"))
 
-        # update existing content
         episodes = [
             Episode(
                 pk=guids.get(item.guid),
@@ -219,7 +219,9 @@ class FeedParser:
             for item in items
         ]
 
-        for batch in get_batch(
+        # update existing content
+
+        for batch in batcher(
             filter(lambda episode: episode.guid in guids, episodes),
             batch_size,
         ):
@@ -242,7 +244,9 @@ class FeedParser:
                 ],
             )
 
-        for batch in get_batch(
+        # add new episodes
+
+        for batch in batcher(
             filter(lambda episode: episode.guid not in guids, episodes),
             batch_size,
         ):
@@ -377,12 +381,10 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def get_batch(items: Iterable, batch_size: int) -> Generator[list, None, None]:
-    while True:
-        if batch := list(itertools.islice(items, batch_size)):
-            yield batch
-        else:
-            return
+def batcher(iterable: Iterable, batch_size: int) -> Generator[list, None, None]:
+    iterator = iter(iterable)
+    while batch := list(itertools.islice(iterator, batch_size)):
+        yield batch
 
 
 def make_content_hash(content: bytes) -> str:
