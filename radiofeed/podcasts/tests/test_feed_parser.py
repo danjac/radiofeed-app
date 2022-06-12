@@ -657,7 +657,7 @@ class TestParsePodcastFeed:
         assert podcast.errors == 0
         assert podcast.http_status == http.HTTPStatus.GONE
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.HTTP_ERROR
+        assert podcast.result == Podcast.Result.REMOVED
 
     def test_parse_podcast_feed_http_server_error(self, mocker, podcast, categories):
         mocker.patch(

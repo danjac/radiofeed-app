@@ -74,6 +74,7 @@ class Podcast(models.Model):
         INVALID_RSS = "invalid_rss", "Invalid RSS"
         NETWORK_ERROR = "network_error", "Network Error"
         NOT_MODIFIED = "not_modified", "Not Modified"
+        REMOVED = "removed", "Removed"
         SUCCESS = "success", "Success"
 
     rss: str = models.URLField(unique=True, max_length=500)

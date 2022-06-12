@@ -55,6 +55,11 @@ class ParseResult:
 
     @classmethod
     def from_exception(cls, e: Exception) -> ParseResult:
+        try:
+            http_status = e.response.status_code  # type: ignore
+        except AttributeError:
+            http_status = None
+
         result = None
 
         match e:
@@ -66,7 +71,11 @@ class ParseResult:
                 result = Podcast.Result.DUPLICATE_FEED
 
             case requests.HTTPError():
-                result = Podcast.Result.HTTP_ERROR
+                result = (
+                    Podcast.Result.REMOVED
+                    if http_status == http.HTTPStatus.GONE
+                    else Podcast.Result.HTTP_ERROR
+                )
 
             case requests.RequestException():
                 result = Podcast.Result.NETWORK_ERROR
@@ -76,10 +85,6 @@ class ParseResult:
 
             case _:
                 raise
-        try:
-            http_status = e.response.status_code  # type: ignore
-        except AttributeError:
-            http_status = None
 
         return cls(result=result, http_status=http_status)  # type: ignore
 
@@ -88,27 +93,18 @@ class ParseResult:
 
     @property
     def active(self) -> bool:
-        match self.result:
-            case Podcast.Result.DUPLICATE_FEED:
-                return False
-            case Podcast.Result.HTTP_ERROR:
-                return not self.gone
-            case _:
-                return True
+        return self.result not in (
+            Podcast.Result.DUPLICATE_FEED,
+            Podcast.Result.REMOVED,
+        )
 
     @property
     def error(self) -> bool:
-        match self.result:
-            case Podcast.Result.INVALID_RSS | Podcast.Result.NETWORK_ERROR:
-                return True
-            case Podcast.Result.HTTP_ERROR:
-                return not self.gone
-            case _:
-                return False
-
-    @property
-    def gone(self) -> bool:
-        return self.http_status == http.HTTPStatus.GONE
+        return self.result in (
+            Podcast.Result.HTTP_ERROR,
+            Podcast.Result.INVALID_RSS,
+            Podcast.Result.NETWORK_ERROR,
+        )
 
 
 @job("feeds")
