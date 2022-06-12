@@ -281,11 +281,9 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
 
-    def handle_unsuccessful_update(self, e: Exception) -> bool:
-
-        result = None
-        active = True
-        error = False
+    def parse_exception(
+        self, e: Exception
+    ) -> tuple[tuple[str, str] | None, http.HTTPStatus | None, bool, bool]:
 
         try:
             http_status = e.response.status_code  # type: ignore
@@ -295,29 +293,27 @@ class FeedParser:
         match e:
 
             case NotModified():
-                result = Podcast.Result.NOT_MODIFIED
+                return Podcast.Result.NOT_MODIFIED, http_status, True, False
 
             case DuplicateFeed():
-                result = Podcast.Result.DUPLICATE_FEED
-                active = False
+                return Podcast.Result.DUPLICATE_FEED, http_status, False, False
 
             case requests.HTTPError():
-
-                result = Podcast.Result.HTTP_ERROR
-                active = error = http_status != http.HTTPStatus.GONE
+                active = http_status != http.HTTPStatus.GONE
+                return Podcast.Result.HTTP_ERROR, http_status, active, active
 
             case requests.RequestException():
-
-                result = Podcast.Result.NETWORK_ERROR
-                error = True
+                return Podcast.Result.NETWORK_ERROR, http_status, True, True
 
             case rss_parser.RssParserError():
-
-                result = Podcast.Result.INVALID_RSS
-                error = True
+                return Podcast.Result.INVALID_RSS, http_status, True, True
 
             case _:
                 raise
+
+    def handle_unsuccessful_update(self, e: Exception) -> bool:
+
+        result, http_status, active, error = self.parse_exception(e)
 
         now = timezone.now()
 
