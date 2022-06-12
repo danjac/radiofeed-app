@@ -58,7 +58,7 @@ class ParseResult:
             case Podcast.Result.DUPLICATE_FEED:
                 return False
             case Podcast.Result.HTTP_ERROR:
-                return self.http_status != http.HTTPStatus.GONE
+                return not self.gone
             case _:
                 return True
 
@@ -68,9 +68,13 @@ class ParseResult:
             case Podcast.Result.INVALID_RSS | Podcast.Result.NETWORK_ERROR:
                 return True
             case Podcast.Result.HTTP_ERROR:
-                return self.http_status != http.HTTPStatus.GONE
+                return not self.gone
             case _:
                 return False
+
+    @property
+    def gone(self) -> bool:
+        return self.http_status == http.HTTPStatus.GONE
 
 
 @job("feeds")
