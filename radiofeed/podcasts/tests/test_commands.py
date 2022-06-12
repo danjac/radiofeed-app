@@ -1,7 +1,6 @@
 import pathlib
 
 from datetime import timedelta
-from unittest import mock
 
 import pytest
 
@@ -168,25 +167,20 @@ class TestParsePodcastFeeds:
     def test_command(self, db, mocker, active, queued, pub_date, parsed, called):
         now = timezone.now()
 
-        PodcastFactory(
+        podcast = PodcastFactory(
             active=active,
             queued=now if queued else None,
             pub_date=now - pub_date if pub_date else None,
             parsed=now - parsed if parsed else None,
         )
 
-        mock_queue = mock.Mock()
-
-        mocker.patch(
-            "radiofeed.podcasts.management.commands.parse_podcast_feeds.get_queue",
-            return_value=mock_queue,
+        patched = mocker.patch(
+            "radiofeed.podcasts.management.commands.parse_podcast_feeds.feed_parser.enqueue",
         )
 
         call_command("parse_podcast_feeds")
 
         if called:
-            mock_queue.enqueue.assert_called()
+            patched.assert_called_with(podcast.id, job_timeout=300)
         else:
-            mock_queue.enqueue.assert_not_called()
-
-        assert Podcast.objects.filter(queued__isnull=False).exists() == called or queued
+            patched.assert_called_with(job_timeout=300)

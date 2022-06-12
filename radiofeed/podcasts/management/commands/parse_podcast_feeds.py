@@ -10,7 +10,6 @@ from django.core.management.base import BaseCommand
 from django.db import models
 from django.db.models.functions import ExtractDay
 from django.utils import timezone
-from django_rq import get_queue
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import feed_parser
@@ -37,19 +36,7 @@ class Command(BaseCommand):
             )
         )
 
-        # add to queue
-
-        Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
-
-        queue = get_queue("feeds")
-
-        for podcast_id in podcast_ids:
-            queue.enqueue(
-                feed_parser.parse_podcast_feed,
-                args=(podcast_id,),
-                on_failure=feed_parser.on_failure,
-                timeout=kwargs["timeout"],
-            )
+        feed_parser.enqueue(*podcast_ids, job_timeout=kwargs["timeout"])
 
         self.stdout.write(f"{len(podcast_ids)} podcasts queued for update")
 

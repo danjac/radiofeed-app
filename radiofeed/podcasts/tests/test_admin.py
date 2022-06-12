@@ -52,9 +52,7 @@ class TestCategoryAdmin:
 class TestPodcastAdmin:
     @pytest.fixture
     def mock_parse_feed(self, mocker):
-        return mocker.patch(
-            "radiofeed.podcasts.parsers.feed_parser.parse_podcast_feed.delay"
-        )
+        return mocker.patch("radiofeed.podcasts.parsers.feed_parser.enqueue")
 
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")

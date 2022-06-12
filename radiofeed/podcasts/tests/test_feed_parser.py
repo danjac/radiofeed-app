@@ -79,6 +79,23 @@ class TestParsePodcastFeed:
         assert podcast.parsed
         assert podcast.queued is None
 
+    def test_enqueue(self, mocker, podcast):
+
+        mock_queue = mock.Mock()
+        mocker.patch(
+            "radiofeed.podcasts.parsers.feed_parser.get_queue",
+            return_value=mock_queue,
+        )
+        feed_parser.enqueue(podcast.id)
+
+        mock_queue.enqueue.assert_called_with(
+            feed_parser.parse_podcast_feed,
+            args=(podcast.id,),
+            on_failure=feed_parser.on_failure,
+        )
+        podcast.refresh_from_db()
+        assert podcast.queued
+
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
         headers = feed_parser.FeedParser(podcast).get_feed_headers()

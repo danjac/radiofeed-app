@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
+from django_rq import get_queue, job
 from rq.job import Job
 
 from radiofeed.episodes.models import Episode
@@ -44,6 +44,20 @@ def parse_podcast_feed(podcast_id: int, **kwargs) -> bool:
         return FeedParser(Podcast.objects.get(pk=podcast_id)).parse(**kwargs)
     except Podcast.DoesNotExist:
         return False
+
+
+def enqueue(*podcast_ids: int, **job_kwargs) -> None:
+    queue = get_queue("feeds")
+
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+
+    for podcast_id in podcast_ids:
+        queue.enqueue(
+            parse_podcast_feed,
+            args=(podcast_id,),
+            on_failure=on_failure,
+            **job_kwargs,
+        )
 
 
 class FeedParser:
