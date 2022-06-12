@@ -242,7 +242,10 @@ LOGGING = {
 # https://github.com/rq/django-rq
 
 RQ_QUEUES = {
-    queue: {"USE_REDIS_CACHE": "default"}
+    queue: {
+        "USE_REDIS_CACHE": "default",
+        "DEFAULT_TIMEOUT": 360,
+    }
     for queue in (
         "default",
         "emails",

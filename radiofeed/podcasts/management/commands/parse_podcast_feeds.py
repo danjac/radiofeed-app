@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument("--limit", help="Limit (per CPU)", type=int, default=100)
-        parser.add_argument("--timeout", help="Timeout(seconds)", type=int, default=300)
+        parser.add_argument("--timeout", help="Timeout(seconds)", type=int, default=360)
 
     def handle(self, *args, **kwargs) -> None:
 

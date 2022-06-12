@@ -181,6 +181,21 @@ class TestParsePodcastFeeds:
         call_command("parse_podcast_feeds")
 
         if called:
-            patched.assert_called_with(podcast.id, job_timeout=300)
+            patched.assert_called_with(podcast.id, job_timeout=360)
         else:
-            patched.assert_called_with(job_timeout=300)
+            patched.assert_called_with(job_timeout=360)
+
+
+class TestRemovePodcastsFromQueue:
+    @pytest.mark.parametrize(
+        "queued,exists",
+        [
+            (None, False),
+            (timedelta(hours=3), False),
+            (timedelta(minutes=30), True),
+        ],
+    )
+    def test_command(self, db, queued, exists):
+        PodcastFactory(queued=timezone.now() - queued if queued else None)
+        call_command("remove_podcasts_from_queue")
+        assert Podcast.objects.filter(queued__isnull=False).exists() == exists

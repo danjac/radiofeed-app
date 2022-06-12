@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import recommender
@@ -8,5 +10,5 @@ class Command(BaseCommand):
     Runs recommendation algorithm.
     """
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs) -> None:
         recommender.recommend()

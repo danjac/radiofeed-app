@@ -22,6 +22,10 @@
           "schedule": "*/6 * * * *"
         },
         {
+          "command": "python manage.py remove_podcasts_from_queue",
+          "schedule": "0 * * * *"
+        },
+        {
           "command": "python manage.py create_recommendations",
           "schedule": "15 6 * * *"
         },
