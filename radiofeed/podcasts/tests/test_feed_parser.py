@@ -2,6 +2,7 @@ import datetime
 import http
 import pathlib
 
+from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -41,6 +42,153 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
+class TestEnqueue:
+    def test_enqueue(self, mocker, podcast):
+
+        mock_queue = mock.Mock()
+        mocker.patch(
+            "radiofeed.podcasts.parsers.feed_parser.get_queue",
+            return_value=mock_queue,
+        )
+        feed_parser.enqueue(podcast.id)
+
+        mock_queue.enqueue.assert_called_with(
+            feed_parser.parse_podcast_feed,
+            args=(podcast.id,),
+            on_failure=feed_parser.on_failure,
+        )
+        podcast.refresh_from_db()
+        assert podcast.queued
+
+
+class TestOnFailure:
+    def test_on_failure(self, db):
+        podcast = PodcastFactory(parsed=None, queued=timezone.now())
+
+        job = mock.Mock()
+        job.args = (podcast.id,)
+
+        feed_parser.on_failure(job)
+        podcast.refresh_from_db()
+        assert podcast.parsed
+        assert podcast.queued is None
+
+
+class TestSchedulePodcastFeedsForUpdate:
+    def test_schedule(self, db, mocker):
+        podcast = PodcastFactory(parsed=None, pub_date=None)
+
+        patched = mocker.patch("radiofeed.podcasts.parsers.feed_parser.enqueue")
+
+        assert feed_parser.schedule_podcast_feeds_for_update(100) == {podcast.id}
+        patched.assert_called_with(podcast.id)
+
+
+class TestGetPodcastFeedsForUpdate:
+    @pytest.mark.parametrize(
+        "active,queued,pub_date,parsed,exists",
+        [
+            (
+                True,
+                False,
+                None,
+                None,
+                True,
+            ),
+            (
+                False,
+                False,
+                None,
+                None,
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(hours=3),
+                timedelta(hours=1),
+                True,
+            ),
+            (
+                True,
+                True,
+                timedelta(hours=3),
+                timedelta(hours=1),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(hours=3),
+                timedelta(minutes=30),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=3),
+                timedelta(hours=3),
+                True,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=3),
+                timedelta(hours=1),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=8),
+                timedelta(hours=8),
+                True,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=8),
+                timedelta(hours=9),
+                True,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=14),
+                timedelta(hours=8),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=15),
+                timedelta(hours=8),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=15),
+                timedelta(hours=24),
+                True,
+            ),
+        ],
+    )
+    def test_get_podcast_feeds_for_update(
+        self, db, mocker, active, queued, pub_date, parsed, exists
+    ):
+        now = timezone.now()
+
+        PodcastFactory(
+            active=active,
+            queued=now if queued else None,
+            pub_date=now - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
+        )
+
+        assert feed_parser.get_podcast_feeds_for_update().exists() == exists
+
+
 class TestParsePodcastFeed:
 
     mock_file = "rss_mock.xml"
@@ -67,34 +215,6 @@ class TestParsePodcastFeed:
 
     def test_podcast_does_not_exist(self, db):
         assert not feed_parser.parse_podcast_feed(1234)
-
-    def test_on_failure(self, db):
-        podcast = PodcastFactory(parsed=None, queued=timezone.now())
-
-        job = mock.Mock()
-        job.args = (podcast.id,)
-
-        feed_parser.on_failure(job)
-        podcast.refresh_from_db()
-        assert podcast.parsed
-        assert podcast.queued is None
-
-    def test_enqueue(self, mocker, podcast):
-
-        mock_queue = mock.Mock()
-        mocker.patch(
-            "radiofeed.podcasts.parsers.feed_parser.get_queue",
-            return_value=mock_queue,
-        )
-        feed_parser.enqueue(podcast.id)
-
-        mock_queue.enqueue.assert_called_with(
-            feed_parser.parse_podcast_feed,
-            args=(podcast.id,),
-            on_failure=feed_parser.on_failure,
-        )
-        podcast.refresh_from_db()
-        assert podcast.queued
 
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")

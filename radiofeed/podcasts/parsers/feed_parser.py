@@ -7,9 +7,13 @@ import http
 import itertools
 import secrets
 
+from datetime import timedelta
+
 import requests
 
 from django.db import transaction
+from django.db.models import Count, F, Q, QuerySet
+from django.db.models.functions import ExtractDay
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
@@ -44,6 +48,19 @@ def parse_podcast_feed(podcast_id: int, **kwargs) -> bool:
         return FeedParser(Podcast.objects.get(pk=podcast_id)).parse(**kwargs)
     except Podcast.DoesNotExist:
         return False
+
+
+def schedule_podcast_feeds_for_update(limit: int, **job_kwargs) -> frozenset[int]:
+
+    podcast_ids = frozenset(
+        itertools.islice(
+            get_podcast_feeds_for_update().values_list("pk", flat=True).distinct(),
+            limit,
+        )
+    )
+
+    enqueue(*podcast_ids, **job_kwargs)
+    return podcast_ids
 
 
 def enqueue(*podcast_ids: int, **job_kwargs) -> None:
@@ -359,6 +376,45 @@ def on_failure(job: Job, *args, **kwargs) -> None:
         parsed=now,
         updated=now,
         queued=None,
+    )
+
+
+def get_podcast_feeds_for_update() -> QuerySet[Podcast]:
+    now = timezone.now()
+
+    return (
+        Podcast.objects.annotate(
+            subscribers=Count("subscription"),
+            days_since_last_pub_date=ExtractDay(now - F("pub_date")),
+        )
+        .filter(
+            Q(
+                parsed__isnull=True,
+            )
+            | Q(
+                pub_date__isnull=True,
+            )
+            | Q(
+                days_since_last_pub_date__lt=1,
+                parsed__lt=now - timedelta(hours=1),
+            )
+            | Q(
+                days_since_last_pub_date__gt=24,
+                parsed__lt=now - timedelta(hours=24),
+            )
+            | Q(
+                days_since_last_pub_date__range=(1, 24),
+                parsed__lt=now - timedelta(hours=1) * F("days_since_last_pub_date"),
+            ),
+            queued__isnull=True,
+            active=True,
+        )
+        .order_by(
+            F("subscribers").desc(),
+            F("promoted").desc(),
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+        )
     )
 
 

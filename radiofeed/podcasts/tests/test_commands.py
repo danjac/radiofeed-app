@@ -1,13 +1,7 @@
 import pathlib
 
-from datetime import timedelta
-
-import pytest
-
 from django.core.management import call_command
-from django.utils import timezone
 
-from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import UserFactory
@@ -75,127 +69,13 @@ class TestSendRecommendationsEmails:
 
 
 class TestParsePodcastFeeds:
-    @pytest.mark.parametrize(
-        "active,queued,pub_date,parsed,called",
-        [
-            (
-                True,
-                False,
-                None,
-                None,
-                True,
-            ),
-            (
-                False,
-                False,
-                None,
-                None,
-                False,
-            ),
-            (
-                True,
-                False,
-                timedelta(hours=3),
-                timedelta(hours=1),
-                True,
-            ),
-            (
-                True,
-                True,
-                timedelta(hours=3),
-                timedelta(hours=1),
-                False,
-            ),
-            (
-                True,
-                False,
-                timedelta(hours=3),
-                timedelta(minutes=30),
-                False,
-            ),
-            (
-                True,
-                False,
-                timedelta(days=3),
-                timedelta(hours=3),
-                True,
-            ),
-            (
-                True,
-                False,
-                timedelta(days=3),
-                timedelta(hours=1),
-                False,
-            ),
-            (
-                True,
-                False,
-                timedelta(days=8),
-                timedelta(hours=8),
-                True,
-            ),
-            (
-                True,
-                False,
-                timedelta(days=8),
-                timedelta(hours=9),
-                True,
-            ),
-            (
-                True,
-                False,
-                timedelta(days=14),
-                timedelta(hours=8),
-                False,
-            ),
-            (
-                True,
-                False,
-                timedelta(days=15),
-                timedelta(hours=8),
-                False,
-            ),
-            (
-                True,
-                False,
-                timedelta(days=15),
-                timedelta(hours=24),
-                True,
-            ),
-        ],
-    )
-    def test_command(self, db, mocker, active, queued, pub_date, parsed, called):
-        now = timezone.now()
-
-        podcast = PodcastFactory(
-            active=active,
-            queued=now if queued else None,
-            pub_date=now - pub_date if pub_date else None,
-            parsed=now - parsed if parsed else None,
-        )
+    def test_command(self, mocker):
 
         patched = mocker.patch(
-            "radiofeed.podcasts.management.commands.parse_podcast_feeds.feed_parser.enqueue",
+            "radiofeed.podcasts.management.commands.parse_podcast_feeds.feed_parser.schedule_podcast_feeds_for_update",
         )
+        mocker.patch("multiprocessing.cpu_count", return_value=4)
 
         call_command("parse_podcast_feeds")
 
-        if called:
-            patched.assert_called_with(podcast.id, job_timeout=360)
-        else:
-            patched.assert_called_with(job_timeout=360)
-
-
-class TestRemovePodcastsFromQueue:
-    @pytest.mark.parametrize(
-        "queued,exists",
-        [
-            (None, False),
-            (timedelta(hours=3), False),
-            (timedelta(minutes=30), True),
-        ],
-    )
-    def test_command(self, db, queued, exists):
-        PodcastFactory(queued=timezone.now() - queued if queued else None)
-        call_command("remove_podcasts_from_queue")
-        assert Podcast.objects.filter(queued__isnull=False).exists() == exists
+        patched.assert_called_with(400, job_timeout=360)
