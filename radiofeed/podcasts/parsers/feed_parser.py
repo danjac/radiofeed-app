@@ -42,6 +42,74 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
+@dataclasses.dataclass
+class ParseResult:
+
+    result: str | None = None
+    http_status: int | None = None
+
+    @classmethod
+    def from_podcast(cls, podcast: Podcast) -> ParseResult:
+        return cls(result=podcast.result, http_status=podcast.http_status)  # type: ignore
+
+    @classmethod
+    def from_exception(cls, e: Exception) -> ParseResult:
+        try:
+            http_status = e.response.status_code  # type: ignore
+        except AttributeError:
+            http_status = None
+
+        return cls(
+            http_status=http_status,
+            result=cls.result_from_exception(e, http_status),
+        )
+
+    def __bool__(self) -> bool:
+        return self.result == Podcast.Result.SUCCESS
+
+    @classmethod
+    def result_from_exception(cls, e: Exception, http_status: int) -> Podcast.Result:
+
+        match e:
+
+            case NotModified():
+                return Podcast.Result.NOT_MODIFIED  # type: ignore
+
+            case DuplicateFeed():
+                return Podcast.Result.DUPLICATE_FEED  # type: ignore
+
+            case requests.HTTPError():
+                return (
+                    Podcast.Result.REMOVED  # type: ignore
+                    if http_status == http.HTTPStatus.GONE
+                    else Podcast.Result.HTTP_ERROR  # type: ignore
+                )
+
+            case requests.RequestException():
+                return Podcast.Result.NETWORK_ERROR  # type: ignore
+
+            case rss_parser.RssParserError():
+                return Podcast.Result.INVALID_RSS  # type: ignore
+
+            case _:
+                raise
+
+    @property
+    def active(self) -> bool:
+        return self.result not in (
+            Podcast.Result.DUPLICATE_FEED,
+            Podcast.Result.REMOVED,
+        )
+
+    @property
+    def error(self) -> bool:
+        return self.result in (
+            Podcast.Result.HTTP_ERROR,
+            Podcast.Result.INVALID_RSS,
+            Podcast.Result.NETWORK_ERROR,
+        )
+
+
 @job("feeds")
 def parse_podcast_feed(podcast_id: int, **kwargs) -> ParseResult:
     try:
@@ -296,70 +364,6 @@ class FeedParser:
         )
 
         return result
-
-
-@dataclasses.dataclass
-class ParseResult:
-
-    result: str | None = None
-    http_status: int | None = None
-
-    @classmethod
-    def from_podcast(cls, podcast: Podcast) -> ParseResult:
-        return cls(result=podcast.result, http_status=podcast.http_status)  # type: ignore
-
-    @classmethod
-    def from_exception(cls, e: Exception) -> ParseResult:
-        try:
-            http_status = e.response.status_code  # type: ignore
-        except AttributeError:
-            http_status = None
-
-        result = None
-
-        match e:
-
-            case NotModified():
-                result = Podcast.Result.NOT_MODIFIED
-
-            case DuplicateFeed():
-                result = Podcast.Result.DUPLICATE_FEED
-
-            case requests.HTTPError():
-                result = (
-                    Podcast.Result.REMOVED
-                    if http_status == http.HTTPStatus.GONE
-                    else Podcast.Result.HTTP_ERROR
-                )
-
-            case requests.RequestException():
-                result = Podcast.Result.NETWORK_ERROR
-
-            case rss_parser.RssParserError():
-                result = Podcast.Result.INVALID_RSS
-
-            case _:
-                raise
-
-        return cls(result=result, http_status=http_status)  # type: ignore
-
-    def __bool__(self) -> bool:
-        return self.result == Podcast.Result.SUCCESS
-
-    @property
-    def active(self) -> bool:
-        return self.result not in (
-            Podcast.Result.DUPLICATE_FEED,
-            Podcast.Result.REMOVED,
-        )
-
-    @property
-    def error(self) -> bool:
-        return self.result in (
-            Podcast.Result.HTTP_ERROR,
-            Podcast.Result.INVALID_RSS,
-            Podcast.Result.NETWORK_ERROR,
-        )
 
 
 def get_podcast_feeds_for_update() -> QuerySet[Podcast]:
