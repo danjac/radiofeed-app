@@ -17,7 +17,7 @@ from django.db.models import Count, F, Q, QuerySet
 from django.db.models.functions import ExtractDay
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue, job
+from django_rq import get_queue
 
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
@@ -42,7 +42,6 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-@job("feeds")
 def update(podcast_id: int, **kwargs) -> Result:
     try:
         return FeedUpdater(Podcast.objects.get(pk=podcast_id)).update(**kwargs)

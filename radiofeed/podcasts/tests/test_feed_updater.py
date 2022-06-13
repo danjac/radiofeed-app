@@ -221,7 +221,7 @@ class TestFeedUpdater:
     def test_update_unhandled_exception(self, podcast, mocker):
 
         mocker.patch(
-            "radiofeed.podcasts.feed_updater.FeedUpdater.parse_content",
+            "radiofeed.podcasts.feed_updater.FeedUpdater.parse_rss",
             side_effect=ValueError,
         )
         with pytest.raises(ValueError):
