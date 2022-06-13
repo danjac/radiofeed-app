@@ -112,7 +112,7 @@ document.addEventListener("alpine:init", () => {
                     this.$refs.audio.currentTime = this.runtime;
                 }
             },
-            skipTo(seconds: Number) {
+            skipTo(seconds: number) {
                 if (this.isPlaying) {
                     this.$refs.audio.currentTime += seconds;
                 }
@@ -192,18 +192,18 @@ document.addEventListener("alpine:init", () => {
             resetRate() {
                 this.setRate(1.0);
             },
-            changeRate(increment: Number) {
+            changeRate(increment: number) {
                 const newValue = Math.max(
                     0.5,
                     Math.min(2.0, parseFloat(this.rate) + increment)
                 );
                 this.setRate(newValue);
             },
-            setRate(value: Number) {
+            setRate(value: number) {
                 this.rate = value;
                 this.saveState();
             },
-            loadState(): Object {
+            loadState(): object {
                 const state = sessionStorage.getItem("player");
                 return state
                     ? JSON.parse(state)
@@ -221,7 +221,7 @@ document.addEventListener("alpine:init", () => {
                     })
                 );
             },
-            formatCounter(value: Number): string {
+            formatCounter(value: number): string {
                 if (isNaN(value) || value < 0) return "00:00:00";
                 const duration = Math.floor(value);
                 const hours = Math.floor(duration / 3600);
@@ -231,7 +231,7 @@ document.addEventListener("alpine:init", () => {
                     .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
             },
-            getMediaMetadata() {
+            getMediaMetadata(): object | null {
                 const dataTag = document.getElementById("player-metadata");
                 if (!dataTag) {
                     return null;
