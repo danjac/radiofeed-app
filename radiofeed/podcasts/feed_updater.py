@@ -80,10 +80,10 @@ class FeedUpdater:
     @transaction.atomic
     def update(self) -> Result:
         try:
-            return self.handle_successful_update(*self.parse_content())
+            return self.handle_success(*self.parse_content())
 
         except Exception as e:
-            return self.handle_unsuccessful_update(e)
+            return self.handle_failure(e)
 
     def parse_content(
         self,
@@ -124,7 +124,7 @@ class FeedUpdater:
 
         return response, content_hash, *rss_parser.parse_rss(response.content)
 
-    def handle_successful_update(
+    def handle_success(
         self,
         response: requests.Response,
         content_hash: str,
@@ -189,6 +189,27 @@ class FeedUpdater:
         self.sync_episodes(items)
 
         return Result.from_podcast(self.podcast)
+
+    def handle_failure(self, e: Exception) -> Result:
+
+        result = Result.from_exception(e)
+
+        now = timezone.now()
+
+        errors = self.podcast.errors + 1 if result.error else 0
+        active = result.active and errors < 3
+
+        Podcast.objects.filter(pk=self.podcast.id).update(
+            active=active,
+            result=result.result,
+            http_status=result.http_status,
+            errors=errors,
+            parsed=now,
+            updated=now,
+            queued=None,
+        )
+
+        return result
 
     def sync_episodes(
         self, items: list[rss_parser.Item], batch_size: int = 100
@@ -275,27 +296,6 @@ class FeedUpdater:
         if self.podcast.modified:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
-
-    def handle_unsuccessful_update(self, e: Exception) -> Result:
-
-        result = Result.from_exception(e)
-
-        now = timezone.now()
-
-        errors = self.podcast.errors + 1 if result.error else 0
-        active = result.active and errors < 3
-
-        Podcast.objects.filter(pk=self.podcast.id).update(
-            active=active,
-            result=result.result,
-            http_status=result.http_status,
-            errors=errors,
-            parsed=now,
-            updated=now,
-            queued=None,
-        )
-
-        return result
 
 
 @dataclasses.dataclass
