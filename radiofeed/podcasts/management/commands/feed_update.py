@@ -23,7 +23,7 @@ class Command(BaseCommand):
         # parse podcasts up to CPU-based limit
         # example: if 3xCPU and --limit=100, then parse 300 each time
 
-        podcast_ids = feed_updater.schedule_feeds_for_update(
+        podcast_ids = feed_updater.enqueue_scheduled_feeds(
             round(multiprocessing.cpu_count() * kwargs["limit"]),
             job_timeout=kwargs["timeout"],
         )

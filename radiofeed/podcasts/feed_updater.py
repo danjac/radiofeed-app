@@ -60,11 +60,11 @@ def enqueue(*podcast_ids: int, **job_kwargs) -> None:
         queue.enqueue(update, args=(podcast_id,), **job_kwargs)
 
 
-def schedule_feeds_for_update(limit: int, **job_kwargs) -> frozenset[int]:
+def enqueue_scheduled_feeds(limit: int, **job_kwargs) -> frozenset[int]:
 
     podcast_ids = frozenset(
         itertools.islice(
-            get_feeds_for_update().values_list("pk", flat=True).distinct(),
+            get_scheduled_feeds().values_list("pk", flat=True).distinct(),
             limit,
         )
     )
@@ -362,7 +362,7 @@ class Result:
         )
 
 
-def get_feeds_for_update() -> QuerySet[Podcast]:
+def get_scheduled_feeds() -> QuerySet[Podcast]:
     now = timezone.now()
 
     return (

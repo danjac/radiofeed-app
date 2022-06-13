@@ -60,17 +60,18 @@ class TestEnqueue:
         assert podcast.queued
 
 
-class TestSchedulePodcastFeedsForUpdate:
-    def test_schedule(self, db, mocker):
+class TestEnqueueScheduledFeeds:
+    def test_enqueue(self, db, mocker):
         podcast = PodcastFactory(parsed=None, pub_date=None)
 
         patched = mocker.patch("radiofeed.podcasts.feed_updater.enqueue")
 
-        assert feed_updater.schedule_feeds_for_update(100) == {podcast.id}
+        assert feed_updater.enqueue_scheduled_feeds(100) == {podcast.id}
+
         patched.assert_called_with(podcast.id)
 
 
-class TestGetPodcastFeedsForUpdate:
+class TestGetScheduledFeeds:
     @pytest.mark.parametrize(
         "active,queued,pub_date,parsed,exists",
         [
@@ -160,7 +161,7 @@ class TestGetPodcastFeedsForUpdate:
             ),
         ],
     )
-    def test_get_podcast_feeds_for_update(
+    def test_get_scheduled_feeds(
         self, db, mocker, active, queued, pub_date, parsed, exists
     ):
         now = timezone.now()
@@ -172,7 +173,7 @@ class TestGetPodcastFeedsForUpdate:
             parsed=now - parsed if parsed else None,
         )
 
-        assert feed_updater.get_feeds_for_update().exists() == exists
+        assert feed_updater.get_scheduled_feeds().exists() == exists
 
 
 class TestFeedUpdater:
