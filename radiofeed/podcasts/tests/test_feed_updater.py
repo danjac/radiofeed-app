@@ -66,7 +66,7 @@ class TestSchedulePodcastFeedsForUpdate:
 
         patched = mocker.patch("radiofeed.podcasts.feed_updater.enqueue")
 
-        assert feed_updater.schedule_podcast_feeds_for_update(100) == {podcast.id}
+        assert feed_updater.schedule_feeds_for_update(100) == {podcast.id}
         patched.assert_called_with(podcast.id)
 
 
@@ -172,7 +172,7 @@ class TestGetPodcastFeedsForUpdate:
             parsed=now - parsed if parsed else None,
         )
 
-        assert feed_updater.get_podcast_feeds_for_update().exists() == exists
+        assert feed_updater.get_feeds_for_update().exists() == exists
 
 
 class TestFeedUpdater:

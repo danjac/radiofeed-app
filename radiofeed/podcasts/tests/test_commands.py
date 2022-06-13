@@ -72,7 +72,7 @@ class TestFeedUpdate:
     def test_command(self, mocker):
 
         patched = mocker.patch(
-            "radiofeed.podcasts.feed_updater.schedule_podcast_feeds_for_update",
+            "radiofeed.podcasts.feed_updater.schedule_feeds_for_update",
         )
         mocker.patch("multiprocessing.cpu_count", return_value=4)
 
