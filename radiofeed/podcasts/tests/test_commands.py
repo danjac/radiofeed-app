@@ -68,14 +68,14 @@ class TestSendRecommendationsEmails:
         patched.assert_called_with(user.id)
 
 
-class TestParsePodcastFeeds:
+class TestFeedUpdate:
     def test_command(self, mocker):
 
         patched = mocker.patch(
-            "radiofeed.podcasts.management.commands.parse_podcast_feeds.feed_parser.schedule_podcast_feeds_for_update",
+            "radiofeed.podcasts.feed_updater.schedule_podcast_feeds_for_update",
         )
         mocker.patch("multiprocessing.cpu_count", return_value=4)
 
-        call_command("parse_podcast_feeds")
+        call_command("feed_update")
 
         patched.assert_called_with(400, job_timeout=360)

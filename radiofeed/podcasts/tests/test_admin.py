@@ -51,8 +51,10 @@ class TestCategoryAdmin:
 
 class TestPodcastAdmin:
     @pytest.fixture
-    def mock_parse_feed(self, mocker):
-        return mocker.patch("radiofeed.podcasts.parsers.feed_parser.enqueue")
+    def mock_feed_updater(self, mocker):
+        return mocker.patch(
+            "radiofeed.podcasts.management.commands.feed_update.feed_updater"
+        )
 
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
@@ -75,13 +77,15 @@ class TestPodcastAdmin:
         ordering = podcast_admin.get_ordering(req)
         assert ordering == []
 
-    def test_parse_podcast_feeds(self, mock_parse_feed, podcast, podcast_admin, req):
-        podcast_admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_parse_feed.assert_called()
+    def test_update_podcast_feeds(self, mocker, podcast, podcast_admin, req):
+        mock_feed_updater = mocker.patch("radiofeed.podcasts.admin.feed_updater")
+        podcast_admin.update_podcast_feeds(req, Podcast.objects.all())
+        mock_feed_updater.enqueue.assert_called_with(podcast.id)
 
-    def test_parse_podcast_feed(self, mock_parse_feed, podcast, podcast_admin, req):
-        podcast_admin.parse_podcast_feed(req, podcast)
-        mock_parse_feed.assert_called_with(podcast.id)
+    def test_update_podcast_feed(self, mocker, podcast, podcast_admin, req):
+        mock_feed_updater = mocker.patch("radiofeed.podcasts.admin.feed_updater")
+        podcast_admin.update_podcast_feed(req, podcast)
+        mock_feed_updater.enqueue.assert_called_with(podcast.id)
 
 
 class TestResultFilter:

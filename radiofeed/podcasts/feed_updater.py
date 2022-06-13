@@ -43,11 +43,21 @@ class DuplicateFeed(requests.RequestException):
 
 
 @job("feeds")
-def parse_podcast_feed(podcast_id: int, **kwargs) -> ParseResult:
+def update(podcast_id: int, **kwargs) -> Result:
     try:
-        return FeedParser(Podcast.objects.get(pk=podcast_id)).parse(**kwargs)
+        return FeedUpdater(Podcast.objects.get(pk=podcast_id)).update(**kwargs)
     except Podcast.DoesNotExist:
-        return ParseResult()
+        return Result()
+
+
+def enqueue(*podcast_ids: int, **job_kwargs) -> None:
+
+    queue = get_queue("feeds")
+
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+
+    for podcast_id in podcast_ids:
+        queue.enqueue(update, args=(podcast_id,), **job_kwargs)
 
 
 def schedule_podcast_feeds_for_update(limit: int, **job_kwargs) -> frozenset[int]:
@@ -63,22 +73,12 @@ def schedule_podcast_feeds_for_update(limit: int, **job_kwargs) -> frozenset[int
     return podcast_ids
 
 
-def enqueue(*podcast_ids: int, **job_kwargs) -> None:
-
-    queue = get_queue("feeds")
-
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
-
-    for podcast_id in podcast_ids:
-        queue.enqueue(parse_podcast_feed, args=(podcast_id,), **job_kwargs)
-
-
-class FeedParser:
+class FeedUpdater:
     def __init__(self, podcast: Podcast):
         self.podcast = podcast
 
     @transaction.atomic
-    def parse(self) -> ParseResult:
+    def update(self) -> Result:
         try:
             return self.handle_successful_update(*self.parse_content())
 
@@ -130,7 +130,7 @@ class FeedParser:
         content_hash: str,
         feed: rss_parser.Feed,
         items: list[rss_parser.Item],
-    ) -> ParseResult:
+    ) -> Result:
 
         # feed status
 
@@ -188,7 +188,7 @@ class FeedParser:
         # episodes
         self.sync_episodes(items)
 
-        return ParseResult.from_podcast(self.podcast)
+        return Result.from_podcast(self.podcast)
 
     def sync_episodes(
         self, items: list[rss_parser.Item], batch_size: int = 100
@@ -276,9 +276,9 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
 
-    def handle_unsuccessful_update(self, e: Exception) -> ParseResult:
+    def handle_unsuccessful_update(self, e: Exception) -> Result:
 
-        result = ParseResult.from_exception(e)
+        result = Result.from_exception(e)
 
         now = timezone.now()
 
@@ -299,17 +299,17 @@ class FeedParser:
 
 
 @dataclasses.dataclass
-class ParseResult:
+class Result:
 
     result: str | None = None
     http_status: int | None = None
 
     @classmethod
-    def from_podcast(cls, podcast: Podcast) -> ParseResult:
+    def from_podcast(cls, podcast: Podcast) -> Result:
         return cls(result=podcast.result, http_status=podcast.http_status)  # type: ignore
 
     @classmethod
-    def from_exception(cls, e: Exception) -> ParseResult:
+    def from_exception(cls, e: Exception) -> Result:
         try:
             http_status = e.response.status_code  # type: ignore
         except AttributeError:

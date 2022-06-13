@@ -114,7 +114,7 @@ In production you should set up the following cron jobs to run these Django comm
 Parse podcast RSS feeds:
 
 ```bash
-*/6 * * * * python manage.py parse_podcast_feeds --limit=120
+*/6 * * * * python manage.py feed_update --limit=120
 ```
 
 Generate similar recommendations for each podcast:

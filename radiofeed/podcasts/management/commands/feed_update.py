@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.podcasts.parsers import feed_parser
+from radiofeed.podcasts import feed_updater
 
 
 class Command(BaseCommand):
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         # parse podcasts up to CPU-based limit
         # example: if 3xCPU and --limit=100, then parse 300 each time
 
-        podcast_ids = feed_parser.schedule_podcast_feeds_for_update(
+        podcast_ids = feed_updater.schedule_podcast_feeds_for_update(
             round(multiprocessing.cpu_count() * kwargs["limit"]),
             job_timeout=kwargs["timeout"],
         )

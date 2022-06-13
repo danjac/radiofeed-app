@@ -7,8 +7,7 @@ from django.db.models import Count, QuerySet
 from django.http import HttpRequest
 from django_object_actions import DjangoObjectActions
 
-from radiofeed.podcasts import models
-from radiofeed.podcasts.parsers import feed_parser
+from radiofeed.podcasts import feed_updater, models
 
 
 @admin.register(models.Category)
@@ -180,15 +179,15 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "content_hash",
     )
 
-    actions = ("parse_podcast_feeds",)
+    actions = ("update_podcast_feeds",)
 
-    change_actions = ("parse_podcast_feed",)
+    change_actions = ("update_podcast_feed",)
 
-    def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
+    def update_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
         count = queryset.count()
 
-        feed_parser.enqueue(*queryset.values_list("pk", flat=True))
+        feed_updater.enqueue(*queryset.values_list("pk", flat=True))
 
         self.message_user(
             request,
@@ -196,8 +195,8 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
-        feed_parser.enqueue(obj.id)
+    def update_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
+        feed_updater.enqueue(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
