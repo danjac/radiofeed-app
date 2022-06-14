@@ -28,15 +28,15 @@ document.addEventListener("alpine:init", () => {
                 total: "00:00:00",
             },
             init() {
-                this.$watch("runtime", (value) => {
+                this.$watch("runtime", (value: string) => {
                     this.counters.current = this.formatCounter(value);
                 });
 
-                this.$watch("duration", (value) => {
+                this.$watch("duration", (value: string) => {
                     this.counters.total = this.formatCounter(value);
                 });
 
-                this.$watch("rate", (value) => {
+                this.$watch("rate", (value: string) => {
                     this.$refs.audio.rate = value;
                 });
 
@@ -49,10 +49,12 @@ document.addEventListener("alpine:init", () => {
             destroy() {
                 this.clearTimer();
             },
-            loaded(event) {
+            loaded(event: Event) {
                 if (this.isLoaded) {
                     return;
                 }
+
+                const target = event.target as HTMLMediaElement;
 
                 const { rate, autoplay } = this.loadState();
 
@@ -60,21 +62,23 @@ document.addEventListener("alpine:init", () => {
                 this.rate = rate || 1.0;
                 this.autoplay = autoplay || this.autoplay;
 
-                event.target.currentTime = this.currentTime;
+                target.currentTime = this.currentTime;
 
                 if (this.autoplay) {
-                    event.target.play().catch(this.handleError.bind(this));
+                    target.play().catch(this.handleError.bind(this));
                 } else {
                     this.pause();
                 }
 
-                this.duration = event.target.duration;
+                this.duration = target.duration || 0;
                 this.isLoaded = true;
             },
-            timeUpdate(event) {
+            timeUpdate(event: Event) {
+                const target = event.target as HTMLMediaElement;
+
                 this.isPlaying = true;
                 this.isError = false;
-                this.runtime = Math.floor(event.target.currentTime);
+                this.runtime = Math.floor(target.currentTime);
             },
             play() {
                 this.isPaused = false;
@@ -97,8 +101,9 @@ document.addEventListener("alpine:init", () => {
             buffering() {
                 this.isPlaying = false;
             },
-            error(event) {
-                this.handleError(event.target.error);
+            error(event: Event) {
+                const target = event.target as HTMLMediaElement;
+                this.handleError(target.error);
             },
             togglePlayPause() {
                 if (this.isPaused) {
@@ -112,7 +117,7 @@ document.addEventListener("alpine:init", () => {
                     this.$refs.audio.currentTime = this.runtime;
                 }
             },
-            skipTo(seconds) {
+            skipTo(seconds: number) {
                 if (this.isPlaying) {
                     this.$refs.audio.currentTime += seconds;
                 }
@@ -123,12 +128,13 @@ document.addEventListener("alpine:init", () => {
             skipForward() {
                 this.skipTo(10);
             },
-            shortcuts(event) {
-                if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
+            shortcuts(event: KeyboardEvent) {
+                const target = event.target as HTMLElement;
+                if (target.tagName.match(/INPUT|TEXTAREA/)) {
                     return;
                 }
 
-                const handleEvent = (fn) => {
+                const handleEvent = (fn: Function) => {
                     event.preventDefault();
                     event.stopPropagation();
                     fn.bind(this)();
@@ -192,25 +198,25 @@ document.addEventListener("alpine:init", () => {
             resetRate() {
                 this.setRate(1.0);
             },
-            changeRate(increment) {
+            changeRate(increment: number) {
                 const newValue = Math.max(
                     0.5,
                     Math.min(2.0, parseFloat(this.rate) + increment)
                 );
                 this.setRate(newValue);
             },
-            setRate(value) {
+            setRate(value: number) {
                 this.rate = value;
                 this.saveState();
             },
             loadState() {
                 const state = sessionStorage.getItem("player");
                 return state
-                ? JSON.parse(state)
-                : {
-                    rate: 1.0,
-                    autoplay: false,
-                };
+                    ? JSON.parse(state)
+                    : {
+                          rate: 1.0,
+                          autoplay: false,
+                      };
             },
             saveState() {
                 sessionStorage.setItem(
@@ -221,7 +227,7 @@ document.addEventListener("alpine:init", () => {
                     })
                 );
             },
-            formatCounter(value) {
+            formatCounter(value: number) {
                 if (isNaN(value) || value < 0) return "00:00:00";
                 const duration = Math.floor(value);
                 const hours = Math.floor(duration / 3600);
@@ -231,20 +237,20 @@ document.addEventListener("alpine:init", () => {
                     .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
             },
-            getMediaMetadata() {
+            getMediaMetadata(): MediaMetadata | null {
                 const dataTag = document.getElementById("player-metadata");
                 if (!dataTag) {
                     return null;
                 }
 
-                const metadata = JSON.parse(dataTag.textContent);
+                const metadata = JSON.parse(dataTag.textContent || "");
 
                 if (metadata && Object.keys(metadata).length > 0) {
-                    return new window.MediaMetadata(metadata);
+                    return new MediaMetadata(metadata);
                 }
                 return null;
             },
-            handleError(error) {
+            handleError(error: Error) {
                 this.pause();
                 this.isError = true;
                 console.error(error);

@@ -1,8 +1,8 @@
-import Alpine from 'alpinejs';
-import 'htmx.org';
-import './player';
-
+"use strict";
+exports.__esModule = true;
+var alpinejs_1 = require("alpinejs");
+require("htmx.org");
+require("./player");
 // set global Alpine instance
-window.Alpine = Alpine;
-
-Alpine.start();
+window.Alpine = alpinejs_1["default"];
+alpinejs_1["default"].start();
