@@ -1,4 +1,4 @@
 web: python manage.py runserver
-worker: python manage.py rqworker default emails feeds
+worker: celery -A radiofeed.celery_app worker --loglevel=info
 watch-css: npm run watch:css
 watch-js: npm run watch:js

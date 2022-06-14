@@ -46,6 +46,7 @@ sentry-sdk = "^1.5.12"
 whitenoise = "^6.1.0"
 rq = "^1.10.1"
 django-rq = "^2.5.1"
+celery = "^5.2.7"
 
 [tool.poetry.dev-dependencies]
 Faker = "^13.11.0"

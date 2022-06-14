@@ -7,10 +7,9 @@ from datetime import timedelta
 from django.db.models import Count, F, Q, QuerySet
 from django.db.models.functions import ExtractDay
 from django.utils import timezone
-from django_rq import get_queue
 
-from radiofeed.podcasts import feed_updater
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.tasks import update_podcast_feed
 
 
 def schedule(limit: int, **job_kwargs) -> frozenset[int]:
@@ -26,14 +25,12 @@ def schedule(limit: int, **job_kwargs) -> frozenset[int]:
     return podcast_ids
 
 
-def enqueue(*podcast_ids: int, queue_name: str = "feeds", **job_kwargs) -> None:
-
-    queue = get_queue(queue_name)
+def enqueue(*podcast_ids: int, **job_kwargs) -> None:
 
     Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
     for podcast_id in podcast_ids:
-        queue.enqueue(feed_updater.update, args=(podcast_id,), **job_kwargs)
+        update_podcast_feed.delay(podcast_id)
 
 
 def remove_feeds_from_queue(since: timedelta) -> int:
