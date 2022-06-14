@@ -69,24 +69,24 @@ class FeedUpdater:
 
         self.save_podcast(
             active=not feed.complete,
+            result=Podcast.Result.SUCCESS,
+            errors=0,
+            rss=response.url,
+            etag=response.headers.get("ETag", ""),
+            http_status=response.status_code,
+            modified=date_parser.parse_date(response.headers.get("Last-Modified")),
             content_hash=content_hash,
+            pub_date=max([item.pub_date for item in items if item.pub_date]),
+            title=feed.title,
             cover_url=feed.cover_url,
             description=feed.description,
-            errors=0,
-            etag=response.headers.get("ETag", ""),
             explicit=feed.explicit,
-            extracted_text=self.extract_text(categories, items),
             funding_text=feed.funding_text,
             funding_url=feed.funding_url,
-            http_status=response.status_code,
             language=feed.language,
             link=feed.link,
-            modified=date_parser.parse_date(response.headers.get("Last-Modified")),
             owner=feed.owner,
-            pub_date=max([item.pub_date for item in items if item.pub_date]),
-            result=Podcast.Result.SUCCESS,
-            rss=response.url,
-            title=feed.title,
+            extracted_text=self.extract_text(categories, items),
             keywords=" ".join(
                 category
                 for category in feed.categories
