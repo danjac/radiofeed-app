@@ -18,11 +18,11 @@
     },
     "cron": [
         {
-          "command": "python manage.py feed_update --limit=120",
+          "command": "python manage.py schedule_feed_updates --limit=120",
           "schedule": "*/6 * * * *"
         },
         {
-          "command": "python manage.py feed_update --clear=3600",
+          "command": "python manage.py remove_podcasts_from_queue",
           "schedule": "0 * * * *"
         },
         {

@@ -72,22 +72,24 @@ class TestSendRecommendationsEmails:
         patched.assert_called_with(user.id)
 
 
-class TestFeedUpdate:
+class TestScheduleFeedUpdates:
     def test_command(self, mocker):
 
         patched = mocker.patch(
-            "radiofeed.podcasts.feed_updater.enqueue_scheduled_feeds",
+            "radiofeed.podcasts.feed_scheduler.enqueue_scheduled_feeds",
         )
         mocker.patch("multiprocessing.cpu_count", return_value=4)
 
-        call_command("feed_update")
+        call_command("schedule_feed_updates")
 
         patched.assert_called_with(400, job_timeout=360)
 
-    def test_clear(self, db):
+
+class TestRemovePodcastsFromQueue:
+    def test_command(self, db):
         first = PodcastFactory(queued=timezone.now() - timedelta(hours=2))
         second = PodcastFactory(queued=timezone.now() - timedelta(minutes=30))
-        call_command("feed_update", clear=3600)
+        call_command("remove_podcasts_from_queue")
 
         first.refresh_from_db()
         assert first.queued is None
