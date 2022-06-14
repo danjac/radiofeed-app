@@ -38,10 +38,6 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def update(podcast: Podcast) -> Result:
-    return FeedUpdater(podcast).update()
-
-
 class FeedUpdater:
     def __init__(self, podcast: Podcast):
         self.podcast = podcast
