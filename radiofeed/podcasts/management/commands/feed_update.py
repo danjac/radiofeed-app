@@ -31,15 +31,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs) -> None:
 
         if clear := kwargs["clear"]:
-
-            podcasts = Podcast.objects.filter(
-                queued__lt=timezone.now() - timedelta(seconds=clear),
-            )
-
-            count = podcasts.count()
-            podcasts.update(queued=None)
-            self.stdout.write(f"{count} podcasts removed from queue")
-            return
+            return self.remove_from_queue(clear)
 
         # parse podcasts up to CPU-based limit
         # example: if 3xCPU and --limit=100, then parse 300 each time
@@ -50,3 +42,12 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(f"{len(podcast_ids)} podcasts queued for update")
+
+    def remove_from_queue(self, clear: int) -> None:
+        podcasts = Podcast.objects.filter(
+            queued__lt=timezone.now() - timedelta(seconds=clear),
+        )
+
+        count = podcasts.count()
+        podcasts.update(queued=None)
+        self.stdout.write(f"{count} podcasts removed from queue")
