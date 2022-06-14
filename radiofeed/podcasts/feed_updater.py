@@ -70,12 +70,12 @@ class FeedUpdater:
         self.save_podcast(
             active=not feed.complete,
             result=Podcast.Result.SUCCESS,
+            content_hash=content_hash,
             errors=0,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=date_parser.parse_date(response.headers.get("Last-Modified")),
-            content_hash=content_hash,
             pub_date=max([item.pub_date for item in items if item.pub_date]),
             title=feed.title,
             cover_url=feed.cover_url,
