@@ -247,7 +247,7 @@ document.addEventListener("alpine:init", () => {
             handleError(error) {
                 this.pause();
                 this.isError = true;
-                console.log(error);
+                console.error(error);
             },
         })
     );
