@@ -9,7 +9,7 @@ from radiofeed.users.models import User
 
 @shared_task
 def feed_update(podcast_id: int) -> None:
-    feed_updater.FeedUpdater(Podcast.objects.get(pk=podcast_id)).update()
+    feed_updater.update(Podcast.objects.get(pk=podcast_id))
 
 
 @shared_task

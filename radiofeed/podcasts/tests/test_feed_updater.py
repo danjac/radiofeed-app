@@ -85,7 +85,7 @@ class TestFeedUpdater:
             side_effect=ValueError,
         )
         with pytest.raises(ValueError):
-            feed_updater.FeedUpdater(podcast).update()
+            feed_updater.update(podcast)
 
     def test_update_ok(self, db, mocker, categories):
 
@@ -113,7 +113,7 @@ class TestFeedUpdater:
                 },
             ),
         )
-        assert feed_updater.FeedUpdater(podcast).update()
+        assert feed_updater.update(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -171,7 +171,7 @@ class TestFeedUpdater:
                 },
             ),
         )
-        assert feed_updater.FeedUpdater(podcast).update()
+        assert feed_updater.update(podcast)
 
         assert Episode.objects.count() == 4940
 
@@ -206,7 +206,7 @@ class TestFeedUpdater:
                 },
             ),
         )
-        assert feed_updater.FeedUpdater(podcast).update()
+        assert feed_updater.update(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -267,7 +267,7 @@ class TestFeedUpdater:
                 },
             ),
         )
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -293,7 +293,7 @@ class TestFeedUpdater:
                 },
             ),
         )
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
 
@@ -321,7 +321,7 @@ class TestFeedUpdater:
                 },
             ),
         )
-        assert feed_updater.FeedUpdater(podcast).update()
+        assert feed_updater.update(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -375,7 +375,7 @@ class TestFeedUpdater:
                 content=self.get_rss_content(),
             ),
         )
-        assert feed_updater.FeedUpdater(podcast).update()
+        assert feed_updater.update(podcast)
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
@@ -402,7 +402,7 @@ class TestFeedUpdater:
                 content=self.get_rss_content(),
             ),
         )
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
 
@@ -421,7 +421,7 @@ class TestFeedUpdater:
             ),
         )
 
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -439,7 +439,7 @@ class TestFeedUpdater:
             ),
         )
 
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -452,7 +452,7 @@ class TestFeedUpdater:
             self.mock_http_get,
             return_value=MockResponse(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED),
         )
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -463,7 +463,7 @@ class TestFeedUpdater:
     def test_update_error(self, mocker, podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -478,7 +478,7 @@ class TestFeedUpdater:
 
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
 
@@ -494,7 +494,7 @@ class TestFeedUpdater:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
 
@@ -509,7 +509,7 @@ class TestFeedUpdater:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
 
@@ -527,7 +527,7 @@ class TestFeedUpdater:
         podcast.pub_date = None
         podcast.save()
 
-        assert not feed_updater.FeedUpdater(podcast).update()
+        assert not feed_updater.update(podcast)
 
         podcast.refresh_from_db()
 

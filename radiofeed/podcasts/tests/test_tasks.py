@@ -3,7 +3,7 @@ from radiofeed.podcasts.tasks import feed_update, send_recommendations_email
 
 class TestTasks:
     def test_feed_update(self, mocker, podcast):
-        patched = mocker.patch("radiofeed.podcasts.feed_updater.FeedUpdater")
+        patched = mocker.patch("radiofeed.podcasts.feed_updater.update")
         feed_update(podcast.id)
         patched.assert_called_with(podcast)
 
