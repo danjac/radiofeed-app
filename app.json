@@ -13,7 +13,7 @@
             "quantity": 1
         },
         "worker": {
-            "quantity": 3
+            "quantity": 1
         }
     },
     "cron": [
