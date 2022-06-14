@@ -87,7 +87,7 @@ class TestFeedUpdate:
     def test_clear(self, db):
         first = PodcastFactory(queued=timezone.now() - timedelta(hours=2))
         second = PodcastFactory(queued=timezone.now() - timedelta(minutes=30))
-        call_command("feed_update", clear=True, timeout=3600)
+        call_command("feed_update", clear=3600)
 
         first.refresh_from_db()
         assert first.queued is None
