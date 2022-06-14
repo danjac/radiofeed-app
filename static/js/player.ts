@@ -123,7 +123,7 @@ document.addEventListener("alpine:init", () => {
             skipForward() {
                 this.skipTo(10);
             },
-            shortcuts(event: Event) {
+            shortcuts(event: KeyboardEvent) {
                 if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
                     return;
                 }
@@ -231,7 +231,7 @@ document.addEventListener("alpine:init", () => {
                     .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
             },
-            getMediaMetadata(): object | null {
+            getMediaMetadata(): window.MediaMetadata | null {
                 const dataTag = document.getElementById("player-metadata");
                 if (!dataTag) {
                     return null;
