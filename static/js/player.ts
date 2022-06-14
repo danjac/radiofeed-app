@@ -1,5 +1,6 @@
 import Alpine from "alpinejs";
 
+//test commit
 document.addEventListener("alpine:init", () => {
     Alpine.data(
         "player",
@@ -8,7 +9,7 @@ document.addEventListener("alpine:init", () => {
             mediaSrc = null,
             currentTime = 0,
             csrfToken = null,
-            timeUpdateUrl = null
+            timeUpdateUrl = null,
         ) => ({
             autoplay,
             mediaSrc,
@@ -201,7 +202,7 @@ document.addEventListener("alpine:init", () => {
             changeRate(increment: number) {
                 const newValue = Math.max(
                     0.5,
-                    Math.min(2.0, parseFloat(this.rate) + increment)
+                    Math.min(2.0, parseFloat(this.rate) + increment),
                 );
                 this.setRate(newValue);
             },
@@ -224,7 +225,7 @@ document.addEventListener("alpine:init", () => {
                     JSON.stringify({
                         rate: this.rate,
                         autoplay: this.isPlaying,
-                    })
+                    }),
                 );
             },
             formatCounter(value: number) {
@@ -234,7 +235,7 @@ document.addEventListener("alpine:init", () => {
                 const minutes = Math.floor((duration % 3600) / 60);
                 const seconds = Math.floor(duration % 60);
                 return [hours, minutes, seconds]
-                    .map((t) => t.toString().padStart(2, "0"))
+                    .map(t => t.toString().padStart(2, "0"))
                     .join(":");
             },
             getMediaMetadata(): MediaMetadata | null {
@@ -255,6 +256,6 @@ document.addEventListener("alpine:init", () => {
                 this.isError = true;
                 console.error(error);
             },
-        })
+        }),
     );
 });
