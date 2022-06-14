@@ -43,7 +43,7 @@ class FeedUpdater:
         self.podcast = podcast
 
     @transaction.atomic
-    def update(self) -> Result:
+    def update(self) -> bool:
         try:
             return self.handle_success(*self.parse_rss())
 
@@ -56,7 +56,7 @@ class FeedUpdater:
         content_hash: str,
         feed: rss_parser.Feed,
         items: list[rss_parser.Item],
-    ) -> Result:
+    ) -> bool:
 
         # feed status
 
@@ -114,28 +114,49 @@ class FeedUpdater:
         # episodes
         self.sync_episodes(items)
 
-        return Result.from_podcast(self.podcast)
+        return True
 
-    def handle_failure(self, e: Exception) -> Result:
+    def handle_failure(self, e: Exception) -> bool:
+        try:
+            http_status = e.response.status_code  # type: ignore
+        except AttributeError:
+            http_status = None
 
-        result = Result.from_exception(e)
+        result = self.result_from_exception(e, http_status)
+
+        errors = (
+            self.podcast.errors + 1
+            if result
+            in (
+                Podcast.Result.HTTP_ERROR,
+                Podcast.Result.INVALID_RSS,
+                Podcast.Result.NETWORK_ERROR,
+            )
+            else 0
+        )
+
+        active = (
+            result
+            not in (
+                Podcast.Result.DUPLICATE_FEED,
+                Podcast.Result.REMOVED,
+            )
+            and errors < 3
+        )
 
         now = timezone.now()
 
-        errors = self.podcast.errors + 1 if result.error else 0
-        active = result.active and errors < 3
-
         Podcast.objects.filter(pk=self.podcast.id).update(
             active=active,
-            result=result.result,
-            http_status=result.http_status,
+            result=result,
+            http_status=http_status,
             errors=errors,
             parsed=now,
             updated=now,
             queued=None,
         )
 
-        return result
+        return False
 
     def parse_rss(
         self,
@@ -265,69 +286,33 @@ class FeedUpdater:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
 
-
-@dataclasses.dataclass
-class Result:
-
-    result: str | None = None
-    http_status: int | None = None
-
-    @classmethod
-    def from_podcast(cls, podcast: Podcast) -> Result:
-        return cls(result=podcast.result, http_status=podcast.http_status)  # type: ignore
-
-    @classmethod
-    def from_exception(cls, e: Exception) -> Result:
-        try:
-            http_status = e.response.status_code  # type: ignore
-        except AttributeError:
-            http_status = None
-
-        result = None
+    def result_from_exception(
+        cls, e: Exception, http_status: int | None
+    ) -> tuple[str, str]:
 
         match e:
 
             case NotModified():
-                result = Podcast.Result.NOT_MODIFIED
+                return Podcast.Result.NOT_MODIFIED
 
             case DuplicateFeed():
-                result = Podcast.Result.DUPLICATE_FEED
+                return Podcast.Result.DUPLICATE_FEED
 
             case requests.HTTPError():
-                result = (
+                return (
                     Podcast.Result.REMOVED
                     if http_status == http.HTTPStatus.GONE
                     else Podcast.Result.HTTP_ERROR
                 )
 
             case requests.RequestException():
-                result = Podcast.Result.NETWORK_ERROR
+                return Podcast.Result.NETWORK_ERROR
 
             case rss_parser.RssParserError():
-                result = Podcast.Result.INVALID_RSS
+                return Podcast.Result.INVALID_RSS
 
             case _:
                 raise
-
-        return cls(result=result, http_status=http_status)  # type: ignore
-
-    def __bool__(self) -> bool:
-        return self.result == Podcast.Result.SUCCESS
-
-    @property
-    def active(self) -> bool:
-        return self.result not in (
-            Podcast.Result.DUPLICATE_FEED,
-            Podcast.Result.REMOVED,
-        )
-
-    @property
-    def error(self) -> bool:
-        return self.result in (
-            Podcast.Result.HTTP_ERROR,
-            Podcast.Result.INVALID_RSS,
-            Podcast.Result.NETWORK_ERROR,
-        )
 
 
 @functools.lru_cache
