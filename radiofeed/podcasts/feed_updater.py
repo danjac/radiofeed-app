@@ -195,21 +195,27 @@ class FeedUpdater:
 
         guids = dict(qs.values_list("guid", "pk"))
 
-        episodes = [
-            Episode(
+        for_insert = []
+
+        # use set for update to prevent duplicates
+        for_update = set()
+
+        for item in items:
+
+            episode = Episode(
                 pk=guids.get(item.guid),
                 podcast=self.podcast,
                 **dataclasses.asdict(item),
             )
-            for item in items
-        ]
+
+            if episode.pk:
+                for_update.add(episode)
+            else:
+                for_insert.append(episode)
 
         # update existing content
 
-        for batch in batcher(
-            filter(lambda episode: episode.guid in guids, episodes),
-            batch_size,
-        ):
+        for batch in batcher(for_update, batch_size):
             Episode.fast_update_objects.fast_update(
                 batch,
                 fields=[
@@ -231,10 +237,7 @@ class FeedUpdater:
 
         # add new episodes
 
-        for batch in batcher(
-            filter(lambda episode: episode.guid not in guids, episodes),
-            batch_size,
-        ):
+        for batch in batcher(for_insert, batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def extract_text(
