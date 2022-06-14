@@ -1,7 +1,11 @@
 import pathlib
 
-from django.core.management import call_command
+from datetime import timedelta
 
+from django.core.management import call_command
+from django.utils import timezone
+
+from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import UserFactory
@@ -79,3 +83,14 @@ class TestFeedUpdate:
         call_command("feed_update")
 
         patched.assert_called_with(400, job_timeout=360)
+
+    def test_clear(self, db):
+        first = PodcastFactory(queued=timezone.now() - timedelta(hours=2))
+        second = PodcastFactory(queued=timezone.now() - timedelta(minutes=30))
+        call_command("feed_update", clear=True, timeout=3600)
+
+        first.refresh_from_db()
+        assert first.queued is None
+
+        second.refresh_from_db()
+        assert second.queued is not None

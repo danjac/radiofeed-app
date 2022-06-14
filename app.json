@@ -22,6 +22,10 @@
           "schedule": "*/6 * * * *"
         },
         {
+          "command": "python manage.py feed_update --clear=3600",
+          "schedule": "0 * * * *"
+        },
+        {
           "command": "python manage.py create_recommendations",
           "schedule": "15 6 * * *"
         },
