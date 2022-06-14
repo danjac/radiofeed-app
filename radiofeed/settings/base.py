@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_htmx",
     "django_object_actions",
+    "fast_update",
     "health_check",
     "health_check.cache",
     "health_check.contrib.celery",
