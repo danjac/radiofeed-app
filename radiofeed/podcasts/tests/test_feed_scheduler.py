@@ -1,11 +1,10 @@
 from datetime import timedelta
-from unittest import mock
 
 import pytest
 
 from django.utils import timezone
 
-from radiofeed.podcasts import feed_scheduler, feed_updater
+from radiofeed.podcasts import feed_scheduler
 from radiofeed.podcasts.factories import PodcastFactory
 
 
@@ -37,17 +36,12 @@ class TestSchedule:
 class TestEnqueue:
     def test_enqueue(self, mocker, podcast):
 
-        mock_queue = mock.Mock()
-        mocker.patch(
-            "radiofeed.podcasts.feed_scheduler.get_queue",
-            return_value=mock_queue,
+        patched = mocker.patch(
+            "radiofeed.podcasts.feed_scheduler.feed_update.delay",
         )
         feed_scheduler.enqueue(podcast.id)
 
-        mock_queue.enqueue.assert_called_with(
-            feed_updater.update,
-            args=(podcast.id,),
-        )
+        patched.assert_called_with(podcast.id)
         podcast.refresh_from_db()
         assert podcast.queued
 

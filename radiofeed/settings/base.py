@@ -84,9 +84,9 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_htmx",
     "django_object_actions",
-    "django_rq",
     "health_check",
     "health_check.cache",
+    "health_check.contrib.celery",
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
@@ -214,46 +214,16 @@ TEMPLATES: list[dict] = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "rq_console": {
-            "format": "%(asctime)s %(message)s",
-            "datefmt": "%H:%M:%S",
-        },
-    },
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
         "null": {"level": "DEBUG", "class": "logging.NullHandler"},
-        "rq_console": {
-            "level": "DEBUG",
-            "class": "rq.utils.ColorizingStreamHandler",
-            "formatter": "rq_console",
-            "exclude": ["%(asctime)s"],
-        },
     },
     "loggers": {
         "root": {"handlers": ["console"], "level": "INFO"},
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
         "django.request": {"handlers": ["console"], "level": "ERROR"},
-        "rq.worker": {"handlers": ["rq_console"], "level": "DEBUG"},
     },
 }
-
-# RQ
-# https://github.com/rq/django-rq
-
-RQ_QUEUES = {
-    queue: {
-        "USE_REDIS_CACHE": "default",
-        "DEFAULT_TIMEOUT": 360,
-    }
-    for queue in (
-        "default",
-        "emails",
-        "feeds",
-    )
-}
-
-RQ_SHOW_ADMIN_LINK = True
 
 # Celery
 
@@ -271,11 +241,13 @@ CELERY_TASK_SERIALIZER = "json"
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
 CELERY_RESULT_SERIALIZER = "json"
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
-# TODO: set to whatever value is adequate in your circumstances
 CELERY_TASK_TIME_LIMIT = 5 * 60
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
-# TODO: set to whatever value is adequate in your circumstances
 CELERY_TASK_SOFT_TIME_LIMIT = 60
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-worker_max_tasks_per_child
+CELERYD_MAX_TASKS_PER_CHILD = 300
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-worker_max_memory_per_child
+CELERYD_MAX_MEMORY_PER_CHILD = 3000
 
 # Project specific
 

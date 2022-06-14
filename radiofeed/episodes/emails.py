@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from django.db.models import OuterRef, Subquery
 from django.utils import timezone
-from django_rq import job
 
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast, Subscription
@@ -12,7 +11,6 @@ from radiofeed.users.emails import send_user_notification_email
 from radiofeed.users.models import User
 
 
-@job("emails")
 def send_new_episodes_email(
     user_id: int,
     interval: timedelta,

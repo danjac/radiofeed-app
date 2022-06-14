@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.episodes.emails import send_new_episodes_email
+from radiofeed.episodes.tasks import send_new_episodes_email
 from radiofeed.users.models import User
 
 

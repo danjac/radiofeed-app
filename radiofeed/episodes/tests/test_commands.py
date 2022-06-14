@@ -10,9 +10,7 @@ class TestCommands:
         user = UserFactory(send_email_notifications=True)
         UserFactory(send_email_notifications=False)
 
-        patched = mocker.patch(
-            "radiofeed.episodes.emails.send_new_episodes_email.delay"
-        )
+        patched = mocker.patch("radiofeed.episodes.tasks.send_new_episodes_email.delay")
 
         call_command("send_new_episodes_emails")
 

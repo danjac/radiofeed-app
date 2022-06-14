@@ -532,23 +532,6 @@ Django = ">=3.2"
 rich = ">=10.0.0"
 
 [[package]]
-name = "django-rq"
-version = "2.5.1"
-description = "An app that provides django integration for RQ (Redis Queue)"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-django = ">=2.0"
-redis = ">=3"
-rq = ">=1.2"
-
-[package.extras]
-sentry = ["raven (>=6.1.0)"]
-testing = ["mock (>=2.0.0)"]
-
-[[package]]
 name = "django-split-settings"
 version = "1.1.0"
 description = "Organize Django settings into multiple files and directories. Easily override and modify settings. Use wildcards and optional settings files."
@@ -1291,18 +1274,6 @@ pygments = ">=2.6.0,<3.0.0"
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
-name = "rq"
-version = "1.10.1"
-description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
-category = "main"
-optional = false
-python-versions = ">=3.5"
-
-[package.dependencies]
-click = ">=5.0.0"
-redis = ">=3.5.0"
-
-[[package]]
 name = "scikit-learn"
 version = "1.1.1"
 description = "A set of python modules for machine learning and data mining"
@@ -1553,7 +1524,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "a438dc5f8ea7a7d37104ebc26c6310338ba9cc5830ff2fe87edb5dadd133d2d0"
+content-hash = "1a3c90f7f6d05e4732728ee47d308c5660fc671cd7897a3db1d64f229006005a"
 
 [metadata.files]
 amqp = [
@@ -1893,10 +1864,6 @@ django-redis = [
 django-rich = [
     {file = "django-rich-1.4.0.tar.gz", hash = "sha256:10a5d9e9b62228b683d51584e4c2a5aa9f838176364a90c8cd79688aadca9f4c"},
     {file = "django_rich-1.4.0-py3-none-any.whl", hash = "sha256:b418926692bf92222006ba846cc2a4aace484401398cd79fde013b11e9a23fa9"},
-]
-django-rq = [
-    {file = "django-rq-2.5.1.tar.gz", hash = "sha256:f08486602664d73a6e335872c868d79663e380247e6307496d01b8fa770fefd8"},
-    {file = "django_rq-2.5.1-py2.py3-none-any.whl", hash = "sha256:7be1e10e7091555f9f36edf100b0dbb205ea2b98683d74443d2bdf3c6649a03f"},
 ]
 django-split-settings = [
     {file = "django-split-settings-1.1.0.tar.gz", hash = "sha256:6b3aed89667a95525152026eab93a9f038ff22df6883006318b8b4a3d0ca6888"},
@@ -2441,10 +2408,6 @@ requests-oauthlib = [
 rich = [
     {file = "rich-12.4.4-py3-none-any.whl", hash = "sha256:d2bbd99c320a2532ac71ff6a3164867884357da3e3301f0240090c5d2fdac7ec"},
     {file = "rich-12.4.4.tar.gz", hash = "sha256:4c586de507202505346f3e32d1363eb9ed6932f0c2f63184dea88983ff4971e2"},
-]
-rq = [
-    {file = "rq-1.10.1-py2.py3-none-any.whl", hash = "sha256:92f4cf38b2364c1697b541e77c0fe62b7e5242fa864324f262be126ee2a07e3a"},
-    {file = "rq-1.10.1.tar.gz", hash = "sha256:62d06b44c3acfa5d1933c5a4ec3fbc2484144a8af60e318d0b8447c5236271e2"},
 ]
 scikit-learn = [
     {file = "scikit-learn-1.1.1.tar.gz", hash = "sha256:3e77b71e8e644f86c8b5be7f1c285ef597de4c384961389ee3e9ca36c445b256"},

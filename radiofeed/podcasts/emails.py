@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from django_rq import job
-
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.emails import send_user_notification_email
 from radiofeed.users.models import User
 
 
-@job("emails")
 def send_recommendations_email(
     user_id: int,
     min_podcasts: int = 2,

@@ -65,7 +65,7 @@ class TestSendRecommendationsEmails:
         UserFactory(send_email_notifications=False)
 
         patched = mocker.patch(
-            "radiofeed.podcasts.emails.send_recommendations_email.delay"
+            "radiofeed.podcasts.tasks.send_recommendations_email.delay"
         )
 
         call_command("send_recommendation_emails")

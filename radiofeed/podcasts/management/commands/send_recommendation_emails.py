@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.podcasts.emails import send_recommendations_email
+from radiofeed.podcasts.tasks import send_recommendations_email
 from radiofeed.users.models import User
 
 
