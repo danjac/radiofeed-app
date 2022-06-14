@@ -12,16 +12,11 @@ from radiofeed.users.models import User
 
 
 def send_new_episodes_email(
-    user_id: int,
+    user: User,
     interval: timedelta,
     min_episodes: int = 3,
     max_episodes: int = 6,
 ) -> bool:
-
-    try:
-        user = User.objects.email_notification_recipients().get(pk=user_id)
-    except User.DoesNotExist:
-        return False
 
     if not (
         podcast_ids := set(

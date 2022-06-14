@@ -7,15 +7,10 @@ from radiofeed.users.models import User
 
 
 def send_recommendations_email(
-    user_id: int,
+    user: User,
     min_podcasts: int = 2,
     max_podcasts: int = 3,
 ) -> bool:
-
-    try:
-        user = User.objects.email_notification_recipients().get(pk=user_id)
-    except User.DoesNotExist:
-        return False
 
     podcast_ids: set[int] = (
         set(

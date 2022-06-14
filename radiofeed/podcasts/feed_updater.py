@@ -38,13 +38,6 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def update(podcast_id: int, **kwargs) -> Result:
-    try:
-        return FeedUpdater(Podcast.objects.get(pk=podcast_id)).update(**kwargs)
-    except Podcast.DoesNotExist:
-        return Result()
-
-
 class FeedUpdater:
     def __init__(self, podcast: Podcast):
         self.podcast = podcast
