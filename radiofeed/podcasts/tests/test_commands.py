@@ -2,11 +2,14 @@ import pathlib
 
 from datetime import timedelta
 
+import pytest
+
 from django.core.management import call_command
 from django.utils import timezone
 
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
+from radiofeed.podcasts.management.commands import schedule_feed_updates
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import UserFactory
 
@@ -73,16 +76,121 @@ class TestSendRecommendationsEmails:
 
 
 class TestScheduleFeedUpdates:
-    def test_command(self, mocker):
+    def test_command(self, db, mocker):
+
+        podcast = PodcastFactory(parsed=None)
 
         patched = mocker.patch(
-            "radiofeed.podcasts.feed_scheduler.schedule",
+            "radiofeed.podcasts.tasks.feed_update.delay",
         )
         mocker.patch("multiprocessing.cpu_count", return_value=4)
 
         call_command("schedule_feed_updates")
 
-        patched.assert_called_with(400, job_timeout=360)
+        patched.assert_called_with(podcast.id)
+
+    @pytest.mark.parametrize(
+        "active,queued,pub_date,parsed,exists",
+        [
+            (
+                True,
+                False,
+                None,
+                None,
+                True,
+            ),
+            (
+                False,
+                False,
+                None,
+                None,
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(hours=3),
+                timedelta(hours=1),
+                True,
+            ),
+            (
+                True,
+                True,
+                timedelta(hours=3),
+                timedelta(hours=1),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(hours=3),
+                timedelta(minutes=30),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=3),
+                timedelta(hours=3),
+                True,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=3),
+                timedelta(hours=1),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=8),
+                timedelta(hours=8),
+                True,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=8),
+                timedelta(hours=9),
+                True,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=14),
+                timedelta(hours=8),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=15),
+                timedelta(hours=8),
+                False,
+            ),
+            (
+                True,
+                False,
+                timedelta(days=15),
+                timedelta(hours=24),
+                True,
+            ),
+        ],
+    )
+    def test_get_scheduled_feeds(
+        self, db, mocker, active, queued, pub_date, parsed, exists
+    ):
+        now = timezone.now()
+
+        PodcastFactory(
+            active=active,
+            queued=now if queued else None,
+            pub_date=now - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
+        )
+
+        assert schedule_feed_updates.Command().get_scheduled_feeds().exists() == exists
 
 
 class TestRemovePodcastsFromQueue:

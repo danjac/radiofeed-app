@@ -4,8 +4,9 @@ from argparse import ArgumentParser
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
-from radiofeed.podcasts import feed_scheduler
+from radiofeed.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
@@ -17,7 +18,8 @@ class Command(BaseCommand):
         parser.add_argument("--timeout", help="Timeout(hours)", type=int, default=1)
 
     def handle(self, *args, **kwargs) -> None:
-        num_podcasts = feed_scheduler.remove_feeds_from_queue(
-            timedelta(hours=kwargs["timeout"])
-        )
+        num_podcasts = Podcast.objects.filter(
+            queued__lt=timezone.now() - timedelta(hours=kwargs["timeout"])
+        ).update(queued=None)
+
         self.stdout.write(f"{num_podcasts} podcasts removed from queue")
