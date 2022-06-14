@@ -38,7 +38,7 @@ repos:
       rev: v2.7.0
       hooks:
         - id: prettier
-          files: \.(ts|tsx)$
+          files: static\/js\/\.(ts|tsx)$
     - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
       rev: v1.0.6
       hooks:
