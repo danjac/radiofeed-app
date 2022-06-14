@@ -137,6 +137,15 @@ class FeedUpdater:
 
         return False
 
+    def save_podcast(self, **fields):
+        now = timezone.now()
+        Podcast.objects.filter(pk=self.podcast.id).update(
+            queued=None,
+            updated=now,
+            parsed=now,
+            **fields,
+        )
+
     def parse_rss(
         self,
     ) -> tuple[requests.Response, str, rss_parser.Feed, list[rss_parser.Item]]:
@@ -292,15 +301,6 @@ class FeedUpdater:
 
             case _:
                 raise
-
-    def save_podcast(self, **fields):
-        now = timezone.now()
-        Podcast.objects.filter(pk=self.podcast.id).update(
-            queued=None,
-            updated=now,
-            parsed=now,
-            **fields,
-        )
 
 
 @functools.lru_cache
