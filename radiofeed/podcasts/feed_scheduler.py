@@ -26,7 +26,7 @@ def schedule(limit: int, **job_kwargs) -> frozenset[int]:
     return podcast_ids
 
 
-def enqueue(*podcast_ids: int, queue_name="feeds", **job_kwargs) -> None:
+def enqueue(*podcast_ids: int, queue_name: str = "feeds", **job_kwargs) -> None:
 
     queue = get_queue(queue_name)
 
