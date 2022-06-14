@@ -1,22 +1,55 @@
 from datetime import timedelta
+from unittest import mock
 
 import pytest
 
 from django.utils import timezone
 
-from radiofeed.podcasts import feed_scheduler
+from radiofeed.podcasts import feed_scheduler, feed_updater
 from radiofeed.podcasts.factories import PodcastFactory
+
+
+class TestRemoveFeedsFromQueue:
+    def test_remove(self, db):
+        first = PodcastFactory(queued=timezone.now() - timedelta(hours=2))
+        second = PodcastFactory(queued=timezone.now() - timedelta(minutes=30))
+
+        feed_scheduler.remove_feeds_from_queue(timedelta(hours=1))
+
+        first.refresh_from_db()
+        assert first.queued is None
+
+        second.refresh_from_db()
+        assert second.queued is not None
 
 
 class TestSchedule:
     def test_schedule(self, db, mocker):
         podcast = PodcastFactory(parsed=None, pub_date=None)
 
-        patched = mocker.patch("radiofeed.podcasts.feed_updater.enqueue")
+        patched = mocker.patch("radiofeed.podcasts.feed_scheduler.enqueue")
 
         assert feed_scheduler.schedule(100) == {podcast.id}
 
         patched.assert_called_with(podcast.id)
+
+
+class TestEnqueue:
+    def test_enqueue(self, mocker, podcast):
+
+        mock_queue = mock.Mock()
+        mocker.patch(
+            "radiofeed.podcasts.feed_scheduler.get_queue",
+            return_value=mock_queue,
+        )
+        feed_scheduler.enqueue(podcast.id)
+
+        mock_queue.enqueue.assert_called_with(
+            feed_updater.update,
+            args=(podcast.id,),
+        )
+        podcast.refresh_from_db()
+        assert podcast.queued
 
 
 class TestGetScheduledFeeds:

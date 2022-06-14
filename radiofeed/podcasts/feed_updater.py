@@ -14,7 +14,6 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue
 
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
@@ -44,16 +43,6 @@ def update(podcast_id: int, **kwargs) -> Result:
         return FeedUpdater(Podcast.objects.get(pk=podcast_id)).update(**kwargs)
     except Podcast.DoesNotExist:
         return Result()
-
-
-def enqueue(*podcast_ids: int, **job_kwargs) -> None:
-
-    queue = get_queue("feeds")
-
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
-
-    for podcast_id in podcast_ids:
-        queue.enqueue(update, args=(podcast_id,), **job_kwargs)
 
 
 class FeedUpdater:

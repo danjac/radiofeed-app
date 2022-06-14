@@ -2,8 +2,6 @@ import datetime
 import http
 import pathlib
 
-from unittest import mock
-
 import pytest
 import requests
 
@@ -39,24 +37,6 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
         raise requests.HTTPError(response=self)
-
-
-class TestEnqueue:
-    def test_enqueue(self, mocker, podcast):
-
-        mock_queue = mock.Mock()
-        mocker.patch(
-            "radiofeed.podcasts.feed_updater.get_queue",
-            return_value=mock_queue,
-        )
-        feed_updater.enqueue(podcast.id)
-
-        mock_queue.enqueue.assert_called_with(
-            feed_updater.update,
-            args=(podcast.id,),
-        )
-        podcast.refresh_from_db()
-        assert podcast.queued
 
 
 class TestFeedUpdater:
