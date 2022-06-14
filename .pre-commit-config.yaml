@@ -34,6 +34,11 @@ repos:
       rev: v0.3.1
       hooks:
           - id: absolufy-imports
+    - repo: https://github.com/pre-commit/mirrors-prettier
+      rev: v2.7.0
+      hooks:
+        - id: prettier
+          files: static/ts/*ts
     - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
       rev: v1.0.6
       hooks:
@@ -44,8 +49,6 @@ repos:
       hooks:
           - id: djhtml
             args: [--tabwidth, '4']
-          - id: djjs
-            exclude: bundle.js|bundle.js.map
           - id: djcss
             exclude: bundle.css
     - repo: https://github.com/pre-commit/mirrors-mypy
