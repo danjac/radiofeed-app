@@ -8,13 +8,13 @@ from radiofeed.podcasts import feed_scheduler
 from radiofeed.podcasts.factories import PodcastFactory
 
 
-class TestEnqueueScheduledFeeds:
-    def test_enqueue(self, db, mocker):
+class TestSchedule:
+    def test_schedule(self, db, mocker):
         podcast = PodcastFactory(parsed=None, pub_date=None)
 
         patched = mocker.patch("radiofeed.podcasts.feed_updater.enqueue")
 
-        assert feed_scheduler.enqueue_scheduled_feeds(100) == {podcast.id}
+        assert feed_scheduler.schedule(100) == {podcast.id}
 
         patched.assert_called_with(podcast.id)
 

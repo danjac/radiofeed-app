@@ -76,7 +76,7 @@ class TestScheduleFeedUpdates:
     def test_command(self, mocker):
 
         patched = mocker.patch(
-            "radiofeed.podcasts.feed_scheduler.enqueue_scheduled_feeds",
+            "radiofeed.podcasts.feed_scheduler.schedule",
         )
         mocker.patch("multiprocessing.cpu_count", return_value=4)
 

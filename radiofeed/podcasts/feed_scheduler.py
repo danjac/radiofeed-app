@@ -12,7 +12,7 @@ from radiofeed.podcasts import feed_updater
 from radiofeed.podcasts.models import Podcast
 
 
-def enqueue_scheduled_feeds(limit: int, **job_kwargs) -> frozenset[int]:
+def schedule(limit: int, **job_kwargs) -> frozenset[int]:
 
     podcast_ids = frozenset(
         itertools.islice(
