@@ -298,18 +298,18 @@ class FeedUpdater:
             case DuplicateFeed():
                 return Podcast.Result.DUPLICATE_FEED
 
+            case requests.RequestException():
+                return Podcast.Result.NETWORK_ERROR
+
+            case rss_parser.RssParserError():
+                return Podcast.Result.INVALID_RSS
+
             case requests.HTTPError():
                 return (
                     Podcast.Result.REMOVED
                     if http_status == http.HTTPStatus.GONE
                     else Podcast.Result.HTTP_ERROR
                 )
-
-            case requests.RequestException():
-                return Podcast.Result.NETWORK_ERROR
-
-            case rss_parser.RssParserError():
-                return Podcast.Result.INVALID_RSS
 
             case _:
                 raise
