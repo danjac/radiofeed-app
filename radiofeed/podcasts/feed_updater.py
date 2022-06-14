@@ -58,42 +58,6 @@ class FeedUpdater:
         items: list[rss_parser.Item],
     ) -> bool:
 
-        # feed status
-
-        self.podcast.rss = response.url
-        self.podcast.http_status = response.status_code
-        self.podcast.etag = response.headers.get("ETag", "")
-        self.podcast.modified = date_parser.parse_date(
-            response.headers.get("Last-Modified")
-        )
-
-        self.podcast.parsed = timezone.now()
-        self.podcast.queued = None
-        self.podcast.result = self.podcast.Result.SUCCESS  # type: ignore
-        self.podcast.content_hash = content_hash
-
-        self.podcast.active = not feed.complete
-        self.podcast.errors = 0
-
-        pub_dates = [item.pub_date for item in items if item.pub_date]
-
-        self.podcast.pub_date = max(pub_dates)
-
-        # content
-
-        for field in (
-            "cover_url",
-            "description",
-            "explicit",
-            "funding_text",
-            "funding_url",
-            "language",
-            "link",
-            "owner",
-            "title",
-        ):
-            setattr(self.podcast, field, getattr(feed, field))
-
         # taxonomy
         categories_dct = get_categories_dict()
 
@@ -102,14 +66,36 @@ class FeedUpdater:
             for category in feed.categories
             if category in categories_dct
         ]
-        self.podcast.keywords = " ".join(
-            category for category in feed.categories if category not in categories_dct
+
+        self.save_podcast(
+            active=not feed.complete,
+            content_hash=content_hash,
+            cover_url=feed.cover_url,
+            description=feed.description,
+            errors=0,
+            etag=response.headers.get("ETag", ""),
+            explicit=feed.explicit,
+            extracted_text=self.extract_text(categories, items),
+            funding_text=feed.funding_text,
+            funding_url=feed.funding_url,
+            http_status=response.status_code,
+            language=feed.language,
+            link=feed.link,
+            modified=date_parser.parse_date(response.headers.get("Last-Modified")),
+            owner=feed.owner,
+            pub_date=max([item.pub_date for item in items if item.pub_date]),
+            result=Podcast.Result.SUCCESS,
+            rss=response.url,
+            title=feed.title,
+            keywords=" ".join(
+                category
+                for category in feed.categories
+                if category not in categories_dct
+            ),
         )
-        self.podcast.extracted_text = self.extract_text(categories, items)
 
+        # categories
         self.podcast.categories.set(categories)  # type: ignore
-
-        self.podcast.save()
 
         # episodes
         self.sync_episodes(items)
@@ -135,25 +121,18 @@ class FeedUpdater:
             else 0
         )
 
-        active = (
-            result
-            not in (
-                Podcast.Result.DUPLICATE_FEED,
-                Podcast.Result.REMOVED,
-            )
-            and errors < 3
-        )
-
-        now = timezone.now()
-
-        Podcast.objects.filter(pk=self.podcast.id).update(
-            active=active,
+        self.save_podcast(
+            active=(
+                result
+                not in (
+                    Podcast.Result.DUPLICATE_FEED,
+                    Podcast.Result.REMOVED,
+                )
+                and errors < 3
+            ),
             result=result,
             http_status=http_status,
             errors=errors,
-            parsed=now,
-            updated=now,
-            queued=None,
         )
 
         return False
@@ -298,9 +277,6 @@ class FeedUpdater:
             case DuplicateFeed():
                 return Podcast.Result.DUPLICATE_FEED
 
-            case requests.RequestException():
-                return Podcast.Result.NETWORK_ERROR
-
             case rss_parser.RssParserError():
                 return Podcast.Result.INVALID_RSS
 
@@ -311,8 +287,20 @@ class FeedUpdater:
                     else Podcast.Result.HTTP_ERROR
                 )
 
+            case requests.RequestException():
+                return Podcast.Result.NETWORK_ERROR
+
             case _:
                 raise
+
+    def save_podcast(self, **fields):
+        now = timezone.now()
+        Podcast.objects.filter(pk=self.podcast.id).update(
+            queued=None,
+            updated=now,
+            parsed=now,
+            **fields,
+        )
 
 
 @functools.lru_cache
