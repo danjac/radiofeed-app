@@ -16,6 +16,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
+from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
@@ -97,6 +98,7 @@ class Episode(models.Model):
     search_vector: str | None = SearchVectorField(null=True, editable=False)
 
     objects = EpisodeManager()
+    fast_update_objects = FastUpdateManager()
 
     class Meta:
         constraints = [

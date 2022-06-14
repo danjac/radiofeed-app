@@ -210,7 +210,7 @@ class FeedUpdater:
             filter(lambda episode: episode.guid in guids, episodes),
             batch_size,
         ):
-            Episode.objects.bulk_update(
+            Episode.fast_update_objects.fast_update(
                 batch,
                 fields=[
                     "cover_url",

@@ -429,6 +429,17 @@ python-versions = ">=3.6"
 Django = ">=2.2"
 
 [[package]]
+name = "django-fast-update"
+version = "0.2.0"
+description = "Faster db updates for Django using UPDATE FROM VALUES sql variants."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Django = ">=3.2,<4.1"
+
+[[package]]
 name = "django-health-check"
 version = "3.16.5"
 description = "Run checks on services like databases, queue servers, celery processes, etc."
@@ -1524,7 +1535,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "1a3c90f7f6d05e4732728ee47d308c5660fc671cd7897a3db1d64f229006005a"
+content-hash = "ef4685d558313c9f51d2f89327420c7a3a19f82e2448be904af648f625c6d08d"
 
 [metadata.files]
 amqp = [
@@ -1828,6 +1839,9 @@ django-environ = [
 django-extensions = [
     {file = "django-extensions-3.1.5.tar.gz", hash = "sha256:28e1e1bf49f0e00307ba574d645b0af3564c981a6dfc87209d48cb98f77d0b1a"},
     {file = "django_extensions-3.1.5-py3-none-any.whl", hash = "sha256:9238b9e016bb0009d621e05cf56ea8ce5cce9b32e91ad2026996a7377ca28069"},
+]
+django-fast-update = [
+    {file = "django-fast-update-0.2.0.tar.gz", hash = "sha256:dc19d97cf272f20b436a9baa04c2faa7692877c393cf40c82878b8265b3cc41d"},
 ]
 django-health-check = [
     {file = "django-health-check-3.16.5.tar.gz", hash = "sha256:1edfd49293ccebbce29f9da609c407f307aee240ab799ab4201031341ae78c0f"},
