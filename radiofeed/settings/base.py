@@ -236,6 +236,9 @@ HUEY = {
     "blocking": False,
     "immediate": False,
     "store_none": True,
+    "consumer": {
+        "periodic": False,
+    },
 }
 
 
