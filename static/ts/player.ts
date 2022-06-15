@@ -217,7 +217,7 @@ document.addEventListener("alpine:init", () => {
             loadState(): PlayerState {
                 const state = sessionStorage.getItem("player");
                 return state
-                    ? JSON.parse(state)
+                    ? <PlayerState>JSON.parse(state)
                     : {
                           rate: 1.0,
                           autoplay: false,
