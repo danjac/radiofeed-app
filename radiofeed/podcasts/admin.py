@@ -50,27 +50,6 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class ResultFilter(admin.SimpleListFilter):
-    title = "Result"
-    parameter_name = "result"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-
-        return (("none", "None"),) + tuple(models.Podcast.Result.choices)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        if value := self.value():
-            return (
-                queryset.filter(result__isnull=True)
-                if value == "none"
-                else queryset.filter(result=value)
-            )
-
-        return queryset
-
-
 class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
@@ -134,7 +113,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         SubscribedFilter,
         PromotedFilter,
         PubDateFilter,
-        ResultFilter,
     )
 
     list_display = (
@@ -156,7 +134,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "modified",
         "etag",
         "http_status",
-        "result",
         "content_hash",
     )
 

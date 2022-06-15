@@ -10,7 +10,6 @@ from radiofeed.podcasts.admin import (
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
-    ResultFilter,
     SubscribedFilter,
 )
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
@@ -84,30 +83,6 @@ class TestPodcastAdmin:
         mock_feed_update = mocker.patch("radiofeed.podcasts.admin.feed_update.delay")
         podcast_admin.update_podcast_feed(req, podcast)
         mock_feed_update.assert_called_with(podcast.id)
-
-
-class TestResultFilter:
-    def test_no_filter(self, podcasts, podcast_admin, req):
-        PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
-        f = ResultFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    def test_none(self, podcasts, podcast_admin, req):
-        podcast = PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
-        f = ResultFilter(req, {"result": "none"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert podcast not in qs
-
-    def test_not_modified(self, podcasts, podcast_admin, req):
-        podcast = PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
-        f = ResultFilter(
-            req, {"result": Podcast.Result.NOT_MODIFIED}, Podcast, podcast_admin
-        )
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
 
 
 class TestPubDateFilter:

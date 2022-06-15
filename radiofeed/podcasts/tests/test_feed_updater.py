@@ -125,7 +125,6 @@ class TestFeedUpdater:
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
-        assert podcast.errors == 0
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -136,7 +135,6 @@ class TestFeedUpdater:
         assert podcast.modified.day == 1
         assert podcast.modified.month == 7
         assert podcast.modified.year == 2020
-        assert podcast.result == Podcast.Result.SUCCESS
 
         assert podcast.parsed
 
@@ -177,7 +175,6 @@ class TestFeedUpdater:
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
-        assert podcast.errors == 0
         assert podcast.title == "Armstrong & Getty On Demand"
 
     def test_update_ok_no_pub_date(self, db, mocker, categories):
@@ -217,7 +214,6 @@ class TestFeedUpdater:
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
-        assert podcast.errors == 0
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -228,7 +224,6 @@ class TestFeedUpdater:
         assert podcast.modified.day == 1
         assert podcast.modified.month == 7
         assert podcast.modified.year == 2020
-        assert podcast.result == Podcast.Result.SUCCESS
 
         assert podcast.parsed
 
@@ -268,7 +263,6 @@ class TestFeedUpdater:
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.NOT_MODIFIED
 
     def test_parse_podcast_another_feed_same_content(self, mocker, podcast, categories):
 
@@ -294,7 +288,6 @@ class TestFeedUpdater:
         assert not podcast.active
         assert podcast.modified is None
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.DUPLICATE_FEED
 
     def test_update_complete(self, mocker, podcast, categories):
 
@@ -328,7 +321,6 @@ class TestFeedUpdater:
 
         assert podcast.rss
         assert not podcast.active
-        assert podcast.errors == 0
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -339,7 +331,6 @@ class TestFeedUpdater:
         assert podcast.modified.day == 1
         assert podcast.modified.month == 7
         assert podcast.modified.year == 2020
-        assert podcast.result == Podcast.Result.SUCCESS
 
         assert podcast.parsed
 
@@ -376,7 +367,6 @@ class TestFeedUpdater:
 
         assert podcast.rss == self.redirect_rss
         assert podcast.active
-        assert podcast.errors == 0
         assert podcast.modified
         assert podcast.parsed
 
@@ -401,10 +391,8 @@ class TestFeedUpdater:
         podcast.refresh_from_db()
 
         assert podcast.rss == current_rss
-        assert podcast.errors == 0
         assert not podcast.active
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.DUPLICATE_FEED
 
     def test_parse_no_podcasts(self, mocker, podcast, categories):
         mocker.patch(
@@ -418,10 +406,8 @@ class TestFeedUpdater:
         assert not feed_updater.FeedUpdater(podcast).update()
 
         podcast.refresh_from_db()
-        assert podcast.active
-        assert podcast.errors == 1
+        assert not podcast.active
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_empty_feed(self, mocker, podcast, categories):
 
@@ -436,10 +422,8 @@ class TestFeedUpdater:
         assert not feed_updater.FeedUpdater(podcast).update()
 
         podcast.refresh_from_db()
-        assert podcast.active
-        assert podcast.errors == 1
+        assert not podcast.active
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.INVALID_RSS
 
     def test_update_not_modified(self, mocker, podcast, categories):
         mocker.patch(
@@ -452,36 +436,6 @@ class TestFeedUpdater:
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.NOT_MODIFIED
-
-    def test_update_error(self, mocker, podcast, categories):
-        mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
-
-        assert not feed_updater.FeedUpdater(podcast).update()
-
-        podcast.refresh_from_db()
-        assert podcast.active
-        assert podcast.errors == 1
-        assert podcast.http_status is None
-        assert podcast.parsed
-        assert podcast.result == Podcast.Result.NETWORK_ERROR
-
-    def test_update_errors_past_limit(self, db, mocker, categories):
-
-        podcast = PodcastFactory(errors=11)
-
-        mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
-
-        assert not feed_updater.FeedUpdater(podcast).update()
-
-        podcast.refresh_from_db()
-
-        assert not podcast.active
-
-        assert podcast.errors == 12
-        assert podcast.http_status is None
-        assert podcast.parsed
-        assert podcast.result == Podcast.Result.NETWORK_ERROR
 
     def test_update_http_gone(self, mocker, podcast, categories):
         mocker.patch(
@@ -493,10 +447,8 @@ class TestFeedUpdater:
         podcast.refresh_from_db()
 
         assert not podcast.active
-        assert podcast.errors == 0
         assert podcast.http_status == http.HTTPStatus.GONE
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.REMOVED
 
     def test_update_http_server_error(self, mocker, podcast, categories):
         mocker.patch(
@@ -508,10 +460,8 @@ class TestFeedUpdater:
         podcast.refresh_from_db()
 
         assert podcast.active
-        assert podcast.errors == 1
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_update_http_server_error_no_pub_date(self, mocker, podcast, categories):
         mocker.patch(
@@ -526,7 +476,5 @@ class TestFeedUpdater:
         podcast.refresh_from_db()
 
         assert podcast.active
-        assert podcast.errors == 1
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parsed
-        assert podcast.result == Podcast.Result.HTTP_ERROR

@@ -68,9 +68,7 @@ class FeedUpdater:
 
         self.save_podcast(
             active=not feed.complete,
-            result=Podcast.Result.SUCCESS,
             content_hash=content_hash,
-            errors=0,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
@@ -107,33 +105,22 @@ class FeedUpdater:
         except AttributeError:
             http_status = None
 
-        result = self.result_from_exception(e, http_status)
-
-        errors = (
-            self.podcast.errors + 1
-            if result
-            in (
-                Podcast.Result.HTTP_ERROR,
-                Podcast.Result.INVALID_RSS,
-                Podcast.Result.NETWORK_ERROR,
-            )
-            else 0
-        )
-
-        self.save_podcast(
-            active=(
-                result
-                not in (
-                    Podcast.Result.DUPLICATE_FEED,
-                    Podcast.Result.REMOVED,
+        match e:
+            case NotModified():
+                active = True
+            case rss_parser.RssParserError() | DuplicateFeed():
+                active = False
+            case requests.RequestException():
+                active = http_status not in (
+                    http.HTTPStatus.FORBIDDEN,
+                    http.HTTPStatus.GONE,
+                    http.HTTPStatus.NOT_FOUND,
+                    http.HTTPStatus.UNAUTHORIZED,
                 )
-                and errors < 3
-            ),
-            result=result,
-            http_status=http_status,
-            errors=errors,
-        )
+            case _:
+                raise
 
+        self.save_podcast(active=active, http_status=http_status)
         return False
 
     def save_podcast(self, **fields):
@@ -267,34 +254,6 @@ class FeedUpdater:
         if self.podcast.modified:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
-
-    def result_from_exception(
-        cls, e: Exception, http_status: int | None
-    ) -> tuple[str, str]:
-
-        match e:
-
-            case NotModified():
-                return Podcast.Result.NOT_MODIFIED
-
-            case DuplicateFeed():
-                return Podcast.Result.DUPLICATE_FEED
-
-            case rss_parser.RssParserError():
-                return Podcast.Result.INVALID_RSS
-
-            case requests.HTTPError():
-                return (
-                    Podcast.Result.REMOVED
-                    if http_status == http.HTTPStatus.GONE
-                    else Podcast.Result.HTTP_ERROR
-                )
-
-            case requests.RequestException():
-                return Podcast.Result.NETWORK_ERROR
-
-            case _:
-                raise
 
 
 @functools.lru_cache

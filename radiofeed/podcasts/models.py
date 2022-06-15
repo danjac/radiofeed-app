@@ -68,15 +68,6 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 
 class Podcast(models.Model):
-    class Result(models.TextChoices):
-        DUPLICATE_FEED = "duplicate_feed", "Duplicate Feed"
-        HTTP_ERROR = "http_error", "HTTP Error"
-        INVALID_RSS = "invalid_rss", "Invalid RSS"
-        NETWORK_ERROR = "network_error", "Network Error"
-        NOT_MODIFIED = "not_modified", "Not Modified"
-        REMOVED = "removed", "Removed"
-        SUCCESS = "success", "Success"
-
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
@@ -92,17 +83,10 @@ class Podcast(models.Model):
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    # feed parse result fields
-    result: str | None = models.CharField(
-        max_length=20, choices=Result.choices, null=True, blank=True
-    )
-
     # hash of last polled content
     content_hash: str | None = models.CharField(max_length=64, null=True, blank=True)
 
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
-
-    errors: int = models.PositiveIntegerField(default=0)
 
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
