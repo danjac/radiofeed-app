@@ -77,7 +77,6 @@ class TestScheduleFeedUpdates:
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.feed_update.map",
         )
-        mocker.patch("multiprocessing.cpu_count", return_value=4)
 
         call_command("schedule_feed_updates")
 

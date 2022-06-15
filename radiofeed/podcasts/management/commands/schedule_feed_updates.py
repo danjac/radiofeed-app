@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import itertools
-import multiprocessing
 
 from argparse import ArgumentParser
 from datetime import timedelta
@@ -21,7 +20,7 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument("--limit", help="Limit (per CPU)", type=int, default=100)
+        parser.add_argument("--limit", help="Limit", type=int, default=100)
 
     def handle(self, *args, **kwargs) -> None:
 
@@ -31,7 +30,7 @@ class Command(BaseCommand):
         feed_update.map(
             itertools.islice(
                 self.get_scheduled_feeds().values_list("pk", flat=True).distinct(),
-                round(multiprocessing.cpu_count() * kwargs["limit"]),
+                kwargs["limit"],
             )
         )
 
