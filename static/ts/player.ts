@@ -32,7 +32,7 @@ document.addEventListener("alpine:init", () => {
                 current: "00:00:00",
                 total: "00:00:00",
             },
-            init() {
+            init(): void {
                 this.$watch("runtime", (value: string) => {
                     this.counters.current = this.formatCounter(value);
                 });
@@ -51,10 +51,10 @@ document.addEventListener("alpine:init", () => {
                     navigator.mediaSession.metadata = this.getMediaMetadata();
                 }
             },
-            destroy() {
+            destroy(): void {
                 this.clearTimer();
             },
-            loaded(event: Event) {
+            loaded(event: Event): void {
                 if (this.isLoaded) {
                     return;
                 }
@@ -78,62 +78,62 @@ document.addEventListener("alpine:init", () => {
                 this.duration = target.duration || 0;
                 this.isLoaded = true;
             },
-            timeUpdate(event: Event) {
+            timeUpdate(event: Event): void {
                 const target = event.target as HTMLMediaElement;
 
                 this.isPlaying = true;
                 this.isError = false;
                 this.runtime = Math.floor(target.currentTime);
             },
-            play() {
+            play(): void {
                 this.isPaused = false;
                 this.isPlaying = true;
                 this.isError = false;
                 this.saveState();
                 this.startTimer();
             },
-            pause() {
+            pause(): void {
                 this.isPlaying = false;
                 this.isPaused = true;
                 this.saveState();
                 this.clearTimer();
             },
-            ended() {
+            ended(): void {
                 this.pause();
                 this.runtime = 0;
                 this.sendTimeUpdate();
             },
-            buffering() {
+            buffering(): void {
                 this.isPlaying = false;
             },
-            error(event: Event) {
+            error(event: Event): void {
                 const target = event.target as HTMLMediaElement;
                 this.handleError(target.error);
             },
-            togglePlayPause() {
+            togglePlayPause(): void {
                 if (this.isPaused) {
                     this.$refs.audio.play();
                 } else {
                     this.$refs.audio.pause();
                 }
             },
-            skip() {
+            skip(): void {
                 if (this.isPlaying) {
                     this.$refs.audio.currentTime = this.runtime;
                 }
             },
-            skipTo(seconds: number) {
+            skipTo(seconds: number): void {
                 if (this.isPlaying) {
                     this.$refs.audio.currentTime += seconds;
                 }
             },
-            skipBack() {
+            skipBack(): void {
                 this.skipTo(-10);
             },
-            skipForward() {
+            skipForward(): void {
                 this.skipTo(10);
             },
-            shortcuts(event: KeyboardEvent) {
+            shortcuts(event: KeyboardEvent): void {
                 const target = event.target as HTMLElement;
                 if (target.tagName.match(/INPUT|TEXTAREA/)) {
                     return;
@@ -168,7 +168,7 @@ document.addEventListener("alpine:init", () => {
                     }
                 }
             },
-            startTimer() {
+            startTimer(): void {
                 if (!this.timer) {
                     this.timer = setInterval(() => {
                         if (this.isPlaying) {
@@ -177,13 +177,13 @@ document.addEventListener("alpine:init", () => {
                     }, 5000);
                 }
             },
-            clearTimer() {
+            clearTimer(): void {
                 if (this.timer) {
                     clearInterval(this.timer);
                     this.timer = null;
                 }
             },
-            sendTimeUpdate() {
+            sendTimeUpdate(): void {
                 fetch(this.timeUpdateUrl, {
                     method: "POST",
                     headers: {
@@ -194,23 +194,23 @@ document.addEventListener("alpine:init", () => {
                     }),
                 });
             },
-            incrementRate() {
+            incrementRate(): void {
                 this.changeRate(0.1);
             },
-            decrementRate() {
+            decrementRate(): void {
                 this.changeRate(-0.1);
             },
-            resetRate() {
+            resetRate(): void {
                 this.setRate(1.0);
             },
-            changeRate(increment: number) {
+            changeRate(increment: number): void {
                 const newValue = Math.max(
                     0.5,
                     Math.min(2.0, parseFloat(this.rate) + increment),
                 );
                 this.setRate(newValue);
             },
-            setRate(value: number) {
+            setRate(value: number): void {
                 this.rate = value;
                 this.saveState();
             },
@@ -223,7 +223,7 @@ document.addEventListener("alpine:init", () => {
                           autoplay: false,
                       };
             },
-            saveState() {
+            saveState(): void {
                 sessionStorage.setItem(
                     "player",
                     JSON.stringify(<PlayerState>{
@@ -232,7 +232,7 @@ document.addEventListener("alpine:init", () => {
                     }),
                 );
             },
-            formatCounter(value: number) {
+            formatCounter(value: number): string {
                 if (isNaN(value) || value < 0) return "00:00:00";
                 const duration = Math.floor(value);
                 const hours = Math.floor(duration / 3600);
@@ -255,7 +255,7 @@ document.addEventListener("alpine:init", () => {
                 }
                 return null;
             },
-            handleError(error: Error) {
+            handleError(error: Error): void {
                 this.pause();
                 this.isError = true;
                 console.error(error);
