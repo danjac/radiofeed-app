@@ -8,7 +8,7 @@
     "env": {
         "DJANGO_SETTINGS_MODULE": "radiofeed.settings.production"
     },
-  "formation": {
+   "formation": {
         "web": {
             "quantity": 1
         },
