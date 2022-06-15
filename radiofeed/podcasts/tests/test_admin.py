@@ -132,8 +132,8 @@ class TestHttpStatusFilter:
 
         f = HttpStatusFilter(req, {}, Podcast, podcast_admin)
         assert f.lookups(req, podcast_admin) == (
-            (200, "Ok"),
-            (304, "Not modified"),
+            (200, "200 OK"),
+            (304, "304 NOT_MODIFIED"),
         )
 
     def test_filter(self, db, podcast_admin, req):

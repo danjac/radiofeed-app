@@ -60,7 +60,7 @@ class HttpStatusFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[int, str], ...]:
         return tuple(
-            (status, http.HTTPStatus(status).name.replace("_", " ").capitalize())
+            (status, f"{status} {http.HTTPStatus(status).name}")
             for status in models.Podcast.objects.filter(
                 http_status__in=set(status.value for status in http.HTTPStatus)
             )
@@ -135,10 +135,10 @@ class SubscribedFilter(admin.SimpleListFilter):
 class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
-        SubscribedFilter,
         PubDateFilter,
-        HttpStatusFilter,
         PromotedFilter,
+        SubscribedFilter,
+        HttpStatusFilter,
     )
 
     list_display = (
