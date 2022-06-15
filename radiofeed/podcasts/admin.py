@@ -83,9 +83,6 @@ class PubDateFilter(admin.SimpleListFilter):
             ("yes", "With pub date"),
             ("no", "With no pub date"),
             ("today", "Today"),
-            ("week", "< 1 week"),
-            ("month", "< 1 month"),
-            ("year", "< 1 year"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
