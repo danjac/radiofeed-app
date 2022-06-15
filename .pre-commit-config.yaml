@@ -50,8 +50,6 @@ repos:
       hooks:
           - id: djhtml
             args: [--tabwidth, '4']
-          - id: djcss
-            exclude: bundle.css
     - repo: https://github.com/pre-commit/mirrors-mypy
       rev: 'v0.950'
       hooks:
