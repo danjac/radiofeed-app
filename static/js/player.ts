@@ -235,10 +235,11 @@ document.addEventListener("alpine:init", () => {
             formatCounter(value: number): string {
                 if (isNaN(value) || value < 0) return "00:00:00";
                 const duration = Math.floor(value);
-                const hours = Math.floor(duration / 3600);
-                const minutes = Math.floor((duration % 3600) / 60);
-                const seconds = Math.floor(duration % 60);
-                return [hours, minutes, seconds]
+                return [
+                    Math.floor(duration / 3600),
+                    Math.floor((duration % 3600) / 60),
+                    Math.floor(duration % 60),
+                ]
                     .map(t => t.toString().padStart(2, "0"))
                     .join(":");
             },
