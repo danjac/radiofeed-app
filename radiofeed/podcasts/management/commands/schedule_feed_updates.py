@@ -23,10 +23,6 @@ class Command(BaseCommand):
         parser.add_argument("--limit", help="Limit", type=int, default=100)
 
     def handle(self, *args, **kwargs) -> None:
-
-        # parse podcasts up to CPU-based limit
-        # example: if 3xCPU and --limit=100, then parse 300 each time
-
         feed_update.map(
             itertools.islice(
                 self.get_scheduled_feeds().values_list("pk", flat=True).distinct(),
