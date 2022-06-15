@@ -1,8 +1,10 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
 
 from django.contrib.admin.sites import AdminSite
+from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
     ActiveFilter,
@@ -117,19 +119,43 @@ class TestPubDateFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    def test_false(self, podcasts, podcast_admin, req):
+    def test_no(self, podcasts, podcast_admin, req):
         no_pub_date = PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {"pub_date": "no"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == no_pub_date
 
-    def test_true(self, podcasts, podcast_admin, req):
+    def test_yes(self, podcasts, podcast_admin, req):
         no_pub_date = PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {"pub_date": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert no_pub_date not in qs
+
+    def test_day(self, db, podcast_admin, req):
+        podcast = PodcastFactory(pub_date=timezone.now() - timedelta(hours=12))
+        PodcastFactory(pub_date=timezone.now() - timedelta(days=14))
+        f = PubDateFilter(req, {"pub_date": "today"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podcast
+
+    def test_month(self, db, podcast_admin, req):
+        podcast = PodcastFactory(pub_date=timezone.now() - timedelta(days=14))
+        PodcastFactory(pub_date=timezone.now() - timedelta(days=90))
+        f = PubDateFilter(req, {"pub_date": "month"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podcast
+
+    def test_year(self, db, podcast_admin, req):
+        podcast = PodcastFactory(pub_date=timezone.now() - timedelta(days=90))
+        PodcastFactory(pub_date=timezone.now() - timedelta(days=500))
+        f = PubDateFilter(req, {"pub_date": "year"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podcast
 
 
 class TestPromotedFilter:

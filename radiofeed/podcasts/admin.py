@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from dateutil.relativedelta import relativedelta
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
+from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.podcasts import models
@@ -82,15 +84,29 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
+            ("today", "Today"),
+            ("week", "< 1 week"),
+            ("month", "< 1 month"),
+            ("year", "< 1 year"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+
+        now = timezone.now()
 
         match self.value():
             case "yes":
                 return queryset.filter(pub_date__isnull=False)
             case "no":
                 return queryset.filter(pub_date__isnull=True)
+            case "today":
+                return queryset.filter(pub_date__gte=now - timedelta(hours=24))
+            case "week":
+                return queryset.filter(pub_date__gte=now - timedelta(days=7))
+            case "month":
+                return queryset.filter(pub_date__gte=now - relativedelta(months=1))
+            case "year":
+                return queryset.filter(pub_date__gte=now - relativedelta(years=1))
             case _:
                 return queryset
 
