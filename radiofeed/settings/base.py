@@ -241,6 +241,8 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
 CELERY_RESULT_SERIALIZER = "json"
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-acks-late
+CELERY_TASK_ACKS_LATE = True
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
 CELERY_TASK_TIME_LIMIT = 5 * 60
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
