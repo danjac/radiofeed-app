@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import http
+
 from datetime import timedelta
 
 from django.contrib import admin, messages
@@ -48,6 +50,29 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset.filter(active=False)
             case _:
                 return queryset
+
+
+class HttpStatusFilter(admin.SimpleListFilter):
+    title = "HTTP Status"
+    parameter_name = "http_status"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[int, str], ...]:
+        return tuple(
+            (status, http.HTTPStatus(status).name.replace("_", " ").capitalize())
+            for status in models.Podcast.objects.filter(
+                http_status__in=set(status.value for status in http.HTTPStatus)
+            )
+            .values_list("http_status", flat=True)
+            .order_by("http_status")
+            .distinct()
+        )
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        if value := self.value():
+            return queryset.filter(http_status=value)
+        return queryset
 
 
 class PubDateFilter(admin.SimpleListFilter):
@@ -111,8 +136,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         SubscribedFilter,
-        PromotedFilter,
         PubDateFilter,
+        HttpStatusFilter,
+        PromotedFilter,
     )
 
     list_display = (

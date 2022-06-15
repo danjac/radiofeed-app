@@ -1,3 +1,5 @@
+import http
+
 from unittest import mock
 
 import pytest
@@ -7,6 +9,7 @@ from django.contrib.admin.sites import AdminSite
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
+    HttpStatusFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
@@ -120,6 +123,27 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestHttpStatusFilter:
+    def test_lookups(self, db, podcast_admin, req):
+        PodcastFactory(http_status=http.HTTPStatus.OK)
+        PodcastFactory(http_status=http.HTTPStatus.NOT_MODIFIED)
+
+        f = HttpStatusFilter(req, {}, Podcast, podcast_admin)
+        assert f.lookups(req, podcast_admin) == (
+            (200, "Ok"),
+            (304, "Not modified"),
+        )
+
+    def test_filter(self, db, podcast_admin, req):
+        podcast = PodcastFactory(http_status=http.HTTPStatus.OK)
+        PodcastFactory(http_status=http.HTTPStatus.NOT_MODIFIED)
+
+        f = HttpStatusFilter(req, {"http_status": "200"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podcast
 
 
 class TestActiveFilter:
