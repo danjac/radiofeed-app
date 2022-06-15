@@ -90,117 +90,77 @@ class TestScheduleFeedUpdates:
         patched.assert_called_with(podcast.id)
 
     @pytest.mark.parametrize(
-        "active,queued,pub_date,parsed,exists",
+        "active,pub_date,parsed,exists",
         [
             (
                 True,
-                False,
                 None,
                 None,
                 True,
             ),
             (
-                False,
-                False,
-                None,
-                None,
-                False,
-            ),
-            (
                 True,
-                False,
                 timedelta(hours=3),
                 timedelta(hours=1),
                 True,
             ),
             (
                 True,
-                True,
-                timedelta(hours=3),
-                timedelta(hours=1),
-                False,
-            ),
-            (
-                True,
-                False,
                 timedelta(hours=3),
                 timedelta(minutes=30),
                 False,
             ),
             (
                 True,
-                False,
                 timedelta(days=3),
                 timedelta(hours=3),
                 True,
             ),
             (
                 True,
-                False,
                 timedelta(days=3),
                 timedelta(hours=1),
                 False,
             ),
             (
                 True,
-                False,
                 timedelta(days=8),
                 timedelta(hours=8),
                 True,
             ),
             (
                 True,
-                False,
                 timedelta(days=8),
                 timedelta(hours=9),
                 True,
             ),
             (
                 True,
-                False,
                 timedelta(days=14),
                 timedelta(hours=8),
                 False,
             ),
             (
                 True,
-                False,
                 timedelta(days=15),
                 timedelta(hours=8),
                 False,
             ),
             (
                 True,
-                False,
                 timedelta(days=15),
                 timedelta(hours=24),
                 True,
             ),
         ],
     )
-    def test_get_scheduled_feeds(
-        self, db, mocker, active, queued, pub_date, parsed, exists
-    ):
+    def test_get_scheduled_feeds(self, db, mocker, active, pub_date, parsed, exists):
         now = timezone.now()
 
         PodcastFactory(
             active=active,
-            queued=now if queued else None,
             pub_date=now - pub_date if pub_date else None,
             parsed=now - parsed if parsed else None,
         )
 
         assert schedule_feed_updates.Command().get_scheduled_feeds().exists() == exists
-
-
-class TestRemovePodcastsFromQueue:
-    def test_command(self, db):
-        first = PodcastFactory(queued=timezone.now() - timedelta(hours=2))
-        second = PodcastFactory(queued=timezone.now() - timedelta(minutes=30))
-        call_command("remove_podcasts_from_queue")
-
-        first.refresh_from_db()
-        assert first.queued is None
-
-        second.refresh_from_db()
-        assert second.queued is not None

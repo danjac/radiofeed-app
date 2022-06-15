@@ -90,9 +90,7 @@ class TestFeedUpdater:
     def test_update_ok(self, db, mocker, categories):
 
         # set date to before latest
-        podcast = PodcastFactory(
-            pub_date=datetime.datetime(year=2020, month=3, day=1), queued=timezone.now()
-        )
+        podcast = PodcastFactory(pub_date=datetime.datetime(year=2020, month=3, day=1))
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
 
@@ -126,7 +124,6 @@ class TestFeedUpdater:
 
         assert podcast.rss
         assert podcast.active
-        assert podcast.queued is None
         assert podcast.content_hash
         assert podcast.errors == 0
         assert podcast.title == "Mysterious Universe"
@@ -252,9 +249,7 @@ class TestFeedUpdater:
 
         content = self.get_rss_content()
 
-        podcast = PodcastFactory(
-            content_hash=feed_updater.make_content_hash(content), queued=timezone.now()
-        )
+        podcast = PodcastFactory(content_hash=feed_updater.make_content_hash(content))
 
         mocker.patch(
             self.mock_http_get,
@@ -272,7 +267,6 @@ class TestFeedUpdater:
         podcast.refresh_from_db()
         assert podcast.active
         assert podcast.modified is None
-        assert podcast.queued is None
         assert podcast.parsed
         assert podcast.result == Podcast.Result.NOT_MODIFIED
 

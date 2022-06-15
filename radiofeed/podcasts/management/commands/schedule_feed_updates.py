@@ -36,8 +36,6 @@ class Command(BaseCommand):
             )
         )
 
-        Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
-
         for podcast_id in podcast_ids:
             feed_update.delay(podcast_id)
 
@@ -70,7 +68,6 @@ class Command(BaseCommand):
                     days_since_last_pub_date__range=(1, 24),
                     parsed__lt=now - timedelta(hours=1) * F("days_since_last_pub_date"),
                 ),
-                queued__isnull=True,
                 active=True,
             )
             .order_by(

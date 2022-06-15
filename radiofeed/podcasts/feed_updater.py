@@ -140,7 +140,6 @@ class FeedUpdater:
     def save_podcast(self, **fields):
         now = timezone.now()
         Podcast.objects.filter(pk=self.podcast.id).update(
-            queued=None,
             updated=now,
             parsed=now,
             **fields,
