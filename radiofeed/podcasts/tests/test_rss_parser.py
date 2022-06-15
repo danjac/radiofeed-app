@@ -139,10 +139,10 @@ class TestRssParser:
     def test_with_bad_chars(self):
         content = self.read_mock_file("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
-        result = parse_rss(bytes(content.encode("utf-8")))
+        feed = parse_rss(bytes(content.encode("utf-8")))
 
-        assert len(result.items) == 20
-        assert result.feed.title == "Mysterious Universe"
+        assert len(feed.items) == 20
+        assert feed.title == "Mysterious Universe"
 
     @pytest.mark.parametrize(
         "filename,title,num_items",
@@ -183,6 +183,6 @@ class TestRssParser:
         ],
     )
     def test_parse_rss(self, filename, title, num_items):
-        result = parse_rss(self.read_mock_file(filename))
-        assert result.feed.title == title
-        assert len(result.items) == num_items
+        feed = parse_rss(self.read_mock_file(filename))
+        assert feed.title == title
+        assert len(feed.items) == num_items

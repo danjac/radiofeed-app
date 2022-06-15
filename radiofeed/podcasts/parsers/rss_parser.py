@@ -69,19 +69,14 @@ class Feed:
     explicit: bool = False
 
     categories: list[str] = dataclasses.field(default_factory=list)
-
-
-@dataclasses.dataclass
-class Result:
-    feed: Feed
-    items: list[Item]
+    items: list[Item] = dataclasses.field(default_factory=list)
 
     @property
     def latest_pub_date(self):
         return max([item.pub_date for item in self.items if item.pub_date])
 
 
-def parse_rss(content: bytes) -> Result:
+def parse_rss(content: bytes) -> Feed:
 
     try:
         for element in iterparse(content):
@@ -99,14 +94,15 @@ def parse_rss(content: bytes) -> Result:
     raise RssParserError("<channel /> not found in RSS feed")
 
 
-def parse_channel(channel: lxml.etree.Element, namespaces: dict[str, str]) -> Result:
+def parse_channel(channel: lxml.etree.Element, namespaces: dict[str, str]) -> Feed:
     try:
         feed = parse_feed(XPathFinder(channel, namespaces))
     except (TypeError, ValueError) as e:
         raise RssParserError from e
-    if not (items := [*parse_items(channel, namespaces)]):
+    feed.items = [*parse_items(channel, namespaces)]
+    if not feed.items:
         raise RssParserError("no items found in RSS feed")
-    return Result(feed=feed, items=items)
+    return feed
 
 
 def parse_feed(finder: XPathFinder) -> Feed:

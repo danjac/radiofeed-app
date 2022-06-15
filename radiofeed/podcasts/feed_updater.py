@@ -53,7 +53,7 @@ class FeedUpdater:
     def handle_success(
         self,
         response: requests.Response,
-        result: rss_parser.Result,
+        feed: rss_parser.Feed,
         content_hash: str,
     ) -> bool:
 
@@ -62,12 +62,12 @@ class FeedUpdater:
 
         categories = [
             categories_dct[category]
-            for category in result.feed.categories
+            for category in feed.categories
             if category in categories_dct
         ]
 
         self.save_podcast(
-            active=not result.feed.complete,
+            active=not feed.complete,
             result=Podcast.Result.SUCCESS,
             content_hash=content_hash,
             errors=0,
@@ -75,20 +75,20 @@ class FeedUpdater:
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=date_parser.parse_date(response.headers.get("Last-Modified")),
-            pub_date=result.latest_pub_date,
-            title=result.feed.title,
-            cover_url=result.feed.cover_url,
-            description=result.feed.description,
-            explicit=result.feed.explicit,
-            funding_text=result.feed.funding_text,
-            funding_url=result.feed.funding_url,
-            language=result.feed.language,
-            link=result.feed.link,
-            owner=result.feed.owner,
-            extracted_text=self.extract_text(categories, result.items),
+            pub_date=feed.latest_pub_date,
+            title=feed.title,
+            cover_url=feed.cover_url,
+            description=feed.description,
+            explicit=feed.explicit,
+            funding_text=feed.funding_text,
+            funding_url=feed.funding_url,
+            language=feed.language,
+            link=feed.link,
+            owner=feed.owner,
+            extracted_text=self.extract_text(feed, categories),
             keywords=" ".join(
                 category
-                for category in result.feed.categories
+                for category in feed.categories
                 if category not in categories_dct
             ),
         )
@@ -97,7 +97,7 @@ class FeedUpdater:
         self.podcast.categories.set(categories)  # type: ignore
 
         # episodes
-        self.sync_episodes(result.items)
+        self.sync_episodes(feed)
 
         return True
 
@@ -146,7 +146,7 @@ class FeedUpdater:
 
     def parse_rss(
         self,
-    ) -> tuple[requests.Response, rss_parser.Result, str]:
+    ) -> tuple[requests.Response, rss_parser.Feed, str]:
 
         response = requests.get(
             self.podcast.rss,
@@ -183,16 +183,14 @@ class FeedUpdater:
 
         return response, rss_parser.parse_rss(response.content), content_hash
 
-    def sync_episodes(
-        self, items: list[rss_parser.Item], batch_size: int = 100
-    ) -> None:
+    def sync_episodes(self, feed: rss_parser.Feed, batch_size: int = 100) -> None:
         """Remove any episodes no longer in feed, update any current and
         add new"""
 
         qs = Episode.objects.filter(podcast=self.podcast)
 
         # remove any episodes that may have been deleted on the podcast
-        qs.exclude(guid__in=[item.guid for item in items]).delete()
+        qs.exclude(guid__in=[item.guid for item in feed.items]).delete()
 
         # determine new/current items based on presence of guid
 
@@ -203,7 +201,7 @@ class FeedUpdater:
         # use set for update to prevent duplicates
         for_update = set()
 
-        for item in items:
+        for item in feed.items:
 
             episode = Episode(
                 pk=guids.get(item.guid),
@@ -243,9 +241,7 @@ class FeedUpdater:
         for batch in batcher(for_insert, batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
-    def extract_text(
-        self, categories: list[Category], items: list[rss_parser.Item]
-    ) -> str:
+    def extract_text(self, feed: rss_parser.Feed, categories: list[Category]) -> str:
         text = " ".join(
             value
             for value in [
@@ -255,7 +251,7 @@ class FeedUpdater:
                 self.podcast.owner,
             ]
             + [c.name for c in categories]
-            + [item.title for item in items][:6]
+            + [item.title for item in feed.items][:6]
             if value
         )
         return " ".join(text_parser.extract_keywords(self.podcast.language, text))
