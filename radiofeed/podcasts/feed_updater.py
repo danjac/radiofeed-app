@@ -53,9 +53,8 @@ class FeedUpdater:
     def handle_success(
         self,
         response: requests.Response,
+        result: rss_parser.Result,
         content_hash: str,
-        feed: rss_parser.Feed,
-        items: list[rss_parser.Item],
     ) -> bool:
 
         # taxonomy
@@ -63,12 +62,12 @@ class FeedUpdater:
 
         categories = [
             categories_dct[category]
-            for category in feed.categories
+            for category in result.feed.categories
             if category in categories_dct
         ]
 
         self.save_podcast(
-            active=not feed.complete,
+            active=not result.feed.complete,
             result=Podcast.Result.SUCCESS,
             content_hash=content_hash,
             errors=0,
@@ -76,20 +75,20 @@ class FeedUpdater:
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=date_parser.parse_date(response.headers.get("Last-Modified")),
-            pub_date=max([item.pub_date for item in items if item.pub_date]),
-            title=feed.title,
-            cover_url=feed.cover_url,
-            description=feed.description,
-            explicit=feed.explicit,
-            funding_text=feed.funding_text,
-            funding_url=feed.funding_url,
-            language=feed.language,
-            link=feed.link,
-            owner=feed.owner,
-            extracted_text=self.extract_text(categories, items),
+            pub_date=result.latest_pub_date,
+            title=result.feed.title,
+            cover_url=result.feed.cover_url,
+            description=result.feed.description,
+            explicit=result.feed.explicit,
+            funding_text=result.feed.funding_text,
+            funding_url=result.feed.funding_url,
+            language=result.feed.language,
+            link=result.feed.link,
+            owner=result.feed.owner,
+            extracted_text=self.extract_text(categories, result.items),
             keywords=" ".join(
                 category
-                for category in feed.categories
+                for category in result.feed.categories
                 if category not in categories_dct
             ),
         )
@@ -98,7 +97,7 @@ class FeedUpdater:
         self.podcast.categories.set(categories)  # type: ignore
 
         # episodes
-        self.sync_episodes(items)
+        self.sync_episodes(result.items)
 
         return True
 
@@ -147,7 +146,7 @@ class FeedUpdater:
 
     def parse_rss(
         self,
-    ) -> tuple[requests.Response, str, rss_parser.Feed, list[rss_parser.Item]]:
+    ) -> tuple[requests.Response, rss_parser.Result, str]:
 
         response = requests.get(
             self.podcast.rss,
@@ -182,7 +181,7 @@ class FeedUpdater:
         ).exists():
             raise DuplicateFeed(response=response)
 
-        return response, content_hash, *rss_parser.parse_rss(response.content)
+        return response, rss_parser.parse_rss(response.content), content_hash
 
     def sync_episodes(
         self, items: list[rss_parser.Item], batch_size: int = 100

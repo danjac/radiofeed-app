@@ -117,6 +117,9 @@ class TestConverters:
 
 
 class TestRssParser:
+    def read_mock_file(self, mock_filename):
+        return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
+
     def test_empty(self):
         with pytest.raises(RssParserError):
             parse_rss(b"")
@@ -136,10 +139,10 @@ class TestRssParser:
     def test_with_bad_chars(self):
         content = self.read_mock_file("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
-        feed, items = parse_rss(bytes(content.encode("utf-8")))
+        result = parse_rss(bytes(content.encode("utf-8")))
 
-        assert len(items) == 20
-        assert feed.title == "Mysterious Universe"
+        assert len(result.items) == 20
+        assert result.feed.title == "Mysterious Universe"
 
     @pytest.mark.parametrize(
         "filename,title,num_items",
@@ -180,9 +183,6 @@ class TestRssParser:
         ],
     )
     def test_parse_rss(self, filename, title, num_items):
-        feed, items = parse_rss(self.read_mock_file(filename))
-        assert feed.title == title
-        assert len(items) == num_items
-
-    def read_mock_file(self, mock_filename):
-        return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
+        result = parse_rss(self.read_mock_file(filename))
+        assert result.feed.title == title
+        assert len(result.items) == num_items
