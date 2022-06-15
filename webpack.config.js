@@ -1,4 +1,3 @@
-//webpack.config.js
 const path = require('path');
 
 module.exports = {
@@ -8,7 +7,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './static/dist'),
-    filename: "bundle.js" // <--- Will be compiled to this single file
+    filename: "bundle.js"
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
