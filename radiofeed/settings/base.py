@@ -87,11 +87,11 @@ INSTALLED_APPS = [
     "fast_update",
     "health_check",
     "health_check.cache",
-    "health_check.contrib.celery",
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "health_check.db",
+    "huey.contrib.djhuey",
     "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.podcasts",
@@ -226,31 +226,18 @@ LOGGING = {
     },
 }
 
-# Celery
+# Huey
+# https://huey.readthedocs.io/en/latest/django.html
 
-if USE_TZ:
-    CELERY_TIMEZONE = TIME_ZONE
+HUEY = {
+    "connection": {
+        "url": REDIS_URL,
+    },
+    "blocking": False,
+    "immediate": False,
+    "store_none": True,
+}
 
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
-CELERY_BROKER_URL = REDIS_URL
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content
-CELERY_ACCEPT_CONTENT = ["json"]
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-task_serializer
-CELERY_TASK_SERIALIZER = "json"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
-CELERY_RESULT_SERIALIZER = "json"
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-acks-late
-CELERY_TASK_ACKS_LATE = True
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
-CELERY_TASK_TIME_LIMIT = 5 * 60
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
-CELERY_TASK_SOFT_TIME_LIMIT = 60
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-worker_max_tasks_per_child
-CELERYD_MAX_TASKS_PER_CHILD = 300
-# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std-setting-worker_max_memory_per_child
-CELERYD_MAX_MEMORY_PER_CHILD = 3000
 
 # Project specific
 

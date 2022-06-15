@@ -12,7 +12,6 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **kwargs) -> None:
-        for user_id in User.objects.email_notification_recipients().values_list(
-            "pk", flat=True
-        ):
-            send_recommendations_email.delay(user_id)
+        send_recommendations_email.map(
+            User.objects.email_notification_recipients().values_list("pk", flat=True)
+        )

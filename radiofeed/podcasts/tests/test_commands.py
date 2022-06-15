@@ -11,7 +11,6 @@ from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
 from radiofeed.podcasts.management.commands import schedule_feed_updates
 from radiofeed.podcasts.models import Podcast
-from radiofeed.users.factories import UserFactory
 
 
 class TestCreateRecommendations:
@@ -64,30 +63,25 @@ class TestExportPodcasts:
 
 class TestSendRecommendationsEmails:
     def test_command(self, db, mocker):
-        user = UserFactory(send_email_notifications=True)
-        UserFactory(send_email_notifications=False)
-
         patched = mocker.patch(
-            "radiofeed.podcasts.tasks.send_recommendations_email.delay"
+            "radiofeed.podcasts.tasks.send_recommendations_email.map"
         )
 
         call_command("send_recommendation_emails")
-        patched.assert_called_with(user.id)
+        patched.assert_called()
 
 
 class TestScheduleFeedUpdates:
     def test_command(self, db, mocker):
 
-        podcast = PodcastFactory(parsed=None)
-
         patched = mocker.patch(
-            "radiofeed.podcasts.tasks.feed_update.delay",
+            "radiofeed.podcasts.tasks.feed_update.map",
         )
         mocker.patch("multiprocessing.cpu_count", return_value=4)
 
         call_command("schedule_feed_updates")
 
-        patched.assert_called_with(podcast.id)
+        patched.assert_called()
 
     @pytest.mark.parametrize(
         "active,pub_date,parsed,exists",

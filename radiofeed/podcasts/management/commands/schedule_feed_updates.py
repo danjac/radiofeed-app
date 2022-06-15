@@ -10,7 +10,6 @@ from django.core.management.base import BaseCommand
 from django.db.models import Count, F, Q, QuerySet
 from django.db.models.functions import ExtractDay
 from django.utils import timezone
-from django.utils.datastructures import OrderedSet
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tasks import feed_update
@@ -29,17 +28,12 @@ class Command(BaseCommand):
         # parse podcasts up to CPU-based limit
         # example: if 3xCPU and --limit=100, then parse 300 each time
 
-        podcast_ids = OrderedSet(
+        feed_update.map(
             itertools.islice(
                 self.get_scheduled_feeds().values_list("pk", flat=True).distinct(),
                 round(multiprocessing.cpu_count() * kwargs["limit"]),
             )
         )
-
-        for podcast_id in podcast_ids:
-            feed_update.delay(podcast_id)
-
-        self.stdout.write(f"{len(podcast_ids)} podcasts queued for update")
 
     def get_scheduled_feeds(self) -> QuerySet[Podcast]:
         now = timezone.now()

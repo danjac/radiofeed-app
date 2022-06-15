@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from argparse import ArgumentParser
-from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 
@@ -20,10 +19,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs) -> None:
-        for user_id in User.objects.email_notification_recipients().values_list(
-            "pk", flat=True
-        ):
-            send_new_episodes_email.delay(
-                user_id,
-                timedelta(days=kwargs["interval"]),
-            )
+        send_new_episodes_email.map(
+            User.objects.email_notification_recipients().values_list("pk", flat=True)
+        )

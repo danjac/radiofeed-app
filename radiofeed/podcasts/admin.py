@@ -171,8 +171,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
         count = queryset.count()
 
-        for podcast_id in queryset.values_list("pk", flat=True):
-            feed_update.delay(podcast_id)
+        feed_update.map(queryset.values_list("pk", flat=True))
 
         self.message_user(
             request,
@@ -181,7 +180,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         )
 
     def update_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
-        feed_update.delay(obj.id)
+        feed_update(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:

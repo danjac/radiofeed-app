@@ -78,12 +78,12 @@ class TestPodcastAdmin:
         assert ordering == []
 
     def test_update_podcast_feeds(self, mocker, podcast, podcast_admin, req):
-        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.feed_update.delay")
+        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.feed_update.map")
         podcast_admin.update_podcast_feeds(req, Podcast.objects.all())
-        mock_feed_update.assert_called_with(podcast.id)
+        mock_feed_update.assert_called()
 
     def test_update_podcast_feed(self, mocker, podcast, podcast_admin, req):
-        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.feed_update.delay")
+        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.feed_update")
         podcast_admin.update_podcast_feed(req, podcast)
         mock_feed_update.assert_called_with(podcast.id)
 
