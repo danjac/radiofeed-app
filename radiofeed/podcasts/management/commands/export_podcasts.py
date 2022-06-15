@@ -13,19 +13,20 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument("filename", help="Path to file")
+        parser.add_argument("-o", "--output", help="Path to file")
 
-    def handle(self, filename: str, *args, **kwargs) -> None:
+    def handle(self, *args, **kwargs) -> None:
 
         counter: int = 0
 
-        with open(filename, "w") as fp:
-            writer = csv.writer(fp)
+        if filename := kwargs.get("output"):
+            stream = open(filename, "w")
+        else:
+            stream = self.stdout
+
+        with stream:
+            writer = csv.writer(stream)
             for counter, rss in enumerate(
                 Podcast.objects.values_list("rss", flat=True), 1
             ):
                 writer.writerow([rss])
-
-        self.stdout.write(
-            self.style.SUCCESS(f"{counter} podcasts written to {filename}")
-        )
