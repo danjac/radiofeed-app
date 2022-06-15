@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "watch:css": "NODE_ENV=production tailwindcss -i ./static/css/app.css -o ./static/dist/bundle.css --minify --watch --verbose",
-        "watch:ts": "tsc ./static/js/*.ts --lib dom,es2017 --moduleResolution node --watch --module commonjs",
+        "watch:ts": "tsc ./static/ts/*.ts --lib dom,es2017 --moduleResolution node --watch --module commonjs --outdir ./static/js",
         "watch:js": "esbuild ./static/js/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./static/dist/bundle.js"
     },
     "dependencies": {

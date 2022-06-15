@@ -199,11 +199,11 @@ document.addEventListener("alpine:init", function () {
             loadState: function () {
                 var state = sessionStorage.getItem("player");
                 return state
-                ? JSON.parse(state)
-                : {
-                    rate: 1.0,
-                    autoplay: false
-                };
+                    ? JSON.parse(state)
+                    : {
+                        rate: 1.0,
+                        autoplay: false
+                    };
             },
             saveState: function () {
                 sessionStorage.setItem("player", JSON.stringify({
@@ -213,7 +213,7 @@ document.addEventListener("alpine:init", function () {
             },
             formatCounter: function (value) {
                 if (isNaN(value) || value < 0)
-                return "00:00:00";
+                    return "00:00:00";
                 var duration = Math.floor(value);
                 var hours = Math.floor(duration / 3600);
                 var minutes = Math.floor((duration % 3600) / 60);
