@@ -1,5 +1,3 @@
 web: python manage.py runserver
 worker: celery -A radiofeed.celery_app worker --loglevel=info
-watch-css: npm run watch:css
-watch-ts: npm run watch:ts
 watch-js: npm run watch:js
