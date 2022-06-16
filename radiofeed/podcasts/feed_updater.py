@@ -128,6 +128,7 @@ class FeedUpdater:
         Podcast.objects.filter(pk=self.podcast.id).update(
             updated=now,
             parsed=now,
+            queued=None,
             **fields,
         )
 
