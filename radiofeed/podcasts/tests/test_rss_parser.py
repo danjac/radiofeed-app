@@ -1,4 +1,5 @@
 import pathlib
+import uuid
 
 from datetime import timedelta
 
@@ -7,6 +8,8 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.podcasts.parsers.rss_parser import (
+    Feed,
+    Item,
     RssParserError,
     parse_audio,
     parse_duration,
@@ -16,6 +19,48 @@ from radiofeed.podcasts.parsers.rss_parser import (
     parse_rss,
     parse_url,
 )
+
+
+class TestFeed:
+    @pytest.fixture
+    def feed(self):
+        return Feed(title="test", language="en")
+
+    def test_latest_pub_date_if_empty(self, feed):
+        assert feed.latest_pub_date is None
+
+    def test_single_pub_date(self, feed):
+        now = timezone.now()
+        feed.items.append(
+            Item(
+                title="test",
+                pub_date=now,
+                media_url="",
+                media_type="audio/mpeg",
+                guid=uuid.uuid4().hex,
+            )
+        )
+        assert feed.latest_pub_date == now
+
+    def test_multiple_pub_dates(self, feed):
+        now = timezone.now()
+        feed.items = [
+            Item(
+                title="test 1",
+                pub_date=now,
+                media_url="",
+                media_type="audio/mpeg",
+                guid=uuid.uuid4().hex,
+            ),
+            Item(
+                title="test 2",
+                pub_date=now - timedelta(days=3),
+                media_url="",
+                media_type="audio/mpeg",
+                guid=uuid.uuid4().hex,
+            ),
+        ]
+        assert feed.latest_pub_date == now
 
 
 class TestConverters:

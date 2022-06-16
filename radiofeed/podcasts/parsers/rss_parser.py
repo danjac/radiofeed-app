@@ -72,8 +72,11 @@ class Feed:
     items: list[Item] = dataclasses.field(default_factory=list)
 
     @property
-    def latest_pub_date(self):
-        return max([item.pub_date for item in self.items if item.pub_date])
+    def latest_pub_date(self) -> datetime | None:
+        try:
+            return max([item.pub_date for item in self.items if item.pub_date])
+        except ValueError:
+            return None
 
 
 def parse_rss(content: bytes) -> Feed:
