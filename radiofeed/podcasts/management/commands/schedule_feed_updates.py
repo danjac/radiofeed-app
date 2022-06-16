@@ -36,8 +36,8 @@ class Command(BaseCommand):
                     models.F("subscribers").desc(),
                     models.F("promoted").desc(),
                     models.F("queued").asc(nulls_first=True),
-                    models.F("parsed").asc(nulls_first=True),
                     models.F("pub_date").desc(nulls_first=True),
+                    models.F("parsed").asc(nulls_first=True),
                 )
                 .values_list("pk")
                 .distinct(),
