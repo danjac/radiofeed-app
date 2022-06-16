@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument("filename", help="Path to file")
 
-    def handle(self, filename: str, *args, **kwargs):
+    def handle(self, filename: str, *args, **options):
         podcasts = Podcast.objects.bulk_create(
             [
                 Podcast(rss=feed)

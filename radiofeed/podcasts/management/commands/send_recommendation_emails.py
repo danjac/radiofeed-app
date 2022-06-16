@@ -11,7 +11,7 @@ class Command(BaseCommand):
     Send recommendation emails
     """
 
-    def handle(self, *args, **kwargs) -> None:
+    def handle(self, *args, **options) -> None:
         send_recommendations_email.map(
-            User.objects.email_notification_recipients().values_list("pk", flat=True)
+            User.objects.email_notification_recipients().values_list("pk")
         )

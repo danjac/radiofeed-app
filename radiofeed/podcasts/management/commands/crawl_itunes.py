@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument("--url", help="iTunes web page", default=None)
 
-    def handle(self, url: str | None = None, *args, **kwargs):
+    def handle(self, url: str | None = None, *args, **options):
         for counter, feed in enumerate(
             itunes.parse_genre(url) if url else itunes.crawl()
         ):

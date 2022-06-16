@@ -1,15 +1,8 @@
 import pathlib
 
-from datetime import timedelta
-
-import pytest
-
 from django.core.management import call_command
-from django.utils import timezone
 
-from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
-from radiofeed.podcasts.management.commands import schedule_feed_updates
 from radiofeed.podcasts.models import Podcast
 
 
@@ -75,85 +68,9 @@ class TestScheduleFeedUpdates:
     def test_command(self, db, mocker):
 
         patched = mocker.patch(
-            "radiofeed.podcasts.tasks.feed_update.map",
+            "radiofeed.podcasts.feed_scheduler.schedule",
         )
 
-        call_command("schedule_feed_updates", 300)
+        call_command("schedule_feed_updates", limit=200)
 
-        patched.assert_called()
-
-    @pytest.mark.parametrize(
-        "active,pub_date,parsed,exists",
-        [
-            (
-                True,
-                None,
-                None,
-                True,
-            ),
-            (
-                True,
-                timedelta(hours=3),
-                timedelta(hours=1),
-                True,
-            ),
-            (
-                True,
-                timedelta(hours=3),
-                timedelta(minutes=30),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=3),
-                timedelta(hours=3),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=3),
-                timedelta(hours=1),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=8),
-                timedelta(hours=8),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=8),
-                timedelta(hours=9),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=14),
-                timedelta(hours=8),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=15),
-                timedelta(hours=8),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=15),
-                timedelta(hours=24),
-                True,
-            ),
-        ],
-    )
-    def test_get_scheduled_feeds(self, db, mocker, active, pub_date, parsed, exists):
-        now = timezone.now()
-
-        PodcastFactory(
-            active=active,
-            pub_date=now - pub_date if pub_date else None,
-            parsed=now - parsed if parsed else None,
-        )
-
-        assert schedule_feed_updates.Command().get_scheduled_feeds().exists() == exists
+        patched.assert_called_with(200)

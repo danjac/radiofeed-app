@@ -15,11 +15,11 @@ class Command(BaseCommand):
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument("-o", "--output", help="Path to file")
 
-    def handle(self, *args, **kwargs) -> None:
+    def handle(self, *args, **options) -> None:
 
         counter: int = 0
 
-        if filename := kwargs.get("output"):
+        if filename := options.get("output"):
             stream = open(filename, "w")
         else:
             stream = self.stdout

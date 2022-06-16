@@ -10,5 +10,5 @@ class Command(BaseCommand):
     Runs recommendation algorithm.
     """
 
-    def handle(self, *args, **kwargs) -> None:
+    def handle(self, *args, **options) -> None:
         recommender.recommend()
