@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import http
 
-from datetime import timedelta
-
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
@@ -78,7 +76,6 @@ class HttpStatusFilter(admin.SimpleListFilter):
 class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
-    interval = timedelta(days=14)
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
@@ -97,6 +94,21 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset.filter(pub_date__isnull=True)
             case _:
                 return queryset
+
+
+class QueuedFilter(admin.SimpleListFilter):
+    title = "Queued"
+    parameter_name = "queued"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (("yes", "Queued"),)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
 
 
 class PromotedFilter(admin.SimpleListFilter):
@@ -138,6 +150,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         PubDateFilter,
+        QueuedFilter,
         PromotedFilter,
         SubscribedFilter,
         HttpStatusFilter,
@@ -162,6 +175,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     readonly_fields = (
         "parsed",
+        "queued",
         "pub_date",
         "modified",
         "etag",
