@@ -14,7 +14,7 @@ class OpmlParserError(ValueError):
     ...
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Outline:
 
     title: str = ""
