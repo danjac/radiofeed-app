@@ -145,6 +145,14 @@ class TestHttpStatusFilter:
         assert qs.count() == 1
         assert qs.first() == podcast
 
+    def test_none(self, db, podcast_admin, req):
+        PodcastFactory(http_status=http.HTTPStatus.OK)
+        PodcastFactory(http_status=http.HTTPStatus.NOT_MODIFIED)
+
+        f = HttpStatusFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 2
+
 
 class TestActiveFilter:
     def test_none(self, podcasts, podcast_admin, req):
