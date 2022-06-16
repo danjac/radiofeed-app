@@ -77,7 +77,7 @@ This will start up:
 
 * Django development server
 * Background workers
-* `tailwindcss` and `esbuild` for building frontend assets on the fly
+* `tailwindcss` and `webpack` for building frontend assets on the fly
 
 Honcho should be installed in your virtualenv.
 
