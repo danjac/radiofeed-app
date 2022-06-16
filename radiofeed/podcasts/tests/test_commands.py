@@ -78,7 +78,7 @@ class TestScheduleFeedUpdates:
             "radiofeed.podcasts.tasks.feed_update.map",
         )
 
-        call_command("schedule_feed_updates")
+        call_command("schedule_feed_updates", 300)
 
         patched.assert_called()
 

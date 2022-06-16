@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
-from django.db.models import Count, F, Q, QuerySet
+from django.db import models
 from django.db.models.functions import ExtractDay
 from django.utils import timezone
 
@@ -20,49 +20,50 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument("--limit", help="Limit", type=int, default=100)
+        parser.add_argument("limit", help="Limit", type=int)
 
-    def handle(self, *args, **kwargs) -> None:
+    def handle(self, limit: int, *args, **kwargs) -> None:
         feed_update.map(
             itertools.islice(
                 self.get_scheduled_feeds().values_list("pk", flat=True).distinct(),
-                kwargs["limit"],
+                limit,
             )
         )
 
-    def get_scheduled_feeds(self) -> QuerySet[Podcast]:
+    def get_scheduled_feeds(self) -> models.QuerySet[Podcast]:
         now = timezone.now()
 
         return (
             Podcast.objects.annotate(
-                subscribers=Count("subscription"),
-                days_since_last_pub_date=ExtractDay(now - F("pub_date")),
+                subscribers=models.Count("subscription"),
+                days_since_last_pub_date=ExtractDay(now - models.F("pub_date")),
             )
             .filter(
-                Q(
+                models.Q(
                     parsed__isnull=True,
                 )
-                | Q(
+                | models.Q(
                     pub_date__isnull=True,
                 )
-                | Q(
+                | models.Q(
                     days_since_last_pub_date__lt=1,
                     parsed__lt=now - timedelta(hours=1),
                 )
-                | Q(
+                | models.Q(
                     days_since_last_pub_date__gt=24,
                     parsed__lt=now - timedelta(hours=24),
                 )
-                | Q(
+                | models.Q(
                     days_since_last_pub_date__range=(1, 24),
-                    parsed__lt=now - timedelta(hours=1) * F("days_since_last_pub_date"),
+                    parsed__lt=now
+                    - timedelta(hours=1) * models.F("days_since_last_pub_date"),
                 ),
                 active=True,
             )
             .order_by(
-                F("subscribers").desc(),
-                F("promoted").desc(),
-                F("parsed").asc(nulls_first=True),
-                F("pub_date").desc(nulls_first=True),
+                models.F("subscribers").desc(),
+                models.F("promoted").desc(),
+                models.F("parsed").asc(nulls_first=True),
+                models.F("pub_date").desc(nulls_first=True),
             )
         )
