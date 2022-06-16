@@ -23,43 +23,49 @@ from radiofeed.podcasts.parsers.rss_parser import (
 
 class TestFeed:
     @pytest.fixture
-    def feed(self):
-        return Feed(title="test", language="en")
+    def test_latest_pub_date_if_empty(self):
+        assert Feed(title="test", language="en").latest_pub_date is None
 
-    def test_latest_pub_date_if_empty(self, feed):
-        assert feed.latest_pub_date is None
-
-    def test_single_pub_date(self, feed):
+    def test_single_pub_date(self):
         now = timezone.now()
-        feed.items.append(
-            Item(
-                title="test",
-                pub_date=now,
-                media_url="",
-                media_type="audio/mpeg",
-                guid=uuid.uuid4().hex,
-            )
+        feed = Feed(
+            title="test",
+            language="en",
+            items=[
+                Item(
+                    title="test",
+                    pub_date=now,
+                    media_url="",
+                    media_type="audio/mpeg",
+                    guid=uuid.uuid4().hex,
+                )
+            ],
         )
         assert feed.latest_pub_date == now
 
-    def test_multiple_pub_dates(self, feed):
+    def test_multiple_pub_dates(self):
         now = timezone.now()
-        feed.items = [
-            Item(
-                title="test 1",
-                pub_date=now,
-                media_url="",
-                media_type="audio/mpeg",
-                guid=uuid.uuid4().hex,
-            ),
-            Item(
-                title="test 2",
-                pub_date=now - timedelta(days=3),
-                media_url="",
-                media_type="audio/mpeg",
-                guid=uuid.uuid4().hex,
-            ),
-        ]
+
+        feed = Feed(
+            title="test",
+            language="en",
+            items=[
+                Item(
+                    title="test 1",
+                    pub_date=now,
+                    media_url="",
+                    media_type="audio/mpeg",
+                    guid=uuid.uuid4().hex,
+                ),
+                Item(
+                    title="test 2",
+                    pub_date=now - timedelta(days=3),
+                    media_url="",
+                    media_type="audio/mpeg",
+                    guid=uuid.uuid4().hex,
+                ),
+            ],
+        )
         assert feed.latest_pub_date == now
 
 

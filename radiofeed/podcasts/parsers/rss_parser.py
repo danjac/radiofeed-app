@@ -30,7 +30,7 @@ class RssParserError(ValueError):
     ...
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Item:
 
     guid: str
@@ -53,7 +53,7 @@ class Item:
     keywords: str = ""
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Feed:
 
     title: str
@@ -99,16 +99,19 @@ def parse_rss(content: bytes) -> Feed:
 
 def parse_channel(channel: lxml.etree.Element, namespaces: dict[str, str]) -> Feed:
     try:
-        feed = parse_feed(XPathFinder(channel, namespaces))
+        feed = parse_feed(
+            XPathFinder(channel, namespaces),
+            items=[*parse_items(channel, namespaces)],
+        )
     except (TypeError, ValueError) as e:
         raise RssParserError from e
-    feed.items = [*parse_items(channel, namespaces)]
+
     if not feed.items:
         raise RssParserError("no items found in RSS feed")
     return feed
 
 
-def parse_feed(finder: XPathFinder) -> Feed:
+def parse_feed(finder: XPathFinder, items: list[Item]) -> Feed:
     return Feed(
         title=finder.first("title/text()", required=True),
         link=parse_url(finder.first("link/text()")),
@@ -127,6 +130,7 @@ def parse_feed(finder: XPathFinder) -> Feed:
         ),
         complete=finder.first("itunes:complete/text()").casefold() == "yes",
         categories=finder.all("//itunes:category/@text"),
+        items=items,
     )
 
 
