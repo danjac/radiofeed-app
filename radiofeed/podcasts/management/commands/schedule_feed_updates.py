@@ -23,21 +23,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
 
-        scheduled = self.get_scheduled_feeds()
-
-        # add podcasts to queue
-        # this ensures that podcasts are not stuck forever in queue
-        scheduled.filter(queued=None).update(queued=timezone.now())
-
         feed_update.map(
             itertools.islice(
-                scheduled.annotate(subscribers=models.Count("subscription"))
+                self.get_scheduled_feeds()
+                .annotate(subscribers=models.Count("subscription"))
                 .order_by(
                     models.F("subscribers").desc(),
                     models.F("promoted").desc(),
-                    models.F("queued").asc(nulls_first=True),
-                    models.F("pub_date").desc(nulls_first=True),
                     models.F("parsed").asc(nulls_first=True),
+                    models.F("pub_date").desc(nulls_first=True),
                 )
                 .values_list("pk")
                 .distinct(),
