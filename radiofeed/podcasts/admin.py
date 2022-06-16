@@ -133,6 +133,8 @@ class SubscribedFilter(admin.SimpleListFilter):
 
 @admin.register(models.Podcast)
 class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
+    date_hierarchy = "pub_date"
+
     list_filter = (
         ActiveFilter,
         PubDateFilter,
