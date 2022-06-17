@@ -215,8 +215,8 @@ class FeedUpdater:
     ) -> Generator[Episode, None, None]:
 
         episode_ids = set()
-        for item in feed.items:
-            if (episode_id := guids.get(item.guid)) and episode_id not in episode_ids:
+        for item in filter(lambda item: item.guid in guids, feed.items):
+            if (episode_id := guids[item.guid]) not in episode_ids:
                 yield self.make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
@@ -224,9 +224,8 @@ class FeedUpdater:
         self, feed: rss_parser.Feed, guids: dict[str, int]
     ) -> Generator[Episode, None, None]:
 
-        for item in feed.items:
-            if item.guid not in guids:
-                yield self.make_episode(item)
+        for item in filter(lambda item: item.guid not in guids, feed.items):
+            yield self.make_episode(item)
 
     def make_episode(
         self, item: rss_parser.Item, episode_id: int | None = None
