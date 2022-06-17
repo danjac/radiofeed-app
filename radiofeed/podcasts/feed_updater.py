@@ -183,27 +183,9 @@ class FeedUpdater:
 
         guids = dict(qs.values_list("guid", "pk"))
 
-        for_insert = []
-
-        # use set for update to prevent duplicates
-        for_update = set()
-
-        for item in feed.items:
-
-            episode = Episode(
-                pk=guids.get(item.guid),
-                podcast=self.podcast,
-                **dataclasses.asdict(item),
-            )
-
-            if episode.pk:
-                for_update.add(episode)
-            else:
-                for_insert.append(episode)
-
         # update existing content
 
-        for batch in batcher(for_update, batch_size):
+        for batch in batcher(self.episodes_for_update(feed, guids), batch_size):
             Episode.fast_update_objects.fast_update(
                 batch,
                 fields=[
@@ -225,8 +207,35 @@ class FeedUpdater:
 
         # add new episodes
 
-        for batch in batcher(for_insert, batch_size):
+        for batch in batcher(self.episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
+
+    def episodes_for_update(
+        self, feed: rss_parser.Feed, guids: dict[str, int]
+    ) -> Generator[Episode, None, None]:
+
+        episode_ids = set()
+        for item in feed.items:
+            if (episode_id := guids.get(item.guid)) and episode_id not in episode_ids:
+                yield self.make_episode(item, episode_id)
+                episode_ids.add(episode_id)
+
+    def episodes_for_insert(
+        self, feed: rss_parser.Feed, guids: dict[str, int]
+    ) -> Generator[Episode, None, None]:
+
+        for item in feed.items:
+            if guids.get(item.guid) is None:
+                yield self.make_episode(item)
+
+    def make_episode(
+        self, item: rss_parser.Item, episode_id: int | None = None
+    ) -> Episode:
+        return Episode(
+            pk=episode_id,
+            podcast=self.podcast,
+            **dataclasses.asdict(item),
+        )
 
     def extract_text(self, feed: rss_parser.Feed, categories: list[Category]) -> str:
         text = " ".join(
