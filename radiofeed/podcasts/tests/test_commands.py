@@ -9,18 +9,26 @@ from django.utils import timezone
 
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
-from radiofeed.podcasts.management.commands import schedule_feed_updates
+from radiofeed.podcasts.management.commands import feed_updater
 from radiofeed.podcasts.models import Podcast
 
 
-class TestCreateRecommendations:
-    def test_command(self, mocker):
+class TestRecommender:
+    def test_create_recommendations(self, mocker):
         patched = mocker.patch("radiofeed.podcasts.recommender.recommend")
-        call_command("create_recommendations")
+        call_command("recommender")
+        patched.assert_called()
+
+    def test_send_recommendations(self, db, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.tasks.send_recommendations_email.map"
+        )
+
+        call_command("recommender", email=True)
         patched.assert_called()
 
 
-class TestCrawlItunes:
+class TestItunesCrawler:
     def test_command(self, mocker, podcast):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.crawl",
@@ -38,47 +46,37 @@ class TestCrawlItunes:
                 ),
             ],
         )
-        call_command("crawl_itunes")
+        call_command("itunes_crawler")
         patched.assert_called()
 
 
-class TestImportPodcasts:
+class TestPodcastImporter:
     def test_command(self, db):
         call_command(
-            "import_podcasts",
+            "podcast_importer",
             pathlib.Path(__file__).parent / "mocks" / "feeds.txt",
         )
 
         assert Podcast.objects.count() == 18
 
 
-class TestExportPodcasts:
+class TestPodcastExporter:
     def test_command(self, mocker, podcast):
         mocker.patch("builtins.open")
         mock_writer = mocker.Mock()
         mocker.patch("csv.writer", return_value=mock_writer)
-        call_command("export_podcasts", "filename.txt")
+        call_command("podcast_exporter", "filename.txt")
         mock_writer.writerows.assert_called()
 
 
-class TestSendRecommendationsEmails:
-    def test_command(self, db, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.tasks.send_recommendations_email.map"
-        )
-
-        call_command("send_recommendation_emails")
-        patched.assert_called()
-
-
-class TestScheduleFeedUpdates:
+class TestFeedUpdater:
     def test_command(self, db, mocker):
 
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.feed_update.map",
         )
 
-        call_command("schedule_feed_updates", limit=200)
+        call_command("feed_updater", limit=200)
 
         patched.assert_called()
 
@@ -156,4 +154,4 @@ class TestScheduleFeedUpdates:
             parsed=now - parsed if parsed else None,
         )
 
-        assert schedule_feed_updates.Command().get_scheduled_feeds().exists() == exists
+        assert feed_updater.Command().get_scheduled_feeds().exists() == exists
