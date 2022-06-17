@@ -114,25 +114,19 @@ In production you should set up the following cron jobs to run these Django comm
 Parse podcast RSS feeds:
 
 ```bash
-*/6 * * * * python manage.py feed_update --limit=120
+*/6 * * * * python manage.py feed_updater
 ```
 
 Generate similar recommendations for each podcast:
 
 ```bash
-15 6 * * * python manage.py create_recommendations
+15 6 * * * python manage.py recommender
 ```
 
 Send podcast recommendations to users:
 
 ```bash
-15 9 * * 1 python manage.py send_recommendation_emails
-```
-
-Send suggestions for new episodes to users:
-
-```bash
-15 9 * * 3 python manage.py send_new_episodes_emails
+15 9 * * 1 python manage.py recommender --email
 ```
 
 An `app.json` configuration with these cron schedules is included for Dokku deployment.
