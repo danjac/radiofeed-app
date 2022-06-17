@@ -82,26 +82,22 @@ class Feed:
 def parse_rss(content: bytes) -> Feed:
 
     try:
-        for element in iterparse(content):
-            if element.tag == "channel":
-                try:
-                    return parse_channel(
-                        element,
-                        namespaces=NAMESPACES | (element.getparent().nsmap or {}),
-                    )
-                finally:
-                    element.clear()
+        for element in iterparse(content, "channel"):
+            try:
+                return parse_channel(element)
+            finally:
+                element.clear()
     except lxml.etree.XMLSyntaxError as e:
         raise RssParserError from e
 
     raise RssParserError("<channel /> not found in RSS feed")
 
 
-def parse_channel(channel: lxml.etree.Element, namespaces: dict[str, str]) -> Feed:
+def parse_channel(channel: lxml.etree.Element) -> Feed:
     try:
         feed = parse_feed(
-            XPathFinder(channel, namespaces),
-            items=[*parse_items(channel, namespaces)],
+            XPathFinder(channel, NAMESPACES),
+            items=[*parse_items(channel, NAMESPACES)],
         )
     except (TypeError, ValueError) as e:
         raise RssParserError from e

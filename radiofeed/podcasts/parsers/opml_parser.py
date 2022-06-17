@@ -25,15 +25,14 @@ class Outline:
 
 def parse_opml(content: bytes) -> Generator[Outline, None, None]:
     try:
-        for element in iterparse(content):
-            if element.tag == "outline":
-                finder = XPathFinder(element)
-                yield Outline(
-                    title=finder.first("@title"),
-                    rss=parse_url(finder.first("@xmlUrl")),
-                    url=parse_url(finder.first("@htmlUrl")),
-                    text=finder.first("@text"),
-                )
-                element.clear()
+        for element in iterparse(content, "outline"):
+            finder = XPathFinder(element)
+            yield Outline(
+                title=finder.first("@title"),
+                rss=parse_url(finder.first("@xmlUrl")),
+                url=parse_url(finder.first("@htmlUrl")),
+                text=finder.first("@text"),
+            )
+            element.clear()
     except lxml.etree.XMLSyntaxError as e:
         raise OpmlParserError from e

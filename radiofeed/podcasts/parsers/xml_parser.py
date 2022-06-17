@@ -7,7 +7,7 @@ from typing import Generator
 import lxml
 
 
-def iterparse(content: bytes) -> Generator[lxml.Element, None, None]:
+def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]:
 
     for _, element in lxml.etree.iterparse(
         io.BytesIO(content),
@@ -17,7 +17,8 @@ def iterparse(content: bytes) -> Generator[lxml.Element, None, None]:
         recover=True,
         events=("end",),
     ):
-        yield element
+        if element.tag in tags:
+            yield element
 
 
 class XPathFinder:
@@ -25,7 +26,7 @@ class XPathFinder:
         self, element: lxml.etree.Element, namespaces: dict[str, str] | None = None
     ):
         self.element = element
-        self.namespaces = namespaces
+        self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
     def first(self, *paths: str, default: str = "", required: bool = False) -> str:
         """Find single attribute or text value. Returns first matching value."""
