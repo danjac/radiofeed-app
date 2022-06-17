@@ -17,5 +17,4 @@ class Command(BaseCommand):
         parser.add_argument("output", nargs="?", type=FileType("w"), default=sys.stdout)
 
     def handle(self, *args, **options) -> None:
-        with (stream := options["output"]):
-            csv.writer(stream).writerows(Podcast.objects.values_list("rss"))
+        csv.writer(options["output"]).writerows(Podcast.objects.values_list("rss"))
