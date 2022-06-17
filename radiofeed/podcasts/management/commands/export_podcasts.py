@@ -17,12 +17,7 @@ class Command(BaseCommand):
         parser.add_argument("output", nargs="?", type=FileType("w"), default=sys.stdout)
 
     def handle(self, *args, **options) -> None:
-
-        counter: int = 0
-
         with (stream := options["output"]):
             writer = csv.writer(stream)
-            for counter, rss in enumerate(
-                Podcast.objects.values_list("rss", flat=True), 1
-            ):
+            for rss in Podcast.objects.values_list("rss", flat=True):
                 writer.writerow([rss])
