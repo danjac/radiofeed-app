@@ -13,7 +13,5 @@ def feed_update(podcast_id: int) -> None:
 
 
 @db_task()
-def send_recommendations_email(user_id: int) -> None:
-    emails.send_recommendations_email(
-        User.objects.email_notification_recipients().get(pk=user_id)
-    )
+def recommendations_email(user_id: int) -> None:
+    emails.recommendations(User.objects.email_notification_recipients().get(pk=user_id))

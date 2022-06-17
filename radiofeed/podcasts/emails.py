@@ -6,7 +6,7 @@ from radiofeed.users.emails import send_user_notification_email
 from radiofeed.users.models import User
 
 
-def send_recommendations_email(
+def recommendations(
     user: User,
     min_podcasts: int = 2,
     max_podcasts: int = 3,

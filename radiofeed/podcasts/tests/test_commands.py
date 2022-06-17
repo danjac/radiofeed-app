@@ -11,16 +11,13 @@ from radiofeed.podcasts.management.commands import feed_updater
 
 
 class TestRecommender:
-    def test_create_recommendations(self, mocker):
+    def test_command(self, mocker):
         patched = mocker.patch("radiofeed.podcasts.recommender.recommend")
         call_command("recommender")
         patched.assert_called()
 
-    def test_send_recommendations(self, db, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.tasks.send_recommendations_email.map"
-        )
-
+    def test_email(self, db, mocker):
+        patched = mocker.patch("radiofeed.podcasts.tasks.recommendations_email.map")
         call_command("recommender", email=True)
         patched.assert_called()
 

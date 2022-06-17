@@ -1,12 +1,12 @@
-from radiofeed.podcasts.emails import send_recommendations_email
+from radiofeed.podcasts import emails
 from radiofeed.podcasts.factories import RecommendationFactory, SubscriptionFactory
 
 
-class TestSendRecommendationEmail:
+class TestRecommendations:
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
 
-        assert not send_recommendations_email(user)
+        assert not emails.recommendations(user)
         assert len(mailoutbox) == 0
 
     def test_sufficient_recommendations(self, user, mailoutbox):
@@ -19,7 +19,7 @@ class TestSendRecommendationEmail:
         RecommendationFactory(podcast=second)
         RecommendationFactory(podcast=third)
 
-        assert send_recommendations_email(user)
+        assert emails.recommendations(user)
 
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [user.email]
