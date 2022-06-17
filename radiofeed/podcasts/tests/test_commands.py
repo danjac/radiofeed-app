@@ -7,24 +7,26 @@ from django.utils import timezone
 
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
-from radiofeed.podcasts.management.commands import feed_updater
+from radiofeed.podcasts.management.commands import run_feed_updates
 
 
-class TestRecommender:
+class TestCreateRecommendations:
     def test_command(self, mocker):
         patched = mocker.patch("radiofeed.podcasts.recommender.recommend")
-        call_command("recommender")
+        call_command("create_recommendations")
         patched.assert_called()
 
-    def test_email(self, db, mocker):
+
+class TestSendRecommendationsEmails:
+    def test_command(self, db, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.send_recommendations_email.map"
         )
-        call_command("recommender", email=True)
+        call_command("send_recommendations_emails")
         patched.assert_called()
 
 
-class TestItunesCrawler:
+class TestCrawlItunes:
     def test_command(self, mocker, podcast):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.crawl",
@@ -42,18 +44,18 @@ class TestItunesCrawler:
                 ),
             ],
         )
-        call_command("itunes_crawler")
+        call_command("crawl_itunes")
         patched.assert_called()
 
 
-class TestFeedUpdater:
+class TestRunFeedUpdates:
     def test_command(self, db, mocker):
 
         patched = mocker.patch(
             "radiofeed.podcasts.tasks.feed_update.map",
         )
 
-        call_command("feed_updater", limit=200)
+        call_command("run_feed_updates", limit=200)
 
         patched.assert_called()
 
@@ -131,4 +133,4 @@ class TestFeedUpdater:
             parsed=now - parsed if parsed else None,
         )
 
-        assert feed_updater.Command().get_scheduled_feeds().exists() == exists
+        assert run_feed_updates.Command().get_scheduled_feeds().exists() == exists
