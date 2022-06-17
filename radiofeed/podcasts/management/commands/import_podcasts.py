@@ -1,4 +1,6 @@
-from argparse import ArgumentParser
+import sys
+
+from argparse import ArgumentParser, FileType
 
 from django.core.management.base import BaseCommand
 
@@ -11,14 +13,14 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument("filename", help="Path to file")
+        parser.add_argument("input", nargs="?", type=FileType("r"), default=sys.stdin)
 
-    def handle(self, filename: str, *args, **options):
+    def handle(self, *args, **options):
         podcasts = Podcast.objects.bulk_create(
             [
                 Podcast(rss=feed)
                 for feed in filter(
-                    None, map(str.strip, open(filename).read().splitlines())
+                    None, map(str.strip, options["input"].read().splitlines())
                 )
             ],
             ignore_conflicts=True,

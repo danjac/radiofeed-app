@@ -57,13 +57,7 @@ class TestExportPodcasts:
         mocker.patch("builtins.open")
         mock_writer = mocker.Mock()
         mocker.patch("csv.writer", return_value=mock_writer)
-        call_command("export_podcasts", output="filename.txt")
-        mock_writer.writerow.assert_called_with([podcast.rss])
-
-    def test_stdout(self, mocker, podcast):
-        mock_writer = mocker.Mock()
-        mocker.patch("csv.writer", return_value=mock_writer)
-        call_command("export_podcasts")
+        call_command("export_podcasts", "filename.txt")
         mock_writer.writerow.assert_called_with([podcast.rss])
 
 
