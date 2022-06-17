@@ -225,7 +225,7 @@ class FeedUpdater:
     ) -> Generator[Episode, None, None]:
 
         for item in feed.items:
-            if guids.get(item.guid) is None:
+            if item.guid not in guids:
                 yield self.make_episode(item)
 
     def make_episode(
