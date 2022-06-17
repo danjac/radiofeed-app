@@ -1,5 +1,3 @@
-import pathlib
-
 from datetime import timedelta
 
 import pytest
@@ -10,7 +8,6 @@ from django.utils import timezone
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.itunes import Feed
 from radiofeed.podcasts.management.commands import feed_updater
-from radiofeed.podcasts.models import Podcast
 
 
 class TestRecommender:
@@ -48,25 +45,6 @@ class TestItunesCrawler:
         )
         call_command("itunes_crawler")
         patched.assert_called()
-
-
-class TestPodcastImporter:
-    def test_command(self, db):
-        call_command(
-            "podcast_importer",
-            pathlib.Path(__file__).parent / "mocks" / "feeds.txt",
-        )
-
-        assert Podcast.objects.count() == 18
-
-
-class TestPodcastExporter:
-    def test_command(self, mocker, podcast):
-        mocker.patch("builtins.open")
-        mock_writer = mocker.Mock()
-        mocker.patch("csv.writer", return_value=mock_writer)
-        call_command("podcast_exporter", "filename.txt")
-        mock_writer.writerows.assert_called()
 
 
 class TestFeedUpdater:
