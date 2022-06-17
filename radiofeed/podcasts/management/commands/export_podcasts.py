@@ -18,5 +18,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         with (stream := options["output"]):
-            writer = csv.writer(stream)
-            writer.writerows(Podcast.objects.values_list("rss"))
+            csv.writer(stream).writerows(Podcast.objects.values_list("rss"))
