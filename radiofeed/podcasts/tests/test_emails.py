@@ -6,7 +6,7 @@ class TestRecommendations:
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
 
-        assert not emails.recommendations(user)
+        assert not emails.send_recommendations_email(user)
         assert len(mailoutbox) == 0
 
     def test_sufficient_recommendations(self, user, mailoutbox):
@@ -19,7 +19,7 @@ class TestRecommendations:
         RecommendationFactory(podcast=second)
         RecommendationFactory(podcast=third)
 
-        assert emails.recommendations(user)
+        assert emails.send_recommendations_email(user)
 
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [user.email]

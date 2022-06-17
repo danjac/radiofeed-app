@@ -30,7 +30,7 @@
           "schedule": "15 6 * * *"
         },
         {
-          "command": "python manage.py recommender --email",
+          "command": "python manage.py send_recommendations_emails",
           "schedule": "15 9 * * 1"
         }
     ]

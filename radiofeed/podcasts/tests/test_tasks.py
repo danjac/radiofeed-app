@@ -1,4 +1,4 @@
-from radiofeed.podcasts.tasks import feed_update, recommendations_email
+from radiofeed.podcasts.tasks import feed_update, send_recommendations_email
 
 
 class TestTasks:
@@ -8,6 +8,6 @@ class TestTasks:
         patched.assert_called_with(podcast)
 
     def test_recommendations_email(self, mocker, user):
-        patched = mocker.patch("radiofeed.podcasts.emails.recommendations")
-        recommendations_email(user.id)
+        patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
+        send_recommendations_email(user.id)
         patched.assert_called_with(user)
