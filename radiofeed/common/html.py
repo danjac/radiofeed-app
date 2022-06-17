@@ -38,6 +38,7 @@ ALLOWED_TAGS: list[str] = [
     "strike",
     "strong",
     "span",
+    "style",
     "sub",
     "sup",
     "table",

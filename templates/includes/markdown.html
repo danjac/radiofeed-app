@@ -1,6 +1,9 @@
 {% if content %}
     <div class="prose dark:prose-invert prose-sm md:prose-base break-words"
         x-init="{# fmt:off #}
+     $el.querySelectorAll('style').forEach(el => {
+        el.remove();
+     });
      $el.querySelectorAll('p,div,li').forEach(el => {
         if (!el.innerText.trim()) {
             el.parentNode.removeChild(el);
