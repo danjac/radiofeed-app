@@ -75,13 +75,10 @@ def parse_rss(content: bytes) -> Feed:
 
     try:
         for element in xml_parser.iterparse(content, "channel"):
-            feed = parse_feed(
+            return parse_feed(
                 element,
                 items=[*parse_items(element)],
             )
-            if not feed.items:
-                raise ValueError("no items found in RSS feed")
-            return feed
 
     except (ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
@@ -90,6 +87,10 @@ def parse_rss(content: bytes) -> Feed:
 
 
 def parse_feed(element: lxml.etree.ElementBase, items: list[Item]) -> Feed:
+
+    if not items:
+        raise ValueError("no items in RSS feed")
+
     with xml_parser.xpath_finder(element, NAMESPACES) as finder:
         return Feed(
             title=finder.first("title/text()", required=True),
