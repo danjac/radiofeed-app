@@ -75,42 +75,40 @@ def parse_rss(content: bytes) -> Feed:
 
     try:
         for element in xml_parser.iterparse(content, "channel"):
-            return parse_feed(element)
+
+            if not (items := [*parse_items(element)]):
+                raise ValueError("no items in RSS feed")
+
+            with xml_parser.xpath_finder(element, NAMESPACES) as finder:
+                return Feed(
+                    title=finder.first("title/text()", required=True),
+                    link=converters.url(finder.first("link/text()")),
+                    language=finder.first("language/text()", default="en")[:2],
+                    explicit=converters.explicit(
+                        finder.first("itunes:explicit/text()")
+                    ),
+                    cover_url=converters.url(
+                        finder.first("itunes:image/@href", "image/url/text()")
+                    ),
+                    funding_url=converters.url(finder.first("podcast:funding/@url")),
+                    funding_text=finder.first("podcast:funding/text()"),
+                    description=finder.first(
+                        "description/text()",
+                        "itunes:summary/text()",
+                    ),
+                    owner=finder.first(
+                        "itunes:author/text()",
+                        "itunes:owner/itunes:name/text()",
+                    ),
+                    complete=finder.first("itunes:complete/text()").casefold() == "yes",
+                    categories=finder.all("//itunes:category/@text"),
+                    items=items,
+                )
 
     except (ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
     raise RssParserError("<channel /> not found in RSS feed")
-
-
-def parse_feed(element: lxml.etree.ElementBase) -> Feed:
-
-    if not (items := [*parse_items(element)]):
-        raise ValueError("no items in RSS feed")
-
-    with xml_parser.xpath_finder(element, NAMESPACES) as finder:
-        return Feed(
-            title=finder.first("title/text()", required=True),
-            link=converters.url(finder.first("link/text()")),
-            language=finder.first("language/text()", default="en")[:2],
-            explicit=converters.explicit(finder.first("itunes:explicit/text()")),
-            cover_url=converters.url(
-                finder.first("itunes:image/@href", "image/url/text()")
-            ),
-            funding_url=converters.url(finder.first("podcast:funding/@url")),
-            funding_text=finder.first("podcast:funding/text()"),
-            description=finder.first(
-                "description/text()",
-                "itunes:summary/text()",
-            ),
-            owner=finder.first(
-                "itunes:author/text()",
-                "itunes:owner/itunes:name/text()",
-            ),
-            complete=finder.first("itunes:complete/text()").casefold() == "yes",
-            categories=finder.all("//itunes:category/@text"),
-            items=items,
-        )
 
 
 def parse_items(element: lxml.etree.Element) -> Generator[Item, None, None]:
