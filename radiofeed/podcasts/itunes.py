@@ -2,19 +2,18 @@ from __future__ import annotations
 
 import base64
 import dataclasses
-import io
 import re
 
 from typing import Generator
 from urllib.parse import urlparse
 
-import lxml
 import requests
 
 from django.core.cache import cache
 
 from radiofeed.podcasts.feed_updater import get_user_agent
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.parsers import xml_parser
 
 RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
 
@@ -100,15 +99,8 @@ def parse_podcast_id(url: str) -> str | None:
 
 
 def parse_urls(content: bytes) -> Generator[str, None, None]:
-    for _, element in lxml.etree.iterparse(
-        io.BytesIO(content),
-        encoding="utf-8",
-        no_network=True,
-        resolve_entities=False,
-        recover=True,
-        events=("end",),
-    ):
-        if element.tag == "a" and (href := element.attrib.get("href")):
+    for link in xml_parser.iterparse(content, "a"):
+        if href := link.attrib.get("href"):
             yield href
 
 
