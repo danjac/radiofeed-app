@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 
+from contextlib import contextmanager
 from typing import Generator
 
 import lxml
@@ -19,6 +20,14 @@ def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]
     ):
         if element.tag in tags:
             yield element
+
+
+@contextmanager
+def xpath_finder(element: lxml.etree.Element, namespaces: dict[str, str] | None = None):
+    try:
+        yield XPathFinder(element, namespaces)
+    finally:
+        element.clear()
 
 
 class XPathFinder:
