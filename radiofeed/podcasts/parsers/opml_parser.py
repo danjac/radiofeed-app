@@ -6,8 +6,7 @@ from typing import Generator
 
 import lxml
 
-from radiofeed.podcasts.parsers import xml_parser
-from radiofeed.podcasts.parsers.rss_parser import parse_url
+from radiofeed.podcasts.parsers import converters, xml_parser
 
 
 class OpmlParserError(ValueError):
@@ -29,9 +28,9 @@ def parse_opml(content: bytes) -> Generator[Outline, None, None]:
             with xml_parser.xpath_finder(element) as finder:
                 yield Outline(
                     title=finder.first("@title"),
-                    rss=parse_url(finder.first("@xmlUrl")),
-                    url=parse_url(finder.first("@htmlUrl")),
                     text=finder.first("@text"),
+                    rss=converters.url(finder.first("@xmlUrl")),
+                    url=converters.url(finder.first("@htmlUrl")),
                 )
     except lxml.etree.XMLSyntaxError as e:
         raise OpmlParserError from e

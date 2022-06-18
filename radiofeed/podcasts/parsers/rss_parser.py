@@ -7,11 +7,7 @@ from typing import Generator
 
 import lxml.etree
 
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
-from django.utils import timezone
-
-from radiofeed.podcasts.parsers import date_parser, xml_parser
+from radiofeed.podcasts.parsers import converters, xml_parser
 
 NAMESPACES: dict[str, str] = {
     "atom": "http://www.w3.org/2005/Atom",
@@ -20,9 +16,6 @@ NAMESPACES: dict[str, str] = {
     "media": "http://search.yahoo.com/mrss/",
     "podcast": "https://podcastindex.org/namespace/1.0",
 }
-
-
-_validate_url = URLValidator(["http", "https"])
 
 
 class RssParserError(ValueError):
@@ -100,11 +93,13 @@ def parse_feed(element: lxml.etree.ElementBase, items: list[Item]) -> Feed:
     with xml_parser.xpath_finder(element, NAMESPACES) as finder:
         return Feed(
             title=finder.first("title/text()", required=True),
-            link=parse_url(finder.first("link/text()")),
+            link=converters.url(finder.first("link/text()")),
             language=finder.first("language/text()", default="en")[:2],
-            explicit=parse_explicit(finder.first("itunes:explicit/text()")),
-            cover_url=parse_url(finder.first("itunes:image/@href", "image/url/text()")),
-            funding_url=parse_url(finder.first("podcast:funding/@url")),
+            explicit=converters.explicit(finder.first("itunes:explicit/text()")),
+            cover_url=converters.url(
+                finder.first("itunes:image/@href", "image/url/text()")
+            ),
+            funding_url=converters.url(finder.first("podcast:funding/@url")),
             funding_text=finder.first("podcast:funding/text()"),
             description=finder.first(
                 "description/text()",
@@ -136,9 +131,9 @@ def parse_item(element: lxml.etree.Element) -> Item:
         return Item(
             guid=finder.first("guid/text()", required=True),
             title=finder.first("title/text()", required=True),
-            pub_date=parse_pub_date(finder.first("pubDate/text()", required=True)),
-            link=parse_url(finder.first("link/text()")),
-            media_url=parse_url(
+            pub_date=converters.pub_date(finder.first("pubDate/text()", required=True)),
+            link=converters.url(finder.first("link/text()")),
+            media_url=converters.url(
                 finder.first(
                     "enclosure//@url",
                     "media:content//@url",
@@ -146,86 +141,29 @@ def parse_item(element: lxml.etree.Element) -> Item:
                 ),
                 raises=True,
             ),
-            media_type=parse_audio(
+            media_type=converters.audio(
                 finder.first(
                     "enclosure//@type",
                     "media:content//@type",
                     required=True,
                 )
             ),
-            length=parse_int(
+            length=converters.integer(
                 finder.first(
                     "enclosure//@length",
                     "media:content//@fileSize",
                 )
             ),
-            explicit=parse_explicit(finder.first("itunes:explicit/text()")),
-            cover_url=parse_url(finder.first("itunes:image/@href")),
-            episode=parse_int(finder.first("itunes:episode/text()")),
-            season=parse_int(finder.first("itunes:season/text()")),
+            explicit=converters.explicit(finder.first("itunes:explicit/text()")),
+            cover_url=converters.url(finder.first("itunes:image/@href")),
+            episode=converters.integer(finder.first("itunes:episode/text()")),
+            season=converters.integer(finder.first("itunes:season/text()")),
             description=finder.first(
                 "content:encoded/text()",
                 "description/text()",
                 "itunes:summary/text()",
             ),
-            duration=parse_duration(finder.first("itunes:duration/text()")),
+            duration=converters.duration(finder.first("itunes:duration/text()")),
             episode_type=finder.first("itunes:episodetype/text()", default="full"),
             keywords=" ".join(finder.all("category/text()")),
         )
-
-
-def parse_audio(value: str) -> str:
-    if not value.startswith("audio/"):
-        raise ValueError("not a valid audio enclosure")
-    return value
-
-
-def parse_pub_date(value: str) -> datetime:
-    if not (pub_date := date_parser.parse_date(value)) or pub_date > timezone.now():
-        raise ValueError("not a valid pub date")
-    return pub_date
-
-
-def parse_explicit(value: str) -> bool:
-    return value.casefold() in ("clean", "yes")
-
-
-def parse_url(value: str, raises: bool = False) -> str | None:
-    try:
-        _validate_url(value)
-        return value
-    except ValidationError as e:
-        if raises:
-            raise ValueError from e
-    return None
-
-
-def parse_int(value: str) -> int | None:
-
-    try:
-        if (result := int(value)) in range(-2147483648, 2147483647):
-            return result
-    except ValueError:
-        pass
-    return None
-
-
-def parse_duration(value: str) -> str:
-    if not value:
-        return ""
-    try:
-        # plain seconds value
-        return str(int(value))
-    except ValueError:
-        pass
-
-    try:
-        return ":".join(
-            [
-                str(v)
-                for v in [int(v) for v in value.split(":")[:3]]
-                if v in range(0, 60)
-            ]
-        )
-    except ValueError:
-        return ""
