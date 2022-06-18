@@ -48,7 +48,7 @@ def search(search_term: str) -> Generator[Feed, None, None]:
     )
 
 
-def crawl() -> Generator[Feed, None, None]:
+def crawl() -> Generator[str, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for url in parse_urls(
@@ -58,14 +58,76 @@ def crawl() -> Generator[Feed, None, None]:
             yield from parse_genre(url)
 
 
-def parse_genre(genre_url: str) -> Generator[Feed, None, None]:
+def get_podcast_feed(podcast_id: str) -> Feed | None:
+    try:
+        return next(
+            parse_feeds(
+                get_response(
+                    "https://itunes.apple.com/lookup",
+                    {
+                        "id": podcast_id,
+                        "entity": "podcast",
+                    },
+                ).json()
+            )
+        )
+    except StopIteration:
+        return None
 
-    for url in parse_urls(get_response(genre_url).content):
-        if podcast_id := parse_podcast_id(url):
-            try:
-                yield from parse_feeds(get_podcast(podcast_id))
-            except requests.RequestException:
-                continue
+
+def parse_genre(genre_url: str) -> filter[str]:
+
+    return filter(
+        None,
+        map(
+            parse_podcast_id,
+            parse_urls(
+                get_response(genre_url).content,
+            ),
+        ),
+    )
+
+
+def parse_feeds(data: dict) -> Generator[Feed, None, None]:
+    """
+    Adds any existing podcasts to result. Create any new podcasts if feed
+    URL not found in database.
+    """
+    feeds: list[Feed] = []
+
+    for result in data.get("results", []):
+        try:
+            feeds.append(
+                Feed(
+                    rss=result["feedUrl"],
+                    url=result["collectionViewUrl"],
+                    title=result["collectionName"],
+                    image=result["artworkUrl600"],
+                )
+            )
+        except KeyError:
+            continue
+
+    if not feeds:
+        return
+
+    podcasts = Podcast.objects.filter(rss__in=[f.rss for f in feeds]).in_bulk(
+        field_name="rss"
+    )
+
+    for_insert: list[Podcast] = []
+
+    try:
+
+        for feed in feeds:
+            feed.podcast = podcasts.get(feed.rss, None)
+
+            if feed.podcast is None:
+                for_insert.append(Podcast(title=feed.title, rss=feed.rss))
+            yield feed
+
+    finally:
+        Podcast.objects.bulk_create(for_insert, ignore_conflicts=True)
 
 
 def get_response(url, data: dict | None = None) -> requests.Response:
@@ -80,16 +142,6 @@ def get_response(url, data: dict | None = None) -> requests.Response:
     return response
 
 
-def get_podcast(podcast_id: str) -> dict:
-    return get_response(
-        "https://itunes.apple.com/lookup",
-        {
-            "id": podcast_id,
-            "entity": "podcast",
-        },
-    ).json()  # pragma: no cover
-
-
 def parse_podcast_id(url: str) -> str | None:
     if url.startswith("https://podcasts.apple.com/us/podcast/") and (
         match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1])
@@ -102,45 +154,3 @@ def parse_urls(content: bytes) -> Generator[str, None, None]:
     for link in xml_parser.iterparse(content, "a"):
         if href := link.attrib.get("href"):
             yield href
-
-
-def parse_feeds(data: dict) -> Generator[Feed, None, None]:
-    """
-    Adds any existing podcasts to result. Create any new podcasts if feed
-    URL not found in database.
-    """
-
-    if not (feeds := list(parse_results(data))):
-        return
-
-    podcasts = Podcast.objects.filter(rss__in=[f.rss for f in feeds]).in_bulk(
-        field_name="rss"
-    )
-
-    for_insert: list[Podcast] = []
-
-    for feed in feeds:
-
-        feed.podcast = podcasts.get(feed.rss, None)
-
-        if feed.podcast is None:
-            for_insert.append(Podcast(title=feed.title, rss=feed.rss))
-        yield feed
-
-    if for_insert:
-        Podcast.objects.bulk_create(for_insert, ignore_conflicts=True)
-
-
-def parse_results(data: dict) -> Generator[Feed, None, None]:
-
-    for result in data.get("results", []):
-
-        try:
-            yield Feed(
-                rss=result["feedUrl"],
-                url=result["collectionViewUrl"],
-                title=result["collectionName"],
-                image=result["artworkUrl600"],
-            )
-        except KeyError:
-            pass

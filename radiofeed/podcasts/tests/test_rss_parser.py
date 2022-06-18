@@ -11,9 +11,11 @@ from radiofeed.podcasts.parsers import rss_parser
 
 
 class TestFeed:
-    @pytest.fixture
     def test_latest_pub_date_if_empty(self):
-        assert rss_parser.Feed(title="test", language="en").latest_pub_date is None
+        assert (
+            rss_parser.Feed(title="test", language="en", items=[]).latest_pub_date
+            is None
+        )
 
     def test_single_pub_date(self):
         now = timezone.now()

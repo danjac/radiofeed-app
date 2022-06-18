@@ -97,24 +97,7 @@ class TestParseGenre:
 
     def test_parse(self, mocker, mock_response):
         mocker.patch("requests.get", return_value=mock_response)
-        mock_fetch = mocker.patch(
-            "radiofeed.podcasts.itunes.get_podcast", return_value={}
-        )
-
-        list(itunes.parse_genre(self.url))
-
-        assert len(mock_fetch.mock_calls) == 240
-
-    def test_lookup_exception(self, mocker, mock_response):
-        mocker.patch("requests.get", return_value=mock_response)
-
-        mock_fetch = mocker.patch(
-            "radiofeed.podcasts.itunes.get_podcast", side_effect=requests.HTTPError
-        )
-
-        list(itunes.parse_genre(self.url))
-
-        mock_fetch.assert_called()
+        assert len(list(itunes.parse_genre(self.url))) == 240
 
 
 class TestParsePodcastId:
@@ -136,6 +119,24 @@ class TestParsePodcastId:
             )
             == "884207568"
         )
+
+
+class TestGetPodcastFeed:
+    def test_exists(self, db, mock_good_response):
+        feed = itunes.get_podcast_feed("12345")
+        assert feed.rss == "https://feeds.fireside.fm/testandcode/rss"
+        assert Podcast.objects.filter(rss=feed.rss).exists()
+
+    def test_not_exists(self, db, mocker):
+        class MockResponse:
+            def raise_for_status(self):
+                ...
+
+            def json(self):
+                return {"results": [{"id": 12345, "url": "bad-url"}]}
+
+        patch_request(mocker, MockResponse())
+        assert itunes.get_podcast_feed("12345") is None
 
 
 class TestSearch:

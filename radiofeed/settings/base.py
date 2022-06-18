@@ -230,14 +230,15 @@ LOGGING = {
 # https://huey.readthedocs.io/en/latest/django.html
 
 HUEY = {
-    "connection": {
-        "url": REDIS_URL,
-    },
+    "huey_class": "huey.PriorityRedisHuey",
     "blocking": False,
     "immediate": False,
     "store_none": True,
     "consumer": {
         "periodic": False,
+    },
+    "connection": {
+        "url": REDIS_URL,
     },
 }
 
