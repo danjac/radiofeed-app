@@ -74,18 +74,19 @@ class Feed:
 def parse_rss(content: bytes) -> Feed:
 
     try:
-        channel = next(xml_parser.iterparse(content, "channel"))
 
-        if not (items := [*parse_items(channel)]):
+        feed = parse_feed(next(xml_parser.iterparse(content, "channel")))
+
+        if not feed.items:
             raise ValueError("no items in RSS feed")
 
-        return parse_feed(channel, items)
+        return feed
 
     except (StopIteration, ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
 
-def parse_feed(channel: lxml.etree.Element, items: list[Item]) -> Feed:
+def parse_feed(channel: lxml.etree.Element) -> Feed:
     with xml_parser.xpath_finder(channel, NAMESPACES) as finder:
         return Feed(
             title=finder.first("title/text()", required=True),
@@ -107,7 +108,7 @@ def parse_feed(channel: lxml.etree.Element, items: list[Item]) -> Feed:
             ),
             complete=finder.first("itunes:complete/text()").casefold() == "yes",
             categories=finder.all("//itunes:category/@text"),
-            items=items,
+            items=list(parse_items(channel)),
         )
 
 
