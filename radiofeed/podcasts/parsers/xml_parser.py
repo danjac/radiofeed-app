@@ -34,7 +34,9 @@ def xpath_finder(
 
 class XPathFinder:
     def __init__(
-        self, element: lxml.etree.Element, namespaces: dict[str, str] | None = None
+        self,
+        element: lxml.etree.Element,
+        namespaces: dict[str, str] | None = None,
     ):
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
@@ -42,20 +44,23 @@ class XPathFinder:
     def first(self, *paths: str, default: str = "", required: bool = False) -> str:
         """Find single attribute or text value. Returns first matching value."""
 
-        for path in paths:
-            try:
-                return self.all(path)[0]
-            except IndexError:
-                continue
+        try:
+            return next(self.iter(*paths))
+        except StopIteration:
+            pass
+
         if required:
-            raise ValueError(f"No value found for {paths}")
+            raise ValueError(f"no value found for {paths}")
         return default
 
-    def all(self, path: str) -> list[str]:
+    def all(self, *paths: str) -> list[str]:
+        return list(self.iter(*paths))
+
+    def iter(self, *paths: str) -> Generator[str, None, None]:
+
         try:
-            return [
-                value.strip()
-                for value in self.element.xpath(path, namespaces=self.namespaces)
-            ]
+            for path in paths:
+                for value in self.element.xpath(path, namespaces=self.namespaces):
+                    yield value.strip()
         except UnicodeDecodeError:
-            return []
+            pass
