@@ -6,8 +6,8 @@ from typing import Generator
 
 import lxml
 
+from radiofeed.podcasts.parsers import xml_parser
 from radiofeed.podcasts.parsers.rss_parser import parse_url
-from radiofeed.podcasts.parsers.xml_parser import iterparse, xpath_finder
 
 
 class OpmlParserError(ValueError):
@@ -25,8 +25,8 @@ class Outline:
 
 def parse_opml(content: bytes) -> Generator[Outline, None, None]:
     try:
-        for element in iterparse(content, "outline"):
-            with xpath_finder(element) as finder:
+        for element in xml_parser.iterparse(content, "outline"):
+            with xml_parser.xpath_finder(element) as finder:
                 yield Outline(
                     title=finder.first("@title"),
                     rss=parse_url(finder.first("@xmlUrl")),
