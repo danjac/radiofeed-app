@@ -74,12 +74,12 @@ class Feed:
 def parse_rss(content: bytes) -> Feed:
 
     try:
-        for element in xml_parser.iterparse(content, "channel"):
+        for channel in xml_parser.iterparse(content, "channel"):
 
-            if not (items := [*parse_items(element)]):
+            if not (items := [*parse_items(channel)]):
                 raise ValueError("no items in RSS feed")
 
-            with xml_parser.xpath_finder(element, NAMESPACES) as finder:
+            with xml_parser.xpath_finder(channel, NAMESPACES) as finder:
                 return Feed(
                     title=finder.first("title/text()", required=True),
                     link=converters.url(finder.first("link/text()")),
@@ -111,9 +111,9 @@ def parse_rss(content: bytes) -> Feed:
     raise RssParserError("<channel /> not found in RSS feed")
 
 
-def parse_items(element: lxml.etree.Element) -> Generator[Item, None, None]:
+def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
 
-    for item in element.iterfind("item"):
+    for item in channel.iterfind("item"):
 
         try:
 
