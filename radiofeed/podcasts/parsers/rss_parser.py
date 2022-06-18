@@ -29,9 +29,9 @@ class Item:
     title: str
     media_url: str | None
     media_type: str
+    pub_date: datetime
 
     link: str | None = None
-    pub_date: datetime | None = None
     explicit: bool = False
 
     length: int | None = None
@@ -66,7 +66,7 @@ class Feed:
     @property
     def latest_pub_date(self) -> datetime | None:
         try:
-            return max([item.pub_date for item in self.items if item.pub_date])
+            return max([item.pub_date for item in self.items])
         except ValueError:
             return None
 
