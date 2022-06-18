@@ -27,13 +27,13 @@ class Item:
 
     guid: str
     title: str
+    pub_date: datetime
+
     media_url: str | None
     media_type: str
-    pub_date: datetime
 
     link: str | None = None
     explicit: bool = False
-
     length: int | None = None
     season: int | None = None
     episode: int | None = None
