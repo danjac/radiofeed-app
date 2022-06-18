@@ -89,12 +89,12 @@ def parse_rss(content: bytes) -> Feed:
                     items=[*parse_items(element, NAMESPACES)],
                 )
                 if not feed.items:
-                    raise RssParserError("no items found in RSS feed")
+                    raise ValueError("no items found in RSS feed")
                 return feed
 
             finally:
                 element.clear()
-    except (ValueError, TypeError, lxml.etree.XMLSyntaxError) as e:
+    except (ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
     raise RssParserError("<channel /> not found in RSS feed")
