@@ -21,4 +21,4 @@ def send_recommendations_email(user_id: int) -> None:
 
 @db_task(priority=1)
 def parse_itunes_feed(itunes_podcast_id: str) -> None:
-    itunes.get_podcast_feed(itunes_podcast_id)
+    itunes.parse_feed(itunes_podcast_id)

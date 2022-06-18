@@ -121,9 +121,9 @@ class TestParsePodcastId:
         )
 
 
-class TestGetPodcastFeed:
+class TestParseFeed:
     def test_exists(self, db, mock_good_response):
-        feed = itunes.get_podcast_feed("12345")
+        feed = itunes.parse_feed("12345")
         assert feed.rss == "https://feeds.fireside.fm/testandcode/rss"
         assert Podcast.objects.filter(rss=feed.rss).exists()
 
@@ -136,7 +136,7 @@ class TestGetPodcastFeed:
                 return {"results": [{"id": 12345, "url": "bad-url"}]}
 
         patch_request(mocker, MockResponse())
-        assert itunes.get_podcast_feed("12345") is None
+        assert itunes.parse_feed("12345") is None
 
 
 class TestSearch:

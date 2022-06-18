@@ -17,6 +17,6 @@ class TestTasks:
         patched.assert_called_with(user)
 
     def test_parse_itunes_feed(self, mocker):
-        patched = mocker.patch("radiofeed.podcasts.itunes.get_podcast_feed")
+        patched = mocker.patch("radiofeed.podcasts.itunes.parse_feed")
         parse_itunes_feed(12345)
         patched.assert_called_with(12345)

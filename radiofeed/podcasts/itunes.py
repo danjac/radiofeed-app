@@ -61,7 +61,7 @@ def crawl() -> Generator[str, None, None]:
         yield from parse_genre(url)
 
 
-def get_podcast_feed(podcast_id: str) -> Feed | None:
+def parse_feed(podcast_id: str) -> Feed | None:
     try:
         return next(
             parse_feeds(
