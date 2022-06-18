@@ -23,7 +23,9 @@ def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]
 
 
 @contextmanager
-def xpath_finder(element: lxml.etree.Element, namespaces: dict[str, str] | None = None):
+def xpath_finder(
+    element: lxml.etree.Element, namespaces: dict[str, str] | None = None
+) -> Generator[XPathFinder, None, None]:
     try:
         yield XPathFinder(element, namespaces)
     finally:
