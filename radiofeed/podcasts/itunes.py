@@ -51,11 +51,14 @@ def search(search_term: str) -> Generator[Feed, None, None]:
 def crawl() -> Generator[str, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
-    for url in parse_urls(
-        get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content
+    for url in filter(
+        lambda url: url.startswith("https://podcasts.apple.com/us/genre/podcasts"),
+        parse_urls(
+            get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content
+        ),
     ):
-        if url.startswith("https://podcasts.apple.com/us/genre/podcasts"):
-            yield from parse_genre(url)
+
+        yield from parse_genre(url)
 
 
 def get_podcast_feed(podcast_id: str) -> Feed | None:
