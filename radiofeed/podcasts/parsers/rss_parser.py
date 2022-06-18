@@ -79,87 +79,84 @@ def parse_rss(content: bytes) -> Feed:
         if not (items := [*parse_items(channel)]):
             raise ValueError("no items in RSS feed")
 
-        with xml_parser.xpath_finder(channel, NAMESPACES) as finder:
-            return Feed(
-                title=finder.first("title/text()", required=True),
-                link=converters.url(finder.first("link/text()")),
-                language=finder.first("language/text()", default="en")[:2],
-                explicit=converters.explicit(finder.first("itunes:explicit/text()")),
-                cover_url=converters.url(
-                    finder.first("itunes:image/@href", "image/url/text()")
-                ),
-                funding_url=converters.url(finder.first("podcast:funding/@url")),
-                funding_text=finder.first("podcast:funding/text()"),
-                description=finder.first(
-                    "description/text()",
-                    "itunes:summary/text()",
-                ),
-                owner=finder.first(
-                    "itunes:author/text()",
-                    "itunes:owner/itunes:name/text()",
-                ),
-                complete=finder.first("itunes:complete/text()").casefold() == "yes",
-                categories=finder.all("//itunes:category/@text"),
-                items=items,
-            )
+        return parse_feed(channel, items)
 
     except (StopIteration, ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
 
+def parse_feed(channel: lxml.etree.Element, items: list[Item]) -> Feed:
+    with xml_parser.xpath_finder(channel, NAMESPACES) as finder:
+        return Feed(
+            title=finder.first("title/text()", required=True),
+            link=converters.url(finder.first("link/text()")),
+            language=finder.first("language/text()", default="en")[:2],
+            explicit=converters.explicit(finder.first("itunes:explicit/text()")),
+            cover_url=converters.url(
+                finder.first("itunes:image/@href", "image/url/text()")
+            ),
+            funding_url=converters.url(finder.first("podcast:funding/@url")),
+            funding_text=finder.first("podcast:funding/text()"),
+            description=finder.first(
+                "description/text()",
+                "itunes:summary/text()",
+            ),
+            owner=finder.first(
+                "itunes:author/text()",
+                "itunes:owner/itunes:name/text()",
+            ),
+            complete=finder.first("itunes:complete/text()").casefold() == "yes",
+            categories=finder.all("//itunes:category/@text"),
+            items=items,
+        )
+
+
 def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
-
     for item in channel.iterfind("item"):
-
         try:
-
-            with xml_parser.xpath_finder(item, NAMESPACES) as finder:
-                yield Item(
-                    guid=finder.first("guid/text()", required=True),
-                    title=finder.first("title/text()", required=True),
-                    pub_date=converters.pub_date(
-                        finder.first("pubDate/text()", required=True)
-                    ),
-                    link=converters.url(finder.first("link/text()")),
-                    media_url=converters.url(
-                        finder.first(
-                            "enclosure//@url",
-                            "media:content//@url",
-                            required=True,
-                        ),
-                        raises=True,
-                    ),
-                    media_type=converters.audio(
-                        finder.first(
-                            "enclosure//@type",
-                            "media:content//@type",
-                            required=True,
-                        )
-                    ),
-                    length=converters.integer(
-                        finder.first(
-                            "enclosure//@length",
-                            "media:content//@fileSize",
-                        )
-                    ),
-                    explicit=converters.explicit(
-                        finder.first("itunes:explicit/text()")
-                    ),
-                    cover_url=converters.url(finder.first("itunes:image/@href")),
-                    episode=converters.integer(finder.first("itunes:episode/text()")),
-                    season=converters.integer(finder.first("itunes:season/text()")),
-                    description=finder.first(
-                        "content:encoded/text()",
-                        "description/text()",
-                        "itunes:summary/text()",
-                    ),
-                    duration=converters.duration(
-                        finder.first("itunes:duration/text()")
-                    ),
-                    episode_type=finder.first(
-                        "itunes:episodetype/text()", default="full"
-                    ),
-                    keywords=" ".join(finder.all("category/text()")),
-                )
+            yield parse_item(item)
         except ValueError:
             continue
+
+
+def parse_item(item: lxml.etree.Element) -> Item:
+    with xml_parser.xpath_finder(item, NAMESPACES) as finder:
+        return Item(
+            guid=finder.first("guid/text()", required=True),
+            title=finder.first("title/text()", required=True),
+            pub_date=converters.pub_date(finder.first("pubDate/text()", required=True)),
+            link=converters.url(finder.first("link/text()")),
+            media_url=converters.url(
+                finder.first(
+                    "enclosure//@url",
+                    "media:content//@url",
+                    required=True,
+                ),
+                raises=True,
+            ),
+            media_type=converters.audio(
+                finder.first(
+                    "enclosure//@type",
+                    "media:content//@type",
+                    required=True,
+                )
+            ),
+            length=converters.integer(
+                finder.first(
+                    "enclosure//@length",
+                    "media:content//@fileSize",
+                )
+            ),
+            explicit=converters.explicit(finder.first("itunes:explicit/text()")),
+            cover_url=converters.url(finder.first("itunes:image/@href")),
+            episode=converters.integer(finder.first("itunes:episode/text()")),
+            season=converters.integer(finder.first("itunes:season/text()")),
+            description=finder.first(
+                "content:encoded/text()",
+                "description/text()",
+                "itunes:summary/text()",
+            ),
+            duration=converters.duration(finder.first("itunes:duration/text()")),
+            episode_type=finder.first("itunes:episodetype/text()", default="full"),
+            keywords=" ".join(finder.all("category/text()")),
+        )
