@@ -51,11 +51,9 @@ def search(search_term: str) -> Generator[Feed, None, None]:
 def crawl() -> Generator[Feed, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
-    for url in filter(
-        lambda url: url.startswith("https://podcasts.apple.com/us/genre/podcasts"),
-        parse_urls(
-            get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content
-        ),
+    for url in parse_urls(
+        get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content,
+        startswith="https://podcasts.apple.com/us/genre/podcasts",
     ):
         yield from parse_genre(url)
 
@@ -68,6 +66,7 @@ def parse_genre(genre_url: str) -> Generator[Feed, None, None]:
             parse_podcast_id,
             parse_urls(
                 get_response(genre_url).content,
+                startswith="https://podcasts.apple.com/us/podcast/",
             ),
         ),
     ):
@@ -147,14 +146,12 @@ def get_response(url, data: dict | None = None) -> requests.Response:
 
 
 def parse_podcast_id(url: str) -> str | None:
-    if url.startswith("https://podcasts.apple.com/us/podcast/") and (
-        match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1])
-    ):
+    if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
         return match.group("id")
     return None
 
 
-def parse_urls(content: bytes) -> Generator[str, None, None]:
+def parse_urls(content: bytes, startswith: str) -> Generator[str, None, None]:
     for link in xml_parser.iterparse(content, "a"):
-        if href := link.attrib.get("href"):
+        if (href := link.attrib.get("href")) and href.startswith(startswith):
             yield href
