@@ -91,7 +91,7 @@ def parse_feed(channel: lxml.etree.Element) -> Feed:
         return Feed(
             title=finder.first("title/text()", required=True),
             link=converters.url(finder.first("link/text()")),
-            language=finder.first("language/text()", default="en")[:2],
+            language=converters.language(finder.first("language/text()")),
             explicit=converters.explicit(finder.first("itunes:explicit/text()")),
             cover_url=converters.url(
                 finder.first("itunes:image/@href", "image/url/text()")
@@ -106,7 +106,7 @@ def parse_feed(channel: lxml.etree.Element) -> Feed:
                 "itunes:author/text()",
                 "itunes:owner/itunes:name/text()",
             ),
-            complete=finder.first("itunes:complete/text()").casefold() == "yes",
+            complete=converters.boolean(finder.first("itunes:complete/text()")),
             categories=finder.all("//itunes:category/@text"),
             items=list(parse_items(channel)),
         )

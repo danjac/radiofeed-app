@@ -101,6 +101,36 @@ class TestUrl:
             assert converters.url(value, raises=True) == value
 
 
+class TestLanguage:
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("en-GB", "en"),
+            ("FI-FI", "fi"),
+            ("fr", "fr"),
+            ("fr-CA", "fr"),
+            ("xx", "en"),
+            ("", "en"),
+            ("#", "en"),
+        ],
+    )
+    def test_language(self, value, expected):
+        assert converters.language(value) == expected
+
+
+class TestBoolean:
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("yes", True),
+            ("no", False),
+            ("", False),
+        ],
+    )
+    def test_boolean(self, value, expected):
+        assert converters.boolean(value) is expected
+
+
 class TestExplicit:
     @pytest.mark.parametrize(
         "value,expected",
