@@ -110,7 +110,7 @@ class FeedUpdater:
                 active = True
             case rss_parser.RssParserError() | DuplicateFeed():
                 active = False
-            case requests.RequestException():
+            case requests.HTTPError():
                 active = http_status not in (
                     http.HTTPStatus.FORBIDDEN,
                     http.HTTPStatus.GONE,
