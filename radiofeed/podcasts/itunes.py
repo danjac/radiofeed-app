@@ -76,22 +76,20 @@ def parse_genre(genre_url: str) -> Generator[Feed, None, None]:
 
 def parse_feed(podcast_id: str) -> Feed | None:
     try:
-        return next(
-            parse_feeds(
-                get_response(
-                    "https://itunes.apple.com/lookup",
-                    {
-                        "id": podcast_id,
-                        "entity": "podcast",
-                    },
-                ).json()
-            )
-        )
-    except StopIteration:
+        return parse_feeds(
+            get_response(
+                "https://itunes.apple.com/lookup",
+                {
+                    "id": podcast_id,
+                    "entity": "podcast",
+                },
+            ).json()
+        )[0]
+    except IndexError:
         return None
 
 
-def parse_feeds(data: dict) -> Generator[Feed, None, None]:
+def parse_feeds(data: dict) -> list[Feed]:
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
@@ -112,7 +110,7 @@ def parse_feeds(data: dict) -> Generator[Feed, None, None]:
             continue
 
     if not feeds:
-        return
+        return []
 
     podcasts = Podcast.objects.filter(rss__in=[f.rss for f in feeds]).in_bulk(
         field_name="rss"
@@ -120,17 +118,18 @@ def parse_feeds(data: dict) -> Generator[Feed, None, None]:
 
     for_insert: list[Podcast] = []
 
-    try:
+    for feed in feeds:
+        if podcast := podcasts.get(feed.rss):
+            feed.podcast = podcast
+        else:
+            for_insert.append(Podcast(title=feed.title, rss=feed.rss))
 
-        for feed in feeds:
-            feed.podcast = podcasts.get(feed.rss, None)
-
-            if feed.podcast is None:
-                for_insert.append(Podcast(title=feed.title, rss=feed.rss))
-            yield feed
-
-    finally:
-        Podcast.objects.bulk_create(for_insert, ignore_conflicts=True)
+    Podcast.objects.bulk_create(
+        for_insert,
+        ignore_conflicts=True,
+        batch_size=100,
+    )
+    return feeds
 
 
 def get_response(url, data: dict | None = None) -> requests.Response:
