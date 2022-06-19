@@ -30,14 +30,14 @@ class Feed:
 def search_cached(search_term: str) -> list[Feed]:
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
     if (feeds := cache.get(cache_key)) is None:
-        feeds = list(search(search_term))
+        feeds = search(search_term)
         cache.set(cache_key, feeds)
     return feeds
 
 
-def search(search_term: str) -> Generator[Feed, None, None]:
+def search(search_term: str) -> list[Feed]:
     """Search RSS feeds on iTunes"""
-    yield from parse_feeds(
+    return parse_feeds(
         get_response(
             "https://itunes.apple.com/search",
             {
