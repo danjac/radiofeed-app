@@ -230,7 +230,6 @@ LOGGING = {
 # https://huey.readthedocs.io/en/latest/django.html
 
 HUEY = {
-    "huey_class": "huey.PriorityRedisHuey",
     "blocking": False,
     "immediate": False,
     "store_none": True,

@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.tasks import parse_itunes_feed
 
 
 class Command(BaseCommand):
@@ -10,4 +9,6 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        parse_itunes_feed.map(itunes.crawl())
+        for counter, feed in enumerate(itunes.crawl()):
+            style = self.style.SUCCESS if feed.podcast is None else self.style.NOTICE
+        self.stdout.write(style(f"{counter}: {feed.title}"))

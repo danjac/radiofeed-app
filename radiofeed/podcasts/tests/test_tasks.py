@@ -1,8 +1,4 @@
-from radiofeed.podcasts.tasks import (
-    feed_update,
-    parse_itunes_feed,
-    send_recommendations_email,
-)
+from radiofeed.podcasts.tasks import feed_update, send_recommendations_email
 
 
 class TestTasks:
@@ -15,8 +11,3 @@ class TestTasks:
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
         send_recommendations_email(user.id)
         patched.assert_called_with(user)
-
-    def test_parse_itunes_feed(self, mocker):
-        patched = mocker.patch("radiofeed.podcasts.itunes.parse_feed")
-        parse_itunes_feed(12345)
-        patched.assert_called_with(12345)

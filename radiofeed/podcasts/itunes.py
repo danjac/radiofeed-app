@@ -48,7 +48,7 @@ def search(search_term: str) -> Generator[Feed, None, None]:
     )
 
 
-def crawl() -> Generator[str, None, None]:
+def crawl() -> Generator[Feed, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for url in filter(
@@ -59,6 +59,21 @@ def crawl() -> Generator[str, None, None]:
     ):
 
         yield from parse_genre(url)
+
+
+def parse_genre(genre_url: str) -> Generator[Feed, None, None]:
+
+    for podcast_id in filter(
+        None,
+        map(
+            parse_podcast_id,
+            parse_urls(
+                get_response(genre_url).content,
+            ),
+        ),
+    ):
+        if feed := parse_feed(podcast_id):
+            yield feed
 
 
 def parse_feed(podcast_id: str) -> Feed | None:
@@ -76,19 +91,6 @@ def parse_feed(podcast_id: str) -> Feed | None:
         )
     except StopIteration:
         return None
-
-
-def parse_genre(genre_url: str) -> filter[str]:
-
-    return filter(
-        None,
-        map(
-            parse_podcast_id,
-            parse_urls(
-                get_response(genre_url).content,
-            ),
-        ),
-    )
 
 
 def parse_feeds(data: dict) -> Generator[Feed, None, None]:

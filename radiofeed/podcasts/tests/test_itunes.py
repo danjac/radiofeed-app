@@ -91,11 +91,14 @@ class TestParseGenre:
             # will always be OK
             pass
 
+        def json(self):
+            return {"results": [MOCK_RESULT]}
+
     @pytest.fixture
     def mock_response(self, mocker):
         return self.MockResponse()
 
-    def test_parse(self, mocker, mock_response):
+    def test_parse(self, mocker, db, mock_response):
         mocker.patch("requests.get", return_value=mock_response)
         assert len(list(itunes.parse_genre(self.url))) == 240
 
