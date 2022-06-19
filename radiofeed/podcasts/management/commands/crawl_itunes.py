@@ -9,6 +9,6 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        for counter, feed in enumerate(itunes.crawl()):
+        for feed in itunes.crawl():
             style = self.style.SUCCESS if feed.podcast is None else self.style.NOTICE
-        self.stdout.write(style(f"{counter}: {feed.title}"))
+            self.stdout.write(style(feed.title))

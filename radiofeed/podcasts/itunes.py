@@ -57,7 +57,6 @@ def crawl() -> Generator[Feed, None, None]:
             get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content
         ),
     ):
-
         yield from parse_genre(url)
 
 
