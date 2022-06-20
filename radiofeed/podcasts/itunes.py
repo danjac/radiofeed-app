@@ -137,7 +137,7 @@ def get_podcast_ids(url: str) -> filter[str]:
         map(
             parse_podcast_id,
             filter(
-                lambda url: "https://podcasts.apple.com/us/podcast/",
+                lambda url: url.startswith("https://podcasts.apple.com/us/podcast/"),
                 parse_urls(get_response(url).content),
             ),
         ),
