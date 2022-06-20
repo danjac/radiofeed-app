@@ -53,10 +53,7 @@ def crawl() -> Generator[Feed, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for url in get_genre_urls():
-        for batch in batcher(
-            get_podcast_ids(url),
-            BATCH_SIZE,
-        ):
+        for batch in batcher(get_podcast_ids(url), BATCH_SIZE):
             yield from parse_feeds(
                 get_response(
                     "https://itunes.apple.com/lookup",
