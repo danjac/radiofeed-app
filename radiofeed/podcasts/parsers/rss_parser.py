@@ -126,7 +126,9 @@ def parse_item(item: lxml.etree.Element) -> Item:
             guid=finder.first("guid/text()", required=True),
             title=finder.first("title/text()", required=True),
             pub_date=converters.pub_date(finder.first("pubDate/text()", required=True)),
+            cover_url=converters.url(finder.first("itunes:image/@href")),
             link=converters.url(finder.first("link/text()")),
+            explicit=converters.explicit(finder.first("itunes:explicit/text()")),
             media_url=converters.url(
                 finder.first(
                     "enclosure//@url",
@@ -148,8 +150,6 @@ def parse_item(item: lxml.etree.Element) -> Item:
                     "media:content//@fileSize",
                 )
             ),
-            explicit=converters.explicit(finder.first("itunes:explicit/text()")),
-            cover_url=converters.url(finder.first("itunes:image/@href")),
             episode=converters.integer(finder.first("itunes:episode/text()")),
             season=converters.integer(finder.first("itunes:season/text()")),
             description=finder.first(
