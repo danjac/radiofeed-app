@@ -74,7 +74,7 @@ class TestCrawl:
 
         list(itunes.crawl())
 
-        assert len(mock_parse.mock_calls) == 222
+        assert len(mock_parse.mock_calls) == 3
 
 
 class TestParseGenre:

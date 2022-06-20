@@ -11,11 +11,12 @@ import requests
 
 from django.core.cache import cache
 
-from radiofeed.podcasts.feed_updater import get_user_agent
+from radiofeed.podcasts.feed_updater import batcher, get_user_agent
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import xml_parser
 
 RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
+BATCH_SIZE = 100
 
 
 @dataclasses.dataclass
@@ -60,33 +61,29 @@ def crawl() -> Generator[Feed, None, None]:
 
 def parse_genre(genre_url: str) -> Generator[Feed, None, None]:
 
-    for podcast_id in filter(
-        None,
-        map(
-            parse_podcast_id,
-            parse_urls(
-                get_response(genre_url).content,
-                startswith="https://podcasts.apple.com/us/podcast/",
+    for batch in batcher(
+        filter(
+            None,
+            map(
+                parse_podcast_id,
+                parse_urls(
+                    get_response(genre_url).content,
+                    startswith="https://podcasts.apple.com/us/podcast/",
+                ),
             ),
         ),
+        BATCH_SIZE,
     ):
-        if feed := parse_feed(podcast_id):
-            yield feed
 
-
-def parse_feed(podcast_id: str) -> Feed | None:
-    try:
-        return parse_feeds(
+        yield from parse_feeds(
             get_response(
                 "https://itunes.apple.com/lookup",
                 {
-                    "id": podcast_id,
+                    "id": ",".join(batch),
                     "entity": "podcast",
                 },
             ).json()
-        )[0]
-    except IndexError:
-        return None
+        )
 
 
 def parse_feeds(data: dict) -> list[Feed]:
@@ -127,7 +124,7 @@ def parse_feeds(data: dict) -> list[Feed]:
     Podcast.objects.bulk_create(
         for_insert,
         ignore_conflicts=True,
-        batch_size=100,
+        batch_size=BATCH_SIZE,
     )
     return feeds
 
