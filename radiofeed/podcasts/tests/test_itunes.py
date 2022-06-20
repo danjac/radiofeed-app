@@ -21,86 +21,66 @@ def patch_request(mocker, response):
     return mocker.patch("requests.get", return_value=response, autospec=True)
 
 
+class MockResponse:
+    def __init__(self, *, mock_file=None, json=None, exception=None):
+        if mock_file is not None:
+            print(mock_file)
+            self.content = (
+                pathlib.Path(__file__).parent / "mocks" / mock_file
+            ).read_bytes()
+        else:
+            self.content = b""
+
+        self.json_data = json
+        self.exception = exception
+
+    def raise_for_status(self):
+        if self.exception:
+            raise self.exception
+
+    def json(self):
+        return self.json_data
+
+
 @pytest.fixture
 def mock_good_response(mocker):
-    class MockResponse:
-        def raise_for_status(self):
-            ...
-
-        def json(self):
-            return {
-                "results": [MOCK_RESULT],
-            }
-
-    yield patch_request(mocker, MockResponse())
+    yield patch_request(mocker, MockResponse(json={"results": [MOCK_RESULT]}))
 
 
 @pytest.fixture
 def mock_bad_response(mocker):
-    class MockResponse:
-        def raise_for_status(self):
-            raise requests.HTTPError()
-
-    yield patch_request(mocker, MockResponse())
+    yield patch_request(mocker, MockResponse(exception=requests.HTTPError()))
 
 
 @pytest.fixture
 def mock_invalid_response(mocker):
-    class MockResponse:
-        def raise_for_status(self):
-            ...
-
-        def json(self):
-            return {"results": [{"id": 12345, "url": "bad-url"}]}
-
-    yield patch_request(mocker, MockResponse())
+    yield patch_request(
+        mocker, MockResponse(json={"results": [{"id": 12345, "url": "bad-url"}]})
+    )
 
 
 class TestCrawl:
-    def test_crawl(self, mocker):
-        class MockResponse:
-            def __init__(self):
+    def test_crawl(self, db, mocker):
+        def side_effect(*args, **kwargs):
 
-                self.content = (
-                    pathlib.Path(__file__).parent / "mocks" / "podcasts.html"
-                ).read_bytes()
+            url = args[0]
 
-            def raise_for_status(self):
-                # will always be OK
-                pass
+            if url == "https://itunes.apple.com/lookup":
+                return MockResponse(json={"results": [MOCK_RESULT]})
 
-        mocker.patch("requests.get", return_value=MockResponse())
-        mock_parse = mocker.patch("radiofeed.podcasts.itunes.parse_genre")
+            if url.startswith("https://itunes.apple.com/us/genre/podcasts/id26"):
+                return MockResponse(mock_file="podcasts.html")
+
+            elif url.startswith("https://podcasts.apple.com/us/genre/podcasts"):
+                return MockResponse(mock_file="genre.html")
+
+            return MockResponse()
+
+        mocker.patch("requests.get", side_effect=side_effect)
 
         list(itunes.crawl())
 
-        assert len(mock_parse.mock_calls) == 222
-
-
-class TestParseGenre:
-    url = "https://podcasts.apple.com/us/genre/podcasts-arts/id1301"
-
-    class MockResponse:
-        def __init__(self):
-
-            self.content = (
-                pathlib.Path(__file__).parent / "mocks" / "genre.html"
-            ).read_bytes()
-
-        def raise_for_status(self):
-            # will always be OK
-            pass
-
-        def json(self):
-            return {"results": [MOCK_RESULT]}
-
-    @pytest.fixture
-    def mock_response(self, mocker):
-        return self.MockResponse()
-
-    def test_parse(self, mocker, db, mock_response):
-        mocker.patch("requests.get", return_value=mock_response)
-        assert len(list(itunes.parse_genre(self.url))) == 3
+        assert Podcast.objects.count() == 1
 
 
 class TestParsePodcastId:

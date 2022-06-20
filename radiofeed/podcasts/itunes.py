@@ -56,34 +56,29 @@ def crawl() -> Generator[Feed, None, None]:
         get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content,
         startswith="https://podcasts.apple.com/us/genre/podcasts",
     ):
-        yield from parse_genre(url)
-
-
-def parse_genre(genre_url: str) -> Generator[Feed, None, None]:
-
-    for batch in batcher(
-        filter(
-            None,
-            map(
-                parse_podcast_id,
-                parse_urls(
-                    get_response(genre_url).content,
-                    startswith="https://podcasts.apple.com/us/podcast/",
+        for batch in batcher(
+            filter(
+                None,
+                map(
+                    parse_podcast_id,
+                    parse_urls(
+                        get_response(url).content,
+                        startswith="https://podcasts.apple.com/us/podcast/",
+                    ),
                 ),
             ),
-        ),
-        BATCH_SIZE,
-    ):
+            BATCH_SIZE,
+        ):
 
-        yield from parse_feeds(
-            get_response(
-                "https://itunes.apple.com/lookup",
-                {
-                    "id": ",".join(batch),
-                    "entity": "podcast",
-                },
-            ).json()
-        )
+            yield from parse_feeds(
+                get_response(
+                    "https://itunes.apple.com/lookup",
+                    {
+                        "id": ",".join(batch),
+                        "entity": "podcast",
+                    },
+                ).json()
+            )
 
 
 def parse_feeds(data: dict) -> list[Feed]:
