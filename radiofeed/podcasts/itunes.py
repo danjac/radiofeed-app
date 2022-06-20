@@ -52,24 +52,11 @@ def search(search_term: str) -> list[Feed]:
 def crawl() -> Generator[Feed, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
-    for url in parse_urls(
-        get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content,
-        startswith="https://podcasts.apple.com/us/genre/podcasts",
-    ):
+    for url in get_genre_urls():
         for batch in batcher(
-            filter(
-                None,
-                map(
-                    parse_podcast_id,
-                    parse_urls(
-                        get_response(url).content,
-                        startswith="https://podcasts.apple.com/us/podcast/",
-                    ),
-                ),
-            ),
+            get_podcast_ids(url),
             BATCH_SIZE,
         ):
-
             yield from parse_feeds(
                 get_response(
                     "https://itunes.apple.com/lookup",
@@ -136,13 +123,37 @@ def get_response(url, data: dict | None = None) -> requests.Response:
     return response
 
 
+def get_genre_urls() -> filter[str]:
+    return filter(
+        lambda url: url.startswith("https://podcasts.apple.com/us/genre/podcasts"),
+        parse_urls(
+            get_response(
+                "https://itunes.apple.com/us/genre/podcasts/id26?mt=2"
+            ).content,
+        ),
+    )
+
+
+def get_podcast_ids(url: str) -> filter[str]:
+    return filter(
+        None,
+        map(
+            parse_podcast_id,
+            filter(
+                lambda url: "https://podcasts.apple.com/us/podcast/",
+                parse_urls(get_response(url).content),
+            ),
+        ),
+    )
+
+
 def parse_podcast_id(url: str) -> str | None:
     if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
         return match.group("id")
     return None
 
 
-def parse_urls(content: bytes, startswith: str) -> Generator[str, None, None]:
+def parse_urls(content: bytes) -> Generator[str, None, None]:
     for link in xml_parser.iterparse(content, "a"):
-        if (href := link.attrib.get("href")) and href.startswith(startswith):
+        if href := link.attrib.get("href"):
             yield href
