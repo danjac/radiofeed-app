@@ -74,7 +74,7 @@ class TestCrawl:
 
         list(itunes.crawl())
 
-        assert len(mock_parse.mock_calls) == 3
+        assert len(mock_parse.mock_calls) == 222
 
 
 class TestParseGenre:
@@ -100,7 +100,7 @@ class TestParseGenre:
 
     def test_parse(self, mocker, db, mock_response):
         mocker.patch("requests.get", return_value=mock_response)
-        assert len(list(itunes.parse_genre(self.url))) == 240
+        assert len(list(itunes.parse_genre(self.url))) == 3
 
 
 class TestParsePodcastId:
@@ -122,24 +122,6 @@ class TestParsePodcastId:
             )
             == "884207568"
         )
-
-
-class TestParseFeed:
-    def test_exists(self, db, mock_good_response):
-        feed = itunes.parse_feed("12345")
-        assert feed.rss == "https://feeds.fireside.fm/testandcode/rss"
-        assert Podcast.objects.filter(rss=feed.rss).exists()
-
-    def test_not_exists(self, db, mocker):
-        class MockResponse:
-            def raise_for_status(self):
-                ...
-
-            def json(self):
-                return {"results": [{"id": 12345, "url": "bad-url"}]}
-
-        patch_request(mocker, MockResponse())
-        assert itunes.parse_feed("12345") is None
 
 
 class TestSearch:
