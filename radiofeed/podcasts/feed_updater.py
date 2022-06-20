@@ -108,8 +108,6 @@ class FeedUpdater:
         match e:
             case NotModified():
                 active = True
-            case DuplicateFeed() | rss_parser.RssParserError() | requests.ConnectionError() | requests.Timeout() | requests.TooManyRedirects():
-                active = False
             case requests.HTTPError():
                 active = http_status not in (
                     http.HTTPStatus.FORBIDDEN,
@@ -117,6 +115,8 @@ class FeedUpdater:
                     http.HTTPStatus.NOT_FOUND,
                     http.HTTPStatus.UNAUTHORIZED,
                 )
+            case DuplicateFeed() | rss_parser.RssParserError() | requests.RequestException():
+                active = False
             case _:
                 raise
 
