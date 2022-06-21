@@ -132,8 +132,11 @@ document.addEventListener("alpine:init", () => {
                 this.skipTo(10);
             },
             shortcuts(event: KeyboardEvent): void {
-                const target = event.target as HTMLElement;
-                if (target.tagName.match(/INPUT|TEXTAREA/)) {
+                if (
+                    (event.target as HTMLElement).tagName.match(
+                        /INPUT|TEXTAREA/,
+                    )
+                ) {
                     return;
                 }
 
