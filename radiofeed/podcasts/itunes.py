@@ -66,34 +66,35 @@ def crawl() -> Generator[Feed, None, None]:
             )
 
 
-def parse_feeds(data: dict) -> Iterable[Feed]:
+def parse_feeds(data: dict) -> Generator[Feed, None, None]:
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
     """
+    for batch in batcher(parse_results(data), BATCH_SIZE):
 
-    feeds_for_podcasts, feeds = itertools.tee(parse_results(data))
+        feeds_for_podcasts, feeds = itertools.tee(batch)
 
-    podcasts = Podcast.objects.filter(
-        rss__in=[f.rss for f in feeds_for_podcasts]
-    ).in_bulk(field_name="rss")
+        podcasts = Podcast.objects.filter(
+            rss__in=[f.rss for f in feeds_for_podcasts]
+        ).in_bulk(field_name="rss")
 
-    feeds_for_insert, feeds = itertools.tee(
-        map(
-            lambda feed: dataclasses.replace(feed, podcast=podcasts.get(feed.rss)),
-            feeds,
-        ),
-    )
+        feeds_for_insert, feeds = itertools.tee(
+            map(
+                lambda feed: dataclasses.replace(feed, podcast=podcasts.get(feed.rss)),
+                feeds,
+            ),
+        )
 
-    Podcast.objects.bulk_create(
-        map(
-            lambda feed: Podcast(title=feed.title, rss=feed.rss),
-            filter(lambda feed: feed.podcast is None, feeds_for_insert),
-        ),
-        batch_size=BATCH_SIZE,
-    )
+        Podcast.objects.bulk_create(
+            map(
+                lambda feed: Podcast(title=feed.title, rss=feed.rss),
+                filter(lambda feed: feed.podcast is None, feeds_for_insert),
+            ),
+            batch_size=BATCH_SIZE,
+        )
 
-    return feeds
+        yield from feeds
 
 
 def get_response(url, data: dict | None = None) -> requests.Response:
