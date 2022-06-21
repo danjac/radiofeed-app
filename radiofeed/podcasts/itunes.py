@@ -103,6 +103,25 @@ def get_response(url, data: dict | None = None) -> requests.Response:
     return response
 
 
+def parse_podcast_id(url: str) -> str | None:
+    if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
+        return match.group("id")
+    return None
+
+
+def parse_results(data: dict) -> Generator[Feed, None, None]:
+    for result in data.get("results", []):
+        try:
+            yield Feed(
+                rss=result["feedUrl"],
+                url=result["collectionViewUrl"],
+                title=result["collectionName"],
+                image=result["artworkUrl600"],
+            )
+        except KeyError:
+            continue
+
+
 def get_genre_urls() -> filter[str]:
     return filter(
         lambda url: url.startswith("https://podcasts.apple.com/us/genre/podcasts"),
@@ -127,26 +146,11 @@ def get_podcast_ids(url: str) -> filter[str]:
     )
 
 
-def parse_podcast_id(url: str) -> str | None:
-    if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
-        return match.group("id")
-    return None
-
-
-def parse_urls(content: bytes) -> Generator[str, None, None]:
-    for link in xml_parser.iterparse(content, "a"):
-        if href := link.attrib.get("href"):
-            yield href
-
-
-def parse_results(data: dict) -> Generator[Feed, None, None]:
-    for result in data.get("results", []):
-        try:
-            yield Feed(
-                rss=result["feedUrl"],
-                url=result["collectionViewUrl"],
-                title=result["collectionName"],
-                image=result["artworkUrl600"],
-            )
-        except KeyError:
-            continue
+def parse_urls(content: bytes) -> filter[str]:
+    return filter(
+        None,
+        map(
+            lambda el: el.attrib.get("href"),
+            xml_parser.iterparse(content, "a"),
+        ),
+    )
