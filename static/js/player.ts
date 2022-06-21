@@ -59,15 +59,16 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
+                this.isError = false;
+
                 const target = event.target as HTMLMediaElement;
 
-                const { rate, autoplay } = this.loadState();
-
-                this.isError = false;
-                this.rate = rate || 1.0;
-                this.autoplay = autoplay || this.autoplay;
-
                 target.currentTime = this.currentTime;
+
+                const state = this.loadState();
+
+                this.rate = state.rate;
+                this.autoplay = state.autoplay;
 
                 if (this.autoplay) {
                     target.play().catch(this.handleError.bind(this));
@@ -220,7 +221,7 @@ document.addEventListener("alpine:init", () => {
                     ? <PlayerState>JSON.parse(state)
                     : {
                           rate: 1.0,
-                          autoplay: false,
+                          autoplay: this.autoplay,
                       };
             },
             saveState(): void {
