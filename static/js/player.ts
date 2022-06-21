@@ -62,14 +62,11 @@ document.addEventListener("alpine:init", () => {
                 this.isError = false;
 
                 const target = event.target as HTMLMediaElement;
-
                 target.currentTime = this.currentTime;
+
                 this.duration = target.duration || 0;
 
-                const { autoplay, rate } = this.loadState();
-
-                this.autoplay = autoplay;
-                this.rate = rate;
+                this.loadState();
 
                 if (this.autoplay) {
                     target.play().catch(this.handleError.bind(this));
@@ -215,21 +212,23 @@ document.addEventListener("alpine:init", () => {
                 this.rate = value;
                 this.saveState();
             },
-            loadState(): PlayerState {
+            loadState(): void {
                 const state = sessionStorage.getItem("player");
-                return state
+                const { autoplay, rate } = state
                     ? <PlayerState>JSON.parse(state)
                     : {
-                          rate: 1.0,
                           autoplay: this.autoplay,
+                          rate: 1.0,
                       };
+                this.autoplay = autoplay;
+                this.rate = rate;
             },
             saveState(): void {
                 sessionStorage.setItem(
                     "player",
                     JSON.stringify(<PlayerState>{
-                        rate: this.rate,
                         autoplay: this.isPlaying,
+                        rate: this.rate,
                     }),
                 );
             },
