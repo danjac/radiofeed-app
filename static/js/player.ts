@@ -1,10 +1,5 @@
 import Alpine from "alpinejs";
 
-interface PlayerState {
-    autoplay: boolean;
-    rate: number;
-}
-
 document.addEventListener("alpine:init", () => {
     Alpine.data(
         "player",
@@ -216,7 +211,7 @@ document.addEventListener("alpine:init", () => {
             loadState(): void {
                 const state = sessionStorage.getItem("player");
                 const { autoplay, rate } = state
-                    ? <PlayerState>JSON.parse(state)
+                    ? JSON.parse(state)
                     : {
                           autoplay: false,
                           rate: 1.0,
@@ -227,7 +222,7 @@ document.addEventListener("alpine:init", () => {
             saveState(): void {
                 sessionStorage.setItem(
                     "player",
-                    JSON.stringify(<PlayerState>{
+                    JSON.stringify({
                         autoplay: this.isPlaying,
                         rate: this.rate,
                     }),
