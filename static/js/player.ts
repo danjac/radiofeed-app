@@ -28,6 +28,8 @@ document.addEventListener("alpine:init", () => {
                 total: "00:00:00",
             },
             init(): void {
+                const audio = this.$refs.audio as HTMLMediaElement;
+
                 this.$watch("runtime", (value: string) => {
                     this.counters.current = this.formatCounter(value);
                 });
@@ -36,11 +38,11 @@ document.addEventListener("alpine:init", () => {
                     this.counters.total = this.formatCounter(value);
                 });
 
-                this.$watch("rate", (value: string) => {
-                    this.$refs.audio.playbackRate = value;
+                this.$watch("rate", (value: number) => {
+                    audio.playbackRate = value;
                 });
 
-                this.$refs.audio.load();
+                audio.load();
 
                 if ("mediaSession" in navigator) {
                     navigator.mediaSession.metadata = this.getMediaMetadata();
@@ -105,20 +107,24 @@ document.addEventListener("alpine:init", () => {
                 this.handleError(target.error);
             },
             togglePlayPause(): void {
+                const audio = this.$refs.audio as HTMLMediaElement;
+
                 if (this.isPaused) {
-                    this.$refs.audio.play();
+                    audio.play();
                 } else {
-                    this.$refs.audio.pause();
+                    audio.pause();
                 }
             },
             skip(): void {
+                const audio = this.$refs.audio as HTMLMediaElement;
                 if (this.isPlaying) {
-                    this.$refs.audio.currentTime = this.runtime;
+                    audio.currentTime = this.runtime;
                 }
             },
             skipTo(seconds: number): void {
+                const audio = this.$refs.audio as HTMLMediaElement;
                 if (this.isPlaying) {
-                    this.$refs.audio.currentTime += seconds;
+                    audio.currentTime += seconds;
                 }
             },
             skipBack(): void {
