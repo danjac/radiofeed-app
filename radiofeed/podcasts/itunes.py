@@ -91,7 +91,6 @@ def parse_feeds(data: dict, batch_size: int = 100) -> Generator[Feed, None, None
                 lambda feed: Podcast(title=feed.title, rss=feed.rss),
                 filter(lambda feed: feed.podcast is None, feeds_for_insert),
             ),
-            batch_size=batch_size,
         )
 
         yield from feeds
