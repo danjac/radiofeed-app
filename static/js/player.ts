@@ -62,6 +62,7 @@ document.addEventListener("alpine:init", () => {
                 this.isError = false;
 
                 const target = event.target as HTMLMediaElement;
+
                 target.currentTime = this.currentTime;
 
                 this.duration = target.duration || 0;
