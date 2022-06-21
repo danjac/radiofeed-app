@@ -56,14 +56,12 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
-                this.isError = false;
-
                 const target = event.target as HTMLMediaElement;
 
                 target.currentTime = this.currentTime;
 
+                this.isError = false;
                 this.duration = target.duration || 0;
-
                 this.loadState();
 
                 if (this.autoplay) {
@@ -75,11 +73,12 @@ document.addEventListener("alpine:init", () => {
                 this.isLoaded = true;
             },
             timeUpdate(event: Event): void {
-                const target = event.target as HTMLMediaElement;
-
                 this.isPlaying = true;
                 this.isError = false;
-                this.runtime = Math.floor(target.currentTime);
+
+                this.runtime = Math.floor(
+                    (event.target as HTMLMediaElement).currentTime,
+                );
             },
             play(): void {
                 this.isPaused = false;
@@ -103,8 +102,7 @@ document.addEventListener("alpine:init", () => {
                 this.isPlaying = false;
             },
             error(event: Event): void {
-                const target = event.target as HTMLMediaElement;
-                this.handleError(target.error);
+                this.handleError((event.target as HTMLMediaElement).error);
             },
             togglePlayPause(): void {
                 const audio = this.$refs.audio as HTMLMediaElement;
@@ -116,15 +114,15 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             skip(): void {
-                const audio = this.$refs.audio as HTMLMediaElement;
                 if (this.isPlaying) {
-                    audio.currentTime = this.runtime;
+                    (this.$refs.audio as HTMLMediaElement).currentTime =
+                        this.runtime;
                 }
             },
             skipTo(seconds: number): void {
-                const audio = this.$refs.audio as HTMLMediaElement;
                 if (this.isPlaying) {
-                    audio.currentTime += seconds;
+                    (this.$refs.audio as HTMLMediaElement).currentTime +=
+                        seconds;
                 }
             },
             skipBack(): void {
