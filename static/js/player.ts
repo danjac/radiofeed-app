@@ -73,12 +73,12 @@ document.addEventListener("alpine:init", () => {
                 this.isLoaded = true;
             },
             timeUpdate(event: Event): void {
+                const target = event.target as HTMLMediaElement;
+
+                this.runtime = Math.floor(target.currentTime);
+
                 this.isPlaying = true;
                 this.isError = false;
-
-                this.runtime = Math.floor(
-                    (event.target as HTMLMediaElement).currentTime,
-                );
             },
             play(): void {
                 this.isPaused = false;
@@ -102,7 +102,8 @@ document.addEventListener("alpine:init", () => {
                 this.isPlaying = false;
             },
             error(event: Event): void {
-                this.handleError((event.target as HTMLMediaElement).error);
+                const target = event.target as HTMLMediaElement;
+                this.handleError(target.error);
             },
             togglePlayPause(): void {
                 const audio = this.$refs.audio as HTMLMediaElement;
@@ -115,14 +116,14 @@ document.addEventListener("alpine:init", () => {
             },
             skip(): void {
                 if (this.isPlaying) {
-                    (this.$refs.audio as HTMLMediaElement).currentTime =
-                        this.runtime;
+                    const audio = this.$refs.audio as HTMLMediaElement;
+                    audio.currentTime = this.runtime;
                 }
             },
             skipTo(seconds: number): void {
                 if (this.isPlaying) {
-                    (this.$refs.audio as HTMLMediaElement).currentTime +=
-                        seconds;
+                    const audio = this.$refs.audio as HTMLMediaElement;
+                    audio.currentTime += seconds;
                 }
             },
             skipBack(): void {
