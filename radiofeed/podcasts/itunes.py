@@ -17,7 +17,6 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import xml_parser
 
 RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
-BATCH_SIZE = 100
 
 
 @dataclasses.dataclass
@@ -50,11 +49,11 @@ def search(search_term: str) -> Iterable[Feed]:
     )
 
 
-def crawl() -> Generator[Feed, None, None]:
+def crawl(batch_size: int = 100) -> Generator[Feed, None, None]:
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for url in get_genre_urls():
-        for batch in batcher(get_podcast_ids(url), BATCH_SIZE):
+        for batch in batcher(get_podcast_ids(url), batch_size):
             yield from parse_feeds(
                 get_response(
                     "https://itunes.apple.com/lookup",
@@ -62,21 +61,22 @@ def crawl() -> Generator[Feed, None, None]:
                         "id": ",".join(batch),
                         "entity": "podcast",
                     },
-                ).json()
+                ).json(),
+                batch_size,
             )
 
 
-def parse_feeds(data: dict) -> Generator[Feed, None, None]:
+def parse_feeds(data: dict, batch_size: int = 100) -> Generator[Feed, None, None]:
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
     """
-    for batch in batcher(parse_results(data), BATCH_SIZE):
+    for batch in batcher(parse_results(data), batch_size):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
         podcasts = Podcast.objects.filter(
-            rss__in=[f.rss for f in feeds_for_podcasts]
+            rss__in=set([f.rss for f in feeds_for_podcasts])
         ).in_bulk(field_name="rss")
 
         feeds_for_insert, feeds = itertools.tee(
@@ -91,7 +91,7 @@ def parse_feeds(data: dict) -> Generator[Feed, None, None]:
                 lambda feed: Podcast(title=feed.title, rss=feed.rss),
                 filter(lambda feed: feed.podcast is None, feeds_for_insert),
             ),
-            batch_size=BATCH_SIZE,
+            batch_size=batch_size,
         )
 
         yield from feeds
