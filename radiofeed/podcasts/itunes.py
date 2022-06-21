@@ -31,12 +31,12 @@ class Feed:
 def search_cached(search_term: str) -> list[Feed]:
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
     if (feeds := cache.get(cache_key)) is None:
-        feeds = search(search_term)
+        feeds = list(search(search_term))
         cache.set(cache_key, feeds)
     return feeds
 
 
-def search(search_term: str) -> list[Feed]:
+def search(search_term: str) -> Generator[Feed, None, None]:
     """Search RSS feeds on iTunes"""
     return parse_feeds(
         get_response(
@@ -65,47 +65,30 @@ def crawl() -> Generator[Feed, None, None]:
             )
 
 
-def parse_feeds(data: dict) -> list[Feed]:
+def parse_feeds(data: dict) -> Generator[Feed, None, None]:
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
     """
-    feeds: list[Feed] = []
 
-    for result in data.get("results", []):
-        try:
-            feeds.append(
-                Feed(
-                    rss=result["feedUrl"],
-                    url=result["collectionViewUrl"],
-                    title=result["collectionName"],
-                    image=result["artworkUrl600"],
-                )
-            )
-        except KeyError:
-            continue
-
-    if not feeds:
-        return []
+    if not (feeds := list(parse_results(data))):
+        return
 
     podcasts = Podcast.objects.filter(rss__in=[f.rss for f in feeds]).in_bulk(
         field_name="rss"
     )
 
-    for_insert: list[Podcast] = []
-
     for feed in feeds:
-        if podcast := podcasts.get(feed.rss):
-            feed.podcast = podcast
-        else:
-            for_insert.append(Podcast(title=feed.title, rss=feed.rss))
+        feed.podcast = podcasts.get(feed.rss)
+        yield feed
 
     Podcast.objects.bulk_create(
-        for_insert,
-        ignore_conflicts=True,
+        map(
+            lambda feed: Podcast(title=feed.title, rss=feed.rss),
+            filter(lambda feed: feed.podcast is None, feeds),
+        ),
         batch_size=BATCH_SIZE,
     )
-    return feeds
 
 
 def get_response(url, data: dict | None = None) -> requests.Response:
@@ -154,3 +137,16 @@ def parse_urls(content: bytes) -> Generator[str, None, None]:
     for link in xml_parser.iterparse(content, "a"):
         if href := link.attrib.get("href"):
             yield href
+
+
+def parse_results(data: dict) -> Generator[Feed, None, None]:
+    for result in data.get("results", []):
+        try:
+            yield Feed(
+                rss=result["feedUrl"],
+                url=result["collectionViewUrl"],
+                title=result["collectionName"],
+                image=result["artworkUrl600"],
+            )
+        except KeyError:
+            continue
