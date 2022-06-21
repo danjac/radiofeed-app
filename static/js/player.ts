@@ -64,11 +64,12 @@ document.addEventListener("alpine:init", () => {
                 const target = event.target as HTMLMediaElement;
 
                 target.currentTime = this.currentTime;
+                this.duration = target.duration || 0;
 
-                const state = this.loadState();
+                const { autoplay, rate } = this.loadState();
 
-                this.rate = state.rate;
-                this.autoplay = state.autoplay;
+                this.autoplay = autoplay;
+                this.rate = rate;
 
                 if (this.autoplay) {
                     target.play().catch(this.handleError.bind(this));
@@ -76,7 +77,6 @@ document.addEventListener("alpine:init", () => {
                     this.pause();
                 }
 
-                this.duration = target.duration || 0;
                 this.isLoaded = true;
             },
             timeUpdate(event: Event): void {
