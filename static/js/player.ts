@@ -42,7 +42,7 @@ document.addEventListener("alpine:init", () => {
                 });
 
                 this.$watch("rate", (value: string) => {
-                    this.$refs.audio.rate = value;
+                    this.$refs.audio.playbackRate = value;
                 });
 
                 this.$refs.audio.load();
@@ -218,10 +218,10 @@ document.addEventListener("alpine:init", () => {
                 const { autoplay, rate } = state
                     ? <PlayerState>JSON.parse(state)
                     : {
-                          autoplay: this.autoplay,
+                          autoplay: false,
                           rate: 1.0,
                       };
-                this.autoplay = autoplay;
+                this.autoplay = autoplay || this.autoplay;
                 this.rate = rate;
             },
             saveState(): void {
