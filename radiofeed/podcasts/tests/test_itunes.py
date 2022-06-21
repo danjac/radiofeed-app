@@ -17,14 +17,9 @@ MOCK_RESULT = {
 }
 
 
-def patch_request(mocker, response):
-    return mocker.patch("requests.get", return_value=response, autospec=True)
-
-
 class MockResponse:
     def __init__(self, *, mock_file=None, json=None, exception=None):
         if mock_file is not None:
-            print(mock_file)
             self.content = (
                 pathlib.Path(__file__).parent / "mocks" / mock_file
             ).read_bytes()
@@ -42,19 +37,23 @@ class MockResponse:
         return self.json_data
 
 
+def mock_request(mocker, response):
+    return mocker.patch("requests.get", return_value=response, autospec=True)
+
+
 @pytest.fixture
 def mock_good_response(mocker):
-    yield patch_request(mocker, MockResponse(json={"results": [MOCK_RESULT]}))
+    yield mock_request(mocker, MockResponse(json={"results": [MOCK_RESULT]}))
 
 
 @pytest.fixture
 def mock_bad_response(mocker):
-    yield patch_request(mocker, MockResponse(exception=requests.HTTPError()))
+    yield mock_request(mocker, MockResponse(exception=requests.HTTPError()))
 
 
 @pytest.fixture
 def mock_invalid_response(mocker):
-    yield patch_request(
+    yield mock_request(
         mocker, MockResponse(json={"results": [{"id": 12345, "url": "bad-url"}]})
     )
 
