@@ -1,10 +1,9 @@
 {% if episode %}
     {% if is_playing %}
-        {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
+        {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
             <div x-data="{# fmt:off #}
             player(
                 autoplay={{ start_player|yesno:'true,false' }},
-                mediaUrl='{{ episode.media_url }}',
                 currentTime={{ current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
@@ -14,7 +13,7 @@
                 {{ episode.get_media_metadata|json_script:"player-metadata" }}
                 <audio x-ref="audio"
                     preload="metadata"
-                    :src="mediaSrc"
+                    src="{{ media_url }}"
                     @loadedmetadata="loaded"
                     @play="play"
                     @pause="pause"
@@ -24,11 +23,9 @@
                     @waiting="buffering"
                     @stalled="buffering"
                     @suspend="buffering">
-                    <source src="{{ episode.media_url }}" type="{{ episode.media_type }}" />
+                    <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
-                <div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold space-y-1 sm:space-y-0"
-                    x-ref="controls"
-                    x-show="mediaSrc">
+                <div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold space-y-1 sm:space-y-0">
 
                     <div class="sm:hidden">
 

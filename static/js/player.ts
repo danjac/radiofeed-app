@@ -5,13 +5,11 @@ document.addEventListener("alpine:init", () => {
         "player",
         (
             autoplay = false,
-            mediaSrc = null,
             currentTime = 0,
             csrfToken = null,
             timeUpdateUrl = null,
         ) => ({
             autoplay,
-            mediaSrc,
             currentTime,
             csrfToken,
             timeUpdateUrl,
@@ -223,7 +221,7 @@ document.addEventListener("alpine:init", () => {
                           rate: 1.0,
                       };
                 this.autoplay = autoplay || this.autoplay;
-                this.rate = rate;
+                this.rate = rate || 1.0;
             },
             saveState(): void {
                 sessionStorage.setItem(
