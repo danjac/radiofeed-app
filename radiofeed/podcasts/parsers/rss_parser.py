@@ -165,10 +165,5 @@ def parse_item(item: lxml.etree.Element) -> Item:
             ),
             duration=converters.duration(xpath.first("itunes:duration/text()")),
             episode_type=xpath.first("itunes:episodetype/text()", default="full"),
-            keywords=" ".join(
-                xpath.all(
-                    "category/text()",
-                    "itunes:keywords/text()",
-                )
-            ),
+            keywords=" ".join(xpath.all("category/text()")),
         )
