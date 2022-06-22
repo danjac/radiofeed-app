@@ -16,8 +16,8 @@ from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from radiofeed.common import text_parser
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.podcasts.parsers.text_parser import get_stopwords
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +122,7 @@ class Recommender:
         df.drop_duplicates(inplace=True)
 
         vec = TfidfVectorizer(
-            stop_words=get_stopwords(self.language),
+            stop_words=text_parser.get_stopwords(self.language),
             max_features=3000,
             ngram_range=(1, 2),
         )

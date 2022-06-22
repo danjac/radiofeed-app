@@ -13,12 +13,12 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common import date_parser
+from radiofeed.common import date_parser, text_parser
 from radiofeed.common.http import get_user_agent
 from radiofeed.common.itertools import batcher
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.podcasts.parsers import rss_parser, text_parser
+from radiofeed.podcasts.parsers import rss_parser
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
