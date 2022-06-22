@@ -10,6 +10,44 @@ from radiofeed.podcasts.parsers import date_parser
 
 _validate_url = URLValidator(["http", "https"])
 
+AUDIO_MIMETYPES = (
+    "audio/aac",
+    "audio/aacp",
+    "audio/basic",
+    "audio/m4a",
+    "audio/midi",
+    "audio/mp3",
+    "audio/mp4",
+    "audio/mp4a-latm",
+    "audio/mp4a-latm",
+    "audio/mpef",
+    "audio/mpeg",
+    "audio/mpeg3",
+    "audio/mpeg4",
+    "audio/mpg",
+    "audio/ogg",
+    "audio/video",
+    "audio/vnd.dlna.adts",
+    "audio/vnd.wave",
+    "audio/wav",
+    "audio/wave",
+    "audio/x-aac",
+    "audio/x-aiff",
+    "audio/x-aiff",
+    "audio/x-hx-aac-adts",
+    "audio/x-m4a",
+    "audio/x-m4a",
+    "audio/x-m4b",
+    "audio/x-m4v",
+    "audio/x-mov",
+    "audio/x-mp3",
+    "audio/x-mpeg",
+    "audio/x-mpg",
+    "audio/x-ms-wma",
+    "audio/x-pn-realaudio",
+    "audio/x-wav",
+)
+
 
 LANGUAGE_CODES = (
     "aa",
@@ -180,9 +218,10 @@ LANGUAGE_CODES = (
 
 
 def audio(value: str) -> str:
-    if not value.startswith("audio/"):
-        raise ValueError("not a valid audio enclosure")
-    return value
+    if (rv := value.casefold()) in AUDIO_MIMETYPES:
+        return rv
+
+    raise ValueError("not a valid audio enclosure")
 
 
 def pub_date(value: str) -> datetime:
