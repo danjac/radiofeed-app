@@ -148,7 +148,7 @@ def get_podcast_ids(url: str) -> filter[str]:
 
 def parse_urls(content: bytes, startswith: str) -> filter[str]:
     return filter(
-        lambda url: url.startswith(startswith),
+        lambda url: url and url.startswith(startswith),
         map(
             lambda el: el.attrib.get("href"),
             xml_parser.iterparse(content, "a"),
