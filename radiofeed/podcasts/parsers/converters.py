@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 
-from radiofeed.podcasts.parsers import date_parser
+from radiofeed.common import date_parser
 
 _validate_url = URLValidator(["http", "https"])
 

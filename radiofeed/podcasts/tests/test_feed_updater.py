@@ -7,12 +7,12 @@ import requests
 
 from django.utils import timezone
 
+from radiofeed.common.date_parser import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import feed_updater
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.date_parser import parse_date
 
 
 class MockResponse:
