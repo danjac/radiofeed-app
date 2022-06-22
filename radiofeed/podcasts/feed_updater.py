@@ -4,10 +4,8 @@ import dataclasses
 import functools
 import hashlib
 import http
-import itertools
-import secrets
 
-from typing import Generator, Iterable
+from typing import Generator
 
 import requests
 
@@ -15,19 +13,13 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
+from radiofeed.common.http import get_user_agent
+from radiofeed.common.itertools import batcher
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
-
-USER_AGENTS = [
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
-]
 
 
 class NotModified(requests.RequestException):
@@ -269,15 +261,5 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def batcher(iterable: Iterable, batch_size: int) -> Generator[list, None, None]:
-    iterator = iter(iterable)
-    while batch := list(itertools.islice(iterator, batch_size)):
-        yield batch
-
-
 def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
-
-
-def get_user_agent() -> str:
-    return secrets.choice(USER_AGENTS)

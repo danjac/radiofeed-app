@@ -12,7 +12,8 @@ import requests
 
 from django.core.cache import cache
 
-from radiofeed.podcasts.feed_updater import batcher, get_user_agent
+from radiofeed.common.http import get_user_agent
+from radiofeed.common.itertools import batcher
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import xml_parser
 
