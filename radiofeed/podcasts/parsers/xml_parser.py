@@ -3,9 +3,11 @@ from __future__ import annotations
 import io
 
 from contextlib import contextmanager
-from typing import Any, Callable, Generator
+from typing import Callable, Generator, TypeVar
 
 import lxml
+
+T = TypeVar("T")
 
 
 def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]:
@@ -44,17 +46,15 @@ class XPath:
     def first(
         self,
         *paths: str,
-        converter: Callable | None = None,
-        default: Any = "",
+        converter: Callable[[str | None], T | str] | None = None,
+        default: T | str = "",
         required: bool = False,
-    ) -> Any:
+    ) -> T | str:
         """Find single attribute or text value. Returns first matching value."""
 
         try:
             value = next(self.iter(*paths))
-            if converter:
-                value = converter(value)
-            return value
+            return converter(value) if converter else value
         except (StopIteration, ValueError) as e:
             if required:
                 raise ValueError from e
