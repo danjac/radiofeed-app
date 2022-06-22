@@ -250,17 +250,13 @@ def url(value: str) -> str | None:
         return value
     except ValidationError as e:
         raise ValueError from e
-    return None
 
 
 def integer(value: str) -> int | None:
 
-    try:
-        if (result := int(value)) in range(-2147483648, 2147483647):
-            return result
-    except ValueError:
-        pass
-    return None
+    if (result := int(value)) in range(-2147483648, 2147483647):
+        return result
+    raise ValueError(f"{result} out of bounds")
 
 
 def duration(value: str) -> str:
@@ -272,13 +268,6 @@ def duration(value: str) -> str:
     except ValueError:
         pass
 
-    try:
-        return ":".join(
-            [
-                str(v)
-                for v in [int(v) for v in value.split(":")[:3]]
-                if v in range(0, 60)
-            ]
-        )
-    except ValueError:
-        return ""
+    return ":".join(
+        [str(v) for v in [int(v) for v in value.split(":")[:3]] if v in range(0, 60)]
+    )

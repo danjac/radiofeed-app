@@ -43,34 +43,43 @@ class TestAudio:
 
 class TestDuration:
     @pytest.mark.parametrize(
-        "value,expected",
+        "value,expected,raises",
         [
-            ("", ""),
-            ("invalid", ""),
-            ("300", "300"),
-            ("10:30", "10:30"),
-            ("10:30:59", "10:30:59"),
-            ("10:30:99", "10:30"),
+            ("", "", False),
+            ("invalid", "", True),
+            ("300", "300", False),
+            ("10:30", "10:30", False),
+            ("10:30:59", "10:30:59", False),
+            ("10:30:99", "10:30", False),
         ],
     )
-    def test_parse_duration(self, value, expected):
-        assert converters.duration(value) == expected
+    def test_parse_duration(self, value, expected, raises):
+        if raises:
+            with pytest.raises(ValueError):
+                converters.duration(value)
+        else:
+            assert converters.duration(value) == expected
 
 
 class TestInteger:
     @pytest.mark.parametrize(
-        "value,expected",
+        "value,expected,raises",
         [
-            ("1234", 1234),
-            ("0", 0),
-            ("-111111111111111", None),
-            ("111111111111111", None),
-            ("", None),
-            ("a string", None),
+            ("1234", 1234, False),
+            ("0", 0, False),
+            ("-111111111111111", None, True),
+            ("111111111111111", None, True),
+            ("", None, True),
+            ("a string", None, True),
         ],
     )
-    def test_integer(self, value, expected):
-        assert converters.integer(value) == expected
+    def test_integer(self, value, expected, raises):
+        if raises:
+            with pytest.raises(ValueError):
+                converters.integer(value)
+        else:
+
+            assert converters.integer(value) == expected
 
 
 class TestUrl:

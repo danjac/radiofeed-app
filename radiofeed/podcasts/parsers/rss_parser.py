@@ -90,10 +90,6 @@ def parse_feed(channel: lxml.etree.Element) -> Feed:
     with xml_parser.xpath(channel, NAMESPACES) as xpath:
         return Feed(
             title=xpath.first("title/text()", required=True),
-            link=xpath.first(
-                "link/text()",
-                converter=converters.url,
-            ),
             language=xpath.first(
                 "language/text()",
                 converter=converters.language,
@@ -108,10 +104,17 @@ def parse_feed(channel: lxml.etree.Element) -> Feed:
                 "itunes:image/@href",
                 "image/url/text()",
                 converter=converters.url,
+                default=None,
+            ),
+            link=xpath.first(
+                "link/text()",
+                converter=converters.url,
+                default=None,
             ),
             funding_url=xpath.first(
                 "podcast:funding/@url",
                 converter=converters.url,
+                default=None,
             ),
             funding_text=xpath.first("podcast:funding/text()"),
             description=xpath.first(
