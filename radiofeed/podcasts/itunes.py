@@ -129,7 +129,7 @@ def parse_results(data: dict) -> Generator[Feed, None, None]:
 
 def get_genre_urls() -> filter[str]:
     return parse_urls(
-        get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content,
+        "https://itunes.apple.com/us/genre/podcasts/id26?mt=2",
         "https://podcasts.apple.com/us/genre/podcasts",
     )
 
@@ -139,18 +139,16 @@ def get_podcast_ids(url: str) -> filter[str]:
         None,
         map(
             parse_podcast_id,
-            parse_urls(
-                get_response(url).content, "https://podcasts.apple.com/us/podcast/"
-            ),
+            parse_urls(url, "https://podcasts.apple.com/us/podcast/"),
         ),
     )
 
 
-def parse_urls(content: bytes, startswith: str) -> filter[str]:
+def parse_urls(url: str, startswith: str) -> filter[str]:
     return filter(
         lambda url: url and url.startswith(startswith),
         map(
             lambda el: el.attrib.get("href"),
-            xml_parser.iterparse(content, "a"),
+            xml_parser.iterparse(get_response(url).content, "a"),
         ),
     )
