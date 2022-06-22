@@ -55,9 +55,9 @@ class XPath:
             if converter:
                 value = converter(value)
             return value
-        except (StopIteration, ValueError):
+        except (StopIteration, ValueError) as e:
             if required:
-                raise ValueError
+                raise ValueError from e
             return default
 
     def all(self, *paths: str) -> list[str]:
