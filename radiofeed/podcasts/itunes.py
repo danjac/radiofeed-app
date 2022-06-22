@@ -12,10 +12,10 @@ import requests
 
 from django.core.cache import cache
 
+from radiofeed.common import xml_parser
 from radiofeed.common.http import get_user_agent
 from radiofeed.common.itertools import batcher
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers import xml_parser
 
 RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
 

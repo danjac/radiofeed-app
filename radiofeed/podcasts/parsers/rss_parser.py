@@ -7,7 +7,8 @@ from typing import Generator
 
 import lxml.etree
 
-from radiofeed.podcasts.parsers import converters, xml_parser
+from radiofeed.common import xml_parser
+from radiofeed.podcasts.parsers import converters
 
 NAMESPACES: dict[str, str] = {
     "atom": "http://www.w3.org/2005/Atom",
