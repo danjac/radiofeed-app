@@ -125,7 +125,13 @@ def parse_item(item: lxml.etree.Element) -> Item:
         return Item(
             guid=xpath.first("guid/text()", required=True),
             title=xpath.first("title/text()", required=True),
-            pub_date=converters.pub_date(xpath.first("pubDate/text()", required=True)),
+            pub_date=converters.pub_date(
+                xpath.first(
+                    "pubDate/text()",
+                    "pubdate/text()",
+                    required=True,
+                )
+            ),
             cover_url=converters.url(xpath.first("itunes:image/@href")),
             link=converters.url(xpath.first("link/text()")),
             explicit=converters.explicit(xpath.first("itunes:explicit/text()")),
@@ -159,5 +165,10 @@ def parse_item(item: lxml.etree.Element) -> Item:
             ),
             duration=converters.duration(xpath.first("itunes:duration/text()")),
             episode_type=xpath.first("itunes:episodetype/text()", default="full"),
-            keywords=" ".join(xpath.all("category/text()")),
+            keywords=" ".join(
+                xpath.all(
+                    "category/text()",
+                    "itunes:keywords/text()",
+                )
+            ),
         )
