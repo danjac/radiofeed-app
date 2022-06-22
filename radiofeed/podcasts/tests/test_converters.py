@@ -75,47 +75,40 @@ class TestInteger:
 
 class TestUrl:
     @pytest.mark.parametrize(
-        "value,expected",
+        "value,expected,raises",
         [
-            ("http://example.com", "http://example.com"),
-            ("example", None),
-            (None, None),
+            ("http://example.com", "http://example.com", False),
+            ("example", None, True),
+            (None, None, True),
         ],
     )
-    def test_parse_url(self, value, expected):
-        assert converters.url(value) == expected
-
-    @pytest.mark.parametrize(
-        "value,raises",
-        [
-            ("http://example.com", False),
-            ("example", True),
-            ("", True),
-        ],
-    )
-    def test_raises(self, value, raises):
+    def test_parse_url(self, value, expected, raises):
         if raises:
             with pytest.raises(ValueError):
-                converters.url(value, raises=True)
+                converters.url(value)
         else:
-            assert converters.url(value, raises=True) == value
+            assert converters.url(value) == expected
 
 
 class TestLanguage:
     @pytest.mark.parametrize(
-        "value,expected",
+        "value,expected,raises",
         [
-            ("en-GB", "en"),
-            ("FI-FI", "fi"),
-            ("fr", "fr"),
-            ("fr-CA", "fr"),
-            ("xx", "en"),
-            ("", "en"),
-            ("#", "en"),
+            ("en-GB", "en", False),
+            ("FI-FI", "fi", False),
+            ("fr", "fr", False),
+            ("fr-CA", "fr", False),
+            ("xx", "", True),
+            ("", "", True),
+            ("#", "en", True),
         ],
     )
-    def test_language(self, value, expected):
-        assert converters.language(value) == expected
+    def test_language(self, value, expected, raises):
+        if raises:
+            with pytest.raises(ValueError):
+                converters.language(value)
+        else:
+            assert converters.language(value) == expected
 
 
 class TestBoolean:

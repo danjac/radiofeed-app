@@ -3,7 +3,7 @@ from __future__ import annotations
 import io
 
 from contextlib import contextmanager
-from typing import Generator
+from typing import Any, Callable, Generator
 
 import lxml
 
@@ -41,17 +41,24 @@ class XPath:
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
-    def first(self, *paths: str, default: str = "", required: bool = False) -> str:
+    def first(
+        self,
+        *paths: str,
+        default: Any = "",
+        required: bool = False,
+        converter: Callable | None = None,
+    ) -> Any:
         """Find single attribute or text value. Returns first matching value."""
 
         try:
-            return next(self.iter(*paths))
-        except StopIteration:
-            pass
-
-        if required:
-            raise ValueError(f"no value found for {paths}")
-        return default
+            value = next(self.iter(*paths))
+            if converter:
+                value = converter(value)
+            return value
+        except (StopIteration, ValueError):
+            if required:
+                raise ValueError
+            return default
 
     def all(self, *paths: str) -> list[str]:
         return list(self.iter(*paths))

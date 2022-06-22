@@ -238,19 +238,18 @@ def boolean(value: str) -> bool:
     return value.casefold() == "yes"
 
 
-def language(value: str, default: str = "en") -> str:
+def language(value: str) -> str:
     if (language := value[:2].casefold()) in LANGUAGE_CODES:
         return language
-    return default
+    raise ValueError("unrecognized language code {language}")
 
 
-def url(value: str, raises: bool = False) -> str | None:
+def url(value: str) -> str | None:
     try:
         _validate_url(value)
         return value
     except ValidationError as e:
-        if raises:
-            raise ValueError from e
+        raise ValueError from e
     return None
 
 
