@@ -44,9 +44,9 @@ class XPath:
     def first(
         self,
         *paths: str,
+        converter: Callable | None = None,
         default: Any = "",
         required: bool = False,
-        converter: Callable | None = None,
     ) -> Any:
         """Find single attribute or text value. Returns first matching value."""
 
