@@ -247,7 +247,7 @@ document.addEventListener("alpine:init", () => {
             },
             getMediaMetadata(): MediaMetadata | null {
                 const dataTag = document.getElementById("player-metadata");
-                const metadata = JSON.parse(dataTag?.textContent || "");
+                const metadata = JSON.parse(dataTag?.textContent || "{}");
 
                 if (metadata && Object.keys(metadata).length > 0) {
                     return new MediaMetadata(metadata);
