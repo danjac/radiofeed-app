@@ -6,8 +6,7 @@ from typing import Generator
 
 import lxml
 
-from radiofeed.common import xml_parser
-from radiofeed.podcasts.parsers import converters
+from radiofeed.podcasts.parsers import converters, xml_parser
 
 
 class OpmlParserError(ValueError):
