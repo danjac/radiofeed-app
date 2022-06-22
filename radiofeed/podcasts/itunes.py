@@ -140,7 +140,8 @@ def get_podcast_ids(url: str) -> filter[str]:
         map(
             parse_podcast_id,
             parse_urls(
-                get_response(url).content, "https://podcasts.apple.com/us/podcast/"
+                get_response(url).content,
+                "https://podcasts.apple.com/us/podcast/",
             ),
         ),
     )
