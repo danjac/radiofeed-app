@@ -96,17 +96,22 @@ class TestInteger:
 
 class TestUrl:
     @pytest.mark.parametrize(
-        "value,expected,required",
+        "value,expected,required,raises",
         [
-            ("http://example.com", "http://example.com", False),
-            ("example", None, True),
-            ("example", None, False),
+            ("http://example.com", "http://example.com", False, False),
+            ("http://example.com", "http://example.com", True, False),
+            ("example", None, True, True),
+            ("example", None, False, False),
         ],
     )
-    def test_parse_url(self, value, expected, required):
+    def test_parse_url(self, value, expected, required, raises):
         if required:
-            with pytest.raises(ValueError):
+            if raises:
+                with pytest.raises(ValueError):
+                    converters.url(value, required=True)
+            else:
                 converters.url(value, required=True)
+
         else:
             assert converters.url(value) == expected
 
