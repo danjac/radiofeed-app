@@ -7,6 +7,18 @@ from django.utils import timezone
 from radiofeed.podcasts.parsers import converters
 
 
+class TestText:
+    def test_ok(self):
+        assert converters.text("", "ok") == "ok"
+
+    def test_default(self):
+        assert converters.text("", "", default="full") == "full"
+
+    def test_required(self):
+        with pytest.raises(ValueError):
+            converters.text("", required=True)
+
+
 class TestPubDate:
     def test_not_date(self):
         with pytest.raises(ValueError):

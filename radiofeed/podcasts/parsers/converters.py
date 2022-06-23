@@ -220,7 +220,7 @@ LANGUAGE_CODES = (
 def text(*values: str, required: bool = False, default: str = "") -> str:
 
     try:
-        return next(iter(values))
+        return next(filter(None, values))
     except StopIteration:
         if required:
             raise ValueError
@@ -275,7 +275,6 @@ def url(*values: str, required: bool = False) -> str | None:
             continue
 
     if required:
-        print("required")
         raise ValueError
     return None
 
