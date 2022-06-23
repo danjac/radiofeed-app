@@ -47,7 +47,7 @@ class XPath:
         self,
         *paths: str,
         converter: Callable[[str], T | None] | None = None,
-        default: T | str = "",
+        default: T | str | None = "",
         required: bool = False,
     ) -> T | str | None:
 
