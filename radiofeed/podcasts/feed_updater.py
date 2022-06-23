@@ -72,7 +72,6 @@ class FeedUpdater:
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=date_parser.parse_date(response.headers.get("Last-Modified")),
-            pub_date=feed.latest_pub_date,
             title=feed.title,
             cover_url=feed.cover_url,
             description=feed.description,
@@ -82,6 +81,7 @@ class FeedUpdater:
             language=feed.language,
             link=feed.link,
             owner=feed.owner,
+            pub_date=feed.latest_pub_date,
             extracted_text=self.extract_text(feed, categories),
             keywords=" ".join(
                 category
