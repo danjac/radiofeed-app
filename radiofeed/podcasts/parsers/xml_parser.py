@@ -3,11 +3,9 @@ from __future__ import annotations
 import io
 
 from contextlib import contextmanager
-from typing import Callable, Generator, TypeVar
+from typing import Generator
 
 import lxml
-
-T = TypeVar("T")
 
 
 def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]:
@@ -43,28 +41,7 @@ class XPath:
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
-    def first(
-        self,
-        *paths: str,
-        converter: Callable[[str], T] | None = None,
-        default: T | str | None = "",
-        required: bool = False,
-    ) -> T | str | None:
-
-        for value in self.iter(*paths):
-            try:
-                return converter(value) if converter else value
-            except ValueError:
-                continue
-
-        if required:
-            raise ValueError
-        return default
-
-    def all(self, *paths: str) -> list[str]:
-        return list(self.iter(*paths))
-
-    def iter(self, *paths: str) -> Generator[str, None, None]:
+    def __call__(self, *paths: str) -> Generator[str, None, None]:
 
         try:
             for path in paths:

@@ -217,57 +217,95 @@ LANGUAGE_CODES = (
 )
 
 
-def audio(value: str) -> str:
-    if (rv := value.casefold()) in AUDIO_MIMETYPES:
-        return rv
+def text(*values: str, required: bool = False, default: str = "") -> str:
+
+    try:
+        return next(iter(values))
+    except StopIteration:
+        if required:
+            raise ValueError
+        return default
+
+
+def audio(*values: str) -> str:
+    for value in values:
+        if (rv := value.casefold()) in AUDIO_MIMETYPES:
+            return rv
 
     raise ValueError
 
 
-def pub_date(value: str) -> datetime:
-    if not (pub_date := date_parser.parse_date(value)) or pub_date > timezone.now():
+def pub_date(*values: str) -> datetime:
+    for value in values:
+        if (pub_date := date_parser.parse_date(value)) and pub_date > timezone.now():
+            return pub_date
+    raise ValueError
+
+
+def explicit(*values: str) -> bool:
+    for value in values:
+        if value.casefold() in ("clean", "yes"):
+            return True
+    return False
+
+
+def boolean(*values: str, default: bool = False) -> bool:
+    for value in values:
+        if value.casefold() == "yes":
+            return True
+    return default
+
+
+def language(*values: str, default: str = "en") -> str:
+    for value in values:
+        if (language := value[:2].casefold()) in LANGUAGE_CODES:
+            return language
+
+    return default
+
+
+def url(*values: str, required: bool = False) -> str | None:
+
+    for value in values:
+        try:
+            _validate_url(value)
+            return value
+        except ValidationError:
+            continue
+    if required:
         raise ValueError
-    return pub_date
+    return None
 
 
-def explicit(value: str) -> bool:
-    return value.casefold() in ("clean", "yes")
+def integer(*values: str, required: bool = False) -> int | None:
+
+    for value in values:
+        try:
+            if (result := int(value)) in range(-2147483648, 2147483647):
+                return result
+        except ValueError:
+            continue
+    if required:
+        raise ValueError
+    return None
 
 
-def boolean(value: str) -> bool:
-    return value.casefold() == "yes"
+def duration(*values: str) -> str:
+    for value in values:
+        try:
+            # plain seconds value
+            return str(int(value))
+        except ValueError:
+            pass
 
-
-def language(value: str) -> str:
-    if (language := value[:2].casefold()) in LANGUAGE_CODES:
-        return language
-    raise ValueError
-
-
-def url(value: str) -> str:
-    try:
-        _validate_url(value)
-        return value
-    except ValidationError as e:
-        raise ValueError from e
-
-
-def integer(value: str) -> int:
-
-    if (result := int(value)) in range(-2147483648, 2147483647):
-        return result
-    raise ValueError
-
-
-def duration(value: str) -> str:
-    if not value:
-        return ""
-    try:
-        # plain seconds value
-        return str(int(value))
-    except ValueError:
-        pass
-
-    return ":".join(
-        [str(v) for v in [int(v) for v in value.split(":")[:3]] if v in range(0, 60)]
-    )
+        try:
+            return ":".join(
+                [
+                    str(v)
+                    for v in [int(v) for v in value.split(":")[:3]]
+                    if v in range(0, 60)
+                ]
+            )
+        except ValueError:
+            continue
+    return ""
