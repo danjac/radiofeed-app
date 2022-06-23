@@ -220,18 +220,10 @@ LANGUAGE_CODES = (
 )
 
 
-def make_iterable(values: str | Iterable[str]) -> Iterable[str]:
-
-    if isinstance(values, str):
-        return [values]
-
-    return values
-
-
 def text(values: Iterable[str], required: bool = False, default: str = "") -> str:
 
     try:
-        return next(filter(None, make_iterable(values)))
+        return next(filter(None, values))
     except StopIteration:
         if required:
             raise ValueError
@@ -239,7 +231,7 @@ def text(values: Iterable[str], required: bool = False, default: str = "") -> st
 
 
 def audio(values: Iterable[str]) -> str:
-    for value in make_iterable(values):
+    for value in values:
         if (rv := value.casefold()) in AUDIO_MIMETYPES:
             return rv
 
@@ -247,7 +239,7 @@ def audio(values: Iterable[str]) -> str:
 
 
 def pub_date(values: Iterable[str]) -> datetime:
-    for value in make_iterable(values):
+    for value in values:
         if (pub_date := date_parser.parse_date(value)) and pub_date < timezone.now():
             return pub_date
     raise ValueError
@@ -258,7 +250,7 @@ def boolean(
     default: bool = False,
     true_values: tuple[str] = ("yes",),
 ) -> bool:
-    for value in make_iterable(values):
+    for value in values:
         if value.casefold() in true_values:
             return True
     return default
@@ -268,7 +260,7 @@ explicit = functools.partial(boolean, true_values=("clean", "yes"))
 
 
 def language(values: Iterable[str], default: str = "en") -> str:
-    for value in make_iterable(values):
+    for value in values:
         if (language := value[:2].casefold()) in LANGUAGE_CODES:
             return language
 
@@ -277,7 +269,7 @@ def language(values: Iterable[str], default: str = "en") -> str:
 
 def url(values: Iterable[str], required: bool = False) -> str | None:
 
-    for value in make_iterable(values):
+    for value in values:
 
         try:
             _validate_url(value)
@@ -292,7 +284,7 @@ def url(values: Iterable[str], required: bool = False) -> str | None:
 
 def integer(values: Iterable[str], required: bool = False) -> int | None:
 
-    for value in make_iterable(values):
+    for value in values:
         try:
             if (result := int(value)) in range(-2147483648, 2147483647):
                 return result
@@ -304,7 +296,7 @@ def integer(values: Iterable[str], required: bool = False) -> int | None:
 
 
 def duration(values: Iterable[str]) -> str:
-    for value in make_iterable(values):
+    for value in values:
         try:
             # plain seconds value
             return str(int(value))
