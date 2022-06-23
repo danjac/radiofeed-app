@@ -220,18 +220,11 @@ LANGUAGE_CODES = (
 )
 
 
-@functools.singledispatch
-def make_iterable(values: Iterable[str]) -> Iterable[str]:
-    ...
+def make_iterable(values: str | Iterable[str]) -> Iterable[str]:
 
+    if isinstance(values, str):
+        return [values]
 
-@make_iterable.register
-def _(values: str) -> Iterable[str]:
-    return iter([values])
-
-
-@make_iterable.register
-def _(values: Iterable[str]) -> Iterable[str]:
     return values
 
 
