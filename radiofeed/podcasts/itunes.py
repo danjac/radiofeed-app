@@ -139,14 +139,17 @@ def get_podcast_ids(url: str) -> filter[str]:
         None,
         map(
             parse_podcast_id,
-            parse_urls(url, "https://podcasts.apple.com/us/podcast/"),
+            parse_urls(
+                url,
+                "https://podcasts.apple.com/us/podcast/",
+            ),
         ),
     )
 
 
 def parse_urls(url: str, startswith: str) -> filter[str]:
     return filter(
-        lambda url: url and url.startswith(startswith),
+        lambda href: href and href.startswith(startswith),
         map(
             lambda el: el.attrib.get("href"),
             xml_parser.iterparse(get_response(url).content, "a"),
