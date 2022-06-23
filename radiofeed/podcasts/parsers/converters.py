@@ -219,38 +219,55 @@ LANGUAGE_CODES = (
     "zu",
 )
 
+StrOrIterable = str | Iterable[str]
 
-def text(values: Iterable[str], required: bool = False, default: str = "") -> str:
+
+@functools.singledispatch
+def make_iterable(values: StrOrIterable) -> Iterable[str]:
+    ...
+
+
+@make_iterable.register
+def _(values: str) -> Iterable[str]:
+    return iter([values])
+
+
+@make_iterable.register
+def _(values: Iterable[str]) -> Iterable[str]:
+    return values
+
+
+def text(values: StrOrIterable, required: bool = False, default: str = "") -> str:
 
     try:
-        return next(filter(None, values))
+        return next(filter(None, make_iterable(values)))
     except StopIteration:
         if required:
             raise ValueError
         return default
 
 
-def audio(values: Iterable[str]) -> str:
-    for value in values:
+def audio(values: StrOrIterable) -> str:
+    for value in make_iterable(values):
         if (rv := value.casefold()) in AUDIO_MIMETYPES:
             return rv
 
     raise ValueError
 
 
-def pub_date(values: Iterable[str]) -> datetime:
-    for value in values:
+def pub_date(values: StrOrIterable) -> datetime:
+    for value in make_iterable(values):
         if (pub_date := date_parser.parse_date(value)) and pub_date < timezone.now():
             return pub_date
     raise ValueError
 
 
 def boolean(
-    values: Iterable[str],
+    values: StrOrIterable,
     default: bool = False,
     true_values: tuple[str] = ("yes",),
 ) -> bool:
-    for value in values:
+    for value in make_iterable(values):
         if value.casefold() in true_values:
             return True
     return default
@@ -259,17 +276,17 @@ def boolean(
 explicit = functools.partial(boolean, true_values=("clean", "yes"))
 
 
-def language(values: Iterable[str], default: str = "en") -> str:
-    for value in values:
+def language(values: StrOrIterable, default: str = "en") -> str:
+    for value in make_iterable(values):
         if (language := value[:2].casefold()) in LANGUAGE_CODES:
             return language
 
     return default
 
 
-def url(values: Iterable[str], required: bool = False) -> str | None:
+def url(values: StrOrIterable, required: bool = False) -> str | None:
 
-    for value in values:
+    for value in make_iterable(values):
 
         try:
             _validate_url(value)
@@ -282,9 +299,9 @@ def url(values: Iterable[str], required: bool = False) -> str | None:
     return None
 
 
-def integer(values: Iterable[str], required: bool = False) -> int | None:
+def integer(values: StrOrIterable, required: bool = False) -> int | None:
 
-    for value in values:
+    for value in make_iterable(values):
         try:
             if (result := int(value)) in range(-2147483648, 2147483647):
                 return result
@@ -295,8 +312,8 @@ def integer(values: Iterable[str], required: bool = False) -> int | None:
     return None
 
 
-def duration(values: Iterable[str]) -> str:
-    for value in values:
+def duration(values: StrOrIterable) -> str:
+    for value in make_iterable(values):
         try:
             # plain seconds value
             return str(int(value))
