@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from datetime import datetime
 
 from django.core.exceptions import ValidationError
@@ -242,18 +244,18 @@ def pub_date(*values: str) -> datetime:
     raise ValueError
 
 
-def explicit(*values: str) -> bool:
+def boolean(
+    *values: str,
+    default: bool = False,
+    true_values: tuple[str] = ("yes",),
+) -> bool:
     for value in values:
-        if value.casefold() in ("clean", "yes"):
-            return True
-    return False
-
-
-def boolean(*values: str, default: bool = False) -> bool:
-    for value in values:
-        if value.casefold() == "yes":
+        if value.casefold() in true_values:
             return True
     return default
+
+
+explicit = functools.partial(boolean, true_values=("clean", "yes"))
 
 
 def language(*values: str, default: str = "en") -> str:
