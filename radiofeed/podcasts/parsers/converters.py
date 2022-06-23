@@ -237,7 +237,7 @@ def audio(*values: str) -> str:
 
 def pub_date(*values: str) -> datetime:
     for value in values:
-        if (pub_date := date_parser.parse_date(value)) and pub_date > timezone.now():
+        if (pub_date := date_parser.parse_date(value)) and pub_date < timezone.now():
             return pub_date
     raise ValueError
 
@@ -267,12 +267,15 @@ def language(*values: str, default: str = "en") -> str:
 def url(*values: str, required: bool = False) -> str | None:
 
     for value in values:
+
         try:
             _validate_url(value)
             return value
         except ValidationError:
             continue
+
     if required:
+        print("required")
         raise ValueError
     return None
 

@@ -43,40 +43,40 @@ class TestAudio:
 
 class TestDuration:
     @pytest.mark.parametrize(
-        "value,expected,raises",
+        "value,expected",
         [
-            ("", "", False),
-            ("invalid", "", True),
-            ("300", "300", False),
-            ("10:30", "10:30", False),
-            ("10:30:59", "10:30:59", False),
-            ("10:30:99", "10:30", False),
+            ("", ""),
+            ("invalid", ""),
+            ("300", "300"),
+            ("10:30", "10:30"),
+            ("10:30:59", "10:30:59"),
+            ("10:30:99", "10:30"),
         ],
     )
-    def test_parse_duration(self, value, expected, raises):
-        if raises:
-            with pytest.raises(ValueError):
-                converters.duration(value)
-        else:
-            assert converters.duration(value) == expected
+    def test_parse_duration(self, value, expected):
+        assert converters.duration(value) == expected
 
 
 class TestInteger:
     @pytest.mark.parametrize(
-        "value,expected,raises",
+        "value,expected,required",
         [
             ("1234", 1234, False),
             ("0", 0, False),
+            ("-111111111111111", None, False),
+            ("111111111111111", None, False),
+            ("", None, False),
+            ("a string", None, False),
             ("-111111111111111", None, True),
             ("111111111111111", None, True),
             ("", None, True),
             ("a string", None, True),
         ],
     )
-    def test_integer(self, value, expected, raises):
-        if raises:
+    def test_integer(self, value, expected, required):
+        if required:
             with pytest.raises(ValueError):
-                converters.integer(value)
+                converters.integer(value, required=True)
         else:
 
             assert converters.integer(value) == expected
@@ -84,40 +84,36 @@ class TestInteger:
 
 class TestUrl:
     @pytest.mark.parametrize(
-        "value,expected,raises",
+        "value,expected,required",
         [
             ("http://example.com", "http://example.com", False),
             ("example", None, True),
-            (None, None, True),
+            ("example", None, False),
         ],
     )
-    def test_parse_url(self, value, expected, raises):
-        if raises:
+    def test_parse_url(self, value, expected, required):
+        if required:
             with pytest.raises(ValueError):
-                converters.url(value)
+                converters.url(value, required=True)
         else:
             assert converters.url(value) == expected
 
 
 class TestLanguage:
     @pytest.mark.parametrize(
-        "value,expected,raises",
+        "value,expected",
         [
-            ("en-GB", "en", False),
-            ("FI-FI", "fi", False),
-            ("fr", "fr", False),
-            ("fr-CA", "fr", False),
-            ("xx", "", True),
-            ("", "", True),
-            ("#", "en", True),
+            ("en-GB", "en"),
+            ("FI-FI", "fi"),
+            ("fr", "fr"),
+            ("fr-CA", "fr"),
+            ("xx", "en"),
+            ("", "en"),
+            ("#", "en"),
         ],
     )
-    def test_language(self, value, expected, raises):
-        if raises:
-            with pytest.raises(ValueError):
-                converters.language(value)
-        else:
-            assert converters.language(value) == expected
+    def test_language(self, value, expected):
+        assert converters.language(value) == expected
 
 
 class TestBoolean:
