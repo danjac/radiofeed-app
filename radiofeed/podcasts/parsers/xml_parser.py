@@ -50,7 +50,6 @@ class XPath:
         default: T | str = "",
         required: bool = False,
     ) -> T | str:
-        """Find single attribute or text value. Returns first matching value."""
 
         try:
             value = next(self.iter(*paths))
