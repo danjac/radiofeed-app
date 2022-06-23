@@ -221,12 +221,12 @@ def audio(value: str) -> str:
     if (rv := value.casefold()) in AUDIO_MIMETYPES:
         return rv
 
-    raise ValueError("not a valid audio enclosure")
+    raise ValueError
 
 
 def pub_date(value: str) -> datetime:
     if not (pub_date := date_parser.parse_date(value)) or pub_date > timezone.now():
-        raise ValueError("not a valid pub date")
+        raise ValueError
     return pub_date
 
 
@@ -241,7 +241,7 @@ def boolean(value: str) -> bool:
 def language(value: str) -> str:
     if (language := value[:2].casefold()) in LANGUAGE_CODES:
         return language
-    raise ValueError("unrecognized language code {language}")
+    raise ValueError
 
 
 def url(value: str) -> str:
@@ -256,7 +256,7 @@ def integer(value: str) -> int:
 
     if (result := int(value)) in range(-2147483648, 2147483647):
         return result
-    raise ValueError(f"{result} out of bounds")
+    raise ValueError
 
 
 def duration(value: str) -> str:
