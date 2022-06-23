@@ -51,13 +51,15 @@ class XPath:
         required: bool = False,
     ) -> T | str:
 
-        try:
-            value = next(self.iter(*paths))
-            return converter(value) if converter else value
-        except (StopIteration, ValueError) as e:
-            if required:
-                raise ValueError from e
-            return default
+        for value in self.iter(*paths):
+            try:
+                return converter(value) if converter else value
+            except ValueError:
+                continue
+
+        if required:
+            raise ValueError("no matching value found for {paths}")
+        return default
 
     def all(self, *paths: str) -> list[str]:
         return list(self.iter(*paths))
@@ -67,6 +69,7 @@ class XPath:
         try:
             for path in paths:
                 for value in self.element.xpath(path, namespaces=self.namespaces):
-                    yield value.strip()
+                    if cleaned := value.strip():
+                        yield cleaned
         except UnicodeDecodeError:
             pass
