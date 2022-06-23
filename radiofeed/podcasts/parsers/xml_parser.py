@@ -8,7 +8,7 @@ from typing import Callable, Generator, TypeVar
 
 import lxml
 
-T = TypeVar("T", datetime, str, int)
+T = TypeVar("T", datetime, str, int, bool)
 
 
 def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]:
