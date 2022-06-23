@@ -125,8 +125,6 @@ def parse_item(item: lxml.etree.Element) -> Item:
             cover_url=converters.url(xpath("itunes:image/@href")),
             link=converters.url(xpath("link/text()")),
             explicit=converters.explicit(xpath("itunes:explicit/text()")),
-            episode=converters.integer(xpath("itunes:episode/text()")),
-            season=converters.integer(xpath("itunes:season/text()")),
             duration=converters.duration(xpath("itunes:duration/text()")),
             media_url=converters.url(
                 xpath("enclosure//@url", "media:content//@url"), required=True
@@ -137,6 +135,8 @@ def parse_item(item: lxml.etree.Element) -> Item:
             length=converters.integer(
                 xpath("enclosure//@length", "media:content//@fileSize")
             ),
+            episode=converters.integer(xpath("itunes:episode/text()")),
+            season=converters.integer(xpath("itunes:season/text()")),
             episode_type=converters.text(
                 xpath("itunes:episodetype/text()"), default="full"
             ),
