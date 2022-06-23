@@ -4,10 +4,8 @@ import dataclasses
 import functools
 import hashlib
 import http
-import itertools
-import secrets
 
-from typing import Generator, Iterable
+from typing import Generator
 
 import requests
 
@@ -18,6 +16,7 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
+from radiofeed.podcasts.utils import batcher, get_user_agent
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -269,15 +268,5 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def batcher(iterable: Iterable, batch_size: int) -> Generator[list, None, None]:
-    iterator = iter(iterable)
-    while batch := list(itertools.islice(iterator, batch_size)):
-        yield batch
-
-
 def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
-
-
-def get_user_agent() -> str:
-    return secrets.choice(USER_AGENTS)
