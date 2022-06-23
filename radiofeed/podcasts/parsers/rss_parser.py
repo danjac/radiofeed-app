@@ -92,28 +92,17 @@ def parse_feed(channel: lxml.etree.Element) -> Feed:
             title=converters.text(xpath("title/text()"), required=True),
             language=converters.language(xpath("language/text()")),
             explicit=converters.explicit(xpath("itunes:explicit/text()")),
-            cover_url=converters.url(
-                xpath(
-                    "itunes:image/@href",
-                    "image/url/text()",
-                ),
-            ),
+            cover_url=converters.url(xpath("itunes:image/@href", "image/url/text()")),
             link=converters.url(xpath("link/text()")),
             funding_url=converters.url(xpath("podcast:funding/@url")),
             funding_text=converters.text(xpath("podcast:funding/text()")),
+            complete=converters.boolean(xpath("itunes:complete/text()")),
             description=converters.text(
-                xpath(
-                    "description/text()",
-                    "itunes:summary/text()",
-                )
+                xpath("description/text()", "itunes:summary/text()")
             ),
             owner=converters.text(
-                xpath(
-                    "itunes:author/text()",
-                    "itunes:owner/itunes:name/text()",
-                )
+                xpath("itunes:author/text()", "itunes:owner/itunes:name/text()")
             ),
-            complete=converters.boolean(xpath("itunes:complete/text()")),
             categories=list(xpath("//itunes:category/@text")),
             items=list(parse_items(channel)),
         )
@@ -132,40 +121,24 @@ def parse_item(item: lxml.etree.Element) -> Item:
         return Item(
             guid=converters.text(xpath("guid/text()"), required=True),
             title=converters.text(xpath("title/text()"), required=True),
-            pub_date=converters.pub_date(
-                xpath(
-                    "pubDate/text()",
-                    "pubdate/text()",
-                ),
-            ),
+            pub_date=converters.pub_date(xpath("pubDate/text()", "pubdate/text()")),
             cover_url=converters.url(xpath("itunes:image/@href")),
             link=converters.url(xpath("link/text()")),
-            media_url=converters.url(
-                xpath(
-                    "enclosure//@url",
-                    "media:content//@url",
-                ),
-                required=True,
-            ),
-            media_type=converters.audio(
-                xpath(
-                    "enclosure//@type",
-                    "media:content//@type",
-                ),
-            ),
-            length=converters.integer(
-                xpath(
-                    "enclosure//@length",
-                    "media:content//@fileSize",
-                ),
-            ),
             explicit=converters.explicit(xpath("itunes:explicit/text()")),
             episode=converters.integer(xpath("itunes:episode/text()")),
             season=converters.integer(xpath("itunes:season/text()")),
             duration=converters.duration(xpath("itunes:duration/text()")),
+            media_url=converters.url(
+                xpath("enclosure//@url", "media:content//@url"), required=True
+            ),
+            media_type=converters.audio(
+                xpath("enclosure//@type", "media:content//@type")
+            ),
+            length=converters.integer(
+                xpath("enclosure//@length", "media:content//@fileSize")
+            ),
             episode_type=converters.text(
-                xpath("itunes:episodetype/text()"),
-                default="full",
+                xpath("itunes:episodetype/text()"), default="full"
             ),
             description=converters.text(
                 xpath(
