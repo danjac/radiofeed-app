@@ -244,7 +244,7 @@ def language(value: str) -> str:
     raise ValueError("unrecognized language code {language}")
 
 
-def url(value: str) -> str | None:
+def url(value: str) -> str:
     try:
         _validate_url(value)
         return value
@@ -252,7 +252,7 @@ def url(value: str) -> str | None:
         raise ValueError from e
 
 
-def integer(value: str) -> int | None:
+def integer(value: str) -> int:
 
     if (result := int(value)) in range(-2147483648, 2147483647):
         return result

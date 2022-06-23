@@ -46,10 +46,10 @@ class XPath:
     def first(
         self,
         *paths: str,
-        converter: Callable[[str], T] | None = None,
+        converter: Callable[[str], T | None] | None = None,
         default: T | str = "",
         required: bool = False,
-    ) -> T | str:
+    ) -> T | str | None:
 
         for value in self.iter(*paths):
             try:
