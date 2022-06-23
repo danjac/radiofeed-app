@@ -3,11 +3,12 @@ from __future__ import annotations
 import io
 
 from contextlib import contextmanager
+from datetime import datetime
 from typing import Callable, Generator, TypeVar
 
 import lxml
 
-T = TypeVar("T")
+T = TypeVar("T", datetime, str, int)
 
 
 def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]:
