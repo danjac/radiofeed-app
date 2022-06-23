@@ -52,6 +52,9 @@ class TestAudio:
         else:
             assert converters.audio([value]) == value
 
+    def test_take_first_correct(self):
+        assert converters.audio(["video/mpeg", "audio/mp3"]) == "audio/mp3"
+
 
 class TestDuration:
     @pytest.mark.parametrize(
@@ -93,6 +96,9 @@ class TestInteger:
 
             assert converters.integer([value]) == expected
 
+    def test_take_first_correct(self):
+        assert converters.integer(["invalid", "", "1234"]) == 1234
+
 
 class TestUrl:
     @pytest.mark.parametrize(
@@ -115,6 +121,11 @@ class TestUrl:
         else:
             assert converters.url([value]) == expected
 
+    def test_take_first_correct(self):
+        assert (
+            converters.url(["invalid", "https://example.com"]) == "https://example.com"
+        )
+
 
 class TestLanguage:
     @pytest.mark.parametrize(
@@ -131,6 +142,9 @@ class TestLanguage:
     )
     def test_language(self, value, expected):
         assert converters.language([value]) == expected
+
+    def test_take_first_correct(self):
+        assert converters.language("x", "ro") == "ro"
 
 
 class TestBoolean:
