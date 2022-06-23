@@ -219,11 +219,9 @@ LANGUAGE_CODES = (
     "zu",
 )
 
-StrOrIterable = str | Iterable[str]
-
 
 @functools.singledispatch
-def make_iterable(values: StrOrIterable) -> Iterable[str]:
+def make_iterable(values: Iterable[str]) -> Iterable[str]:
     ...
 
 
@@ -237,7 +235,7 @@ def _(values: Iterable[str]) -> Iterable[str]:
     return values
 
 
-def text(values: StrOrIterable, required: bool = False, default: str = "") -> str:
+def text(values: Iterable[str], required: bool = False, default: str = "") -> str:
 
     try:
         return next(filter(None, make_iterable(values)))
@@ -247,7 +245,7 @@ def text(values: StrOrIterable, required: bool = False, default: str = "") -> st
         return default
 
 
-def audio(values: StrOrIterable) -> str:
+def audio(values: Iterable[str]) -> str:
     for value in make_iterable(values):
         if (rv := value.casefold()) in AUDIO_MIMETYPES:
             return rv
@@ -255,7 +253,7 @@ def audio(values: StrOrIterable) -> str:
     raise ValueError
 
 
-def pub_date(values: StrOrIterable) -> datetime:
+def pub_date(values: Iterable[str]) -> datetime:
     for value in make_iterable(values):
         if (pub_date := date_parser.parse_date(value)) and pub_date < timezone.now():
             return pub_date
@@ -263,7 +261,7 @@ def pub_date(values: StrOrIterable) -> datetime:
 
 
 def boolean(
-    values: StrOrIterable,
+    values: Iterable[str],
     default: bool = False,
     true_values: tuple[str] = ("yes",),
 ) -> bool:
@@ -276,7 +274,7 @@ def boolean(
 explicit = functools.partial(boolean, true_values=("clean", "yes"))
 
 
-def language(values: StrOrIterable, default: str = "en") -> str:
+def language(values: Iterable[str], default: str = "en") -> str:
     for value in make_iterable(values):
         if (language := value[:2].casefold()) in LANGUAGE_CODES:
             return language
@@ -284,7 +282,7 @@ def language(values: StrOrIterable, default: str = "en") -> str:
     return default
 
 
-def url(values: StrOrIterable, required: bool = False) -> str | None:
+def url(values: Iterable[str], required: bool = False) -> str | None:
 
     for value in make_iterable(values):
 
@@ -299,7 +297,7 @@ def url(values: StrOrIterable, required: bool = False) -> str | None:
     return None
 
 
-def integer(values: StrOrIterable, required: bool = False) -> int | None:
+def integer(values: Iterable[str], required: bool = False) -> int | None:
 
     for value in make_iterable(values):
         try:
@@ -312,7 +310,7 @@ def integer(values: StrOrIterable, required: bool = False) -> int | None:
     return None
 
 
-def duration(values: StrOrIterable) -> str:
+def duration(values: Iterable[str]) -> str:
     for value in make_iterable(values):
         try:
             # plain seconds value
