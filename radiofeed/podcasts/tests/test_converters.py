@@ -9,31 +9,31 @@ from radiofeed.podcasts.parsers import converters
 
 class TestText:
     def test_ok(self):
-        assert converters.text("", "ok") == "ok"
+        assert converters.text(["", "ok"]) == "ok"
 
     def test_default(self):
-        assert converters.text("", "", default="full") == "full"
+        assert converters.text(["", ""], default="full") == "full"
 
     def test_required(self):
         with pytest.raises(ValueError):
-            converters.text("", required=True)
+            converters.text([""], required=True)
 
 
 class TestPubDate:
     def test_not_date(self):
         with pytest.raises(ValueError):
-            converters.pub_date("test")
+            converters.pub_date(["invalid"])
 
     def test_invalid_date(self):
         with pytest.raises(ValueError):
-            converters.pub_date("Sun, 28 Apr 2013 15:12:352 CST")
+            converters.pub_date(["Sun, 28 Apr 2013 15:12:352 CST"])
 
     def test_in_future(self):
         with pytest.raises(ValueError):
-            converters.pub_date((timezone.now() + timedelta(days=3)).strftime("%c"))
+            converters.pub_date([(timezone.now() + timedelta(days=3)).strftime("%c")])
 
     def test_ok(self):
-        assert converters.pub_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        assert converters.pub_date(["Fri, 19 Jun 2020 16:58:03 +0000"])
 
 
 class TestAudio:
@@ -50,7 +50,7 @@ class TestAudio:
             with pytest.raises(ValueError):
                 converters.audio(value)
         else:
-            assert converters.audio(value) == value
+            assert converters.audio([value]) == value
 
 
 class TestDuration:
@@ -66,7 +66,7 @@ class TestDuration:
         ],
     )
     def test_parse_duration(self, value, expected):
-        assert converters.duration(value) == expected
+        assert converters.duration([value]) == expected
 
 
 class TestInteger:
@@ -88,10 +88,10 @@ class TestInteger:
     def test_integer(self, value, expected, required):
         if required:
             with pytest.raises(ValueError):
-                converters.integer(value, required=True)
+                converters.integer([value], required=True)
         else:
 
-            assert converters.integer(value) == expected
+            assert converters.integer([value]) == expected
 
 
 class TestUrl:
@@ -110,10 +110,10 @@ class TestUrl:
                 with pytest.raises(ValueError):
                     converters.url(value, required=True)
             else:
-                converters.url(value, required=True)
+                converters.url([value], required=True)
 
         else:
-            assert converters.url(value) == expected
+            assert converters.url([value]) == expected
 
 
 class TestLanguage:
@@ -130,7 +130,7 @@ class TestLanguage:
         ],
     )
     def test_language(self, value, expected):
-        assert converters.language(value) == expected
+        assert converters.language([value]) == expected
 
 
 class TestBoolean:
@@ -143,7 +143,7 @@ class TestBoolean:
         ],
     )
     def test_boolean(self, value, expected):
-        assert converters.boolean(value) is expected
+        assert converters.boolean([value]) is expected
 
 
 class TestExplicit:
@@ -157,4 +157,4 @@ class TestExplicit:
         ],
     )
     def test_explicit(self, value, expected):
-        assert converters.explicit(value) is expected
+        assert converters.explicit([value]) is expected

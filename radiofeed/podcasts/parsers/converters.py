@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 
 from datetime import datetime
+from typing import Iterable
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -219,7 +220,7 @@ LANGUAGE_CODES = (
 )
 
 
-def text(*values: str, required: bool = False, default: str = "") -> str:
+def text(values: Iterable[str], required: bool = False, default: str = "") -> str:
 
     try:
         return next(filter(None, values))
@@ -229,7 +230,7 @@ def text(*values: str, required: bool = False, default: str = "") -> str:
         return default
 
 
-def audio(*values: str) -> str:
+def audio(values: Iterable[str]) -> str:
     for value in values:
         if (rv := value.casefold()) in AUDIO_MIMETYPES:
             return rv
@@ -237,7 +238,7 @@ def audio(*values: str) -> str:
     raise ValueError
 
 
-def pub_date(*values: str) -> datetime:
+def pub_date(values: Iterable[str]) -> datetime:
     for value in values:
         if (pub_date := date_parser.parse_date(value)) and pub_date < timezone.now():
             return pub_date
@@ -245,7 +246,7 @@ def pub_date(*values: str) -> datetime:
 
 
 def boolean(
-    *values: str,
+    values: Iterable[str],
     default: bool = False,
     true_values: tuple[str] = ("yes",),
 ) -> bool:
@@ -258,7 +259,7 @@ def boolean(
 explicit = functools.partial(boolean, true_values=("clean", "yes"))
 
 
-def language(*values: str, default: str = "en") -> str:
+def language(values: Iterable[str], default: str = "en") -> str:
     for value in values:
         if (language := value[:2].casefold()) in LANGUAGE_CODES:
             return language
@@ -266,7 +267,7 @@ def language(*values: str, default: str = "en") -> str:
     return default
 
 
-def url(*values: str, required: bool = False) -> str | None:
+def url(values: Iterable[str], required: bool = False) -> str | None:
 
     for value in values:
 
@@ -281,7 +282,7 @@ def url(*values: str, required: bool = False) -> str | None:
     return None
 
 
-def integer(*values: str, required: bool = False) -> int | None:
+def integer(values: Iterable[str], required: bool = False) -> int | None:
 
     for value in values:
         try:
@@ -294,7 +295,7 @@ def integer(*values: str, required: bool = False) -> int | None:
     return None
 
 
-def duration(*values: str) -> str:
+def duration(values: Iterable[str]) -> str:
     for value in values:
         try:
             # plain seconds value
