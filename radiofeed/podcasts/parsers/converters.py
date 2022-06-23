@@ -252,7 +252,7 @@ def url(value: str) -> str | None:
         raise ValueError from e
 
 
-def integer(value: str) -> int | None:
+def integer(value: int) -> int | None:
 
     if (result := int(value)) in range(-2147483648, 2147483647):
         return result
