@@ -46,7 +46,7 @@ class XPath:
     def first(
         self,
         *paths: str,
-        converter: Callable[[str | None], T] | None = None,
+        converter: Callable[[str], T] | None = None,
         default: T | str = "",
         required: bool = False,
     ) -> T | str:
