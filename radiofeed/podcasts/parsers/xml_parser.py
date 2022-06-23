@@ -58,7 +58,7 @@ class XPath:
                 continue
 
         if required:
-            raise ValueError("no matching value found for {paths}")
+            raise ValueError(f"no matching value found for {paths}")
         return default
 
     def all(self, *paths: str) -> list[str]:
