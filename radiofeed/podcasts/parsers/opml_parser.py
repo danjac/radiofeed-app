@@ -1,5 +1,3 @@
-from typing import Generator
-
 import lxml
 
 from radiofeed.podcasts.parsers import xml_parser
@@ -10,7 +8,7 @@ class OpmlParserError(ValueError):
     ...
 
 
-def parse_opml(content: bytes) -> Generator[Outline, None, None]:
+def parse_opml(content):
     try:
         for element in xml_parser.iterparse(content, "outline"):
             with xml_parser.xpath(element) as xpath:

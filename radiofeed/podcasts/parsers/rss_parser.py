@@ -1,5 +1,3 @@
-from typing import Generator
-
 import lxml.etree
 
 from radiofeed.podcasts.parsers import xml_parser
@@ -18,7 +16,7 @@ class RssParserError(ValueError):
     ...
 
 
-def parse_rss(content: bytes) -> Feed:
+def parse_rss(content):
 
     try:
 
@@ -28,7 +26,7 @@ def parse_rss(content: bytes) -> Feed:
         raise RssParserError from e
 
 
-def parse_feed(channel: lxml.etree.Element) -> Feed:
+def parse_feed(channel):
     with xml_parser.xpath(channel, NAMESPACES) as xpath:
         return Feed(
             title=xpath.first("title/text()"),
@@ -48,7 +46,7 @@ def parse_feed(channel: lxml.etree.Element) -> Feed:
         )
 
 
-def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
+def parse_items(channel):
     for item in channel.iterfind("item"):
         try:
             yield parse_item(item)
@@ -56,7 +54,7 @@ def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
             continue
 
 
-def parse_item(item: lxml.etree.Element) -> Item:
+def parse_item(item):
     with xml_parser.xpath(item, NAMESPACES) as xpath:
         return Item(
             guid=xpath.first("guid/text()"),
