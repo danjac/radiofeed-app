@@ -1,3 +1,5 @@
+import uuid
+
 from datetime import timedelta
 
 import pytest
@@ -5,11 +7,93 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.podcasts.parsers.models import (
+    Feed,
+    Item,
+    duration,
     int_in_range,
     language_code,
     min_len,
     pub_date,
+    url,
 )
+
+
+class TestUrl:
+    @pytest.mark.parametrize(
+        "value,expected,raises",
+        [
+            ("http://example.com", "http://example.com", False),
+            ("https://example.com", "https://example.com", False),
+            (None, None, False),
+            ("example", None, True),
+        ],
+    )
+    def test_url(self, value, expected, raises):
+        if raises:
+            with pytest.raises(ValueError):
+                url(None, None, value)
+        else:
+            url(None, None, value)
+
+
+class TestFeed:
+    def test_single_pub_date(self):
+        now = timezone.now()
+        feed = Feed(
+            title="test",
+            language="en",
+            items=[
+                Item(
+                    title="test",
+                    pub_date=now,
+                    media_url="",
+                    media_type="audio/mpeg",
+                    guid=uuid.uuid4().hex,
+                )
+            ],
+        )
+        assert feed.latest_pub_date == now
+
+    def test_multiple_pub_dates(self):
+        now = timezone.now()
+
+        feed = Feed(
+            title="test",
+            language="en",
+            items=[
+                Item(
+                    title="test 1",
+                    pub_date=now,
+                    media_url="",
+                    media_type="audio/mpeg",
+                    guid=uuid.uuid4().hex,
+                ),
+                Item(
+                    title="test 2",
+                    pub_date=now - timedelta(days=3),
+                    media_url="",
+                    media_type="audio/mpeg",
+                    guid=uuid.uuid4().hex,
+                ),
+            ],
+        )
+        assert feed.latest_pub_date == now
+
+
+class TestDuration:
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("", ""),
+            ("invalid", ""),
+            ("300", "300"),
+            ("10:30", "10:30"),
+            ("10:30:59", "10:30:59"),
+            ("10:30:99", "10:30"),
+        ],
+    )
+    def test_parse_duration(self, value, expected):
+        assert duration(value) == expected
 
 
 class TestLanguageCode:

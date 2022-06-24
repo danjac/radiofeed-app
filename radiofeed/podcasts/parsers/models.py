@@ -370,8 +370,5 @@ class Feed:
     )
 
     @property
-    def latest_pub_date(self) -> datetime | None:
-        try:
-            return max([item.pub_date for item in self.items])
-        except ValueError:
-            return None
+    def latest_pub_date(self) -> datetime:
+        return max([item.pub_date for item in self.items])
