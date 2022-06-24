@@ -10,7 +10,6 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
@@ -32,7 +31,7 @@ _validate_url = URLValidator(["http", "https"])
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
+def pagination_url(context, page_number, param="page"):
     """
     Inserts the "page" query string parameter with the
     provided page number into the template, preserving the original
@@ -50,19 +49,19 @@ def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
 
 
 @register.simple_tag
-def get_site_config() -> dict:
+def get_site_config():
     return settings.SITE_CONFIG
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context: dict, url: str | None = None, *args, **kwargs) -> str:
+def absolute_uri(context, url=None, *args, **kwargs):
     return build_absolute_uri(
         resolve_url(url, *args, **kwargs) if url else None, context.get("request")
     )
 
 
 @register.filter
-def format_duration(total_seconds: int | None) -> str:
+def format_duration(total_seconds):
     """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
     if total_seconds is None or total_seconds < 60:
         return ""
@@ -79,7 +78,7 @@ def format_duration(total_seconds: int | None) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context, url_name, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
 
     if context["request"].path == url:
@@ -92,9 +91,7 @@ def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
 
 
 @register.simple_tag(takes_context=True)
-def re_active_link(
-    context: dict, url_name: str, pattern: str, *args, **kwargs
-) -> ActiveLink:
+def re_active_link(context, url_name, pattern, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
         return ActiveLink(url, match=True)
@@ -103,22 +100,22 @@ def re_active_link(
 
 
 @register.filter
-def login_url(url: str) -> str:
+def login_url(url):
     return auth_redirect_url(url, reverse("account_login"))
 
 
 @register.filter
-def signup_url(url: str) -> str:
+def signup_url(url):
     return auth_redirect_url(url, reverse("account_signup"))
 
 
 @register.inclusion_tag("includes/markdown.html")
-def markdown(value: str | None) -> dict:
+def markdown(value):
     return {"content": mark_safe(html.markup(value))}  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
-def share_buttons(context: dict, url: str, subject: str, css_class: str = "") -> dict:
+def share_buttons(context, url, subject, css_class=""):
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 
@@ -134,13 +131,13 @@ def share_buttons(context: dict, url: str, subject: str, css_class: str = "") ->
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
-def cookie_notice(context: dict) -> dict:
+def cookie_notice(context):
     return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
 
 
 @register.filter
 @stringfilter
-def normalize_url(url: str | None) -> str:
+def normalize_url(url):
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if url:
         for value in (url, "https://" + url):
@@ -152,7 +149,7 @@ def normalize_url(url: str | None) -> str:
     return ""
 
 
-def auth_redirect_url(url: str, redirect_url: str) -> str:
+def auth_redirect_url(url, redirect_url):
 
     return (
         redirect_url
@@ -161,9 +158,7 @@ def auth_redirect_url(url: str, redirect_url: str) -> str:
     )
 
 
-def build_absolute_uri(
-    url: str | None = None, request: HttpRequest | None = None
-) -> str:
+def build_absolute_uri(url=None, request=None) -> str:
     if request:
         return request.build_absolute_uri(url)
 

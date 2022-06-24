@@ -1,19 +1,18 @@
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
-from django.db.models import QuerySet
-from django.http import Http404, HttpRequest
+from django.http import Http404
 from django.template.response import TemplateResponse
 
 
 def pagination_response(
-    request: HttpRequest,
-    object_list: list | QuerySet,
-    template_name: str,
-    pagination_template_name: str,
-    extra_context: dict | None = None,
-    target: str = "object-list",
-    page_size: int = settings.DEFAULT_PAGE_SIZE,
-    param: str = "page",
+    request,
+    object_list,
+    template_name,
+    pagination_template_name,
+    extra_context=None,
+    target="object-list",
+    page_size=settings.DEFAULT_PAGE_SIZE,
+    param="page",
     **pagination_kwargs,
 ) -> TemplateResponse:
     """Renders a pagination_responsed response"""
