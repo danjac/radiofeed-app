@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet

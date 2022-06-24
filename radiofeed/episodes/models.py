@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import mimetypes
 import pathlib
 
@@ -26,7 +24,7 @@ from radiofeed.users.models import User
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet[Episode]:
+    def with_current_time(self, user):
         """Adds `current_time` and `listened` annotations."""
 
         if user.is_anonymous:
@@ -42,7 +40,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("listened")),
         )
 
-    def get_next_episode(self, episode: Episode) -> Episode | None:
+    def get_next_episode(self, episode):
         return (
             self.filter(
                 podcast=episode.podcast_id,
@@ -53,7 +51,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             .first()
         )
 
-    def get_previous_episode(self, episode: Episode) -> Episode | None:
+    def get_previous_episode(self, episode):
         return (
             self.filter(
                 podcast=episode.podcast_id,
@@ -72,30 +70,30 @@ class Episode(models.Model):
 
     podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
-    guid: str = models.TextField()
+    guid = models.TextField()
 
     pub_date: datetime = models.DateTimeField()
 
-    title: str = models.TextField(blank=True)
-    description: str = models.TextField(blank=True)
-    keywords: str = models.TextField(blank=True)
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    keywords = models.TextField(blank=True)
 
-    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    link = models.URLField(max_length=2083, null=True, blank=True)
 
-    episode_type: str = models.CharField(max_length=30, default="full")
-    episode: int | None = models.IntegerField(null=True, blank=True)
-    season: int | None = models.IntegerField(null=True, blank=True)
+    episode_type = models.CharField(max_length=30, default="full")
+    episode: int = models.IntegerField(null=True, blank=True)
+    season: int = models.IntegerField(null=True, blank=True)
 
-    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url = models.URLField(max_length=2083, null=True, blank=True)
 
-    media_url: str = models.URLField(max_length=2083)
-    media_type: str = models.CharField(max_length=60)
-    length: int | None = models.BigIntegerField(null=True, blank=True)
+    media_url = models.URLField(max_length=2083)
+    media_type = models.CharField(max_length=60)
+    length: int = models.BigIntegerField(null=True, blank=True)
 
-    duration: str = models.CharField(max_length=30, blank=True)
+    duration = models.CharField(max_length=30, blank=True)
     explicit: bool = models.BooleanField(default=False)
 
-    search_vector: str | None = SearchVectorField(null=True, editable=False)
+    search_vector = SearchVectorField(null=True, editable=False)
 
     objects = EpisodeManager()
     fast_update_objects = FastUpdateManager()
@@ -118,23 +116,23 @@ class Episode(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.title or self.guid
 
-    def get_absolute_url(self) -> str:
+    def get_absolute_url(self):
         return reverse("episodes:episode_detail", args=[self.pk, self.slug])
 
     @property
-    def slug(self) -> str:
+    def slug(self):
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def get_link(self) -> str | None:
+    def get_link(self):
         return self.link or self.podcast.link
 
-    def get_file_size(self) -> str | None:
+    def get_file_size(self):
         return filesizeformat(self.length) if self.length else None
 
-    def get_cover_url(self) -> str | None:
+    def get_cover_url(self):
         return self.cover_url or self.podcast.cover_url
 
     def is_bookmarked(self, user: User | AnonymousUser) -> bool:
@@ -143,15 +141,15 @@ class Episode(models.Model):
         return Bookmark.objects.filter(user=user, episode=self).exists()
 
     @cached_property
-    def cleaned_title(self) -> str:
+    def cleaned_title(self):
         return strip_html(self.title)
 
     @cached_property
-    def cleaned_description(self) -> str:
+    def cleaned_description(self):
         return strip_html(self.description)
 
     @cached_property
-    def duration_in_seconds(self) -> int:
+    def duration_in_seconds(self):
         """Returns total number of seconds given string in [h:][m:]s format."""
 
         if not self.duration:
@@ -170,7 +168,7 @@ class Episode(models.Model):
     def is_explicit(self) -> bool:
         return self.explicit or self.podcast.explicit
 
-    def get_episode_metadata(self) -> str:
+    def get_episode_metadata(self):
 
         episode_type = (
             self.episode_type.capitalize()
@@ -194,7 +192,7 @@ class Episode(models.Model):
             ]
         )
 
-    def get_media_url_ext(self) -> str:
+    def get_media_url_ext(self):
         return pathlib.Path(self.media_url).suffix[1:]
 
     def get_media_metadata(self) -> dict:
@@ -216,13 +214,13 @@ class Episode(models.Model):
             ],
         }
 
-    def get_player_target(self) -> str:
+    def get_player_target(self):
         return f"player-buttons-{self.id}"
 
-    def get_bookmark_target(self) -> str:
+    def get_bookmark_target(self):
         return f"bookmark-buttons-{self.id}"
 
-    def get_history_target(self) -> str:
+    def get_history_target(self):
         return f"history-buttons-{self.id}"
 
 

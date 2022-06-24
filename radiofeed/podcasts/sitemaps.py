@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import datetime
 
 from django.contrib.sitemaps import Sitemap
@@ -22,10 +20,10 @@ class PodcastSitemap(Sitemap):
     priority = 0.5
     limit = 100
 
-    def items(self) -> QuerySet:
+    def items(self):
         return Podcast.objects.filter(
             pub_date__gt=timezone.now() - datetime.timedelta(hours=24),
         ).order_by("-pub_date")
 
-    def lastmod(self, item: Podcast) -> datetime.datetime | None:
+    def lastmod(self, item):
         return item.pub_date

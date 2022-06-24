@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django import forms
 from django.utils.datastructures import OrderedSet
 

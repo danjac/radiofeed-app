@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from datetime import datetime
 from decimal import Decimal
 
@@ -29,7 +27,7 @@ class CategoryQuerySet(models.QuerySet):
 class Category(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
-    parent: Category = models.ForeignKey(
+    parent = models.ForeignKey(
         "self",
         null=True,
         blank=True,

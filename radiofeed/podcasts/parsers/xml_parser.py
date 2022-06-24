@@ -1,14 +1,11 @@
-from __future__ import annotations
-
 import io
 
 from contextlib import contextmanager
-from typing import Generator
 
 import lxml
 
 
-def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]:
+def iterparse(content, *tags):
 
     for _, element in lxml.etree.iterparse(
         io.BytesIO(content),
@@ -23,9 +20,7 @@ def iterparse(content: bytes, *tags: str) -> Generator[lxml.Element, None, None]
 
 
 @contextmanager
-def xpath(
-    element: lxml.etree.Element, namespaces: dict[str, str] | None = None
-) -> Generator[XPath, None, None]:
+def xpath(element, namespaces=None):
     try:
         yield XPath(element, namespaces)
     finally:
@@ -33,22 +28,17 @@ def xpath(
 
 
 class XPath:
-    def __init__(
-        self,
-        element: lxml.etree.Element,
-        namespaces: dict[str, str] | None = None,
-    ):
+    def __init__(self, element, namespaces=None):
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
-    def first(self, *paths: str, default: str = "") -> str:
+    def first(self, *paths, default=""):
         try:
             return next(self.iter(*paths))
         except StopIteration:
             return default
 
-    def iter(self, *paths: str) -> Generator[str, None, None]:
-
+    def iter(self, *paths):
         try:
             for path in paths:
                 for value in self.element.xpath(path, namespaces=self.namespaces):

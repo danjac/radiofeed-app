@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from huey.contrib.djhuey import db_task
 
 from radiofeed.podcasts import emails, feed_updater

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import http
 
 from django.contrib import admin, messages

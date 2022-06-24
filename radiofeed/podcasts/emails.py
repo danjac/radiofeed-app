@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.emails import send_user_notification_email

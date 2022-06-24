@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
