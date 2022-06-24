@@ -7,7 +7,7 @@ import attrs
 from radiofeed.podcasts.parsers import converters, date_parser, validators
 
 
-@attrs.define(kw_only=True)
+@attrs.define(kw_only=True, frozen=True)
 class Outline:
 
     title: str = ""
@@ -17,7 +17,7 @@ class Outline:
     url: str | None = attrs.field(validator=validators.url, default=None)
 
 
-@attrs.define(kw_only=True)
+@attrs.define(kw_only=True, frozen=True)
 class Item:
 
     guid: str = attrs.field(validator=validators.not_empty)
@@ -25,13 +25,19 @@ class Item:
 
     pub_date: datetime = attrs.field(
         converter=date_parser.parse_date,
-        validator=[
+        validator=attrs.validators.and_(
             attrs.validators.instance_of(datetime),
             validators.pub_date,
-        ],
+        ),
     )
 
-    media_url: str = attrs.field(validator=[validators.not_empty, validators.url])
+    media_url: str = attrs.field(
+        validator=attrs.validators.and_(
+            validators.not_empty,
+            validators.url,
+        ),
+    )
+
     media_type: str = attrs.field(validator=validators.audio)
 
     link: str | None = attrs.field(validator=validators.url, default=None)
@@ -63,7 +69,7 @@ class Item:
     keywords: str = ""
 
 
-@attrs.define(kw_only=True)
+@attrs.define(kw_only=True, frozen=True)
 class Feed:
 
     title: str = attrs.field(validator=validators.not_empty)
