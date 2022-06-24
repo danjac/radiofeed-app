@@ -4,7 +4,7 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.podcasts.parsers.validators import int_in_range, not_empty, pub_date, url
+from radiofeed.podcasts.parsers import validators
 
 
 class TestNotEmpty:
@@ -20,9 +20,9 @@ class TestNotEmpty:
 
         if raises:
             with pytest.raises(ValueError):
-                not_empty(None, None, value)
+                validators.not_empty(None, None, value)
         else:
-            not_empty(None, None, value)
+            validators.not_empty(None, None, value)
 
 
 class TestUrl:
@@ -38,28 +38,28 @@ class TestUrl:
     def test_url(self, value, raises):
         if raises:
             with pytest.raises(ValueError):
-                url(None, None, value)
+                validators.url(None, None, value)
         else:
-            url(None, None, value)
+            validators.url(None, None, value)
 
 
 class TestIntInRange:
     def test_too_low(self):
         with pytest.raises(ValueError):
-            int_in_range(None, None, -2147483649)
+            validators.int_in_range(None, None, -2147483649)
 
     def test_too_high(self):
         with pytest.raises(ValueError):
-            int_in_range(None, None, 2147483649)
+            validators.int_in_range(None, None, 2147483649)
 
     def test_ok(self):
-        int_in_range(None, None, 1000)
+        validators.int_in_range(None, None, 1000)
 
 
 class TestPubDate:
     def test_ok(self):
-        pub_date(None, None, timezone.now() - timedelta(hours=1))
+        validators.pub_date(None, None, timezone.now() - timedelta(hours=1))
 
     def test_in_future(self):
         with pytest.raises(ValueError):
-            pub_date(None, None, timezone.now() + timedelta(hours=1))
+            validators.pub_date(None, None, timezone.now() + timedelta(hours=1))
