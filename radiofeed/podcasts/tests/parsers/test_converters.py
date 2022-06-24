@@ -3,6 +3,28 @@ import pytest
 from radiofeed.podcasts.parsers import converters
 
 
+class TestComplete:
+    def test_true(self):
+        assert converters.complete("yes") is True
+
+    def test_false(self):
+        assert converters.complete("no") is False
+
+    def test_none(self):
+        assert converters.complete(None) is False
+
+
+class TestExplicit:
+    def test_true(self):
+        assert converters.explicit("yes") is True
+
+    def test_false(self):
+        assert converters.explicit("no") is False
+
+    def test_none(self):
+        assert converters.explicit(None) is False
+
+
 class TestIntOrNone:
     def test_is_none(self):
         assert converters.int_or_none(None) is None
