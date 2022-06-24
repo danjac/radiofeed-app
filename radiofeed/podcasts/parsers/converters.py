@@ -1,5 +1,13 @@
 from __future__ import annotations
 
+from datetime import datetime
+
+from radiofeed.podcasts.parsers import date_parser
+
+
+def date(value: str) -> datetime | None:
+    return date_parser.parse_date(value)
+
 
 def complete(value: str) -> bool:
     return bool(value and value.casefold() == "yes")

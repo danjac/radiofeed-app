@@ -4,7 +4,7 @@ from datetime import datetime
 
 import attrs
 
-from radiofeed.podcasts.parsers import converters, date_parser, validators
+from radiofeed.podcasts.parsers import converters, validators
 
 
 @attrs.define(kw_only=True, frozen=True)
@@ -24,7 +24,7 @@ class Item:
     title: str = attrs.field(validator=validators.not_empty)
 
     pub_date: datetime = attrs.field(
-        converter=date_parser.parse_date,
+        converter=converters.date,
         validator=attrs.validators.and_(
             attrs.validators.instance_of(datetime),
             validators.pub_date,
