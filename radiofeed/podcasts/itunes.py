@@ -88,6 +88,7 @@ def parse_feeds(data, batch_size=100):
                 lambda feed: Podcast(title=feed.title, rss=feed.rss),
                 filter(lambda feed: feed.podcast is None, feeds_for_insert),
             ),
+            ignore_conflicts=True,
         )
 
         yield from feeds
