@@ -61,7 +61,6 @@ pytest-forked = "^1.4.0"
 pytest-mock = "^3.7.0"
 pytest-randomly = "^3.11.0"
 pytest-xdist = "^2.5.0"
-django-stubs = "^1.10.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -99,26 +98,3 @@ omit=[
 DJANGO_SETTINGS_MODULE="radiofeed.settings.test"
 addopts="-v -x --ff --reuse-db -p no:warnings --tb=short"
 testpaths="radiofeed"
-
-[tool.mypy]
-python_version = 3.10
-check_untyped_defs = false
-ignore_missing_imports = true
-show_error_codes = true
-warn_unused_ignores = false
-warn_redundant_casts = false
-warn_unused_configs = false
-warn_unreachable = true
-
-plugins = ["mypy_django_plugin.main"]
-
-[[tool.mypy.overrides]]
-module="*.tests.*"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module="*.migrations.*"
-ignore_errors = true
-
-[tool.django-stubs]
-django_settings_module = "radiofeed.settings.test"
