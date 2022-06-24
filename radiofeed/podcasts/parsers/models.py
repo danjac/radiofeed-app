@@ -49,11 +49,13 @@ class Item:
         validator=validators.int_in_range,
         default=None,
     )
+
     season: int | None = attrs.field(
         converter=converters.int_or_none,
         validator=validators.int_in_range,
         default=None,
     )
+
     episode: int | None = attrs.field(
         converter=converters.int_or_none,
         validator=validators.int_in_range,
