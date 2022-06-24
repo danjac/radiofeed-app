@@ -15,6 +15,8 @@ class TestOpmlParser:
         assert len(outlines) == 0
 
     def test_ok(self):
-        content = (pathlib.Path(__file__).parent / "mocks" / "feeds.opml").read_bytes()
+        content = (
+            pathlib.Path(__file__).parent.parent / "mocks" / "feeds.opml"
+        ).read_bytes()
         outlines = list(opml_parser.parse_opml(content))
         assert len(outlines) == 12

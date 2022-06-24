@@ -7,7 +7,9 @@ from radiofeed.podcasts.parsers import rss_parser
 
 class TestRssParser:
     def read_mock_file(self, mock_filename):
-        return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
+        return (
+            pathlib.Path(__file__).parent.parent / "mocks" / mock_filename
+        ).read_bytes()
 
     def test_empty(self):
         with pytest.raises(rss_parser.RssParserError):
