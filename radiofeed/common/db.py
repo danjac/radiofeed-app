@@ -8,7 +8,7 @@ from django.utils.encoding import force_str
 
 
 class FastCountMixin:
-    def count(self: QuerySet) -> int:
+    def count(self):
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()  # type: ignore
         if (count := get_reltuple_count(self.db, self.model._meta.db_table)) >= 1000:
@@ -18,11 +18,11 @@ class FastCountMixin:
 
 
 class SearchMixin:
-    search_vectors: list[tuple[str, str]] = []
-    search_vector_field: str = "search_vector"
-    search_rank: str = "rank"
+    search_vectors = []
+    search_vector_field = "search_vector"
+    search_rank = "rank"
 
-    def search(self: QuerySet, search_term: str) -> QuerySet:
+    def search(self: QuerySet, search_term):
         if not search_term:
             return self.none()
 
@@ -50,7 +50,7 @@ class SearchMixin:
         return self.annotate(**ranks).filter(functools.reduce(operator.or_, filters))
 
 
-def get_reltuple_count(db: str, table: str) -> int:
+def get_reltuple_count(db, table):
     cursor = connections[db].cursor()
     cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s", [table])
     return int(cursor.fetchone()[0])
