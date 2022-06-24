@@ -1,25 +1,23 @@
-from datetime import datetime
-
 from radiofeed.podcasts.parsers import date_parser
 
 
-def pub_date(value: str) -> datetime | None:
+def pub_date(value):
     return date_parser.parse_date(value)
 
 
-def complete(value: str) -> bool:
+def complete(value):
     if value and value.casefold() == "yes":
         return True
     return False
 
 
-def explicit(value: str) -> bool:
+def explicit(value):
     if value and value.casefold() in ("clean", "yes"):
         return True
     return False
 
 
-def duration(value: str) -> str:
+def duration(value):
     if not value:
         return ""
 
@@ -41,11 +39,11 @@ def duration(value: str) -> str:
         return ""
 
 
-def language_code(value: str) -> str:
+def language_code(value):
     return (value or "en")[:2]
 
 
-def int_or_none(value: str) -> int | None:
+def int_or_none(value):
     try:
         return int(value)
     except (TypeError, ValueError):

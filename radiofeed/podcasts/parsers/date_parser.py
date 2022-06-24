@@ -240,12 +240,12 @@ TZ_INFOS: dict[str, int | float] = {
 
 
 @functools.singledispatch
-def parse_date(value: datetime | date | str | None) -> datetime | None:
+def parse_date(value):
     return None
 
 
 @parse_date.register
-def _(value: datetime) -> datetime | None:
+def _(value: datetime):
     try:
         return value if is_aware(value) else make_aware(value)
     except ValueError:
@@ -263,12 +263,12 @@ def _(value: datetime) -> datetime | None:
 
 
 @parse_date.register
-def _(value: date) -> datetime | None:
+def _(value: date):
     return parse_date(datetime.combine(value, datetime.min.time()))
 
 
 @parse_date.register
-def _(value: str) -> datetime | None:
+def _(value: str):
 
     try:
         return parse_date(date_parser.parse(value, tzinfos=TZ_INFOS)) if value else None
