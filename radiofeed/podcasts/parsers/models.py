@@ -33,12 +33,7 @@ class Item:
         ),
     )
 
-    media_url: str = attrs.field(
-        validator=attrs.validators.and_(
-            validators.not_empty,
-            validators.url,
-        ),
-    )
+    media_url: str = attrs.field(validator=validators.url)
 
     media_type: str = attrs.field(validator=validators.audio)
 
