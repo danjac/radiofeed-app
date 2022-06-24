@@ -21,8 +21,10 @@ class TestOpmlUploadForm:
         mocker.patch(
             "radiofeed.users.forms.opml_parser.parse_opml",
             return_value=[
-                opml_parser.Outline(rss="https://example.com/test.xml"),
-                opml_parser.Outline(rss=None),
+                opml_parser.Outline(
+                    rss="https://example.com/test.xml", url="", title=""
+                ),
+                opml_parser.Outline(rss=None, url="", title=""),
             ],
         )
         assert list(form.parse_opml_feeds()) == ["https://example.com/test.xml"]

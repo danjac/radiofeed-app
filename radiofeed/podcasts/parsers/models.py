@@ -13,8 +13,8 @@ class Outline:
     title: str = ""
     text: str = ""
 
-    rss: str | None = attrs.field(validator=validators.url, default=None)
-    url: str | None = attrs.field(validator=validators.url, default=None)
+    rss: str | None = attrs.field(validator=validators.url)
+    url: str | None = attrs.field(validator=validators.url)
 
 
 @attrs.define(kw_only=True, frozen=True)
@@ -60,9 +60,8 @@ class Item:
         validator=validators.int_in_range,
     )
 
-    cover_url: str | None = attrs.field(validator=validators.url, default=None)
-
-    duration: str = attrs.field(converter=converters.duration, default="")
+    cover_url: str | None = attrs.field(validator=validators.url)
+    duration: str = attrs.field(converter=converters.duration)
 
     episode_type: str = "full"
     description: str = ""
@@ -74,23 +73,22 @@ class Feed:
 
     title: str = attrs.field(validator=validators.not_empty)
 
+    owner: str = ""
+    description: str = ""
+
     language: str = attrs.field(
         converter=converters.language_code,
         validator=validators.language_code,
     )
 
-    link: str | None = attrs.field(validator=validators.url, default=None)
-    cover_url: str | None = attrs.field(validator=validators.url, default=None)
+    link: str | None = attrs.field(validator=validators.url)
+    cover_url: str | None = attrs.field(validator=validators.url)
 
-    complete: bool = attrs.field(converter=converters.complete, default=False)
-
-    explicit: bool = attrs.field(converter=converters.explicit, default=False)
-
-    owner: str = ""
-    description: str = ""
+    complete: bool = attrs.field(converter=converters.complete)
+    explicit: bool = attrs.field(converter=converters.explicit)
 
     funding_text: str = ""
-    funding_url: str | None = attrs.field(validator=validators.url, default=None)
+    funding_url: str | None = attrs.field(validator=validators.url)
 
     categories: list[str] = attrs.field(default=attrs.Factory(list))
 

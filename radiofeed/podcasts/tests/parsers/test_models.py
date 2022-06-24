@@ -13,6 +13,11 @@ class TestFeed:
         feed = Feed(
             title="test",
             language="en",
+            complete=False,
+            explicit=False,
+            link="",
+            cover_url="",
+            funding_url="",
             items=[
                 Item(
                     title="test",
@@ -20,6 +25,8 @@ class TestFeed:
                     media_url="https://example.com",
                     media_type="audio/mpeg",
                     guid=uuid.uuid4().hex,
+                    cover_url="",
+                    duration="",
                 )
             ],
         )
@@ -31,6 +38,11 @@ class TestFeed:
         feed = Feed(
             title="test",
             language="en",
+            link="",
+            complete=False,
+            explicit=False,
+            cover_url="",
+            funding_url="",
             items=[
                 Item(
                     title="test 1",
@@ -38,6 +50,8 @@ class TestFeed:
                     media_url="https://example.com",
                     media_type="audio/mpeg",
                     guid=uuid.uuid4().hex,
+                    cover_url="",
+                    duration="",
                 ),
                 Item(
                     title="test 2",
@@ -45,6 +59,8 @@ class TestFeed:
                     media_url="https://example.com",
                     media_type="audio/mpeg",
                     guid=uuid.uuid4().hex,
+                    cover_url="",
+                    duration="",
                 ),
             ],
         )
