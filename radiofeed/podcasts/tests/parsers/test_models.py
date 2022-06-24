@@ -30,7 +30,7 @@ class TestFeed:
                 )
             ],
         )
-        assert feed.latest_pub_date == now
+        assert feed.pub_date == now
 
     def test_multiple_pub_dates(self):
         now = timezone.now()
@@ -64,4 +64,4 @@ class TestFeed:
                 ),
             ],
         )
-        assert feed.latest_pub_date == now
+        assert feed.pub_date == now

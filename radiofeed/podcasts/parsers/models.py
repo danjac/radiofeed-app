@@ -99,5 +99,5 @@ class Feed:
     )
 
     @property
-    def latest_pub_date(self) -> datetime:
+    def pub_date(self) -> datetime:
         return max([item.pub_date for item in self.items])

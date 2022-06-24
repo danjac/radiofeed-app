@@ -6,7 +6,7 @@ import http
 
 from typing import Generator
 
-import attr
+import attrs
 import requests
 
 from django.db import transaction
@@ -74,6 +74,7 @@ class FeedUpdater:
             http_status=response.status_code,
             modified=date_parser.parse_date(response.headers.get("Last-Modified")),
             title=feed.title,
+            pub_date=feed.pub_date,
             cover_url=feed.cover_url,
             description=feed.description,
             explicit=feed.explicit,
@@ -82,7 +83,6 @@ class FeedUpdater:
             language=feed.language,
             link=feed.link,
             owner=feed.owner,
-            pub_date=feed.latest_pub_date,
             extracted_text=self.extract_text(feed, categories),
             keywords=" ".join(
                 category
@@ -231,7 +231,7 @@ class FeedUpdater:
         return Episode(
             pk=episode_id,
             podcast=self.podcast,
-            **attr.asdict(item),
+            **attrs.asdict(item),
         )
 
     def extract_text(self, feed: Feed, categories: list[Category]) -> str:
