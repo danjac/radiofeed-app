@@ -5,7 +5,7 @@ from datetime import datetime
 from radiofeed.podcasts.parsers import date_parser
 
 
-def date(value: str) -> datetime | None:
+def pub_date(value: str) -> datetime | None:
     return date_parser.parse_date(value)
 
 
