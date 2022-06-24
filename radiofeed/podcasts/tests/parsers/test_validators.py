@@ -31,7 +31,6 @@ class TestUrl:
         [
             ("http://example.com", False),
             ("https://example.com", False),
-            (None, False),
             ("example", True),
         ],
     )

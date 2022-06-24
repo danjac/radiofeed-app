@@ -19,11 +19,11 @@ class TestOpmlParser:
             pathlib.Path(__file__).parent.parent / "mocks" / "feeds_with_invalid.opml"
         ).read_bytes()
         outlines = list(opml_parser.parse_opml(content))
-        assert len(outlines) == 11
+        assert len(outlines) == 10
 
     def test_ok(self):
         content = (
             pathlib.Path(__file__).parent.parent / "mocks" / "feeds.opml"
         ).read_bytes()
         outlines = list(opml_parser.parse_opml(content))
-        assert len(outlines) == 12
+        assert len(outlines) == 11

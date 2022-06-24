@@ -218,11 +218,9 @@ language_code = attrs.validators.in_(LANGUAGE_CODES)
 
 audio = attrs.validators.in_(AUDIO_MIMETYPES)
 
-pg_integer = attrs.validators.optional(
-    attrs.validators.and_(
-        attrs.validators.gt(-2147483648),
-        attrs.validators.lt(2147483647),
-    )
+pg_integer = attrs.validators.and_(
+    attrs.validators.gt(-2147483648),
+    attrs.validators.lt(2147483647),
 )
 
 
@@ -237,8 +235,7 @@ def not_empty(instance, attr, value):
 
 
 def url(instance, attr, value):
-    if value:
-        try:
-            _url_validator(value)
-        except ValidationError as e:
-            raise ValueError from e
+    try:
+        _url_validator(value)
+    except ValidationError as e:
+        raise ValueError from e

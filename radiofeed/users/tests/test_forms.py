@@ -3,6 +3,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from radiofeed.podcasts.parsers import opml_parser
+from radiofeed.podcasts.parsers.models import Outline
 from radiofeed.users.forms import OpmlUploadForm
 
 
@@ -21,10 +22,7 @@ class TestOpmlUploadForm:
         mocker.patch(
             "radiofeed.users.forms.opml_parser.parse_opml",
             return_value=[
-                opml_parser.Outline(
-                    rss="https://example.com/test.xml", url="", title=""
-                ),
-                opml_parser.Outline(rss=None, url="", title=""),
+                Outline(rss="https://example.com/test.xml", title=""),
             ],
         )
         assert list(form.parse_opml_feeds()) == ["https://example.com/test.xml"]
