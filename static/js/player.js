@@ -219,7 +219,7 @@ document.addEventListener("alpine:init", () => {
                     }),
                 );
             },
-            formatCounter(valu) {
+            formatCounter(value) {
                 if (isNaN(value) || value < 0) return "00:00:00";
                 const duration = Math.floor(value);
                 return [
