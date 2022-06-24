@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Callable
+from typing import Callable, TypeVar
 
 import attrs
 
-from attrs import define
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, URLValidator
 from django.utils import timezone
@@ -14,13 +13,8 @@ from radiofeed.podcasts.parsers import date_parser
 
 _url_validator = URLValidator(["http", "https"])
 
+T = TypeVar("T")
 
-@define
-class Something:
-    title: str = ""
-
-
-something = Something(title="Ok")
 
 AUDIO_MIMETYPES = (
     "audio/aac",
@@ -229,24 +223,18 @@ LANGUAGE_CODES = (
 )
 
 
-def int_or_none(value: Any) -> int | None:
-    try:
-        if value and (rv := int(value)) in range(-2147483648, 2147483647):
-            return rv
-
-    except (TypeError, ValueError):
-        pass
-
-    return None
+def int_in_range(inst: T, attr: attrs.Attribute, value: int | None) -> None:
+    if value and value not in range(-2147483648, 2147483647):
+        raise ValueError(f"{value=} out of range")
 
 
-def pub_date(inst: Any, attr: attrs.Attribute, value: datetime) -> None:
+def pub_date(inst: T, attr: attrs.Attribute, value: datetime) -> None:
     if value > timezone.now():
         raise ValueError("pub_date cannot be in future")
 
 
 def min_len(length: int) -> Callable:
-    def _validate(inst: Any, attr: attrs.Attribute, value: str | None) -> None:
+    def _validate(inst: T, attr: attrs.Attribute, value: str | None) -> None:
         try:
             MinLengthValidator(length)(value or "")
         except ValidationError as e:
@@ -255,22 +243,23 @@ def min_len(length: int) -> Callable:
     return _validate
 
 
-def url(inst: Any, attr: attrs.Attribute, value: str | None) -> None:
-    try:
-        _url_validator(value)
-    except ValidationError as e:
-        raise ValueError from e
+def url(inst: T, attr: attrs.Attribute, value: str | None) -> None:
+    if value:
+        try:
+            _url_validator(value)
+        except ValidationError as e:
+            raise ValueError from e
 
 
-def is_complete(value: str | None) -> bool:
+def is_complete(value: str) -> bool:
     return bool(value and value.casefold() == "yes")
 
 
-def is_explicit(value: str | None) -> bool:
+def is_explicit(value: str) -> bool:
     return bool(value and value.casefold() in ("clean", "yes"))
 
 
-def duration(value: str | None) -> str:
+def duration(value: str) -> str:
     if not value:
         return ""
 
@@ -292,11 +281,18 @@ def duration(value: str | None) -> str:
         return ""
 
 
-def language_code(value: str | None) -> str:
+def language_code(value: str) -> str:
     return (value or "en")[:2]
 
 
-@define(kw_only=True)
+def int_or_none(value: str) -> int | None:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+@attrs.define(kw_only=True)
 class Outline:
 
     title: str = ""
@@ -306,7 +302,7 @@ class Outline:
     url: str | None = attrs.field(validator=url, default=None)
 
 
-@define(kw_only=True)
+@attrs.define(kw_only=True)
 class Item:
 
     guid: str = attrs.field(validator=min_len(1))
@@ -324,9 +320,15 @@ class Item:
 
     explicit: bool = attrs.field(converter=is_explicit, default=False)
 
-    length: int | None = attrs.field(converter=int_or_none, default=None)
-    season: int | None = attrs.field(converter=int_or_none, default=None)
-    episode: int | None = attrs.field(converter=int_or_none, default=None)
+    length: int | None = attrs.field(
+        converter=int_or_none, default=None, validator=int_in_range
+    )
+    season: int | None = attrs.field(
+        converter=int_or_none, default=None, validator=int_in_range
+    )
+    episode: int | None = attrs.field(
+        converter=int_or_none, default=None, validator=int_in_range
+    )
 
     cover_url: str | None = attrs.field(validator=url, default=None)
 
@@ -337,7 +339,7 @@ class Item:
     keywords: str = ""
 
 
-@define(kw_only=True)
+@attrs.define(kw_only=True)
 class Feed:
 
     title: str = attrs.field(validator=min_len(1))

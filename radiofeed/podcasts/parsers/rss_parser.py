@@ -26,8 +26,7 @@ def parse_rss(content: bytes) -> Feed:
 
         return parse_feed(next(xml_parser.iterparse(content, "channel")))
 
-    except (StopIteration, ValueError, lxml.etree.XMLSyntaxError) as e:
-        print("parse errror", e)
+    except (StopIteration, TypeError, ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
 
@@ -62,7 +61,8 @@ def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
     for item in channel.iterfind("item"):
         try:
             yield parse_item(item)
-        except ValueError:
+        except (TypeError, ValueError) as e:
+            print(e)
             continue
 
 
