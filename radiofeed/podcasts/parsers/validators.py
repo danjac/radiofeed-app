@@ -1,6 +1,3 @@
-from datetime import datetime
-from typing import Sequence, TypeVar
-
 import attrs
 
 from django.core.exceptions import ValidationError
@@ -8,9 +5,6 @@ from django.core.validators import URLValidator
 from django.utils import timezone
 
 _url_validator = URLValidator(["http", "https"])
-
-
-T = TypeVar("T")
 
 
 AUDIO_MIMETYPES = (
@@ -232,17 +226,17 @@ pg_integer = attrs.validators.optional(
 )
 
 
-def pub_date(inst: T, attr: attrs.Attribute, value: datetime) -> None:
+def pub_date(instance, attr, value):
     if value > timezone.now():
         raise ValueError(f"{value=} cannot be in future")
 
 
-def not_empty(inst: T, attr: attrs.Attribute, value: Sequence | None) -> None:
+def not_empty(instance, attr, value):
     if not value:
         raise ValueError(f"{attr=} cannot be empty or None")
 
 
-def url(inst: T, attr: attrs.Attribute, value: str | None) -> None:
+def url(instance, attr, value):
     if value:
         try:
             _url_validator(value)
