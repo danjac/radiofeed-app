@@ -10,11 +10,15 @@ def pub_date(value: str) -> datetime | None:
 
 
 def complete(value: str) -> bool:
-    return bool(value and value.casefold() == "yes")
+    if value and value.casefold() == "yes":
+        return True
+    return False
 
 
 def explicit(value: str) -> bool:
-    return bool(value and value.casefold() in ("clean", "yes"))
+    if value and value.casefold() in ("clean", "yes"):
+        return True
+    return False
 
 
 def duration(value: str) -> str:
