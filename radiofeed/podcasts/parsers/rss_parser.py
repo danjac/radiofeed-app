@@ -36,21 +36,14 @@ def parse_feed(channel: lxml.etree.Element) -> Feed:
             title=xpath.first("title/text()"),
             language=xpath.first("language/text()"),
             explicit=xpath.first("itunes:explicit/text()"),
-            cover_url=xpath.first(
-                "itunes:image/@href",
-                "image/url/text()",
-            ),
+            cover_url=xpath.first("itunes:image/@href", "image/url/text()"),
             link=xpath.first("link/text()"),
             funding_url=xpath.first("podcast:funding/@url"),
             funding_text=xpath.first("podcast:funding/text()"),
             complete=xpath.first("itunes:complete/text()"),
-            description=xpath.first(
-                "description/text()",
-                "itunes:summary/text()",
-            ),
+            description=xpath.first("description/text()", "itunes:summary/text()"),
             owner=xpath.first(
-                "itunes:author/text()",
-                "itunes:owner/itunes:name/text()",
+                "itunes:author/text()", "itunes:owner/itunes:name/text()"
             ),
             categories=list(xpath.iter("//itunes:category/@text")),
             items=list(parse_items(channel)),
@@ -70,33 +63,19 @@ def parse_item(item: lxml.etree.Element) -> Item:
         return Item(
             guid=xpath.first("guid/text()"),
             title=xpath.first("title/text()"),
-            pub_date=xpath.first(
-                "pubDate/text()",
-                "pubdate/text()",
-            ),
+            pub_date=xpath.first("pubDate/text()", "pubdate/text()"),
             cover_url=xpath.first("itunes:image/@href"),
             link=xpath.first("link/text()"),
             explicit=xpath.first("itunes:explicit/text()"),
             duration=xpath.first("itunes:duration/text()"),
-            media_url=xpath.first(
-                "enclosure//@url",
-                "media:content//@url",
-            ),
-            media_type=xpath.first(
-                "enclosure//@type",
-                "media:content//@type",
-            ),
-            length=xpath.first(
-                "enclosure//@length",
-                "media:content//@fileSize",
-            ),
+            media_url=xpath.first("enclosure//@url", "media:content//@url"),
+            media_type=xpath.first("enclosure//@type", "media:content//@type"),
+            length=xpath.first("enclosure//@length", "media:content//@fileSize"),
             episode=xpath.first("itunes:episode/text()"),
             season=xpath.first("itunes:season/text()"),
             episode_type=xpath.first("itunes:episodetype/text()", default="full"),
             description=xpath.first(
-                "content:encoded/text()",
-                "description/text()",
-                "itunes:summary/text()",
+                "content:encoded/text()", "description/text()", "itunes:summary/text()"
             ),
             keywords=" ".join(xpath.iter("category/text()")),
         )
