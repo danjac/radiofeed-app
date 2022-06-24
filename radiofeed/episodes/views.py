@@ -1,14 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import (
-    HttpRequest,
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseRedirect,
-)
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -24,7 +19,7 @@ from radiofeed.podcasts.models import Podcast
 
 
 @require_http_methods(["GET"])
-def index(request: HttpRequest) -> HttpResponse:
+def index(request):
 
     promoted = "promoted" in request.GET
     since = timezone.now() - timedelta(days=14)
@@ -66,7 +61,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def search_episodes(request: HttpRequest) -> HttpResponse:
+def search_episodes(request):
 
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
@@ -86,9 +81,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def episode_detail(
-    request: HttpRequest, episode_id: int, slug: str | None = None
-) -> HttpResponse:
+def episode_detail(request, episode_id, slug: str | None = None):
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -107,7 +100,7 @@ def episode_detail(
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+def start_player(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     log, _ = AudioLog.objects.update_or_create(
@@ -131,7 +124,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def close_player(request: HttpRequest) -> HttpResponse:
+def close_player(request):
 
     if episode_id := request.player.pop():
 
@@ -151,7 +144,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
 @ajax_login_required
-def player_time_update(request: HttpRequest) -> HttpResponse:
+def player_time_update(request):
     """Update current play time of episode."""
 
     if episode_id := request.player.get():
@@ -170,7 +163,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @login_required
-def history(request: HttpRequest) -> HttpResponse:
+def history(request):
 
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
@@ -197,7 +190,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_audio_log(request, episode_id):
 
     episode = get_episode_or_404(request, episode_id)
 
@@ -214,7 +207,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @login_required
-def bookmarks(request: HttpRequest) -> HttpResponse:
+def bookmarks(request):
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
@@ -233,7 +226,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_bookmark(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     try:
@@ -248,7 +241,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_bookmark(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
@@ -259,12 +252,8 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 def get_episode_or_404(
-    request: HttpRequest,
-    episode_id: int,
-    *,
-    with_podcast: bool = False,
-    with_current_time: bool = False,
-) -> Episode:
+    request, episode_id, *, with_podcast=False, with_current_time=False
+):
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
@@ -274,13 +263,13 @@ def get_episode_or_404(
 
 
 def render_player(
-    request: HttpRequest,
+    request,
     episode: Episode,
     *,
-    start_player: bool,
-    current_time: datetime,
-    listened: datetime,
-) -> TemplateResponse:
+    start_player,
+    current_time,
+    listened,
+):
     return TemplateResponse(
         request,
         "episodes/player.html",
@@ -294,9 +283,7 @@ def render_player(
     )
 
 
-def render_bookmark_buttons(
-    request: HttpRequest, episode: Episode, is_bookmarked: bool
-) -> TemplateResponse:
+def render_bookmark_buttons(request, episode, is_bookmarked) -> TemplateResponse:
     return TemplateResponse(
         request,
         "episodes/buttons/bookmark.html",

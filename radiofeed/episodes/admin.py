@@ -1,6 +1,4 @@
 from django.contrib import admin
-from django.db.models import QuerySet
-from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
 from radiofeed.episodes import models
@@ -13,24 +11,22 @@ class EpisodeAdmin(admin.ModelAdmin):
     raw_id_fields = ("podcast",)
     search_fields = ("search_document",)
 
-    def episode_title(self, obj: models.Episode) -> str:
+    def episode_title(self, obj):
         return truncatechars(obj.title, 30)
 
     episode_title.short_description = "Title"  # type: ignore
 
-    def podcast_title(self, obj: models.Episode) -> str:
+    def podcast_title(self, obj):
         return truncatechars(obj.podcast.title, 30)
 
     podcast_title.short_description = "Podcast"  # type: ignore
 
-    def get_search_results(
-        self, request: HttpRequest, queryset: QuerySet, search_term: str
-    ) -> QuerySet:
+    def get_search_results(self, request, queryset, search_term):
         if not search_term:
             return super().get_search_results(request, queryset, search_term)
         return queryset.search(search_term).order_by("-rank", "-pub_date"), False
 
-    def get_ordering(self, request: HttpRequest) -> list[str]:
+    def get_ordering(self, request):
         return (
             []
             if request.GET.get("q")
