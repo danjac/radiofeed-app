@@ -1,8 +1,7 @@
 import http
 
 from django.contrib import admin, messages
-from django.db.models import Count, QuerySet
-from django.http import HttpRequest
+from django.db.models import Count
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.podcasts import models
@@ -19,10 +18,10 @@ class CategoryAdmin(admin.ModelAdmin):
     )
     search_fields = ("name",)
 
-    def get_queryset(self, request: HttpRequest) -> QuerySet:
+    def get_queryset(self, request):
         return super().get_queryset(request).annotate(num_podcasts=Count("podcast"))
 
-    def num_podcasts(self, obj: models.Category) -> int:
+    def num_podcasts(self, obj) -> int:
         return obj.num_podcasts or 0
 
 
@@ -30,15 +29,13 @@ class ActiveFilter(admin.SimpleListFilter):
     title = "Active"
     parameter_name = "active"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
+    def lookups(self, request, model_admin):
         return (
             ("yes", "Active"),
             ("no", "Inactive"),
         )
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         match self.value():
             case "yes":
                 return queryset.filter(active=True)
@@ -52,9 +49,7 @@ class HttpStatusFilter(admin.SimpleListFilter):
     title = "HTTP Status"
     parameter_name = "http_status"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[int, str], ...]:
+    def lookups(self, request, model_admin):
         return tuple(
             (status, f"{status} {http.HTTPStatus(status).name}")
             for status in models.Podcast.objects.filter(
@@ -65,7 +60,7 @@ class HttpStatusFilter(admin.SimpleListFilter):
             .distinct()
         )
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         if value := self.value():
             return queryset.filter(http_status=value)
         return queryset
@@ -75,15 +70,13 @@ class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
+    def lookups(self, request, model_admin):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
         )
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
 
         match self.value():
             case "yes":
@@ -98,12 +91,10 @@ class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
+    def lookups(self, request, model_admin):
         return (("yes", "Promoted"),)
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
@@ -111,12 +102,10 @@ class SubscribedFilter(admin.SimpleListFilter):
     title = "Subscribed"
     parameter_name = "subscribed"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
+    def lookups(self, request, model_admin):
         return (("yes", "Subscribed"),)
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         return (
             queryset.annotate(subscribers=Count("subscription")).filter(
                 subscribers__gt=0
@@ -168,7 +157,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     change_actions = ("update_podcast_feed",)
 
-    def update_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
+    def update_podcast_feeds(self, request, queryset):
 
         count = queryset.count()
 
@@ -180,9 +169,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    def update_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
+    def update_podcast_feed(self, request, obj):
         feed_update(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
-    def get_ordering(self, request: HttpRequest) -> list[str]:
+    def get_ordering(self, request):
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
