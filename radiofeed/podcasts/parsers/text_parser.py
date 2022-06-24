@@ -2,7 +2,6 @@ import html
 import re
 
 from functools import lru_cache
-from typing import Generator
 
 from django.template.defaultfilters import striptags
 from nltk.corpus import stopwords
@@ -325,14 +324,14 @@ lemmatizer = WordNetLemmatizer()
 
 
 @lru_cache()
-def get_stopwords(language: str) -> list[str]:
+def get_stopwords(language):
     try:
         return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
     except (OSError, KeyError):
         return []
 
 
-def clean_text(text: str) -> str:
+def clean_text(text):
     """Remove HTML tags and entities, punctuation and numbers."""
     text = html.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
@@ -340,7 +339,7 @@ def clean_text(text: str) -> str:
     return text
 
 
-def extract_keywords(language: str, text: str) -> list[str]:
+def extract_keywords(language, text):
 
     if not (text := clean_text(text).casefold()):
         return []
@@ -350,7 +349,7 @@ def extract_keywords(language: str, text: str) -> list[str]:
     return [token for token in tokenize(text) if token and token not in stopwords]
 
 
-def tokenize(text: str) -> Generator[str, None, None]:
+def tokenize(text):
 
     for token in tokenizer.tokenize(text):
         try:
