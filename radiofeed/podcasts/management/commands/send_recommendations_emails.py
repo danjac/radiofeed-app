@@ -9,7 +9,7 @@ class Command(BaseCommand):
     Sends recommendations emails to users
     """
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args, **options):
         send_recommendations_email.map(
             User.objects.email_notification_recipients().values_list("pk")
         )
