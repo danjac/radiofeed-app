@@ -1,16 +1,13 @@
 import functools
 
-from typing import Callable
-
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponse
 from django_htmx.http import HttpResponseClientRedirect
 
 
-def ajax_login_required(view: Callable) -> Callable:
+def ajax_login_required(view):
     """Use this decorator instead of @login_required
     when handling HTMX includes and JSON requests.
 
@@ -20,7 +17,7 @@ def ajax_login_required(view: Callable) -> Callable:
     """
 
     @functools.wraps(view)
-    def wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+    def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
