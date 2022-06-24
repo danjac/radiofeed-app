@@ -100,7 +100,7 @@ DJANGO_SETTINGS_MODULE="radiofeed.settings.test"
 addopts="-v -x --ff --reuse-db -p no:warnings --tb=short"
 testpaths="radiofeed"
 
-[mypy]
+[tool.mypy]
 python_version = 3.10
 check_untyped_defs = false
 ignore_missing_imports = true
