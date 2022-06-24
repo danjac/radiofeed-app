@@ -6,7 +6,7 @@ import markdown
 
 from django.template.defaultfilters import striptags
 
-ALLOWED_TAGS: list[str] = [
+ALLOWED_TAGS = [
     "a",
     "abbr",
     "acronym",
@@ -51,7 +51,7 @@ ALLOWED_TAGS: list[str] = [
     "ul",
 ]
 
-ALLOWED_ATTRS: dict[str, list[str]] = {
+ALLOWED_ATTRS = {
     "a": ["href", "target", "title"],
     "img": ["src", "alt", "height", "width", "loading"],
 }
@@ -59,13 +59,13 @@ ALLOWED_ATTRS: dict[str, list[str]] = {
 HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 
-def linkify_callback(attrs: dict[tuple, str], new: bool = False) -> dict[tuple, str]:
+def linkify_callback(attrs, new=False):
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs
 
 
-def clean(value: str | None) -> str:
+def clean(value):
     return (
         bleach.linkify(
             bleach.clean(
@@ -81,20 +81,20 @@ def clean(value: str | None) -> str:
     )
 
 
-def strip_whitespace(value: str | None) -> str:
+def strip_whitespace(value):
     return (value or "").strip()
 
 
-def strip_html(value: str | None) -> str:
+def strip_html(value):
     """Removes all HTML tags and entities"""
     return html.unescape(striptags(strip_whitespace(value)))
 
 
-def as_html(value: str) -> str:
+def as_html(value):
     return value if HTML_RE.match(value) else markdown.markdown(value)
 
 
-def markup(value: str | None) -> str:
+def markup(value):
     """Parses Markdown and/or html and returns cleaned result."""
     if value := strip_whitespace(value):
         return html.unescape(clean(as_html(value)))
