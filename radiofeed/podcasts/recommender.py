@@ -6,11 +6,9 @@ import operator
 import statistics
 
 from datetime import timedelta
-from typing import Generator
 
 import pandas
 
-from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -22,10 +20,7 @@ from radiofeed.podcasts.parsers.text_parser import get_stopwords
 logger = logging.getLogger(__name__)
 
 
-Similarities = tuple[int, list[tuple[int, float]]]
-
-
-def recommend(since: timedelta = timedelta(days=90), num_matches: int = 12) -> None:
+def recommend(since=timedelta(days=90), num_matches=12) -> None:
 
     podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
         extracted_text="",
@@ -42,13 +37,11 @@ def recommend(since: timedelta = timedelta(days=90), num_matches: int = 12) -> N
 
 
 class Recommender:
-    def __init__(self, language: str, num_matches: int):
+    def __init__(self, language, num_matches):
         self.language = language
         self.num_matches = num_matches
 
-    def recommend(
-        self, podcasts: QuerySet, categories: QuerySet
-    ) -> list[Recommendation]:
+    def recommend(self, podcasts, categories):
 
         if matches := self.build_matches_dict(podcasts, categories):
 
@@ -62,11 +55,7 @@ class Recommender:
 
         return []
 
-    def build_matches_dict(
-        self,
-        podcasts: QuerySet,
-        categories: QuerySet,
-    ) -> dict[tuple[int, int], list[float]]:
+    def build_matches_dict(self, podcasts, categories):
 
         matches = collections.defaultdict(list)
         podcasts = podcasts.filter(language__iexact=self.language)
@@ -85,9 +74,7 @@ class Recommender:
 
         return matches
 
-    def recommendations_from_matches(
-        self, matches: dict[tuple[int, int], list[float]]
-    ) -> Generator[Recommendation, None, None]:
+    def recommendations_from_matches(self, matches):
         for (podcast_id, recommended_id), values in matches.items():
             yield Recommendation(
                 podcast_id=podcast_id,
@@ -96,10 +83,7 @@ class Recommender:
                 frequency=len(values),
             )
 
-    def find_similarities_for_podcasts(
-        self,
-        podcasts: QuerySet,
-    ) -> Generator[tuple[int, int, float], None, None]:
+    def find_similarities_for_podcasts(self, podcasts):
 
         if not podcasts.exists():  # pragma: no cover
             return
@@ -110,9 +94,7 @@ class Recommender:
                 if similarity > 0:
                     yield podcast_id, recommended_id, similarity
 
-    def find_similarities(
-        self, podcasts: QuerySet
-    ) -> Generator[Similarities, None, None]:
+    def find_similarities(self, podcasts):
         """Given a queryset, will yield tuples of
         (id, (similar_1, similar_2, ...)) based on text content.
         """
@@ -144,12 +126,7 @@ class Recommender:
             except IndexError:  # pragma: no cover
                 pass
 
-    def find_similarity(
-        self,
-        df: pandas.DataFrame,
-        similar: list[float],
-        current_id: int,
-    ) -> Similarities:
+    def find_similarity(self, df, similar, current_id):
 
         sorted_similar = sorted(
             list(enumerate(similar)),
