@@ -61,8 +61,7 @@ def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
     for item in channel.iterfind("item"):
         try:
             yield parse_item(item)
-        except (TypeError, ValueError) as e:
-            print(e)
+        except (TypeError, ValueError):
             continue
 
 
