@@ -41,10 +41,3 @@ def duration(value):
 
 def language_code(value):
     return (value or "en")[:2]
-
-
-def int_or_none(value):
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return None

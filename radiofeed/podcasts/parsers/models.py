@@ -45,18 +45,24 @@ class Item:
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
     length: int | None = attrs.field(
-        converter=converters.int_or_none,
+        converter=attrs.converters.optional(
+            attrs.converters.pipe(float, int),
+        ),
         default=None,
     )
 
     season: int | None = attrs.field(
-        converter=attrs.converters.optional(int),
+        converter=attrs.converters.optional(
+            attrs.converters.pipe(float, int),
+        ),
         validator=attrs.validators.optional(validators.pg_integer),
         default=None,
     )
 
     episode: int | None = attrs.field(
-        converter=attrs.converters.optional(int),
+        converter=attrs.converters.optional(
+            attrs.converters.pipe(float, int),
+        ),
         validator=attrs.validators.optional(validators.pg_integer),
         default=None,
     )

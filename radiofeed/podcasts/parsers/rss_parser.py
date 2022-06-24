@@ -70,7 +70,11 @@ def parse_item(item):
             duration=xpath.first("itunes:duration/text()"),
             media_url=xpath.first("enclosure//@url", "media:content//@url"),
             media_type=xpath.first("enclosure//@type", "media:content//@type"),
-            length=xpath.first("enclosure//@length", "media:content//@fileSize"),
+            length=xpath.first(
+                "enclosure//@length",
+                "media:content//@fileSize",
+                default=None,
+            ),
             episode=xpath.first("itunes:episode/text()", default=None),
             season=xpath.first("itunes:season/text()", default=None),
             episode_type=xpath.first("itunes:episodetype/text()", default="full"),

@@ -25,17 +25,6 @@ class TestExplicit:
         assert converters.explicit(None) is False
 
 
-class TestIntOrNone:
-    def test_is_none(self):
-        assert converters.int_or_none(None) is None
-
-    def test_is_empty(self):
-        assert converters.int_or_none("") is None
-
-    def test_is_number(self):
-        assert converters.int_or_none("11111") == 11111
-
-
 class TestDuration:
     @pytest.mark.parametrize(
         "value,expected",
