@@ -43,19 +43,6 @@ class TestUrl:
             validators.url(None, None, value)
 
 
-class TestIntInRange:
-    def test_too_low(self):
-        with pytest.raises(ValueError):
-            validators.int_in_range(None, None, -2147483649)
-
-    def test_too_high(self):
-        with pytest.raises(ValueError):
-            validators.int_in_range(None, None, 2147483649)
-
-    def test_ok(self):
-        validators.int_in_range(None, None, 1000)
-
-
 class TestPubDate:
     def test_ok(self):
         validators.pub_date(None, None, timezone.now() - timedelta(hours=1))

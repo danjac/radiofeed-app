@@ -226,10 +226,12 @@ language_code = attrs.validators.in_(LANGUAGE_CODES)
 
 audio = attrs.validators.in_(AUDIO_MIMETYPES)
 
-
-def int_in_range(inst: T, attr: attrs.Attribute, value: int | None) -> None:
-    if value and value not in range(-2147483648, 2147483647):
-        raise ValueError(f"{value=} out of range")
+pg_integer = attrs.validators.optional(
+    attrs.validators.and_(
+        attrs.validators.gt(-2147483648),
+        attrs.validators.lt(2147483647),
+    )
+)
 
 
 def pub_date(inst: T, attr: attrs.Attribute, value: datetime) -> None:
