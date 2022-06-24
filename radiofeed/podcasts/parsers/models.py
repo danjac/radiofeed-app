@@ -13,8 +13,8 @@ class Outline:
     title: str = ""
     text: str = ""
 
-    rss: str | None = attrs.field(validator=validators.url)
-    url: str | None = attrs.field(validator=validators.url)
+    rss: str | None = attrs.field(validator=validators.url, default=None)
+    url: str | None = attrs.field(validator=validators.url, default=None)
 
 
 @attrs.define(kw_only=True, frozen=True)
@@ -45,23 +45,23 @@ class Item:
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
     length: int | None = attrs.field(
-        default=None,
         converter=converters.int_or_none,
         validator=validators.int_in_range,
+        default=None,
     )
     season: int | None = attrs.field(
-        default=None,
         converter=converters.int_or_none,
         validator=validators.int_in_range,
+        default=None,
     )
     episode: int | None = attrs.field(
-        default=None,
         converter=converters.int_or_none,
         validator=validators.int_in_range,
+        default=None,
     )
 
-    cover_url: str | None = attrs.field(validator=validators.url)
-    duration: str = attrs.field(converter=converters.duration)
+    cover_url: str | None = attrs.field(validator=validators.url, default=None)
+    duration: str = attrs.field(converter=converters.duration, default="")
 
     episode_type: str = "full"
     description: str = ""
@@ -79,16 +79,17 @@ class Feed:
     language: str = attrs.field(
         converter=converters.language_code,
         validator=validators.language_code,
+        default="en",
     )
 
-    link: str | None = attrs.field(validator=validators.url)
-    cover_url: str | None = attrs.field(validator=validators.url)
+    link: str | None = attrs.field(validator=validators.url, default=None)
+    cover_url: str | None = attrs.field(validator=validators.url, default=None)
 
-    complete: bool = attrs.field(converter=converters.complete)
-    explicit: bool = attrs.field(converter=converters.explicit)
+    complete: bool = attrs.field(converter=converters.complete, default=False)
+    explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
     funding_text: str = ""
-    funding_url: str | None = attrs.field(validator=validators.url)
+    funding_url: str | None = attrs.field(validator=validators.url, default=None)
 
     categories: list[str] = attrs.field(default=attrs.Factory(list))
 
