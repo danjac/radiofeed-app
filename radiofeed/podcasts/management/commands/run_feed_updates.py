@@ -1,6 +1,5 @@
 import itertools
 
-from argparse import ArgumentParser
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
@@ -16,10 +15,10 @@ class Command(BaseCommand):
     Parses RSS feeds of all scheduled podcasts
     """
 
-    def add_arguments(self, parser: ArgumentParser) -> None:
+    def add_arguments(self, parser):
         parser.add_argument("--limit", help="Limit", type=int, default=360)
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args, **options):
 
         feed_update.map(
             itertools.islice(
@@ -28,7 +27,7 @@ class Command(BaseCommand):
             )
         )
 
-    def get_scheduled_feeds(self) -> models.QuerySet[Podcast]:
+    def get_scheduled_feeds(self):
         now = timezone.now()
 
         return (
