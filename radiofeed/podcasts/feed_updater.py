@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import dataclasses
 import functools
 import hashlib
 import http
 
 from typing import Generator
 
+import attr
 import requests
 
 from django.db import transaction
@@ -16,6 +16,7 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
+from radiofeed.podcasts.parsers.models import Feed, Item
 from radiofeed.podcasts.utils import batcher, get_user_agent
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -52,7 +53,7 @@ class FeedUpdater:
     def handle_success(
         self,
         response: requests.Response,
-        feed: rss_parser.Feed,
+        feed: Feed,
         content_hash: str,
     ) -> bool:
 
@@ -132,7 +133,7 @@ class FeedUpdater:
 
     def parse_rss(
         self,
-    ) -> tuple[requests.Response, rss_parser.Feed, str]:
+    ) -> tuple[requests.Response, Feed, str]:
 
         response = requests.get(
             self.podcast.rss,
@@ -169,7 +170,7 @@ class FeedUpdater:
 
         return response, rss_parser.parse_rss(response.content), content_hash
 
-    def sync_episodes(self, feed: rss_parser.Feed, batch_size: int = 100) -> None:
+    def sync_episodes(self, feed: Feed, batch_size: int = 100) -> None:
         """Remove any episodes no longer in feed, update any current and
         add new"""
 
@@ -210,7 +211,7 @@ class FeedUpdater:
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def episodes_for_update(
-        self, feed: rss_parser.Feed, guids: dict[str, int]
+        self, feed: Feed, guids: dict[str, int]
     ) -> Generator[Episode, None, None]:
 
         episode_ids = set()
@@ -220,22 +221,20 @@ class FeedUpdater:
                 episode_ids.add(episode_id)
 
     def episodes_for_insert(
-        self, feed: rss_parser.Feed, guids: dict[str, int]
+        self, feed: Feed, guids: dict[str, int]
     ) -> Generator[Episode, None, None]:
 
         for item in filter(lambda item: item.guid not in guids, feed.items):
             yield self.make_episode(item)
 
-    def make_episode(
-        self, item: rss_parser.Item, episode_id: int | None = None
-    ) -> Episode:
+    def make_episode(self, item: Item, episode_id: int | None = None) -> Episode:
         return Episode(
             pk=episode_id,
             podcast=self.podcast,
-            **dataclasses.asdict(item),
+            **attr.asdict(item),
         )
 
-    def extract_text(self, feed: rss_parser.Feed, categories: list[Category]) -> str:
+    def extract_text(self, feed: Feed, categories: list[Category]) -> str:
         text = " ".join(
             value
             for value in [

@@ -1,63 +1,8 @@
 import pathlib
-import uuid
-
-from datetime import timedelta
 
 import pytest
 
-from django.utils import timezone
-
 from radiofeed.podcasts.parsers import rss_parser
-
-
-class TestFeed:
-    def test_latest_pub_date_if_empty(self):
-        assert (
-            rss_parser.Feed(title="test", language="en", items=[]).latest_pub_date
-            is None
-        )
-
-    def test_single_pub_date(self):
-        now = timezone.now()
-        feed = rss_parser.Feed(
-            title="test",
-            language="en",
-            items=[
-                rss_parser.Item(
-                    title="test",
-                    pub_date=now,
-                    media_url="",
-                    media_type="audio/mpeg",
-                    guid=uuid.uuid4().hex,
-                )
-            ],
-        )
-        assert feed.latest_pub_date == now
-
-    def test_multiple_pub_dates(self):
-        now = timezone.now()
-
-        feed = rss_parser.Feed(
-            title="test",
-            language="en",
-            items=[
-                rss_parser.Item(
-                    title="test 1",
-                    pub_date=now,
-                    media_url="",
-                    media_type="audio/mpeg",
-                    guid=uuid.uuid4().hex,
-                ),
-                rss_parser.Item(
-                    title="test 2",
-                    pub_date=now - timedelta(days=3),
-                    media_url="",
-                    media_type="audio/mpeg",
-                    guid=uuid.uuid4().hex,
-                ),
-            ],
-        )
-        assert feed.latest_pub_date == now
 
 
 class TestRssParser:

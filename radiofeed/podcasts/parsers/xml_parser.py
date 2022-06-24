@@ -41,7 +41,13 @@ class XPath:
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
-    def __call__(self, *paths: str) -> Generator[str, None, None]:
+    def first(self, *paths: str, default: str = "") -> str:
+        try:
+            return next(self.iter(*paths))
+        except StopIteration:
+            return default
+
+    def iter(self, *paths: str) -> Generator[str, None, None]:
 
         try:
             for path in paths:
