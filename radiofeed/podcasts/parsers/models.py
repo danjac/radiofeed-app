@@ -240,9 +240,7 @@ def int_or_none(value: Any) -> int | None:
     return None
 
 
-def pub_date(inst: Any, attr: attrs.Attribute, value: datetime | None) -> None:
-    if value is None:
-        raise ValueError("pub_date cannot be None")
+def pub_date(inst: Any, attr: attrs.Attribute, value: datetime) -> None:
     if value > timezone.now():
         raise ValueError("pub_date cannot be in future")
 
@@ -258,11 +256,10 @@ def min_len(length: int) -> Callable:
 
 
 def url(inst: Any, attr: attrs.Attribute, value: str | None) -> None:
-    if value:
-        try:
-            _url_validator(value)
-        except ValidationError as e:
-            raise ValueError from e
+    try:
+        _url_validator(value)
+    except ValidationError as e:
+        raise ValueError from e
 
 
 def is_complete(value: str | None) -> bool:
@@ -316,7 +313,8 @@ class Item:
     title: str = attrs.field(validator=min_len(1))
 
     pub_date: datetime = attrs.field(
-        converter=date_parser.parse_date, validator=pub_date
+        converter=date_parser.parse_date,
+        validator=[attrs.validators.instance_of(datetime), pub_date],
     )
 
     media_url: str = attrs.field(validator=url)
