@@ -4,8 +4,6 @@ import functools
 import hashlib
 import http
 
-from typing import Generator
-
 import attrs
 import requests
 
@@ -16,7 +14,6 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
-from radiofeed.podcasts.parsers.models import Feed, Item
 from radiofeed.podcasts.utils import batcher, get_user_agent
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -39,23 +36,18 @@ class DuplicateFeed(requests.RequestException):
 
 
 class FeedUpdater:
-    def __init__(self, podcast: Podcast):
+    def __init__(self, podcast):
         self.podcast = podcast
 
     @transaction.atomic
-    def update(self) -> bool:
+    def update(self):
         try:
             return self.handle_success(*self.parse_rss())
 
         except Exception as e:
             return self.handle_failure(e)
 
-    def handle_success(
-        self,
-        response: requests.Response,
-        feed: Feed,
-        content_hash: str,
-    ) -> bool:
+    def handle_success(self, response, feed, content_hash):
 
         # taxonomy
         categories_dct = get_categories_dict()
@@ -99,13 +91,13 @@ class FeedUpdater:
 
         return True
 
-    def handle_failure(self, e: Exception) -> bool:
+    def handle_failure(self, exc):
         try:
-            http_status = e.response.status_code  # type: ignore
+            http_status = exc.response.status_code  # type: ignore
         except AttributeError:
             http_status = None
 
-        match e:
+        match exc:
             case NotModified():
                 active = True
             case requests.HTTPError():
@@ -131,9 +123,7 @@ class FeedUpdater:
             **fields,
         )
 
-    def parse_rss(
-        self,
-    ) -> tuple[requests.Response, Feed, str]:
+    def parse_rss(self):
 
         response = requests.get(
             self.podcast.rss,
@@ -170,7 +160,7 @@ class FeedUpdater:
 
         return response, rss_parser.parse_rss(response.content), content_hash
 
-    def sync_episodes(self, feed: Feed, batch_size: int = 100) -> None:
+    def sync_episodes(self, feed, batch_size=100):
         """Remove any episodes no longer in feed, update any current and
         add new"""
 
@@ -210,9 +200,7 @@ class FeedUpdater:
         for batch in batcher(self.episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
-    def episodes_for_update(
-        self, feed: Feed, guids: dict[str, int]
-    ) -> Generator[Episode, None, None]:
+    def episodes_for_update(self, feed, guids):
 
         episode_ids = set()
         for item in filter(lambda item: item.guid in guids, feed.items):
@@ -220,21 +208,19 @@ class FeedUpdater:
                 yield self.make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
-    def episodes_for_insert(
-        self, feed: Feed, guids: dict[str, int]
-    ) -> Generator[Episode, None, None]:
+    def episodes_for_insert(self, feed, guids):
 
         for item in filter(lambda item: item.guid not in guids, feed.items):
             yield self.make_episode(item)
 
-    def make_episode(self, item: Item, episode_id: int | None = None) -> Episode:
+    def make_episode(self, item, episode_id=None):
         return Episode(
             pk=episode_id,
             podcast=self.podcast,
             **attrs.asdict(item),
         )
 
-    def extract_text(self, feed: Feed, categories: list[Category]) -> str:
+    def extract_text(self, feed, categories):
         text = " ".join(
             value
             for value in [
@@ -249,7 +235,7 @@ class FeedUpdater:
         )
         return " ".join(text_parser.extract_keywords(self.podcast.language, text))
 
-    def get_feed_headers(self) -> dict[str, str]:
+    def get_feed_headers(self):
         headers = {
             "Accept": ACCEPT_HEADER,
             "User-Agent": get_user_agent(),
@@ -263,9 +249,9 @@ class FeedUpdater:
 
 
 @functools.lru_cache
-def get_categories_dict() -> dict[str, Category]:
+def get_categories_dict():
     return Category.objects.in_bulk(field_name="name")
 
 
-def make_content_hash(content: bytes) -> str:
+def make_content_hash(content):
     return hashlib.sha256(content).hexdigest()

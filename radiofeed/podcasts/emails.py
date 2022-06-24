@@ -3,14 +3,9 @@ from __future__ import annotations
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.emails import send_user_notification_email
-from radiofeed.users.models import User
 
 
-def send_recommendations_email(
-    user: User,
-    min_podcasts: int = 2,
-    max_podcasts: int = 3,
-) -> bool:
+def send_recommendations_email(user, min_podcasts=2, max_podcasts=3):
 
     podcast_ids: set[int] = (
         set(
