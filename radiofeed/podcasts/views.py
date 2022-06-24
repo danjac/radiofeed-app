@@ -6,8 +6,8 @@ import requests
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.db.models import Exists, OuterRef
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -23,7 +23,7 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscri
 
 
 @require_http_methods(["GET"])
-def index(request: HttpRequest) -> HttpResponse:
+def index(request):
 
     subscribed = (
         set(request.user.subscription_set.values_list("podcast", flat=True))
@@ -55,7 +55,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def search_podcasts(request: HttpRequest) -> HttpResponse:
+def search_podcasts(request):
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
@@ -78,7 +78,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
-def search_itunes(request: HttpRequest) -> HttpResponse:
+def search_itunes(request):
 
     try:
         feeds = itunes.search_cached(request.search.value) if request.search else []
@@ -97,7 +97,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def latest_episode(request: HttpRequest, podcast_id: int, slug: str) -> HttpResponse:
+def latest_episode(request, podcast_id, slug):
 
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
@@ -111,11 +111,11 @@ def latest_episode(request: HttpRequest, podcast_id: int, slug: str) -> HttpResp
 
 @require_http_methods(["GET"])
 def similar(
-    request: HttpRequest,
-    podcast_id: int,
+    request,
+    podcast_id,
     slug: str | None = None,
     limit: int = 12,
-) -> HttpResponse:
+):
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -137,9 +137,7 @@ def similar(
 
 
 @require_http_methods(["GET"])
-def podcast_detail(
-    request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+def podcast_detail(request, podcast_id, slug=None):
     podcast = get_podcast_or_404(podcast_id)
 
     return TemplateResponse(
@@ -156,9 +154,7 @@ def podcast_detail(
 
 
 @require_http_methods(["GET"])
-def episodes(
-    request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+def episodes(request, podcast_id, slug: str = None):
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -190,7 +186,7 @@ def episodes(
 
 
 @require_http_methods(["GET"])
-def category_list(request: HttpRequest) -> HttpResponse:
+def category_list(request):
 
     categories = (
         Category.objects.annotate(
@@ -209,9 +205,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def category_detail(
-    request: HttpRequest, category_id: int, slug: str | None = None
-) -> HttpResponse:
+def category_detail(request, category_id, slug=None):
 
     category = get_object_or_404(Category, pk=category_id)
     podcasts = get_podcasts().filter(categories=category)
@@ -236,7 +230,7 @@ def category_detail(
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def subscribe(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -251,7 +245,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def unsubscribe(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -261,17 +255,15 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return render_subscribe_buttons(request, podcast, False)
 
 
-def get_podcasts() -> QuerySet:
+def get_podcasts():
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def get_podcast_or_404(podcast_id: int) -> Podcast:
+def get_podcast_or_404(podcast_id) -> Podcast:
     return get_object_or_404(get_podcasts(), pk=podcast_id)
 
 
-def get_podcast_detail_context(
-    request: HttpRequest, podcast: Podcast, extra_context: dict | None = None
-) -> dict:
+def get_podcast_detail_context(request, podcast, extra_context=None):
 
     return {
         "podcast": podcast,
@@ -280,9 +272,7 @@ def get_podcast_detail_context(
     } | (extra_context or {})
 
 
-def render_subscribe_buttons(
-    request: HttpRequest, podcast: Podcast, is_subscribed: bool
-) -> TemplateResponse:
+def render_subscribe_buttons(request, podcast, is_subscribed):
     return TemplateResponse(
         request,
         "podcasts/buttons/subscribe.html",
