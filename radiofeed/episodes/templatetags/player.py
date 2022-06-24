@@ -6,7 +6,7 @@ register = template.Library()
 
 
 @register.inclusion_tag("episodes/player.html", takes_context=True)
-def audio_player(context: dict) -> dict:
+def audio_player(context):
     request = context["request"]
 
     if (
