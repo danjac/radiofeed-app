@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
@@ -14,9 +14,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 @require_http_methods(["GET", "POST"])
 @login_required
-def user_preferences(
-    request: HttpRequest, target: str = "preferences-form"
-) -> HttpResponse:
+def user_preferences(request, target="preferences-form"):
 
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
@@ -40,7 +38,7 @@ def user_preferences(
 
 @require_http_methods(["GET"])
 @login_required
-def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def import_export_podcast_feeds(request):
     return TemplateResponse(
         request,
         "account/import_export_podcast_feeds.html",
@@ -53,9 +51,7 @@ def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @login_required
-def import_podcast_feeds(
-    request: HttpRequest, target: str = "opml-import-form"
-) -> HttpResponse:
+def import_podcast_feeds(request, target="opml-import-form"):
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
 
@@ -96,7 +92,7 @@ def import_podcast_feeds(
 
 @require_http_methods(["POST"])
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def export_podcast_feeds(request):
     podcasts = (
         Podcast.objects.filter(
             subscription__user=request.user,
@@ -118,7 +114,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @login_required
-def user_stats(request: HttpRequest) -> HttpResponse:
+def user_stats(request):
 
     logs = AudioLog.objects.filter(user=request.user)
 
@@ -137,7 +133,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET", "POST"])
 @login_required
-def delete_account(request: HttpRequest) -> HttpResponse:
+def delete_account(request):
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)
