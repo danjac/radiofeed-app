@@ -33,9 +33,7 @@ def parse_feed(channel):
             language=xpath.first("language/text()"),
             explicit=xpath.first("itunes:explicit/text()"),
             cover_url=xpath.first(
-                "itunes:image/@href",
-                "image/url/text()",
-                default=None,
+                "itunes:image/@href", "image/url/text()", default=None
             ),
             link=xpath.first("link/text()", default=None),
             funding_url=xpath.first("podcast:funding/@url", default=None),
@@ -71,17 +69,13 @@ def parse_item(item):
             media_url=xpath.first("enclosure//@url", "media:content//@url"),
             media_type=xpath.first("enclosure//@type", "media:content//@type"),
             length=xpath.first(
-                "enclosure//@length",
-                "media:content//@fileSize",
-                default=None,
+                "enclosure//@length", "media:content//@fileSize", default=None
             ),
             episode=xpath.first("itunes:episode/text()", default=None),
             season=xpath.first("itunes:season/text()", default=None),
             episode_type=xpath.first("itunes:episodetype/text()", default="full"),
             description=xpath.first(
-                "content:encoded/text()",
-                "description/text()",
-                "itunes:summary/text()",
+                "content:encoded/text()", "description/text()", "itunes:summary/text()"
             ),
             keywords=" ".join(xpath.iter("category/text()")),
         )
