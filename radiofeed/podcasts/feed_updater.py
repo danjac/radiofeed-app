@@ -84,7 +84,7 @@ class FeedUpdater:
         self.podcast.categories.set(categories)  # type: ignore
 
         # episodes
-        self.sync_episodes(feed)
+        self.save_episodes(feed)
 
         return True
 
@@ -111,14 +111,6 @@ class FeedUpdater:
 
         self.save_podcast(active=active, http_status=http_status)
         return False
-
-    def save_podcast(self, **fields):
-        now = timezone.now()
-        Podcast.objects.filter(pk=self.podcast.id).update(
-            updated=now,
-            parsed=now,
-            **fields,
-        )
 
     def parse_rss(self):
 
@@ -157,7 +149,15 @@ class FeedUpdater:
 
         return response, rss_parser.parse_rss(response.content), content_hash
 
-    def sync_episodes(self, feed, batch_size=100):
+    def save_podcast(self, **fields):
+        now = timezone.now()
+        Podcast.objects.filter(pk=self.podcast.id).update(
+            updated=now,
+            parsed=now,
+            **fields,
+        )
+
+    def save_episodes(self, feed, batch_size=100):
         """Remove any episodes no longer in feed, update any current and
         add new"""
 
