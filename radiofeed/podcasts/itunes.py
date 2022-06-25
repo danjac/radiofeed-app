@@ -50,7 +50,7 @@ def crawl(batch_size=100):
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for url in get_genre_urls():
-        for batch in batcher(get_podcast_ids(url), batch_size):
+        for batch in batcher(parse_podcast_ids(url), batch_size):
             yield from parse_feeds(
                 get_response(
                     "https://itunes.apple.com/lookup",
@@ -132,7 +132,8 @@ def get_genre_urls():
     )
 
 
-def get_podcast_ids(url):
+def parse_podcast_ids(url):
+    """Parse iTunes podcast IDs from provided URL"""
     return filter(
         None,
         map(
@@ -146,6 +147,7 @@ def get_podcast_ids(url):
 
 
 def parse_urls(url, startswith):
+    """Fetches all urls from a page starting with a given string"""
     return filter(
         lambda href: href and href.startswith(startswith),
         map(
