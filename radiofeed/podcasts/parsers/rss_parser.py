@@ -3,7 +3,7 @@ import lxml.etree
 from radiofeed.podcasts.parsers import xml_parser
 from radiofeed.podcasts.parsers.models import Feed, Item
 
-NAMESPACES: dict[str, str] = {
+NAMESPACES = {
     "atom": "http://www.w3.org/2005/Atom",
     "content": "http://purl.org/rss/1.0/modules/content/",
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
