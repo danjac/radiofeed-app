@@ -120,6 +120,8 @@ class Feed:
         validator=validators.not_empty,
     )
 
-    @property
-    def pub_date(self):
+    pub_date: datetime | None = attrs.field()
+
+    @pub_date.default
+    def _default_pub_date(self):
         return max([item.pub_date for item in self.items])

@@ -12,6 +12,7 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import date_parser, rss_parser, text_parser
+from radiofeed.podcasts.parsers.models import Feed
 from radiofeed.podcasts.utils import batcher, get_user_agent
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -63,21 +64,19 @@ class FeedUpdater:
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=date_parser.parse_date(response.headers.get("Last-Modified")),
-            title=feed.title,
-            pub_date=feed.pub_date,
-            cover_url=feed.cover_url,
-            description=feed.description,
-            explicit=feed.explicit,
-            funding_text=feed.funding_text,
-            funding_url=feed.funding_url,
-            language=feed.language,
-            link=feed.link,
-            owner=feed.owner,
             extracted_text=self.extract_text(feed, categories),
             keywords=" ".join(
                 category
                 for category in feed.categories
                 if category not in categories_dct
+            ),
+            **attrs.asdict(
+                feed,
+                filter=attrs.filters.exclude(
+                    attrs.fields(Feed).categories,
+                    attrs.fields(Feed).complete,
+                    attrs.fields(Feed).items,
+                ),
             ),
         )
 
