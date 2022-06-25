@@ -218,6 +218,8 @@ language_code = attrs.validators.in_(LANGUAGE_CODES)
 
 audio = attrs.validators.in_(AUDIO_MIMETYPES)
 
+# ensure integer falls within PostgreSQL INTEGER range
+
 pg_integer = attrs.validators.and_(
     attrs.validators.gt(-2147483648),
     attrs.validators.lt(2147483647),
