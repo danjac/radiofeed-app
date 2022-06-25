@@ -38,11 +38,11 @@ jobs:
           virtualenvs-in-project: true
 
       - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v2
         with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+            path: ~/.cache/pypoetry/virtualenvs
+            key: poetry-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+            restore-keys: |
+              poetry-${{ runner.os }}-
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
