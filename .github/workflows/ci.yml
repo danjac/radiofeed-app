@@ -3,7 +3,7 @@ name: Run unit tests
 on: push
 
 jobs:
-  runtests:
+  tests:
     runs-on: ubuntu-latest
 
     services:
@@ -55,6 +55,5 @@ jobs:
           SECRET_KEY: seekrit
         run: |
           source .venv/bin/activate
-          python -m nltk.downloader stopwords
-          python -m nltk.downloader wordnet
+          xargs python -m nltk.downloader < nltk.txt
           pytest -x
