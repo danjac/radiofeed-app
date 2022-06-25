@@ -15,7 +15,7 @@ class UserQuerySet(models.QuerySet):
         )
 
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
     def create_user(self, username, email, password=None, **kwargs):
         user = self.model(
             username=username, email=self.normalize_email(email), **kwargs

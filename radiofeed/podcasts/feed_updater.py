@@ -81,7 +81,7 @@ class FeedUpdater:
         )
 
         # categories
-        self.podcast.categories.set(categories)  # type: ignore
+        self.podcast.categories.set(categories)
 
         # episodes
         self.save_episodes(feed)
@@ -90,7 +90,7 @@ class FeedUpdater:
 
     def handle_failure(self, exc):
         try:
-            http_status = exc.response.status_code  # type: ignore
+            http_status = exc.response.status_code
         except AttributeError:
             http_status = None
 

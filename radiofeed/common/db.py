@@ -10,11 +10,11 @@ from django.utils.encoding import force_str
 class FastCountMixin:
     def count(self):
         if self._query.group_by or self._query.where or self._query.distinct:
-            return super().count()  # type: ignore
+            return super().count()
         if (count := get_reltuple_count(self.db, self.model._meta.db_table)) >= 1000:
             return count
         # exact count for small tables
-        return super().count()  # type: ignore
+        return super().count()
 
 
 class SearchMixin:

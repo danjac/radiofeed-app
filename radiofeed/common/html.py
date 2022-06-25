@@ -74,7 +74,7 @@ def clean(value):
                 attributes=ALLOWED_ATTRS,
                 strip=True,
             ),
-            [linkify_callback],  # type: ignore
+            [linkify_callback],
         )
         if value
         else ""
