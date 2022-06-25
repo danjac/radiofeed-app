@@ -206,7 +206,7 @@ def category_list(request):
 def category_detail(request, category_id, slug=None):
 
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = get_podcasts().filter(categories=category)
+    podcasts = get_podcasts().filter(categories=category).distinct()
 
     podcasts = (
         podcasts.search(request.search.value).order_by(
