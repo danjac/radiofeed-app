@@ -106,12 +106,6 @@ def get_response(url, data=None):
     return response
 
 
-def parse_podcast_id(url):
-    if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
-        return match.group("id")
-    return None
-
-
 def parse_results(data):
     for result in data.get("results", []):
         try:
@@ -155,3 +149,9 @@ def parse_urls(url, startswith):
             xml_parser.iterparse(get_response(url).content, "a"),
         ),
     )
+
+
+def parse_podcast_id(url):
+    if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
+        return match.group("id")
+    return None
