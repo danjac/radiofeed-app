@@ -5,7 +5,6 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
@@ -19,8 +18,6 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
 from radiofeed.common.html import strip_html
-from radiofeed.podcasts.models import Podcast
-from radiofeed.users.models import User
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
@@ -68,7 +65,7 @@ EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
+    podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
     guid = models.TextField()
 
@@ -81,17 +78,17 @@ class Episode(models.Model):
     link = models.URLField(max_length=2083, null=True, blank=True)
 
     episode_type = models.CharField(max_length=30, default="full")
-    episode: int = models.IntegerField(null=True, blank=True)
-    season: int = models.IntegerField(null=True, blank=True)
+    episode = models.IntegerField(null=True, blank=True)
+    season = models.IntegerField(null=True, blank=True)
 
     cover_url = models.URLField(max_length=2083, null=True, blank=True)
 
     media_url = models.URLField(max_length=2083)
     media_type = models.CharField(max_length=60)
-    length: int = models.BigIntegerField(null=True, blank=True)
+    length = models.BigIntegerField(null=True, blank=True)
 
     duration = models.CharField(max_length=30, blank=True)
-    explicit: bool = models.BooleanField(default=False)
+    explicit = models.BooleanField(default=False)
 
     search_vector = SearchVectorField(null=True, editable=False)
 
@@ -135,7 +132,7 @@ class Episode(models.Model):
     def get_cover_url(self):
         return self.cover_url or self.podcast.cover_url
 
-    def is_bookmarked(self, user: User | AnonymousUser) -> bool:
+    def is_bookmarked(self, user) -> bool:
         if user.is_anonymous:
             return False
         return Bookmark.objects.filter(user=user, episode=self).exists()
@@ -225,7 +222,7 @@ class Episode(models.Model):
 
 
 class BookmarkQuerySet(SearchMixin, models.QuerySet):
-    search_vectors: list[tuple[str, str]] = [
+    search_vectors = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -236,8 +233,8 @@ BookmarkManager = models.Manager.from_queryset(BookmarkQuerySet)
 
 class Bookmark(TimeStampedModel):
 
-    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
+    userg = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
     objects = BookmarkManager()
 
@@ -255,7 +252,7 @@ class Bookmark(TimeStampedModel):
 
 
 class AudioLogQuerySet(SearchMixin, models.QuerySet):
-    search_vectors: list[tuple[str, str]] = [
+    search_vectors = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -266,11 +263,11 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 class AudioLog(TimeStampedModel):
 
-    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
     listened: datetime = models.DateTimeField()
-    current_time: int = models.IntegerField(default=0)
+    current_time = models.IntegerField(default=0)
 
     objects = AudioLogManager()
 
