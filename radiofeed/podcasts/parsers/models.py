@@ -84,6 +84,8 @@ class Feed:
 
     title: str = attrs.field(validator=validators.not_empty)
 
+    pub_date: datetime | None = attrs.field()
+
     owner: str = ""
     description: str = ""
 
@@ -119,8 +121,6 @@ class Feed:
         default=attrs.Factory(list),
         validator=validators.not_empty,
     )
-
-    pub_date: datetime | None = attrs.field()
 
     @pub_date.default
     def _default_pub_date(self):
