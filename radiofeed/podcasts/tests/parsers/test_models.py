@@ -32,7 +32,7 @@ class TestItem:
 
 
 class TestFeed:
-    def test_single_pub_date(self):
+    def test_defaults(self):
         now = timezone.now()
         feed = Feed(
             title="test",
@@ -46,7 +46,14 @@ class TestFeed:
                 )
             ],
         )
+
+        assert len(feed.items) == 1
+
         assert feed.pub_date == now
+        assert feed.owner == ""
+        assert feed.language == "en"
+        assert feed.categories == []
+        assert feed.cover_url is None
 
     def test_multiple_pub_dates(self):
         now = timezone.now()
@@ -70,4 +77,5 @@ class TestFeed:
                 ),
             ],
         )
+        assert len(feed.items) == 2
         assert feed.pub_date == now
