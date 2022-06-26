@@ -1,6 +1,3 @@
-from datetime import datetime
-from decimal import Decimal
-
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
@@ -14,7 +11,6 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
 from radiofeed.common.html import strip_html
-from radiofeed.users.models import User
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -67,13 +63,13 @@ class Podcast(models.Model):
     title = models.TextField()
 
     # latest episode pub date from RSS feed
-    pub_date: datetime = models.DateTimeField(null=True, blank=True)
+    pub_date = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
-    parsed: datetime = models.DateTimeField(null=True, blank=True)
+    parsed = models.DateTimeField(null=True, blank=True)
 
     # Last-Modified header from RSS feed
-    modified: datetime = models.DateTimeField(null=True, blank=True)
+    modified = models.DateTimeField(null=True, blank=True)
 
     # hash of last polled content
     content_hash = models.CharField(max_length=64, null=True, blank=True)
@@ -94,8 +90,8 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 
-    created: datetime = models.DateTimeField(auto_now_add=True)
-    updated: datetime = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     explicit = models.BooleanField(default=False)
     promoted = models.BooleanField(default=False)
@@ -162,8 +158,8 @@ class Podcast(models.Model):
 
 class Subscription(TimeStampedModel):
 
-    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -186,13 +182,13 @@ RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
 
 class Recommendation(models.Model):
 
-    podcast: Podcast = models.ForeignKey(
+    podcast = models.ForeignKey(
         "podcasts.Podcast",
         related_name="+",
         on_delete=models.CASCADE,
     )
 
-    recommended: Podcast = models.ForeignKey(
+    recommended = models.ForeignKey(
         "podcasts.Podcast",
         related_name="+",
         on_delete=models.CASCADE,
@@ -200,7 +196,7 @@ class Recommendation(models.Model):
 
     frequency = models.PositiveIntegerField(default=0)
 
-    similarity: Decimal = models.DecimalField(
+    similarity = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 
