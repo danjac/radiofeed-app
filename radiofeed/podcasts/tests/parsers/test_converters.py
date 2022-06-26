@@ -29,6 +29,7 @@ class TestDuration:
     @pytest.mark.parametrize(
         "value,expected",
         [
+            (None, ""),
             ("", ""),
             ("invalid", ""),
             ("300", "300"),

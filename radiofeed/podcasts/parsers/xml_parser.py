@@ -32,7 +32,7 @@ class XPath:
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
-    def first(self, *paths, default=""):
+    def first(self, *paths, default=None):
         try:
             return next(self.iter(*paths))
         except StopIteration:
