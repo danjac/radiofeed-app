@@ -72,11 +72,22 @@ class Item:
         default=None,
     )
 
-    duration: str = attrs.field(converter=converters.duration, default="")
+    duration: str = attrs.field(converter=converters.duration, default=None)
 
-    episode_type: str = "full"
-    description: str = ""
-    keywords: str = ""
+    episode_type: str = attrs.field(
+        converter=attrs.converters.default_if_none("full"),
+        default=None,
+    )
+
+    description: str = attrs.field(
+        converter=attrs.converters.default_if_none(""),
+        default=None,
+    )
+
+    keywords: str = attrs.field(
+        converter=attrs.converters.default_if_none(""),
+        default=None,
+    )
 
 
 @attrs.define(kw_only=True, frozen=True)
@@ -84,15 +95,19 @@ class Feed:
 
     title: str = attrs.field(validator=validators.not_empty)
 
-    pub_date: datetime | None = attrs.field()
-
-    owner: str = ""
-    description: str = ""
+    owner: str = attrs.field(
+        converter=attrs.converters.default_if_none(""),
+        default=None,
+    )
+    description: str = attrs.field(
+        converter=attrs.converters.default_if_none(""),
+        default=None,
+    )
 
     language: str = attrs.field(
         converter=converters.language_code,
         validator=validators.language_code,
-        default="en",
+        default=None,
     )
 
     link: str | None = attrs.field(
@@ -108,7 +123,9 @@ class Feed:
     complete: bool = attrs.field(converter=converters.complete, default=False)
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
-    funding_text: str = ""
+    funding_text: str = attrs.field(
+        converter=attrs.converters.default_if_none(""), default=None
+    )
 
     funding_url: str | None = attrs.field(
         validator=attrs.validators.optional(validators.url),
@@ -121,6 +138,8 @@ class Feed:
         default=attrs.Factory(list),
         validator=validators.not_empty,
     )
+
+    pub_date: datetime | None = attrs.field()
 
     @pub_date.default
     def _default_pub_date(self):

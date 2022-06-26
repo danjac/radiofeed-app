@@ -7,6 +7,30 @@ from django.utils import timezone
 from radiofeed.podcasts.parsers.models import Feed, Item
 
 
+class TestItem:
+    def test_defaults(self):
+
+        item = Item(
+            title="test",
+            pub_date=timezone.now(),
+            media_url="https://example.com",
+            media_type="audio/mpeg",
+            guid=uuid.uuid4().hex,
+            episode_type=None,
+            description=None,
+        )
+
+        assert item.explicit is False
+        assert item.length is None
+        assert item.cover_url is None
+        assert item.episode is None
+
+        assert item.episode_type == "full"
+        assert item.description == ""
+        assert item.keywords == ""
+        assert item.duration == ""
+
+
 class TestFeed:
     def test_single_pub_date(self):
         now = timezone.now()

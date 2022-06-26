@@ -41,17 +41,14 @@ def parse_feed(channel):
             funding_url=xpath.first("podcast:funding/@url"),
             funding_text=xpath.first(
                 "podcast:funding/text()",
-                default="",
             ),
             description=xpath.first(
                 "description/text()",
                 "itunes:summary/text()",
-                default="",
             ),
             owner=xpath.first(
                 "itunes:author/text()",
                 "itunes:owner/itunes:name/text()",
-                default="",
             ),
             categories=list(xpath.iter("//itunes:category/@text")),
             items=list(parse_items(channel)),
@@ -93,15 +90,11 @@ def parse_item(item):
             ),
             episode=xpath.first("itunes:episode/text()"),
             season=xpath.first("itunes:season/text()"),
-            episode_type=xpath.first(
-                "itunes:episodetype/text()",
-                default="full",
-            ),
+            episode_type=xpath.first("itunes:episodetype/text()"),
             description=xpath.first(
                 "content:encoded/text()",
                 "description/text()",
                 "itunes:summary/text()",
-                default="",
             ),
             keywords=" ".join(xpath.iter("category/text()")),
         )

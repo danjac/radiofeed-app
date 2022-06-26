@@ -49,6 +49,7 @@ class TestLanguageCode:
             ("fr", "fr"),
             ("fr-CA", "fr"),
             ("", "en"),
+            (None, "en"),
         ],
     )
     def test_language_code(self, value, expected):
