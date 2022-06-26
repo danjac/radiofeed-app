@@ -13,6 +13,8 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers import xml_parser
 from radiofeed.podcasts.utils import batcher, get_user_agent
 
+BATCH_SIZE = 100
+
 RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
 
 LOCATIONS = (
@@ -55,25 +57,30 @@ def search(search_term):
     )
 
 
-def crawl(batch_size=100):
+def crawl(batch_size=BATCH_SIZE):
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for location in LOCATIONS:
         for url in get_genre_urls(location):
-            for batch in batcher(parse_podcast_ids(url, location), batch_size):
-                yield from parse_feeds(
-                    get_response(
-                        "https://itunes.apple.com/lookup",
-                        {
-                            "id": ",".join(batch),
-                            "entity": "podcast",
-                        },
-                    ).json(),
-                    batch_size,
-                )
+            yield from parse_genre(url, location, batch_size)
 
 
-def parse_feeds(data, batch_size=100):
+def parse_genre(url, location, batch_size=BATCH_SIZE):
+
+    for batch in batcher(parse_podcast_ids(url, location), batch_size):
+        yield from parse_feeds(
+            get_response(
+                "https://itunes.apple.com/lookup",
+                {
+                    "id": ",".join(batch),
+                    "entity": "podcast",
+                },
+            ).json(),
+            batch_size,
+        )
+
+
+def parse_feeds(data, batch_size=BATCH_SIZE):
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
