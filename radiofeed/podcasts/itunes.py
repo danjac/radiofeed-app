@@ -15,6 +15,15 @@ from radiofeed.podcasts.utils import batcher, get_user_agent
 
 RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
 
+LOCATIONS = (
+    "de",
+    "fi",
+    "fr",
+    "gb",
+    "se",
+    "us",
+)
+
 
 @dataclasses.dataclass
 class Feed:
@@ -49,18 +58,19 @@ def search(search_term):
 def crawl(batch_size=100):
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
-    for url in get_genre_urls():
-        for batch in batcher(parse_podcast_ids(url), batch_size):
-            yield from parse_feeds(
-                get_response(
-                    "https://itunes.apple.com/lookup",
-                    {
-                        "id": ",".join(batch),
-                        "entity": "podcast",
-                    },
-                ).json(),
-                batch_size,
-            )
+    for location in LOCATIONS:
+        for url in get_genre_urls(location):
+            for batch in batcher(parse_podcast_ids(url, location), batch_size):
+                yield from parse_feeds(
+                    get_response(
+                        "https://itunes.apple.com/lookup",
+                        {
+                            "id": ",".join(batch),
+                            "entity": "podcast",
+                        },
+                    ).json(),
+                    batch_size,
+                )
 
 
 def parse_feeds(data, batch_size=100):
@@ -119,14 +129,14 @@ def parse_results(data):
             continue
 
 
-def get_genre_urls():
+def get_genre_urls(location):
     return parse_urls(
-        "https://itunes.apple.com/us/genre/podcasts/id26?mt=2",
-        "https://podcasts.apple.com/us/genre/podcasts",
+        f"https://itunes.apple.com/{location}/genre/podcasts/id26",
+        f"https://podcasts.apple.com/{location}/genre/podcasts",
     )
 
 
-def parse_podcast_ids(url):
+def parse_podcast_ids(url, location):
     """Parse iTunes podcast IDs from provided URL"""
     return filter(
         None,
@@ -134,7 +144,7 @@ def parse_podcast_ids(url):
             parse_podcast_id,
             parse_urls(
                 url,
-                "https://podcasts.apple.com/us/podcast/",
+                f"https://podcasts.apple.com/{location}/podcast/",
             ),
         ),
     )

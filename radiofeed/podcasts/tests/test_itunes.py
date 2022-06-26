@@ -63,14 +63,15 @@ class TestCrawl:
         def side_effect(*args, **kwargs):
 
             url = args[0]
+            print("URL", url)
 
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
-            if url.startswith("https://itunes.apple.com/us/genre/podcasts/id26"):
+            if url.endswith("/genre/podcasts/id26"):
                 return MockResponse(mock_file="podcasts.html")
 
-            elif url.startswith("https://podcasts.apple.com/us/genre/podcasts"):
+            if "/genre/podcasts" in url:
                 return MockResponse(mock_file="genre.html")
 
             return MockResponse()
