@@ -112,7 +112,10 @@ class Feed:
     )
 
     language: str = attrs.field(
-        converter=converters.language_code,
+        converter=attrs.converters.pipe(
+            attrs.converters.default_if_none("en"),
+            converters.language_code,
+        ),
         validator=validators.language_code,
         default=None,
     )
