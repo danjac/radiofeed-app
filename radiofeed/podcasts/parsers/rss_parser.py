@@ -93,7 +93,10 @@ def parse_item(item):
             ),
             episode=xpath.first("itunes:episode/text()"),
             season=xpath.first("itunes:season/text()"),
-            episode_type=xpath.first("itunes:episodetype/text()", default="full"),
+            episode_type=xpath.first(
+                "itunes:episodetype/text()",
+                default="full",
+            ),
             description=xpath.first(
                 "content:encoded/text()",
                 "description/text()",
