@@ -31,6 +31,7 @@ def parse_feed(channel):
         return Feed(
             title=xpath.first("title/text()"),
             language=xpath.first("language/text()"),
+            complete=xpath.first("itunes:complete/text()"),
             explicit=xpath.first("itunes:explicit/text()"),
             cover_url=xpath.first(
                 "itunes:image/@href",
@@ -42,7 +43,6 @@ def parse_feed(channel):
                 "podcast:funding/text()",
                 default="",
             ),
-            complete=xpath.first("itunes:complete/text()"),
             description=xpath.first(
                 "description/text()",
                 "itunes:summary/text()",
