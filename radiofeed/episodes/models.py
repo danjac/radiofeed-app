@@ -233,7 +233,7 @@ BookmarkManager = models.Manager.from_queryset(BookmarkQuerySet)
 
 class Bookmark(TimeStampedModel):
 
-    userg = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
     objects = BookmarkManager()
