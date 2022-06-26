@@ -8,8 +8,15 @@ from radiofeed.podcasts.parsers import converters, validators
 @attrs.define(kw_only=True, frozen=True)
 class Outline:
 
-    title: str = ""
-    text: str = ""
+    title: str = attrs.field(
+        converter=attrs.converters.default_if_none(""),
+        default=None,
+    )
+
+    text: str = attrs.field(
+        converter=attrs.converters.default_if_none(""),
+        default=None,
+    )
 
     rss: str = attrs.field(validator=validators.url)
 
