@@ -57,17 +57,17 @@ def search(search_term):
     )
 
 
-def crawl(batch_size=BATCH_SIZE):
+def crawl():
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for location in LOCATIONS:
         for url in get_genre_urls(location):
-            yield from parse_genre(url, location, batch_size)
+            yield from parse_genre(url, location)
 
 
-def parse_genre(url, location, batch_size=BATCH_SIZE):
+def parse_genre(url, location):
 
-    for batch in batcher(parse_podcast_ids(url, location), batch_size):
+    for batch in batcher(parse_podcast_ids(url, location), BATCH_SIZE):
         yield from parse_feeds(
             get_response(
                 "https://itunes.apple.com/lookup",
@@ -76,16 +76,15 @@ def parse_genre(url, location, batch_size=BATCH_SIZE):
                     "entity": "podcast",
                 },
             ).json(),
-            batch_size,
         )
 
 
-def parse_feeds(data, batch_size=BATCH_SIZE):
+def parse_feeds(data):
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
     """
-    for batch in batcher(parse_results(data), batch_size):
+    for batch in batcher(parse_results(data), BATCH_SIZE):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
