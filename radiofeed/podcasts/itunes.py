@@ -61,30 +61,25 @@ def crawl():
     """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for location in LOCATIONS:
-        for url in get_genre_urls(location):
-            yield from parse_genre(url, location)
+        for url in parse_genre_urls(location):
+            for batch in batcher(parse_podcast_ids(url, location), BATCH_SIZE):
+                yield from parse_feeds(
+                    get_response(
+                        "https://itunes.apple.com/lookup",
+                        {
+                            "id": ",".join(batch),
+                            "entity": "podcast",
+                        },
+                    ).json(),
+                )
 
 
-def parse_genre(url, location):
-
-    for batch in batcher(parse_podcast_ids(url, location), BATCH_SIZE):
-        yield from parse_feeds(
-            get_response(
-                "https://itunes.apple.com/lookup",
-                {
-                    "id": ",".join(batch),
-                    "entity": "podcast",
-                },
-            ).json(),
-        )
-
-
-def parse_feeds(data):
+def parse_feeds(json_data):
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
     """
-    for batch in batcher(parse_results(data), BATCH_SIZE):
+    for batch in batcher(build_feeds_from_json(json_data), BATCH_SIZE):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
@@ -122,23 +117,16 @@ def get_response(url, data=None):
     return response
 
 
-def parse_results(data):
-    for result in data.get("results", []):
-        try:
-            yield Feed(
-                rss=result["feedUrl"],
-                url=result["collectionViewUrl"],
-                title=result["collectionName"],
-                image=result["artworkUrl600"],
-            )
-        except KeyError:
-            continue
-
-
-def get_genre_urls(location):
-    return parse_urls(
-        f"https://itunes.apple.com/{location}/genre/podcasts/id26",
-        f"https://podcasts.apple.com/{location}/genre/podcasts",
+def parse_genre_urls(location):
+    return filter(
+        lambda href: href.startswith(
+            f"https://podcasts.apple.com/{location}/genre/podcasts"
+        ),
+        parse_urls(
+            get_response(
+                f"https://itunes.apple.com/{location}/genre/podcasts/id26"
+            ).content
+        ),
     )
 
 
@@ -148,21 +136,12 @@ def parse_podcast_ids(url, location):
         None,
         map(
             parse_podcast_id,
-            parse_urls(
-                url,
-                f"https://podcasts.apple.com/{location}/podcast/",
+            filter(
+                lambda href: href.startswith(
+                    f"https://podcasts.apple.com/{location}/podcast/"
+                ),
+                parse_urls(get_response(url).content),
             ),
-        ),
-    )
-
-
-def parse_urls(url, startswith):
-    """Fetches all urls from a page starting with a given string"""
-    return filter(
-        lambda href: href and href.startswith(startswith),
-        map(
-            lambda el: el.attrib.get("href"),
-            xml_parser.iterparse(get_response(url).content, "a"),
         ),
     )
 
@@ -171,3 +150,26 @@ def parse_podcast_id(url):
     if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
         return match.group("id")
     return None
+
+
+def parse_urls(content):
+    return filter(
+        None,
+        map(
+            lambda el: el.attrib.get("href"),
+            xml_parser.iterparse(content, "a"),
+        ),
+    )
+
+
+def build_feeds_from_json(json_data):
+    for result in json_data.get("results", []):
+        try:
+            yield Feed(
+                rss=result["feedUrl"],
+                url=result["collectionViewUrl"],
+                title=result["collectionName"],
+                image=result["artworkUrl600"],
+            )
+        except KeyError:
+            continue
