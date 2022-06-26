@@ -241,7 +241,7 @@ def subscribe(request, podcast_id):
     return render_subscribe_buttons(request, podcast, True)
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["DELETE"])
 @ajax_login_required
 def unsubscribe(request, podcast_id):
 

@@ -7,7 +7,7 @@
             {% if is_subscribed %}
                 <button class="btn btn-secondary inline-flex items-center"
                     title="Unsubscribe from this Podcast"
-                    hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
+                    hx-delete="{% url 'podcasts:unsubscribe' podcast.id %}">
                     {% include "icons/eye_slash.svg" with css_class=ICON_CSS %}
                     Unsubscribe
                 </button>

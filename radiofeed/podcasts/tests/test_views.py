@@ -266,6 +266,6 @@ class TestSubscribe:
 class TestUnsubscribe:
     def test_unsubscribe(self, client, auth_user, podcast):
         SubscriptionFactory(user=auth_user, podcast=podcast)
-        response = client.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
+        response = client.delete(reverse("podcasts:unsubscribe", args=[podcast.id]))
         assert_ok(response)
         assert not Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
