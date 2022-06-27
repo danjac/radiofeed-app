@@ -132,7 +132,7 @@ class Episode(models.Model):
     def get_cover_url(self):
         return self.cover_url or self.podcast.cover_url
 
-    def is_bookmarked(self, user) -> bool:
+    def is_bookmarked(self, user):
         if user.is_anonymous:
             return False
         return Bookmark.objects.filter(user=user, episode=self).exists()
@@ -162,7 +162,7 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def is_explicit(self) -> bool:
+    def is_explicit(self):
         return self.explicit or self.podcast.explicit
 
     def get_episode_metadata(self):
@@ -192,7 +192,7 @@ class Episode(models.Model):
     def get_media_url_ext(self):
         return pathlib.Path(self.media_url).suffix[1:]
 
-    def get_media_metadata(self) -> dict:
+    def get_media_metadata(self):
         # https://developers.google.com/web/updates/2017/02/media-session
         cover_url = self.podcast.cover_url or static("img/podcast-icon.png")
         cover_url_type, _ = mimetypes.guess_type(urlparse(cover_url).path)

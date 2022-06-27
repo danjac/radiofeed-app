@@ -283,7 +283,7 @@ def render_player(
     )
 
 
-def render_bookmark_buttons(request, episode, is_bookmarked) -> TemplateResponse:
+def render_bookmark_buttons(request, episode, is_bookmarked):
     return TemplateResponse(
         request,
         "episodes/buttons/bookmark.html",

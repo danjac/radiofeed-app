@@ -21,7 +21,7 @@ class CategoryAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(num_podcasts=Count("podcast"))
 
-    def num_podcasts(self, obj) -> int:
+    def num_podcasts(self, obj):
         return obj.num_podcasts or 0
 
 

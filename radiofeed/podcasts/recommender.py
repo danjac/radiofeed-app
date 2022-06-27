@@ -18,7 +18,7 @@ from radiofeed.podcasts.parsers.text_parser import get_stopwords
 logger = logging.getLogger(__name__)
 
 
-def recommend(since=timedelta(days=90), num_matches=12) -> None:
+def recommend(since=timedelta(days=90), num_matches=12):
 
     podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
         extracted_text="",

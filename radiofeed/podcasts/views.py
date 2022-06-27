@@ -257,7 +257,7 @@ def get_podcasts():
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def get_podcast_or_404(podcast_id) -> Podcast:
+def get_podcast_or_404(podcast_id):
     return get_object_or_404(get_podcasts(), pk=podcast_id)
 
 

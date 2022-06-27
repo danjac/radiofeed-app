@@ -158,7 +158,7 @@ def auth_redirect_url(url, redirect_url):
     )
 
 
-def build_absolute_uri(url=None, request=None) -> str:
+def build_absolute_uri(url=None, request=None):
     if request:
         return request.build_absolute_uri(url)
 

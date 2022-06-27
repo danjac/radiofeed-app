@@ -14,7 +14,7 @@ def pagination_response(
     page_size=settings.DEFAULT_PAGE_SIZE,
     param="page",
     **pagination_kwargs,
-) -> TemplateResponse:
+):
     """Renders a pagination_responsed response"""
 
     try:

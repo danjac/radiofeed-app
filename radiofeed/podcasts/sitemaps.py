@@ -1,7 +1,6 @@
 import datetime
 
 from django.contrib.sitemaps import Sitemap
-from django.db.models import QuerySet
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Category, Podcast
@@ -11,7 +10,7 @@ class CategorySitemap(Sitemap):
     changefreq = "never"
     priority = 0.3
 
-    def items(self) -> QuerySet:
+    def items(self):
         return Category.objects.order_by("name")
 
 

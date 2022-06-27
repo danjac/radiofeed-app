@@ -8,8 +8,8 @@ from radiofeed.users.models import User
 class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
-        fields: tuple[str, ...] = ("send_email_notifications",)
-        help_texts: dict[str, str] = {
+        fields = ("send_email_notifications",)
+        help_texts = {
             "send_email_notifications": "I'd like to receive notications of new content and recommendations.",
         }
 
@@ -32,7 +32,7 @@ class OpmlUploadForm(forms.Form):
         ),
     )
 
-    def parse_opml_feeds(self, limit: int = 300) -> OrderedSet:
+    def parse_opml_feeds(self, limit=300):
         self.cleaned_data["opml"].seek(0)
         try:
             feeds = [
