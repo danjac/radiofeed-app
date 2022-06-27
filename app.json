@@ -32,6 +32,10 @@
         {
           "command": "python manage.py crawl_itunes",
           "schedule": "15 3 * * *"
+        },
+        {
+          "command": "python manage.py clearsessions",
+          "schedule": "5 6 * * *"
         }
     ]
 }
