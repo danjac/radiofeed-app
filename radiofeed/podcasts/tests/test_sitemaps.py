@@ -1,9 +1,8 @@
-from radiofeed.common.asserts import assert_ok
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 
 
 class TestCategorySitemap:
-    def test_get(self, client, db):
+    def test_get(self, client, db, assert_ok):
         CategoryFactory.create_batch(12)
         resp = client.get("/sitemap-categories.xml")
         assert_ok(resp)
@@ -11,7 +10,7 @@ class TestCategorySitemap:
 
 
 class TestPodcastSitemap:
-    def test_get(self, client, db):
+    def test_get(self, client, db, assert_ok):
         PodcastFactory.create_batch(12)
         resp = client.get("/sitemap-podcasts.xml")
         assert_ok(resp)

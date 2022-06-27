@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.common.asserts import assert_ok
 from radiofeed.episodes.factories import (
     AudioLogFactory,
     BookmarkFactory,
@@ -18,11 +17,11 @@ from radiofeed.users.models import User
 class TestUserPreferences:
     url = reverse_lazy("users:preferences")
 
-    def test_get(self, client, auth_user):
+    def test_get(self, client, auth_user, assert_ok):
         response = client.get(self.url)
         assert_ok(response)
 
-    def test_post(self, client, auth_user):
+    def test_post(self, client, auth_user, assert_ok):
         response = client.post(
             self.url,
             {
@@ -39,7 +38,7 @@ class TestUserPreferences:
 
 
 class TestUserStats:
-    def test_stats(self, client, auth_user, podcast):
+    def test_stats(self, client, auth_user, podcast, assert_ok):
 
         SubscriptionFactory(podcast=podcast, user=auth_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
@@ -54,7 +53,7 @@ class TestUserStats:
 
 
 class TestImportExportPodcastFeeds:
-    def test_get(self, client, auth_user):
+    def test_get(self, client, auth_user, assert_ok):
         assert_ok(client.get(reverse("users:import_export_podcast_feeds")))
 
 
@@ -65,7 +64,9 @@ class TestImportPodcastFeeds:
     def upload_file(self):
         return SimpleUploadedFile("feeds.opml", b"content", content_type="text/xml")
 
-    def test_post_has_new_feeds(self, client, auth_user, mocker, upload_file):
+    def test_post_has_new_feeds(
+        self, client, auth_user, mocker, upload_file, assert_ok
+    ):
         podcast = PodcastFactory()
 
         mocker.patch(
@@ -77,7 +78,9 @@ class TestImportPodcastFeeds:
 
         assert Subscription.objects.filter(user=auth_user, podcast=podcast).exists()
 
-    def test_post_already_subscribed(self, client, auth_user, mocker, upload_file):
+    def test_post_already_subscribed(
+        self, client, auth_user, mocker, upload_file, assert_ok
+    ):
         subscription = SubscriptionFactory(user=auth_user)
 
         mocker.patch(
@@ -89,7 +92,9 @@ class TestImportPodcastFeeds:
 
         assert Subscription.objects.filter(user=auth_user).count() == 1
 
-    def test_post_has_no_new_feeds(self, client, auth_user, mocker, upload_file):
+    def test_post_has_no_new_feeds(
+        self, client, auth_user, mocker, upload_file, assert_ok
+    ):
 
         mocker.patch(
             "radiofeed.users.forms.OpmlUploadForm.parse_opml_feeds",
@@ -100,7 +105,7 @@ class TestImportPodcastFeeds:
 
         assert not Subscription.objects.filter(user=auth_user).exists()
 
-    def test_post_is_empty(self, client, auth_user, mocker, upload_file):
+    def test_post_is_empty(self, client, auth_user, mocker, upload_file, assert_ok):
 
         mocker.patch(
             "radiofeed.users.forms.OpmlUploadForm.parse_opml_feeds",
@@ -116,7 +121,7 @@ class TestExportPodcastFeeds:
 
     url = reverse_lazy("users:export_podcast_feeds")
 
-    def test_export_opml(self, client, subscription):
+    def test_export_opml(self, client, subscription, assert_ok):
         response = client.post(self.url)
         assert_ok(response)
         assert response["Content-Type"] == "text/x-opml"
@@ -125,13 +130,13 @@ class TestExportPodcastFeeds:
 class TestDeleteAccount:
     url = reverse_lazy("users:delete_account")
 
-    def test_get(self, client, auth_user):
+    def test_get(self, client, auth_user, assert_ok):
         # make sure we don't accidentally delete account on get request
         response = client.get(self.url)
         assert_ok(response)
         assert User.objects.exists()
 
-    def test_post_unconfirmed(self, client, auth_user):
+    def test_post_unconfirmed(self, client, auth_user, assert_ok):
         response = client.post(self.url)
         assert_ok(response)
         assert User.objects.exists()

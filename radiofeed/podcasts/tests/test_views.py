@@ -3,7 +3,6 @@ import requests
 
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.common.asserts import assert_conflict, assert_not_found, assert_ok
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts.factories import (
     CategoryFactory,
@@ -18,13 +17,13 @@ podcasts_url = reverse_lazy("podcasts:index")
 
 
 class TestPodcasts:
-    def test_anonymous(self, client, db):
+    def test_anonymous(self, client, db, assert_ok):
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(podcasts_url)
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_subscribed_promoted(self, client, auth_user):
+    def test_user_is_subscribed_promoted(self, client, auth_user, assert_ok):
         """If user is not subscribed any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
@@ -34,7 +33,7 @@ class TestPodcasts:
         assert len(response.context_data["page_obj"].object_list) == 3
         assert sub not in response.context_data["page_obj"].object_list
 
-    def test_user_is_not_subscribed(self, client, auth_user):
+    def test_user_is_not_subscribed(self, client, auth_user, assert_ok):
         """If user is not subscribed any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
@@ -42,7 +41,7 @@ class TestPodcasts:
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_subscribed(self, client, auth_user):
+    def test_user_is_subscribed(self, client, auth_user, assert_ok):
         """If user subscribed any podcasts, show only own feed with these podcasts"""
 
         PodcastFactory.create_batch(3)
@@ -54,7 +53,7 @@ class TestPodcasts:
 
 
 class TestLatestEpisode:
-    def test_no_episode(self, client, podcast):
+    def test_no_episode(self, client, podcast, assert_not_found):
         assert_not_found(client.get(podcast.get_latest_episode_url()))
 
     def test_ok(self, client, episode):
@@ -74,7 +73,7 @@ class TestSearchPodcasts:
             == podcasts_url
         )
 
-    def test_search(self, client, db, faker):
+    def test_search(self, client, db, faker, assert_ok):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(
@@ -87,7 +86,7 @@ class TestSearchPodcasts:
 
 
 class TestSearchITunes:
-    def test_search(self, client, db, mocker):
+    def test_search(self, client, db, mocker, assert_ok):
         feeds = [
             Feed(
                 url="https://example.com/id123456",
@@ -106,7 +105,7 @@ class TestSearchITunes:
         assert response.context["feeds"] == feeds
         mock_search.assert_called()
 
-    def test_search_exception(self, client, db, mocker):
+    def test_search_exception(self, client, db, mocker, assert_ok):
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search_cached",
             side_effect=requests.RequestException,
@@ -121,7 +120,7 @@ class TestSearchITunes:
 
 
 class TestPodcastSimilar:
-    def test_get(self, client, db, podcast):
+    def test_get(self, client, db, podcast, assert_ok):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
         response = client.get(
@@ -133,14 +132,14 @@ class TestPodcastSimilar:
 
 
 class TestPodcastDetail:
-    def test_get_podcast_anonymous(self, client, podcast):
+    def test_get_podcast_anonymous(self, client, podcast, assert_ok):
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
         assert response.context_data["podcast"] == podcast
 
-    def test_get_podcast_authenticated(self, client, auth_user, podcast):
+    def test_get_podcast_authenticated(self, client, auth_user, podcast, assert_ok):
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
@@ -155,14 +154,14 @@ class TestPodcastEpisodes:
             args=[podcast.id, podcast.slug],
         )
 
-    def test_get_episodes(self, client, podcast):
+    def test_get_episodes(self, client, podcast, assert_ok):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
         response = client.get(self.url(podcast))
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
 
-    def test_get_oldest_first(self, client, podcast):
+    def test_get_oldest_first(self, client, podcast, assert_ok):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
         response = client.get(
@@ -172,7 +171,7 @@ class TestPodcastEpisodes:
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
 
-    def test_search(self, client, podcast, faker):
+    def test_search(self, client, podcast, faker, assert_ok):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
         episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
@@ -188,7 +187,7 @@ class TestPodcastEpisodes:
 class TestCategoryList:
     url = reverse_lazy("podcasts:category_list")
 
-    def test_matching_podcasts(self, db, client):
+    def test_matching_podcasts(self, db, client, assert_ok):
         for _ in range(3):
             category = CategoryFactory()
             category.podcast_set.add(PodcastFactory())
@@ -197,13 +196,13 @@ class TestCategoryList:
         assert_ok(response)
         assert len(response.context_data["categories"]) == 3
 
-    def test_no_matching_podcasts(self, db, client):
+    def test_no_matching_podcasts(self, db, client, assert_ok):
         CategoryFactory.create_batch(3)
         response = client.get(self.url)
         assert_ok(response)
         assert len(response.context_data["categories"]) == 0
 
-    def test_search(self, client, category, faker):
+    def test_search(self, client, category, faker, assert_ok):
 
         CategoryFactory.create_batch(3)
 
@@ -214,7 +213,7 @@ class TestCategoryList:
         assert_ok(response)
         assert len(response.context_data["categories"]) == 1
 
-    def test_search_no_matching_podcasts(self, client, category, faker):
+    def test_search_no_matching_podcasts(self, client, category, faker, assert_ok):
 
         CategoryFactory.create_batch(3)
 
@@ -226,13 +225,13 @@ class TestCategoryList:
 
 
 class TestCategoryDetail:
-    def test_get(self, client, category):
+    def test_get(self, client, category, assert_ok):
         PodcastFactory.create_batch(12, categories=[category])
         response = client.get(category.get_absolute_url())
         assert_ok(response)
         assert response.context_data["category"] == category
 
-    def test_search(self, client, category, faker):
+    def test_search(self, client, category, faker, assert_ok):
 
         PodcastFactory.create_batch(
             12, title="zzzz", keywords="zzzz", categories=[category]
@@ -249,13 +248,13 @@ class TestSubscribe:
     def url(self, podcast):
         return reverse("podcasts:subscribe", args=[podcast.id])
 
-    def test_subscribe(self, client, podcast, auth_user, url):
+    def test_subscribe(self, client, podcast, auth_user, url, assert_ok):
         response = client.post(url)
         assert_ok(response)
         assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
 
     @pytest.mark.django_db(transaction=True)
-    def test_already_subscribed(self, client, podcast, auth_user, url):
+    def test_already_subscribed(self, client, podcast, auth_user, url, assert_conflict):
 
         SubscriptionFactory(user=auth_user, podcast=podcast)
         response = client.post(url)
@@ -264,7 +263,7 @@ class TestSubscribe:
 
 
 class TestUnsubscribe:
-    def test_unsubscribe(self, client, auth_user, podcast):
+    def test_unsubscribe(self, client, auth_user, podcast, assert_ok):
         SubscriptionFactory(user=auth_user, podcast=podcast)
         response = client.delete(reverse("podcasts:unsubscribe", args=[podcast.id]))
         assert_ok(response)
