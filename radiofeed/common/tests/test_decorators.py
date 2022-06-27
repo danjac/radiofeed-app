@@ -1,10 +1,9 @@
 import pytest
 
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.urls import reverse
 
-from radiofeed.common.asserts import assert_ok
+from radiofeed.common.asserts import assert_ok, assert_unauthorized
 from radiofeed.common.decorators import ajax_login_required
 
 
@@ -25,8 +24,8 @@ class TestAjaxLoginRequired:
         req = rf.get("/")
         req.user = anonymous_user
         req.htmx = False
-        with pytest.raises(PermissionDenied):
-            ajax_view(req)
+        resp = ajax_view(req)
+        assert_unauthorized(resp)
 
     def test_authenticated(self, rf, user, ajax_view):
         req = rf.get("/")

@@ -3,17 +3,18 @@ import functools
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
-from django.core.exceptions import PermissionDenied
 from django_htmx.http import HttpResponseClientRedirect
+
+from radiofeed.common.http import HttpResponseUnauthorized
 
 
 def ajax_login_required(view):
     """Use this decorator instead of @login_required
-    when handling HTMX includes and JSON requests.
+    when handling HTMX fragment and JSON requests. For standard
+    requests and full page HTMX responses use Django @login_required.
 
     If an HTMX request returns a client redirect to login page
-    if user is not logged in, otherwise raises a 403.
-
+    if user is not logged in, otherwise raises a 401.
     """
 
     @functools.wraps(view)
@@ -28,6 +29,6 @@ def ajax_login_required(view):
                     redirect_field_name=REDIRECT_FIELD_NAME,
                 ).url
             )
-        raise PermissionDenied
+        return HttpResponseUnauthorized()
 
     return wrapper
