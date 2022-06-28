@@ -236,7 +236,7 @@ def add_bookmark(request, episode_id):
 
     messages.success(request, "Added to Bookmarks")
 
-    return bookmark_actions_response(request, episode, True)
+    return bookmark_action_response(request, episode, True)
 
 
 @require_http_methods(["DELETE"])
@@ -248,7 +248,7 @@ def remove_bookmark(request, episode_id):
 
     messages.info(request, "Removed from Bookmarks")
 
-    return bookmark_actions_response(request, episode, False)
+    return bookmark_action_response(request, episode, False)
 
 
 def get_episode_or_404(
@@ -283,7 +283,7 @@ def player_response(
     )
 
 
-def bookmark_actions_response(request, episode, is_bookmarked):
+def bookmark_action_response(request, episode, is_bookmarked):
     return TemplateResponse(
         request,
         "episodes/actions/bookmark.html",
