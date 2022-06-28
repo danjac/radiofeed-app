@@ -1,10 +1,3 @@
-from radiofeed.podcasts.parsers import date_parser
-
-
-def datetime(value):
-    return date_parser.parse_date(value)
-
-
 def complete(value):
     if value and value.casefold() == "yes":
         return True
