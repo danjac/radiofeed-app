@@ -9,17 +9,6 @@ from django.utils import timezone
 from radiofeed.podcasts.parsers import rss_parser
 
 
-class TestComplete:
-    def test_true(self):
-        assert rss_parser.complete("yes") is True
-
-    def test_false(self):
-        assert rss_parser.complete("no") is False
-
-    def test_none(self):
-        assert rss_parser.complete(None) is False
-
-
 class TestExplicit:
     def test_true(self):
         assert rss_parser.explicit("yes") is True
@@ -46,20 +35,6 @@ class TestDuration:
     )
     def test_parse_duration(self, value, expected):
         assert rss_parser.duration(value) == expected
-
-
-class TestLanguageCode:
-    @pytest.mark.parametrize(
-        "value,expected",
-        [
-            ("fr", "fr"),
-            ("fr-CA", "fr"),
-            ("", "en"),
-            (None, "en"),
-        ],
-    )
-    def test_language_code(self, value, expected):
-        assert rss_parser.language_code(value) == expected
 
 
 class TestNotEmpty:
@@ -97,13 +72,35 @@ class TestUrl:
             rss_parser.url(None, None, value)
 
 
-class TestPubDate:
-    def test_ok(self):
-        rss_parser.pub_date(None, None, timezone.now() - timedelta(hours=1))
-
-    def test_in_future(self):
+class TestItem:
+    def test_pub_date_none(self):
         with pytest.raises(ValueError):
-            rss_parser.pub_date(None, None, timezone.now() + timedelta(hours=1))
+            rss_parser.Item(
+                guid="test",
+                title="test",
+                media_url="https://example.com/",
+                media_type="audio/mpeg",
+                pub_date=None,
+            )
+
+    def test_pub_date_in_future(self):
+        with pytest.raises(ValueError):
+            rss_parser.Item(
+                guid="test",
+                title="test",
+                media_url="https://example.com/",
+                media_type="audio/mpeg",
+                pub_date=timezone.now() + timedelta(days=1),
+            )
+
+    def test_pub_date_ok(self):
+        rss_parser.Item(
+            guid="test",
+            title="test",
+            media_url="https://example.com/",
+            media_type="audio/mpeg",
+            pub_date=timezone.now() - timedelta(days=1),
+        )
 
 
 class TestRssParser:

@@ -13,7 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.podcasts.parsers.text_parser import get_stopwords
+from radiofeed.podcasts.parsers import text_parser
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,12 @@ def recommend(since=timedelta(days=90), num_matches=12):
     categories = Category.objects.order_by("name")
 
     # separate by language, so we don't get false matches
-    for language in podcasts.values_list(Lower("language"), flat=True).distinct():
+
+    for language in (
+        podcasts.filter(language__in=text_parser.NLTK_LANGUAGES)
+        .values_list(Lower("language"), flat=True)
+        .distinct()
+    ):
         Recommender(language, num_matches).recommend(podcasts, categories)
 
 
@@ -102,7 +107,7 @@ class Recommender:
         df.drop_duplicates(inplace=True)
 
         vec = TfidfVectorizer(
-            stop_words=get_stopwords(self.language),
+            stop_words=text_parser.get_stopwords(self.language),
             max_features=3000,
             ngram_range=(1, 2),
         )

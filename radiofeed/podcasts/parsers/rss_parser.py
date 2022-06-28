@@ -57,174 +57,6 @@ AUDIO_MIMETYPES = (
 )
 
 
-LANGUAGE_CODES = (
-    "aa",
-    "ab",
-    "ae",
-    "af",
-    "ak",
-    "am",
-    "an",
-    "ar",
-    "as",
-    "av",
-    "ay",
-    "az",
-    "ba",
-    "be",
-    "bg",
-    "cv",
-    "cy",
-    "da",
-    "de",
-    "dv",
-    "dz",
-    "ee",
-    "el",
-    "en",
-    "eo",
-    "es",
-    "et",
-    "eu",
-    "fa",
-    "ff",
-    "fi",
-    "fj",
-    "fo",
-    "fr",
-    "fy",
-    "ga",
-    "gd",
-    "gl",
-    "gn",
-    "gu",
-    "gv",
-    "ha",
-    "he",
-    "hi",
-    "ho",
-    "hr",
-    "ht",
-    "hu",
-    "hy",
-    "hz",
-    "ia",
-    "id",
-    "ie",
-    "ig",
-    "ii",
-    "ik",
-    "io",
-    "is",
-    "it",
-    "iu",
-    "ja",
-    "jv",
-    "ka",
-    "kg",
-    "ki",
-    "kj",
-    "kk",
-    "kl",
-    "km",
-    "kn",
-    "ko",
-    "kr",
-    "ks",
-    "ku",
-    "kv",
-    "kw",
-    "ky",
-    "la",
-    "lb",
-    "lg",
-    "li",
-    "ln",
-    "lo",
-    "lt",
-    "lu",
-    "lv",
-    "mg",
-    "mh",
-    "mi",
-    "mk",
-    "ml",
-    "mn",
-    "mr",
-    "ms",
-    "mt",
-    "my",
-    "na",
-    "nb",
-    "nd",
-    "nv",
-    "ny",
-    "oc",
-    "oj",
-    "om",
-    "or",
-    "os",
-    "pa",
-    "pi",
-    "pl",
-    "ps",
-    "pt",
-    "qu",
-    "rm",
-    "rn",
-    "ro",
-    "ru",
-    "rw",
-    "sa",
-    "sc",
-    "sd",
-    "se",
-    "sg",
-    "si",
-    "sk",
-    "sl",
-    "sm",
-    "sn",
-    "so",
-    "sq",
-    "sr",
-    "ss",
-    "st",
-    "su",
-    "sv",
-    "sw",
-    "ta",
-    "te",
-    "tg",
-    "th",
-    "ti",
-    "tk",
-    "tl",
-    "tn",
-    "to",
-    "tr",
-    "ts",
-    "tt",
-    "tw",
-    "ty",
-    "ug",
-    "uk",
-    "ur",
-    "uz",
-    "ve",
-    "vi",
-    "vo",
-    "wa",
-    "wo",
-    "xh",
-    "yi",
-    "yo",
-    "za",
-    "zh",
-    "zu",
-)
-
-
 # ensure integer falls within PostgreSQL INTEGER range
 
 pg_integer = attrs.validators.and_(
@@ -234,11 +66,6 @@ pg_integer = attrs.validators.and_(
 
 
 _url_validator = URLValidator(["http", "https"])
-
-
-def pub_date(instance, attr, value):
-    if value > timezone.now():
-        raise ValueError(f"{value=} cannot be in future")
 
 
 def not_empty(instance, attr, value):
@@ -251,12 +78,6 @@ def url(instance, attr, value):
         _url_validator(value)
     except ValidationError as e:
         raise ValueError from e
-
-
-def complete(value):
-    if value and value.casefold() == "yes":
-        return True
-    return False
 
 
 def explicit(value):
@@ -287,23 +108,13 @@ def duration(value):
         return ""
 
 
-def language_code(value):
-    return (value or "en")[:2]
-
-
 @attrs.define(kw_only=True, frozen=True)
 class Item:
 
     guid: str = attrs.field(validator=not_empty)
     title: str = attrs.field(validator=not_empty)
 
-    pub_date: datetime = attrs.field(
-        converter=date_parser.parse_date,
-        validator=attrs.validators.and_(
-            attrs.validators.instance_of(datetime),
-            pub_date,
-        ),
-    )
+    pub_date: datetime = attrs.field(converter=date_parser.parse_date)
 
     media_url: str = attrs.field(validator=url)
 
@@ -361,6 +172,13 @@ class Item:
         default=None,
     )
 
+    @pub_date.validator
+    def _pub_date_ok(self, attribute, value):
+        if value is None:
+            raise ValueError("pub_date cannot be null")
+        if value > timezone.now():
+            raise ValueError("pub_date cannot be in future")
+
 
 @attrs.define(kw_only=True, frozen=True)
 class Feed:
@@ -379,9 +197,8 @@ class Feed:
     language: str = attrs.field(
         converter=attrs.converters.pipe(
             attrs.converters.default_if_none("en"),
-            language_code,
+            lambda value: value[:2],
         ),
-        validator=attrs.validators.in_(LANGUAGE_CODES),
         default=None,
     )
 
@@ -395,7 +212,11 @@ class Feed:
         default=None,
     )
 
-    complete: bool = attrs.field(converter=complete, default=False)
+    complete: bool = attrs.field(
+        converter=lambda value: value and value.casefold() == "yes",
+        default=False,
+    )
+
     explicit: bool = attrs.field(converter=explicit, default=False)
 
     funding_text: str = attrs.field(
