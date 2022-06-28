@@ -169,6 +169,8 @@ class TestFeed:
         assert feed.complete is False
         assert feed.explicit is False
         assert feed.language == "en"
+        assert feed.description == ""
+        assert feed.categories == []
         assert feed.pub_date == item.pub_date
 
 
