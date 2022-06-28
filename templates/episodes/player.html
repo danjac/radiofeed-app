@@ -225,8 +225,8 @@
         {% endwith %}
     {% endif %}
     {% if request.htmx.target == "player" %}
-        {% include "episodes/buttons/history.html" with hx_oob=True %}
-        {% include "episodes/buttons/player.html" with hx_oob=True %}
+        {% include "episodes/actions/history.html" with hx_oob=True %}
+        {% include "episodes/actions/player.html" with hx_oob=True %}
         {% include "episodes/timestamps.html" with hx_oob=True %}
     {% endif %}
 {% endif %}
