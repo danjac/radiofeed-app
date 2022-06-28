@@ -3,7 +3,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from radiofeed.podcasts.parsers import opml_parser
-from radiofeed.podcasts.parsers.models import Outline
+from radiofeed.podcasts.parsers.opml_parser import Outline
 from radiofeed.users.forms import OpmlUploadForm
 
 

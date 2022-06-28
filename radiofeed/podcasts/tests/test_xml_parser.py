@@ -7,9 +7,7 @@ from radiofeed.podcasts.parsers import xml_parser
 
 class TestXPath:
     def read_mock_file(self, mock_filename="rss_mock.xml"):
-        return (
-            pathlib.Path(__file__).parent.parent / "mocks" / mock_filename
-        ).read_bytes()
+        return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
     @pytest.fixture
     def channel(self):
