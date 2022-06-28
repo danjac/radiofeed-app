@@ -238,7 +238,7 @@ def subscribe(request, podcast_id):
         return HttpResponseConflict()
 
     messages.success(request, "You are now subscribed to this podcast")
-    return render_subscribe_buttons(request, podcast, True)
+    return subscribe_action_response(request, podcast, True)
 
 
 @require_http_methods(["DELETE"])
@@ -250,7 +250,7 @@ def unsubscribe(request, podcast_id):
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
 
     messages.info(request, "You are no longer subscribed to this podcast")
-    return render_subscribe_buttons(request, podcast, False)
+    return subscribe_action_response(request, podcast, False)
 
 
 def get_podcasts():
@@ -270,10 +270,10 @@ def get_podcast_detail_context(request, podcast, extra_context=None):
     } | (extra_context or {})
 
 
-def render_subscribe_buttons(request, podcast, is_subscribed):
+def subscribe_action_response(request, podcast, is_subscribed):
     return TemplateResponse(
         request,
-        "podcasts/buttons/subscribe.html",
+        "podcasts/actions/subscribe.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,

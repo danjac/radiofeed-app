@@ -113,7 +113,7 @@ def start_player(request, episode_id):
 
     request.player.set(episode.id)
 
-    return render_player(
+    return player_response(
         request,
         episode,
         start_player=True,
@@ -130,7 +130,7 @@ def close_player(request):
 
         episode = get_episode_or_404(request, episode_id, with_current_time=True)
 
-        return render_player(
+        return player_response(
             request,
             episode,
             start_player=False,
@@ -200,7 +200,7 @@ def remove_audio_log(request, episode_id):
 
     return TemplateResponse(
         request,
-        "episodes/buttons/history.html",
+        "episodes/actions/history.html",
         {"episode": episode},
     )
 
@@ -236,7 +236,7 @@ def add_bookmark(request, episode_id):
 
     messages.success(request, "Added to Bookmarks")
 
-    return render_bookmark_buttons(request, episode, True)
+    return bookmark_actions_response(request, episode, True)
 
 
 @require_http_methods(["DELETE"])
@@ -248,7 +248,7 @@ def remove_bookmark(request, episode_id):
 
     messages.info(request, "Removed from Bookmarks")
 
-    return render_bookmark_buttons(request, episode, False)
+    return bookmark_actions_response(request, episode, False)
 
 
 def get_episode_or_404(
@@ -262,7 +262,7 @@ def get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def render_player(
+def player_response(
     request,
     episode: Episode,
     *,
@@ -283,10 +283,10 @@ def render_player(
     )
 
 
-def render_bookmark_buttons(request, episode, is_bookmarked):
+def bookmark_actions_response(request, episode, is_bookmarked):
     return TemplateResponse(
         request,
-        "episodes/buttons/bookmark.html",
+        "episodes/actions/bookmark.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,
