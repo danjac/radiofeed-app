@@ -1,7 +1,7 @@
 from radiofeed.podcasts.parsers import date_parser
 
 
-def pub_date(value):
+def datetime(value):
     return date_parser.parse_date(value)
 
 

@@ -33,7 +33,7 @@ class Item:
     title: str = attrs.field(validator=validators.not_empty)
 
     pub_date: datetime = attrs.field(
-        converter=converters.pub_date,
+        converter=converters.datetime,
         validator=attrs.validators.and_(
             attrs.validators.instance_of(datetime),
             validators.pub_date,
