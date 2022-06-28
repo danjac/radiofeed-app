@@ -93,14 +93,64 @@ class TestItem:
                 pub_date=timezone.now() + timedelta(days=1),
             )
 
-    def test_pub_date_ok(self):
-        rss_parser.Item(
+    def test_not_audio_mimetype(self):
+        with pytest.raises(ValueError):
+            rss_parser.Item(
+                guid="test",
+                title="test",
+                media_url="https://example.com/",
+                media_type="video/mpeg",
+                pub_date=timezone.now() - timedelta(days=1),
+            )
+
+    def test_defaults(self):
+        item = rss_parser.Item(
             guid="test",
             title="test",
             media_url="https://example.com/",
             media_type="audio/mpeg",
             pub_date=timezone.now() - timedelta(days=1),
         )
+
+        assert item.explicit is False
+        assert item.episode_type == "full"
+
+
+class TestFeed:
+    @pytest.fixture
+    def item(self):
+        return rss_parser.Item(
+            guid="test",
+            title="test",
+            media_url="https://example.com/",
+            media_type="audio/mpeg",
+            pub_date=timezone.now() - timedelta(days=1),
+        )
+
+    def test_language(self, item):
+        feed = rss_parser.Feed(
+            title="test",
+            language="fr-CA",
+            items=[item],
+        )
+        assert feed.language == "fr"
+
+    def test_no_items(self):
+        with pytest.raises(ValueError):
+            rss_parser.Feed(
+                title="test",
+                items=[],
+            )
+
+    def test_defaults(self, item):
+        feed = rss_parser.Feed(
+            title="test",
+            items=[item],
+        )
+
+        assert feed.explicit is False
+        assert feed.language == "en"
+        assert feed.pub_date == item.pub_date
 
 
 class TestRssParser:
