@@ -213,7 +213,10 @@ class Feed:
     )
 
     complete: bool = attrs.field(
-        converter=lambda value: value and value.casefold() == "yes",
+        converter=attrs.converters.pipe(
+            attrs.converters.default_if_none(False),
+            attrs.converters.to_bool,
+        ),
         default=False,
     )
 

@@ -142,12 +142,31 @@ class TestFeed:
                 items=[],
             )
 
+    def test_not_complete(self, item):
+        feed = rss_parser.Feed(
+            title="test",
+            items=[item],
+            complete="no",
+        )
+
+        assert feed.complete is False
+
+    def test_complete(self, item):
+        feed = rss_parser.Feed(
+            title="test",
+            items=[item],
+            complete="yes",
+        )
+
+        assert feed.complete is True
+
     def test_defaults(self, item):
         feed = rss_parser.Feed(
             title="test",
             items=[item],
         )
 
+        assert feed.complete is False
         assert feed.explicit is False
         assert feed.language == "en"
         assert feed.pub_date == item.pub_date
