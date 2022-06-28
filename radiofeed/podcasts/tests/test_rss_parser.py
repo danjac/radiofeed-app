@@ -46,13 +46,13 @@ class TestNotEmpty:
             (None, True),
         ],
     )
-    def test_not_empty(self, value, raises):
+    def test_required(self, value, raises):
 
         if raises:
             with pytest.raises(ValueError):
-                rss_parser.not_empty(None, None, value)
+                rss_parser.required(None, None, value)
         else:
-            rss_parser.not_empty(None, None, value)
+            rss_parser.required(None, None, value)
 
 
 class TestUrl:

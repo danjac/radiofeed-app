@@ -68,7 +68,7 @@ pg_integer = attrs.validators.and_(
 _url_validator = URLValidator(["http", "https"])
 
 
-def not_empty(instance, attr, value):
+def required(instance, attr, value):
     if not value:
         raise ValueError(f"{attr=} cannot be empty or None")
 
@@ -111,8 +111,8 @@ def duration(value):
 @attrs.define(kw_only=True, frozen=True)
 class Item:
 
-    guid: str = attrs.field(validator=not_empty)
-    title: str = attrs.field(validator=not_empty)
+    guid: str = attrs.field(validator=required)
+    title: str = attrs.field(validator=required)
 
     pub_date: datetime = attrs.field(converter=date_parser.parse_date)
 
@@ -183,7 +183,7 @@ class Item:
 @attrs.define(kw_only=True, frozen=True)
 class Feed:
 
-    title: str = attrs.field(validator=not_empty)
+    title: str = attrs.field(validator=required)
 
     owner: str = attrs.field(
         converter=attrs.converters.default_if_none(""),
@@ -235,7 +235,7 @@ class Feed:
 
     items: list[Item] = attrs.field(
         default=attrs.Factory(list),
-        validator=not_empty,
+        validator=required,
     )
 
     pub_date: datetime | None = attrs.field()
