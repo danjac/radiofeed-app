@@ -255,13 +255,13 @@ class TestEpisodeModel:
         )
 
     def test_get_player_target(self):
-        assert Episode(id=12345).get_player_target() == "player-buttons-12345"
+        assert Episode(id=12345).get_player_target() == "player-actions-12345"
 
     def test_get_history_target(self):
-        assert Episode(id=12345).get_history_target() == "history-buttons-12345"
+        assert Episode(id=12345).get_history_target() == "history-actions-12345"
 
     def test_get_bookmark_target(self):
-        assert Episode(id=12345).get_bookmark_target() == "bookmark-buttons-12345"
+        assert Episode(id=12345).get_bookmark_target() == "bookmark-actions-12345"
 
 
 class TestBookmarkManager:

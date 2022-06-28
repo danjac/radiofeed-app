@@ -96,4 +96,4 @@ class TestPodcastModel:
         )
 
     def test_get_subscribe_target(self):
-        return Podcast(id=12345).get_subscribe_target() == "subscribe-buttons-12345"
+        return Podcast(id=12345).get_subscribe_target() == "subscribe-actions-12345"

@@ -212,13 +212,13 @@ class Episode(models.Model):
         }
 
     def get_player_target(self):
-        return f"player-buttons-{self.id}"
+        return f"player-actions-{self.id}"
 
     def get_bookmark_target(self):
-        return f"bookmark-buttons-{self.id}"
+        return f"bookmark-actions-{self.id}"
 
     def get_history_target(self):
-        return f"history-buttons-{self.id}"
+        return f"history-actions-{self.id}"
 
 
 class BookmarkQuerySet(SearchMixin, models.QuerySet):

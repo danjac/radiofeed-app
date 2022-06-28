@@ -153,7 +153,7 @@ class Podcast(models.Model):
         return Subscription.objects.filter(podcast=self, user=user).exists()
 
     def get_subscribe_target(self):
-        return f"subscribe-buttons-{self.id}"
+        return f"subscribe-actions-{self.id}"
 
 
 class Subscription(TimeStampedModel):
