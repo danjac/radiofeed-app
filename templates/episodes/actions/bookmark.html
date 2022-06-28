@@ -1,0 +1,26 @@
+{% with ICON_CSS="h-5 w-5 md:h-6 md:w-6" target=episode.get_bookmark_target %}
+    <div class="flex items-center"
+        id="{{ target }}"
+        hx-push-url="false"
+        hx-target="this"
+        hx-swap="outerHTML">
+
+        {% if is_bookmarked %}
+            <button title="Remove from Bookmarks"
+                class="link"
+                hx-delete="{% url 'episodes:remove_bookmark' episode.id %}">
+                {% include "icons/star_solid.svg" with css_class=ICON_CSS %}
+            </button>
+        {% else %}
+            <button title="Add to Bookmarks"
+                class="link"
+                hx-post="{% url 'episodes:add_bookmark' episode.id %}">
+                {% include "icons/star.svg" with css_class=ICON_CSS %}
+            </button>
+        {% endif %}
+    </div>
+
+    {% if request.htmx.target == target %}
+        {% include "includes/messages.html" with hx_oob=True %}
+    {% endif %}
+{% endwith %}
