@@ -95,7 +95,7 @@ def search_itunes(request):
 
 
 @require_http_methods(["GET"])
-def latest_episode(request, podcast_id, slug):
+def latest_episode(request, podcast_id, slug=None):
 
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
@@ -108,12 +108,7 @@ def latest_episode(request, podcast_id, slug):
 
 
 @require_http_methods(["GET"])
-def similar(
-    request,
-    podcast_id,
-    slug: str | None = None,
-    limit: int = 12,
-):
+def similar(request, podcast_id, slug=None, limit=12):
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -152,7 +147,7 @@ def podcast_detail(request, podcast_id, slug=None):
 
 
 @require_http_methods(["GET"])
-def episodes(request, podcast_id, slug: str = None):
+def episodes(request, podcast_id, slug=None):
 
     podcast = get_podcast_or_404(podcast_id)
 
