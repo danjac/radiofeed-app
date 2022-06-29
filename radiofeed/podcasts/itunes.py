@@ -9,8 +9,8 @@ import requests
 
 from django.core.cache import cache
 
-from radiofeed.common import xml_parser
-from radiofeed.common.utils import batcher, get_user_agent
+from radiofeed.common import user_agent, xml_parser
+from radiofeed.common.itertools import batcher
 from radiofeed.podcasts.models import Podcast
 
 BATCH_SIZE = 100
@@ -109,7 +109,7 @@ def get_response(url, data=None):
     response = requests.get(
         url,
         data,
-        headers={"User-Agent": get_user_agent()},
+        headers={"User-Agent": user_agent.get_user_agent()},
         timeout=10,
         allow_redirects=True,
     )

@@ -1,4 +1,4 @@
-from radiofeed.common.utils import batcher
+from radiofeed.common.itertools import batcher
 
 
 class TestBatcher:
