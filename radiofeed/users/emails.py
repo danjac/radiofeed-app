@@ -3,16 +3,14 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
-from radiofeed.users.models import User
-
 
 def send_user_notification_email(
-    recipient: User,
-    subject: str,
-    template_name: str,
-    html_template_name: str,
-    context: dict | None = None,
-) -> None:
+    recipient,
+    subject,
+    template_name,
+    html_template_name,
+    context=None,
+):
 
     site = Site.objects.get_current()
 
