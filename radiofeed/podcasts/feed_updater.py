@@ -9,7 +9,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common import date_parser, itertools, user_agent
+from radiofeed.common import batcher, date_parser, user_agent
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import rss_parser, text_parser
 from radiofeed.podcasts.models import Category, Podcast
@@ -189,9 +189,7 @@ class FeedUpdater:
 
         # update existing content
 
-        for batch in itertools.batcher(
-            self.episodes_for_update(feed, guids), batch_size
-        ):
+        for batch in batcher.batcher(self.episodes_for_update(feed, guids), batch_size):
             Episode.fast_update_objects.fast_update(
                 batch,
                 fields=[
@@ -213,9 +211,7 @@ class FeedUpdater:
 
         # add new episodes
 
-        for batch in itertools.batcher(
-            self.episodes_for_insert(feed, guids), batch_size
-        ):
+        for batch in batcher.batcher(self.episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def episodes_for_update(self, feed, guids):
