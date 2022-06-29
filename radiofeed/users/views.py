@@ -55,25 +55,7 @@ def import_podcast_feeds(request, target="opml-import-form"):
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
 
-        new_feeds: int = 0
-
-        if feeds := form.parse_opml_feeds():
-
-            podcasts = Podcast.objects.filter(rss__in=feeds).exclude(
-                subscription__user=request.user
-            )
-            if podcasts.exists():
-
-                subscriptions = Subscription.objects.bulk_create(
-                    [
-                        Subscription(podcast=podcast, user=request.user)
-                        for podcast in podcasts
-                    ],
-                    ignore_conflicts=True,
-                )
-                new_feeds = len(subscriptions)
-
-        if new_feeds:
+        if new_feeds := form.create_subscriptions(request.user):
             messages.success(request, f"{new_feeds} podcasts added to your collection")
         else:
             messages.info(request, "No new podcasts found in uploaded file")
