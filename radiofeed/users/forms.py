@@ -2,8 +2,8 @@ import lxml
 
 from django import forms
 
+from radiofeed.common import xml_parser
 from radiofeed.podcasts.models import Podcast, Subscription
-from radiofeed.podcasts.parsers import xml_parser
 from radiofeed.users.models import User
 
 

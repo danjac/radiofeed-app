@@ -6,7 +6,7 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.podcasts.parsers import rss_parser
+from radiofeed.podcasts import rss_parser
 
 
 class TestExplicit:

@@ -12,8 +12,8 @@ from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from radiofeed.podcasts import text_parser
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.podcasts.parsers import text_parser
 
 logger = logging.getLogger(__name__)
 
