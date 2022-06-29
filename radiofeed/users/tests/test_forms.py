@@ -19,36 +19,28 @@ class TestOpmlUploadForm:
         }
         return form
 
-    def test_create_subscriptions(self, mocker, form, user, podcast):
+    def test_subscribe_to_feeds(self, mocker, form, user, podcast):
         mocker.patch(
             "radiofeed.users.forms.opml_parser.parse_opml",
             return_value=[
                 Outline(rss=podcast.rss, title=""),
             ],
         )
-        assert form.create_subscriptions(user) == 1
+        assert form.subscribe_to_feeds(user) == 1
         assert Subscription.objects.filter(user=user, podcast=podcast).count() == 1
 
-    def test_create_subscriptions_no_results(self, mocker, form, user, podcast):
+    def test_subscribe_to_feeds_no_results(self, mocker, form, user, podcast):
         mocker.patch(
             "radiofeed.users.forms.opml_parser.parse_opml",
             return_value=[],
         )
-        assert form.create_subscriptions(user) == 0
+        assert form.subscribe_to_feeds(user) == 0
         assert Subscription.objects.filter(user=user, podcast=podcast).count() == 0
 
-    def test_parse_opml_feed(self, mocker, form):
-        mocker.patch(
-            "radiofeed.users.forms.opml_parser.parse_opml",
-            return_value=[
-                Outline(rss="https://example.com/test.xml", title=""),
-            ],
-        )
-        assert list(form.parse_opml_feeds(300)) == ["https://example.com/test.xml"]
-
-    def test_parse_opml_feed_error(self, mocker, form):
+    def test_subscribe_to_feeds_parser_error(self, mocker, form, user, podcast):
         mocker.patch(
             "radiofeed.users.forms.opml_parser.parse_opml",
             side_effect=opml_parser.OpmlParserError,
         )
-        assert list(form.parse_opml_feeds(300)) == []
+        assert form.subscribe_to_feeds(user) == 0
+        assert Subscription.objects.filter(user=user, podcast=podcast).count() == 0

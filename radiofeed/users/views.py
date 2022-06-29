@@ -55,7 +55,7 @@ def import_podcast_feeds(request, target="opml-import-form"):
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
 
-        if new_feeds := form.create_subscriptions(request.user):
+        if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(request, f"{new_feeds} podcasts added to your collection")
         else:
             messages.info(request, "No new podcasts found in uploaded file")

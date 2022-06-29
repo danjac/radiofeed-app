@@ -62,55 +62,41 @@ class TestImportPodcastFeeds:
 
     @pytest.fixture
     def upload_file(self):
-        return SimpleUploadedFile("feeds.opml", b"content", content_type="text/xml")
+        return SimpleUploadedFile(
+            "feeds.opml",
+            (
+                settings.BASE_DIR
+                / "radiofeed"
+                / "podcasts"
+                / "tests"
+                / "mocks"
+                / "feeds.opml"
+            ).read_bytes(),
+            content_type="text/xml",
+        )
 
-    def test_post_has_new_feeds(
-        self, client, auth_user, mocker, upload_file, assert_ok
-    ):
-        podcast = PodcastFactory()
-
-        mocker.patch(
-            "radiofeed.users.forms.OpmlUploadForm.parse_opml_feeds",
-            return_value=[podcast.rss],
+    def test_post_has_new_feeds(self, client, auth_user, upload_file, assert_ok):
+        podcast = PodcastFactory(
+            rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
         assert_ok(client.post(self.url, data={"opml": upload_file}))
 
         assert Subscription.objects.filter(user=auth_user, podcast=podcast).exists()
 
-    def test_post_already_subscribed(
-        self, client, auth_user, mocker, upload_file, assert_ok
-    ):
-        subscription = SubscriptionFactory(user=auth_user)
-
-        mocker.patch(
-            "radiofeed.users.forms.OpmlUploadForm.parse_opml_feeds",
-            return_value=[subscription.podcast.rss],
-        )
-
-        assert_ok(client.post(self.url, data={"opml": upload_file}))
-
-        assert Subscription.objects.filter(user=auth_user).count() == 1
-
     def test_post_has_no_new_feeds(
         self, client, auth_user, mocker, upload_file, assert_ok
     ):
-
-        mocker.patch(
-            "radiofeed.users.forms.OpmlUploadForm.parse_opml_feeds",
-            return_value=["https://example.com/test.xml"],
+        SubscriptionFactory(
+            podcast__rss="https://feeds.99percentinvisible.org/99percentinvisible",
+            user=auth_user,
         )
 
         assert_ok(client.post(self.url, data={"opml": upload_file}))
 
-        assert not Subscription.objects.filter(user=auth_user).exists()
+        assert Subscription.objects.filter(user=auth_user).exists()
 
     def test_post_is_empty(self, client, auth_user, mocker, upload_file, assert_ok):
-
-        mocker.patch(
-            "radiofeed.users.forms.OpmlUploadForm.parse_opml_feeds",
-            return_value=[],
-        )
 
         assert_ok(client.post(self.url, data={"opml": upload_file}))
 
