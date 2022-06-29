@@ -1,3 +1,5 @@
+import pathlib
+
 import pytest
 
 from django.conf import settings
@@ -64,14 +66,7 @@ class TestImportPodcastFeeds:
     def upload_file(self):
         return SimpleUploadedFile(
             "feeds.opml",
-            (
-                settings.BASE_DIR
-                / "radiofeed"
-                / "podcasts"
-                / "tests"
-                / "mocks"
-                / "feeds.opml"
-            ).read_bytes(),
+            (pathlib.Path(__file__).parent / "mocks" / "feeds.opml").read_bytes(),
             content_type="text/xml",
         )
 

@@ -1,7 +1,9 @@
+import lxml
+
 from django import forms
 
 from radiofeed.podcasts.models import Podcast, Subscription
-from radiofeed.podcasts.parsers import opml_parser
+from radiofeed.podcasts.parsers import xml_parser
 from radiofeed.users.models import User
 
 
@@ -33,17 +35,10 @@ class OpmlUploadForm(forms.Form):
     )
 
     def subscribe_to_feeds(self, user, limit=300):
-        self.cleaned_data["opml"].seek(0)
 
         try:
-            feeds = filter(
-                None,
-                map(
-                    lambda outline: outline.rss,
-                    opml_parser.parse_opml(self.cleaned_data["opml"].read()),
-                ),
-            )
-        except opml_parser.OpmlParserError:
+            feeds = self.parse_opml()
+        except lxml.etree.XMLSyntaxError:
             return 0
 
         podcasts = (
@@ -58,3 +53,13 @@ class OpmlUploadForm(forms.Form):
         )
 
         return podcasts.count()
+
+    def parse_opml(self):
+        self.cleaned_data["opml"].seek(0)
+
+        for element in xml_parser.iterparse(
+            self.cleaned_data["opml"].read(), "outline"
+        ):
+            with xml_parser.xpath(element) as xpath:
+                if rss := xpath.first("@xmlUrl"):
+                    yield rss
