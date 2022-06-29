@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
+from django.template.defaultfilters import pluralize
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
@@ -56,7 +57,10 @@ def import_podcast_feeds(request, target="opml-import-form"):
     if form.is_valid():
 
         if new_feeds := form.subscribe_to_feeds(request.user):
-            messages.success(request, f"{new_feeds} podcasts added to your collection")
+            messages.success(
+                request,
+                f"{new_feeds} podcast{pluralize(new_feeds)} added to your collection",
+            )
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
