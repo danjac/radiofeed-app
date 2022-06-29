@@ -81,7 +81,7 @@ def search_episodes(request):
 
 
 @require_http_methods(["GET"])
-def episode_detail(request, episode_id, slug: str | None = None):
+def episode_detail(request, episode_id, slug=None):
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
