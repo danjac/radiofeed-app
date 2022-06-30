@@ -37,6 +37,15 @@ class Feed:
 
 
 def search_cached(search_term):
+    """
+    Runs cached search for podcasts on iTunes API.
+
+    Args:
+        search_term (str): search term(s)
+
+    Returns:
+        list[Feed]
+    """
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
     if (feeds := cache.get(cache_key)) is None:
         feeds = list(search(search_term))
@@ -45,7 +54,15 @@ def search_cached(search_term):
 
 
 def search(search_term):
-    """Search RSS feeds on iTunes"""
+    """
+    Runs search for podcasts on iTunes API.
+
+    Args:
+        search_term (str): search term(s)
+
+    Returns:
+        list[Feed]
+    """
     return parse_feeds(
         get_response(
             "https://itunes.apple.com/search",
@@ -58,7 +75,14 @@ def search(search_term):
 
 
 def crawl():
-    """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
+    """
+    Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found.
+
+    Crawling is restricted to small set of locations (US, UK etc).
+
+    Yields:
+        Feed: any new or existing feeds
+    """
 
     for location in LOCATIONS:
         for url in parse_genre_urls(location):
@@ -77,7 +101,14 @@ def crawl():
 def parse_feeds(json_data):
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
-    URL not found in database.
+    URL not found in database. Existing Podcast instances are attached as `podcast`
+    to the Feed instance.
+
+    Args:
+        json_data (dict): JSON payload returned from iTunes API
+
+    Yields:
+        Feed: any new or existing feeds
     """
     for batch in batcher(build_feeds_from_json(json_data), BATCH_SIZE):
 
