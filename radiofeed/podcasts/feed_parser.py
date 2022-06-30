@@ -252,8 +252,7 @@ class FeedParserError(ValueError):
 
 
 def parse_feed(content):
-    """
-    Parses RSS or Atom feed and returns the feed details and individual episodes.
+    """Parses RSS or Atom feed and returns the feed details and individual episodes.
 
     Args:
         content (bytes): the body of the RSS or Atom feed

@@ -37,8 +37,7 @@ class Feed:
 
 
 def search_cached(search_term):
-    """
-    Runs cached search for podcasts on iTunes API.
+    """Runs cached search for podcasts on iTunes API.
 
     Args:
         search_term (str): search term(s)
@@ -54,8 +53,7 @@ def search_cached(search_term):
 
 
 def search(search_term):
-    """
-    Runs search for podcasts on iTunes API.
+    """Runs search for podcasts on iTunes API.
 
     Args:
         search_term (str): search term(s)
@@ -75,8 +73,7 @@ def search(search_term):
 
 
 def crawl():
-    """
-    Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found.
+    """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found.
 
     Crawling is restricted to small set of locations (US, UK etc).
 
@@ -99,8 +96,7 @@ def crawl():
 
 
 def parse_feeds(json_data):
-    """
-    Adds any existing podcasts to result. Create any new podcasts if feed
+    """Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database. Existing Podcast instances are attached as `podcast`
     to the Feed instance.
 

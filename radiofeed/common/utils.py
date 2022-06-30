@@ -11,8 +11,7 @@ USER_AGENTS = [
 
 
 def get_user_agent():
-    """
-    Returns randomly selected HTTP header User Agent
+    """Returns randomly selected HTTP header User Agent
 
     Returns:
         str: user agent
@@ -21,8 +20,7 @@ def get_user_agent():
 
 
 def batcher(iterable, batch_size):
-    """
-    Batches an iterable into lists of given batch size. Useful for handling long
+    """Batches an iterable into lists of given batch size. Useful for handling long
     iterables where individual processing might be slow.
 
     Args:

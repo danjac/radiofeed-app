@@ -27,8 +27,7 @@ class DuplicateFeed(requests.RequestException):
 
 
 class FeedUpdater:
-    """
-    Syncs a Podcast instance with its RSS or Atom feed source.
+    """Syncs a Podcast instance with its RSS or Atom feed source.
 
     Args:
         podcast (Podcast): podcast instance
@@ -39,8 +38,7 @@ class FeedUpdater:
 
     @transaction.atomic
     def update(self):
-        """
-        Updates Podcast instance with RSS or Atom feed source. Podcast details are updated and
+        """Updates Podcast instance with RSS or Atom feed source. Podcast details are updated and
         episodes created, updated or deleted accordingly.
 
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is

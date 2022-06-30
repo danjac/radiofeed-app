@@ -15,6 +15,12 @@ def ajax_login_required(view):
 
     If an HTMX request returns a client redirect to login page
     if user is not logged in, otherwise raises a 401.
+
+    Args:
+        view (Callable): Django view callable
+
+    Returns:
+        Callable: decorated callable
     """
 
     @functools.wraps(view)
