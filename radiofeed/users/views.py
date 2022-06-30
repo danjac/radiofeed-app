@@ -16,6 +16,15 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_http_methods(["GET", "POST"])
 @login_required
 def user_preferences(request, target="preferences-form"):
+    """Handle user preferences form.
+
+    Args:
+        request (HttpRequest)
+        target (str): HTMX form target
+
+    Returns:
+        TemplateResponse
+    """
 
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
@@ -40,6 +49,14 @@ def user_preferences(request, target="preferences-form"):
 @require_http_methods(["GET"])
 @login_required
 def import_export_podcast_feeds(request):
+    """Renders import/export page
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        TemplateResponse
+    """
     return TemplateResponse(
         request,
         "account/import_export_podcast_feeds.html",
@@ -53,6 +70,15 @@ def import_export_podcast_feeds(request):
 @require_http_methods(["POST"])
 @login_required
 def import_podcast_feeds(request, target="opml-import-form"):
+    """Imports an OPML document and subscribes user to any discovered feeds.
+
+    Args:
+        request (HttpRequest)
+        target (str): HTMX form target
+
+    Returns:
+        TemplateResponse
+    """
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
 
@@ -79,6 +105,14 @@ def import_podcast_feeds(request, target="opml-import-form"):
 @require_http_methods(["POST"])
 @login_required
 def export_podcast_feeds(request):
+    """Download OPML document containing feeds from user's subscriptions.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse: OPML document
+    """
     podcasts = (
         Podcast.objects.filter(
             subscription__user=request.user,
@@ -101,6 +135,14 @@ def export_podcast_feeds(request):
 @require_http_methods(["GET"])
 @login_required
 def user_stats(request):
+    """Render user statistics including listening history, subscriptions, etc
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        TemplateResponse
+    """
 
     logs = AudioLog.objects.filter(user=request.user)
 
@@ -120,6 +162,15 @@ def user_stats(request):
 @require_http_methods(["GET", "POST"])
 @login_required
 def delete_account(request):
+    """Delete account on confirmation.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse: redirect to index page on delete confirmation, otherwise
+            render delete confirmation page.
+    """
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)

@@ -11,6 +11,15 @@ def send_user_notification_email(
     html_template_name,
     context=None,
 ):
+    """Common function for sending any notifications to a user.
+
+    Args:
+        recipient (User): email recipient
+        subject (str): email subject line
+        template_name (str): plain text template for email body
+        html_template_name (str): template for email HTML attachment
+        context (dict | None): any template context for both templates
+    """
 
     site = Site.objects.get_current()
 
