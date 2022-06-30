@@ -56,8 +56,6 @@ AUDIO_MIMETYPES = (
     "audio/x-wav",
 )
 
-######## VALIDATORS ########
-
 # ensure integer falls within PostgreSQL INTEGER range
 
 pg_integer = attrs.validators.and_(
@@ -79,9 +77,6 @@ def url(instance, attr, value):
         _url_validator(value)
     except ValidationError as e:
         raise ValueError from e
-
-
-######## CONVERTERS ########
 
 
 def explicit(value):
@@ -110,9 +105,6 @@ def duration(value):
         )
     except ValueError:
         return ""
-
-
-######## MODELS ########
 
 
 @attrs.define(kw_only=True, frozen=True)
