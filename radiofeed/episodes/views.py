@@ -42,7 +42,7 @@ def index(request, since=timedelta(days=14)):
 
     from_pub_date = timezone.now() - since
 
-    podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - from_pub_date)
+    podcasts = Podcast.objects.filter(pub_date__gt=from_pub_date)
 
     if subscribed and not promoted:
         podcasts = podcasts.filter(pk__in=subscribed)
