@@ -9,7 +9,8 @@ import requests
 
 from django.core.cache import cache
 
-from radiofeed.common.utils import batcher, user_agent, xml_parser
+from radiofeed.common.parsers import xml_parser
+from radiofeed.common.utils import batcher, get_user_agent
 from radiofeed.podcasts.models import Podcast
 
 BATCH_SIZE = 100
@@ -61,7 +62,7 @@ def crawl():
 
     for location in LOCATIONS:
         for url in parse_genre_urls(location):
-            for batch in batcher.batcher(parse_podcast_ids(url, location), BATCH_SIZE):
+            for batch in batcher(parse_podcast_ids(url, location), BATCH_SIZE):
                 yield from parse_feeds(
                     get_response(
                         "https://itunes.apple.com/lookup",
@@ -78,7 +79,7 @@ def parse_feeds(json_data):
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
     """
-    for batch in batcher.batcher(build_feeds_from_json(json_data), BATCH_SIZE):
+    for batch in batcher(build_feeds_from_json(json_data), BATCH_SIZE):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
@@ -108,7 +109,7 @@ def get_response(url, data=None):
     response = requests.get(
         url,
         data,
-        headers={"User-Agent": user_agent.get_user_agent()},
+        headers={"User-Agent": get_user_agent()},
         timeout=10,
         allow_redirects=True,
     )

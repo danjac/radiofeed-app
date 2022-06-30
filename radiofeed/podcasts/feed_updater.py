@@ -9,9 +9,9 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common.utils import batcher, date_parser, user_agent
+from radiofeed.common.parsers import date_parser, rss_parser, text_parser
+from radiofeed.common.utils import batcher, get_user_agent
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts import rss_parser, text_parser
 from radiofeed.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -76,7 +76,7 @@ class FeedUpdater:
     def get_feed_headers(self):
         headers = {
             "Accept": ACCEPT_HEADER,
-            "User-Agent": user_agent.get_user_agent(),
+            "User-Agent": get_user_agent(),
         }
 
         if self.podcast.etag:
@@ -189,7 +189,7 @@ class FeedUpdater:
 
         # update existing content
 
-        for batch in batcher.batcher(self.episodes_for_update(feed, guids), batch_size):
+        for batch in batcher(self.episodes_for_update(feed, guids), batch_size):
             Episode.fast_update_objects.fast_update(
                 batch,
                 fields=[
@@ -211,7 +211,7 @@ class FeedUpdater:
 
         # add new episodes
 
-        for batch in batcher.batcher(self.episodes_for_insert(feed, guids), batch_size):
+        for batch in batcher(self.episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def episodes_for_update(self, feed, guids):

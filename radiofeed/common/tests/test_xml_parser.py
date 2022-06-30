@@ -2,7 +2,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.common.utils import xml_parser
+from radiofeed.common.parsers import xml_parser
 
 
 class TestXPath:

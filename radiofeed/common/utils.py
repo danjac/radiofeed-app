@@ -1,3 +1,4 @@
+import itertools
 import secrets
 
 USER_AGENTS = [
@@ -11,3 +12,9 @@ USER_AGENTS = [
 
 def get_user_agent():
     return secrets.choice(USER_AGENTS)
+
+
+def batcher(iterable, batch_size):
+    iterator = iter(iterable)
+    while batch := list(itertools.islice(iterator, batch_size)):
+        yield batch

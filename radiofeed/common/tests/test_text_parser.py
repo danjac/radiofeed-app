@@ -1,4 +1,4 @@
-from radiofeed.podcasts import text_parser
+from radiofeed.common.parsers import text_parser
 
 
 class TestStopwords:
@@ -22,7 +22,7 @@ class TestExtractKeywords:
 
     def test_extract_attribute_error(self, mocker):
         mocker.patch(
-            "radiofeed.podcasts.text_parser.lemmatizer.lemmatize",
+            "radiofeed.common.parsers.text_parser.lemmatizer.lemmatize",
             side_effect=AttributeError,
         )
         assert text_parser.extract_keywords("en", "the cat sits on the mat") == []
