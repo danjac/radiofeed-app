@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -58,7 +61,50 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    ...
+    def scheduled(self):
+        """Returns podcasts scheduled for update.
+
+         Scheduling algorithm:
+
+             1. check once every n hours, where "n" is the number
+                 of days since the podcast was last updated (i.e. last pub date)
+             2. if podcast was last updated within 24 hours, check once an hour.
+             3. if podcast was last updated > 24 days, check every 24 hours.
+             4. if podcast has not been checked yet (i.e. just added to database), check immediately.
+
+         Only *active* podcasts should be included.
+
+        Returns:
+             QuerySet: scheduled podcasts
+        """
+        now = timezone.now()
+
+        return Podcast.objects.annotate(
+            days_since_last_pub_date=models.functions.ExtractDay(
+                now - models.F("pub_date")
+            ),
+        ).filter(
+            models.Q(
+                parsed__isnull=True,
+            )
+            | models.Q(
+                pub_date__isnull=True,
+            )
+            | models.Q(
+                days_since_last_pub_date__lt=1,
+                parsed__lt=now - timedelta(hours=1),
+            )
+            | models.Q(
+                days_since_last_pub_date__gt=24,
+                parsed__lt=now - timedelta(hours=24),
+            )
+            | models.Q(
+                days_since_last_pub_date__range=(1, 24),
+                parsed__lt=now
+                - timedelta(hours=1) * models.F("days_since_last_pub_date"),
+            ),
+            active=True,
+        )
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)

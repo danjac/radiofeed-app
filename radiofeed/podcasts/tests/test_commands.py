@@ -40,11 +40,9 @@ class TestCrawlItunes:
 
 
 class TestFeedUpdates:
-    def test_command(self, db, mocker):
+    def test_command(self, mocker, podcast):
 
-        patched = mocker.patch(
-            "radiofeed.podcasts.scheduler.schedule_feeds_for_update",
-        )
+        patched = mocker.patch("radiofeed.podcasts.tasks.parse_feed.map")
 
         call_command("feed_updates", limit=200)
 
