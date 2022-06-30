@@ -10,7 +10,7 @@ from radiofeed.podcasts.tasks import parse_feed
 
 
 def schedule_feeds_for_update(limit):
-    """Schedules feeds for update
+    """Schedules feeds for update in task queue
 
     Args:
         limit (int): number of podcasts to update
