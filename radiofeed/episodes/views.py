@@ -102,6 +102,19 @@ def search_episodes(request):
 
 @require_http_methods(["GET"])
 def episode_detail(request, episode_id, slug=None):
+    """Renders episode detail.
+
+    Args:
+        request (HttpRequest)
+        episode_id (int): Episode PK
+        slug (str | None): used for SEO
+
+    Raises:
+        Http404: episode not found
+
+    Returns:
+        TemplateResponse
+    """
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -121,6 +134,19 @@ def episode_detail(request, episode_id, slug=None):
 @require_http_methods(["POST"])
 @ajax_login_required
 def start_player(request, episode_id):
+    """Starts player. Creates new audio log if necessary and adds episode to
+    player session tracker.
+
+    Args:
+        request (HttpRequest)
+        episode_id (int): Episode PK
+
+    Raises:
+        Http404: episode not found
+
+    Returns:
+        TemplateResponse
+    """
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     log, _ = AudioLog.objects.update_or_create(
@@ -145,6 +171,17 @@ def start_player(request, episode_id):
 @require_http_methods(["POST"])
 @ajax_login_required
 def close_player(request):
+    """Closes player. Removes episode to player session tracker.
+
+    Args:
+        request (HttpRequest)
+
+    Raises:
+        Http404: episode not found
+
+    Returns:
+        HttpResponse: returns empty response if player not running.
+    """
 
     if episode_id := request.player.pop():
 
@@ -313,6 +350,18 @@ def player_response(
     current_time,
     listened,
 ):
+    """Renders player inside HTMX snippet.
+
+    Args:
+        request (HttpRequest)
+        episode (Episode)
+        start_player (bool): render the player and start play in client
+        current_time (datetime | None): current time played so far
+        listened (datetime | None): time when last listened to episode
+
+    Returns:
+        TemplateResponse
+    """
     return TemplateResponse(
         request,
         "episodes/player.html",
