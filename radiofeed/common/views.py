@@ -11,6 +11,14 @@ from django.views.decorators.http import require_http_methods
 
 @require_http_methods(["POST"])
 def accept_cookies(request):
+    """Handles "accept" action on GDPR cookie banner.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse
+    """
     response = HttpResponse()
     response.set_cookie(
         "accept-cookies",
@@ -25,12 +33,30 @@ def accept_cookies(request):
 
 @require_http_methods(["GET"])
 def static_page(request, template_name, extra_context=None):
+    """Renders a simple web page. Use for help pages, "About" pages etc.
+
+    Args:
+        request (HttpRequest)
+        template_name (str): template
+        extra_context (dict | None): any extra template context
+
+    Returns:
+        TemplateResponse
+    """
     return TemplateResponse(request, template_name, extra_context)
 
 
 @require_http_methods(["GET"])
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 def favicon(request):
+    """Generates favicon file
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        FileResponse
+    """
     return FileResponse(
         (settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb")
     )
@@ -40,6 +66,14 @@ def favicon(request):
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request):
+    """Generates robots.txt
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse
+    """
     return HttpResponse(
         "\n".join(
             [
@@ -63,6 +97,14 @@ def robots(request):
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def security(request):
+    """Generates security.txt file containing contact details etc
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse
+    """
 
     return HttpResponse(
         "\n".join(

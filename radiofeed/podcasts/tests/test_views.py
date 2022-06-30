@@ -86,6 +86,10 @@ class TestSearchPodcasts:
 
 
 class TestSearchITunes:
+    def test_empty(self, client, db):
+        response = client.get(reverse("podcasts:search_itunes"), {"q": ""})
+        assert response.url == reverse("podcasts:index")
+
     def test_search(self, client, db, mocker, assert_ok):
         feeds = [
             Feed(

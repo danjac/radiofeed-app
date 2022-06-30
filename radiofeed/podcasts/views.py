@@ -22,6 +22,15 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscri
 
 @require_http_methods(["GET"])
 def index(request):
+    """Renders default podcast home page. If user is authenticated
+    will show their subscriptions (if any); otherwise shows all promoted podcasts.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        TemplateResponse
+    """
 
     subscribed = (
         set(request.user.subscription_set.values_list("podcast", flat=True))
@@ -54,6 +63,14 @@ def index(request):
 
 @require_http_methods(["GET"])
 def search_podcasts(request):
+    """Renders search page. Redirects to index page if search is empty.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse
+    """
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
@@ -77,9 +94,19 @@ def search_podcasts(request):
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
 def search_itunes(request):
+    """Renders iTunes search page. Redirects to index page if search is empty.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse
+    """
+    if not request.search:
+        return HttpResponseRedirect(reverse("podcasts:index"))
 
     try:
-        feeds = itunes.search_cached(request.search.value) if request.search else []
+        feeds = itunes.search_cached(request.search.value)
     except requests.RequestException as e:
         logging.exception(e)
         feeds = []
@@ -249,10 +276,26 @@ def unsubscribe(request, podcast_id):
 
 
 def get_podcasts():
+    """Returns QuerySet of published podcasts.
+
+    Returns:
+        QuerySet
+    """
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
 def get_podcast_or_404(podcast_id):
+    """Returns individual podcast
+
+    Args:
+        podcast_id (int): Podcast PK
+
+    Raises:
+        Http404
+
+    Returns:
+        Podcast
+    """
     return get_object_or_404(get_podcasts(), pk=podcast_id)
 
 
