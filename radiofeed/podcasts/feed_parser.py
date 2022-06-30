@@ -30,7 +30,7 @@ def parse_feed(podcast):
     """Updates a Podcast instance with its RSS or Atom feed source.
 
     Args:
-        podcast (Podcast): podcast instance
+        podcast (Podcast)
 
     Returns:
         bool: if successful update
@@ -42,7 +42,7 @@ class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source.
 
     Args:
-        podcast (Podcast): podcast instance
+        podcast (Podcast)
     """
 
     def __init__(self, podcast):
