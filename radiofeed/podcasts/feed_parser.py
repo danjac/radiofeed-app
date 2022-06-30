@@ -26,8 +26,20 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
+def parse_feed(podcast):
+    """Updates a Podcast instance with its RSS or Atom feed source.
+
+    Args:
+        podcast (Podcast): podcast instance
+
+    Returns:
+        bool: if successful update
+    """
+    return FeedParser(podcast).parse()
+
+
 class FeedParser:
-    """Syncs a Podcast instance with its RSS or Atom feed source.
+    """Updates a Podcast instance with its RSS or Atom feed source.
 
     Args:
         podcast (Podcast): podcast instance

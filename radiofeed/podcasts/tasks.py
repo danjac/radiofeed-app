@@ -15,7 +15,7 @@ def parse_feed(podcast_id):
     Raises:
         PodcastDoesNotExist: if no active podcast found
     """
-    feed_parser.FeedParser(Podcast.objects.get(pk=podcast_id, active=True)).parse()
+    feed_parser.parse_feed(Podcast.objects.get(pk=podcast_id, active=True))
 
 
 @db_task()

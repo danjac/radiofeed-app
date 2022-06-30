@@ -85,7 +85,7 @@ class TestFeedParser:
             side_effect=ValueError,
         )
         with pytest.raises(ValueError):
-            feed_parser.FeedParser(podcast).parse()
+            feed_parser.parse_feed(podcast)
 
     def test_parse_ok(self, db, mocker, categories):
 
@@ -111,7 +111,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert feed_parser.FeedParser(podcast).parse()
+        assert feed_parser.parse_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -168,7 +168,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert feed_parser.FeedParser(podcast).parse()
+        assert feed_parser.parse_feed(podcast)
 
         assert Episode.objects.count() == 4940
 
@@ -202,7 +202,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert feed_parser.FeedParser(podcast).parse()
+        assert feed_parser.parse_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -261,7 +261,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -285,7 +285,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -312,7 +312,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert feed_parser.FeedParser(podcast).parse()
+        assert feed_parser.parse_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -366,7 +366,7 @@ class TestFeedParser:
                 content=self.get_rss_content(),
             ),
         )
-        assert feed_parser.FeedParser(podcast).parse()
+        assert feed_parser.parse_feed(podcast)
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
@@ -392,7 +392,7 @@ class TestFeedParser:
                 content=self.get_rss_content(),
             ),
         )
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -409,7 +409,7 @@ class TestFeedParser:
             ),
         )
 
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert not podcast.active
@@ -425,7 +425,7 @@ class TestFeedParser:
             ),
         )
 
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert not podcast.active
@@ -436,7 +436,7 @@ class TestFeedParser:
             self.mock_http_get,
             return_value=MockResponse(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED),
         )
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -448,7 +448,7 @@ class TestFeedParser:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -461,7 +461,7 @@ class TestFeedParser:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -477,7 +477,7 @@ class TestFeedParser:
         podcast.pub_date = None
         podcast.save()
 
-        assert not feed_parser.FeedParser(podcast).parse()
+        assert not feed_parser.parse_feed(podcast)
 
         podcast.refresh_from_db()
 
