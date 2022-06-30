@@ -325,6 +325,14 @@ lemmatizer = WordNetLemmatizer()
 
 @lru_cache()
 def get_stopwords(language):
+    """Returns all stopwords for a language, if available.
+
+    Args:
+        language (str): 2-char language code e.g. "en"
+
+    Returns:
+        list[str]
+    """
     try:
         return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
     except (OSError, KeyError):
@@ -332,7 +340,14 @@ def get_stopwords(language):
 
 
 def clean_text(text):
-    """Remove HTML tags and entities, punctuation and numbers."""
+    """Remove HTML tags and entities, punctuation and numbers.
+
+    Args:
+        text (str): text to be cleaned
+
+    Returns:
+        str: cleaned text
+    """
     text = html.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
     text = re.sub(r"\d+", "", text)
@@ -340,6 +355,16 @@ def clean_text(text):
 
 
 def extract_keywords(language, text):
+    """Extracts all relevant keywords from text, removing any stopwords,
+    HTML tags etc.
+
+    Args:
+        language (str): 2-char language code e.g. "en"
+        text(str): text source
+
+    Returns:
+        str
+    """
 
     if not (text := clean_text(text).casefold()):
         return []
