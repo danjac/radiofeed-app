@@ -4,7 +4,7 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.podcasts import feed_scheduler
+from radiofeed.podcasts import scheduler
 from radiofeed.podcasts.factories import PodcastFactory
 
 
@@ -83,4 +83,4 @@ class TestGetScheduledFeeds:
             parsed=now - parsed if parsed else None,
         )
 
-        assert feed_scheduler.get_scheduled_feeds().exists() == exists
+        assert scheduler.get_scheduled_feeds().exists() == exists
