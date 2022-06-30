@@ -15,8 +15,7 @@ def pagination_response(
     param="page",
     **pagination_kwargs,
 ):
-    """
-    Creates a TemplateResponse for a paginated QuerySet or list.
+    """Creates a TemplateResponse for a paginated QuerySet or list.
 
     If the request has the HX-Request header and matching HTMX target,
     will select the pagination template instead
