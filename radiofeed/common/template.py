@@ -41,6 +41,14 @@ def pagination_url(context, page_number, param="page"):
     be something like:
 
     "/search?q=test&page=3"
+
+    Args:
+        context (dict): template context
+        page_number (int)
+        param (str): query string parameter for pages
+
+    Returns:
+        str: updated URL path with new page
     """
     request = context["request"]
     params = request.GET.copy()
@@ -50,6 +58,10 @@ def pagination_url(context, page_number, param="page"):
 
 @register.simple_tag
 def get_site_config():
+    """
+    Returns:
+        dict: site configuration
+    """
     return settings.SITE_CONFIG
 
 
@@ -62,7 +74,14 @@ def absolute_uri(context, url=None, *args, **kwargs):
 
 @register.filter
 def format_duration(total_seconds):
-    """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
+    """Formats duration (in seconds) as human readable value e.g. 1h 30min
+
+    Args:
+        total_seconds (int | None)
+
+    Returns:
+        str: empty if total seconds None or under a minute
+    """
     if total_seconds is None or total_seconds < 60:
         return ""
 
