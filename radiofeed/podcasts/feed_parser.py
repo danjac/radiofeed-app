@@ -112,6 +112,9 @@ def duration(value):
         return ""
 
 
+######## MODELS ########
+
+
 @attrs.define(kw_only=True, frozen=True)
 class Item:
     """Individual item or episode in RSS or Atom podcast feed"""
