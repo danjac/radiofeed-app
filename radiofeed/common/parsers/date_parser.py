@@ -241,6 +241,19 @@ TZ_INFOS: dict[str, int | float] = {
 
 @functools.singledispatch
 def parse_date(value):
+    """Parses a date string or object and returns a timezone-aware datetime object.
+
+    If datetime passed will return the same instance with timezone awareness if not
+    already present.
+
+    Invalid inputs will return None.
+
+    Args:
+        value (str | date | datetime | None):  value to parse
+
+    Returns:
+        datetime | None: timezone-aware datetime or None if invalid value.
+    """
     return None
 
 
