@@ -12,15 +12,20 @@ def get_scheduled_feeds():
     Scheduling algorithm:
 
         1. check once every n hours, where "n" is the number
-            of days since the podcast was last updated
+            of days since the podcast was last updated (i.e. last pub date)
         2. if podcast was last updated within 24 hours, check once an hour.
         3. if podcast was last updated > 24 days, check every 24 hours.
-        4. if podcast has not been checked yet, check immediately.
+        4. if podcast has not been checked yet (i.e. just added to database), check immediately.
 
-    Example:
+    Only *active* podcasts should be included.
 
-        Podcast was last parsed 3 days ago, so should be checked every 3 hours
-        based on its `parsed` field.
+    Examples:
+
+        1. Podcast was last updated 3 days ago, so should be checked every 3 hours
+            based on its `parsed` field.
+        2. Podcast was last updated 3 hours ago, so should be checked every hour.
+        3. Podcast was last updated 30 days ago, should be checked once a day (every 24 hours)
+        4. Podcast has just been added e.g. from iTunes API, so should be checked immediately.
 
     Podcasts are ordered by (in order of priority):
 
@@ -28,6 +33,10 @@ def get_scheduled_feeds():
         2. promoted podcasts
         3. time since last parsed
         4. time since last published
+
+    The exact timing of when a podcast is checked depends on the number of other podcasts in the queue,
+    speed of processing individual feeds, and overall server capacity. This function just returns all
+    eligible podcasts ordered by priority.
 
     Returns:
         QuerySet: scheduled podcasts
