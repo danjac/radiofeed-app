@@ -1,3 +1,5 @@
+import itertools
+
 import lxml
 
 from django import forms
@@ -41,18 +43,20 @@ class OpmlUploadForm(forms.Form):
         except lxml.etree.XMLSyntaxError:
             return 0
 
-        podcasts = (
-            Podcast.objects.filter(rss__in=feeds)
-            .exclude(subscription__user=user)
-            .distinct()
-        )[:limit]
-
-        Subscription.objects.bulk_create(
-            [Subscription(podcast=podcast, user=user) for podcast in podcasts],
-            ignore_conflicts=True,
+        return len(
+            Subscription.objects.bulk_create(
+                [
+                    Subscription(podcast=podcast, user=user)
+                    for podcast in itertools.islice(
+                        Podcast.objects.filter(rss__in=feeds)
+                        .exclude(subscription__user=user)
+                        .distinct(),
+                        limit,
+                    )
+                ],
+                ignore_conflicts=True,
+            )
         )
-
-        return podcasts.count()
 
     def parse_opml(self):
         self.cleaned_data["opml"].seek(0)
