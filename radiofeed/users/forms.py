@@ -37,6 +37,15 @@ class OpmlUploadForm(forms.Form):
     )
 
     def subscribe_to_feeds(self, user, limit=300):
+        """Subscribes user to feeds in uploaded OPML.
+
+        Args:
+            user (User)
+            limit (int): limit of OPML feeds
+
+        Returns:
+            int: number of new subscribed feeds
+        """
 
         try:
             feeds = self.parse_opml()
