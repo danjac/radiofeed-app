@@ -110,6 +110,7 @@ def duration(value):
 
 @attrs.define(kw_only=True, frozen=True)
 class Item:
+    """Individual item or episode in RSS or Atom podcast feed"""
 
     guid: str = attrs.field(validator=required)
     title: str = attrs.field(validator=required)
@@ -182,6 +183,7 @@ class Item:
 
 @attrs.define(kw_only=True, frozen=True)
 class Feed:
+    """RSS or Atom podcast feed"""
 
     title: str = attrs.field(validator=required)
 
@@ -250,6 +252,18 @@ class FeedParserError(ValueError):
 
 
 def parse_feed(content):
+    """
+    Parses RSS or Atom feed and returns the feed details and individual episodes.
+
+    Args:
+        content (bytes): the body of the RSS or Atom feed
+
+    Raises:
+        FeedParserError: if XML content is invalid, or the feed is otherwise invalid or empty
+
+    Returns:
+        Feed
+    """
 
     try:
         channel = next(xml_parser.iterparse(content, "channel"))

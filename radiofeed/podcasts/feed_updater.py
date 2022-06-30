@@ -27,11 +27,29 @@ class DuplicateFeed(requests.RequestException):
 
 
 class FeedUpdater:
+    """
+    Syncs a Podcast instance with its RSS or Atom feed source.
+
+    Args:
+        podcast (Podcast): podcast instance
+    """
+
     def __init__(self, podcast):
         self.podcast = podcast
 
     @transaction.atomic
     def update(self):
+        """
+        Updates Podcast instance with RSS or Atom feed source. Podcast details are updated and
+        episodes created, updated or deleted accordingly.
+
+        If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is
+        marked as complete) then the podcast is set inactive.
+
+        Returns:
+            bool: if podcast has been successfully updated. This will be False if there are no updates or
+                there is some other problem e.g. HTTP error.
+        """
         try:
             return self.handle_success(*self.parse_feed())
 

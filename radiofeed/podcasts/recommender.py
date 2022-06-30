@@ -19,6 +19,16 @@ logger = logging.getLogger(__name__)
 
 
 def recommend(since=timedelta(days=90), num_matches=12):
+    """
+    Generates Recommendation instances based on podcast similarity, grouped
+    by language.
+
+    Any existing recommendations are first deleted.
+
+    Args:
+        since (timedelta): include podcasts last published since this period
+        num_matches (int): total number of recommendations to create for each podcast
+    """
 
     podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
         extracted_text="",
@@ -40,11 +50,28 @@ def recommend(since=timedelta(days=90), num_matches=12):
 
 
 class Recommender:
+    """Creates recommendations for given language, based around text content and
+    common categories.
+
+    Args:
+        language (str): two-character language code e.g. "en"
+        num_matches (int): number of recommendations to create
+    """
+
     def __init__(self, language, num_matches):
         self.language = language
         self.num_matches = num_matches
 
     def recommend(self, podcasts, categories):
+        """Creates recommendation instances.
+
+        Args:
+            podcasts (QuerySet): podcast instances
+            categories (QuerySet): category instances
+
+        Returns:
+            list[Recommendation]: list of new Recommendation instances
+        """
 
         if matches := self.build_matches_dict(podcasts, categories):
 
