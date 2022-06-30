@@ -22,7 +22,15 @@ from radiofeed.common.html import strip_html
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def with_current_time(self, user):
-        """Adds `current_time` and `listened` annotations."""
+        """Adds `current_time` and `listened` annotations. Both will be None
+        if user is anonymous or there is no listening history.
+
+        Args:
+            user (User | AnonymousUser)
+
+        Returns:
+            QuerySet
+        """
 
         if user.is_anonymous:
             return self.annotate(
@@ -38,6 +46,14 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def get_next_episode(self, episode):
+        """Returns following episode in same podcast as this episode, if any.
+
+        Args:
+            episode (Episode)
+
+        Returns:
+            Episode | None
+        """
         return (
             self.filter(
                 podcast=episode.podcast_id,
@@ -49,6 +65,14 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def get_previous_episode(self, episode):
+        """Returns previous episode in same podcast as this episode, if any.
+
+        Args:
+            episode (Episode)
+
+        Returns:
+            Episode | None
+        """
         return (
             self.filter(
                 podcast=episode.podcast_id,
@@ -121,28 +145,66 @@ class Episode(models.Model):
 
     @property
     def slug(self):
+        """Returns slugified title, if any
+
+        Returns:
+            str
+        """
         return slugify(self.title, allow_unicode=False) or "no-title"
 
     def get_link(self):
+        """Returns link to episode web page or podcast site if former not provided.
+
+        Returns:
+            str | None
+        """
         return self.link or self.podcast.link
 
     def get_file_size(self):
+        """Returns human readable file size e.g. 30MB. If length is zero or none returns None.
+
+        Returns:
+            str | None
+        """
         return filesizeformat(self.length) if self.length else None
 
     def get_cover_url(self):
+        """Returns cover image URL or podcast cover image if former not provided.
+
+        Returns:
+            str | None
+        """
         return self.cover_url or self.podcast.cover_url
 
     def is_bookmarked(self, user):
+        """Check if episode has been bookmarked by this user.
+
+        Args:
+            user (User | AnonymousUser)
+
+        Returns:
+            bool
+        """
         if user.is_anonymous:
             return False
         return Bookmark.objects.filter(user=user, episode=self).exists()
 
     @cached_property
     def cleaned_title(self):
+        """Strips HTML from title field
+
+        Returns:
+            str
+        """
         return strip_html(self.title)
 
     @cached_property
     def cleaned_description(self):
+        """Strips HTML from description field
+
+        Returns:
+            str
+        """
         return strip_html(self.description)
 
     @cached_property
@@ -240,12 +302,27 @@ class Episode(models.Model):
         }
 
     def get_player_target(self):
+        """Play button HTMX target
+
+        Returns:
+            str
+        """
         return f"player-actions-{self.id}"
 
     def get_bookmark_target(self):
+        """Add/remove bookmark button HTMX target
+
+        Returns:
+            str
+        """
         return f"bookmark-actions-{self.id}"
 
     def get_history_target(self):
+        """Listening history episode detail HTMX target
+
+        Returns:
+            str
+        """
         return f"history-actions-{self.id}"
 
 

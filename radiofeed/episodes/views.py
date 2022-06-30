@@ -19,10 +19,20 @@ from radiofeed.podcasts.models import Podcast
 
 
 @require_http_methods(["GET"])
-def index(request):
+def index(request, since=timedelta(days=14)):
+    """List latest episodes from subscriptions if any, else latest episodes from
+    promoted podcasts.
+
+
+    Args:
+        request (HttpRequest)
+        since (timedelta): only include podcasts with last pub date since this time
+
+    Returns:
+        TemplateResponse
+    """
 
     promoted = "promoted" in request.GET
-    since = timezone.now() - timedelta(days=14)
 
     subscribed = (
         set(request.user.subscription_set.values_list("podcast", flat=True))
@@ -30,7 +40,9 @@ def index(request):
         else set()
     )
 
-    podcasts = Podcast.objects.filter(pub_date__gt=since)
+    from_pub_date = timezone.now() - since
+
+    podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - from_pub_date)
 
     if subscribed and not promoted:
         podcasts = podcasts.filter(pk__in=subscribed)
@@ -38,7 +50,7 @@ def index(request):
         podcasts = podcasts.filter(promoted=True)
 
     episodes = (
-        Episode.objects.filter(pub_date__gt=since)
+        Episode.objects.filter(pub_date__gt=from_pub_date)
         .select_related("podcast")
         .filter(
             podcast__in=set(podcasts.values_list("pk", flat=True)),
@@ -62,6 +74,14 @@ def index(request):
 
 @require_http_methods(["GET"])
 def search_episodes(request):
+    """Search episodes. If search empty redirects to index page.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse
+    """
 
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
