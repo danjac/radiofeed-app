@@ -5,7 +5,6 @@ import pathlib
 import pytest
 import requests
 
-from django.conf import settings
 from django.utils import timezone
 
 from radiofeed.common.parsers import date_parser
@@ -76,18 +75,13 @@ class TestFeedUpdater:
 
     def get_rss_content(self, filename=""):
         return (
-            pathlib.Path(settings.BASE_DIR)
-            / "radiofeed"
-            / "common"
-            / "tests"
-            / "mocks"
-            / (filename or self.mock_file)
+            pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)
         ).read_bytes()
 
     def test_update_unhandled_exception(self, podcast, mocker):
 
         mocker.patch(
-            "radiofeed.podcasts.feed_updater.FeedUpdater.parse_rss",
+            "radiofeed.podcasts.feed_updater.FeedUpdater.parse_feed",
             side_effect=ValueError,
         )
         with pytest.raises(ValueError):

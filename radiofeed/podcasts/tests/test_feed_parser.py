@@ -6,18 +6,18 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.common.parsers import rss_parser
+from radiofeed.podcasts import feed_parser
 
 
 class TestExplicit:
     def test_true(self):
-        assert rss_parser.explicit("yes") is True
+        assert feed_parser.explicit("yes") is True
 
     def test_false(self):
-        assert rss_parser.explicit("no") is False
+        assert feed_parser.explicit("no") is False
 
     def test_none(self):
-        assert rss_parser.explicit(None) is False
+        assert feed_parser.explicit(None) is False
 
 
 class TestDuration:
@@ -34,7 +34,7 @@ class TestDuration:
         ],
     )
     def test_parse_duration(self, value, expected):
-        assert rss_parser.duration(value) == expected
+        assert feed_parser.duration(value) == expected
 
 
 class TestNotEmpty:
@@ -50,9 +50,9 @@ class TestNotEmpty:
 
         if raises:
             with pytest.raises(ValueError):
-                rss_parser.required(None, None, value)
+                feed_parser.required(None, None, value)
         else:
-            rss_parser.required(None, None, value)
+            feed_parser.required(None, None, value)
 
 
 class TestUrl:
@@ -67,15 +67,15 @@ class TestUrl:
     def test_url(self, value, raises):
         if raises:
             with pytest.raises(ValueError):
-                rss_parser.url(None, None, value)
+                feed_parser.url(None, None, value)
         else:
-            rss_parser.url(None, None, value)
+            feed_parser.url(None, None, value)
 
 
 class TestItem:
     def test_pub_date_none(self):
         with pytest.raises(ValueError):
-            rss_parser.Item(
+            feed_parser.Item(
                 guid="test",
                 title="test",
                 media_url="https://example.com/",
@@ -85,7 +85,7 @@ class TestItem:
 
     def test_pub_date_in_future(self):
         with pytest.raises(ValueError):
-            rss_parser.Item(
+            feed_parser.Item(
                 guid="test",
                 title="test",
                 media_url="https://example.com/",
@@ -95,7 +95,7 @@ class TestItem:
 
     def test_not_audio_mimetype(self):
         with pytest.raises(ValueError):
-            rss_parser.Item(
+            feed_parser.Item(
                 guid="test",
                 title="test",
                 media_url="https://example.com/",
@@ -104,7 +104,7 @@ class TestItem:
             )
 
     def test_defaults(self):
-        item = rss_parser.Item(
+        item = feed_parser.Item(
             guid="test",
             title="test",
             media_url="https://example.com/",
@@ -119,7 +119,7 @@ class TestItem:
 class TestFeed:
     @pytest.fixture
     def item(self):
-        return rss_parser.Item(
+        return feed_parser.Item(
             guid="test",
             title="test",
             media_url="https://example.com/",
@@ -128,7 +128,7 @@ class TestFeed:
         )
 
     def test_language(self, item):
-        feed = rss_parser.Feed(
+        feed = feed_parser.Feed(
             title="test",
             language="fr-CA",
             items=[item],
@@ -137,13 +137,13 @@ class TestFeed:
 
     def test_no_items(self):
         with pytest.raises(ValueError):
-            rss_parser.Feed(
+            feed_parser.Feed(
                 title="test",
                 items=[],
             )
 
     def test_not_complete(self, item):
-        feed = rss_parser.Feed(
+        feed = feed_parser.Feed(
             title="test",
             items=[item],
             complete="no",
@@ -152,7 +152,7 @@ class TestFeed:
         assert feed.complete is False
 
     def test_complete(self, item):
-        feed = rss_parser.Feed(
+        feed = feed_parser.Feed(
             title="test",
             items=[item],
             complete="yes",
@@ -161,7 +161,7 @@ class TestFeed:
         assert feed.complete is True
 
     def test_defaults(self, item):
-        feed = rss_parser.Feed(
+        feed = feed_parser.Feed(
             title="test",
             items=[item],
         )
@@ -174,30 +174,30 @@ class TestFeed:
         assert feed.pub_date == item.pub_date
 
 
-class TestRssParser:
+class TestFeedParser:
     def read_mock_file(self, mock_filename):
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
     def test_empty(self):
-        with pytest.raises(rss_parser.RssParserError):
-            rss_parser.parse_rss(b"")
+        with pytest.raises(feed_parser.FeedParserError):
+            feed_parser.parse_feed(b"")
 
     def test_invalid_xml(self):
-        with pytest.raises(rss_parser.RssParserError):
-            rss_parser.parse_rss(b"junk string")
+        with pytest.raises(feed_parser.FeedParserError):
+            feed_parser.parse_feed(b"junk string")
 
     def test_missing_channel(self):
-        with pytest.raises(rss_parser.RssParserError):
-            rss_parser.parse_rss(b"<rss />")
+        with pytest.raises(feed_parser.FeedParserError):
+            feed_parser.parse_feed(b"<rss />")
 
     def test_invalid_feed_channel(self):
-        with pytest.raises(rss_parser.RssParserError):
-            rss_parser.parse_rss(b"<rss><channel /></rss>")
+        with pytest.raises(feed_parser.FeedParserError):
+            feed_parser.parse_feed(b"<rss><channel /></rss>")
 
     def test_with_bad_chars(self):
         content = self.read_mock_file("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
-        feed = rss_parser.parse_rss(bytes(content.encode("utf-8")))
+        feed = feed_parser.parse_feed(bytes(content.encode("utf-8")))
 
         assert len(feed.items) == 20
         assert feed.title == "Mysterious Universe"
@@ -240,7 +240,7 @@ class TestRssParser:
             ),
         ],
     )
-    def test_parse_rss(self, filename, title, num_items):
-        feed = rss_parser.parse_rss(self.read_mock_file(filename))
+    def test_parse_feed(self, filename, title, num_items):
+        feed = feed_parser.parse_feed(self.read_mock_file(filename))
         assert feed.title == title
         assert len(feed.items) == num_items

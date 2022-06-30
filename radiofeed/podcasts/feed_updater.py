@@ -9,9 +9,10 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common.parsers import date_parser, rss_parser, text_parser
+from radiofeed.common.parsers import date_parser, text_parser
 from radiofeed.common.utils import batcher, get_user_agent
 from radiofeed.episodes.models import Episode
+from radiofeed.podcasts import feed_parser
 from radiofeed.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -32,12 +33,12 @@ class FeedUpdater:
     @transaction.atomic
     def update(self):
         try:
-            return self.handle_success(*self.parse_rss())
+            return self.handle_success(*self.parse_feed())
 
         except Exception as e:
             return self.handle_failure(e)
 
-    def parse_rss(self):
+    def parse_feed(self):
         response = requests.get(
             self.podcast.rss,
             headers=self.get_feed_headers(),
@@ -71,7 +72,7 @@ class FeedUpdater:
         ).exists():
             raise DuplicateFeed(response=response)
 
-        return response, rss_parser.parse_rss(response.content), content_hash
+        return response, feed_parser.parse_feed(response.content), content_hash
 
     def get_feed_headers(self):
         headers = {
@@ -112,9 +113,9 @@ class FeedUpdater:
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(
-                    attrs.fields(rss_parser.Feed).categories,
-                    attrs.fields(rss_parser.Feed).complete,
-                    attrs.fields(rss_parser.Feed).items,
+                    attrs.fields(feed_parser.Feed).categories,
+                    attrs.fields(feed_parser.Feed).complete,
+                    attrs.fields(feed_parser.Feed).items,
                 ),
             ),
         )
@@ -158,7 +159,7 @@ class FeedUpdater:
                     http.HTTPStatus.NOT_FOUND,
                     http.HTTPStatus.UNAUTHORIZED,
                 )
-            case DuplicateFeed() | rss_parser.RssParserError() | requests.RequestException():
+            case DuplicateFeed() | feed_parser.FeedParserError() | requests.RequestException():
                 active = False
             case _:
                 raise

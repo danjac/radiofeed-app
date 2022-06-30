@@ -245,47 +245,43 @@ class Feed:
         return max([item.pub_date for item in self.items])
 
 
-class RssParserError(ValueError):
+class FeedParserError(ValueError):
     ...
 
 
-def parse_rss(content):
+def parse_feed(content):
 
     try:
-
-        return parse_feed(next(xml_parser.iterparse(content, "channel")))
+        channel = next(xml_parser.iterparse(content, "channel"))
+        with xml_parser.xpath(channel, NAMESPACES) as xpath:
+            return Feed(
+                title=xpath.first("title/text()"),
+                language=xpath.first("language/text()"),
+                complete=xpath.first("itunes:complete/text()"),
+                explicit=xpath.first("itunes:explicit/text()"),
+                cover_url=xpath.first(
+                    "itunes:image/@href",
+                    "image/url/text()",
+                ),
+                link=xpath.first("link/text()"),
+                funding_url=xpath.first("podcast:funding/@url"),
+                funding_text=xpath.first(
+                    "podcast:funding/text()",
+                ),
+                description=xpath.first(
+                    "description/text()",
+                    "itunes:summary/text()",
+                ),
+                owner=xpath.first(
+                    "itunes:author/text()",
+                    "itunes:owner/itunes:name/text()",
+                ),
+                categories=list(xpath.iter("//itunes:category/@text")),
+                items=list(parse_items(channel)),
+            )
 
     except (StopIteration, TypeError, ValueError, lxml.etree.XMLSyntaxError) as e:
-        raise RssParserError from e
-
-
-def parse_feed(channel):
-    with xml_parser.xpath(channel, NAMESPACES) as xpath:
-        return Feed(
-            title=xpath.first("title/text()"),
-            language=xpath.first("language/text()"),
-            complete=xpath.first("itunes:complete/text()"),
-            explicit=xpath.first("itunes:explicit/text()"),
-            cover_url=xpath.first(
-                "itunes:image/@href",
-                "image/url/text()",
-            ),
-            link=xpath.first("link/text()"),
-            funding_url=xpath.first("podcast:funding/@url"),
-            funding_text=xpath.first(
-                "podcast:funding/text()",
-            ),
-            description=xpath.first(
-                "description/text()",
-                "itunes:summary/text()",
-            ),
-            owner=xpath.first(
-                "itunes:author/text()",
-                "itunes:owner/itunes:name/text()",
-            ),
-            categories=list(xpath.iter("//itunes:category/@text")),
-            items=list(parse_items(channel)),
-        )
+        raise FeedParserError from e
 
 
 def parse_items(channel):
