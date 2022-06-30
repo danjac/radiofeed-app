@@ -7,7 +7,7 @@ import requests
 
 from django.utils import timezone
 
-from radiofeed.common.date_parser import parse_date
+from radiofeed.common.utils.date_parser import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import feed_updater

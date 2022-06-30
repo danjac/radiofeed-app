@@ -9,7 +9,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common import batcher, date_parser, user_agent
+from radiofeed.common.utils import batcher, date_parser, user_agent
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import rss_parser, text_parser
 from radiofeed.podcasts.models import Category, Podcast

@@ -9,7 +9,7 @@ import requests
 
 from django.core.cache import cache
 
-from radiofeed.common import batcher, user_agent, xml_parser
+from radiofeed.common.utils import batcher, user_agent, xml_parser
 from radiofeed.podcasts.models import Podcast
 
 BATCH_SIZE = 100
