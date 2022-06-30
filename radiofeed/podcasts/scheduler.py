@@ -1,9 +1,27 @@
+import itertools
+
 from datetime import timedelta
 
 from django.db import models
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.tasks import parse_feed
+
+
+def schedule_feeds_for_update(limit):
+    """Schedules feeds for update
+
+    Args:
+        limit (int): number of podcasts to update
+    """
+
+    parse_feed.map(
+        itertools.islice(
+            get_scheduled_feeds().values_list("pk").distinct(),
+            limit,
+        )
+    )
 
 
 def get_scheduled_feeds():

@@ -8,6 +8,17 @@ from radiofeed.podcasts import scheduler
 from radiofeed.podcasts.factories import PodcastFactory
 
 
+class TestScheduleFeedsForUpdate:
+    def test_schedule(self, db, mocker):
+
+        patched = mocker.patch(
+            "radiofeed.podcasts.tasks.parse_feed.map",
+        )
+        scheduler.schedule_feeds_for_update(300)
+
+        patched.assert_called()
+
+
 class TestGetScheduledFeeds:
     @pytest.mark.parametrize(
         "active,pub_date,parsed,exists",
