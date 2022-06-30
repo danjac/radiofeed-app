@@ -67,6 +67,15 @@ def get_site_config():
 
 @register.simple_tag(takes_context=True)
 def absolute_uri(context, url=None, *args, **kwargs):
+    """Generate absolute URI based on server environment or current Site.
+
+    Args:
+        context (dict): template context
+        url (str): URL name or path
+
+    Returns:
+        str
+    """
     return build_absolute_uri(
         resolve_url(url, *args, **kwargs) if url else None, context.get("request")
     )
@@ -98,6 +107,15 @@ def format_duration(total_seconds):
 
 @register.simple_tag(takes_context=True)
 def active_link(context, url_name, *args, **kwargs):
+    """Returns url with active link info
+
+    Args:
+        context (dict): template context
+        url_name (str): URL name
+
+    Returns:
+        ActiveLink
+    """
     url = resolve_url(url_name, *args, **kwargs)
 
     if context["request"].path == url:
@@ -111,6 +129,16 @@ def active_link(context, url_name, *args, **kwargs):
 
 @register.simple_tag(takes_context=True)
 def re_active_link(context, url_name, pattern, *args, **kwargs):
+    """Returns url with active link info
+
+    Args:
+        context (dict): template context
+        url_name (str): URL name
+        pattern (str): regex pattern to match
+
+    Returns:
+        ActiveLink
+    """
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
         return ActiveLink(url, match=True)
@@ -120,21 +148,57 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 
 @register.filter
 def login_url(url):
+    """Returns login URL with redirect parameter back to this url
+
+    Args:
+        url (str)
+
+    Returns:
+        str
+    """
     return auth_redirect_url(url, reverse("account_login"))
 
 
 @register.filter
 def signup_url(url):
+    """Returns signup URL with redirect parameter back to this url
+
+    Args:
+        url (str)
+
+    Returns:
+        str
+    """
     return auth_redirect_url(url, reverse("account_signup"))
 
 
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value):
+    """Renders markdown content
+
+    Args:
+        value (str | None)
+
+    Returns:
+        dict: context with `content` of markdown value
+    """
     return {"content": mark_safe(html.markup(value))}  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
 def share_buttons(context, url, subject, css_class=""):
+    """Render set of share buttons for a page for email, Facebook, Twitter
+    and Linkedin.
+
+    Args:
+        url (str): URL on page to share in link (automatically expanded to
+            absolute URI)
+        subject (str): subject line
+        css_class (str): CSS classes to render in button
+
+    Returns:
+        dict
+    """
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 
@@ -151,13 +215,31 @@ def share_buttons(context, url, subject, css_class=""):
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
 def cookie_notice(context):
+    """
+    Renders GDPR cookie notice. Notice should be hidden once user has clicked
+    "Accept Cookies" button.
+
+    Args:
+        context (dict): request context
+
+    Returns:
+        dict
+    """
+
     return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
 
 
 @register.filter
 @stringfilter
 def normalize_url(url):
-    """If a URL is provided minus http(s):// prefix, prepends protocol."""
+    """If a URL is provided minus http(s):// prefix, prepends protocol.
+
+    Args:
+        url (str)
+
+    Returns:
+        str
+    """
     if url:
         for value in (url, "https://" + url):
             try:
