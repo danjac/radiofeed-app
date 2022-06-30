@@ -147,7 +147,11 @@ class Episode(models.Model):
 
     @cached_property
     def duration_in_seconds(self):
-        """Returns total number of seconds given string in [h:][m:]s format."""
+        """Returns total number of seconds given string in [h:][m:]s format.
+
+        Returns:
+            int: total duration in seconds. Will be 0 if invalid duration string.
+        """
 
         if not self.duration:
             return 0
@@ -163,9 +167,20 @@ class Episode(models.Model):
             return 0
 
     def is_explicit(self):
+        """Check if either this specific episode or the podcast is explicit.
+
+        Returns:
+            bool
+        """
         return self.explicit or self.podcast.explicit
 
     def get_episode_metadata(self):
+        """Returns the episode season/episode/type as a single string,
+        e.g. "Episode 3 Season 4", "Trailer", etc.
+
+        Returns:
+            str
+        """
 
         episode_type = (
             self.episode_type.capitalize()
@@ -190,10 +205,23 @@ class Episode(models.Model):
         )
 
     def get_media_url_ext(self):
+        """Returns the path extension of the media URL, e.g. "mpeg"
+
+        Returns:
+            str
+        """
         return pathlib.Path(self.media_url).suffix[1:]
 
     def get_media_metadata(self):
-        # https://developers.google.com/web/updates/2017/02/media-session
+        """Returns media session metadata for integration with client device.
+
+        For more details:
+
+            https://developers.google.com/web/updates/2017/02/media-session
+
+        Returns:
+            dict
+        """
         cover_url = self.podcast.cover_url or static("img/podcast-icon.png")
         cover_url_type, _ = mimetypes.guess_type(urlparse(cover_url).path)
 
