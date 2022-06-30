@@ -5,7 +5,7 @@ from django.db.models import Count
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.podcasts import models
-from radiofeed.podcasts.tasks import feed_update
+from radiofeed.podcasts.tasks import parse_feed
 
 
 @admin.register(models.Category)
@@ -161,7 +161,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
         count = queryset.count()
 
-        feed_update.map(queryset.values_list("pk", flat=True))
+        parse_feed.map(queryset.values_list("pk", flat=True))
 
         self.message_user(
             request,
@@ -170,7 +170,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         )
 
     def update_podcast_feed(self, request, obj):
-        feed_update(obj.id)
+        parse_feed(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request):

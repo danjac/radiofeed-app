@@ -1,12 +1,12 @@
 from huey.contrib.djhuey import db_task
 
-from radiofeed.podcasts import emails, feed_updater
+from radiofeed.podcasts import emails, feed_parser
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
 
 
 @db_task()
-def feed_update(podcast_id):
+def parse_feed(podcast_id):
     """Handles single podcast feed update.
 
     Args:
@@ -15,7 +15,7 @@ def feed_update(podcast_id):
     Raises:
         PodcastDoesNotExist: if no active podcast found
     """
-    feed_updater.FeedUpdater(Podcast.objects.get(pk=podcast_id, active=True)).update()
+    feed_parser.FeedParser(Podcast.objects.get(pk=podcast_id, active=True)).parse()
 
 
 @db_task()

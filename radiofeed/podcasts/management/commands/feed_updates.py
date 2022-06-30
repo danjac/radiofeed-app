@@ -3,7 +3,7 @@ import itertools
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import feed_scheduler
-from radiofeed.podcasts.tasks import feed_update
+from radiofeed.podcasts.tasks import parse_feed
 
 
 class Command(BaseCommand):
@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        feed_update.map(
+        parse_feed.map(
             itertools.islice(
                 feed_scheduler.get_scheduled_feeds().values_list("pk").distinct(),
                 options["limit"],

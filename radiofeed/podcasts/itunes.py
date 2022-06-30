@@ -61,7 +61,7 @@ def search(search_term):
     Returns:
         list[Feed]
     """
-    return parse_feeds(
+    return parse_rsss(
         get_response(
             "https://itunes.apple.com/search",
             {
@@ -84,7 +84,7 @@ def crawl():
     for location in LOCATIONS:
         for url in parse_genre_urls(location):
             for batch in batcher(parse_podcast_ids(url, location), BATCH_SIZE):
-                yield from parse_feeds(
+                yield from parse_rsss(
                     get_response(
                         "https://itunes.apple.com/lookup",
                         {
@@ -95,7 +95,7 @@ def crawl():
                 )
 
 
-def parse_feeds(json_data):
+def parse_rsss(json_data):
     """Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database. Existing Podcast instances are attached as `podcast`
     to the Feed instance.

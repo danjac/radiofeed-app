@@ -51,9 +51,9 @@ class TestCategoryAdmin:
 
 class TestPodcastAdmin:
     @pytest.fixture
-    def mock_feed_updater(self, mocker):
+    def mock_feed_parser(self, mocker):
         return mocker.patch(
-            "radiofeed.podcasts.management.commands.feed_update.feed_updater"
+            "radiofeed.podcasts.management.commands.feed_update.feed_parser"
         )
 
     def test_get_search_results(self, podcasts, podcast_admin, req):
@@ -78,12 +78,12 @@ class TestPodcastAdmin:
         assert ordering == []
 
     def test_update_podcast_feeds(self, mocker, podcast, podcast_admin, req):
-        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.feed_update.map")
+        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.parse_feed.map")
         podcast_admin.update_podcast_feeds(req, Podcast.objects.all())
         mock_feed_update.assert_called()
 
     def test_update_podcast_feed(self, mocker, podcast, podcast_admin, req):
-        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.feed_update")
+        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.parse_feed")
         podcast_admin.update_podcast_feed(req, podcast)
         mock_feed_update.assert_called_with(podcast.id)
 

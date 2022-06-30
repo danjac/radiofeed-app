@@ -43,7 +43,7 @@ class TestFeedUpdates:
     def test_command(self, db, mocker):
 
         patched = mocker.patch(
-            "radiofeed.podcasts.tasks.feed_update.map",
+            "radiofeed.podcasts.tasks.parse_feed.map",
         )
 
         call_command("feed_updates", limit=200)
