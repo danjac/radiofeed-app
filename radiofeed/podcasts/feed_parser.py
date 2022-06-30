@@ -188,7 +188,7 @@ class FeedParser:
                     http.HTTPStatus.NOT_FOUND,
                     http.HTTPStatus.UNAUTHORIZED,
                 )
-            case DuplicateFeed() | rss_parser.FeedParserError() | requests.RequestException():
+            case DuplicateFeed() | rss_parser.RssParserError() | requests.RequestException():
                 active = False
             case _:
                 raise

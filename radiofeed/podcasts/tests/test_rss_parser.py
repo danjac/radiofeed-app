@@ -179,19 +179,19 @@ class TestParseRss:
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
     def test_empty(self):
-        with pytest.raises(rss_parser.FeedParserError):
+        with pytest.raises(rss_parser.RssParserError):
             rss_parser.parse_rss(b"")
 
     def test_invalid_xml(self):
-        with pytest.raises(rss_parser.FeedParserError):
+        with pytest.raises(rss_parser.RssParserError):
             rss_parser.parse_rss(b"junk string")
 
     def test_missing_channel(self):
-        with pytest.raises(rss_parser.FeedParserError):
+        with pytest.raises(rss_parser.RssParserError):
             rss_parser.parse_rss(b"<rss />")
 
     def test_invalid_feed_channel(self):
-        with pytest.raises(rss_parser.FeedParserError):
+        with pytest.raises(rss_parser.RssParserError):
             rss_parser.parse_rss(b"<rss><channel /></rss>")
 
     def test_with_bad_chars(self):

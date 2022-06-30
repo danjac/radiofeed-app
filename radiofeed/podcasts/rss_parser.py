@@ -254,7 +254,7 @@ class Feed:
         return max([item.pub_date for item in self.items])
 
 
-class FeedParserError(ValueError):
+class RssParserError(ValueError):
     ...
 
 
@@ -268,13 +268,13 @@ def parse_rss(content):
         Feed
 
     Raises:
-        FeedParserError: if XML content is invalid, or the feed is otherwise invalid or empty
+        RssParserError: if XML content is invalid, or the feed is otherwise invalid or empty
     """
 
     try:
         return parse_feed(next(xml_parser.iterparse(content, "channel")))
     except (StopIteration, TypeError, ValueError, lxml.etree.XMLSyntaxError) as e:
-        raise FeedParserError from e
+        raise RssParserError from e
 
 
 def parse_feed(channel):
