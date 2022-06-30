@@ -123,6 +123,18 @@ def search_itunes(request):
 
 @require_http_methods(["GET"])
 def latest_episode(request, podcast_id, slug=None):
+    """Redirects to the latest episode for a given podcast.
+    Args:
+        request (HttpRequest)
+        podcast_id (int): Podcast PK
+        slug (str | None): slug of podcast (used for SEO)
+
+    Raises:
+        Http404: podcast not found
+
+    Returns:
+        HttpResponseRedirect
+    """
 
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
@@ -136,6 +148,19 @@ def latest_episode(request, podcast_id, slug=None):
 
 @require_http_methods(["GET"])
 def similar(request, podcast_id, slug=None, limit=12):
+    """Lists similar podcasts based on recommendations
+
+    Args:
+        request (HttpRequest)
+        podcast_id (int): Podcast PK
+        slug (str | None): slug of podcast (used for SEO)
+
+    Raises:
+        Http404: podcast not found
+
+    Returns:
+        TemplateResponse
+    """
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -158,6 +183,20 @@ def similar(request, podcast_id, slug=None, limit=12):
 
 @require_http_methods(["GET"])
 def podcast_detail(request, podcast_id, slug=None):
+    """Renders details for a single podcast.
+
+    Args:
+        request (HttpRequest)
+        podcast_id (int): Podcast PK
+        slug (str | None): slug of podcast (used for SEO)
+
+    Raises:
+        Http404: podcast not found
+
+    Returns:
+        TemplateResponse
+    """
+
     podcast = get_podcast_or_404(podcast_id)
 
     return TemplateResponse(
@@ -174,7 +213,21 @@ def podcast_detail(request, podcast_id, slug=None):
 
 
 @require_http_methods(["GET"])
-def episodes(request, podcast_id, slug=None):
+def episodes(request, podcast_id, slug=None, target="object-list"):
+    """Renders episodes for a single podcast.
+
+    Args:
+        request (HttpRequest)
+        podcast_id (int): Podcast PK
+        slug (str | None): slug of podcast (used for SEO)
+        target (str): HTMX pagination target
+
+    Raises:
+        Http404: podcast not found
+
+    Returns:
+        TemplateResponse
+    """
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -199,14 +252,23 @@ def episodes(request, podcast_id, slug=None):
         episodes,
         "podcasts/episodes.html",
         "episodes/pagination/episodes.html",
+        target=target,
         extra_context=extra_context
-        if request.htmx.target == "object-list"
+        if request.htmx.target == target
         else get_podcast_detail_context(request, podcast, extra_context),
     )
 
 
 @require_http_methods(["GET"])
 def category_list(request):
+    """Lists all categories containing podcasts.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        TemplateResponse
+    """
 
     categories = (
         Category.objects.annotate(
@@ -226,6 +288,21 @@ def category_list(request):
 
 @require_http_methods(["GET"])
 def category_detail(request, category_id, slug=None):
+    """Renders individual podcast category along with its podcasts.
+
+    Podcasts can also be searched.
+
+    Args:
+        request (HttpRequest)
+        category_id (int): Category PK
+        slug (str | None): slug of podcast (used for SEO)
+
+    Raises:
+        Http404: category not found
+
+    Returns:
+        TemplateResponse
+    """
 
     category = get_object_or_404(Category, pk=category_id)
     podcasts = get_podcasts().filter(categories=category).distinct()
@@ -251,6 +328,19 @@ def category_detail(request, category_id, slug=None):
 @require_http_methods(["POST"])
 @ajax_login_required
 def subscribe(request, podcast_id):
+    """Subscribes a user to a podcast.
+
+    Args:
+        request (HttpRequest)
+        podcast_id (int): Podcast PK
+
+    Raises:
+        Http404: podcast not found
+
+    Returns:
+        HttpResponse: returns HTTP CONFLICT if user is already subscribed
+            to this podcast, otherwise returns the subscribe action as HTMX snippet.
+    """
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -266,6 +356,18 @@ def subscribe(request, podcast_id):
 @require_http_methods(["DELETE"])
 @ajax_login_required
 def unsubscribe(request, podcast_id):
+    """Unsubscribes user from a podcast.
+
+    Args:
+        request (HttpRequest)
+        podcast_id (int): Podcast PK
+
+    Raises:
+        Http404: podcast not found
+
+    Returns:
+        TemplateResponse: subscribe action as HTMX snippet.
+    """
 
     podcast = get_podcast_or_404(podcast_id)
 
@@ -291,7 +393,7 @@ def get_podcast_or_404(podcast_id):
         podcast_id (int): Podcast PK
 
     Raises:
-        Http404
+        Http404: podcast not found
 
     Returns:
         Podcast
@@ -300,6 +402,17 @@ def get_podcast_or_404(podcast_id):
 
 
 def get_podcast_detail_context(request, podcast, extra_context=None):
+    """Returns template context dict for a single podcast.
+
+
+    Args:
+        request (HttpRequest)
+        podcast (Podcast): Podcast instance
+        extra_context (dict | None): extra template context
+
+    Returns:
+        dict: template context
+    """
 
     return {
         "podcast": podcast,
