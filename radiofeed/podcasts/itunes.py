@@ -7,10 +7,11 @@ from urllib.parse import urlparse
 
 import requests
 
+from django.conf import settings
 from django.core.cache import cache
 
+from radiofeed.common import batcher
 from radiofeed.common.parsers import xml_parser
-from radiofeed.common.utils import batcher, get_user_agent
 from radiofeed.podcasts.models import Podcast
 
 BATCH_SIZE = 100
@@ -83,7 +84,7 @@ def crawl():
 
     for location in LOCATIONS:
         for url in parse_genre_urls(location):
-            for batch in batcher(parse_podcast_ids(url, location), BATCH_SIZE):
+            for batch in batcher.batcher(parse_podcast_ids(url, location), BATCH_SIZE):
                 yield from parse_rsss(
                     get_response(
                         "https://itunes.apple.com/lookup",
@@ -106,7 +107,7 @@ def parse_rsss(json_data):
     Yields:
         Feed: any new or existing feeds
     """
-    for batch in batcher(build_feeds_from_json(json_data), BATCH_SIZE):
+    for batch in batcher.batcher(build_feeds_from_json(json_data), BATCH_SIZE):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
@@ -136,7 +137,7 @@ def get_response(url, data=None):
     response = requests.get(
         url,
         data,
-        headers={"User-Agent": get_user_agent()},
+        headers={"User-Agent": settings.USER_AGENT},
         timeout=10,
         allow_redirects=True,
     )

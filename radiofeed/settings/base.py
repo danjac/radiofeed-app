@@ -6,6 +6,8 @@ import environ
 
 from django.urls import reverse_lazy
 
+from radiofeed import __version__
+
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 env = environ.Env()
@@ -257,3 +259,5 @@ SITE_CONFIG = {
     "keywords": env("SITE_KEYWORDS", default="podcasts, rss, feeds"),
     "owner": env("SITE_OWNER", default=None),
 }
+
+USER_AGENT = f"radiofeed/{__version__} +https://github.com/danjac/radiofeed-app/"
