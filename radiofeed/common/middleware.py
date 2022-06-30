@@ -53,7 +53,7 @@ class Search:
 
 
 class SearchMiddleware(BaseMiddleware):
-    """Adds Search instance to the request as request.search"""
+    """Adds Search instance to the request as `request.search`."""
 
     def __call__(self, request):
         request.search = SimpleLazyObject(lambda: Search(request))

@@ -15,6 +15,15 @@ from radiofeed.common.html import strip_html
 
 class CategoryQuerySet(models.QuerySet):
     def search(self, search_term, base_similarity=0.2):
+        """Does a trigram similarity search for podcasts.
+
+        Args:
+            search_term (str)
+            base_similarity (float): base similarity for trigram search
+
+        Returns:
+            QuerySet
+        """
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -137,22 +146,50 @@ class Podcast(models.Model):
 
     @cached_property
     def cleaned_title(self):
+        """Strips HTML from title field
+
+        Returns:
+            str
+        """
         return strip_html(self.title)
 
     @cached_property
     def cleaned_description(self):
+        """Strips HTML from description field
+
+        Returns:
+            str
+        """
         return strip_html(self.description)
 
     @cached_property
     def slug(self):
+        """Returns slugified title
+
+        Returns:
+            str
+        """
         return slugify(self.title, allow_unicode=False) or "no-title"
 
     def is_subscribed(self, user):
+        """Check if user is subscribed to this podcast.
+
+        Args:
+            user (User | AnonymousUser)
+
+        Returns:
+            bool
+        """
         if user.is_anonymous:
             return False
         return Subscription.objects.filter(podcast=self, user=user).exists()
 
     def get_subscribe_target(self):
+        """Returns HTMX subscribe action target.
+
+        Returns:
+            str
+        """
         return f"subscribe-actions-{self.id}"
 
 

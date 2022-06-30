@@ -145,7 +145,16 @@ def close_player(request):
 @require_http_methods(["POST"])
 @ajax_login_required
 def player_time_update(request):
-    """Update current play time of episode."""
+    """Update current play time of episode. Time should be
+    passed in POST as `current_time` integer value.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        HttpResponse: HTTP BAD REQUEST if missing/invalid `current_time`, otherwise
+            HTTP NO CONTENT.
+    """
 
     if episode_id := request.player.get():
         try:
@@ -254,6 +263,20 @@ def remove_bookmark(request, episode_id):
 def get_episode_or_404(
     request, episode_id, *, with_podcast=False, with_current_time=False
 ):
+    """Returns single Episode instance.
+
+    Args:
+        request (HttpRequest)
+        episode_id (int): Episode PK
+        with_podcast (bool): join Podcast instance
+        with_current_time (bool): include listening history annotations
+
+    Raises:
+        Http404: episode not found
+
+    Returns:
+        Episode
+    """
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
