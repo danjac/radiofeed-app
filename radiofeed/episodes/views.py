@@ -109,11 +109,11 @@ def episode_detail(request, episode_id, slug=None):
         episode_id (int): Episode PK
         slug (str | None): used for SEO
 
-    Raises:
-        Http404: episode not found
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404: episode not found
     """
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
@@ -141,11 +141,11 @@ def start_player(request, episode_id):
         request (HttpRequest)
         episode_id (int): Episode PK
 
-    Raises:
-        Http404: episode not found
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404: episode not found
     """
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
@@ -176,11 +176,11 @@ def close_player(request):
     Args:
         request (HttpRequest)
 
-    Raises:
-        Http404: episode not found
-
     Returns:
         HttpResponse: returns empty response if player not running.
+
+    Raises:
+        Http404: episode not found
     """
 
     if episode_id := request.player.pop():
@@ -271,11 +271,11 @@ def remove_audio_log(request, episode_id):
         request (HttpRequest)
         episode_id (int): Episode PK
 
-    Raises:
-        Http404 if episode not found
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404 if episode not found
     """
 
     episode = get_episode_or_404(request, episode_id)
@@ -327,13 +327,12 @@ def add_bookmark(request, episode_id):
     Args:
         request (HttpRequest)
         episode_id (int): Episode PK
-
-    Raises:
-        Http404: episode not found
-
     Returns:
         HttpResponse: returns HTMX snippet containing subscribe button. Returns HTTP CONFLICT
             if episode already bookmarked.
+
+    Raises:
+        Http404: episode not found
     """
 
     episode = get_episode_or_404(request, episode_id)
@@ -357,11 +356,11 @@ def remove_bookmark(request, episode_id):
         request (HttpRequest)
         episode_id (int): Episode PK
 
-    Raises:
-        Http404: episode not found
-
     Returns:
         TemplateResponse: HTMX snippet containing subscribe button.
+
+    Raises:
+        Http404: episode not found
     """
 
     episode = get_episode_or_404(request, episode_id)
@@ -384,11 +383,11 @@ def get_episode_or_404(
         with_podcast (bool): join Podcast instance
         with_current_time (bool): include listening history annotations
 
-    Raises:
-        Http404: episode not found
-
     Returns:
         Episode
+
+    Raises:
+        Http404: episode not found
     """
     qs = Episode.objects.all()
     if with_podcast:

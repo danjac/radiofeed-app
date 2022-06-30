@@ -64,11 +64,11 @@ def pagination_response(
         param (str): query string parameter for page
         **pagination_kwargs: other Paginator kwargs
 
-    Raises:
-        Http404: invalid page
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404: invalid page
     """
 
     try:

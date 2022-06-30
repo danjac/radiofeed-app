@@ -264,11 +264,11 @@ def parse_rss(content):
     Args:
         content (bytes): the body of the RSS or Atom feed
 
-    Raises:
-        FeedParserError: if XML content is invalid, or the feed is otherwise invalid or empty
-
     Returns:
         Feed
+
+    Raises:
+        FeedParserError: if XML content is invalid, or the feed is otherwise invalid or empty
     """
 
     try:

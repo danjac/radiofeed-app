@@ -129,11 +129,11 @@ def latest_episode(request, podcast_id, slug=None):
         podcast_id (int): Podcast PK
         slug (str | None): slug of podcast (used for SEO)
 
-    Raises:
-        Http404: podcast not found
-
     Returns:
         HttpResponseRedirect
+
+    Raises:
+        Http404: podcast not found
     """
 
     if (
@@ -155,11 +155,11 @@ def similar(request, podcast_id, slug=None, limit=12):
         podcast_id (int): Podcast PK
         slug (str | None): slug of podcast (used for SEO)
 
-    Raises:
-        Http404: podcast not found
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404: podcast not found
     """
 
     podcast = get_podcast_or_404(podcast_id)
@@ -190,11 +190,11 @@ def podcast_detail(request, podcast_id, slug=None):
         podcast_id (int): Podcast PK
         slug (str | None): slug of podcast (used for SEO)
 
-    Raises:
-        Http404: podcast not found
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404: podcast not found
     """
 
     podcast = get_podcast_or_404(podcast_id)
@@ -222,11 +222,11 @@ def episodes(request, podcast_id, slug=None, target="object-list"):
         slug (str | None): slug of podcast (used for SEO)
         target (str): HTMX pagination target
 
-    Raises:
-        Http404: podcast not found
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404: podcast not found
     """
 
     podcast = get_podcast_or_404(podcast_id)
@@ -297,11 +297,11 @@ def category_detail(request, category_id, slug=None):
         category_id (int): Category PK
         slug (str | None): slug of podcast (used for SEO)
 
-    Raises:
-        Http404: category not found
-
     Returns:
         TemplateResponse
+
+    Raises:
+        Http404: category not found
     """
 
     category = get_object_or_404(Category, pk=category_id)
@@ -334,12 +334,12 @@ def subscribe(request, podcast_id):
         request (HttpRequest)
         podcast_id (int): Podcast PK
 
-    Raises:
-        Http404: podcast not found
-
     Returns:
         HttpResponse: returns HTTP CONFLICT if user is already subscribed
             to this podcast, otherwise returns the subscribe action as HTMX snippet.
+
+    Raises:
+        Http404: podcast not found
     """
 
     podcast = get_podcast_or_404(podcast_id)
@@ -362,11 +362,11 @@ def unsubscribe(request, podcast_id):
         request (HttpRequest)
         podcast_id (int): Podcast PK
 
-    Raises:
-        Http404: podcast not found
-
     Returns:
         TemplateResponse: subscribe action as HTMX snippet.
+
+    Raises:
+        Http404: podcast not found
     """
 
     podcast = get_podcast_or_404(podcast_id)
@@ -392,11 +392,11 @@ def get_podcast_or_404(podcast_id):
     Args:
         podcast_id (int): Podcast PK
 
-    Raises:
-        Http404: podcast not found
-
     Returns:
         Podcast
+
+    Raises:
+        Http404: podcast not found
     """
     return get_object_or_404(get_podcasts(), pk=podcast_id)
 
