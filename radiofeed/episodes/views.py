@@ -230,6 +230,14 @@ def player_time_update(request):
 @require_http_methods(["GET"])
 @login_required
 def history(request):
+    """Renders user's listening history. User can also search history.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        TemplateResponse
+    """
 
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
@@ -257,6 +265,18 @@ def history(request):
 @require_http_methods(["DELETE"])
 @ajax_login_required
 def remove_audio_log(request, episode_id):
+    """Removes audio log from user history and returns HTMX snippet.
+
+    Args:
+        request (HttpRequest)
+        episode_id (int): Episode PK
+
+    Raises:
+        Http404 if episode not found
+
+    Returns:
+        TemplateResponse
+    """
 
     episode = get_episode_or_404(request, episode_id)
 
@@ -274,6 +294,15 @@ def remove_audio_log(request, episode_id):
 @require_http_methods(["GET"])
 @login_required
 def bookmarks(request):
+    """Renders user's bookmarks. User can also search their bookmarks.
+
+    Args:
+        request (HttpRequest)
+
+    Returns:
+        TemplateResponse
+    """
+
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
@@ -293,6 +322,20 @@ def bookmarks(request):
 @require_http_methods(["POST"])
 @ajax_login_required
 def add_bookmark(request, episode_id):
+    """Add episode to bookmarks.
+
+    Args:
+        request (HttpRequest)
+        episode_id (int): Episode PK
+
+    Raises:
+        Http404: episode not found
+
+    Returns:
+        HttpResponse: returns HTMX snippet containing subscribe button. Returns HTTP CONFLICT
+            if episode already bookmarked.
+    """
+
     episode = get_episode_or_404(request, episode_id)
 
     try:
@@ -308,6 +351,19 @@ def add_bookmark(request, episode_id):
 @require_http_methods(["DELETE"])
 @ajax_login_required
 def remove_bookmark(request, episode_id):
+    """Remove episode from bookmarks.
+
+    Args:
+        request (HttpRequest)
+        episode_id (int): Episode PK
+
+    Raises:
+        Http404: episode not found
+
+    Returns:
+        TemplateResponse: HTMX snippet containing subscribe button.
+    """
+
     episode = get_episode_or_404(request, episode_id)
 
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
