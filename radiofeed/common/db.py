@@ -3,11 +3,17 @@ import operator
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, Q
 from django.utils.encoding import force_str
 
 
 class FastCountMixin:
+    """Provides faster alternative to COUNT for very large tables, using
+    PostgreSQL retuple SELECT.
+
+    If table count less than 1000 or is filtered then does a standard COUNT query.
+    """
+
     def count(self):
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
@@ -18,11 +24,26 @@ class FastCountMixin:
 
 
 class SearchMixin:
+    """Provides standard search interface for models supporting search vector and
+    ranking."""
+
+    # list of search vectors: use this if multiple vector fields
     search_vectors = []
+
+    # this is used if just single search vector field (default)
     search_vector_field = "search_vector"
+
     search_rank = "rank"
 
-    def search(self: QuerySet, search_term):
+    def search(self, search_term):
+        """Returns result of search.
+
+        Args:
+            search_term (str)
+
+        Returns:
+            QuerySet
+        """
         if not search_term:
             return self.none()
 
