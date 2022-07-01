@@ -2,7 +2,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.common import xml_parser
+from radiofeed.common.utils.xml import XPathFinder, parse_xml
 
 
 class TestXPath:
@@ -11,25 +11,25 @@ class TestXPath:
 
     @pytest.fixture
     def channel(self):
-        return next(xml_parser.iterparse(self.read_mock_file(), "channel"))
+        return next(parse_xml(self.read_mock_file(), "channel"))
 
     def test_iter(self, channel):
-        assert list(xml_parser.XPath(channel).iter("title/text()")) == [
+        assert list(XPathFinder(channel).iter("title/text()")) == [
             "Mysterious Universe"
         ]
 
     def test_first_exists(self, channel):
-        assert xml_parser.XPath(channel).first("title/text()") == "Mysterious Universe"
+        assert XPathFinder(channel).first("title/text()") == "Mysterious Universe"
 
     def test_find_first_matching(self, channel):
         assert (
-            xml_parser.XPath(channel).first("editor/text()", "managingEditor/text()")
+            XPathFinder(channel).first("editor/text()", "managingEditor/text()")
             == "sales@mysteriousuniverse.org (8th Kind)"
         )
 
     def test_default(self, channel):
         assert (
-            xml_parser.XPath(channel).first(
+            XPathFinder(channel).first(
                 "editor/text()", "managingEditor2/text()", default="unknown"
             )
             == "unknown"

@@ -7,7 +7,7 @@ import requests
 
 from django.utils import timezone
 
-from radiofeed.common import date_parser
+from radiofeed.common.utils.dates import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import feed_parser
@@ -142,9 +142,7 @@ class TestFeedParser:
         assert podcast.explicit
         assert podcast.cover_url
 
-        assert podcast.pub_date == date_parser.parse_date(
-            "Fri, 19 Jun 2020 16:58:03 +0000"
-        )
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 
@@ -233,9 +231,7 @@ class TestFeedParser:
         assert podcast.explicit
         assert podcast.cover_url
 
-        assert podcast.pub_date == date_parser.parse_date(
-            "Fri, 19 Jun 2020 16:58:03 +0000"
-        )
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 
@@ -342,9 +338,7 @@ class TestFeedParser:
         assert podcast.explicit
         assert podcast.cover_url
 
-        assert podcast.pub_date == date_parser.parse_date(
-            "Fri, 19 Jun 2020 16:58:03 +0000"
-        )
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 

@@ -15,7 +15,7 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from radiofeed.common import html
+from radiofeed.common.utils.html import markup
 
 register = template.Library()
 
@@ -182,7 +182,7 @@ def markdown(value):
     Returns:
         dict: context with `content` of markdown value
     """
-    return {"content": mark_safe(html.markup(value))}  # nosec
+    return {"content": mark_safe(markup(value))}  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)

@@ -10,7 +10,9 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common import batcher, date_parser, text_parser
+from radiofeed.common.utils.dates import parse_date
+from radiofeed.common.utils.iterators import batcher
+from radiofeed.common.utils.text import extract_keywords
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import rss_parser
 from radiofeed.podcasts.models import Category, Podcast
@@ -131,7 +133,7 @@ class FeedParser:
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
-            modified=date_parser.parse_date(response.headers.get("Last-Modified")),
+            modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self.extract_text(feed, categories),
             keywords=" ".join(
                 category
@@ -169,7 +171,7 @@ class FeedParser:
             + [item.title for item in feed.items][:6]
             if value
         )
-        return " ".join(text_parser.extract_keywords(self.podcast.language, text))
+        return " ".join(extract_keywords(self.podcast.language, text))
 
     def handle_failure(self, exc):
         try:
@@ -218,7 +220,7 @@ class FeedParser:
 
         # update existing content
 
-        for batch in batcher.batcher(self.episodes_for_update(feed, guids), batch_size):
+        for batch in batcher(self.episodes_for_update(feed, guids), batch_size):
             Episode.fast_update_objects.fast_update(
                 batch,
                 fields=[
@@ -240,7 +242,7 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in batcher.batcher(self.episodes_for_insert(feed, guids), batch_size):
+        for batch in batcher(self.episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def episodes_for_update(self, feed, guids):

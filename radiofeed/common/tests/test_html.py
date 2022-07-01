@@ -1,4 +1,4 @@
-from radiofeed.common import html
+from radiofeed.common.utils import html
 
 
 class TestClean:

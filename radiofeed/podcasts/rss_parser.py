@@ -7,7 +7,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 
-from radiofeed.common import date_parser, xml_parser
+from radiofeed.common.utils.dates import parse_date
+from radiofeed.common.utils.xml import parse_xml, xpath_finder
 
 NAMESPACES = {
     "atom": "http://www.w3.org/2005/Atom",
@@ -114,7 +115,7 @@ class Item:
     guid: str = attrs.field(validator=required)
     title: str = attrs.field(validator=required)
 
-    pub_date: datetime = attrs.field(converter=date_parser.parse_date)
+    pub_date: datetime = attrs.field(converter=parse_date)
 
     media_url: str = attrs.field(validator=url)
 
@@ -264,36 +265,36 @@ def parse_rss(content):
     """
 
     try:
-        return parse_feed(next(xml_parser.iterparse(content, "channel")))
+        return parse_feed(next(parse_xml(content, "channel")))
     except (StopIteration, TypeError, ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
 
 def parse_feed(channel):
-    with xml_parser.xpath(channel, NAMESPACES) as xpath:
+    with xpath_finder(channel, NAMESPACES) as finder:
         return Feed(
-            title=xpath.first("title/text()"),
-            language=xpath.first("language/text()"),
-            complete=xpath.first("itunes:complete/text()"),
-            explicit=xpath.first("itunes:explicit/text()"),
-            cover_url=xpath.first(
+            title=finder.first("title/text()"),
+            language=finder.first("language/text()"),
+            complete=finder.first("itunes:complete/text()"),
+            explicit=finder.first("itunes:explicit/text()"),
+            cover_url=finder.first(
                 "itunes:image/@href",
                 "image/url/text()",
             ),
-            link=xpath.first("link/text()"),
-            funding_url=xpath.first("podcast:funding/@url"),
-            funding_text=xpath.first(
+            link=finder.first("link/text()"),
+            funding_url=finder.first("podcast:funding/@url"),
+            funding_text=finder.first(
                 "podcast:funding/text()",
             ),
-            description=xpath.first(
+            description=finder.first(
                 "description/text()",
                 "itunes:summary/text()",
             ),
-            owner=xpath.first(
+            owner=finder.first(
                 "itunes:author/text()",
                 "itunes:owner/itunes:name/text()",
             ),
-            categories=list(xpath.iter("//itunes:category/@text")),
+            categories=list(finder.iter("//itunes:category/@text")),
             items=list(parse_items(channel)),
         )
 
@@ -307,37 +308,37 @@ def parse_items(channel):
 
 
 def parse_item(item):
-    with xml_parser.xpath(item, NAMESPACES) as xpath:
+    with xpath_finder(item, NAMESPACES) as finder:
         return Item(
-            guid=xpath.first("guid/text()"),
-            title=xpath.first("title/text()"),
-            pub_date=xpath.first(
+            guid=finder.first("guid/text()"),
+            title=finder.first("title/text()"),
+            pub_date=finder.first(
                 "pubDate/text()",
                 "pubdate/text()",
             ),
-            media_url=xpath.first(
+            media_url=finder.first(
                 "enclosure//@url",
                 "media:content//@url",
             ),
-            media_type=xpath.first(
+            media_type=finder.first(
                 "enclosure//@type",
                 "media:content//@type",
             ),
-            cover_url=xpath.first("itunes:image/@href"),
-            link=xpath.first("link/text()"),
-            explicit=xpath.first("itunes:explicit/text()"),
-            duration=xpath.first("itunes:duration/text()"),
-            length=xpath.first(
+            cover_url=finder.first("itunes:image/@href"),
+            link=finder.first("link/text()"),
+            explicit=finder.first("itunes:explicit/text()"),
+            duration=finder.first("itunes:duration/text()"),
+            length=finder.first(
                 "enclosure//@length",
                 "media:content//@fileSize",
             ),
-            episode=xpath.first("itunes:episode/text()"),
-            season=xpath.first("itunes:season/text()"),
-            episode_type=xpath.first("itunes:episodetype/text()"),
-            description=xpath.first(
+            episode=finder.first("itunes:episode/text()"),
+            season=finder.first("itunes:season/text()"),
+            episode_type=finder.first("itunes:episodetype/text()"),
+            description=finder.first(
                 "content:encoded/text()",
                 "description/text()",
                 "itunes:summary/text()",
             ),
-            keywords=" ".join(xpath.iter("category/text()")),
+            keywords=" ".join(finder.iter("category/text()")),
         )

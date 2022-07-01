@@ -5,7 +5,7 @@ from contextlib import contextmanager
 import lxml
 
 
-def iterparse(content, *tags):
+def parse_xml(content, *tags):
     """Iterates through elements in XML document with matching tag names.
 
     Args:
@@ -29,7 +29,7 @@ def iterparse(content, *tags):
 
 
 @contextmanager
-def xpath(element, namespaces=None):
+def xpath_finder(element, namespaces=None):
     """Returns XPath instance for an XML element.
 
     Args:
@@ -40,12 +40,12 @@ def xpath(element, namespaces=None):
         XPath
     """
     try:
-        yield XPath(element, namespaces)
+        yield XPathFinder(element, namespaces)
     finally:
         element.clear()
 
 
-class XPath:
+class XPathFinder:
     """Convenient class for doing XPath lookups to find text or attribute values on an XML element.
 
     Args:

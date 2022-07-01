@@ -4,7 +4,7 @@ import lxml
 
 from django import forms
 
-from radiofeed.common import xml_parser
+from radiofeed.common.utils.xml import parse_xml, xpath_finder
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
@@ -70,9 +70,7 @@ class OpmlUploadForm(forms.Form):
     def parse_opml(self):
         self.cleaned_data["opml"].seek(0)
 
-        for element in xml_parser.iterparse(
-            self.cleaned_data["opml"].read(), "outline"
-        ):
-            with xml_parser.xpath(element) as xpath:
-                if rss := xpath.first("@xmlUrl"):
+        for element in parse_xml(self.cleaned_data["opml"].read(), "outline"):
+            with xpath_finder(element) as finder:
+                if rss := finder.first("@xmlUrl"):
                     yield rss
