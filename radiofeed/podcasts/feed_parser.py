@@ -127,6 +127,10 @@ class FeedParser:
             if category in categories_dct
         ]
 
+        keywords = " ".join(
+            category for category in feed.categories if category not in categories_dct
+        )
+
         self.save_podcast(
             active=not feed.complete,
             content_hash=content_hash,
@@ -134,11 +138,11 @@ class FeedParser:
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
-            extracted_text=self.extract_text(feed, categories),
-            keywords=" ".join(
-                category
-                for category in feed.categories
-                if category not in categories_dct
+            keywords=keywords,
+            extracted_text=self.extract_text(
+                feed,
+                categories,
+                keywords,
             ),
             **attrs.asdict(
                 feed,
@@ -158,14 +162,14 @@ class FeedParser:
 
         return True
 
-    def extract_text(self, feed, categories):
+    def extract_text(self, feed, categories, keywords):
         text = " ".join(
             value
             for value in [
-                self.podcast.title,
-                self.podcast.description,
-                self.podcast.keywords,
-                self.podcast.owner,
+                feed.title,
+                feed.description,
+                feed.owner,
+                keywords,
             ]
             + [c.name for c in categories]
             + [item.title for item in feed.items][:6]
