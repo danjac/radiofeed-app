@@ -10,7 +10,7 @@ from django.utils import timezone
 from radiofeed.common.utils.dates import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
-from radiofeed.feed_parser.feed_parser import (
+from radiofeed.feedparser.feed_parser import (
     FeedParser,
     get_categories_dict,
     make_content_hash,
@@ -85,7 +85,7 @@ class TestFeedParser:
     def test_parse_unhandled_exception(self, podcast, mocker):
 
         mocker.patch(
-            "radiofeed.feed_parser.feed_parser.FeedParser.parse_rss",
+            "radiofeed.feedparser.feed_parser.FeedParser.parse_rss",
             side_effect=ValueError,
         )
         with pytest.raises(ValueError):

@@ -5,7 +5,7 @@ import attrs
 from django.utils import timezone
 
 from radiofeed.common.utils.dates import parse_date
-from radiofeed.feed_parser import converters, validators
+from radiofeed.feedparser import converters, validators
 
 
 @attrs.define(kw_only=True, frozen=True)

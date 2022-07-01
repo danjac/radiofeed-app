@@ -1,8 +1,8 @@
 import lxml.etree
 
 from radiofeed.common.utils.xml import parse_xml, xpath_finder
-from radiofeed.feed_parser.exceptions import RssParserError
-from radiofeed.feed_parser.models import Feed, Item
+from radiofeed.feedparser.exceptions import RssParserError
+from radiofeed.feedparser.models import Feed, Item
 
 NAMESPACES = {
     "atom": "http://www.w3.org/2005/Atom",

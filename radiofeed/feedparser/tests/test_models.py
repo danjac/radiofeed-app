@@ -4,7 +4,7 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.feed_parser.models import Feed, Item
+from radiofeed.feedparser.models import Feed, Item
 
 
 class TestItem:

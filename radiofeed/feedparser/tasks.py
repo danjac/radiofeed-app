@@ -1,6 +1,6 @@
 from huey.contrib.djhuey import db_task
 
-from radiofeed.feed_parser.feed_parser import FeedParser
+from radiofeed.feedparser.feed_parser import FeedParser
 from radiofeed.podcasts.models import Podcast
 
 

@@ -14,9 +14,9 @@ from radiofeed.common.utils.dates import parse_date
 from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import tokenize
 from radiofeed.episodes.models import Episode
-from radiofeed.feed_parser.exceptions import DuplicateFeed, NotModified, RssParserError
-from radiofeed.feed_parser.models import Feed
-from radiofeed.feed_parser.rss_parser import parse_rss
+from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError
+from radiofeed.feedparser.models import Feed
+from radiofeed.feedparser.rss_parser import parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"

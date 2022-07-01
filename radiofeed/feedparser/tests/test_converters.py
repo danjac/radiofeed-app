@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed.feed_parser import converters
+from radiofeed.feedparser import converters
 
 
 class TestExplicit:

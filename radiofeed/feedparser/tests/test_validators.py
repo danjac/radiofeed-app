@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed.feed_parser import validators
+from radiofeed.feedparser import validators
 
 
 class TestRequired:

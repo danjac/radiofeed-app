@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 
-from radiofeed.feed_parser.validators import _url_validator
+from radiofeed.feedparser.validators import _url_validator
 
 
 def explicit(value):

@@ -4,7 +4,7 @@ from django.contrib import admin, messages
 from django.db.models import Count
 from django_object_actions import DjangoObjectActions
 
-from radiofeed.feed_parser.tasks import parse_feed
+from radiofeed.feedparser.tasks import parse_feed
 from radiofeed.podcasts import models
 
 
