@@ -37,7 +37,7 @@ def xpath_finder(element, namespaces=None):
         namespaces (dict | None): dict of XML namespaces
 
     Yields:
-        XPath
+        XPathFinder
     """
     try:
         yield XPathFinder(element, namespaces)
