@@ -14,7 +14,7 @@ class TestExplicit:
         assert converters.explicit(None) is False
 
 
-class TestUrlOrNone:
+class TestUrl:
     def test_ok(self):
         assert (
             converters.url("http://yhanewashington.wixsite.com/1972")
