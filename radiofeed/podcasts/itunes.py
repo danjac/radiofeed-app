@@ -28,7 +28,7 @@ LOCATIONS = (
 )
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Feed:
     rss: str
     url: str
