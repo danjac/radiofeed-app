@@ -5,7 +5,7 @@ from datetime import date, datetime
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
 
-TZ_INFOS: dict[str, int | float] = {
+TZ_INFOS = {
     k: v * 3600
     for k, v in (
         ("A", 1),
