@@ -260,4 +260,7 @@ SITE_CONFIG = {
     "owner": env("SITE_OWNER", default=None),
 }
 
-USER_AGENT = f"radiofeed/{__version__} +https://github.com/danjac/radiofeed-app/"
+USER_AGENT = env(
+    "USER_AGENT",
+    default=f"radiofeed/{__version__} +https://github.com/danjac/radiofeed-app/",
+)
