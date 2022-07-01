@@ -17,15 +17,15 @@ class TestExplicit:
 class TestUrlOrNone:
     def test_ok(self):
         assert (
-            converters.url_or_none("http://yhanewashington.wixsite.com/1972")
+            converters.url("http://yhanewashington.wixsite.com/1972")
             == "http://yhanewashington.wixsite.com/1972"
         )
 
     def test_bad_url(self):
-        assert converters.url_or_none("yhanewashington.wixsite.com/1972") is None
+        assert converters.url("yhanewashington.wixsite.com/1972") is None
 
     def test_none(self):
-        assert converters.url_or_none(None) is None
+        assert converters.url(None) is None
 
 
 class TestDuration:

@@ -21,7 +21,7 @@ class Item:
 
     media_type: str = attrs.field(validator=validators.audio)
 
-    link: str | None = attrs.field(converter=converters.url_or_none, default=None)
+    link: str | None = attrs.field(converter=converters.url, default=None)
 
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
@@ -48,7 +48,7 @@ class Item:
         default=None,
     )
 
-    cover_url: str | None = attrs.field(converter=converters.url_or_none, default=None)
+    cover_url: str | None = attrs.field(converter=converters.url, default=None)
 
     duration: str = attrs.field(converter=converters.duration, default=None)
 
@@ -98,9 +98,9 @@ class Feed:
         default=None,
     )
 
-    link: str | None = attrs.field(converter=converters.url_or_none, default=None)
+    link: str | None = attrs.field(converter=converters.url, default=None)
 
-    cover_url: str | None = attrs.field(converter=converters.url_or_none, default=None)
+    cover_url: str | None = attrs.field(converter=converters.url, default=None)
 
     complete: bool = attrs.field(
         converter=attrs.converters.pipe(
@@ -116,9 +116,7 @@ class Feed:
         converter=attrs.converters.default_if_none(""), default=None
     )
 
-    funding_url: str | None = attrs.field(
-        converter=converters.url_or_none, default=None
-    )
+    funding_url: str | None = attrs.field(converter=converters.url, default=None)
 
     categories: list[str] = attrs.field(default=attrs.Factory(list))
 

@@ -9,7 +9,7 @@ def explicit(value):
     return False
 
 
-def url_or_none(value):
+def url(value):
     try:
         _url_validator(value)
         return value
