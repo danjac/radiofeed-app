@@ -88,8 +88,6 @@ class FeedParser:
         ).exists():
             raise DuplicateFeed(response=response)
 
-        print("parserss", parse_rss)
-
         return response, parse_rss(response.content), content_hash
 
     def get_feed_headers(self):
