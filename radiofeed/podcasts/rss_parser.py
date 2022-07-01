@@ -86,6 +86,14 @@ def explicit(value):
     return False
 
 
+def url_or_none(value):
+    try:
+        _url_validator(value)
+        return value
+    except ValidationError:
+        return None
+
+
 def duration(value):
     if not value:
         return ""
@@ -121,10 +129,7 @@ class Item:
 
     media_type: str = attrs.field(validator=attrs.validators.in_(AUDIO_MIMETYPES))
 
-    link: str | None = attrs.field(
-        validator=attrs.validators.optional(url),
-        default=None,
-    )
+    link: str | None = attrs.field(converter=url_or_none, default=None)
 
     explicit: bool = attrs.field(converter=explicit, default=False)
 
@@ -151,10 +156,7 @@ class Item:
         default=None,
     )
 
-    cover_url: str | None = attrs.field(
-        validator=attrs.validators.optional(url),
-        default=None,
-    )
+    cover_url: str | None = attrs.field(converter=url_or_none, default=None)
 
     duration: str = attrs.field(converter=duration, default=None)
 
@@ -204,15 +206,9 @@ class Feed:
         default=None,
     )
 
-    link: str | None = attrs.field(
-        validator=attrs.validators.optional(url),
-        default=None,
-    )
+    link: str | None = attrs.field(converter=url_or_none, default=None)
 
-    cover_url: str | None = attrs.field(
-        validator=attrs.validators.optional(url),
-        default=None,
-    )
+    cover_url: str | None = attrs.field(converter=url_or_none, default=None)
 
     complete: bool = attrs.field(
         converter=attrs.converters.pipe(
@@ -228,10 +224,7 @@ class Feed:
         converter=attrs.converters.default_if_none(""), default=None
     )
 
-    funding_url: str | None = attrs.field(
-        validator=attrs.validators.optional(url),
-        default=None,
-    )
+    funding_url: str | None = attrs.field(converter=url_or_none, default=None)
 
     categories: list[str] = attrs.field(default=attrs.Factory(list))
 

@@ -20,6 +20,20 @@ class TestExplicit:
         assert rss_parser.explicit(None) is False
 
 
+class TestUrlOrNone:
+    def test_ok(self):
+        assert (
+            rss_parser.url_or_none("http://yhanewashington.wixsite.com/1972")
+            == "http://yhanewashington.wixsite.com/1972"
+        )
+
+    def test_bad_url(self):
+        assert rss_parser.url_or_none("yhanewashington.wixsite.com/1972") is None
+
+    def test_none(self):
+        assert rss_parser.url_or_none(None) is None
+
+
 class TestDuration:
     @pytest.mark.parametrize(
         "value,expected",
@@ -206,6 +220,11 @@ class TestParseRss:
         "filename,title,num_items",
         [
             ("rss_missing_enc_length.xml", "The Vanilla JS Podcast", 71),
+            (
+                "rss_bad_urls.xml",
+                "1972",
+                3,
+            ),
             (
                 "rss_bad_pub_date.xml",
                 "Old Time Radio Mystery Theater",
