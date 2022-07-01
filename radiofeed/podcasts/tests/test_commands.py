@@ -37,13 +37,3 @@ class TestCrawlItunes:
         )
         call_command("crawl_itunes")
         patched.assert_called()
-
-
-class TestFeedUpdates:
-    def test_command(self, mocker, podcast):
-
-        patched = mocker.patch("radiofeed.podcasts.tasks.parse_feed.map")
-
-        call_command("feed_updates", limit=200)
-
-        patched.assert_called()

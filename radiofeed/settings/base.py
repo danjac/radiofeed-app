@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "huey.contrib.djhuey",
     "widget_tweaks",
     "radiofeed.episodes",
+    "radiofeed.feed_parser",
     "radiofeed.podcasts",
     "radiofeed.users",
 ]

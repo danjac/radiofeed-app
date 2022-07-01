@@ -3,8 +3,8 @@ import itertools
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 
+from radiofeed.feed_parser.tasks import parse_feed
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.tasks import parse_feed
 
 
 class Command(BaseCommand):
