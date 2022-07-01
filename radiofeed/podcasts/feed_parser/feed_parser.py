@@ -14,30 +14,16 @@ from radiofeed.common.utils.dates import parse_date
 from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import tokenize
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts import rss_parser
+from radiofeed.podcasts.feed_parser.exceptions import (
+    DuplicateFeed,
+    NotModified,
+    RssParserError,
+)
+from radiofeed.podcasts.feed_parser.models import Feed
+from radiofeed.podcasts.feed_parser.rss_parser import parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
-
-
-class NotModified(requests.RequestException):
-    ...
-
-
-class DuplicateFeed(requests.RequestException):
-    ...
-
-
-def parse_feed(podcast):
-    """Updates a Podcast instance with its RSS or Atom feed source.
-
-    Args:
-        podcast (Podcast)
-
-    Returns:
-        bool: if successful update
-    """
-    return FeedParser(podcast).parse()
 
 
 class FeedParser:
@@ -102,7 +88,9 @@ class FeedParser:
         ).exists():
             raise DuplicateFeed(response=response)
 
-        return response, rss_parser.parse_rss(response.content), content_hash
+        print("parserss", parse_rss)
+
+        return response, parse_rss(response.content), content_hash
 
     def get_feed_headers(self):
         headers = {
@@ -147,9 +135,9 @@ class FeedParser:
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(
-                    attrs.fields(rss_parser.Feed).categories,
-                    attrs.fields(rss_parser.Feed).complete,
-                    attrs.fields(rss_parser.Feed).items,
+                    attrs.fields(Feed).categories,
+                    attrs.fields(Feed).complete,
+                    attrs.fields(Feed).items,
                 ),
             ),
         )
@@ -193,7 +181,7 @@ class FeedParser:
                     http.HTTPStatus.NOT_FOUND,
                     http.HTTPStatus.UNAUTHORIZED,
                 )
-            case DuplicateFeed() | rss_parser.RssParserError() | requests.RequestException():
+            case DuplicateFeed() | RssParserError() | requests.RequestException():
                 active = False
             case _:
                 raise
