@@ -8,17 +8,21 @@ import pytest
 from radiofeed.common.utils import html
 from radiofeed.common.utils.dates import parse_date
 from radiofeed.common.utils.iterators import batcher
-from radiofeed.common.utils.text import clean_text, extract_keywords, get_stopwords
-from radiofeed.common.utils.xml import XPathFinder, parse_xml
+from radiofeed.common.utils.text import clean_text, get_stopwords, tokenize
+from radiofeed.common.utils.xml import XPathFinder, parse_xml, xpath_finder
 
 
-class TestXPath:
+class TestXPathFinder:
     def read_mock_file(self, mock_filename="rss_mock.xml"):
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
     @pytest.fixture
     def channel(self):
         return next(parse_xml(self.read_mock_file(), "channel"))
+
+    def test_contexttmanager(self, channel):
+        with xpath_finder(channel) as finder:
+            assert finder.first("title/text()") == "Mysterious Universe"
 
     def test_iter(self, channel):
         assert list(XPathFinder(channel).iter("title/text()")) == [
@@ -51,12 +55,12 @@ class TestStopwords:
         assert get_stopwords("ka") == []
 
 
-class TestExtractKeywords:
+class TestTokenize:
     def test_extract_if_empty(self):
-        assert extract_keywords("en", "   ") == []
+        assert tokenize("en", "   ") == []
 
     def test_extract(self):
-        assert extract_keywords("en", "the cat sits on the mat") == [
+        assert tokenize("en", "the cat sits on the mat") == [
             "cat",
             "sits",
             "mat",
@@ -67,7 +71,7 @@ class TestExtractKeywords:
             "radiofeed.common.utils.text.lemmatizer.lemmatize",
             side_effect=AttributeError,
         )
-        assert extract_keywords("en", "the cat sits on the mat") == []
+        assert tokenize("en", "the cat sits on the mat") == []
 
 
 class TestCleanText:

@@ -12,7 +12,7 @@ from django.utils.http import http_date, quote_etag
 
 from radiofeed.common.utils.dates import parse_date
 from radiofeed.common.utils.iterators import batcher
-from radiofeed.common.utils.text import extract_keywords
+from radiofeed.common.utils.text import tokenize
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import rss_parser
 from radiofeed.podcasts.models import Category, Podcast
@@ -171,7 +171,7 @@ class FeedParser:
             + [item.title for item in feed.items][:6]
             if value
         )
-        return " ".join(extract_keywords(self.podcast.language, text))
+        return " ".join(tokenize(self.podcast.language, text))
 
     def handle_failure(self, exc):
         try:

@@ -354,7 +354,7 @@ def clean_text(text):
     return text
 
 
-def extract_keywords(language, text):
+def tokenize(language, text):
     """Extracts all relevant keywords from text, removing any stopwords,
     HTML tags etc.
 
@@ -371,10 +371,12 @@ def extract_keywords(language, text):
 
     stopwords = get_stopwords(language)
 
-    return [token for token in tokenize(text) if token and token not in stopwords]
+    return [
+        token for token in lemmatized_tokens(text) if token and token not in stopwords
+    ]
 
 
-def tokenize(text):
+def lemmatized_tokens(text):
 
     for token in tokenizer.tokenize(text):
         try:
