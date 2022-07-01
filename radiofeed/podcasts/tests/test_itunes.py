@@ -63,7 +63,6 @@ class TestCrawl:
         def side_effect(*args, **kwargs):
 
             url = args[0]
-            print("URL", url)
 
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})

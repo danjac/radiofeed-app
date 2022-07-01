@@ -47,17 +47,12 @@ class OpmlUploadForm(forms.Form):
             int: number of new subscribed feeds
         """
 
-        try:
-            feeds = self.parse_opml()
-        except lxml.etree.XMLSyntaxError:
-            return 0
-
         return len(
             Subscription.objects.bulk_create(
                 [
                     Subscription(podcast=podcast, user=user)
                     for podcast in itertools.islice(
-                        Podcast.objects.filter(rss__in=feeds)
+                        Podcast.objects.filter(rss__in=self.parse_opml())
                         .exclude(subscription__user=user)
                         .distinct(),
                         limit,
@@ -70,7 +65,10 @@ class OpmlUploadForm(forms.Form):
     def parse_opml(self):
         self.cleaned_data["opml"].seek(0)
 
-        for element in parse_xml(self.cleaned_data["opml"].read(), "outline"):
-            with xpath_finder(element) as finder:
-                if rss := finder.first("@xmlUrl"):
-                    yield rss
+        try:
+            for element in parse_xml(self.cleaned_data["opml"].read(), "outline"):
+                with xpath_finder(element) as finder:
+                    if rss := finder.first("@xmlUrl"):
+                        yield rss
+        except lxml.etree.XMLSyntaxError:
+            return

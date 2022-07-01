@@ -1,6 +1,5 @@
 import pathlib
 
-import lxml
 import pytest
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -34,16 +33,9 @@ class TestOpmlUploadForm:
         assert Subscription.objects.filter(user=user, podcast=podcast).count() == 1
 
     def test_subscribe_to_feeds_parser_error(self, user, podcast, mocker):
-        mocker.patch(
-            "radiofeed.common.utils.xml.parse_xml",
-            side_effect=lxml.etree.XMLSyntaxError,
-        )
-
         form = OpmlUploadForm()
         form.cleaned_data = {
-            "opml": SimpleUploadedFile(
-                "feeds.opml", b"content", content_type="text/xml"
-            )
+            "opml": SimpleUploadedFile("feeds.opml", b"", content_type="text/xml")
         }
         assert form.subscribe_to_feeds(user) == 0
         assert Subscription.objects.filter(user=user, podcast=podcast).count() == 0
