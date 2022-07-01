@@ -10,8 +10,7 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
-from radiofeed.common import batcher
-from radiofeed.common.parsers import xml_parser
+from radiofeed.common import batcher, xml_parser
 from radiofeed.podcasts.models import Podcast
 
 BATCH_SIZE = 100
