@@ -15,13 +15,12 @@ class Item:
     guid: str = attrs.field(validator=validators.required)
     title: str = attrs.field(validator=validators.required)
 
+    link: str | None = attrs.field(converter=converters.url, default=None)
+
     pub_date: datetime = attrs.field(converter=parse_date)
 
     media_url: str = attrs.field(validator=validators.url)
-
     media_type: str = attrs.field(validator=validators.audio)
-
-    link: str | None = attrs.field(converter=converters.url, default=None)
 
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
