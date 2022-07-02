@@ -112,20 +112,20 @@ def parse_feeds(json_data):
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
         podcasts = Podcast.objects.filter(
-            rss__in=set([f.rss for f in feeds_for_podcasts])
+            rss__in={f.rss for f in feeds_for_podcasts}
         ).in_bulk(field_name="rss")
 
         feeds_for_insert, feeds = itertools.tee(
-            map(
-                lambda feed: dataclasses.replace(feed, podcast=podcasts.get(feed.rss)),
-                feeds,
+            (
+                dataclasses.replace(feed, podcast=podcasts.get(feed.rss))
+                for feed in feeds
             ),
         )
 
         Podcast.objects.bulk_create(
-            map(
-                lambda feed: Podcast(title=feed.title, rss=feed.rss),
-                filter(lambda feed: feed.podcast is None, feeds_for_insert),
+            (
+                Podcast(title=feed.title, rss=feed.rss)
+                for feed in filter(lambda feed: feed.podcast is None, feeds_for_insert)
             ),
             ignore_conflicts=True,
         )
@@ -162,14 +162,14 @@ def parse_podcast_ids(url, location):
     """Parse iTunes podcast IDs from provided URL"""
     return filter(
         None,
-        map(
-            parse_podcast_id,
-            filter(
+        (
+            parse_podcast_id(href)
+            for href in filter(
                 lambda href: href.startswith(
                     f"https://podcasts.apple.com/{location}/podcast/"
                 ),
                 parse_urls(get_response(url).content),
-            ),
+            )
         ),
     )
 
@@ -181,13 +181,7 @@ def parse_podcast_id(url):
 
 
 def parse_urls(content):
-    return filter(
-        None,
-        map(
-            lambda el: el.attrib.get("href"),
-            parse_xml(content, "a"),
-        ),
-    )
+    return filter(None, (el.attrib.get("href") for el in parse_xml(content, "a")))
 
 
 def build_feeds_from_json(json_data):

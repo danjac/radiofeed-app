@@ -19,14 +19,13 @@ from radiofeed.podcasts.models import Podcast
 
 
 @require_http_methods(["GET"])
-def index(request, since=timedelta(days=14)):
+def index(request):
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts.
 
 
     Args:
         request (HttpRequest)
-        since (timedelta): only include podcasts with last pub date since this time
 
     Returns:
         TemplateResponse
@@ -40,9 +39,9 @@ def index(request, since=timedelta(days=14)):
         else set()
     )
 
-    from_pub_date = timezone.now() - since
+    since = timezone.now() - timedelta(days=14)
 
-    podcasts = Podcast.objects.filter(pub_date__gt=from_pub_date)
+    podcasts = Podcast.objects.filter(pub_date__gt=since)
 
     if subscribed and not promoted:
         podcasts = podcasts.filter(pk__in=subscribed)
@@ -50,7 +49,7 @@ def index(request, since=timedelta(days=14)):
         podcasts = podcasts.filter(promoted=True)
 
     episodes = (
-        Episode.objects.filter(pub_date__gt=from_pub_date)
+        Episode.objects.filter(pub_date__gt=since)
         .select_related("podcast")
         .filter(
             podcast__in=set(podcasts.values_list("pk", flat=True)),
@@ -373,7 +372,11 @@ def remove_bookmark(request, episode_id):
 
 
 def get_episode_or_404(
-    request, episode_id, *, with_podcast=False, with_current_time=False
+    request,
+    episode_id,
+    *,
+    with_podcast=False,
+    with_current_time=False,
 ):
     """Returns single Episode instance.
 
