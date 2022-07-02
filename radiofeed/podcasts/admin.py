@@ -45,6 +45,24 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
+class ParseResultFilter(admin.SimpleListFilter):
+    title = "Parse Result"
+    parameter_name = "parse_result"
+
+    def lookups(self, request, model_admin):
+        return (("none", "None"),) + tuple(models.Podcast.ParseResult.choices)
+
+    def queryset(self, request, queryset):
+
+        if (value := self.value()) == "none":
+            return queryset.filter(parse_result=None)
+
+        if value in models.Podcast.ParseResult.values:
+            return queryset.filter(parse_result=value)
+
+        return queryset
+
+
 class HttpStatusFilter(admin.SimpleListFilter):
     title = "HTTP Status"
     parameter_name = "http_status"
@@ -124,6 +142,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PubDateFilter,
         PromotedFilter,
         SubscribedFilter,
+        ParseResultFilter,
         HttpStatusFilter,
     )
 
@@ -150,6 +169,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "modified",
         "etag",
         "http_status",
+        "parse_result",
         "content_hash",
     )
 

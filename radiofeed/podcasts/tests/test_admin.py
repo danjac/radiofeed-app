@@ -10,6 +10,7 @@ from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
     HttpStatusFilter,
+    ParseResultFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
@@ -189,3 +190,34 @@ class TestSubscribedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
+
+
+class TestParseResultFilter:
+    def test_parse_result_none(self, db, podcast_admin, req):
+        PodcastFactory(parse_result=Podcast.ParseResult.SUCCESS)
+        podcast = PodcastFactory(parse_result=None)
+        f = ParseResultFilter(req, {"parse_result": "none"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podcast
+
+    def test_parse_result_empty(self, db, podcast_admin, req):
+        PodcastFactory(parse_result=Podcast.ParseResult.SUCCESS)
+        PodcastFactory(parse_result=None)
+        f = ParseResultFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 2
+
+    def test_specific_parse_result(self, db, podcast_admin, req):
+        podcast = PodcastFactory(parse_result=Podcast.ParseResult.SUCCESS)
+        PodcastFactory(parse_result=None)
+        PodcastFactory(parse_result=Podcast.ParseResult.NOT_MODIFIED)
+        f = ParseResultFilter(
+            req,
+            {"parse_result": "success"},
+            Podcast,
+            podcast_admin,
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podcast

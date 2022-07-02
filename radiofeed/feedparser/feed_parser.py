@@ -113,13 +113,22 @@ class FeedParser:
             category for category in feed.categories if category not in categories_dct
         )
 
+        # mark inactive if discontinued
+        if feed.complete:
+            active = False
+            parse_result = Podcast.ParseResult.COMPLETE
+        else:
+            active = True
+            parse_result = Podcast.ParseResult.SUCCESS
+
         self.save_podcast(
-            active=not feed.complete,
+            active=active,
             content_hash=content_hash,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
+            parse_result=parse_result,
             keywords=keywords,
             extracted_text=self.extract_text(
                 feed,
@@ -160,20 +169,32 @@ class FeedParser:
         return " ".join(tokenize(self.podcast.language, text))
 
     def handle_failure(self, exc):
+        match exc:
+            case NotModified():
+                active = True
+                parse_result = Podcast.ParseResult.NOT_MODIFIED
+            case DuplicateFeed():
+                active = False
+                parse_result = Podcast.ParseResult.DUPLICATE_FEED
+            case RssParserError():
+                active = False
+                parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
+            case requests.RequestException():
+                active = False
+                parse_result = Podcast.ParseResult.HTTP_ERROR
+            case _:
+                raise
+
         try:
             http_status = exc.response.status_code
         except AttributeError:
             http_status = None
 
-        match exc:
-            case NotModified():
-                active = True
-            case DuplicateFeed() | RssParserError() | requests.HTTPError() | requests.RequestException():
-                active = False
-            case _:
-                raise
-
-        self.save_podcast(active=active, http_status=http_status)
+        self.save_podcast(
+            active=active,
+            http_status=http_status,
+            parse_result=parse_result,
+        )
         return False
 
     def save_podcast(self, **fields):

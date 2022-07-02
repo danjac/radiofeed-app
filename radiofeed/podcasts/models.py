@@ -111,6 +111,14 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 
 class Podcast(models.Model):
+    class ParseResult(models.TextChoices):
+        SUCCESS = "success", "Success"
+        COMPLETE = "complete", "Complete"
+        NOT_MODIFIED = "not_modified", "Not Modified"
+        HTTP_ERROR = "http_error", "HTTP Error"
+        RSS_PARSER_ERROR = "rss_parser_error", "RSS Parser Error"
+        DUPLICATE_FEED = "duplicate_feed", "Duplicate Feed"
+
     rss = models.URLField(unique=True, max_length=500)
     active = models.BooleanField(default=True)
 
@@ -130,6 +138,13 @@ class Podcast(models.Model):
     content_hash = models.CharField(max_length=64, null=True, blank=True)
 
     http_status = models.SmallIntegerField(null=True, blank=True)
+
+    parse_result = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+        choices=ParseResult.choices,
+    )
 
     cover_url = models.URLField(max_length=2083, null=True, blank=True)
 
