@@ -15,8 +15,6 @@ from model_utils.models import TimeStampedModel
 from radiofeed.common.db import FastCountMixin, SearchMixin
 from radiofeed.common.utils.html import strip_html
 
-# test commit
-
 
 class CategoryQuerySet(models.QuerySet):
     def search(self, search_term, base_similarity=0.2):
