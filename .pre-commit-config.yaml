@@ -25,7 +25,6 @@ repos:
       rev: 3.9.2
       hooks:
           - id: flake8
-            args: [--docstring-convention, google]
             additional_dependencies: [
                 'flake8-docstrings==1.6.0'
             ]
