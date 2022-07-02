@@ -125,7 +125,8 @@ def parse_feeds(json_data):
         Podcast.objects.bulk_create(
             (
                 Podcast(title=feed.title, rss=feed.rss)
-                for feed in filter(lambda feed: feed.podcast is None, feeds_for_insert)
+                for feed in feeds_for_insert
+                if feed.podcast is None
             ),
             ignore_conflicts=True,
         )
@@ -146,31 +147,35 @@ def get_response(url, data=None):
 
 
 def parse_genre_urls(location):
-    return filter(
-        lambda href: href.startswith(
-            f"https://podcasts.apple.com/{location}/genre/podcasts"
-        ),
-        parse_urls(
+    return (
+        href
+        for href in parse_urls(
             get_response(
                 f"https://itunes.apple.com/{location}/genre/podcasts/id26"
             ).content
-        ),
+        )
+        if href.startswith(f"https://podcasts.apple.com/{location}/genre/podcasts")
     )
 
 
 def parse_podcast_ids(url, location):
     """Parse iTunes podcast IDs from provided URL"""
-    return filter(
-        None,
-        (
+    return (
+        podcast_id
+        for podcast_id in (
             parse_podcast_id(href)
-            for href in filter(
-                lambda href: href.startswith(
-                    f"https://podcasts.apple.com/{location}/podcast/"
-                ),
-                parse_urls(get_response(url).content),
-            )
-        ),
+            for href in parse_urls(get_response(url).content)
+            if href.startswith(f"https://podcasts.apple.com/{location}/podcast/")
+        )
+        if podcast_id
+    )
+
+
+def parse_urls(content):
+    return (
+        href
+        for href in (el.attrib.get("href") for el in parse_xml(content, "a"))
+        if href
     )
 
 
@@ -178,10 +183,6 @@ def parse_podcast_id(url):
     if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
         return match.group("id")
     return None
-
-
-def parse_urls(content):
-    return filter(None, (el.attrib.get("href") for el in parse_xml(content, "a")))
 
 
 def build_feeds_from_json(json_data):
