@@ -102,7 +102,7 @@ def strip_whitespace(value):
 
 
 def strip_html(value):
-    """Removes all HTML tags and entities from text.
+    """Scrubs all HTML tags and entities from text.
 
     Args:
         value (str | None): text to be cleaned
