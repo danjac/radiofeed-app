@@ -50,11 +50,6 @@ repos:
       hooks:
       - id: pyupgrade
         args: [--py310-plus]
-    - repo: https://github.com/adamchainz/django-upgrade
-      rev: '1.7.0'
-      hooks:
-        - id: django-upgrade
-          args: [--target-version, "4.2"]
     - repo: https://github.com/rtts/djhtml
       rev: 'v1.5.0'
       hooks:
