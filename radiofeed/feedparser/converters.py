@@ -2,7 +2,7 @@ from radiofeed.common.template import normalize_url
 
 
 def explicit(value):
-    """Checks if podcast or episode explicit
+    """Checks if podcast or episode explicit.
 
     Args:
         value (str | None)
