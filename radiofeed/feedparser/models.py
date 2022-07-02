@@ -113,7 +113,8 @@ class Feed:
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
     funding_text: str = attrs.field(
-        converter=attrs.converters.default_if_none(""), default=None
+        converter=attrs.converters.default_if_none(""),
+        default=None,
     )
 
     funding_url: str | None = attrs.field(converter=converters.url, default=None)
