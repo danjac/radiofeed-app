@@ -26,6 +26,8 @@ docker-compose build && docker-compose up -d
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
+Current tested versions are PostgresSQL 14+ and Redis 6.2+.
+
 ### Django setup
 
 Copy the file `.env.example` to `.env` and set the variables accordingly. These settings should work as-is with the Docker containers defined in `docker-compose.yml`.
@@ -59,6 +61,9 @@ python manage.py loaddata podcasts \
 ```
 
 This should provide some useful data to get started with.
+
+
+
 
 ### Frontend setup
 
@@ -130,3 +135,25 @@ Send podcast recommendations to users:
 ```
 
 An `app.json` configuration with these cron schedules is included for Dokku deployment.
+
+### Upgrading dependencies
+
+To upgrade Python dependencies just use Poetry:
+
+```bash
+poetry update
+```
+
+This will update `poetry.lock` which should be commmitted to the repo. Refer to Poetry docs for more details.
+
+If you are using Heroku, Dokku or similar for deployment you should also re-generate the `requirements.txt` file, as Heroku will automatically detect and reinstall any changes:
+
+```bash
+poetry export --without-hashes -o requirements.txt
+```
+
+You can update frontend dependencies as usual with `npm`:
+
+```bash
+
+```
