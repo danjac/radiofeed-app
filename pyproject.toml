@@ -90,7 +90,6 @@ omit=[
     "*/migrations/*",
     "*/tests/*",
     "*/settings/*",
-    "*/celery_app.py",
     "*/wsgi.py",
 ]
 
