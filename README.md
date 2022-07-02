@@ -136,7 +136,7 @@ Send podcast recommendations to users:
 
 An `app.json` configuration with these cron schedules is included for Dokku deployment.
 
-### Upgrading dependencies
+### Updating dependencies
 
 To upgrade Python dependencies just use Poetry:
 
