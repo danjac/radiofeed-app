@@ -168,14 +168,7 @@ class FeedParser:
         match exc:
             case NotModified():
                 active = True
-            case requests.HTTPError():
-                active = http_status not in (
-                    http.HTTPStatus.FORBIDDEN,
-                    http.HTTPStatus.GONE,
-                    http.HTTPStatus.NOT_FOUND,
-                    http.HTTPStatus.UNAUTHORIZED,
-                )
-            case DuplicateFeed() | RssParserError() | requests.RequestException():
+            case DuplicateFeed() | RssParserError() | requests.HTTPError() | requests.RequestException():
                 active = False
             case _:
                 raise

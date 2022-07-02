@@ -467,7 +467,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.active
+        assert not podcast.active
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parsed
 
@@ -483,6 +483,6 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.active
+        assert not podcast.active
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parsed
