@@ -248,15 +248,16 @@ class FeedParser:
     def episodes_for_update(self, feed, guids):
 
         episode_ids = set()
-        for item in filter(lambda item: item.guid in guids, feed.items):
+
+        for item in (item for item in feed.items if item.guid in guids):
             if (episode_id := guids[item.guid]) not in episode_ids:
                 yield self.make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
     def episodes_for_insert(self, feed, guids):
-
-        for item in filter(lambda item: item.guid not in guids, feed.items):
-            yield self.make_episode(item)
+        return (
+            self.make_episode(item) for item in feed.items if item.guid not in guids
+        )
 
     def make_episode(self, item, episode_id=None):
         return Episode(
