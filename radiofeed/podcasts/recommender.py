@@ -29,6 +29,7 @@ def recommend(since=None, num_matches=12):
         since (timedelta | None): include podcasts last published since this period
         num_matches (int): total number of recommendations to create for each podcast
     """
+    print("running...")
 
     podcasts = Podcast.objects.filter(
         pub_date__gt=timezone.now() - (since or timedelta(days=90))
