@@ -30,9 +30,10 @@ def url(value):
 def duration(value):
     """Given a duration value will ensure all values fall within range.
 
-    Example:
-        3600 (plain int) -> "3600"
-        3:60:50:1000 -> "3:60:50"
+    Examples:
+
+    - 3600 (plain int) -> "3600"
+    - 3:60:50:1000 -> "3:60:50"
 
     Return empty string if cannot resolve.
 

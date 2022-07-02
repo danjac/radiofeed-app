@@ -24,21 +24,22 @@ def pagination_response(
 
     The following items are added to the template context:
 
-        page_obj: Page instance
-        pagination_template: pagination template name
-        pagination_target: HTMX target
+    **page_obj**: Page instance
+    **pagination_template**: pagination template name
+    **pagination_target**: HTMX target
 
     Example:
 
     default template:
 
-        ```html
+    .. code-block:: html
+
         {% include pagination_template %}
-        ```
 
     pagination template:
 
-        ```html
+    .. code-block:: html
+
         <div id="{{ pagination_target }}">
 
             {% include "includes/pagination_links.html" %}
@@ -50,8 +51,7 @@ def pagination_response(
             {% endfor %}
 
             {% include "includes/pagination_links.html" %}
-        </dv>
-        ```
+        </div>
 
     Args:
         request (HttpRequest)

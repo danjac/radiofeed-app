@@ -1,0 +1,552 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+        <title>radiofeed.feedparser package &#8212; radiofeed 0.1.0 documentation</title>
+        <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+        <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <link rel="index" title="Index" href="genindex.html" />
+        <link rel="search" title="Search" href="search.html" />
+
+        <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+
+        <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+    </head><body>
+
+
+        <div class="document">
+            <div class="documentwrapper">
+                <div class="bodywrapper">
+
+
+                    <div class="body" role="main">
+
+                        <section id="radiofeed-feedparser-package">
+                            <h1>radiofeed.feedparser package<a class="headerlink" href="#radiofeed-feedparser-package" title="Permalink to this heading">¶</a></h1>
+                            <section id="subpackages">
+                                <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
+                                <div class="toctree-wrapper compound">
+                                    <ul>
+                                        <li class="toctree-l1"><a class="reference internal" href="radiofeed.feedparser.management.html">radiofeed.feedparser.management package</a><ul>
+                                            <li class="toctree-l2"><a class="reference internal" href="radiofeed.feedparser.management.html#subpackages">Subpackages</a><ul>
+                                                <li class="toctree-l3"><a class="reference internal" href="radiofeed.feedparser.management.commands.html">radiofeed.feedparser.management.commands package</a><ul>
+                                                    <li class="toctree-l4"><a class="reference internal" href="radiofeed.feedparser.management.commands.html#submodules">Submodules</a></li>
+                                                    <li class="toctree-l4"><a class="reference internal" href="radiofeed.feedparser.management.commands.html#module-radiofeed.feedparser.management.commands.feed_updates">radiofeed.feedparser.management.commands.feed_updates module</a></li>
+                                                    <li class="toctree-l4"><a class="reference internal" href="radiofeed.feedparser.management.commands.html#module-radiofeed.feedparser.management.commands">Module contents</a></li>
+                                                </ul>
+                                                </li>
+                                            </ul>
+                                            </li>
+                                            <li class="toctree-l2"><a class="reference internal" href="radiofeed.feedparser.management.html#module-radiofeed.feedparser.management">Module contents</a></li>
+                                        </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </section>
+                            <section id="submodules">
+                                <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+                            </section>
+                            <section id="module-radiofeed.feedparser.apps">
+                                <span id="radiofeed-feedparser-apps-module"></span><h2>radiofeed.feedparser.apps module<a class="headerlink" href="#module-radiofeed.feedparser.apps" title="Permalink to this heading">¶</a></h2>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.apps.FeedParserConfig">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.apps.</span></span><span class="sig-name descname"><span class="pre">FeedParserConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_module</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.apps.FeedParserConfig" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></p>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.apps.FeedParserConfig.default_auto_field">
+                                                <span class="sig-name descname"><span class="pre">default_auto_field</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'django.db.models.BigAutoField'</span></em><a class="headerlink" href="#radiofeed.feedparser.apps.FeedParserConfig.default_auto_field" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.apps.FeedParserConfig.name">
+                                                <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'radiofeed.feedparser'</span></em><a class="headerlink" href="#radiofeed.feedparser.apps.FeedParserConfig.name" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                    </dd></dl>
+
+                            </section>
+                            <section id="module-radiofeed.feedparser.converters">
+                                <span id="radiofeed-feedparser-converters-module"></span><h2>radiofeed.feedparser.converters module<a class="headerlink" href="#module-radiofeed.feedparser.converters" title="Permalink to this heading">¶</a></h2>
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.converters.duration">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.converters.</span></span><span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.converters.duration" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Given a duration value will ensure all values fall within range.</p>
+                                        <p>Examples:</p>
+                                        <ul class="simple">
+                                            <li><p>3600 (plain int) -&gt; “3600”</p></li>
+                                            <li><p>3:60:50:1000 -&gt; “3:60:50”</p></li>
+                                        </ul>
+                                        <p>Return empty string if cannot resolve.</p>
+                                        <dl class="field-list simple">
+                                            <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><p><strong>value</strong> (<em>str</em><em> | </em><em>None</em>) – </p>
+                                            </dd>
+                                            <dt class="field-even">Returns<span class="colon">:</span></dt>
+                                            <dd class="field-even"><p>str</p>
+                                            </dd>
+                                        </dl>
+                                    </dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.converters.explicit">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.converters.</span></span><span class="sig-name descname"><span class="pre">explicit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.converters.explicit" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Checks if podcast or episode explicit</p>
+                                        <dl class="field-list simple">
+                                            <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><p><strong>value</strong> (<em>str</em><em> | </em><em>None</em>) – </p>
+                                            </dd>
+                                            <dt class="field-even">Returns<span class="colon">:</span></dt>
+                                            <dd class="field-even"><p>bool</p>
+                                            </dd>
+                                        </dl>
+                                    </dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.converters.url">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.converters.</span></span><span class="sig-name descname"><span class="pre">url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.converters.url" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Returns a URL value. Will try to prefix with <a class="reference external" href="https://">https://</a> if only domain provided.</p>
+                                        <p>If cannot resolve as a valid URL will return None.</p>
+                                        <dl class="field-list simple">
+                                            <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><p><strong>value</strong> (<em>str</em><em> | </em><em>None</em>) – </p>
+                                            </dd>
+                                            <dt class="field-even">Returns<span class="colon">:</span></dt>
+                                            <dd class="field-even"><p>str | None</p>
+                                            </dd>
+                                        </dl>
+                                    </dd></dl>
+
+                            </section>
+                            <section id="module-radiofeed.feedparser.exceptions">
+                                <span id="radiofeed-feedparser-exceptions-module"></span><h2>radiofeed.feedparser.exceptions module<a class="headerlink" href="#module-radiofeed.feedparser.exceptions" title="Permalink to this heading">¶</a></h2>
+                                <dl class="py exception">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.exceptions.DuplicateFeed">
+                                        <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.exceptions.</span></span><span class="sig-name descname"><span class="pre">DuplicateFeed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.exceptions.DuplicateFeed" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RequestException</span></code></p>
+                                    </dd></dl>
+
+                                <dl class="py exception">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.exceptions.NotModified">
+                                        <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotModified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.exceptions.NotModified" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RequestException</span></code></p>
+                                    </dd></dl>
+
+                                <dl class="py exception">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.exceptions.RssParserError">
+                                        <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.exceptions.</span></span><span class="sig-name descname"><span class="pre">RssParserError</span></span><a class="headerlink" href="#radiofeed.feedparser.exceptions.RssParserError" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+                                    </dd></dl>
+
+                            </section>
+                            <section id="module-radiofeed.feedparser.feed_parser">
+                                <span id="radiofeed-feedparser-feed-parser-module"></span><h2>radiofeed.feedparser.feed_parser module<a class="headerlink" href="#module-radiofeed.feedparser.feed_parser" title="Permalink to this heading">¶</a></h2>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.feed_parser.</span></span><span class="sig-name descname"><span class="pre">FeedParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">podcast</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+                                        <p>Updates a Podcast instance with its RSS or Atom feed source.</p>
+                                        <dl class="field-list simple">
+                                            <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><p><strong>podcast</strong> (<a class="reference internal" href="radiofeed.podcasts.html#radiofeed.podcasts.models.Podcast" title="radiofeed.podcasts.models.Podcast"><em>Podcast</em></a>) – </p>
+                                            </dd>
+                                        </dl>
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.episodes_for_insert">
+                                                <span class="sig-name descname"><span class="pre">episodes_for_insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.episodes_for_insert" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.episodes_for_update">
+                                                <span class="sig-name descname"><span class="pre">episodes_for_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.episodes_for_update" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.extract_text">
+                                                <span class="sig-name descname"><span class="pre">extract_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.extract_text" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.get_feed_headers">
+                                                <span class="sig-name descname"><span class="pre">get_feed_headers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.get_feed_headers" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.handle_failure">
+                                                <span class="sig-name descname"><span class="pre">handle_failure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.handle_failure" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.handle_success">
+                                                <span class="sig-name descname"><span class="pre">handle_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_hash</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.handle_success" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.make_episode">
+                                                <span class="sig-name descname"><span class="pre">make_episode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.make_episode" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.parse">
+                                                <span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.parse" title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>Updates Podcast instance with RSS or Atom feed source. Podcast details are updated and
+                                                episodes created, updated or deleted accordingly.</p>
+                                                <p>If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is
+                                                    marked as complete) then the podcast is set inactive.</p>
+                                                <dl class="field-list simple">
+                                                    <dt class="field-odd">Returns<span class="colon">:</span></dt>
+                                                    <dd class="field-odd"><p><dl class="simple">
+                                                        <dt>if podcast has been successfully updated. This will be False if there are no updates or</dt><dd><p>there is some other problem e.g. HTTP error.</p>
+                                                        </dd>
+                                                    </dl>
+                                                    </p>
+                                                    </dd>
+                                                    <dt class="field-even">Return type<span class="colon">:</span></dt>
+                                                    <dd class="field-even"><p>bool</p>
+                                                    </dd>
+                                                </dl>
+                                            </dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.parse_rss">
+                                                <span class="sig-name descname"><span class="pre">parse_rss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.parse_rss" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.save_episodes">
+                                                <span class="sig-name descname"><span class="pre">save_episodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.save_episodes" title="Permalink to this definition">¶</a></dt>
+                                            <dd><p>Remove any episodes no longer in feed, update any current and
+                                                add new</p>
+                                            </dd></dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.FeedParser.save_podcast">
+                                                <span class="sig-name descname"><span class="pre">save_podcast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.FeedParser.save_podcast" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                    </dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.get_categories_dict">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.feed_parser.</span></span><span class="sig-name descname"><span class="pre">get_categories_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.get_categories_dict" title="Permalink to this definition">¶</a></dt>
+                                    <dd></dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.feed_parser.make_content_hash">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.feed_parser.</span></span><span class="sig-name descname"><span class="pre">make_content_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.feed_parser.make_content_hash" title="Permalink to this definition">¶</a></dt>
+                                    <dd></dd></dl>
+
+                            </section>
+                            <section id="module-radiofeed.feedparser.models">
+                                <span id="radiofeed-feedparser-models-module"></span><h2>radiofeed.feedparser.models module<a class="headerlink" href="#module-radiofeed.feedparser.models" title="Permalink to this heading">¶</a></h2>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.models.</span></span><span class="sig-name descname"><span class="pre">Feed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cover_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funding_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">funding_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#radiofeed.feedparser.models.Item" title="radiofeed.feedparser.models.Item"><span class="pre">radiofeed.feedparser.models.Item</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">NOTHING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pub_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime.datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">NOTHING</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.models.Feed" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+                                        <p>RSS or Atom podcast feed</p>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.categories">
+                                                <span class="sig-name descname"><span class="pre">categories</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.categories" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.complete">
+                                                <span class="sig-name descname"><span class="pre">complete</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.complete" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.cover_url">
+                                                <span class="sig-name descname"><span class="pre">cover_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.cover_url" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.description">
+                                                <span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.description" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.explicit">
+                                                <span class="sig-name descname"><span class="pre">explicit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.explicit" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.funding_text">
+                                                <span class="sig-name descname"><span class="pre">funding_text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.funding_text" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.funding_url">
+                                                <span class="sig-name descname"><span class="pre">funding_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.funding_url" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.items">
+                                                <span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#radiofeed.feedparser.models.Item" title="radiofeed.feedparser.models.Item"><span class="pre">radiofeed.feedparser.models.Item</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.items" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.language">
+                                                <span class="sig-name descname"><span class="pre">language</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.language" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.link">
+                                                <span class="sig-name descname"><span class="pre">link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.link" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.owner">
+                                                <span class="sig-name descname"><span class="pre">owner</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.owner" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.pub_date">
+                                                <span class="sig-name descname"><span class="pre">pub_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.pub_date" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Feed.title">
+                                                <span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Feed.title" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                    </dd></dl>
+
+                                <dl class="py class">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.models.</span></span><span class="sig-name descname"><span class="pre">Item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pub_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cover_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.models.Item" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+                                        <p>Individual item or episode in RSS or Atom podcast feed</p>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.cover_url">
+                                                <span class="sig-name descname"><span class="pre">cover_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.cover_url" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.description">
+                                                <span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.description" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.duration">
+                                                <span class="sig-name descname"><span class="pre">duration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.duration" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.episode">
+                                                <span class="sig-name descname"><span class="pre">episode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.episode" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.episode_type">
+                                                <span class="sig-name descname"><span class="pre">episode_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.episode_type" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.explicit">
+                                                <span class="sig-name descname"><span class="pre">explicit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.explicit" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.guid">
+                                                <span class="sig-name descname"><span class="pre">guid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.guid" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.keywords">
+                                                <span class="sig-name descname"><span class="pre">keywords</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.keywords" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.length">
+                                                <span class="sig-name descname"><span class="pre">length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.length" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.link">
+                                                <span class="sig-name descname"><span class="pre">link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.link" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.media_type">
+                                                <span class="sig-name descname"><span class="pre">media_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.media_type" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.media_url">
+                                                <span class="sig-name descname"><span class="pre">media_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.media_url" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.pub_date">
+                                                <span class="sig-name descname"><span class="pre">pub_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.pub_date" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.season">
+                                                <span class="sig-name descname"><span class="pre">season</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.season" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="radiofeed.feedparser.models.Item.title">
+                                                <span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#radiofeed.feedparser.models.Item.title" title="Permalink to this definition">¶</a></dt>
+                                            <dd></dd></dl>
+
+                                    </dd></dl>
+
+                            </section>
+                            <section id="module-radiofeed.feedparser.rss_parser">
+                                <span id="radiofeed-feedparser-rss-parser-module"></span><h2>radiofeed.feedparser.rss_parser module<a class="headerlink" href="#module-radiofeed.feedparser.rss_parser" title="Permalink to this heading">¶</a></h2>
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.rss_parser.parse_feed">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.rss_parser.</span></span><span class="sig-name descname"><span class="pre">parse_feed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.rss_parser.parse_feed" title="Permalink to this definition">¶</a></dt>
+                                    <dd></dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.rss_parser.parse_item">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.rss_parser.</span></span><span class="sig-name descname"><span class="pre">parse_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.rss_parser.parse_item" title="Permalink to this definition">¶</a></dt>
+                                    <dd></dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.rss_parser.parse_items">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.rss_parser.</span></span><span class="sig-name descname"><span class="pre">parse_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.rss_parser.parse_items" title="Permalink to this definition">¶</a></dt>
+                                    <dd></dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.rss_parser.parse_rss">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.rss_parser.</span></span><span class="sig-name descname"><span class="pre">parse_rss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.rss_parser.parse_rss" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Parses RSS or Atom feed and returns the feed details and individual episodes.</p>
+                                        <dl class="field-list simple">
+                                            <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><p><strong>content</strong> (<em>bytes</em>) – the body of the RSS or Atom feed</p>
+                                            </dd>
+                                            <dt class="field-even">Returns<span class="colon">:</span></dt>
+                                            <dd class="field-even"><p>Feed</p>
+                                            </dd>
+                                            <dt class="field-odd">Raises<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><p><a class="reference internal" href="#radiofeed.feedparser.exceptions.RssParserError" title="radiofeed.feedparser.exceptions.RssParserError"><strong>RssParserError</strong></a> – if XML content is invalid, or the feed is otherwise invalid or empty</p>
+                                            </dd>
+                                        </dl>
+                                    </dd></dl>
+
+                            </section>
+                            <section id="module-radiofeed.feedparser.tasks">
+                                <span id="radiofeed-feedparser-tasks-module"></span><h2>radiofeed.feedparser.tasks module<a class="headerlink" href="#module-radiofeed.feedparser.tasks" title="Permalink to this heading">¶</a></h2>
+                            </section>
+                            <section id="module-radiofeed.feedparser.validators">
+                                <span id="radiofeed-feedparser-validators-module"></span><h2>radiofeed.feedparser.validators module<a class="headerlink" href="#module-radiofeed.feedparser.validators" title="Permalink to this heading">¶</a></h2>
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.validators.required">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.validators.</span></span><span class="sig-name descname"><span class="pre">required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.validators.required" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Checks if value is truthy</p>
+                                        <dl class="field-list simple">
+                                            <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><ul class="simple">
+                                                <li><p><strong>instance</strong> (<em>object</em><em> | </em><em>None</em>) – </p></li>
+                                                <li><p><strong>attr</strong> (<em>attrs.Attribute</em>) – </p></li>
+                                                <li><p><strong>value</strong> (<em>Any</em>) – </p></li>
+                                            </ul>
+                                            </dd>
+                                            <dt class="field-even">Raises<span class="colon">:</span></dt>
+                                            <dd class="field-even"><p><strong>ValueError</strong> – any falsy value</p>
+                                            </dd>
+                                        </dl>
+                                    </dd></dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="radiofeed.feedparser.validators.url">
+                                        <span class="sig-prename descclassname"><span class="pre">radiofeed.feedparser.validators.</span></span><span class="sig-name descname"><span class="pre">url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#radiofeed.feedparser.validators.url" title="Permalink to this definition">¶</a></dt>
+                                    <dd><p>Checks if value is a valid URL</p>
+                                        <dl class="field-list simple">
+                                            <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                            <dd class="field-odd"><ul class="simple">
+                                                <li><p><strong>instance</strong> (<em>object</em><em> | </em><em>None</em>) – </p></li>
+                                                <li><p><strong>attr</strong> (<em>attrs.Attribute</em>) – </p></li>
+                                                <li><p><strong>value</strong> (<em>Any</em>) – </p></li>
+                                            </ul>
+                                            </dd>
+                                            <dt class="field-even">Raises<span class="colon">:</span></dt>
+                                            <dd class="field-even"><p><strong>ValueError</strong> – invalid URL</p>
+                                            </dd>
+                                        </dl>
+                                    </dd></dl>
+
+                            </section>
+                            <section id="module-radiofeed.feedparser">
+                                <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-radiofeed.feedparser" title="Permalink to this heading">¶</a></h2>
+                            </section>
+                        </section>
+
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+                <div class="sphinxsidebarwrapper">
+                    <h1 class="logo"><a href="index.html">radiofeed</a></h1>
+
+
+
+
+
+
+
+
+                    <h3>Navigation</h3>
+
+                    <div class="relations">
+                        <h3>Related Topics</h3>
+                        <ul>
+                            <li><a href="index.html">Documentation overview</a><ul>
+                            </ul></li>
+                        </ul>
+                    </div>
+                    <div id="searchbox" style="display: none" role="search">
+                        <h3 id="searchlabel">Quick search</h3>
+                        <div class="searchformwrapper">
+                            <form class="search" action="search.html" method="get">
+                                <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                                <input type="submit" value="Go" />
+                            </form>
+                        </div>
+                    </div>
+                    <script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            <div class="clearer"></div>
+        </div>
+        <div class="footer">
+            &copy;2022, Dan Jacob.
+
+            |
+            Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+            &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+
+            |
+            <a href="_sources/radiofeed.feedparser.rst.txt"
+                rel="nofollow">Page source</a>
+        </div>
+
+
+
+
+    </body>
+</html>
