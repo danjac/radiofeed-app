@@ -26,7 +26,8 @@ def recommend(since=None, num_matches=12):
     Any existing recommendations are first deleted.
 
     Args:
-        since (timedelta | None): include podcasts last published since this period
+        since (timedelta | None): include podcasts last published since this period. By
+            default this is 90 days.
         num_matches (int): total number of recommendations to create for each podcast
     """
 
