@@ -54,11 +54,31 @@ _url_validator = URLValidator(["http", "https"])
 
 
 def required(instance, attr, value):
+    """Checks if value is truthy
+
+    Args:
+        instance (object | None)
+        attr (attrs.Attribute)
+        value (Any)
+
+    Raises:
+        ValueError: any falsy value
+    """
     if not value:
         raise ValueError(f"{attr=} cannot be empty or None")
 
 
 def url(instance, attr, value):
+    """Checks if value is a valid URL
+
+    Args:
+        instance (object | None)
+        attr (attrs.Attribute)
+        value (Any)
+
+    Raises:
+        ValueError: invalid URL
+    """
     try:
         _url_validator(value)
     except ValidationError as e:

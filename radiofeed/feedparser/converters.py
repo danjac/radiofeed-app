@@ -1,23 +1,47 @@
-from django.core.exceptions import ValidationError
-
-from radiofeed.feedparser.validators import _url_validator
+from radiofeed.common.template import normalize_url
 
 
 def explicit(value):
-    if value and value.casefold() in ("clean", "yes"):
-        return True
-    return False
+    """Checks if podcast or episode explicit
+
+    Args:
+        value (str | None)
+
+    Returns:
+        bool
+    """
+    return bool(value and value.casefold() in ("clean", "yes"))
 
 
 def url(value):
-    try:
-        _url_validator(value)
-        return value
-    except ValidationError:
-        return None
+    """Returns a URL value. Will try to prefix with https:// if only domain provided.
+
+    If cannot resolve as a valid URL will return None.
+
+    Args:
+        value (str | None)
+
+    Returns:
+        str | None
+    """
+    return normalize_url(value) or None
 
 
 def duration(value):
+    """Given a duration value will ensure all values fall within range.
+
+    Example:
+        3600 (plain int) -> "3600"
+        3:60:50:1000 -> "3:60:50"
+
+    Return empty string if cannot resolve.
+
+    Args:
+        value (str | None)
+
+    Returns:
+        str
+    """
     if not value:
         return ""
 

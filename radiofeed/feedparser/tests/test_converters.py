@@ -21,8 +21,14 @@ class TestUrl:
             == "http://yhanewashington.wixsite.com/1972"
         )
 
+    def test_domain_only(self):
+        assert (
+            converters.url("yhanewashington.wixsite.com/1972")
+            == "https://yhanewashington.wixsite.com/1972"
+        )
+
     def test_bad_url(self):
-        assert converters.url("yhanewashington.wixsite.com/1972") is None
+        assert converters.url("yhanewashington") is None
 
     def test_none(self):
         assert converters.url(None) is None
