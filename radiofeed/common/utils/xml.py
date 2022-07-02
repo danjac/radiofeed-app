@@ -30,7 +30,7 @@ def parse_xml(content, *tags):
 
 @contextmanager
 def xpath_finder(element, namespaces=None):
-    """Returns XPath instance for an XML element.
+    """Returns XPathFinder instance for an XML element as a context manager.
 
     Args:
         element (lxml.etree.Element): the root element you want to search
