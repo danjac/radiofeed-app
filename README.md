@@ -155,5 +155,7 @@ poetry export --without-hashes -o requirements.txt
 You can update frontend dependencies as usual with `npm`:
 
 ```bash
-
+npm update
 ```
+
+Again, the updated `package-lock.json` file should be committed to the repo.
