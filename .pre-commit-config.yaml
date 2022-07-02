@@ -45,11 +45,6 @@ repos:
         - id: prettier
           files: \.(|ts|css)$
           exclude: bundle.js|bundle.js.map|bundle.css
-    - repo: https://github.com/asottile/pyupgrade
-      rev: v2.34.0
-      hooks:
-      - id: pyupgrade
-        args: [--py310-plus]
     - repo: https://github.com/rtts/djhtml
       rev: 'v1.5.0'
       hooks:
