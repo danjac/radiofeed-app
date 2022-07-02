@@ -53,14 +53,13 @@ class ParseResultFilter(admin.SimpleListFilter):
         return (("none", "None"),) + tuple(models.Podcast.ParseResult.choices)
 
     def queryset(self, request, queryset):
-
-        if (value := self.value()) == "none":
-            return queryset.filter(parse_result=None)
-
-        if value in models.Podcast.ParseResult.values:
-            return queryset.filter(parse_result=value)
-
-        return queryset
+        match value := self.value():
+            case "none":
+                return queryset.filter(parse_result=None)
+            case value if value in models.Podcast.ParseResult:
+                return queryset.filter(parse_result=value)
+            case _:
+                return queryset
 
 
 class HttpStatusFilter(admin.SimpleListFilter):
