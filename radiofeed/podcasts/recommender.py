@@ -18,7 +18,7 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation
 logger = logging.getLogger(__name__)
 
 
-def recommend(since=timedelta(days=90), num_matches=12):
+def recommend(since=None, num_matches=12):
     """
     Generates Recommendation instances based on podcast similarity, grouped
     by language.
@@ -26,11 +26,13 @@ def recommend(since=timedelta(days=90), num_matches=12):
     Any existing recommendations are first deleted.
 
     Args:
-        since (timedelta): include podcasts last published since this period
+        since (timedelta | None): include podcasts last published since this period
         num_matches (int): total number of recommendations to create for each podcast
     """
 
-    podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
+    podcasts = Podcast.objects.filter(
+        pub_date__gt=timezone.now() - (since or timedelta(days=90))
+    ).exclude(
         extracted_text="",
         language="",
     )
@@ -159,7 +161,7 @@ class Recommender:
     def find_similarity(self, df, similar, current_id):
 
         sorted_similar = sorted(
-            list(enumerate(similar)),
+            enumerate(similar),
             key=operator.itemgetter(1),
             reverse=True,
         )[: self.num_matches]
