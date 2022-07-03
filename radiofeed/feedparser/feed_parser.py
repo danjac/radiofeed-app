@@ -34,8 +34,9 @@ class FeedParser:
 
     @transaction.atomic
     def parse(self):
-        """Updates Podcast instance with RSS or Atom feed source. Podcast details are updated and
-        episodes created, updated or deleted accordingly.
+        """Updates Podcast instance with RSS or Atom feed source.
+
+        Podcast details are updated and episodes created, updated or deleted accordingly.
 
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is
         marked as complete) then the podcast is set inactive.
@@ -50,7 +51,7 @@ class FeedParser:
         except Exception as e:
             return self.handle_failure(e)
 
-    def parse_rss(self):
+    def _parse_rss(self):
         response = requests.get(
             self.podcast.rss,
             headers=self.get_feed_headers(),
@@ -86,7 +87,7 @@ class FeedParser:
 
         return response, parse_rss(response.content), content_hash
 
-    def get_feed_headers(self):
+    def _get_feed_headers(self):
         headers = {
             "Accept": ACCEPT_HEADER,
             "User-Agent": settings.USER_AGENT,
@@ -98,7 +99,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
         return headers
 
-    def handle_success(self, response, feed, content_hash):
+    def _handle_success(self, response, feed, content_hash):
 
         # taxonomy
         categories_dct = get_categories_dict()
@@ -153,7 +154,7 @@ class FeedParser:
 
         return True
 
-    def extract_text(self, feed, categories, keywords):
+    def _extract_text(self, feed, categories, keywords):
         text = " ".join(
             value
             for value in [
@@ -168,7 +169,7 @@ class FeedParser:
         )
         return " ".join(tokenize(self.podcast.language, text))
 
-    def handle_failure(self, exc):
+    def _handle_failure(self, exc):
         match exc:
             case NotModified():
                 active = True
@@ -197,7 +198,7 @@ class FeedParser:
         )
         return False
 
-    def save_podcast(self, **fields):
+    def _save_podcast(self, **fields):
         now = timezone.now()
         Podcast.objects.filter(pk=self.podcast.id).update(
             updated=now,
@@ -205,10 +206,7 @@ class FeedParser:
             **fields,
         )
 
-    def save_episodes(self, feed, batch_size=100):
-        """Remove any episodes no longer in feed, update any current and
-        add new"""
-
+    def _save_episodes(self, feed, batch_size=100):
         qs = Episode.objects.filter(podcast=self.podcast)
 
         # remove any episodes that may have been deleted on the podcast
@@ -220,7 +218,7 @@ class FeedParser:
 
         # update existing content
 
-        for batch in batcher(self.episodes_for_update(feed, guids), batch_size):
+        for batch in batcher(self._episodes_for_update(feed, guids), batch_size):
             Episode.fast_update_objects.fast_update(
                 batch,
                 fields=[
@@ -242,24 +240,24 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in batcher(self.episodes_for_insert(feed, guids), batch_size):
+        for batch in batcher(self._episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
-    def episodes_for_update(self, feed, guids):
+    def _episodes_for_update(self, feed, guids):
 
         episode_ids = set()
 
         for item in (item for item in feed.items if item.guid in guids):
             if (episode_id := guids[item.guid]) not in episode_ids:
-                yield self.make_episode(item, episode_id)
+                yield self._make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
-    def episodes_for_insert(self, feed, guids):
+    def _episodes_for_insert(self, feed, guids):
         return (
-            self.make_episode(item) for item in feed.items if item.guid not in guids
+            self._make_episode(item) for item in feed.items if item.guid not in guids
         )
 
-    def make_episode(self, item, episode_id=None):
+    def _make_episode(self, item, episode_id=None):
         return Episode(
             pk=episode_id,
             podcast=self.podcast,
@@ -269,8 +267,21 @@ class FeedParser:
 
 @functools.lru_cache
 def get_categories_dict():
+    """Dictionary of categories, keyed by name.
+
+    Returns:
+        dict[str, Category]
+    """
     return Category.objects.in_bulk(field_name="name")
 
 
 def make_content_hash(content):
+    """Generates hash of content body.
+
+    Args:
+        content (bytes)
+
+    Returns:
+        str
+    """
     return hashlib.sha256(content).hexdigest()
