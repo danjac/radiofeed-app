@@ -17,6 +17,8 @@ from radiofeed.common.utils.html import strip_html
 
 
 class CategoryQuerySet(models.QuerySet):
+    """Custom QuerySet for Category model."""
+
     def search(self, search_term, base_similarity=0.2):
         """Does a trigram similarity search for podcasts.
 
@@ -33,6 +35,7 @@ class CategoryQuerySet(models.QuerySet):
 
 
 class Category(models.Model):
+    """iTunes category."""
 
     name = models.CharField(max_length=100, unique=True)
     parent = models.ForeignKey(
@@ -50,17 +53,34 @@ class Category(models.Model):
         ordering = ("name",)
 
     def __str__(self):
+        """Returns category name.
+
+        Returns:
+            str
+        """
         return self.name
 
     @property
     def slug(self):
+        """Returns slugified name.
+
+        Returns:
+            str
+        """
         return slugify(self.name, allow_unicode=False)
 
     def get_absolute_url(self):
+        """Absolute URL to a category.
+
+        Returns:
+            str
+        """
         return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
+    """Custom QuerySet of Podcast model."""
+
     def scheduled(self):
         """Returns podcasts scheduled for update.
 
@@ -111,7 +131,11 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 
 class Podcast(models.Model):
+    """Podcast channel or feed."""
+
     class ParseResult(models.TextChoices):
+        """Result of feed parser process."""
+
         SUCCESS = "success", "Success"
         COMPLETE = "complete", "Complete"
         NOT_MODIFIED = "not_modified", "Not Modified"
@@ -188,26 +212,56 @@ class Podcast(models.Model):
         ]
 
     def __str__(self):
+        """Returns podcast title or RSS if missing.
+
+        Returns:
+            str
+        """
         return self.title or self.rss
 
     def get_absolute_url(self):
+        """Default absolute URL of podcast.
+
+        Returns:
+            str
+        """
         return self.get_detail_url()
 
     def get_detail_url(self):
+        """Absolute URL of podcast detail page.
+
+        Returns:
+            str
+        """
         return reverse("podcasts:podcast_detail", args=[self.pk, self.slug])
 
     def get_episodes_url(self):
+        """Absolute URL of podcast episode list page.
+
+        Returns:
+            str
+        """
         return reverse("podcasts:podcast_episodes", args=[self.pk, self.slug])
 
     def get_similar_url(self):
+        """Absolute URL of podcast similar recommendations page.
+
+        Returns:
+            str
+        """
         return reverse("podcasts:podcast_similar", args=[self.pk, self.slug])
 
     def get_latest_episode_url(self):
+        """Absolute URL to latest episode redirect.
+
+        Returns:
+            str
+        """
         return reverse("podcasts:latest_episode", args=[self.pk, self.slug])
 
     @cached_property
     def cleaned_title(self):
-        """Strips HTML from title field
+        """Strips HTML from title field.
 
         Returns:
             str
@@ -216,7 +270,7 @@ class Podcast(models.Model):
 
     @cached_property
     def cleaned_description(self):
-        """Strips HTML from description field
+        """Strips HTML from description field.
 
         Returns:
             str
@@ -225,7 +279,7 @@ class Podcast(models.Model):
 
     @cached_property
     def slug(self):
-        """Returns slugified title
+        """Returns slugified title.
 
         Returns:
             str
@@ -255,6 +309,7 @@ class Podcast(models.Model):
 
 
 class Subscription(TimeStampedModel):
+    """Subscribed podcast belonging to a user's collection."""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
@@ -270,8 +325,14 @@ class Subscription(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
+    """Custom QuerySet for Recommendation model."""
+
     def bulk_delete(self):
-        """More efficient quick delete"""
+        """More efficient quick delete.
+
+        Returns:
+            int: number of rows deleted
+        """
         return self._raw_delete(self.db)
 
 
@@ -279,6 +340,7 @@ RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
 
 
 class Recommendation(models.Model):
+    """Recommendation based on similarity between two podcasts."""
 
     podcast = models.ForeignKey(
         "podcasts.Podcast",
