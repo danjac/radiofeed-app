@@ -367,10 +367,12 @@ def tokenize(language, text):
     if not (text := clean_text(text).casefold()):
         return []
 
-    stopwords = get_stopwords(language)
+    stopwords_for_language = get_stopwords(language)
 
     return [
-        token for token in _lemmatized_tokens(text) if token and token not in stopwords
+        token
+        for token in _lemmatized_tokens(text)
+        if token and token not in stopwords_for_language
     ]
 
 
