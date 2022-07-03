@@ -1,3 +1,5 @@
+"""Functions for removing and cleaning HTML and Markdown content."""
+
 import html
 import re
 
@@ -59,7 +61,7 @@ ALLOWED_ATTRS = {
 HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 
-def linkify_callback(attrs, new=False):
+def _linkify_callback(attrs, new=False):
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs
@@ -82,7 +84,7 @@ def clean(value):
                 attributes=ALLOWED_ATTRS,
                 strip=True,
             ),
-            [linkify_callback],
+            [_linkify_callback],
         )
         if value
         else ""
@@ -114,8 +116,7 @@ def strip_html(value):
 
 
 def as_html(value):
-    """Checks if content contains any HTML tags. If not, will try and
-    parse Markdown from text.
+    """Checks if content contains any HTML tags. If not, will try and parse Markdown from text.
 
     Args:
         value (str)
