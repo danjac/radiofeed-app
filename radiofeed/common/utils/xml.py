@@ -1,3 +1,5 @@
+"""XML parsing and searching functions."""
+
 import io
 
 from contextlib import contextmanager
@@ -15,7 +17,6 @@ def parse_xml(content, *tags):
     Yields:
         lxml.etree.Element
     """
-
     for _, element in lxml.etree.iterparse(
         io.BytesIO(content),
         encoding="utf-8",
@@ -46,21 +47,22 @@ def xpath_finder(element, namespaces=None):
 
 
 class XPathFinder:
-    """Convenient class for doing XPath lookups to find text or attribute values on an XML element.
-
-    Args:
-        element (lxml.etree.Element): the root element you want to search
-        namespaces (dict | None): dict of XML namespaces
-    """
+    """Wrapper class for doing XPath lookups to find text or attribute values on an XML element."""
 
     def __init__(self, element, namespaces=None):
+        """Initialization.
+
+        Args:
+            element (lxml.etree.Element): the root element you want to search
+            namespaces (dict | None): dict of XML namespaces
+        """
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
     def first(self, *paths, default=None):
-        """Returns first matching text or attribute value. Tries each path in turn. If no values
-        found returns `default`.
+        """Returns first matching text or attribute value.
 
+        Tries each path in turn. If no values found returns `default`.
 
         Args:
             *paths (str): list of XPath paths to search through in order
@@ -75,8 +77,7 @@ class XPathFinder:
             return default
 
     def iter(self, *paths):
-        """Iterates through xpaths and returns any non-empty text or attribute
-        values matching the path. All strings are stripped of extra whitespace.
+        """Iterates through xpaths and returns any non-empty text or attribute values matching the path. All strings are stripped of extra whitespace.
 
         Args:
             *paths (str): list of XPath paths to search through in order
