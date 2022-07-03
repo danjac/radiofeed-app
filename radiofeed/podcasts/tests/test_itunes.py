@@ -82,27 +82,6 @@ class TestCrawl:
         assert Podcast.objects.count() == 1
 
 
-class TestParsePodcastId:
-    def test_incorrect_url(self):
-        assert itunes._parse_podcast_id("https://example.com") is None
-
-    def test_no_lookup_id(self):
-        assert (
-            itunes._parse_podcast_id(
-                "https://podcasts.apple.com/us/podcast/the-human-action-podcast/"
-            )
-            is None
-        )
-
-    def test_has_lookup_id(self):
-        assert (
-            itunes._parse_podcast_id(
-                "https://podcasts.apple.com/us/podcast/the-human-action-podcast/id884207568"
-            )
-            == "884207568"
-        )
-
-
 class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 

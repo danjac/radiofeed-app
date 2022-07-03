@@ -3,11 +3,26 @@ from radiofeed.podcasts.factories import (
     PodcastFactory,
     RecommendationFactory,
 )
-from radiofeed.podcasts.models import Recommendation
-from radiofeed.podcasts.recommender import recommend
+from radiofeed.podcasts.models import Category, Podcast, Recommendation
+from radiofeed.podcasts.recommender import Recommender, recommend
 
 
-class TestPodcastRecommender:
+class TestRecommender:
+    def test_no_suitable_matches_for_podcasts(self, db):
+        PodcastFactory(
+            title="Cool science podcast",
+            keywords="science physics astronomy",
+        )
+
+        assert (
+            Recommender("en", 12).recommend(
+                Podcast.objects.none(), Category.objects.all()
+            )
+            == []
+        )
+
+
+class TestRecommend:
     def test_handle_empty_data_frame(self, db):
         PodcastFactory(
             title="Cool science podcast",
