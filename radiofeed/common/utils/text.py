@@ -329,14 +329,14 @@ def get_stopwords(language):
         language (str): 2-char language code e.g. "en"
 
     Returns:
-        set[str]
+        frozenset[str]
     """
     try:
-        return set(
+        return frozenset(
             stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
         )
     except (OSError, KeyError):
-        return set()
+        return frozenset()
 
 
 def clean_text(text):
