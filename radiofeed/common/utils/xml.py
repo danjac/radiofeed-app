@@ -47,15 +47,14 @@ def xpath_finder(element, namespaces=None):
 
 
 class XPathFinder:
-    """Wrapper class for doing XPath lookups to find text or attribute values on an XML element."""
+    """Wrapper class for doing XPath lookups to find text or attribute values on an XML element.
+
+    Args:
+        element (lxml.etree.Element): the root element you want to search
+        namespaces (dict | None): dict of XML namespaces
+    """
 
     def __init__(self, element, namespaces=None):
-        """Class initialization.
-
-        Args:
-            element (lxml.etree.Element): the root element you want to search
-            namespaces (dict | None): dict of XML namespaces
-        """
         self.element = element
         self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
