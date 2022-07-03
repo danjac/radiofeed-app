@@ -22,6 +22,14 @@ register = template.Library()
 
 @dataclasses.dataclass
 class ActiveLink:
+    """Active link info returned from `active_link` or `re_active_link` filters.
+
+    Attributes:
+        url: resolved URL
+        match: if the URL matches whatever pattern
+        exact: if the URL is an exact match
+    """
+
     url: str
     match: bool = False
     exact: bool = False
@@ -32,15 +40,12 @@ _validate_url = URLValidator(["http", "https"])
 
 @register.simple_tag(takes_context=True)
 def pagination_url(context, page_number, param="page"):
-    """
-    Inserts the "page" query string parameter with the
-    provided page number into the template, preserving the original
-    request path and any other query string parameters.
+    """Inserts the "page" query string parameter with the provided page number into the template.
+
+    Preserves the original request path and any other query string parameters.
 
     Given the above and a URL of "/search?q=test" the result would
-    be something like:
-
-    "/search?q=test&page=3"
+    be something like: "/search?q=test&page=3"
 
     Args:
         context (dict): template context
@@ -58,7 +63,8 @@ def pagination_url(context, page_number, param="page"):
 
 @register.simple_tag
 def get_site_config():
-    """
+    """Returns the configuration defined in the setting SITE_CONFIG.
+
     Returns:
         dict: site configuration
     """
@@ -76,14 +82,14 @@ def absolute_uri(context, url=None, *args, **kwargs):
     Returns:
         str
     """
-    return build_absolute_uri(
+    return _build_absolute_uri(
         resolve_url(url, *args, **kwargs) if url else None, context.get("request")
     )
 
 
 @register.filter
 def format_duration(total_seconds):
-    """Formats duration (in seconds) as human readable value e.g. 1h 30min
+    """Formats duration (in seconds) as human readable value e.g. 1h 30min.
 
     Args:
         total_seconds (int | None)
@@ -107,7 +113,7 @@ def format_duration(total_seconds):
 
 @register.simple_tag(takes_context=True)
 def active_link(context, url_name, *args, **kwargs):
-    """Returns url with active link info
+    """Returns url with active link info.
 
     Args:
         context (dict): template context
@@ -129,7 +135,7 @@ def active_link(context, url_name, *args, **kwargs):
 
 @register.simple_tag(takes_context=True)
 def re_active_link(context, url_name, pattern, *args, **kwargs):
-    """Returns url with active link info
+    """Returns url with active link info.
 
     Args:
         context (dict): template context
@@ -148,7 +154,7 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 
 @register.filter
 def login_url(url):
-    """Returns login URL with redirect parameter back to this url
+    """Returns login URL with redirect parameter back to this url.
 
     Args:
         url (str)
@@ -156,12 +162,12 @@ def login_url(url):
     Returns:
         str
     """
-    return auth_redirect_url(url, reverse("account_login"))
+    return _auth_redirect_url(url, reverse("account_login"))
 
 
 @register.filter
 def signup_url(url):
-    """Returns signup URL with redirect parameter back to this url
+    """Returns signup URL with redirect parameter back to this url.
 
     Args:
         url (str)
@@ -169,12 +175,12 @@ def signup_url(url):
     Returns:
         str
     """
-    return auth_redirect_url(url, reverse("account_signup"))
+    return _auth_redirect_url(url, reverse("account_signup"))
 
 
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value):
-    """Renders markdown content
+    """Renders markdown content.
 
     Args:
         value (str | None)
@@ -187,8 +193,7 @@ def markdown(value):
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
 def share_buttons(context, url, subject, css_class=""):
-    """Render set of share buttons for a page for email, Facebook, Twitter
-    and Linkedin.
+    """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin.
 
     Args:
         url (str): URL on page to share in link (automatically expanded to
@@ -215,9 +220,7 @@ def share_buttons(context, url, subject, css_class=""):
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
 def cookie_notice(context):
-    """
-    Renders GDPR cookie notice. Notice should be hidden once user has clicked
-    "Accept Cookies" button.
+    """Renders GDPR cookie notice. Notice should be hidden once user has clicked "Accept Cookies" button.
 
     Args:
         context (dict): request context
@@ -225,7 +228,6 @@ def cookie_notice(context):
     Returns:
         dict
     """
-
     return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
 
 
@@ -250,7 +252,7 @@ def normalize_url(url):
     return ""
 
 
-def auth_redirect_url(url, redirect_url):
+def _auth_redirect_url(url, redirect_url):
 
     return (
         redirect_url
@@ -259,7 +261,7 @@ def auth_redirect_url(url, redirect_url):
     )
 
 
-def build_absolute_uri(url=None, request=None):
+def _build_absolute_uri(url=None, request=None):
     if request:
         return request.build_absolute_uri(url)
 
