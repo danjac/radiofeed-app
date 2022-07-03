@@ -70,6 +70,7 @@ build-backend = "poetry.core.masonry.api"
 ignore = [
     "D100",
     "D104",
+    "D106",
     "D107",
     "D203",
     "D204",
