@@ -66,8 +66,9 @@ pytest-xdist = "^2.5.0"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.pydoctyle]
-match_dir = '^(?!tests).*'
+[tool.pydocstyle]
+convention = "google"
+match_dir = '^(?!tests|migrations).*'
 
 [tool.isort]
 default_section="THIRDPARTY"

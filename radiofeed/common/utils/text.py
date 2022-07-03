@@ -1,3 +1,5 @@
+"""Provides text parsing and analysis functions."""
+
 import html
 import re
 
@@ -7,8 +9,6 @@ from django.template.defaultfilters import striptags
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
-
-"""Additional language-specific stopwords"""
 
 ENGLISH_DAYS: list[str] = [
     "monday",
@@ -331,16 +331,18 @@ def get_stopwords(language):
         language (str): 2-char language code e.g. "en"
 
     Returns:
-        list[str]
+        set[str]
     """
     try:
-        return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
+        return set(
+            stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
+        )
     except (OSError, KeyError):
-        return []
+        return set()
 
 
 def clean_text(text):
-    """Remove HTML tags and entities, punctuation and numbers.
+    """Scrubs text of any HTML tags and entities, punctuation and numbers.
 
     Args:
         text (str): text to be cleaned
@@ -355,8 +357,7 @@ def clean_text(text):
 
 
 def tokenize(language, text):
-    """Extracts all relevant keywords from text, removing any stopwords,
-    HTML tags etc.
+    """Extracts all relevant keywords from text, removing any stopwords, HTML tags etc.
 
     Args:
         language (str): 2-char language code e.g. "en"
@@ -365,18 +366,17 @@ def tokenize(language, text):
     Returns:
         str
     """
-
     if not (text := clean_text(text).casefold()):
         return []
 
     stopwords = get_stopwords(language)
 
     return [
-        token for token in lemmatized_tokens(text) if token and token not in stopwords
+        token for token in _lemmatized_tokens(text) if token and token not in stopwords
     ]
 
 
-def lemmatized_tokens(text):
+def _lemmatized_tokens(text):
 
     for token in tokenizer.tokenize(text):
         try:
