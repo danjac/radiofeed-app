@@ -101,7 +101,7 @@ class FeedParser:
     def _handle_success(self, response, feed, content_hash):
 
         # taxonomy
-        categories_dct = self._get_categories()
+        categories_dct = Category.objects.in_bulk(field_name="name")
 
         categories = [
             categories_dct[category]
@@ -260,6 +260,3 @@ class FeedParser:
             podcast=self.podcast,
             **attrs.asdict(item),
         )
-
-    def _get_categories(self):
-        return Category.objects.in_bulk(field_name="name")
