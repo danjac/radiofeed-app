@@ -255,8 +255,4 @@ class FeedParser:
         )
 
     def _make_episode(self, item, episode_id=None):
-        return Episode(
-            pk=episode_id,
-            podcast=self.podcast,
-            **attrs.asdict(item),
-        )
+        return Episode(pk=episode_id, podcast=self.podcast, **attrs.asdict(item))
