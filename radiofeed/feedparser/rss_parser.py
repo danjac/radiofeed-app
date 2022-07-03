@@ -4,7 +4,7 @@ from radiofeed.common.utils.xml import parse_xml, xpath_finder
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
 
-NAMESPACES = {
+_namespaces = {
     "atom": "http://www.w3.org/2005/Atom",
     "content": "http://purl.org/rss/1.0/modules/content/",
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
@@ -32,7 +32,7 @@ def parse_rss(content):
 
 
 def _parse_feed(channel):
-    with xpath_finder(channel, NAMESPACES) as finder:
+    with xpath_finder(channel, _namespaces) as finder:
         return Feed(
             title=finder.first("title/text()"),
             language=finder.first("language/text()"),
@@ -69,7 +69,7 @@ def _parse_items(channel):
 
 
 def _parse_item(item):
-    with xpath_finder(item, NAMESPACES) as finder:
+    with xpath_finder(item, _namespaces) as finder:
         return Item(
             guid=finder.first("guid/text()"),
             title=finder.first("title/text()"),
