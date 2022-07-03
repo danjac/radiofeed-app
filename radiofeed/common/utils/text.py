@@ -65,8 +65,8 @@ def get_stopwords(language):
         return frozenset(
             stopwords.words(NLTK_LANGUAGES[language])
             + _corporate_stopwords
-            + _get_extra_stopwords(language)
             + list(_get_date_stopwords(language))
+            + list(_get_extra_stopwords(language))
         )
 
     except (OSError, KeyError):
@@ -129,7 +129,7 @@ def _get_extra_stopwords(language):
     path = (
         pathlib.PosixPath(__file__).parent / "stopwords" / f"stopwords_{language}.txt"
     )
-    return path.read_text().splitlines() if path.exists() else []
+    return filter(None, path.read_text().splitlines() if path.exists() else [])
 
 
 def _lemmatized_tokens(text):
