@@ -52,7 +52,7 @@ class TestStopwords:
         assert get_stopwords("en")
 
     def test_get_stopwords_if_none(self):
-        assert get_stopwords("ka") == []
+        assert get_stopwords("ka") == set()
 
 
 class TestTokenize:
