@@ -29,8 +29,10 @@ def recommend(since=DEFAULT_TIME_PERIOD, num_matches=12):
         since (timedelta | None): include podcasts last published since this period.
         num_matches (int): total number of recommendations to create for each podcast
     """
-    podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
-        extracted_text="", language=""
+    podcasts = (
+        Podcast.objects.filter(pub_date__gt=timezone.now() - since)
+        .filter(language__in=NLTK_LANGUAGES)
+        .exclude(extracted_text="")
     )
 
     Recommendation.objects.bulk_delete()
@@ -39,11 +41,7 @@ def recommend(since=DEFAULT_TIME_PERIOD, num_matches=12):
 
     # separate by language, so we don't get false matches
 
-    for language in (
-        podcasts.filter(language__in=NLTK_LANGUAGES)
-        .values_list(Lower("language"), flat=True)
-        .distinct()
-    ):
+    for language in podcasts.values_list(Lower("language"), flat=True).distinct():
         Recommender(language, num_matches).recommend(podcasts, categories)
 
 
