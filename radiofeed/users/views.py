@@ -16,7 +16,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_http_methods(["GET", "POST"])
 @login_required
 def user_preferences(request, target="preferences-form"):
-    """Handle user preferences form.
+    """Handle user preferences.
 
     Args:
         request (HttpRequest)
@@ -25,7 +25,6 @@ def user_preferences(request, target="preferences-form"):
     Returns:
         TemplateResponse
     """
-
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
     if request.method == "POST" and form.is_valid():
@@ -49,7 +48,7 @@ def user_preferences(request, target="preferences-form"):
 @require_http_methods(["GET"])
 @login_required
 def import_export_podcast_feeds(request):
-    """Renders import/export page
+    """Renders import/export page.
 
     Args:
         request (HttpRequest)
@@ -135,7 +134,7 @@ def export_podcast_feeds(request):
 @require_http_methods(["GET"])
 @login_required
 def user_stats(request):
-    """Render user statistics including listening history, subscriptions, etc
+    """Render user statistics including listening history, subscriptions, etc.
 
     Args:
         request (HttpRequest)
@@ -143,7 +142,6 @@ def user_stats(request):
     Returns:
         TemplateResponse
     """
-
     logs = AudioLog.objects.filter(user=request.user)
 
     return TemplateResponse(
