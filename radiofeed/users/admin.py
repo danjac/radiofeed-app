@@ -6,6 +6,8 @@ from radiofeed.users.models import User
 
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
+    """User model admin."""
+
     list_display = [
         "username",
         "email",

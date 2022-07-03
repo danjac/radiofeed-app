@@ -3,6 +3,8 @@ from django.db import models
 
 
 class UserQuerySet(models.QuerySet):
+    """Custom QuerySet for User model."""
+
     def email_notification_recipients(self):
         """Returns all active users who have enabled email notifications in their settings.
 
@@ -12,8 +14,8 @@ class UserQuerySet(models.QuerySet):
         return self.filter(is_active=True, send_email_notifications=True)
 
     def for_email(self, email):
-        """Returns users matching this email address, including both
-        primary and secondary email addresses
+        """Returns users matching this email address, including both primary and secondary email addresses.
+
         Returns:
             QuerySet
         """
@@ -23,8 +25,10 @@ class UserQuerySet(models.QuerySet):
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
+    """Custom Manager for User model."""
+
     def create_user(self, username, email, password=None, **kwargs):
-        """Create new user
+        """Create new user.
 
         Args:
             username (str)
@@ -45,7 +49,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return user
 
     def create_superuser(self, username, email, password, **kwargs):
-        """Create new superuser
+        """Create new superuser.
 
         Args:
             username (str)
@@ -67,6 +71,8 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 
 class User(AbstractUser):
+    """Custom User model."""
+
     send_email_notifications = models.BooleanField(default=True)
 
     objects = UserManager()
