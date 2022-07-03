@@ -30,6 +30,16 @@ LOCATIONS = (
 
 @dataclasses.dataclass(frozen=True)
 class Feed:
+    """Encapsulates iTunes API result.
+
+    Attributes:
+        rss: URL to RSS or Atom resource
+        url: URL to website of podcast
+        title: title of podcast
+        image: URL to cover image
+        podcast: matching Podcast instance in local database
+    """
+
     rss: str
     url: str
     title: str = ""
@@ -62,8 +72,8 @@ def search(search_term):
     Returns:
         list[Feed]
     """
-    return parse_feeds(
-        get_response(
+    return _parse_feeds(
+        _get_response(
             "https://itunes.apple.com/search",
             {
                 "term": search_term,
@@ -81,12 +91,11 @@ def crawl():
     Yields:
         Feed: any new or existing feeds
     """
-
     for location in LOCATIONS:
-        for url in parse_genre_urls(location):
-            for batch in batcher(parse_podcast_ids(url, location), BATCH_SIZE):
-                yield from parse_feeds(
-                    get_response(
+        for url in _parse_genre_urls(location):
+            for batch in batcher(_parse_podcast_ids(url, location), BATCH_SIZE):
+                yield from _parse_feeds(
+                    _get_response(
                         "https://itunes.apple.com/lookup",
                         {
                             "id": ",".join(batch),
@@ -96,18 +105,8 @@ def crawl():
                 )
 
 
-def parse_feeds(json_data):
-    """Adds any existing podcasts to result. Create any new podcasts if feed
-    URL not found in database. Existing Podcast instances are attached as `podcast`
-    to the Feed instance.
-
-    Args:
-        json_data (dict): JSON payload returned from iTunes API
-
-    Yields:
-        Feed: any new or existing feeds
-    """
-    for batch in batcher(build_feeds_from_json(json_data), BATCH_SIZE):
+def _parse_feeds(json_data):
+    for batch in batcher(_build_feeds_from_json(json_data), BATCH_SIZE):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
@@ -134,7 +133,7 @@ def parse_feeds(json_data):
         yield from feeds
 
 
-def get_response(url, data=None):
+def _get_response(url, data=None):
     response = requests.get(
         url,
         data,
@@ -146,11 +145,11 @@ def get_response(url, data=None):
     return response
 
 
-def parse_genre_urls(location):
+def _parse_genre_urls(location):
     return (
         href
-        for href in parse_urls(
-            get_response(
+        for href in _parse_urls(
+            _get_response(
                 f"https://itunes.apple.com/{location}/genre/podcasts/id26"
             ).content
         )
@@ -158,20 +157,19 @@ def parse_genre_urls(location):
     )
 
 
-def parse_podcast_ids(url, location):
-    """Parse iTunes podcast IDs from provided URL"""
+def _parse_podcast_ids(url, location):
     return (
         podcast_id
         for podcast_id in (
-            parse_podcast_id(href)
-            for href in parse_urls(get_response(url).content)
+            _parse_podcast_id(href)
+            for href in _parse_urls(_get_response(url).content)
             if href.startswith(f"https://podcasts.apple.com/{location}/podcast/")
         )
         if podcast_id
     )
 
 
-def parse_urls(content):
+def _parse_urls(content):
     return (
         href
         for href in (el.attrib.get("href") for el in parse_xml(content, "a"))
@@ -179,13 +177,13 @@ def parse_urls(content):
     )
 
 
-def parse_podcast_id(url):
+def _parse_podcast_id(url):
     if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
         return match.group("id")
     return None
 
 
-def build_feeds_from_json(json_data):
+def _build_feeds_from_json(json_data):
     for result in json_data.get("results", []):
         try:
             yield Feed(

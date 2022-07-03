@@ -84,11 +84,11 @@ class TestCrawl:
 
 class TestParsePodcastId:
     def test_incorrect_url(self):
-        assert itunes.parse_podcast_id("https://example.com") is None
+        assert itunes._parse_podcast_id("https://example.com") is None
 
     def test_no_lookup_id(self):
         assert (
-            itunes.parse_podcast_id(
+            itunes._parse_podcast_id(
                 "https://podcasts.apple.com/us/podcast/the-human-action-podcast/"
             )
             is None
@@ -96,7 +96,7 @@ class TestParsePodcastId:
 
     def test_has_lookup_id(self):
         assert (
-            itunes.parse_podcast_id(
+            itunes._parse_podcast_id(
                 "https://podcasts.apple.com/us/podcast/the-human-action-podcast/id884207568"
             )
             == "884207568"
