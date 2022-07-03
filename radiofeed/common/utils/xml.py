@@ -77,7 +77,9 @@ class XPathFinder:
             return default
 
     def iter(self, *paths):
-        """Iterates through xpaths and returns any non-empty text or attribute values matching the path. All strings are stripped of extra whitespace.
+        """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
+
+        All strings are stripped of extra whitespace.
 
         Args:
             *paths (str): list of XPath paths to search through in order
