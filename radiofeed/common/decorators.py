@@ -9,12 +9,11 @@ from radiofeed.common.http import HttpResponseUnauthorized
 
 
 def ajax_login_required(view):
-    """Use this decorator instead of @login_required
-    when handling HTMX fragment and JSON requests. For standard
-    requests and full page HTMX responses use Django @login_required.
+    """Login required decorator for HTMX and AJAX views.
 
-    If an HTMX request returns a client redirect to login page
-    if user is not logged in, otherwise raises a 401.
+    Use this decorator instead of @login_required with views returning HTMX fragment and JSON responses.
+
+    Returns redirect to login page if HTMX request, otherwise returns HTTP UNAUTHORIZED.
 
     Args:
         view (Callable): Django view callable
