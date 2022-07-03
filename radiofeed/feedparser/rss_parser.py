@@ -25,14 +25,13 @@ def parse_rss(content):
     Raises:
         RssParserError: if XML content is invalid, or the feed is otherwise invalid or empty
     """
-
     try:
-        return parse_feed(next(parse_xml(content, "channel")))
+        return _parse_feed(next(parse_xml(content, "channel")))
     except (StopIteration, TypeError, ValueError, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
 
-def parse_feed(channel):
+def _parse_feed(channel):
     with xpath_finder(channel, NAMESPACES) as finder:
         return Feed(
             title=finder.first("title/text()"),
@@ -57,19 +56,19 @@ def parse_feed(channel):
                 "itunes:owner/itunes:name/text()",
             ),
             categories=list(finder.iter("//itunes:category/@text")),
-            items=list(parse_items(channel)),
+            items=list(_parse_items(channel)),
         )
 
 
-def parse_items(channel):
+def _parse_items(channel):
     for item in channel.iterfind("item"):
         try:
-            yield parse_item(item)
+            yield _parse_item(item)
         except (TypeError, ValueError):
             continue
 
 
-def parse_item(item):
+def _parse_item(item):
     with xpath_finder(item, NAMESPACES) as finder:
         return Item(
             guid=finder.first("guid/text()"),
