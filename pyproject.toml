@@ -66,6 +66,9 @@ pytest-xdist = "^2.5.0"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pydoctyle]
+match_dir = '^(?!tests).*'
+
 [tool.isort]
 default_section="THIRDPARTY"
 known_first_party="radiofeed"
