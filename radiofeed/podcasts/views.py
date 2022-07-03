@@ -172,7 +172,7 @@ def similar(request, podcast_id, slug=None, limit=12):
     return TemplateResponse(
         request,
         "podcasts/similar.html",
-        _get_podcast_detail_context(
+        _podcast_detail_context(
             request,
             podcast,
             {"recommendations": recommendations},
@@ -200,7 +200,7 @@ def podcast_detail(request, podcast_id, slug=None):
     return TemplateResponse(
         request,
         "podcasts/detail.html",
-        _get_podcast_detail_context(
+        _podcast_detail_context(
             request,
             podcast,
             {
@@ -252,7 +252,7 @@ def episodes(request, podcast_id, slug=None, target="object-list"):
         target=target,
         extra_context=extra_context
         if request.htmx.target == target
-        else _get_podcast_detail_context(request, podcast, extra_context),
+        else _podcast_detail_context(request, podcast, extra_context),
     )
 
 
@@ -378,7 +378,7 @@ def _get_podcast_or_404(podcast_id):
     return get_object_or_404(_get_podcasts(), pk=podcast_id)
 
 
-def _get_podcast_detail_context(request, podcast, extra_context=None):
+def _podcast_detail_context(request, podcast, extra_context=None):
     return {
         "podcast": podcast,
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
