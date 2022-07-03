@@ -371,6 +371,7 @@ def unsubscribe(request, podcast_id):
 
 
 def _get_podcasts():
+    # we just want to include podcasts which have a pub date
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
