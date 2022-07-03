@@ -67,8 +67,8 @@ def get_stopwords(language):
         return frozenset(
             stopwords.words(NLTK_LANGUAGES[language])
             + _corporate_stopwords
+            + _get_extra_stopwords(language)
             + list(_get_date_stopwords(language))
-            + list(_get_extra_stopwords(language))
         )
 
     except (AttributeError, KeyError, OSError):
@@ -129,11 +129,17 @@ def _get_date_stopwords(language):
 
 def _get_extra_stopwords(language):
     path = _stopwords_dir / f"stopwords_{language}.txt"
-    return filter(
-        None,
-        [word.strip().casefold() for word in path.read_text().splitlines()]
+
+    return (
+        [
+            word
+            for word in (
+                word.strip().casefold() for word in path.read_text().splitlines()
+            )
+            if word
+        ]
         if path.exists()
-        else [],
+        else []
     )
 
 

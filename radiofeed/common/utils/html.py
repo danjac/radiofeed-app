@@ -6,7 +6,7 @@ import markdown
 
 from django.template.defaultfilters import striptags
 
-ALLOWED_TAGS = [
+_allowed_tags = [
     "a",
     "abbr",
     "acronym",
@@ -51,12 +51,12 @@ ALLOWED_TAGS = [
     "ul",
 ]
 
-ALLOWED_ATTRS = {
+_allowed_attrs = {
     "a": ["href", "target", "title"],
     "img": ["src", "alt", "height", "width", "loading"],
 }
 
-HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
+_html_re = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 
 def _linkify_callback(attrs, new=False):
@@ -78,8 +78,8 @@ def clean(value):
         bleach.linkify(
             bleach.clean(
                 value,
-                tags=ALLOWED_TAGS,
-                attributes=ALLOWED_ATTRS,
+                tags=_allowed_tags,
+                attributes=_allowed_attrs,
                 strip=True,
             ),
             [_linkify_callback],
@@ -122,7 +122,7 @@ def as_html(value):
     Returns:
         str: HTML content
     """
-    return value if HTML_RE.match(value) else markdown.markdown(value)
+    return value if _html_re.match(value) else markdown.markdown(value)
 
 
 def markup(value):

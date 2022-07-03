@@ -16,7 +16,7 @@ from radiofeed.podcasts.models import Podcast
 
 _batch_size = 100
 
-_podcast_id = re.compile(r"id(?P<id>\d+)")
+_itunes_podcast_id_re = re.compile(r"id(?P<id>\d+)")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -149,7 +149,7 @@ class Crawler:
         )
 
     def _parse_podcast_id(self, url):
-        if match := _podcast_id.search(urlparse(url).path.split("/")[-1]):
+        if match := _itunes_podcast_id_re.search(urlparse(url).path.split("/")[-1]):
             return match.group("id")
         return None
 
