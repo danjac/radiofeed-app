@@ -291,6 +291,7 @@ STOPWORDS = {
     + ENGLISH_MISC_WORDS
     + CORPORATES
 }
+
 NLTK_LANGUAGES = {
     "ar": "arabic",
     "az": "azerbaijani",
@@ -317,8 +318,8 @@ NLTK_LANGUAGES = {
     "tr": "turkish",
 }
 
-tokenizer = RegexpTokenizer(r"\w+")
-lemmatizer = WordNetLemmatizer()
+_tokenizer = RegexpTokenizer(r"\w+")
+_lemmatizer = WordNetLemmatizer()
 
 
 @lru_cache()
@@ -378,9 +379,9 @@ def tokenize(language, text):
 
 def _lemmatized_tokens(text):
 
-    for token in tokenizer.tokenize(text):
+    for token in _tokenizer.tokenize(text):
         try:
-            yield lemmatizer.lemmatize(token)
+            yield _lemmatizer.lemmatize(token)
         except AttributeError:
             # threading issue:
             # 'WordNetCorpusReader' object has no attribute '_LazyCorpusLoader__args'
