@@ -1,5 +1,3 @@
-"""Functions for parsing date strings and other values."""
-
 import functools
 
 from datetime import date, datetime

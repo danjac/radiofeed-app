@@ -1,5 +1,3 @@
-"""Provides text parsing and analysis functions."""
-
 import html
 import re
 

@@ -1,5 +1,3 @@
-"""Functions for removing and cleaning HTML and Markdown content."""
-
 import html
 import re
 

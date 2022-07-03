@@ -68,6 +68,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pydocstyle]
 ignore = [
+    "D100",
     "D104",
     "D107",
     "D203",

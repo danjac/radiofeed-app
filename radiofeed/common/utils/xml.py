@@ -1,5 +1,3 @@
-"""XML parsing and searching functions."""
-
 import io
 
 from contextlib import contextmanager

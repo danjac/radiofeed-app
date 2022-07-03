@@ -49,7 +49,7 @@ def static_page(request, template_name, extra_context=None):
 @require_http_methods(["GET"])
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 def favicon(request):
-    """Generates favicon file
+    """Generates favicon file.
 
     Args:
         request (HttpRequest)
@@ -66,7 +66,7 @@ def favicon(request):
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request):
-    """Generates robots.txt
+    """Generates robots.txt file.
 
     Args:
         request (HttpRequest)
@@ -97,7 +97,7 @@ def robots(request):
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def security(request):
-    """Generates security.txt file containing contact details etc
+    """Generates security.txt file containing contact details etc.
 
     Args:
         request (HttpRequest)
@@ -105,7 +105,6 @@ def security(request):
     Returns:
         HttpResponse
     """
-
     return HttpResponse(
         "\n".join(
             [

@@ -1,4 +1,3 @@
-"""Extra iterator utilities."""
 import itertools
 
 
