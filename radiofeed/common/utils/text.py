@@ -50,6 +50,8 @@ _corporate_stopwords = [
 _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
 
+_stopwords_dir = pathlib.Path(__file__).resolve(strict=True).parent / "stopwords"
+
 
 @lru_cache()
 def get_stopwords(language):
@@ -126,9 +128,7 @@ def _get_date_stopwords(language):
 
 
 def _get_extra_stopwords(language):
-    path = (
-        pathlib.PosixPath(__file__).parent / "stopwords" / f"stopwords_{language}.txt"
-    )
+    path = _stopwords_dir / f"stopwords_{language}.txt"
     return filter(None, path.read_text().splitlines() if path.exists() else [])
 
 
