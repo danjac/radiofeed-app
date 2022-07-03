@@ -17,20 +17,21 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_TIME_PERIOD = timedelta(days=90)
 
-def recommend(since=None, num_matches=12):
+
+def recommend(since=DEFAULT_TIME_PERIOD, num_matches=12):
     """Generates Recommendation instances based on podcast similarity, grouped by language.
 
     Any existing recommendations are first deleted.
 
     Args:
-        since (timedelta | None): include podcasts last published since this period. By
-            default this is 90 days.
+        since (timedelta | None): include podcasts last published since this period.
         num_matches (int): total number of recommendations to create for each podcast
     """
-    podcasts = Podcast.objects.filter(
-        pub_date__gt=timezone.now() - (since or timedelta(days=90))
-    ).exclude(extracted_text="", language="")
+    podcasts = Podcast.objects.filter(pub_date__gt=timezone.now() - since).exclude(
+        extracted_text="", language=""
+    )
 
     Recommendation.objects.bulk_delete()
 
