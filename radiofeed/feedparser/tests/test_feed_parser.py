@@ -7,14 +7,11 @@ import requests
 
 from django.utils import timezone
 
+from radiofeed.common.utils.crypto import make_content_hash
 from radiofeed.common.utils.dates import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
-from radiofeed.feedparser.feed_parser import (
-    FeedParser,
-    get_categories_dict,
-    make_content_hash,
-)
+from radiofeed.feedparser.feed_parser import FeedParser
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.podcasts.models import Podcast
 
@@ -53,7 +50,7 @@ class TestFeedParser:
 
     @pytest.fixture
     def categories(self):
-        yield [
+        return [
             CategoryFactory(name=name)
             for name in (
                 "Philosophy",
@@ -64,8 +61,6 @@ class TestFeedParser:
                 "Religion & Spirituality",
             )
         ]
-
-        get_categories_dict.cache_clear()
 
     def get_rss_content(self, filename=""):
         return (
@@ -258,7 +253,6 @@ class TestFeedParser:
     def test_parse_same_content(self, db, mocker, categories):
 
         content = self.get_rss_content()
-
         podcast = PodcastFactory(content_hash=make_content_hash(content))
 
         mocker.patch(
@@ -272,6 +266,7 @@ class TestFeedParser:
                 },
             ),
         )
+
         assert not FeedParser(podcast).parse()
 
         podcast.refresh_from_db()

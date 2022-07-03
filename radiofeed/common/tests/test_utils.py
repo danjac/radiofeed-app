@@ -6,10 +6,16 @@ from zoneinfo import ZoneInfo
 import pytest
 
 from radiofeed.common.utils import html
+from radiofeed.common.utils.crypto import make_content_hash
 from radiofeed.common.utils.dates import parse_date
 from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import clean_text, get_stopwords, tokenize
 from radiofeed.common.utils.xml import XPathFinder, parse_xml, xpath_finder
+
+
+class TestMakeContentHash:
+    def test_hash_identical(self):
+        assert make_content_hash(b"ok") == make_content_hash(b"ok")
 
 
 class TestXPathFinder:

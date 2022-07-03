@@ -1,5 +1,3 @@
-import functools
-import hashlib
 import http
 
 import attrs
@@ -10,6 +8,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
+from radiofeed.common.utils.crypto import make_content_hash
 from radiofeed.common.utils.dates import parse_date
 from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import tokenize
@@ -42,7 +41,7 @@ class FeedParser:
         marked as complete) then the podcast is set inactive.
 
         Returns:
-            bool: if podcast has been successfully updated. This will be False if there are no updates or
+            bool: if podcast has been successfully updated. This will be False if there are no new updates or
                 there is some other problem e.g. HTTP error.
         """
         try:
@@ -102,7 +101,7 @@ class FeedParser:
     def _handle_success(self, response, feed, content_hash):
 
         # taxonomy
-        categories_dct = get_categories_dict()
+        categories_dct = self._get_categories()
 
         categories = [
             categories_dct[category]
@@ -262,24 +261,5 @@ class FeedParser:
             **attrs.asdict(item),
         )
 
-
-@functools.lru_cache
-def get_categories_dict():
-    """Dictionary of categories, keyed by name.
-
-    Returns:
-        dict[str, Category]
-    """
-    return Category.objects.in_bulk(field_name="name")
-
-
-def make_content_hash(content):
-    """Generates hash of content body.
-
-    Args:
-        content (bytes)
-
-    Returns:
-        str
-    """
-    return hashlib.sha256(content).hexdigest()
+    def _get_categories(self):
+        return Category.objects.in_bulk(field_name="name")
