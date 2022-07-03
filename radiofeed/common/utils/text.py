@@ -98,7 +98,7 @@ def tokenize(language, text):
         text(str): text source
 
     Returns:
-        str
+        list[str]
     """
     if not (text := clean_text(text).casefold()):
         return []
