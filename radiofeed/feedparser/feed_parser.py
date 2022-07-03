@@ -147,7 +147,7 @@ class FeedParser:
 
         self.podcast.categories.set(categories)
 
-        self._save_episodes(feed)
+        self._handle_episode_updates(feed)
 
         return True
 
@@ -203,7 +203,7 @@ class FeedParser:
             **fields,
         )
 
-    def _save_episodes(self, feed, batch_size=100):
+    def _handle_episode_updates(self, feed, batch_size=100):
         qs = Episode.objects.filter(podcast=self.podcast)
 
         # remove any episodes that may have been deleted on the podcast
