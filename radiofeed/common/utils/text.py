@@ -71,7 +71,7 @@ def get_stopwords(language):
             + list(_get_extra_stopwords(language))
         )
 
-    except (OSError, KeyError):
+    except (AttributeError, KeyError, OSError):
         return frozenset()
 
 
@@ -145,7 +145,7 @@ def _lemmatized_tokens(text):
         except AttributeError:
             # threading issue:
             # 'WordNetCorpusReader' object has no attribute '_LazyCorpusLoader__args'
-            pass
+            continue
 
 
 def _format_date(value, fmt):
