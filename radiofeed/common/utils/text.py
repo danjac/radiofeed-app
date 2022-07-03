@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
-ENGLISH_DAYS: list[str] = [
+ENGLISH_DAYS = [
     "monday",
     "tuesday",
     "wednesday",
@@ -25,7 +25,7 @@ ENGLISH_DAYS: list[str] = [
     "sun",
 ]
 
-ENGLISH_NUMBERS: list[str] = [
+ENGLISH_NUMBERS = [
     "one",
     "two",
     "three",
@@ -38,7 +38,7 @@ ENGLISH_NUMBERS: list[str] = [
     "ten",
 ]
 
-ENGLISH_MONTHS: list[str] = [
+ENGLISH_MONTHS = [
     "january",
     "february",
     "march",
@@ -65,7 +65,7 @@ ENGLISH_MONTHS: list[str] = [
     "dec",
 ]
 
-ENGLISH_MISC_WORDS: list[str] = [
+ENGLISH_MISC_WORDS = [
     "across",
     "advice",
     "along",
