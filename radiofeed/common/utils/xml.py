@@ -50,7 +50,7 @@ class XPathFinder:
     """Wrapper class for doing XPath lookups to find text or attribute values on an XML element."""
 
     def __init__(self, element, namespaces=None):
-        """Initialization.
+        """Class initialization.
 
         Args:
             element (lxml.etree.Element): the root element you want to search
@@ -79,7 +79,7 @@ class XPathFinder:
     def iter(self, *paths):
         """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
 
-        All strings are stripped of extra whitespace.
+        All strings are stripped of extra whitespace. Should skip any unicode errors.
 
         Args:
             *paths (str): list of XPath paths to search through in order
