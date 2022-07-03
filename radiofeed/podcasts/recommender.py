@@ -19,9 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def recommend(since=None, num_matches=12):
-    """
-    Generates Recommendation instances based on podcast similarity, grouped
-    by language.
+    """Generates Recommendation instances based on podcast similarity, grouped by language.
 
     Any existing recommendations are first deleted.
 
@@ -30,7 +28,6 @@ def recommend(since=None, num_matches=12):
             default this is 90 days.
         num_matches (int): total number of recommendations to create for each podcast
     """
-
     podcasts = Podcast.objects.filter(
         pub_date__gt=timezone.now() - (since or timedelta(days=90))
     ).exclude(extracted_text="", language="")
@@ -50,8 +47,7 @@ def recommend(since=None, num_matches=12):
 
 
 class Recommender:
-    """Creates recommendations for given language, based around text content and
-    common categories.
+    """Creates recommendations for given language, based around text content and common categories.
 
     Args:
         language (str): two-character language code e.g. "en"
@@ -72,20 +68,19 @@ class Recommender:
         Returns:
             list[Recommendation]: list of new Recommendation instances
         """
-
-        if matches := self.build_matches_dict(podcasts, categories):
+        if matches := self._build_matches_dict(podcasts, categories):
 
             logger.info("Inserting %d recommendations:%s", len(matches), self.language)
 
             return Recommendation.objects.bulk_create(
-                self.recommendations_from_matches(matches),
+                self._recommendations_from_matches(matches),
                 batch_size=100,
                 ignore_conflicts=True,
             )
 
         return []
 
-    def build_matches_dict(self, podcasts, categories):
+    def _build_matches_dict(self, podcasts, categories):
 
         matches = collections.defaultdict(list)
         podcasts = podcasts.filter(language__iexact=self.language)
@@ -97,14 +92,14 @@ class Recommender:
                 podcast_id,
                 recommended_id,
                 similarity,
-            ) in self.find_similarities_for_podcasts(
+            ) in self._find_similarities_for_podcasts(
                 podcasts.filter(categories=category)
             ):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
-    def recommendations_from_matches(self, matches):
+    def _recommendations_from_matches(self, matches):
         for (podcast_id, recommended_id), values in matches.items():
             yield Recommendation(
                 podcast_id=podcast_id,
@@ -113,22 +108,18 @@ class Recommender:
                 frequency=len(values),
             )
 
-    def find_similarities_for_podcasts(self, podcasts):
+    def _find_similarities_for_podcasts(self, podcasts):
 
         if not podcasts.exists():  # pragma: no cover
             return
 
-        for podcast_id, recommended in self.find_similarities(podcasts):
+        for podcast_id, recommended in self._find_similarities(podcasts):
             for recommended_id, similarity in recommended:
                 similarity = round(similarity, 2)
                 if similarity > 0:
                     yield podcast_id, recommended_id, similarity
 
-    def find_similarities(self, podcasts):
-        """Given a queryset, will yield tuples of
-        (id, (similar_1, similar_2, ...)) based on text content.
-        """
-
+    def _find_similarities(self, podcasts):
         df = pandas.DataFrame(podcasts.values("id", "extracted_text"))
 
         df.drop_duplicates(inplace=True)
@@ -148,7 +139,7 @@ class Recommender:
 
         for index in df.index:
             try:
-                yield self.find_similarity(
+                yield self._find_similarity(
                     df,
                     similar=cosine_sim[index],
                     current_id=df.loc[index, "id"],
@@ -156,7 +147,7 @@ class Recommender:
             except IndexError:  # pragma: no cover
                 pass
 
-    def find_similarity(self, df, similar, current_id):
+    def _find_similarity(self, df, similar, current_id):
 
         sorted_similar = sorted(
             enumerate(similar),
