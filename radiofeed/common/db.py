@@ -28,7 +28,7 @@ class FastCountMixin:
             return super().count()
         if (
             count := get_reltuple_count(self.db, self.model._meta.db_table)
-        ) >= self.fast_count_row_limit:
+        ) > self.fast_count_row_limit:
             return count
         # exact count for small tables
         return super().count()
