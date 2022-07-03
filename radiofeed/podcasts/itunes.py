@@ -92,8 +92,27 @@ def crawl():
         Feed: any new or existing feeds
     """
     for location in LOCATIONS:
-        for url in _parse_genre_urls(location):
-            for batch in batcher(_parse_podcast_ids(url, location), BATCH_SIZE):
+        yield from Crawler(location).crawl()
+
+
+class Crawler:
+    """Crawls iTunes podcast catalog.
+
+    Args:
+        location (str): country location e.g. "US, UK"
+    """
+
+    def __init__(self, location):
+        self.location = location
+
+    def crawl(self):
+        """Crawls through location and finds new feeds, adding any new podcasts to the database.
+
+        Yields:
+            Feed
+        """
+        for url in self._parse_genre_urls():
+            for batch in batcher(self._parse_podcast_ids(url), BATCH_SIZE):
                 yield from _parse_feeds(
                     _get_response(
                         "https://itunes.apple.com/lookup",
@@ -103,6 +122,44 @@ def crawl():
                         },
                     ).json(),
                 )
+
+    def _parse_genre_urls(self):
+        return (
+            href
+            for href in self._parse_urls(
+                _get_response(
+                    f"https://itunes.apple.com/{self.location}/genre/podcasts/id26"
+                ).content
+            )
+            if href.startswith(
+                f"https://podcasts.apple.com/{self.location}/genre/podcasts"
+            )
+        )
+
+    def _parse_podcast_ids(self, url):
+        return (
+            podcast_id
+            for podcast_id in (
+                self._parse_podcast_id(href)
+                for href in self._parse_urls(_get_response(url).content)
+                if href.startswith(
+                    f"https://podcasts.apple.com/{self.location}/podcast/"
+                )
+            )
+            if podcast_id
+        )
+
+    def _parse_urls(self, content):
+        return (
+            href
+            for href in (el.attrib.get("href") for el in parse_xml(content, "a"))
+            if href
+        )
+
+    def _parse_podcast_id(self, url):
+        if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
+            return match.group("id")
+        return None
 
 
 def _parse_feeds(json_data):
@@ -143,44 +200,6 @@ def _get_response(url, data=None):
     )
     response.raise_for_status()
     return response
-
-
-def _parse_genre_urls(location):
-    return (
-        href
-        for href in _parse_urls(
-            _get_response(
-                f"https://itunes.apple.com/{location}/genre/podcasts/id26"
-            ).content
-        )
-        if href.startswith(f"https://podcasts.apple.com/{location}/genre/podcasts")
-    )
-
-
-def _parse_podcast_ids(url, location):
-    return (
-        podcast_id
-        for podcast_id in (
-            _parse_podcast_id(href)
-            for href in _parse_urls(_get_response(url).content)
-            if href.startswith(f"https://podcasts.apple.com/{location}/podcast/")
-        )
-        if podcast_id
-    )
-
-
-def _parse_urls(content):
-    return (
-        href
-        for href in (el.attrib.get("href") for el in parse_xml(content, "a"))
-        if href
-    )
-
-
-def _parse_podcast_id(url):
-    if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
-        return match.group("id")
-    return None
 
 
 def _build_feeds_from_json(json_data):
