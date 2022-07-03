@@ -8,31 +8,45 @@ from django.utils.encoding import force_str
 
 
 class FastCountMixin:
-    """Provides faster alternative to COUNT for very large tables, using
-    PostgreSQL retuple SELECT.
+    """Provides faster alternative to COUNT for very large tables, using PostgreSQL retuple SELECT.
 
-    If table count less than 1000 or is filtered then does a standard COUNT query.
+    Attributes:
+        fast_count_row_limit (int): max number of rows before switching from SELECT COUNT to reltuples.
     """
 
+    fast_count_row_limit = 1000
+
     def count(self):
+        """Does optimized COUNT.
+
+        If query contains WHERE, DISTINCT or GROUP BY, or number of rows under `fast_count_row_limit`, returns standard SELECT COUNT.
+
+        Returns:
+            int
+        """
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
-        if (count := get_reltuple_count(self.db, self.model._meta.db_table)) >= 1000:
+        if (
+            count := get_reltuple_count(self.db, self.model._meta.db_table)
+        ) >= self.fast_count_row_limit:
             return count
         # exact count for small tables
         return super().count()
 
 
 class SearchMixin:
-    """Provides standard search interface for models supporting search vector and
-    ranking."""
+    """Provides standard search interface for models supporting search vector and ranking.
 
-    # list of search vectors: use this if multiple vector fields
+    Adds a `search` method to automatically resolve simple PostgreSQL search vector queries.
+
+    Attributes:
+        search_vectors (list[str]): SearchVector fields (if multiple)
+        search_vector_field (str): single SearchVectorField
+        search_rank (str): SearchRank field for ordering
+    """
+
     search_vectors = []
-
-    # this is used if just single search vector field (default)
     search_vector_field = "search_vector"
-
     search_rank = "rank"
 
     def search(self, search_term):
@@ -72,6 +86,15 @@ class SearchMixin:
 
 
 def get_reltuple_count(db, table):
+    """Returns result of SELECT reltuples.
+
+    Args:
+        db (str): database name
+        table (str): table name
+
+    Returns:
+        int
+    """
     cursor = connections[db].cursor()
     cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s", [table])
     return int(cursor.fetchone()[0])
