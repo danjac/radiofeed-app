@@ -118,26 +118,35 @@ def _get_date_stopwords(language):
 
         for month in range(1, 13):
             dt = datetime.date(now.year, month, 1)
-            yield date_format(dt, "b").casefold()
-            yield date_format(dt, "F").casefold()
+            yield _format_date(dt, "b")
+            yield _format_date(dt, "F")
 
         for day in range(0, 7):
             dt = now + timedelta(days=day)
-            yield date_format(dt, "D").casefold()
-            yield date_format(dt, "l").casefold()
+            yield _format_date(dt, "D")
+            yield _format_date(dt, "l")
 
 
 def _get_extra_stopwords(language):
     path = _stopwords_dir / f"stopwords_{language}.txt"
-    return filter(None, path.read_text().splitlines() if path.exists() else [])
+    return filter(
+        None,
+        [word.strip().casefold() for word in path.read_text().splitlines()]
+        if path.exists()
+        else [],
+    )
 
 
 def _lemmatized_tokens(text):
-
     for token in _tokenizer.tokenize(text):
         try:
             yield _lemmatizer.lemmatize(token)
+
         except AttributeError:
             # threading issue:
             # 'WordNetCorpusReader' object has no attribute '_LazyCorpusLoader__args'
             pass
+
+
+def _format_date(value, fmt):
+    return date_format(value, fmt).casefold()

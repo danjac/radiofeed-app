@@ -10,6 +10,8 @@ from radiofeed.users.models import User
 
 
 class UserPreferencesForm(forms.ModelForm):
+    """Form for user settings."""
+
     class Meta:
         model = User
         fields = ("send_email_notifications",)
@@ -19,6 +21,8 @@ class UserPreferencesForm(forms.ModelForm):
 
 
 class OpmlUploadForm(forms.Form):
+    """Form for uploading OPML into user collection."""
+
     opml = forms.FileField(
         label="Select OPML file",
         widget=forms.FileInput(
@@ -46,13 +50,12 @@ class OpmlUploadForm(forms.Form):
         Returns:
             int: number of new subscribed feeds
         """
-
         return len(
             Subscription.objects.bulk_create(
                 [
                     Subscription(podcast=podcast, user=user)
                     for podcast in itertools.islice(
-                        Podcast.objects.filter(rss__in=self.parse_opml())
+                        Podcast.objects.filter(rss__in=self._parse_opml())
                         .exclude(subscription__user=user)
                         .distinct(),
                         limit,
@@ -62,7 +65,7 @@ class OpmlUploadForm(forms.Form):
             )
         )
 
-    def parse_opml(self):
+    def _parse_opml(self):
         self.cleaned_data["opml"].seek(0)
 
         try:
