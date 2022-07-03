@@ -85,7 +85,6 @@ ignore = [
     "D409",
     "D413",
 ]
-# convention = "google"
 
 [tool.isort]
 default_section="THIRDPARTY"
