@@ -86,7 +86,7 @@ def search(search_term):
 def crawl():
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found.
 
-    Crawling is restricted to small set of locations (US, UK etc).
+    Crawling is restricted to small set of locations (us, gb etc).
 
     Yields:
         Feed: any new or existing feeds
@@ -99,7 +99,7 @@ class Crawler:
     """Crawls iTunes podcast catalog.
 
     Args:
-        location (str): country location e.g. "US, UK"
+        location (str): country location e.g. "us"
     """
 
     def __init__(self, location):
