@@ -46,15 +46,15 @@ class FeedParser:
                 there is some other problem e.g. HTTP error.
         """
         try:
-            return self.handle_success(*self.parse_rss())
+            return self._handle_success(*self._parse_rss())
 
         except Exception as e:
-            return self.handle_failure(e)
+            return self._handle_failure(e)
 
     def _parse_rss(self):
         response = requests.get(
             self.podcast.rss,
-            headers=self.get_feed_headers(),
+            headers=self._get_feed_headers(),
             allow_redirects=True,
             timeout=10,
         )
@@ -122,7 +122,7 @@ class FeedParser:
             active = True
             parse_result = Podcast.ParseResult.SUCCESS
 
-        self.save_podcast(
+        self._save_podcast(
             active=active,
             content_hash=content_hash,
             rss=response.url,
@@ -131,7 +131,7 @@ class FeedParser:
             modified=parse_date(response.headers.get("Last-Modified")),
             parse_result=parse_result,
             keywords=keywords,
-            extracted_text=self.extract_text(
+            extracted_text=self._extract_text(
                 feed,
                 categories,
                 keywords,
@@ -146,11 +146,9 @@ class FeedParser:
             ),
         )
 
-        # categories
         self.podcast.categories.set(categories)
 
-        # episodes
-        self.save_episodes(feed)
+        self._save_episodes(feed)
 
         return True
 
@@ -191,7 +189,7 @@ class FeedParser:
         except AttributeError:
             http_status = None
 
-        self.save_podcast(
+        self._save_podcast(
             active=active,
             http_status=http_status,
             parse_result=parse_result,

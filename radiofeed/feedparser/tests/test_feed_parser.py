@@ -5,8 +5,6 @@ import pathlib
 import pytest
 import requests
 
-from django.utils import timezone
-
 from radiofeed.common.utils.dates import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
@@ -67,16 +65,6 @@ class TestFeedParser:
 
         get_categories_dict.cache_clear()
 
-    def test_has_etag(self):
-        podcast = Podcast(etag="abc123")
-        headers = FeedParser(podcast).get_feed_headers()
-        assert headers["If-None-Match"] == f'"{podcast.etag}"'
-
-    def test_is_modified(self):
-        podcast = Podcast(modified=timezone.now())
-        headers = FeedParser(podcast).get_feed_headers()
-        assert headers["If-Modified-Since"]
-
     def get_rss_content(self, filename=""):
         return (
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)
@@ -85,7 +73,7 @@ class TestFeedParser:
     def test_parse_unhandled_exception(self, podcast, mocker):
 
         mocker.patch(
-            "radiofeed.feedparser.feed_parser.FeedParser.parse_rss",
+            "radiofeed.feedparser.feed_parser.FeedParser._parse_rss",
             side_effect=ValueError,
         )
         with pytest.raises(ValueError):
