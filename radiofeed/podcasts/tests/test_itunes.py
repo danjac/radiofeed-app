@@ -77,7 +77,7 @@ class TestCrawl:
 
         mocker.patch("requests.get", side_effect=side_effect)
 
-        list(itunes.crawl())
+        list(itunes.crawl(["us"]))
 
         assert Podcast.objects.count() == 1
 

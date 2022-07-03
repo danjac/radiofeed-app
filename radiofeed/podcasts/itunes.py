@@ -14,18 +14,9 @@ from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.xml import parse_xml
 from radiofeed.podcasts.models import Podcast
 
-BATCH_SIZE = 100
+_batch_size = 100
 
-RE_PODCAST_ID = re.compile(r"id(?P<id>\d+)")
-
-LOCATIONS = (
-    "de",
-    "fi",
-    "fr",
-    "gb",
-    "se",
-    "us",
-)
+_podcast_id = re.compile(r"id(?P<id>\d+)")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -83,15 +74,16 @@ def search(search_term):
     )
 
 
-def crawl():
+def crawl(locations):
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found.
 
-    Crawling is restricted to small set of locations (us, gb etc).
+    Args:
+        locations (list[str]): list of iTunes country locations e.g. "us", "gb"
 
     Yields:
         Feed: any new or existing feeds
     """
-    for location in LOCATIONS:
+    for location in settings.ITUNES_LOCATIONS:
         yield from Crawler(location).crawl()
 
 
@@ -112,7 +104,7 @@ class Crawler:
             Feed
         """
         for url in self._parse_genre_urls():
-            for batch in batcher(self._parse_podcast_ids(url), BATCH_SIZE):
+            for batch in batcher(self._parse_podcast_ids(url), _batch_size):
                 yield from _parse_feeds(
                     _get_response(
                         "https://itunes.apple.com/lookup",
@@ -157,13 +149,13 @@ class Crawler:
         )
 
     def _parse_podcast_id(self, url):
-        if match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
+        if match := _podcast_id.search(urlparse(url).path.split("/")[-1]):
             return match.group("id")
         return None
 
 
 def _parse_feeds(json_data):
-    for batch in batcher(_build_feeds_from_json(json_data), BATCH_SIZE):
+    for batch in batcher(_build_feeds_from_json(json_data), _batch_size):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 

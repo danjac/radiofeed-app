@@ -265,3 +265,15 @@ USER_AGENT = env(
     "USER_AGENT",
     default=f"radiofeed/{__version__} +https://github.com/danjac/radiofeed-app/",
 )
+
+ITUNES_LOCATIONS = env.list(
+    "ITUNES_LOCATIONS",
+    default=[
+        "de",
+        "fi",
+        "fr",
+        "gb",
+        "se",
+        "us",
+    ],
+)
