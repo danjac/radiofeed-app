@@ -133,7 +133,6 @@ def markup(value):
 
     Returns:
         str
-
     """
     if value := strip_whitespace(value):
         return html.unescape(clean(as_html(value)))
