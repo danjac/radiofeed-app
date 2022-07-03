@@ -1,9 +1,11 @@
+"""Extra iterator utilities."""
 import itertools
 
 
 def batcher(iterable, batch_size):
-    """Batches an iterable into lists of given batch size. Useful for handling long
-    iterables where individual processing might be slow.
+    """Batches an iterable into lists of given batch size.
+
+    Useful for handling long iterables where individual processing might be slow.
 
     Args:
         iterable (Iterable): any iterable object
