@@ -39,7 +39,7 @@ NLTK_LANGUAGES = {
     "tr": "turkish",
 }
 
-_corporates = [
+_corporate_stopwords = [
     "apple",
     "patreon",
     "spotify",
@@ -64,10 +64,9 @@ def get_stopwords(language):
     try:
         return frozenset(
             stopwords.words(NLTK_LANGUAGES[language])
-            + _corporates
+            + _corporate_stopwords
             + _get_extra_stopwords(language)
-            + list(_get_month_names(language))
-            + list(_get_day_names(language))
+            + list(_get_date_stopwords(language))
         )
 
     except (OSError, KeyError):
@@ -111,18 +110,15 @@ def tokenize(language, text):
     ]
 
 
-def _get_month_names(language):
+def _get_date_stopwords(language):
     now = timezone.now()
     with translation.override(language):
+
         for month in range(1, 13):
             dt = datetime.date(now.year, month, 1)
             yield date_format(dt, "b").casefold()
             yield date_format(dt, "F").casefold()
 
-
-def _get_day_names(language):
-    now = timezone.now()
-    with translation.override(language):
         for day in range(0, 7):
             dt = now + timedelta(days=day)
             yield date_format(dt, "D").casefold()
