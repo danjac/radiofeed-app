@@ -56,8 +56,15 @@ class Recommender:
     """
 
     def __init__(self, language, num_matches):
-        self.language = language
-        self.num_matches = num_matches
+
+        self._language = language
+        self._num_matches = num_matches
+
+        self._vectorizer = TfidfVectorizer(
+            stop_words=get_stopwords(self._language),
+            max_features=3000,
+            ngram_range=(1, 2),
+        )
 
     def recommend(self, podcasts, categories):
         """Creates recommendation instances.
@@ -92,7 +99,7 @@ class Recommender:
         # individual graded category matches
         for category in categories:
             for podcast_id, recommended_id, similarity in self._find_similarities(
-                podcasts.filter(categories=category, language=self.language)
+                podcasts.filter(categories=category, language=self._language)
             ):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
@@ -108,11 +115,7 @@ class Recommender:
 
         try:
             cosine_sim = cosine_similarity(
-                TfidfVectorizer(
-                    stop_words=get_stopwords(self.language),
-                    max_features=3000,
-                    ngram_range=(1, 2),
-                ).fit_transform(df["extracted_text"])
+                self._vectorizer.fit_transform(df["extracted_text"])
             )
         except ValueError:  # pragma: no cover
             return
@@ -138,7 +141,7 @@ class Recommender:
             enumerate(similar),
             key=operator.itemgetter(1),
             reverse=True,
-        )[: self.num_matches]
+        )[: self._num_matches]
 
         return (
             current_id,

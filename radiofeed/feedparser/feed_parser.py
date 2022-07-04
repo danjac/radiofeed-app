@@ -27,7 +27,7 @@ class FeedParser:
     """
 
     def __init__(self, podcast):
-        self.podcast = podcast
+        self._podcast = podcast
 
     @transaction.atomic
     def parse(self):
@@ -50,7 +50,7 @@ class FeedParser:
 
     def _parse_rss(self):
         response = requests.get(
-            self.podcast.rss,
+            self._podcast.rss,
             headers=self._get_feed_headers(),
             allow_redirects=True,
             timeout=10,
@@ -63,7 +63,7 @@ class FeedParser:
 
         # check if another feed already has new URL
         if (
-            response.url != self.podcast.rss
+            response.url != self._podcast.rss
             and Podcast.objects.filter(rss=response.url).exists()
         ):
             raise DuplicateFeed(response=response)
@@ -71,12 +71,12 @@ class FeedParser:
         # check if content has changed (feed is not checking etag etc)
         if (
             content_hash := make_content_hash(response.content)
-        ) == self.podcast.content_hash:
+        ) == self._podcast.content_hash:
             raise NotModified(response=response)
 
         # check if another feed has exact same content
         if (
-            Podcast.objects.exclude(pk=self.podcast.id).filter(
+            Podcast.objects.exclude(pk=self._podcast.id).filter(
                 content_hash=content_hash, active=True
             )
         ).exists():
@@ -90,10 +90,10 @@ class FeedParser:
             "User-Agent": settings.USER_AGENT,
         }
 
-        if self.podcast.etag:
-            headers["If-None-Match"] = quote_etag(self.podcast.etag)
-        if self.podcast.modified:
-            headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
+        if self._podcast.etag:
+            headers["If-None-Match"] = quote_etag(self._podcast.etag)
+        if self._podcast.modified:
+            headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
     def _handle_success(self, response, feed, content_hash):
@@ -143,7 +143,7 @@ class FeedParser:
             ),
         )
 
-        self.podcast.categories.set(categories)
+        self._podcast.categories.set(categories)
 
         self._handle_episode_updates(feed)
 
@@ -162,7 +162,7 @@ class FeedParser:
             + [item.title for item in feed.items][:6]
             if value
         )
-        return " ".join(tokenize(self.podcast.language, text))
+        return " ".join(tokenize(self._podcast.language, text))
 
     def _handle_failure(self, exc):
         match exc:
@@ -195,14 +195,14 @@ class FeedParser:
 
     def _save_podcast(self, **fields):
         now = timezone.now()
-        Podcast.objects.filter(pk=self.podcast.id).update(
+        Podcast.objects.filter(pk=self._podcast.id).update(
             updated=now,
             parsed=now,
             **fields,
         )
 
     def _handle_episode_updates(self, feed, batch_size=100):
-        qs = Episode.objects.filter(podcast=self.podcast)
+        qs = Episode.objects.filter(podcast=self._podcast)
 
         # remove any episodes that may have been deleted on the podcast
         qs.exclude(guid__in={item.guid for item in feed.items}).delete()
@@ -253,4 +253,4 @@ class FeedParser:
         )
 
     def _make_episode(self, item, episode_id=None):
-        return Episode(pk=episode_id, podcast=self.podcast, **attrs.asdict(item))
+        return Episode(pk=episode_id, podcast=self._podcast, **attrs.asdict(item))
