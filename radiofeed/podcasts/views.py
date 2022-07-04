@@ -33,9 +33,9 @@ def index(request):
         TemplateResponse
     """
     subscribed = (
-        set(request.user.subscription_set.values_list("podcast", flat=True))
+        frozenset(request.user.subscription_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
-        else set()
+        else frozenset()
     )
 
     promoted = "promoted" in request.GET or not subscribed

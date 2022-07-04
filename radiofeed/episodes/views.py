@@ -31,9 +31,9 @@ def index(request):
     promoted = "promoted" in request.GET
 
     subscribed = (
-        set(request.user.subscription_set.values_list("podcast", flat=True))
+        frozenset(request.user.subscription_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
-        else set()
+        else frozenset()
     )
 
     since = timezone.now() - timedelta(days=14)
