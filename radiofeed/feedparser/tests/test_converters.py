@@ -3,6 +3,14 @@ import pytest
 from radiofeed.feedparser import converters
 
 
+class TestLanguage:
+    def test_full_locale(self):
+        assert converters.language("en-US") == "en"
+
+    def test_uppercase(self):
+        assert converters.language("FI") == "fi"
+
+
 class TestExplicit:
     def test_true(self):
         assert converters.explicit("yes") is True

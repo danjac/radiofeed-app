@@ -92,7 +92,7 @@ class Feed:
     language: str = attrs.field(
         converter=attrs.converters.pipe(
             attrs.converters.default_if_none("en"),
-            lambda value: value[:2],
+            converters.language,
         ),
         default=None,
     )

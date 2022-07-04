@@ -1,6 +1,18 @@
 from radiofeed.common.template import normalize_url
 
 
+def language(value):
+    """Returns two-character language code.
+
+    Args:
+        value (str)
+
+    Returns:
+        str
+    """
+    return value[:2].casefold()
+
+
 def explicit(value):
     """Checks if podcast or episode explicit.
 
@@ -31,9 +43,8 @@ def duration(value):
     """Given a duration value will ensure all values fall within range.
 
     Examples:
-
-    - 3600 (plain int) -> "3600"
-    - 3:60:50:1000 -> "3:60:50"
+        - 3600 (plain int) -> "3600"
+        - 3:60:50:1000 -> "3:60:50"
 
     Return empty string if cannot resolve.
 
