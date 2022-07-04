@@ -102,6 +102,7 @@ def search_itunes(request):
     Returns:
         HttpResponse
     """
+    print("OK")
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
