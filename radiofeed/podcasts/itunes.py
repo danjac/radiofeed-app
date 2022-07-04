@@ -95,7 +95,7 @@ class Crawler:
     """
 
     def __init__(self, location):
-        self.location = location
+        self._location = location
 
     def crawl(self):
         """Crawls through location and finds new feeds, adding any new podcasts to the database.
@@ -120,11 +120,11 @@ class Crawler:
             href
             for href in self._parse_urls(
                 _get_response(
-                    f"https://itunes.apple.com/{self.location}/genre/podcasts/id26"
+                    f"https://itunes.apple.com/{self._location}/genre/podcasts/id26"
                 ).content
             )
             if href.startswith(
-                f"https://podcasts.apple.com/{self.location}/genre/podcasts"
+                f"https://podcasts.apple.com/{self._location}/genre/podcasts"
             )
         )
 
@@ -135,7 +135,7 @@ class Crawler:
                 self._parse_podcast_id(href)
                 for href in self._parse_urls(_get_response(url).content)
                 if href.startswith(
-                    f"https://podcasts.apple.com/{self.location}/podcast/"
+                    f"https://podcasts.apple.com/{self._location}/podcast/"
                 )
             )
             if podcast_id
