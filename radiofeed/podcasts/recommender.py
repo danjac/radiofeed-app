@@ -1,10 +1,10 @@
 import collections
 import logging
 import operator
-import statistics
 
 from datetime import timedelta
 
+import numpy
 import pandas
 
 from django.db.models.functions import Lower
@@ -103,7 +103,7 @@ class Recommender:
             yield Recommendation(
                 podcast_id=podcast_id,
                 recommended_id=recommended_id,
-                similarity=statistics.median(values),
+                similarity=numpy.median(values),
                 frequency=len(values),
             )
 
