@@ -14,10 +14,10 @@
                             title="Search Episodes"
                             class="link">Search All Podcasts</a>
                     {% elif newest_first %}
-                        <a href="{{ request.path|add:'?ordering=asc' }}"
+                        <a href="{{ request.path|add:'?o=a' }}"
                             class="link">Oldest First</a>
                     {% else %}
-                        <a href="{{ request.path|add:'?ordering=desc' }}"
+                        <a href="{{ request.path|add:'?o=d' }}"
                             class="link">Newest First</a>
                     {% endif %}
                 </nav>

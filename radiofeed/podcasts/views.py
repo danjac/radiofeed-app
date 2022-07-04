@@ -228,7 +228,7 @@ def episodes(request, podcast_id, slug=None, target="object-list"):
     """
     podcast = _get_podcast_or_404(podcast_id)
 
-    newest_first = request.GET.get("ordering", "desc") == "desc"
+    newest_first = request.GET.get("o", "d") == "d"
 
     episodes = Episode.objects.filter(podcast=podcast).select_related("podcast")
 

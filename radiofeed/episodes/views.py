@@ -231,7 +231,7 @@ def history(request):
     Returns:
         TemplateResponse
     """
-    newest_first = request.GET.get("ordering", "desc") == "desc"
+    newest_first = request.GET.get("o", "d") == "d"
 
     logs = AudioLog.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
