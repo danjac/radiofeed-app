@@ -1,5 +1,4 @@
 import collections
-import logging
 import operator
 
 from datetime import timedelta
@@ -14,8 +13,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed.common.utils.text import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-
-logger = logging.getLogger(__name__)
 
 DEFAULT_TIME_PERIOD = timedelta(days=90)
 
@@ -67,82 +64,66 @@ class Recommender:
         Returns:
             list[Recommendation]: list of new Recommendation instances
         """
-        if matches := self._build_matches_dict(podcasts, categories):
-
-            logger.info("Inserting %d recommendations:%s", len(matches), self.language)
-
-            return Recommendation.objects.bulk_create(
-                self._recommendations_from_matches(matches),
-                batch_size=100,
-                ignore_conflicts=True,
-            )
-
-        return []
+        return Recommendation.objects.bulk_create(
+            (
+                Recommendation(
+                    podcast_id=podcast_id,
+                    recommended_id=recommended_id,
+                    similarity=numpy.median(values),
+                    frequency=len(values),
+                )
+                for (podcast_id, recommended_id), values in self._build_matches_dict(
+                    podcasts, categories
+                ).items()
+            ),
+            batch_size=100,
+            ignore_conflicts=True,
+        )
 
     def _build_matches_dict(self, podcasts, categories):
 
         matches = collections.defaultdict(list)
-        podcasts = podcasts.filter(language__iexact=self.language)
 
         # individual graded category matches
         for category in categories:
-            logger.info("Recommendations for %s:%s", self.language, category)
-            for (
-                podcast_id,
-                recommended_id,
-                similarity,
-            ) in self._find_similarities_for_podcasts(
-                podcasts.filter(categories=category)
+            for podcast_id, recommended_id, similarity in self._find_similarities(
+                podcasts.filter(categories=category, language=self.language)
             ):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
-    def _recommendations_from_matches(self, matches):
-        for (podcast_id, recommended_id), values in matches.items():
-            yield Recommendation(
-                podcast_id=podcast_id,
-                recommended_id=recommended_id,
-                similarity=numpy.median(values),
-                frequency=len(values),
-            )
-
-    def _find_similarities_for_podcasts(self, podcasts):
-
-        if not podcasts.exists():  # pragma: no cover
-            return
-
-        for podcast_id, recommended in self._find_similarities(podcasts):
-            for recommended_id, similarity in recommended:
-                similarity = round(similarity, 2)
-                if similarity > 0:
-                    yield podcast_id, recommended_id, similarity
-
     def _find_similarities(self, podcasts):
         df = pandas.DataFrame(podcasts.values("id", "extracted_text"))
 
+        if df.empty:
+            return  # pragma: no cover
+
         df.drop_duplicates(inplace=True)
 
-        vec = TfidfVectorizer(
-            stop_words=get_stopwords(self.language),
-            max_features=3000,
-            ngram_range=(1, 2),
-        )
-
         try:
-            count_matrix = vec.fit_transform(df["extracted_text"])
+            cosine_sim = cosine_similarity(
+                TfidfVectorizer(
+                    stop_words=get_stopwords(self.language),
+                    max_features=3000,
+                    ngram_range=(1, 2),
+                ).fit_transform(df["extracted_text"])
+            )
         except ValueError:  # pragma: no cover
             return
 
-        cosine_sim = cosine_similarity(count_matrix)
-
         for index in df.index:
             try:
-                yield self._find_similarity(
+                podcast_id, recommended = self._find_similarity(
                     df,
                     similar=cosine_sim[index],
                     current_id=df.loc[index, "id"],
                 )
+
+                for recommended_id, similarity in recommended:
+                    if (similarity := round(similarity, 2)) > 0:
+                        yield podcast_id, recommended_id, similarity
+
             except IndexError:  # pragma: no cover
                 continue
 
