@@ -6,11 +6,14 @@ from radiofeed.users.models import User
 
 
 class Command(BaseCommand):
+    """Django command."""
+
     help = """
     Runs recommendation algorithms.
     """
 
     def add_arguments(self, parser):
+        """Parse command args."""
         parser.add_argument(
             "--email",
             help="Send recommendations emails to users",
@@ -19,9 +22,14 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        """Command handler implementation."""
         if options["email"]:
             send_recommendations_email.map(
                 User.objects.email_notification_recipients().values_list("pk")
             )
-        else:
-            recommender.recommend()
+            return
+
+        for language, recommendations in recommender.recommend():
+            self.stdout.write(
+                f"Recommendations for language {language}: {len(recommendations)}"
+            )

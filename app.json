@@ -18,19 +18,19 @@
     },
     "cron": [
         {
-          "command": "python manage.py feed_updates",
+          "command": "python manage.py feed_updater",
           "schedule": "*/6 * * * *"
         },
         {
-          "command": "python manage.py recommendations",
+          "command": "python manage.py recommender",
           "schedule": "15 6 * * *"
         },
         {
-          "command": "python manage.py recommendations --email",
+          "command": "python manage.py recommender --email",
           "schedule": "15 9 * * 1"
         },
         {
-          "command": "python manage.py crawl_itunes",
+          "command": "python manage.py itunes_crawler",
           "schedule": "15 3 * * *"
         },
         {

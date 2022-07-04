@@ -6,6 +6,6 @@ class TestFeedUpdates:
 
         patched = mocker.patch("radiofeed.feedparser.tasks.parse_feed.map")
 
-        call_command("feed_updates", limit=200)
+        call_command("feed_updater", limit=200)
 
         patched.assert_called()

@@ -25,6 +25,9 @@ def recommend(since=DEFAULT_TIME_PERIOD, num_matches=12):
     Args:
         since (timedelta | None): include podcasts last published since this period.
         num_matches (int): total number of recommendations to create for each podcast
+
+    Yields:
+        tuple[str, list[Recommendation]]: language + list of new matches
     """
     podcasts = (
         Podcast.objects.filter(pub_date__gt=timezone.now() - since)
@@ -39,7 +42,9 @@ def recommend(since=DEFAULT_TIME_PERIOD, num_matches=12):
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-        Recommender(language, num_matches).recommend(podcasts, categories)
+        yield language, Recommender(language, num_matches).recommend(
+            podcasts, categories
+        )
 
 
 class Recommender:

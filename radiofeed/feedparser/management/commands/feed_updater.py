@@ -8,16 +8,20 @@ from radiofeed.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
+    """Django management command."""
+
     help = """
     Parses RSS feeds of all scheduled podcasts
     """
 
     def add_arguments(self, parser):
+        """Parse command args."""
         parser.add_argument(
             "--limit", help="Number of feeds for update", type=int, default=360
         )
 
     def handle(self, *args, **options):
+        """Command handler implmentation."""
         parse_feed.map(
             itertools.islice(
                 Podcast.objects.scheduled()

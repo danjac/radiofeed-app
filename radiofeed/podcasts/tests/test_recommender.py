@@ -75,7 +75,11 @@ class TestRecommend:
             categories=[cat_2, cat_3],
         )
 
-        recommend()
+        result = list(recommend())
+
+        assert result[0][0] == "en"
+        assert len(result[0][1]) == 2
+
         recommendations = (
             Recommendation.objects.filter(podcast=podcast_1)
             .order_by("similarity")
@@ -83,3 +87,11 @@ class TestRecommend:
         )
         assert recommendations.count() == 1
         assert recommendations[0].recommended == podcast_2
+
+        recommendations = (
+            Recommendation.objects.filter(podcast=podcast_2)
+            .order_by("similarity")
+            .select_related("recommended")
+        )
+        assert recommendations.count() == 1
+        assert recommendations[0].recommended == podcast_1
