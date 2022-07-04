@@ -18,7 +18,7 @@ from radiofeed.feedparser.models import Feed
 from radiofeed.feedparser.rss_parser import parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
-ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
+_accept_header = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
 
 class FeedParser:
@@ -88,7 +88,7 @@ class FeedParser:
 
     def _get_feed_headers(self):
         headers = {
-            "Accept": ACCEPT_HEADER,
+            "Accept": _accept_header,
             "User-Agent": settings.USER_AGENT,
         }
 
