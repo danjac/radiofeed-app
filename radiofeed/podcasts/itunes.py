@@ -83,7 +83,7 @@ def crawl(locations):
     Yields:
         Feed: any new or existing feeds
     """
-    for location in settings.ITUNES_LOCATIONS:
+    for location in locations:
         yield from Crawler(location).crawl()
 
 
