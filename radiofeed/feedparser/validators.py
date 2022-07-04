@@ -3,7 +3,7 @@ import attrs
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
-AUDIO_MIMETYPES = (
+_audio_mimetypes = (
     "audio/aac",
     "audio/aacp",
     "audio/basic",
@@ -48,13 +48,13 @@ pg_integer = attrs.validators.and_(
     attrs.validators.lt(2147483647),
 )
 
-audio = attrs.validators.in_(AUDIO_MIMETYPES)
+audio = attrs.validators.in_(_audio_mimetypes)
 
 _url_validator = URLValidator(["http", "https"])
 
 
 def required(instance, attr, value):
-    """Checks if value is truthy
+    """Checks if value is truthy.
 
     Args:
         instance (object | None)
@@ -69,7 +69,7 @@ def required(instance, attr, value):
 
 
 def url(instance, attr, value):
-    """Checks if value is a valid URL
+    """Checks if value is a valid URL.
 
     Args:
         instance (object | None)
