@@ -10,7 +10,7 @@ from radiofeed.feedparser import converters, validators
 
 @attrs.define(kw_only=True, frozen=True)
 class Item:
-    """Individual item or episode in RSS or Atom podcast feed"""
+    """Individual item or episode in RSS or Atom podcast feed."""
 
     guid: str = attrs.field(validator=validators.required)
     title: str = attrs.field(validator=validators.required)
@@ -76,7 +76,7 @@ class Item:
 
 @attrs.define(kw_only=True, frozen=True)
 class Feed:
-    """RSS or Atom podcast feed"""
+    """RSS or Atom podcast feed."""
 
     title: str = attrs.field(validator=validators.required)
 
