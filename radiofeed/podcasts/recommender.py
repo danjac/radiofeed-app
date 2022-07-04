@@ -144,7 +144,7 @@ class Recommender:
                     current_id=df.loc[index, "id"],
                 )
             except IndexError:  # pragma: no cover
-                pass
+                continue
 
     def _find_similarity(self, df, similar, current_id):
 
@@ -154,9 +154,11 @@ class Recommender:
             reverse=True,
         )[: self.num_matches]
 
-        matches = [
-            (df.loc[row, "id"], similarity)
-            for row, similarity in sorted_similar
-            if df.loc[row, "id"] != current_id
-        ]
-        return (current_id, matches)
+        return (
+            current_id,
+            (
+                (df.loc[row, "id"], similarity)
+                for row, similarity in sorted_similar
+                if df.loc[row, "id"] != current_id
+            ),
+        )
