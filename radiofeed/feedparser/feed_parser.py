@@ -207,7 +207,7 @@ class FeedParser:
         qs = Episode.objects.filter(podcast=self.podcast)
 
         # remove any episodes that may have been deleted on the podcast
-        qs.exclude(guid__in=[item.guid for item in feed.items]).delete()
+        qs.exclude(guid__in={item.guid for item in feed.items}).delete()
 
         # determine new/current items based on presence of guid
 
