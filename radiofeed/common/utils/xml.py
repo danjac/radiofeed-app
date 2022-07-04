@@ -53,8 +53,8 @@ class XPathFinder:
     """
 
     def __init__(self, element, namespaces=None):
-        self.element = element
-        self.namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
+        self._element = element
+        self._namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
     def first(self, *paths, default=None):
         """Returns first matching text or attribute value.
@@ -86,7 +86,7 @@ class XPathFinder:
         """
         try:
             for path in paths:
-                for value in self.element.xpath(path, namespaces=self.namespaces):
+                for value in self._element.xpath(path, namespaces=self._namespaces):
                     if cleaned := value.strip():
                         yield cleaned
         except UnicodeDecodeError:
