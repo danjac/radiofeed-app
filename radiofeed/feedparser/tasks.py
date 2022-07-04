@@ -12,6 +12,6 @@ def parse_feed(podcast_id):
         podcast_id (int): Podcast PK
 
     Raises:
-        PodcastDoesNotExist: if no active podcast found
+        PodcastDoesNotExist: if no podcast found
     """
     FeedParser(Podcast.objects.get(pk=podcast_id)).parse()
