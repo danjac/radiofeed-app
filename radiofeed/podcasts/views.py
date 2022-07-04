@@ -136,7 +136,6 @@ def latest_episode(request, podcast_id, slug=None):
     Raises:
         Http404: podcast not found
     """
-    print("OK")
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
         .order_by("-pub_date")
