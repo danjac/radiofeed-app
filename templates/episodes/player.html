@@ -19,10 +19,10 @@
                     @pause="pause"
                     @ended="ended"
                     @timeupdate="timeUpdate"
-                    @error="error"
                     @waiting="buffering"
                     @stalled="buffering"
-                    @suspend="buffering">
+                    @suspend="buffering"
+                    @error.prevent="error">
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
                 <div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold space-y-1 sm:space-y-0">
