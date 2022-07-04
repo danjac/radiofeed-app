@@ -1,11 +1,17 @@
 from django.core.management import call_command
 
+from radiofeed.podcasts.factories import RecommendationFactory
 from radiofeed.podcasts.itunes import Feed
 
 
 class TestRecommender:
-    def test_create_recommendations(self, mocker):
-        patched = mocker.patch("radiofeed.podcasts.recommender.recommend")
+    def test_create_recommendations(self, db, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.recommender.recommend",
+            return_value=[
+                ("en", RecommendationFactory.create_batch(3)),
+            ],
+        )
         call_command("recommender")
         patched.assert_called()
 
