@@ -70,7 +70,6 @@ def pagination_response(
     Raises:
         Http404: invalid page
     """
-
     try:
         page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(
             int(request.GET.get(param, 1))
