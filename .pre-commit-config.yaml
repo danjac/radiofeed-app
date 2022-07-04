@@ -31,12 +31,8 @@ repos:
                 'flake8-comprehensions',
                 'flake8-debugger',
                 'flake8-deprecated',
-                'flake8-docstrings',
-                'flake8-pep3101',
-                'flake8-polyfill',
                 'flake8-print',
-                'flake8-string-format',
-            ]
+        ]
     - repo: https://github.com/pycqa/pydocstyle
       rev: 6.1.1
       hooks:

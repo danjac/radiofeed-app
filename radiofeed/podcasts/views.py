@@ -22,7 +22,7 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscri
 
 @require_http_methods(["GET"])
 def index(request):
-    """Renders default podcast home page.
+    """Render default podcast home page.
 
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
 
@@ -102,7 +102,6 @@ def search_itunes(request):
     Returns:
         HttpResponse
     """
-    print("OK")
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
