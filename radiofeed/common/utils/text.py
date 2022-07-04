@@ -55,7 +55,7 @@ _stopwords_dir = pathlib.Path(__file__).resolve(strict=True).parent / "stopwords
 
 @lru_cache()
 def get_stopwords(language):
-    """Returns all stopwords for a language, if available.
+    """Return all stopwords for a language, if available.
 
     Args:
         language (str): 2-char language code e.g. "en"
@@ -76,7 +76,7 @@ def get_stopwords(language):
 
 
 def clean_text(text):
-    """Scrubs text of any HTML tags and entities, punctuation and numbers.
+    """Scrub text of any HTML tags and entities, punctuation and numbers.
 
     Args:
         text (str): text to be cleaned
@@ -91,7 +91,7 @@ def clean_text(text):
 
 
 def tokenize(language, text):
-    """Extracts all relevant keywords from text, removing any stopwords, HTML tags etc.
+    """Extract all relevant keywords from text, removing any stopwords, HTML tags etc.
 
     Args:
         language (str): 2-char language code e.g. "en"
