@@ -63,7 +63,7 @@ def index(request):
 
 @require_http_methods(["GET"])
 def search_podcasts(request):
-    """Renders search page. Redirects to index page if search is empty.
+    """Render search page. Redirects to index page if search is empty.
 
     Args:
         request (HttpRequest)
@@ -94,7 +94,7 @@ def search_podcasts(request):
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
 def search_itunes(request):
-    """Renders iTunes search page. Redirects to index page if search is empty.
+    """Render iTunes search page. Redirects to index page if search is empty.
 
     Args:
         request (HttpRequest)
@@ -148,7 +148,7 @@ def latest_episode(request, podcast_id, slug=None):
 
 @require_http_methods(["GET"])
 def similar(request, podcast_id, slug=None, limit=12):
-    """Lists similar podcasts based on recommendations.
+    """List similar podcasts based on recommendations.
 
     Args:
         request (HttpRequest)
@@ -182,7 +182,7 @@ def similar(request, podcast_id, slug=None, limit=12):
 
 @require_http_methods(["GET"])
 def podcast_detail(request, podcast_id, slug=None):
-    """Renders details for a single podcast.
+    """Render details for a single podcast.
 
     Args:
         request (HttpRequest)
@@ -212,7 +212,7 @@ def podcast_detail(request, podcast_id, slug=None):
 
 @require_http_methods(["GET"])
 def episodes(request, podcast_id, slug=None, target="object-list"):
-    """Renders episodes for a single podcast.
+    """Render episodes for a single podcast.
 
     Args:
         request (HttpRequest)
@@ -258,7 +258,7 @@ def episodes(request, podcast_id, slug=None, target="object-list"):
 
 @require_http_methods(["GET"])
 def category_list(request):
-    """Lists all categories containing podcasts.
+    """List all categories containing podcasts.
 
     Args:
         request (HttpRequest)
@@ -284,7 +284,7 @@ def category_list(request):
 
 @require_http_methods(["GET"])
 def category_detail(request, category_id, slug=None):
-    """Renders individual podcast category along with its podcasts.
+    """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
 
@@ -323,7 +323,7 @@ def category_detail(request, category_id, slug=None):
 @require_http_methods(["POST"])
 @ajax_login_required
 def subscribe(request, podcast_id):
-    """Subscribes a user to a podcast.
+    """Subscribe a user to a podcast.
 
     Args:
         request (HttpRequest)
@@ -350,7 +350,7 @@ def subscribe(request, podcast_id):
 @require_http_methods(["DELETE"])
 @ajax_login_required
 def unsubscribe(request, podcast_id):
-    """Unsubscribes user from a podcast.
+    """Unsubscribe user from a podcast.
 
     Args:
         request (HttpRequest)
