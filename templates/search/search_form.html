@@ -1,3 +1,4 @@
+{% load i18n %}
 <form action="{{ search_url|default:request.path }}"
     method="get"
     x-data="{search: '{{ request.search.value|default:''|escapejs }}'}"
@@ -8,21 +9,21 @@
         @click="$el.select()"
         name="{{ search_param|default:'q' }}"
         autocomplete="off"
-        aria-label="{{ placeholder|default:'Search' }}"
+        aria-label="{{ placeholder|default:_('Search') }}"
         {% if placeholder %}placeholder="{{ placeholder }}"
         {% endif %}
         class="px-2 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm md:text-base"
         :class="{'md:w-72 xl:w-84': !search, 'md:w-72 xl:w-96': search}">
     <div class="absolute inset-y-0 right-0 flex items-center pr-2">
         <a href="{{ clear_search_url|default:request.path }}"
-            title="Clear Search"
+            title="{% translate "Clear Search" %}"
             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100 mr-1"
             x-show="search"
             x-cloak>
             {% include "icons/x.svg" with css_class="h-4 w-4" %}
         </a>
         <button type="submit"
-            title="Search"
+            title="{% translate "Search" %}"
             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
             {% include "icons/search.svg" with css_class="h-4 w-4" %}
         </button>
