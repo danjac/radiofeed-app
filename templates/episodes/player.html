@@ -1,3 +1,4 @@
+{% load i18n %}
 {% if episode %}
     {% if is_playing %}
         {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
@@ -40,20 +41,26 @@
                             x-cloak
                             x-show="!isError && isLoaded"
                             :class="{'animate-pulse text-gray-300': !isPlaying}">
-                            <span x-text="counters.current"></span> /
-                            <span x-text="counters.total"></span>
+                            <span x-text="counters.current"
+
+                                title="{% translate "Current Time" %}"
+                            ></span> /
+                            <span x-text="counters.total"
+
+                                title="{% translate "Time Remaining" %}"
+                            ></span>
                         </div>
 
                         <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
                             x-show="!isError && !isLoaded">
-                            Loading...
+                            {% translate "Loading..." %}
                         </div>
 
                         <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
                             x-show="isError">
-                            Error
+                            {% translate "Error" %}
                         </div>
 
                     </div>
@@ -73,7 +80,7 @@
                                 <div class="flex items-center">
                                     {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" ICON_CSS="h-8 w-8 md:h-9 md:w-9"  %}
 
-                                        <button title="Pause"
+                                        <button title="{% translate "Pause" %}"
                                             @click="togglePlayPause"
                                             x-show="!isPaused"
                                             class="{{ BUTTON_CSS }} mr-1 md:mr-2"
@@ -82,7 +89,7 @@
                                             {% include "icons/pause.svg" with css_class=ICON_CSS %}
                                         </button>
 
-                                        <button title="Play"
+                                        <button title="{% translate "Play" %}"
                                             @click="togglePlayPause"
                                             x-show="isPaused"
                                             class="{{ BUTTON_CSS }} mr-1 md:mr-2"
@@ -90,7 +97,7 @@
                                             {% include "icons/play.svg" with css_class=ICON_CSS %}
                                         </button>
 
-                                        <button title="Close Player"
+                                        <button title="{% translate "Close Player" %}"
                                             accesskey="x"
                                             class="{{ BUTTON_CSS }}"
                                             hx-post="{% url "episodes:close_player" %}"
@@ -116,21 +123,24 @@
                                         x-show="!isError && isLoaded"
                                         :class="{'animate-pulse text-gray-300': !isPlaying}">
                                         <span x-text="counters.current"
-                                            title="Current Time"></span> /
+                                            title="{% translate "Current Time" %}"
+                                        ></span> /
                                         <span x-text="counters.total"
-                                            title="Time Remaining"></span>
+
+                                            title="{% translate "Time Remaining" %}"
+                                        ></span>
                                     </div>
 
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
                                         x-show="!isError && !isLoaded">
-                                        Loading...
+                                        {% translate "Loading..." %}
                                     </div>
 
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
                                         x-show="isError">
-                                        Error
+                                        {% translate "Error" %}
                                     </div>
 
                                 </div>
@@ -139,14 +149,14 @@
 
                                     <div class="flex items-center sm:hidden space-x-1">
 
-                                        <button title="Skip back 10 seconds"
+                                        <button title="{% translate "Skip Back 10 Seconds" %}"
                                             @click="skipBack"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
                                             {% include "icons/skip_back_10.svg" with css_class=ICON_CSS %}
                                         </button>
 
-                                        <button title="Skip forward 10 seconds"
+                                        <button title="{% translate "Skip Forward 10 Seconds" %}"
                                             @click="skipForward"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
@@ -159,14 +169,14 @@
 
                                         <div class="flex items-center space-x-1 md:space-x-2">
 
-                                            <button title="Skip back 10 seconds"
+                                            <button title="{% translate "Skip Back 10 Seconds" %}"
                                                 @click="skipBack"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
                                                 {% include "icons/skip_back_10.svg" with css_class=ICON_CSS %}
                                             </button>
 
-                                            <button title="Skip forward 10 seconds"
+                                            <button title="{% translate "Skip Forward 10 Seconds" %}"
                                                 @click="skipForward"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
@@ -179,7 +189,7 @@
                                             <button :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 @click="decrementRate"
-                                                title="Decrease Playback Rate">-</button>
+                                                title="{% translate "Decrease Playback Rate" %}">-</button>
                                             <div class="mr-1 md:mr-2 tracking-tight player--interactive"
                                                 title="Playback Rate">
                                                 x<span x-text="rate.toFixed(1)"></span>
@@ -188,10 +198,10 @@
                                             <button class="{{ BUTTON_CSS }} inline-block"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 @click="incrementRate"
-                                                title="Increase Playback Rate">+</button>
+                                                title="{% translate "Increase Playback Rate" %}">+</button>
                                         </div>
                                         <div class="flex items-center">
-                                            <button title="Reload Player"
+                                            <button title="{% translate "Reload Player" %}"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 accesskey="r"
                                                 @click="window.location.reload()">
