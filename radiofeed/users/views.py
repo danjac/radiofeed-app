@@ -88,7 +88,7 @@ def import_podcast_feeds(request, target="opml-import-form"):
                 ngettext(
                     "%(count)d podcast feed added to your collection",
                     "%(count)d podcast feeds added to your collection",
-                    count=new_feeds,
+                    new_feeds,
                 ),
             )
         else:
