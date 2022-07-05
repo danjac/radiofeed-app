@@ -1,10 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %} | About {% endblock %}
+{% block title %} | {% translate "About" %} {% endblock %}
 
 {% block signup_cta %}{% endblock %}
 {% block content %}
-    <h1 class="font-bold mb-6 flex flex-wrap text-lg md:text-xl xl:text-2xl">About {{ request.site.name }}</h1>
+    <h1 class="font-bold mb-6 flex flex-wrap text-lg md:text-xl xl:text-2xl">
+        {% blocktranslate with site_name=request.site.name %}
+            About {{ site_name }}
+        {% endblocktranslate %}
+    </h1>
     <div id="about-content">
         <nav class="mb-3 pb-3 border-b dark:border-gray-500">
             <ul class="flex items-center overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none space-x-6">
@@ -12,26 +17,26 @@
                     {% active_link 'about:faq' as link %}
                     <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
                         <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                            title="Frequenly Asked Questions"
-                            href="{{ link.url }}">FAQ</a>
+                            title="{% translate "Frequenly Asked Questions" %}"
+                            href="{{ link.url }}">{% translate "FAQ" %}</a>
                     </li>
                     {% active_link 'about:credits' as link %}
                     <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
                         <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                            title="Credits"
-                            href="{{ link.url }}">Credits</a>
+                            title="{% translate "Credits" %}"
+                            href="{{ link.url }}">{% translate "Credits" %}</a>
                     </li>
                     {% active_link 'about:shortcuts' as link %}
                     <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
                         <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                            title="Shortcuts"
-                            href="{{ link.url }}">Shortcuts</a>
+                            title="{% translate "Shortcuts" %}"
+                            href="{{ link.url }}">{% translate "Shortcuts" %}</a>
                     </li>
                     {% active_link 'about:terms' as link %}
                     <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
                         <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                            title="Terms &amp; Conditions"
-                            href="{{ link.url }}">Terms</a>
+                            title="{% translate "Terms &amp; Conditions" %}"
+                            href="{{ link.url }}">{% translate "Terms" %}</a>
                     </li>
                 {% endwith %}
             </ul>
