@@ -1,24 +1,25 @@
 {% extends "account/settings_base.html" %}
+{% load i18n %}
 
-{% block title %}{{ block.super }} | Delete Account{% endblock %}
+{% block title %}{{ block.super }} | {% translate "Delete Account" %}{% endblock %}
 
 {% block settings_content %}
     <div class="w-full space-y-3">
         <p>
-            Please confirm that you want to delete your account. You will not be able to undo this action!
+            {% translate "Please confirm that you want to delete your account. You will not be able to undo this action!" %}
         </p>
         <div>
             <form method="POST"
                 hx-disable="true"
                 action="{% url 'users:delete_account' %}"
-                onSubmit="return confirm('Are you sure?')">
+                onSubmit="return confirm('{% translate "Are you sure?" %}')">
                 {% csrf_token %}
                 <div>
                     <button class="btn btn-danger inline-flex items-center"
                         name="confirm-delete"
                         value="true">
                         {% include "icons/trash.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
-                        Yes, delete my account
+                        {% translate "Yes, delete my account" %}
                     </button>
                 </div>
             </form>
