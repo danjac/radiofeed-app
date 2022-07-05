@@ -19,8 +19,6 @@ from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 
-# test commit
-
 
 @require_http_methods(["GET"])
 def index(request):
