@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,13 +8,21 @@
     </head>
 
     <body style="font-family: Helvetica, sans-serif;">
-        <h1 style="margin-bottom: 0.75rem; font-weight: 700; font-size: 1.25rem; line-height: 1.75rem;">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
+        <h1 style="margin-bottom: 0.75rem; font-weight: 700; font-size: 1.25rem; line-height: 1.75rem;">
+            {% blocktranslate with username=recipient.username site_name=site.name %}
+                Hi {{ username }}, greetings from {{ site_name }}!
+            {% endblocktranslate %}
+        </h1>
 
         {% block content %}{% endblock %}
 
-        <p>If you do not want to receive any more notifications, just uncheck the "Send email notifications"
-            option
-            on your <a style="text-decoration: underline; color: #000;" href="{% absolute_uri 'users:preferences' %}">Settings</a> page.</p>
-    </body>
+        <p>
+            {% absolute_uri 'users:preferences' as preferences_url %}
+            {% blocktranslate %}
+                If you do not want to receive any more notifications, just uncheck the "Send email notifications"
+                option
+                on your <a style="text-decoration: underline; color: #000;" href="{{ preferences_url }}">Settings</a> page.</p>
+            {% endblocktranslate %}
+        </body>
 
-</html>
+    </html>
