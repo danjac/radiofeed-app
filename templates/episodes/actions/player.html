@@ -1,3 +1,4 @@
+{% load i18n %}
 {% with ICON_CSS="h-5 w-5 md:h-6 md:w-6 mr-2" %}
     {% if user.is_authenticated %}
         <div{% if hx_oob %} hx-swap-oob="true"
@@ -9,9 +10,9 @@
                     hx-push-url="false"
                     hx-target="#player"
                     hx-swap="innerHTML"
-                    title="Close Player">
+                    title="{% translate "Close Player" %}">
                     {% include "icons/stop.svg" with css_class=ICON_CSS %}
-                    Close
+                    {% translate "Close" %}
                 </button>
             {% else %}
                 <button class="inline-flex items-center btn btn-default"
@@ -19,9 +20,9 @@
                     hx-push-url="false"
                     hx-target="#player"
                     hx-swap="innerHTML"
-                    title="Open Episode in Player">
+                    title="{% translate "Open Episode in Player" %}">
                     {% include "icons/play.svg" with css_class=ICON_CSS %}
-                    Play
+                    {% translate "Play" %}
                 </button>
             {% endif %}
         </div>
@@ -31,9 +32,9 @@
             <a class="btn btn-default inline-flex items-center justify-center"
                 href="{{ episode.get_absolute_url|login_url }}"
                 hx-disable="true"
-                title="You must sign up or log in to play this episode">
+                title="{% translate "You must sign up or log in to play this episode" %}">
                 {% include "icons/play.svg" with css_class=ICON_CSS %}
-                Play
+                {% translate "Play" %}
             </a>
 
         </div>
