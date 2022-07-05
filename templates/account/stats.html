@@ -1,23 +1,28 @@
 {% extends "account/settings_base.html" %}
+{% load i18n %}
 
-{% block title %}{{ block.super }} | Statistics{% endblock %}
+{% block title %}{{ block.super }} | {% translate "Statistics" %}{% endblock %}
 
 {% block settings_content %}
 
     <div class="w-full divide-y mb-3 space-y-3 dark:divide-gray-500">
 
         <div class="flex justify-between pt-4">
-            <div class="w-1/2">Joined</div>
+            <div class="w-1/2">{% translate "Joined" %}</div>
             <div class="w-1/2 font-bold text-right">{% include "includes/date.html" with value=user.date_joined %}</div>
         </div>
 
         {% if stats.subscribed %}
             <div class="flex justify-between pt-4">
-                <div class="w-1/2">Subscribed</div>
+                <div class="w-1/2">{% translate "Subscribed" %}</div>
                 <div class="w-1/2 font-bold text-right">
                     <a href="{% url 'podcasts:index' %}"
                         class="link font-bold underline">
-                        {{ stats.subscribed }} podcast{{ stats.subscribed|pluralize }}
+                        {% blocktranslate count counter=stats.subscribed %}
+                            1 podcast
+                        {% plural %}
+                            {{ counter }} podcasts
+                        {% endblocktranslate %}
                     </a>
                 </div>
             </div>
@@ -25,11 +30,15 @@
 
         {% if stats.bookmarks %}
             <div class="flex justify-between pt-4">
-                <div class="w-1/2">Bookmarks</div>
+                <div class="w-1/2">{% translate "Bookmarks" %}</div>
                 <div class="w-1/2 font-bold text-right">
                     <a href="{% url 'episodes:bookmarks' %}"
                         class="link font-bold underline">
-                        {{ stats.bookmarks }} episode{{ stats.bookmarks|pluralize }}
+                        {% blocktranslate count counter=stats.bookmarks %}
+                            1 episode
+                        {% plural %}
+                            {{ counter }} episodes
+                        {% endblocktranslate %}
                     </a>
                 </div>
             </div>
@@ -38,11 +47,15 @@
 
         {% if stats.in_queue %}
             <div class="flex justify-between pt-4">
-                <div class="w-1/2">In Queue</div>
+                <div class="w-1/2">{% translate "In Queue" %}</div>
                 <div class="w-1/2 font-bold text-right">
                     <a href="{% url 'episodes:queue' %}"
                         class="link font-bold underline">
-                        {{ stats.in_queue }} episode{{ stats.in_queue|pluralize }}
+                        {% blocktranslate count counter=stats.in_queue %}
+                            1 episode
+                        {% plural %}
+                            {{ counter }} episodes
+                        {% endblocktranslate %}
                     </a>
                 </div>
             </div>
@@ -52,11 +65,15 @@
 
         {% if stats.listened %}
             <div class="flex justify-between pt-4">
-                <div class="w-1/2">Listened</div>
+                <div class="w-1/2">{% translate "Listened" %}</div>
                 <div class="w-1/2 font-bold text-right">
                     <a href="{{ history_url }}"
                         class="link font-bold underline">
-                        {{ stats.listened }} episode{{ stats.listened|pluralize }}
+                        {% blocktranslate count counter=stats.listened %}
+                            1 episode
+                        {% plural %}
+                            {{ counter }} episodes
+                        {% endblocktranslate %}
                     </a>
                 </div>
             </div>
