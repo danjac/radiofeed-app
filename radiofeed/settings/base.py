@@ -190,7 +190,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-TEMPLATES: list[dict] = [
+TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
