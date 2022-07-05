@@ -19,7 +19,7 @@ def parse_rss(content):
     """
     try:
         return RssParser(next(parse_xml(content, "channel"))).parse()
-    except (StopIteration, TypeError, ValueError, lxml.etree.XMLSyntaxError) as e:
+    except (StopIteration, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
 
@@ -46,24 +46,33 @@ class RssParser:
 
         Returns:
             Feed
+
+        Raises:
+            RssParserError: missing or invalid RSS content
         """
         with xpath_finder(self._channel, self._namespaces) as finder:
-            return Feed(
-                categories=list(finder.iter("//itunes:category/@text")),
-                items=list(self._parse_items()),
-                **finder.to_dict(
-                    complete="itunes:complete/text()",
-                    cover_url=("itunes:image/@href", "image/url/text()"),
-                    description=("description/text()", "itunes:summary/text()"),
-                    explicit="itunes:explicit/text()",
-                    funding_text="podcast:funding/text()",
-                    funding_url="podcast:funding/@url",
-                    language="language/text()",
-                    link="link/text()",
-                    owner=("itunes:author/text()", "itunes:owner/itunes:name/text()"),
-                    title="title/text()",
-                ),
-            )
+            try:
+                return Feed(
+                    categories=list(finder.iter("//itunes:category/@text")),
+                    items=list(self._parse_items()),
+                    **finder.to_dict(
+                        complete="itunes:complete/text()",
+                        cover_url=("itunes:image/@href", "image/url/text()"),
+                        description=("description/text()", "itunes:summary/text()"),
+                        explicit="itunes:explicit/text()",
+                        funding_text="podcast:funding/text()",
+                        funding_url="podcast:funding/@url",
+                        language="language/text()",
+                        link="link/text()",
+                        owner=(
+                            "itunes:author/text()",
+                            "itunes:owner/itunes:name/text()",
+                        ),
+                        title="title/text()",
+                    ),
+                )
+            except (TypeError, ValueError) as e:
+                raise RssParserError from e
 
     def _parse_item(self, item):
         with xpath_finder(item, self._namespaces) as finder:
