@@ -1,6 +1,7 @@
 {% extends "account/emails/base.html" %}
+{% load i18n %}
 {% block content %}
-    <p style="margin-bottom: 0.75rem;">Here are some podcasts you might find interesting:</p>
+    <p style="margin-bottom: 0.75rem;">{% translate "Here are some podcasts you might find interesting:" %}</p>
 
     {% for podcast in podcasts %}
         <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #eee;">
