@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load account %}
+{% load i18n account %}
 
 {% block content %}
 
@@ -7,9 +7,12 @@
         Sign In
     </h1>
 
-    <p class="mb-3">If you have not created an account yet, then please
-        <a class="underline hover:text-blue-500"
-            href="{{ signup_url }}">sign up</a> first.
+    <p class="mb-3">
+        {% blocktranslate %}
+            If you have not created an account yet, then please
+            <a class="underline hover:text-blue-500"
+                href="{{ signup_url }}">sign up</a> first.
+        {% endblocktranslate %}
     </p>
 
     <form method="post"
@@ -26,11 +29,11 @@
         {{ form }}
         <div class="flex items-center">
             <a class="link mr-3 md:mr-6"
-                title="Recover Your Password"
-                href="{% url 'account_reset_password' %}">Forgot Password?</a>
+                title="{% translate "Recover Your Password" %}"
+                href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
             <button class="inline-flex items-center btn btn-default">
                 {% include "icons/login.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
-                Sign In
+                {% translate "Sign In" %}
             </button>
         </div>
     </form>
