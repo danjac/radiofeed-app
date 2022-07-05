@@ -1,6 +1,7 @@
 {% extends "about/base.html" %}
+{% load i18n %}
 
-{% block title %}{{ block.super }} | Frequently Asked Questions {% endblock %}
+{% block title %}{{ block.super }} | {% translate "Frequently Asked Questions" %}{% endblock %}
 
 {% block about_content %}
 
@@ -37,15 +38,15 @@
                     You'll have to register at <strong>{{ site_name }}</strong> to do all of these:
                 </p>
                 <ul class="list-disc list-inside space-y-3 ml-3">
-                    <li>Play episodes in our custom Player</li>
-                    <li>Bookmark episodes to listen to later</li>
-                    <li>Add podcasts to your collection</li>
-                    <li>Get new weekly recommendations</li>
-                    <li>Keep track of episodes you have listened to</li>
+                    <li>{% translate "Play episodes in our custom Player" %}</li>
+                    <li>{% translate "Bookmark episodes to listen to later" %}</li>
+                    <li>{% translate "Add podcasts to your collection" %}</li>
+                    <li>{% translate "Get new weekly recommendations" %}</li>
+                    <li>{% translate "Keep track of episodes you have listened to" %}</li>
                 </ul>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">What if I want to download an episode to my device?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "What if I want to download an episode to my device?" %}</summary>
                 <p>
                     Click the download icon {% include "icons/download.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %} on the episode page to save the audio file to your device. You can then
                     listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
@@ -53,7 +54,7 @@
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">How do I add podcasts to my collection?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "How do I add podcasts to my collection?" %}</summary>
                 <p>
                     Just click the <strong>Subscribe</strong> button on the podcast&apos;s <strong>About</strong> page to add the podcast
                     to your collection.
@@ -66,28 +67,28 @@
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">How do I stop receiving email notifications?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "How do I stop receiving email notifications?" %}</summary>
                 <p>
                     Go to the <a class="link"
                         href="{% url 'users:preferences'%}">Preferences</a> section in the <strong>Settings</strong> area, uncheck the option <strong>Send email notifications</strong> and click the save button.
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">How do I remove an episode from my history?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "How do I remove an episode from my history?" %}</summary>
                 <p>
                     Go to the episode page and click the trash icon {% include "icons/trash.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %}
                     to permanently remove the episode from your History.
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">Can I import my feeds from another podcast app?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "Can I import my feeds from another podcast app?" %}</summary>
                 <p>
                     If your podcast app supports <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> export, you can download the OPML file to your device and upload it to <strong>{{ request.site.name }}</strong> in the <a class="link"
                         href="{% url 'users:import_export_podcast_feeds' %}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">Can I save my podcast subscriptions to my device?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "Can I save my podcast subscriptions to my device?" %}</summary>
                 <p>
                     You can download your podcast feed collection in <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> format in the <a class="link"
                         href="{% url 'users:import_export_podcast_feeds' %}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
@@ -102,7 +103,7 @@
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">How do I save an episode to listen to later?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "How do I save an episode to listen to later?" %}</summary>
                 <p>
                     Click the star icon {% include "icons/star.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %}
                     in the episode page to add an episode to your <a class="link" href="{% url 'episodes:bookmarks' %}">Bookmarks</a>.
@@ -110,7 +111,7 @@
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">How often are podcasts updated?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "How often are podcasts updated?" %}</summary>
                 <p>
                     Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
                     submitted new content in a long time may be updated every few days.
@@ -127,7 +128,7 @@
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">Help! I've found a bug. How do I report it?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "Help! I've found a bug. How do I report it?" %}</summary>
                 <p>
                     Sorry! If you find a bug we would be very grateful if you report it
                     <a class="link"
@@ -146,7 +147,7 @@
                 </p>
             </details>
             <details>
-                <summary class="cursor-pointer focus:font-bold">How do I delete my account?</summary>
+                <summary class="cursor-pointer focus:font-bold">{% translate "How do I delete my account?" %}</summary>
                 <p>
                     Go to <a class="link"
                         href="{% url 'users:delete_account' %}">Delete Account</a> section in the <strong>Settings</strong> area. If you delete your account,
