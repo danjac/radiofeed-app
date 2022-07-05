@@ -37,25 +37,16 @@ def _parse_feed(channel):
             categories=list(finder.iter("//itunes:category/@text")),
             items=list(_parse_items(channel)),
             **finder.to_dict(
-                title="title/text()",
-                language="language/text()",
                 complete="itunes:complete/text()",
+                cover_url=("itunes:image/@href", "image/url/text()"),
+                description=("description/text()", "itunes:summary/text()"),
                 explicit="itunes:explicit/text()",
-                cover_url=(
-                    "itunes:image/@href",
-                    "image/url/text()",
-                ),
-                link="link/text()",
-                funding_url="podcast:funding/@url",
                 funding_text="podcast:funding/text()",
-                description=(
-                    "description/text()",
-                    "itunes:summary/text()",
-                ),
-                owner=(
-                    "itunes:author/text()",
-                    "itunes:owner/itunes:name/text()",
-                ),
+                funding_url="podcast:funding/@url",
+                language="language/text()",
+                link="link/text()",
+                owner=("itunes:author/text()", "itunes:owner/itunes:name/text()"),
+                title="title/text()",
             ),
         )
 
@@ -73,35 +64,23 @@ def _parse_item(item):
         return Item(
             keywords=" ".join(finder.iter("category/text()")),
             **finder.to_dict(
-                guid="guid/text()",
-                title="title/text()",
-                pub_date=(
-                    "pubDate/text()",
-                    "pubdate/text()",
-                ),
-                media_url=(
-                    "enclosure//@url",
-                    "media:content//@url",
-                ),
-                media_type=(
-                    "enclosure//@type",
-                    "media:content//@type",
-                ),
                 cover_url="itunes:image/@href",
-                link="link/text()",
-                explicit="itunes:explicit/text()",
-                duration="itunes:duration/text()",
-                length=(
-                    "enclosure//@length",
-                    "media:content//@fileSize",
-                ),
-                episode="itunes:episode/text()",
-                season="itunes:season/text()",
-                episode_type="itunes:episodetype/text()",
                 description=(
                     "content:encoded/text()",
                     "description/text()",
                     "itunes:summary/text()",
                 ),
+                duration="itunes:duration/text()",
+                episode="itunes:episode/text()",
+                episode_type="itunes:episodetype/text()",
+                explicit="itunes:explicit/text()",
+                guid="guid/text()",
+                length=("enclosure//@length", "media:content//@fileSize"),
+                link="link/text()",
+                media_type=("enclosure//@type", "media:content//@type"),
+                media_url=("enclosure//@url", "media:content//@url"),
+                pub_date=("pubDate/text()", "pubdate/text()"),
+                season="itunes:season/text()",
+                title="title/text()",
             ),
         )
