@@ -1,27 +1,33 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %} | Signup{% endblock %}
+{% block title %} | {% translate "Signup" %}{% endblock %}
 
 {% block content %}
-    <h1 class="mb-3 font-bold">Sign Up</h1>
+    {% with provider_name=account.get_provider.name site_name=site.name %}
+        <h1 class="mb-3 font-bold">Sign Up</h1>
 
-    <p class="mb-3">{% with provider_name=account.get_provider.name site_name=site.name %}You are about to
-        use your {{ provider_name }} account to login to
-        {{ site_name }}. As a final step, please complete the following form:{% endwith %}
-    </p>
+        <p class="mb-3">
+            {% blocktranslate %}
+                You are about to
+                use your {{ provider_name }} account to login to
+                {{ site_name }}. As a final step, please complete the following form:
+            {% endblocktranslate %}
+        </p>
 
-    <form method="post"
-        action="{{ request.path }}"
-        class="p-3 border dark:border-gray-500 w-full sm:w-3/4 md:w-1/2"
-        hx-disable="true"
-        novalidate>
-        {% csrf_token %}
-        {{ form }}
-        <div class="flex items-center justify-end">
-            <button class="inline-flex items-center btn btn-default">
-                {% include "icons/plus.svg" with css_class="h-4 w-4 mr-2" %}
-                Sign Up
-            </button>
-        </div>
-    </form>
+        <form method="post"
+            action="{{ request.path }}"
+            class="p-3 border dark:border-gray-500 w-full sm:w-3/4 md:w-1/2"
+            hx-disable="true"
+            novalidate>
+            {% csrf_token %}
+            {{ form }}
+            <div class="flex items-center justify-end">
+                <button class="inline-flex items-center btn btn-default">
+                    {% include "icons/plus.svg" with css_class="h-4 w-4 mr-2" %}
+                    {% translate "Sign Up" %}
+                </button>
+            </div>
+        </form>
+    {% endwith %}
 {% endblock %}
