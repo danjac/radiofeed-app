@@ -7,60 +7,46 @@ from django.utils import timezone
 from radiofeed.feedparser.models import Feed, Item
 
 
+@pytest.fixture
+def item_dict():
+    return {
+        "guid": "test",
+        "title": "test",
+        "media_url": "https://example.com/",
+        "media_type": "audio/mpeg",
+        "pub_date": timezone.now() - timedelta(days=1),
+    }
+
+
 class TestItem:
-    def test_pub_date_none(self):
+    def test_pub_date_none(self, item_dict):
         with pytest.raises(ValueError):
-            Item(
-                guid="test",
-                title="test",
-                media_url="https://example.com/",
-                media_type="audio/mpeg",
-                pub_date=None,
-            )
+            Item(**item_dict | {"pub_date": None})
 
-    def test_pub_date_in_future(self):
+    def test_pub_date_in_future(self, item_dict):
         with pytest.raises(ValueError):
-            Item(
-                guid="test",
-                title="test",
-                media_url="https://example.com/",
-                media_type="audio/mpeg",
-                pub_date=timezone.now() + timedelta(days=1),
-            )
+            Item(**item_dict | {"pub_date": timezone.now() + timedelta(days=1)})
 
-    def test_not_audio_mimetype(self):
+    def test_not_audio_mimetype(self, item_dict):
         with pytest.raises(ValueError):
-            Item(
-                guid="test",
-                title="test",
-                media_url="https://example.com/",
-                media_type="video/mpeg",
-                pub_date=timezone.now() - timedelta(days=1),
-            )
+            Item(**item_dict | {"media_type": "video/mpeg"})
 
-    def test_defaults(self):
-        item = Item(
-            guid="test",
-            title="test",
-            media_url="https://example.com/",
-            media_type="audio/mpeg",
-            pub_date=timezone.now() - timedelta(days=1),
-        )
+    def test_default_keywords_from_categories(self, item_dict):
+        item = Item(**item_dict, categories=["Gaming", "Hobbies", "Video Games"])
+        assert item.keywords == "Gaming Hobbies Video Games"
 
+    def test_defaults(self, item_dict):
+        item = Item(**item_dict)
         assert item.explicit is False
         assert item.episode_type == "full"
+        assert item.categories == []
+        assert item.keywords == ""
 
 
 class TestFeed:
     @pytest.fixture
-    def item(self):
-        return Item(
-            guid="test",
-            title="test",
-            media_url="https://example.com/",
-            media_type="audio/mpeg",
-            pub_date=timezone.now() - timedelta(days=1),
-        )
+    def item(self, item_dict):
+        return Item(**item_dict)
 
     def test_language(self, item):
         feed = Feed(
