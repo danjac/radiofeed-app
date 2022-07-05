@@ -61,17 +61,20 @@ class Item:
         default=None,
     )
 
-    keywords: str = attrs.field(
-        converter=attrs.converters.default_if_none(""),
-        default=None,
-    )
+    categories: list[str] = attrs.field(default=attrs.Factory(list))
+
+    keywords: str = attrs.field()
 
     @pub_date.validator
-    def _pub_date_ok(self, attribute, value):
+    def _check_pub_date(self, attribute, value):
         if value is None:
             raise ValueError("pub_date cannot be null")
         if value > timezone.now():
             raise ValueError("pub_date cannot be in future")
+
+    @keywords.default
+    def _default_keywords(self):
+        return " ".join(filter(None, self.categories))
 
 
 @attrs.define(kw_only=True, frozen=True)

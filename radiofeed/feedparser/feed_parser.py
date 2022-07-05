@@ -14,7 +14,7 @@ from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import tokenize
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError
-from radiofeed.feedparser.models import Feed
+from radiofeed.feedparser.models import Feed, Item
 from radiofeed.feedparser.rss_parser import parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
@@ -25,6 +25,9 @@ class FeedParser:
     Args:
         podcast (Podcast)
     """
+
+    _feed_attrs = attrs.fields(Feed)
+    _item_attrs = attrs.fields(Item)
 
     def __init__(self, podcast):
         self._podcast = podcast
@@ -136,9 +139,9 @@ class FeedParser:
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(
-                    attrs.fields(Feed).categories,
-                    attrs.fields(Feed).complete,
-                    attrs.fields(Feed).items,
+                    self._feed_attrs.categories,
+                    self._feed_attrs.complete,
+                    self._feed_attrs.items,
                 ),
             ),
         )
@@ -253,4 +256,13 @@ class FeedParser:
         )
 
     def _make_episode(self, item, episode_id=None):
-        return Episode(pk=episode_id, podcast=self._podcast, **attrs.asdict(item))
+        return Episode(
+            pk=episode_id,
+            podcast=self._podcast,
+            **attrs.asdict(
+                item,
+                filter=attrs.filters.exclude(
+                    self._item_attrs.categories,
+                ),
+            ),
+        )

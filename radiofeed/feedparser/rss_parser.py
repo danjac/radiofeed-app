@@ -54,7 +54,7 @@ def _parse_feed(channel):
 def _parse_item(item):
     with xpath_finder(item, _namespaces) as finder:
         return Item(
-            keywords=" ".join(finder.iter("category/text()")),
+            categories=list(finder.iter("category/text()")),
             **finder.to_dict(
                 cover_url="itunes:image/@href",
                 description=(
