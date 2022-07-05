@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %} | New Releases {% if promoted %} | Promoted {% endif %} {% endblock %}
+{% block title %} | {% translate "New Releases" %} {% if promoted %} | {% translate "Promoted" %} {% endif %} {% endblock %}
 
 {% block content %}
 
     <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
         <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-            New Releases {% if promoted and has_subscriptions %} - Promoted{% elif has_subscriptions %} - My Podcasts{% endif %}
+            {% translate "New Releases" %} {% if promoted and has_subscriptions %} - {% translate "Promoted" %}{% elif has_subscriptions %} - {% translate "My Podcasts" %}{% endif %}
         </h1>
         {% if not has_subscriptions %}
             <div class="flex items-center justify-center sm:justify-end space-x-3">
-                {% include "search/search_form.html" with placeholder="Find an episode..." %}
+                {% include "search/search_form.html" with placeholder=_("Find an episode...") %}
             </div>
         {% endif %}
     </div>
@@ -20,15 +21,15 @@
             <div class="flex items-center justify-center sm:justify-start">
                 {% if promoted %}
                     <a href="{% url 'episodes:index' %}"
-                        class="link">My Podcasts</a>
+                        class="link">{% translate "My Podcasts" %}</a>
                 {% else %}
                     <a href="{% url 'episodes:index' %}?promoted=true"
-                        class="link">Promoted</a>
+                        class="link">{% translate "Promoted" %}</a>
                 {% endif %}
             </div>
 
             <div class="flex items-center justify-center sm:justify-end space-x-3">
-                {% include "search/search_form.html" with placeholder="Find an episode..." %}
+                {% include "search/search_form.html" with placeholder=_("Find an episode...") %}
             </div>
         </div>
     {% endif %}
