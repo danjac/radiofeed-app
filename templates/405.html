@@ -1,7 +1,8 @@
 {% extends "error_base.html" %}
-{% block title %}Error: 405 Method Not Allowed{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Error: 405 Method Not Allowed" %}{% endblock %}
 {% block content %}
     <p>
-        Sorry, you cannot perform this action. You may have disabled JavaScript on your browser or are using an older browser that does not support this action.
+        {% translate "Sorry, you cannot perform this action. You may have disabled JavaScript on your browser or are using an older browser that does not support this action." %}
     </p>
 {% endblock %}
