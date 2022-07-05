@@ -34,6 +34,8 @@ def parse_rss(content):
 def _parse_feed(channel):
     with xpath_finder(channel, _namespaces) as finder:
         return Feed(
+            categories=list(finder.iter("//itunes:category/@text")),
+            items=list(_parse_items(channel)),
             **finder.to_dict(
                 title="title/text()",
                 language="language/text()",
@@ -55,8 +57,6 @@ def _parse_feed(channel):
                     "itunes:owner/itunes:name/text()",
                 ),
             ),
-            categories=list(finder.iter("//itunes:category/@text")),
-            items=list(_parse_items(channel)),
         )
 
 
@@ -71,6 +71,7 @@ def _parse_items(channel):
 def _parse_item(item):
     with xpath_finder(item, _namespaces) as finder:
         return Item(
+            keywords=" ".join(finder.iter("category/text()")),
             **finder.to_dict(
                 guid="guid/text()",
                 title="title/text()",
@@ -103,5 +104,4 @@ def _parse_item(item):
                     "itunes:summary/text()",
                 ),
             ),
-            keywords=" ".join(finder.iter("category/text()")),
         )
