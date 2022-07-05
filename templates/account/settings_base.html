@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %} | Settings {% endblock %}
+{% block title %} | {% translate "Settings" %} {% endblock %}
 
 {% block content %}
     {% if user.is_authenticated %}
-        <h1 class="font-bold break-words mb-6 max-w-max text-lg md:text-xl xl:text-2xl">Settings for {{ user.username }}</h1>
+        <h1 class="font-bold break-words mb-6 max-w-max text-lg md:text-xl xl:text-2xl">
+            {% blocktranslate with username=user.username %}Settings for {{ username }}{% endblocktranslate %}
+        </h1>
         <div id="settings-content">
             <nav class="mb-3 border-b dark:border-gray-500">
                 <ul class="flex items-center overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none space-x-6 pb-3">
@@ -12,44 +15,44 @@
                         {% active_link 'users:preferences' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                                title="Preferences"
-                                href="{{ link.url }}">Preferences</a>
+                                title="{% translate "Preferences" %}"
+                                href="{{ link.url }}">{% translate "Preferences" %}</a>
                         </li>
                         {% active_link 'users:import_export_podcast_feeds' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                                title="Import/Export OPML"
-                                href="{{ link.url }}">Import/Export OPML</a>
+                                title="{% translate "Import/Export OPML" %}"
+                                href="{{ link.url }}">{% translate "Import/Export OPML" %}</a>
                         </li>
                         {% active_link 'users:stats' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                                title="Statistics"
-                                href="{{ link.url }}">Statistics</a>
+                                title="{% translate "Statistics" %}"
+                                href="{{ link.url }}">{% translate "Statistics" %}</a>
                         </li>
                         {% active_link 'account_email' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                                title="Email Addresses"
-                                href="{{ link.url }}">Email Addresses</a>
+                                title="{% translate "Email Addresses" %}"
+                                href="{{ link.url }}">{% translate "Email Addresses" %}</a>
                         </li>
                         {% active_link 'account_change_password' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                                title="Change Password"
-                                href="{{ link.url }}">Change Password</a>
+                                title="{% translate "Change Password" %}"
+                                href="{{ link.url }}">{% translate "Change Password" %}</a>
                         </li>
                         {% active_link 'socialaccount_connections' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                                title="Social Logins"
-                                href="{{ link.url }}">Social Logins</a>
+                                title="{% translate "Social Logins" %}"
+                                href="{{ link.url }}">{% translate "Social Logins" %}</a>
                         </li>
                         {% active_link 'users:delete_account' as link %}
                         <li>
                             <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                                title="Delete Account"
-                                href="{{ link.url }}">Delete Account</a>
+                                title="{% translate "Delete Account" %}"
+                                href="{{ link.url }}">{% translate "Delete Account" %}</a>
                         </li>
                     {% endwith %}
                 </ul>
