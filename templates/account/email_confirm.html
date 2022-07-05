@@ -11,7 +11,7 @@
 
         {% user_display confirmation.email_address.user as user_display %}
         <p class="mb-3">
-            {% blocktranslate email=confirmation.email_address.email %}
+            {% blocktranslate with email=confirmation.email_address.email %}
                 Please confirm that <strong>{{ email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             {% endblocktranslate %}
         </p>

@@ -56,4 +56,5 @@ jobs:
         run: |
           source .venv/bin/activate
           xargs python -m nltk.downloader < nltk.txt
+          python manage.py validate_templates
           pytest -x
