@@ -1,7 +1,7 @@
 {% extends "about/base.html" %}
 {% load i18n socialaccount %}
 
-{% block title %}{{ block.super }} | Terms {% endblock %}
+{% block title %}{{ block.super }} | {% translate "Terms" %} {% endblock %}
 
 {% block about_content %}
 
@@ -260,7 +260,6 @@
         <p>
             {% blocktranslate %}
                 <strong>Type:</strong> Session Cookies
-
             {% endblocktranslate %}
         </p>
 
@@ -638,9 +637,9 @@
 
         <p>
             {% blocktranslate with email=site_config.contact_email %}
-            If you have any questions about this Privacy Policy, You can contact us at
-            <a href="mailto:{{ email }}">{{ email }}</a>.{% endblocktrans %}
-</p>
+                If you have any questions about this Privacy Policy, You can contact us at
+                <a href="mailto:{{ email }}">{{ email }}</a>.{% endblocktranslate %}
+        </p>
 
-</div>
+    </div>
 {% endblock about_content %}
