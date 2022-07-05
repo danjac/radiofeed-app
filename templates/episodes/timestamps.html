@@ -2,16 +2,16 @@
     id="episode-timestamps-{{ episode.id }}"
     {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     <div class="flex items-center space-x-2 sm:space-x-3">
-        {% include "includes/date.html" with value=episode.pub_date title="Release Date" %}
+        {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
         {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
             {% if duration %}
                 <div>
                     {% if current_time > 60 and current_time < duration %}
-                        <span title="Completed">
+                        <span title="{% translate "Completed" %}">
                             {{ current_time|format_duration }}
                         </span> /
                     {% endif %}
-                    <span title="Duration">
+                    <span title="{% translate "Duration" %}">
                         {{ duration|format_duration }}
                     </span>
                 </div>
@@ -20,7 +20,7 @@
     </div>
     {% if listened %}
         <div>
-            Listened {% include "includes/date.html" with value=listened %}
+            {% translate "Listened" %} {% include "includes/date.html" with value=listened %}
         </div>
     {% endif %}
 </div>

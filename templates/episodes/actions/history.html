@@ -1,3 +1,4 @@
+{% load i18n %}
 {% with ICON_CSS="h-5 w-5 md:h-6 md:w-6" target=episode.get_history_target %}
     <div class="flex items-center space-x-3 md:space-x-4"
         id="{{ target }}"
@@ -6,9 +7,9 @@
         {% if hx_oob %}hx-swap-oob="true"
         {% endif %}>
         {% if listened and not is_playing %}
-            <button title="Remove from History"
+            <button title="{% translate "Remove from History" %}"
                 class="link"
-                hx-confirm="Are you sure you want to remove this episode from your History?"
+                hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}"
                 hx-delete="{% url 'episodes:remove_audio_log' episode.id %}">
                 {% include "icons/trash.svg" with css_class=ICON_CSS %}
             </button>
