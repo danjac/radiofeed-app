@@ -1,4 +1,4 @@
-{% load static %}
+{% load i18n static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,7 +47,7 @@
                     <li>
 
                         <a class="font-bold text-lg md:text-xl xl:text-2xl hover:text-blue-300"
-                            title="Radiofeed Home Page"
+                            title="{% translate "Home Page" %}"
                             href="{{ home_url }}">Radiofeed</a>
                     </li>
 
@@ -57,7 +57,7 @@
         </header>
         <main class="w-full flex justify-center mt-12">
             <div class="p-3 border mx-auto w-4/5 md:w-2/3 text-center">
-                <h1 class="mb-3 font-bold text-lg md:text-xl xl:text-2xl">An error has occurred</h1>
+                <h1 class="mb-3 font-bold text-lg md:text-xl xl:text-2xl">{% translate "An error has occurred" %}</h1>
                 {% block content %}{% endblock %}
             </div>
         </main>

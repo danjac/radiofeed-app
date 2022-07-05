@@ -1,3 +1,4 @@
+{% load i18n %}
 {% get_site_config as site_config %}
 <footer class="relative pt-20">
     <div class="space-y-1 bg-black text-white p-1 w-full text-xs md:text-sm absolute bottom-0">
@@ -5,29 +6,33 @@
             <div>
                 <a class="text-gray-100 hover:text-blue-300"
                     href="mailto:{{ site_config.contact_email }}">
-                    Contact Us
+                    {% translate "Contact Us" %}
                 </a>
             </div>
             <div>
                 <a class="text-gray-100 hover:text-blue-300"
                     target="_blank"
                     rel="noopener"
-                    href="https://github.com/danjac/radiofeed/">Source Code</a>
-
+                    href="https://github.com/danjac/radiofeed/">
+                    {% translate "Source Code" %}
+                </a>
             </div>
             <div>
                 <a class="text-gray-100 hover:text-blue-300"
                     target="_blank"
                     rel="noopener"
-                    href="https://github.com/danjac/radiofeed/issues/">Report an Issue</a>
-
+                    href="https://github.com/danjac/radiofeed/issues/">
+                    {% translate "Report an Issue" %}
+                </a>
             </div>
 
         </div>
         <div class="flex items-center flex-wrap justify-center space-x-3">
             <p class="text-center font-semibold">
-                Podcast audio recordings, show notes and artwork are the property of the individual owners
-                and are neither affiliated with nor endorsed by {{ request.site.name }}.
+                {% blocktranslate with site_name=request.site.name %}
+                    Podcast audio recordings, show notes and artwork are the property of the individual owners
+                    and are neither affiliated with nor endorsed by {{ site_name }}.
+                {% endblocktranslate %}
             </p>
         </div>
     </div>

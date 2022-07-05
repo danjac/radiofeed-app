@@ -1,4 +1,4 @@
-{% load static %}
+{% load i18n static %}
 {% with site_name=request.site.name %}
     {% url 'podcasts:index' as home_url %}
     <header class="bg-black text-white sticky top-0 w-full z-20 shadow"
@@ -21,7 +21,7 @@
                 <li>
 
                     <a class="font-bold text-lg md:text-xl xl:text-2xl hover:text-blue-300"
-                        title="{{ site_name }}: Home Page"
+                        title="{{ site_name }}: {% translate "Home Page" %}"
                         href="{{ home_url }}">{{ site_name }}</a>
                 </li>
 
@@ -54,8 +54,8 @@
                     name="q"
                     accesskey="k"
                     autocomplete="off"
-                    aria-label="Search"
-                    placeholder="Search"
+                    aria-label="{% translate "Search" %}"
+                    placeholder="{% translate "Search" %}"
                     class="px-4 py-1 w-64 md:w-72 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900  text-sm md:text-base">
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2">
 
@@ -71,21 +71,21 @@
                 {% if user.is_authenticated %}
                     <li>
                         <a href="{% url 'users:preferences' %}"
-                            title="Settings for {{ user.username }}"
+                            title="{% blocktranslate with username=user.username %}Settings for {{ username }}{% endblocktranslate %}"
                             class="flex items-center font-bold hover:text-blue-300">
                             {{ user.username|slice:12 }}
                         </a>
                     </li>
                     <li class="xl:hidden flex items-center">
                         <button class="focus:outline-none transform transition"
-                            title="Toggle Menu"
+                            title="{% translate "Toggle Menu" %}"
                             x-cloak
                             x-show.transition="!sidebar"
                             @click="sidebar=true">
                             {% include "icons/menu.svg" with css_class="h-6 w-6" %}
                         </button>
                         <button class="focus:outline-none transform transition"
-                            title="Toggle Menu"
+                            title="{% translate "Toggle Menu" %}"
                             x-cloak
                             x-show.transition="sidebar"
                             @click="sidebar=false">
@@ -95,11 +95,11 @@
                 {% else %}
                     <li>
                         <a href="{% url 'about:faq' %}"
-                            title="About this Site"
+                            title="{% translate "About this Site" %}"
                             class="flex items-center font-bold hover:text-blue-300">
                             {% include "icons/info.svg" with css_class="h-6 w-6 md:mr-2" %}
                             <span class="hidden md:inline-block">
-                                About
+                                {% translate "About" %}
                             </span>
                         </a>
                     </li>
