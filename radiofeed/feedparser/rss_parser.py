@@ -51,14 +51,6 @@ def _parse_feed(channel):
         )
 
 
-def _parse_items(channel):
-    for item in channel.iterfind("item"):
-        try:
-            yield _parse_item(item)
-        except (TypeError, ValueError):
-            continue
-
-
 def _parse_item(item):
     with xpath_finder(item, _namespaces) as finder:
         return Item(
@@ -84,3 +76,11 @@ def _parse_item(item):
                 title="title/text()",
             ),
         )
+
+
+def _parse_items(channel):
+    for item in channel.iterfind("item"):
+        try:
+            yield _parse_item(item)
+        except (TypeError, ValueError):
+            continue
