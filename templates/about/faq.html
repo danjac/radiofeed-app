@@ -11,13 +11,18 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">What is {{ site_name }}?</summary>
                 <p>
-                    <strong>{{ site_name }}</strong> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
+                    {% blocktranslate %}
+                        <strong>{{ site_name }}</strong> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">Is {{ site_name }} free?</summary>
                 <p>
-                    <strong>{{ site_name }}</strong> is free of charge. It's also <a href="https://github.com/danjac/radiofeed/">free, open-source software!</a>
+                    {% blocktranslate %}
+                        <strong>{{ site_name }}</strong> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
+                        <strong>{{ site_name }}</strong> is free of charge. It's also <a href="https://github.com/danjac/radiofeed/">free, open-source software!</a>
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
@@ -29,7 +34,10 @@
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">
-                    Do I have to create an account to use {{ site_name }}?</summary>
+                    {% blocktranslate %}
+                        Do I have to create an account to use {{ site_name }}?
+                    {% endblocktranslate %}
+                </summary>
                 <p>
                     You don't have to <a class="link"
                         href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
@@ -56,14 +64,22 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "How do I add podcasts to my collection?" %}</summary>
                 <p>
-                    Just click the <strong>Subscribe</strong> button on the podcast&apos;s <strong>About</strong> page to add the podcast
-                    to your collection.
+                    {% blocktranslate %}
+                        Just click the <strong>Subscribe</strong> button on the podcast&apos;s <strong>About</strong> page to add the podcast
+                        to your collection.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
-                <summary class="cursor-pointer focus:font-bold">How does {{ site_name }} recommend new podcasts to me?</summary>
+                <summary class="cursor-pointer focus:font-bold">
+                    {% blocktranslate %}
+                        How does {{ site_name }} recommend new podcasts to me?
+                    {% endblocktranslate %}
+                </summary>
                 <p>
-                    We will send you an email with new recommendations every week. We recommend new podcasts using a machine-learning algorithm based on your collection and listening history.
+                    {% blocktranslate %}
+                        We will send you an email with new recommendations every week. We recommend new podcasts using a machine-learning algorithm based on your collection and listening history.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
@@ -97,9 +113,11 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">How do I add podcasts to {{ site_name }}?</summary>
                 <p>
-                    First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
-                    click the <strong>iTunes</strong> link in the search results page. Any new podcasts you find in iTunes will be automatically
-                    added to our database. We're also adding new podcasts every day!
+                    {% blocktranslate %}
+                        First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
+                        click the <strong>iTunes</strong> link in the search results page. Any new podcasts you find in iTunes will be automatically
+                        added to our database. We're also adding new podcasts every day!
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
@@ -113,37 +131,45 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "How often are podcasts updated?" %}</summary>
                 <p>
-                    Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
-                    submitted new content in a long time may be updated every few days.
+                    {% blocktranslate %}
+                        Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
+                        submitted new content in a long time may be updated every few days.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">Which browsers does {{ site_name }} support?</summary>
                 <p>
-                    <strong>{{ site_name }}</strong> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
-                    It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/danjac/radiofeed/issues">bug</a> and provide as much detail as possible.
+                    {% blocktranslate %}
+                        <strong>{{ site_name }}</strong> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
+                        It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
+                            target="_blank"
+                            rel="noopener"
+                            href="https://github.com/danjac/radiofeed/issues">bug</a> and provide as much detail as possible.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "Help! I've found a bug. How do I report it?" %}</summary>
                 <p>
-                    Sorry! If you find a bug we would be very grateful if you report it
-                    <a class="link"
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/danjac/radiofeed/issues">here</a>. You can also submit any ideas or suggestions you have!
+                    {% blocktranslate %}
+                        Sorry! If you find a bug we would be very grateful if you report it
+                        <a class="link"
+                            target="_blank"
+                            rel="noopener"
+                            href="https://github.com/danjac/radiofeed/issues">here</a>. You can also submit any ideas or suggestions you have!
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">I want to host an instance of {{ site_name }} myself. Is this possible?</summary>
                 <p>
-                    Absolutely, this is an open source project that can be hosted on your own server. Please see the <a class="link"
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/danjac/radiofeed/">README</a> for instructions on setting up and running an instance.
+                    {% blocktranslate %}
+                        Absolutely, this is an open source project that can be hosted on your own server. Please see the <a class="link"
+                            target="_blank"
+                            rel="noopener"
+                            href="https://github.com/danjac/radiofeed/">README</a> for instructions on setting up and running an instance.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details>
