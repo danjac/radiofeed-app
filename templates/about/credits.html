@@ -1,97 +1,109 @@
 {% extends "about/base.html" %}
+{% load i18n %}
 
-{% block title %}{{ block.super }} | Credits {% endblock %}
+{% block title %}{{ block.super }} | {% translate "Credits" %} {% endblock %}
 
 {% block about_content %}
-{% get_site_config as site_config %}
-{% with site_name=request.site.name %}
-    <div class="prose dark:prose-invert prose-sm md:prose break-words">
+    {% get_site_config as site_config %}
+    {% with site_name=request.site.name %}
+        <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
-        <h3>About Us</h3>
+            <h3>{% translate "About Us" %}</h3>
 
-        <p>
-            <strong>{{ request.site.name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
-        </p>
+            <p>
+                {% blocktranslate %}
+                    <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
+                {% endblocktranslate %}
+            </p>
 
-        <h3>Technology</h3>
+            <h3>{% translate "Technology" %}</h3>
 
-        <p><strong>{{ request.site.name }}</strong> is an
-            <a
-                target="_blank"
-                rel="noopener"
-                href="https://github.com/danjac/radiofeed/">open source project</a>
-            under the <a href=""
-                target="_blank"
-                rel="noopener"
-                href="https://mit-license.org/">MIT license</a>.
-        </p>
-
-        <p>
-            Runs on <a href="https://www.djangoproject.com/"
-                rel="noopener"
-                target="_blank">Django</a> with the help of <a href="https://htmx.org"
-                    rel="noopener"
-                    target="_blank">
-                    HTMX</a>, <a href="https://alpinejs.dev/"
-                        class="link underline"
+            <p>
+                {% blocktranslate %}
+                    <strong>{{ site_name }}</strong> is an
+                    <a
+                        target="_blank"
                         rel="noopener"
-                        target="_blank">AlpineJS</a>
-            and <a href="https://tailwindcss.com/"
-                rel="noopener"
-                target="_blank">Tailwind</a>.
-        </p>
-        <h3>Additional Credits</h3>
+                        href="https://github.com/danjac/radiofeed/">open source project</a>
+                    under the <a href=""
+                        target="_blank"
+                        rel="noopener"
+                        href="https://mit-license.org/">MIT license</a>.
+                {% endblocktranslate %}
+            </p>
 
-        <ul>
+            <p>
+                {% blocktranslate %}
+                    Runs on <a href="https://www.djangoproject.com/"
+                        rel="noopener"
+                        target="_blank">Django</a> with the help of <a href="https://htmx.org"
+                            rel="noopener"
+                            target="_blank">
+                            HTMX</a>, <a href="https://alpinejs.dev/"
+                                class="link underline"
+                                rel="noopener"
+                                target="_blank">AlpineJS</a>
+                    and <a href="https://tailwindcss.com/"
+                        rel="noopener"
+                        target="_blank">Tailwind</a>.
+                {% endblocktranslate %}
+            </p>
 
-            <li>
-                SVG icons from <a target="_blank"
-                    href="https://fontawesome.com"
-                    rel="noopener">Font Awesome</a>
-                and <a target="_blank"
-                    href="https://heroicons.com/"
-                    rel="noopener">Heroicons</a>
-            </li>
+            <h3>{% translate "Additional Credits" %}</h3>
 
-            <li>
-                Loader icon from <a target="_blank"
-                    href="https://github.com/SamHerbert/SVG-Loaders"
-                    rel="noopener">Sam Herbert</a>
-            </li>
+            <ul>
+                {% blocktranslate %}
+                    <li>
+                        SVG icons from <a target="_blank"
+                            href="https://fontawesome.com"
+                            rel="noopener">Font Awesome</a>
+                        and <a target="_blank"
+                            href="https://heroicons.com/"
+                            rel="noopener">Heroicons</a>
+                    </li>
 
-            <li>
-                Podcast icon made by <a
-                    href="https://www.flaticon.com/authors/freepik"
+                    <li>
+                        Loader icon from <a target="_blank"
+                            href="https://github.com/SamHerbert/SVG-Loaders"
+                            rel="noopener">Sam Herbert</a>
+                    </li>
+
+                    <li>
+                        Podcast icon made by <a
+                            href="https://www.flaticon.com/authors/freepik"
+                            rel="noopener"
+                            title="Freepik">Freepik</a> from
+                        <a href="https://www.flaticon.com/"
+                            rel="noopener"
+                            title="Flaticon">www.flaticon.com
+                        </a>
+                    </li>
+                {% endblocktranslate %}
+            </ul>
+
+            <h3>{% translate "General Disclaimer" %}</h3>
+
+            <p>
+                {% blocktranslate %}
+                    All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
+                    nor endorsed by {{ site_name }}. All audio files are played directly from the source.
+                {% endblocktranslate %}
+            </p>
+
+            <h3>{% translate "Contact Us" %}</h3>
+
+            <p class="flex items-center space-x-3">
+
+                {% if site_config.contact_email %}
+                    <a target="_blank"
+                        rel="noopener"
+                        href="mailto:{{ site_config.contact_email }}">{% translate "Feedback" %}</a>
+                {% endif %}
+
+                <a target="_blank"
                     rel="noopener"
-                    title="Freepik">Freepik</a> from
-                <a href="https://www.flaticon.com/"
-                    rel="noopener"
-                    title="Flaticon">www.flaticon.com
-                </a>
-            </li>
-        </ul>
-        <h3>General Disclaimer</h3>
-
-        <p>
-            All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
-            nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
-        </p>
-
-        <h3>Contact Us</h3>
-        <p class="flex items-center space-x-3">
-
-            {% if site_config.contact_email %}
-                <a
-                    target="_blank"
-                    rel="noopener"
-                    href="mailto:{{ site_config.contact_email }}">Feedback</a>
-            {% endif %}
-
-            <a
-                target="_blank"
-                rel="noopener"
-                href="https://github.com/danjac/radiofeed/issues">Issues</a>
-        </p>
-    </div>
-{% endwith %}
+                    href="https://github.com/danjac/radiofeed/issues">{% translate "Issues" %}</a>
+            </p>
+        </div>
+    {% endwith %}
 {% endblock about_content %}
