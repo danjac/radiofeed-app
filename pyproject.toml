@@ -61,6 +61,7 @@ pytest-forked = "^1.4.0"
 pytest-mock = "^3.7.0"
 pytest-randomly = "^3.11.0"
 pytest-xdist = "^2.5.0"
+django-coverage-plugin = "^2.0.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -106,11 +107,16 @@ multi_line_output=3
 [tool.coverage.run]
 source=["radiofeed"]
 omit=[
+    "**/stopwords/*.txt",
     "**/factories.py",
     "*/migrations/*",
     "*/tests/*",
     "*/settings/*",
     "*/wsgi.py",
+]
+
+plugins = [
+    'django_coverage_plugin',
 ]
 
 [tool.pytest.ini_options]
