@@ -9,6 +9,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
@@ -343,7 +344,7 @@ def subscribe(request, podcast_id):
     except IntegrityError:
         return HttpResponseConflict()
 
-    messages.success(request, "You are now subscribed to this podcast")
+    messages.success(request, _("You are now subscribed to this podcast"))
     return _subscribe_action_response(request, podcast, True)
 
 
@@ -366,7 +367,7 @@ def unsubscribe(request, podcast_id):
 
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
 
-    messages.info(request, "You are no longer subscribed to this podcast")
+    messages.info(request, _("You are no longer subscribed to this podcast"))
     return _subscribe_action_response(request, podcast, False)
 
 

@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
@@ -273,7 +274,7 @@ def remove_audio_log(request, episode_id):
 
     if not request.player.has(episode.id):
         AudioLog.objects.filter(user=request.user, episode=episode).delete()
-        messages.info(request, "Removed from History")
+        messages.info(request, _("Removed from History"))
 
     return TemplateResponse(
         request,
@@ -331,7 +332,7 @@ def add_bookmark(request, episode_id):
     except IntegrityError:
         return HttpResponseConflict()
 
-    messages.success(request, "Added to Bookmarks")
+    messages.success(request, _("Added to Bookmarks"))
 
     return _bookmark_action_response(request, episode, True)
 
@@ -355,7 +356,7 @@ def remove_bookmark(request, episode_id):
 
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
 
-    messages.info(request, "Removed from Bookmarks")
+    messages.info(request, _("Removed from Bookmarks"))
 
     return _bookmark_action_response(request, episode, False)
 

@@ -3,9 +3,10 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.template.defaultfilters import pluralize
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from django.views.decorators.http import require_http_methods
 
 from radiofeed.episodes.models import AudioLog, Bookmark
@@ -31,7 +32,7 @@ def user_preferences(request, target="preferences-form"):
 
         form.save()
 
-        messages.success(request, "Your preferences have been saved")
+        messages.success(request, _("Your preferences have been saved"))
 
     return TemplateResponse(
         request,
@@ -84,10 +85,14 @@ def import_podcast_feeds(request, target="opml-import-form"):
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
-                f"{new_feeds} podcast{pluralize(new_feeds)} added to your collection",
+                ngettext(
+                    "%(count)d podcast feed added to your collection",
+                    "%(count)d podcast feeds added to your collection",
+                    count=new_feeds,
+                ),
             )
         else:
-            messages.info(request, "No new podcasts found in uploaded file")
+            messages.info(request, _("No new podcasts found in uploaded file"))
 
     return TemplateResponse(
         request,
@@ -172,6 +177,6 @@ def delete_account(request):
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)
-        messages.info(request, "Your account has been deleted")
+        messages.info(request, _("Your account has been deleted"))
         return HttpResponseRedirect(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
