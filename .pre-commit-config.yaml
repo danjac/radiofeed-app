@@ -38,7 +38,7 @@ repos:
       hooks:
         - id: pydocstyle
           additional_dependencies: ['toml']
-          exclude: tests/|migrations/
+          exclude: tests/|migrations/|factories/
     - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
       rev: v1.3.0
       hooks:

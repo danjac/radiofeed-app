@@ -4,11 +4,11 @@ from radiofeed.users.emails import send_user_notification_email
 
 
 def send_recommendations_email(user, min_podcasts=2, max_podcasts=3):
-    """Sends email to user with a list of recommended podcasts based on their subscriptions
-    and listening history.
+    """Sends email to user with a list of recommended podcasts.
 
-    Recommended podcasts are saved to the database, so the user is not recommended the same podcasts
-    more than once.
+    Recommendaitons based on their subscriptions and listening history.
+
+    Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
 
     Args:
         user (User): authenticated user
@@ -18,7 +18,6 @@ def send_recommendations_email(user, min_podcasts=2, max_podcasts=3):
     Returns:
         bool: whether user has been sent recommendations email
     """
-
     podcast_ids = (
         set(
             Bookmark.objects.filter(user=user)
