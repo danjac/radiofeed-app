@@ -34,7 +34,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             username (str)
             email (str)
             password (str | None): if None sets unusable password
-            **kwargs: any other User fields
+            `**kwargs`: any other User fields
 
         Returns:
             User: saved User instance
@@ -55,7 +55,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             username (str)
             email (str)
             password (str)
-            **kwargs: any other User fields
+            `**kwargs`: any other User fields
 
         Returns:
             User: saved User instance

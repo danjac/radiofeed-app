@@ -62,7 +62,7 @@ def pagination_response(
         target (str): HTMX target
         page_size (int): number of items per page
         param (str): query string parameter for page
-        **pagination_kwargs: other Paginator kwargs
+        `**pagination_kwargs`: other Paginator kwargs
 
     Returns:
         TemplateResponse
