@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
     <h1 class="font-bold flex items-center justify-center sm:justify-start mb-3 text-lg md:text-xl xl:text-2xl">
@@ -12,25 +13,25 @@
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
                         <a class="link {% if link.match %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                            title="Search Podcasts"
-                            href="{{ link.url|add:search_qs }}">Podcasts</a>
+                            title="{% translate "Search Podcasts" %}"
+                            href="{{ link.url|add:search_qs }}">{% translate "Podcasts" %}</a>
                     </li>
                     {% active_link 'episodes:search_episodes' as link %}
                     <li>
                         <a class="link {% if link.match %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                            title="Search Episodes"
-                            href="{{ link.url|add:search_qs }}">Episodes</a>
+                            title="{% translate "Search Episodes" %}"
+                            href="{{ link.url|add:search_qs }}">{% translate "Episodes" %}</a>
                     </li>
                     {% active_link 'podcasts:search_itunes' as link %}
                     <li>
                         <a class="link {% if link.match %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                            title="Search iTunes"
-                            href="{{ link.url|add:search_qs }}">iTunes</a>
+                            title="{% translate "Search iTunes" %}"
+                            href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>
                     </li>
                 {% endwith %}
             </ul>
             <div class="flex items-center justify-center sm:justify-end">
-                {% include "search/search_form.html" with placeholder="Search..." %}
+                {% include "search/search_form.html" with placeholder=_("Search...") %}
             </div>
         </nav>
 

@@ -1,6 +1,7 @@
 {% extends "search/search_base.html" %}
+{% load i18n %}
 
-{% block title %} | Search | Podcasts {% endblock %}
+{% block title %} | {% translate "Search" %} | {% translate "Podcasts" %} {% endblock %}
 
 {% block search_content %}
     {% include pagination_template %}
