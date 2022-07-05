@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %} | Signup{% endblock %}
+{% block title %} | {% translate "Signup" %}{% endblock %}
 
 {% block content %}
 
@@ -8,9 +9,12 @@
         Sign Up
     </h1>
 
-    <p class="mb-3">Already have an account? Then please
-        <a class="underline link"
-            href="{{ login_url }}">sign in</a>.
+    <p class="mb-3">
+        {% blocktranslate %}
+            Already have an account? Then please
+            <a class="underline link"
+                href="{{ login_url }}">sign in</a>.
+        {% endblocktranslate %}
     </p>
 
     <form method="post"
@@ -30,7 +34,7 @@
         <div>
             <button class="inline-flex items-center btn btn-default">
                 {% include "icons/plus.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
-                Sign Up
+                {% translate "Sign Up" %}
             </button>
         </div>
     </form>
@@ -38,7 +42,10 @@
     {% include "account/social_logins.html" %}
 
     <p class="mt-3">
-        Please review our <a class="underline link"
-            href="{% url 'about:terms' %}">Privacy Policy</a> before you join.
+        {% url 'about:terms' as terms_url %}
+        {% blocktranslate %}
+            Please review our <a class="underline link"
+                href="{{ terms_url }}">Privacy Policy</a> before you join.
+        {% endblocktranslate %}
     </p>
 {% endblock %}
