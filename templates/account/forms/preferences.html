@@ -1,4 +1,4 @@
-
+{% load i18n %}
 <form method="post"
     action="{{ request.path }}"
     class="space-y-3"
@@ -13,7 +13,7 @@
     <div>
         <button class="inline-flex items-center btn btn-default">
             {% include "icons/check.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
-            Save Changes
+            {% translate "Save Changes" %}
         </button>
     </div>
 </form>

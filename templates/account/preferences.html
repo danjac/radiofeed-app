@@ -1,6 +1,7 @@
 {% extends "account/settings_base.html" %}
+{% load i18n %}
 
-{% block title %}{{ block.super }} | Preferences{% endblock %}
+{% block title %}{{ block.super }} | {% translate "Preferences" %}{% endblock %}
 
 {% block settings_content %}
     {% include "account/forms/preferences.html" %}
