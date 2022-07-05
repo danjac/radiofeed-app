@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block title %} | {{ podcast.cleaned_title }}{% endblock %}
 
@@ -89,7 +90,9 @@
                         <li>
                             <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                 href="{{ link.url }}"
-                                title="{{ podcast.cleaned_title }} | About">About</a>
+                                title="{{ podcast.cleaned_title }} | {% translate "About" %}">
+                                {% translate "About" %}
+                            </a>
                         </li>
 
                         {% if num_episodes %}
@@ -97,7 +100,9 @@
                             <li>
                                 <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                     href="{{ link.url }}"
-                                    title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
+                                    title="{{ podcast.cleaned_title }} | {% translate "Episodes" %}">
+                                    {% translate "Episodes" %} ({{ num_episodes }})
+                                </a>
                             </li>
                         {% endif %}
 
@@ -106,7 +111,9 @@
                             <li>
                                 <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                     href="{{ link.url }}"
-                                    title="{{ podcast.cleaned_title }} | Similar">Similar</a>
+                                    title="{{ podcast.cleaned_title }} | {% translate "Similar" %}">
+                                    {% translate "Similar" %}
+                                </a>
                             </li>
                         {% endif %}
 
