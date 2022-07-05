@@ -5,9 +5,9 @@ from django.utils import timezone
 
 
 def set_cover_image_date(apps, schema_editor):
-    Podcast = apps.get_model("podcasts", "Podcast")
+    podcast_model = apps.get_model("podcasts", "Podcast")
 
-    Podcast.objects.filter(
+    podcast_model.objects.filter(
         cover_image__isnull=False, cover_image_date__isnull=True
     ).update(cover_image_date=timezone.now())
 

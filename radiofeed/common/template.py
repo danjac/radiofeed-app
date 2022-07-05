@@ -196,8 +196,7 @@ def share_buttons(context, url, subject, css_class=""):
     """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin.
 
     Args:
-        url (str): URL on page to share in link (automatically expanded to
-            absolute URI)
+        url (str): URL on page to share in link (automatically expanded to absolute URI)
         subject (str): subject line
         css_class (str): CSS classes to render in button
 

@@ -10,7 +10,7 @@ def parse_xml(content, *tags):
 
     Args:
         content (bytes): XML document
-        *tags (str): tag names
+        `*tags` (str): tag names
 
     Yields:
         lxml.etree.Element
@@ -62,7 +62,7 @@ class XPathFinder:
         Tries each path in turn. If no values found returns `default`.
 
         Args:
-            *paths (str): list of XPath paths to search through in order
+            `*paths` (str): list of XPath paths to search through in order
             default (Any):  value returned if no result found
 
         Returns:
@@ -79,7 +79,7 @@ class XPathFinder:
         All strings are stripped of extra whitespace. Should skip any unicode errors.
 
         Args:
-            *paths (str): list of XPath paths to search through in order
+            `*paths` (str): list of XPath paths to search through in order
 
         Yields:
             str

@@ -6,8 +6,9 @@ from django.db import migrations
 
 
 def set_removed_from_http_gone(apps, schema_editor):
-    Podcast = apps.get_model("podcasts.Podcast")
-    Podcast.objects.filter(http_status=http.HTTPStatus.GONE).update(result="removed")
+    apps.get_model("podcasts.Podcast").objects.filter(
+        http_status=http.HTTPStatus.GONE
+    ).update(result="removed")
 
 
 class Migration(migrations.Migration):
