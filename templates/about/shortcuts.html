@@ -1,128 +1,131 @@
 {% extends "about/base.html" %}
+{% load i18n %}
 
-{% block title %}{{ block.super }} | Keyboard Shortcuts {% endblock %}
+{% block title %}{{ block.super }} | {% translate "Keyboard Shortcuts" %}{% endblock %}
 
 {% block about_content %}
     <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
-        <h3>Player Shortcuts</h3>
+        <h3>{% translate "Player Shortcuts" %}</h3>
 
         <p>
-            These keyboard shortcuts are available when the Player is running.
+            {% translate "These keyboard shortcuts are available when the Player is running." %}
         </p>
 
-        <table aria-label="Navigation Shortcuts">
+        <table aria-label="{% translate "Navigation Shortcuts" %}">
             <thead>
                 <tr>
-                    <th scope="col">Action</th>
-                    <th scope="col">Key</th>
+                    <th scope="col">{% translate "Action" %}</th>
+                    <th scope="col">{% translate "Key" %}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Toggle Play/Pause</td>
-                    <td>Spacebar</td>
+                    <td>{% translate "Toggle Play/Pause" %}</td>
+                    <td>{% translate "Spacebar" %}</td>
                 </tr>
                 <tr>
-                    <td>Skip Backwards 10s</td>
-                    <td>Left Arrow</td>
+                    <td>{% translate "Skip Backwards 10s" %}</td>
+                    <td>{% translate "Left Arrow" %}</td>
                 </tr>
                 <tr>
                     <td>Skip Forwards 10s</td>
-                    <td>Right Arrow</td>
+                    <td>{% translate "Right Arrow" %}</td>
                 </tr>
                 <tr>
-                    <td>Increase Playback Rate</td>
+                    <td>{% translate "Increase Playback Rate" %}</td>
                     <td>alt+'+'</td>
                 </tr>
                 <tr>
-                    <td>Decrease Playback Rate</td>
+                    <td>{% translate "Decrease Playback Rate" %}</td>
                     <td>alt+'-'</td>
                 </tr>
                 <tr>
-                    <td>Reset Default Playback Rate</td>
+                    <td>{% translate "Reset Default Playback Rate" %}</td>
                     <td>alt+'0'</td>
                 </tr>
                 <tr>
-                    <td>Close Player (if running)</td>
+                    <td>{% translate "Close Player (if running)" %}</td>
                     <td>alt+shift+'x'</td>
                 </tr>
                 <tr>
-                    <td>Reload Player (if running)</td>
+                    <td>{% translate "Reload Player (if running)" %}</td>
                     <td>alt+shift+'r'</td>
                 </tr>
 
             </tbody>
         </table>
 
-        <h3>Navigation Shortcuts</h3>
+        <h3>{% translate "Navigation Shortcuts" %}</h3>
 
         <p>
-            These keyboard shortcuts should be used in combination with <strong>Alt+Shift</strong> keys on Windows and Linux
-            devices (Chrome/Firefox/Edge) and <strong>Ctrl+Option</strong> keys on Mac devices (Chrome/Firefox/Safari).
+            {% blocktranslate %}
+                These keyboard shortcuts should be used in combination with <strong>Alt+Shift</strong> keys on Windows and Linux
+                devices (Chrome/Firefox/Edge) and <strong>Ctrl+Option</strong> keys on Mac devices (Chrome/Firefox/Safari).
+                These keyboard shortcuts should be used in combination with <strong>Alt+Shift</strong> keys on Windows and Linux
+            {% endblocktranslate %}
         </p>
 
         <table
-            aria-label="Navigation Shortcuts">
+            aria-label="{% translate "Navigation Shortcuts" %}">
             <thead>
                 <tr>
                     <th scope="col"
-                    >Action</th>
+                    >{% translate "Action" %}</th>
                     <th scope="col"
-                    >Key</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Podcasts</td>
-                    <td>p</td>
-                </tr>
-                <tr>
-                    <td>New Releases</td>
-                    <td>n</td>
-                </tr>
-                <tr>
-                    <td>Categories</td>
-                    <td>c</td>
-                </tr>
-                <tr>
-                    <td>Discover</td>
-                    <td>d</td>
-                </tr>
-                <tr>
-                    <td>Play Queue</td>
-                    <td>q</td>
-                </tr>
-                <tr>
-                    <td>Favorites</td>
-                    <td>f</td>
-                </tr>
-                <tr>
-                    <td>History</td>
-                    <td>h</td>
-                </tr>
-                <tr>
-                    <td>Settings</td>
-                    <td>s</td>
-                </tr>
-                <tr>
-                    <td>About</td>
-                    <td>a</td>
-                </tr>
-                <tr>
-                    <td>Search</td>
-                    <td>k</td>
-                </tr>
-                <tr>
-                    <td>Login/Logout</td>
-                    <td>l</td>
-                </tr>
-                <tr>
-                    <td>Join</td>
-                    <td>j</td>
-                </tr>
-            </tbody>
-        </table>
+                    >{% translate "Key" %}</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{% translate "Podcasts" %}</td>
+                        <td>p</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "New Releases" %}</td>
+                        <td>n</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Categories" %}</td>
+                        <td>c</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Discover" %}</td>
+                        <td>d</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Play Queue" %}</td>
+                        <td>q</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Favorites" %}</td>
+                        <td>f</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "History" %}</td>
+                        <td>h</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Settings" %}</td>
+                        <td>s</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "About" %}</td>
+                        <td>a</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Search" %}</td>
+                        <td>k</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Login/Logout" %}</td>
+                        <td>l</td>
+                    </tr>
+                    <tr>
+                        <td>{% translate "Join" %}</td>
+                        <td>j</td>
+                    </tr>
+                </tbody>
+            </table>
 
-    </div>
+        </div>
 {% endblock about_content %}
