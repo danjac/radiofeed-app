@@ -35,6 +35,21 @@ class TestXPathFinder:
             "Mysterious Universe"
         ]
 
+    def test_to_dict(self, channel):
+
+        assert XPathFinder(channel).to_dict(
+            title="title/text()",
+            cover_url=(
+                "itunes:image/@href",
+                "image/url/text()",
+            ),
+            editor="managingEditor2/text()",
+        ) == {
+            "title": "Mysterious Universe",
+            "cover_url": "https://mysteriousuniverse.org/wp-content/uploads/2018/11/itunes_14k.jpg",
+            "editor": None,
+        }
+
     def test_first_exists(self, channel):
         assert XPathFinder(channel).first("title/text()") == "Mysterious Universe"
 
@@ -46,10 +61,8 @@ class TestXPathFinder:
 
     def test_default(self, channel):
         assert (
-            XPathFinder(channel).first(
-                "editor/text()", "managingEditor2/text()", default="unknown"
-            )
-            == "unknown"
+            XPathFinder(channel).first("editor/text()", "managingEditor2/text()")
+            is None
         )
 
 

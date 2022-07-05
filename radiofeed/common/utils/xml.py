@@ -56,22 +56,21 @@ class XPathFinder:
         self._element = element
         self._namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
-    def first(self, *paths, default=None):
+    def first(self, *paths):
         """Returns first matching text or attribute value.
 
         Tries each path in turn. If no values found returns `default`.
 
         Args:
             `*paths` (str): list of XPath paths to search through in order
-            default (Any):  value returned if no result found
 
         Returns:
-            Any: string of text/attribute, or default value if none found
+            str | None: string of text/attribute, or None if not found
         """
         try:
             return next(self.iter(*paths))
         except StopIteration:
-            return default
+            return None
 
     def iter(self, *paths):
         """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
@@ -91,3 +90,40 @@ class XPathFinder:
                         yield cleaned
         except UnicodeDecodeError:
             pass
+
+    def to_dict(self, **fields):
+        """Returns a dict with each field mapped to one or more xpaths.
+
+        Example:
+
+        .. code block:: python
+
+            finder.to_dict(
+                title="title/text()",
+                cover_url=[
+                    "itunes:image/@href",
+                    "image/url/text()",
+                ]
+            )
+
+        This should return e.g.:
+
+        .. code block:: python
+
+            {
+                "title": "Sample title",
+                "cover_url": "/path/to/url"
+            }
+
+        As this calls `first()` will default to None for any fields that cannot be found.
+
+        Args:
+            `**fields` (dict[str, str | Iterable]): dict of field and xpath mapping(s)
+
+        Returns:
+            dict[str, str | None]
+        """
+        return {
+            field: self.first(*[xpaths] if isinstance(xpaths, str) else xpaths)
+            for field, xpaths in fields.items()
+        }
