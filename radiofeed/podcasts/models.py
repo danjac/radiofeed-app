@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
@@ -136,12 +137,12 @@ class Podcast(models.Model):
     class ParseResult(models.TextChoices):
         """Result of feed parser process."""
 
-        SUCCESS = "success", "Success"
-        COMPLETE = "complete", "Complete"
-        NOT_MODIFIED = "not_modified", "Not Modified"
-        HTTP_ERROR = "http_error", "HTTP Error"
-        RSS_PARSER_ERROR = "rss_parser_error", "RSS Parser Error"
-        DUPLICATE_FEED = "duplicate_feed", "Duplicate Feed"
+        SUCCESS = "success", _("Success")
+        COMPLETE = "complete", _("Complete")
+        NOT_MODIFIED = "not_modified", _("Not Modified")
+        HTTP_ERROR = "http_error", _("HTTP Error")
+        RSS_PARSER_ERROR = "rss_parser_error", _("RSS Parser Error")
+        DUPLICATE_FEED = "duplicate_feed", _("Duplicate Feed")
 
     rss = models.URLField(unique=True, max_length=500)
     active = models.BooleanField(default=True)

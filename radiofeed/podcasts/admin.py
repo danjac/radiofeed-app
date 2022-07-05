@@ -2,6 +2,7 @@ import http
 
 from django.contrib import admin, messages
 from django.db.models import Count
+from django.utils.translation import gettext as _
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.feedparser.tasks import parse_feed
@@ -60,8 +61,8 @@ class ActiveFilter(admin.SimpleListFilter):
             tuple[tuple[str, str]]
         """
         return (
-            ("yes", "Active"),
-            ("no", "Inactive"),
+            ("yes", _("Active")),
+            ("no", _("Inactive")),
         )
 
     def queryset(self, request, queryset):
@@ -99,7 +100,7 @@ class ParseResultFilter(admin.SimpleListFilter):
         Returns:
             tuple[tuple[str, str]]
         """
-        return (("none", "None"),) + tuple(models.Podcast.ParseResult.choices)
+        return (("none", _("None")),) + tuple(models.Podcast.ParseResult.choices)
 
     def queryset(self, request, queryset):
         """Returns filtered queryset.
@@ -178,8 +179,8 @@ class PubDateFilter(admin.SimpleListFilter):
             tuple[tuple[str, str]]
         """
         return (
-            ("yes", "With pub date"),
-            ("no", "With no pub date"),
+            ("yes", _("With pub date")),
+            ("no", _("With no pub date")),
         )
 
     def queryset(self, request, queryset):
@@ -217,7 +218,7 @@ class PromotedFilter(admin.SimpleListFilter):
         Returns:
             tuple[tuple[str, str]]
         """
-        return (("yes", "Promoted"),)
+        return (("yes", _("Promoted")),)
 
     def queryset(self, request, queryset):
         """Returns filtered queryset.
@@ -248,7 +249,7 @@ class SubscribedFilter(admin.SimpleListFilter):
         Returns:
             tuple[tuple[str, str]]
         """
-        return (("yes", "Subscribed"),)
+        return (("yes", _("Subscribed")),)
 
     def queryset(self, request, queryset):
         """Returns filtered queryset.
@@ -322,13 +323,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             request (HttpRequest): request
             queryset (QuerySet): podcast queryset
         """
-        count = queryset.count()
-
         parse_feed.map(queryset.values_list("pk", flat=True))
 
         self.message_user(
             request,
-            f"{count} podcast(s) queued for update",
+            _("Podcast(s) queued for update"),
             messages.SUCCESS,
         )
 
@@ -340,7 +339,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             obj (Podcast): Podcast instance
         """
         parse_feed(obj.id)
-        self.message_user(request, "Podcast has been queued for update")
+        self.message_user(request, _("Podcast has been queued for update"))
 
     def get_ordering(self, request):
         """Returns default ordering.
