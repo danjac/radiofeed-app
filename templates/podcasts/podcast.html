@@ -1,6 +1,6 @@
+{% load i18n %}
 <article class="border dark:border-gray-500 flex items-center space-x-3"
     role="listitem">
-
 
     {% with COVER_IMAGE_CSS="h-16 w-16 md:h-20 md:w-20" %}
         <div class="{{ COVER_IMAGE_CSS }}">
@@ -21,9 +21,9 @@
         <h3 class="truncate w-60 sm:w-auto sm:max-w-md md:max-w-lg md:max-w-xl xl:max-w-2xl 2xl:max-w-3xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
 
             <a href="{{ podcast.get_latest_episode_url }}"
-                title="Latest Episode"
+                title="{% translate "Latest Episode" %}"
                 class="link font-semibold text-gray-600 dark:text-gray-300">
-                {% include "includes/date.html" with value=podcast.pub_date title="Latest Episode" %}
+                {% include "includes/date.html" with value=podcast.pub_date title=_("Latest Episode") %}
             </a>
         </h3>
     </div>

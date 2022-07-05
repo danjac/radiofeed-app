@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %} | Categories {% endblock %}
+{% block title %} | {% translate "Categories" %} {% endblock %}
 
 {% block content %}
     <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0 border-b dark:border-gray-500 pb-3">
         <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-            Categories
+            {% translate "Categories" %}
         </h1>
         <div class="flex items-center justify-center sm:justify-end space-x-3">
-            {% include "search/search_form.html" with placeholder="Find a category..." %}
+            {% include "search/search_form.html" with placeholder=_("Find a category...") %}
         </div>
     </div>
 
@@ -25,11 +26,7 @@
             </li>
         {% empty %}
             <li>
-                {% if request.search %}
-                    No results found for <span class="font-bold">{{ request.search.value }}</span>.
-                {% else %}
-                    Nothing to see here.
-                {% endif %}
+                {% include "includes/empty.html" %}
             </li>
         {% endfor %}
     </ul>
