@@ -1,6 +1,7 @@
 {% extends "podcasts/detail_base.html" %}
+{% load i18n %}
 
-{% block title %}{{ block.super }} | About{% endblock %}
+{% block title %}{{ block.super }} | {% translate "About" %}{% endblock %}
 
 {% block podcast_content %}
     {% with link=podcast.link|normalize_url funding_url=podcast.funding_url|normalize_url %}
@@ -36,19 +37,19 @@
                                 <a href="{{ link }}"
                                     class="link"
                                     target="_blank"
-                                    rel="noopener">Website</a>
+                                    rel="noopener">{% translate "Website" %}</a>
                             </div>
                         {% endif %}
                         <div>
                             <a href="{{ podcast.rss }}"
                                 class="link"
-                                download>RSS</a>
+                                download>{% translate "RSS" %}</a>
                         </div>
                         {% if user.is_staff %}
                             <div>
                                 <a href="{% url 'admin:podcasts_podcast_change' podcast.id %}"
                                     hx-disable="true"
-                                    class="link">Admin</a>
+                                    class="link">{% translate "Admin" %}</a>
                             </div>
                         {% endif %}
 
@@ -70,7 +71,7 @@
                 <a href="{{ podcast.get_latest_episode_url }}"
                     class="link"
                     title="Latest Episode">
-                    Latest episode released {% include "includes/date.html" with value=podcast.pub_date %}
+                    {% translate "Latest episode released " %}{% include "includes/date.html" with value=podcast.pub_date %}
                 </a>
             </div>
 
@@ -79,7 +80,7 @@
                     <div class="max-w-max flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
                         {% for category in categories %}
                             <a class="inline-flex items-center link"
-                                title="{{ category.name }} Podcasts"
+                                title="{{ category.name }} {% translate "Podcasts" %}"
                                 href="{{ category.get_absolute_url }}">
                                 {% include "icons/tag.svg" with css_class="h-4 w-4 mr-2" %}
                                 {{ category.name }}
