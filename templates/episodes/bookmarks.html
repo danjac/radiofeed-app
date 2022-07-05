@@ -1,26 +1,27 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %} | Bookmarks{% endblock %}
+{% block title %} | {% translate "Bookmarks" %}{% endblock %}
 
 {% block content %}
 
     {% if request.search %}
-        <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">Bookmarks</h1>
+        <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">{% translate "Bookmarks" %}</h1>
     {% endif %}
     <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
         {% if request.search %}
             <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
                 <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                    title="Search Episodes"
-                    class="link">Search All Podcasts</a>
+                    title="{% translate "Search Episodes" %}"
+                    class="link">{% translate "Search All Podcasts" %}</a>
             </nav>
         {% else %}
-            <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">Bookmarks</h1>
+            <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">{% translate "Bookmarks" %}</h1>
         {% endif %}
 
         {% if request.search or page_obj.paginator.count %}
             <div class="flex items-center justify-center sm:justify-end">
-                {% include "search/search_form.html" with placeholder="Search: Bookmarks" %}
+                {% include "search/search_form.html" with placeholder=_("Search: Bookmarks") %}
             </div>
         {% endif %}
     </div>
