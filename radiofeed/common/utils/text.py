@@ -3,8 +3,9 @@ import html
 import pathlib
 import re
 
-from datetime import timedelta
+from datetime import date, timedelta
 from functools import lru_cache
+from typing import Generator
 
 from django.template.defaultfilters import striptags
 from django.utils import timezone, translation
@@ -54,14 +55,11 @@ _stopwords_dir = pathlib.Path(__file__).resolve(strict=True).parent / "stopwords
 
 
 @lru_cache()
-def get_stopwords(language):
+def get_stopwords(language: str) -> frozenset[str]:
     """Return all stopwords for a language, if available.
 
     Args:
-        language (str): 2-char language code e.g. "en"
-
-    Returns:
-        frozenset[str]
+        language: 2-char language code e.g. "en"
     """
     try:
         return frozenset(
@@ -75,44 +73,30 @@ def get_stopwords(language):
         return frozenset()
 
 
-def clean_text(text):
-    """Scrub text of any HTML tags and entities, punctuation and numbers.
-
-    Args:
-        text (str): text to be cleaned
-
-    Returns:
-        str: cleaned text
-    """
+def clean_text(text: str) -> str:
+    """Scrub text of any HTML tags and entities, punctuation and numbers."""
     text = html.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
     text = re.sub(r"\d+", "", text)
     return text
 
 
-def tokenize(language, text):
+def tokenize(language: str, text: str) -> list[str]:
     """Extract all relevant keywords from text, removing any stopwords, HTML tags etc.
 
     Args:
-        language (str): 2-char language code e.g. "en"
-        text(str): text source
-
-    Returns:
-        list[str]
+        language: 2-char language code e.g. "en"
+        text: text source
     """
     if not (text := clean_text(text).casefold()):
         return []
 
     stopwords_for_language = get_stopwords(language)
 
-    return [
-        token
-        for token in _lemmatized_tokens(text)
-        if token and token not in stopwords_for_language
-    ]
+    return [token for token in _lemmatized_tokens(text) if token and token not in stopwords_for_language]
 
 
-def _get_date_stopwords(language):
+def _get_date_stopwords(language: str) -> Generator[str, None, None]:
     now = timezone.now()
     with translation.override(language):
 
@@ -127,23 +111,17 @@ def _get_date_stopwords(language):
             yield _format_date(dt, "l")
 
 
-def _get_extra_stopwords(language):
+def _get_extra_stopwords(language: str) -> list[str]:
     path = _stopwords_dir / f"stopwords_{language}.txt"
 
     return (
-        [
-            word
-            for word in (
-                word.strip().casefold() for word in path.read_text().splitlines()
-            )
-            if word
-        ]
+        [word for word in (word.strip().casefold() for word in path.read_text().splitlines()) if word]
         if path.exists()
         else []
     )
 
 
-def _lemmatized_tokens(text):
+def _lemmatized_tokens(text: str) -> Generator[str, None, None]:
     for token in _tokenizer.tokenize(text):
         try:
             yield _lemmatizer.lemmatize(token)
@@ -154,5 +132,5 @@ def _lemmatized_tokens(text):
             continue
 
 
-def _format_date(value, fmt):
+def _format_date(value: date, fmt: str) -> str:
     return date_format(value, fmt).casefold()

@@ -6,7 +6,7 @@ import markdown
 
 from django.template.defaultfilters import striptags
 
-_allowed_tags: list[str] = [
+_allowed_tags = [
     "a",
     "abbr",
     "acronym",
