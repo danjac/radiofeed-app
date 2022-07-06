@@ -4,11 +4,7 @@ import pytest
 
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.episodes.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
-    EpisodeFactory,
-)
+from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
@@ -102,15 +98,11 @@ class TestSearchEpisodes:
 class TestEpisodeDetail:
     @pytest.fixture
     def prev_episode(self, episode):
-        return EpisodeFactory(
-            podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7)
-        )
+        return EpisodeFactory(podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7))
 
     @pytest.fixture
     def next_episode(self, episode):
-        return EpisodeFactory(
-            podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7)
-        )
+        return EpisodeFactory(podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7))
 
     def test_anonymous(self, client, episode, prev_episode, next_episode, assert_ok):
         response = client.get(episode.get_absolute_url())

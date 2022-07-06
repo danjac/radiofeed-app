@@ -3,9 +3,9 @@ from __future__ import annotations
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
-from django.contrib.users.models import AnonymousUser
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse

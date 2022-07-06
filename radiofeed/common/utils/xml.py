@@ -35,7 +35,7 @@ class XPathFinder:
         namespaces: dict of XML namespaces
     """
 
-    def __init__(self, element: lxml.etree.Element, namespaces: Namespaces | None):
+    def __init__(self, element: lxml.etree.Element, namespaces: Namespaces | None = None):
         self._element = element
         self._namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 

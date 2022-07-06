@@ -11,7 +11,7 @@ def send_user_notification_email(
     subject: str,
     template_name: str,
     html_template_name: str,
-    context=dict | None,
+    context: dict | None = None,
 ) -> None:
     """Common function for sending any notifications to a user.
 
