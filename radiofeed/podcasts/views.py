@@ -4,8 +4,8 @@ import requests
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef
-from django.http import Http404, HttpResponseRedirect
+from django.db.models import Exists, OuterRef, QuerySet
+from django.http import Http404, HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -22,16 +22,11 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscri
 
 
 @require_http_methods(["GET"])
-def index(request):
+def index(request: HttpRequest) -> TemplateResponse:
     """Render default podcast home page.
 
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
 
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        TemplateResponse
     """
     subscribed = (
         frozenset(request.user.subscription_set.values_list("podcast", flat=True))
@@ -43,11 +38,7 @@ def index(request):
 
     podcasts = _get_podcasts().order_by("-pub_date").distinct()
 
-    podcasts = (
-        podcasts.filter(promoted=True)
-        if promoted
-        else podcasts.filter(pk__in=subscribed)
-    )
+    podcasts = podcasts.filter(promoted=True) if promoted else podcasts.filter(pk__in=subscribed)
 
     return pagination_response(
         request,
@@ -63,15 +54,8 @@ def index(request):
 
 
 @require_http_methods(["GET"])
-def search_podcasts(request):
-    """Render search page. Redirects to index page if search is empty.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse
-    """
+def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
+    """Render search page. Redirects to index page if search is empty."""
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
@@ -94,15 +78,8 @@ def search_podcasts(request):
 
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
-def search_itunes(request):
-    """Render iTunes search page. Redirects to index page if search is empty.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse
-    """
+def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
+    """Render iTunes search page. Redirects to index page if search is empty."""
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
@@ -123,41 +100,21 @@ def search_itunes(request):
 
 
 @require_http_methods(["GET"])
-def latest_episode(request, podcast_id, slug=None):
+def latest_episode(request: HttpRequest, podcast_id: int, slug: str | None = None) -> HttpResponseRedirect:
     """Redirects to the latest episode for a given podcast.
-
-    Args:
-        request (HttpRequest)
-        podcast_id (int): Podcast PK
-        slug (str | None): slug of podcast (used for SEO)
-
-    Returns:
-        HttpResponseRedirect
 
     Raises:
         Http404: podcast not found
     """
-    if (
-        episode := Episode.objects.filter(podcast=podcast_id)
-        .order_by("-pub_date")
-        .first()
-    ) is None:
+    if (episode := Episode.objects.filter(podcast=podcast_id).order_by("-pub_date").first()) is None:
         raise Http404()
 
     return HttpResponseRedirect(episode.get_absolute_url())
 
 
 @require_http_methods(["GET"])
-def similar(request, podcast_id, slug=None, limit=12):
+def similar(request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12) -> TemplateResponse:
     """List similar podcasts based on recommendations.
-
-    Args:
-        request (HttpRequest)
-        podcast_id (int): Podcast PK
-        slug (str | None): slug of podcast (used for SEO)
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404: podcast not found
@@ -182,16 +139,8 @@ def similar(request, podcast_id, slug=None, limit=12):
 
 
 @require_http_methods(["GET"])
-def podcast_detail(request, podcast_id, slug=None):
+def podcast_detail(request: HttpRequest, podcast_id: int, slug: str | None = None) -> TemplateResponse:
     """Render details for a single podcast.
-
-    Args:
-        request (HttpRequest)
-        podcast_id (int): Podcast PK
-        slug (str | None): slug of podcast (used for SEO)
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404: podcast not found
@@ -212,17 +161,10 @@ def podcast_detail(request, podcast_id, slug=None):
 
 
 @require_http_methods(["GET"])
-def episodes(request, podcast_id, slug=None, target="object-list"):
+def episodes(
+    request: HttpRequest, podcast_id: int, slug: str | None = None, target: str = "object-list"
+) -> TemplateResponse:
     """Render episodes for a single podcast.
-
-    Args:
-        request (HttpRequest)
-        podcast_id (int): Podcast PK
-        slug (str | None): slug of podcast (used for SEO)
-        target (str): HTMX pagination target
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404: podcast not found
@@ -258,19 +200,10 @@ def episodes(request, podcast_id, slug=None, target="object-list"):
 
 
 @require_http_methods(["GET"])
-def category_list(request):
-    """List all categories containing podcasts.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        TemplateResponse
-    """
+def category_list(request: HttpRequest) -> TemplateResponse:
+    """List all categories containing podcasts."""
     categories = (
-        Category.objects.annotate(
-            has_podcasts=Exists(_get_podcasts().filter(categories=OuterRef("pk")))
-        )
+        Category.objects.annotate(has_podcasts=Exists(_get_podcasts().filter(categories=OuterRef("pk"))))
         .filter(has_podcasts=True)
         .order_by("name")
     )
@@ -278,24 +211,14 @@ def category_list(request):
     if request.search:
         categories = categories.search(request.search.value)
 
-    return TemplateResponse(
-        request, "podcasts/categories.html", {"categories": categories}
-    )
+    return TemplateResponse(request, "podcasts/categories.html", {"categories": categories})
 
 
 @require_http_methods(["GET"])
-def category_detail(request, category_id, slug=None):
+def category_detail(request: HttpRequest, category_id: int, slug: str | None = None) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
-
-    Args:
-        request (HttpRequest)
-        category_id (int): Category PK
-        slug (str | None): slug of podcast (used for SEO)
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404: category not found
@@ -323,16 +246,11 @@ def category_detail(request, category_id, slug=None):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def subscribe(request, podcast_id):
+def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponseConflict | TemplateResponse:
     """Subscribe a user to a podcast.
 
-    Args:
-        request (HttpRequest)
-        podcast_id (int): Podcast PK
-
     Returns:
-        HttpResponse: returns HTTP CONFLICT if user is already subscribed
-            to this podcast, otherwise returns the subscribe action as HTMX snippet.
+        returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise returns the subscribe action as HTMX snippet.
 
     Raises:
         Http404: podcast not found
@@ -350,15 +268,8 @@ def subscribe(request, podcast_id):
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def unsubscribe(request, podcast_id):
+def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast.
-
-    Args:
-        request (HttpRequest)
-        podcast_id (int): Podcast PK
-
-    Returns:
-        TemplateResponse: subscribe action as HTMX snippet.
 
     Raises:
         Http404: podcast not found
@@ -371,16 +282,16 @@ def unsubscribe(request, podcast_id):
     return _subscribe_action_response(request, podcast, False)
 
 
-def _get_podcasts():
+def _get_podcasts() -> QuerySet[Podcast]:
     # we just want to include podcasts which have a pub date
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def _get_podcast_or_404(podcast_id):
+def _get_podcast_or_404(podcast_id: int) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id)
 
 
-def _podcast_detail_context(request, podcast, extra_context=None):
+def _podcast_detail_context(request: HttpRequest, podcast: Podcast, extra_context: dict | None = None) -> dict:
     return {
         "podcast": podcast,
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
@@ -388,7 +299,7 @@ def _podcast_detail_context(request, podcast, extra_context=None):
     } | (extra_context or {})
 
 
-def _subscribe_action_response(request, podcast, is_subscribed):
+def _subscribe_action_response(request: HttpRequest, podcast: Podcast, is_subscribed: bool) -> TemplateResponse:
     return TemplateResponse(
         request,
         "podcasts/actions/subscribe.html",
