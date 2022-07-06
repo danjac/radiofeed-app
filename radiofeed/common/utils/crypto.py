@@ -1,13 +1,6 @@
 import hashlib
 
 
-def make_content_hash(content):
-    """Hashes content to a hex string.
-
-    Args:
-        content (bytes)
-
-    Returns:
-        str
-    """
+def make_content_hash(content: bytes) -> str:
+    """Hashes content to a hex string."""
     return hashlib.sha256(content).hexdigest()

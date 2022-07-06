@@ -240,7 +240,7 @@ TZ_INFOS = {
 
 
 @functools.singledispatch
-def parse_date(value):
+def parse_date(value: str | datetime | date | None) -> datetime | None:
     """Parses a date string or object and returns a timezone-aware datetime object.
 
     If datetime passed will return the same instance with timezone awareness if not
@@ -248,17 +248,14 @@ def parse_date(value):
 
     Invalid inputs will return None.
 
-    Args:
-        value (str | date | datetime | None):  value to parse
-
     Returns:
-        datetime | None: timezone-aware datetime or None if invalid value.
+        timezone-aware datetime or None if invalid value.
     """
     return None
 
 
 @parse_date.register
-def _(value: datetime):
+def _(value: datetime) -> datetime | None:
     try:
         return value if is_aware(value) else make_aware(value)
     except ValueError:
@@ -276,12 +273,12 @@ def _(value: datetime):
 
 
 @parse_date.register
-def _(value: date):
+def _(value: date) -> datetime | None:
     return parse_date(datetime.combine(value, datetime.min.time()))
 
 
 @parse_date.register
-def _(value: str):
+def _(value: str) -> datetime | None:
 
     try:
         return parse_date(date_parser.parse(value, tzinfos=TZ_INFOS)) if value else None
