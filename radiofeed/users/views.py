@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -16,16 +16,8 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 @require_http_methods(["GET", "POST"])
 @login_required
-def user_preferences(request, target="preferences-form"):
-    """Handle user preferences.
-
-    Args:
-        request (HttpRequest)
-        target (str): HTMX form target
-
-    Returns:
-        TemplateResponse
-    """
+def user_preferences(request: HttpRequest, target: str = "preferences-form") -> TemplateResponse:
+    """Handle user preferences."""
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
     if request.method == "POST" and form.is_valid():
@@ -36,9 +28,7 @@ def user_preferences(request, target="preferences-form"):
 
     return TemplateResponse(
         request,
-        "account/forms/preferences.html"
-        if request.htmx.target == target
-        else "account/preferences.html",
+        "account/forms/preferences.html" if request.htmx.target == target else "account/preferences.html",
         {
             "form": form,
             "target": target,
@@ -48,15 +38,8 @@ def user_preferences(request, target="preferences-form"):
 
 @require_http_methods(["GET"])
 @login_required
-def import_export_podcast_feeds(request):
-    """Renders import/export page.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        TemplateResponse
-    """
+def import_export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
+    """Renders import/export page."""
     return TemplateResponse(
         request,
         "account/import_export_podcast_feeds.html",
@@ -69,16 +52,8 @@ def import_export_podcast_feeds(request):
 
 @require_http_methods(["POST"])
 @login_required
-def import_podcast_feeds(request, target="opml-import-form"):
-    """Imports an OPML document and subscribes user to any discovered feeds.
-
-    Args:
-        request (HttpRequest)
-        target (str): HTMX form target
-
-    Returns:
-        TemplateResponse
-    """
+def import_podcast_feeds(request: HttpRequest, target: str = "opml-import-form") -> TemplateResponse:
+    """Imports an OPML document and subscribes user to any discovered feeds."""
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
 
@@ -108,15 +83,8 @@ def import_podcast_feeds(request, target="opml-import-form"):
 
 @require_http_methods(["POST"])
 @login_required
-def export_podcast_feeds(request):
-    """Download OPML document containing feeds from user's subscriptions.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse: OPML document
-    """
+def export_podcast_feeds(request: HttpRequest) -> SimpleTemplateResponse:
+    """Download OPML document containing feeds from user's subscriptions."""
     podcasts = (
         Podcast.objects.filter(
             subscription__user=request.user,
@@ -130,23 +98,14 @@ def export_podcast_feeds(request):
         "account/podcasts.opml",
         {"podcasts": podcasts},
         content_type="text/x-opml",
-        headers={
-            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-        },
+        headers={"Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"},
     )
 
 
 @require_http_methods(["GET"])
 @login_required
-def user_stats(request):
-    """Render user statistics including listening history, subscriptions, etc.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        TemplateResponse
-    """
+def user_stats(request: HttpRequest) -> TemplateResponse:
+    """Render user statistics including listening history, subscriptions, etc."""
     logs = AudioLog.objects.filter(user=request.user)
 
     return TemplateResponse(
@@ -164,15 +123,11 @@ def user_stats(request):
 
 @require_http_methods(["GET", "POST"])
 @login_required
-def delete_account(request):
+def delete_account(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Delete account on confirmation.
 
-    Args:
-        request (HttpRequest)
-
     Returns:
-        HttpResponse: redirect to index page on delete confirmation, otherwise
-            render delete confirmation page.
+         redirect to index page on delete confirmation, otherwise render delete confirmation page.
     """
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
