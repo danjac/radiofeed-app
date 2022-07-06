@@ -1,7 +1,7 @@
 import datetime
 
 from django.conf import settings
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -10,15 +10,8 @@ from django.views.decorators.http import require_http_methods
 
 
 @require_http_methods(["POST"])
-def accept_cookies(request):
-    """Handles "accept" action on GDPR cookie banner.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse
-    """
+def accept_cookies(request: HttpRequest) -> HttpResponse:
+    """Handles "accept" action on GDPR cookie banner."""
     response = HttpResponse()
     response.set_cookie(
         "accept-cookies",
@@ -32,48 +25,23 @@ def accept_cookies(request):
 
 
 @require_http_methods(["GET"])
-def static_page(request, template_name, extra_context=None):
-    """Renders a simple web page. Use for help pages, "About" pages etc.
-
-    Args:
-        request (HttpRequest)
-        template_name (str): template
-        extra_context (dict | None): any extra template context
-
-    Returns:
-        TemplateResponse
-    """
+def static_page(request: HttpRequest, template_name: str, extra_context: dict | None = None) -> TemplateResponse:
+    """Renders a simple web page. Use for help pages, "About" pages etc."""
     return TemplateResponse(request, template_name, extra_context)
 
 
 @require_http_methods(["GET"])
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
-def favicon(request):
-    """Generates favicon file.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        FileResponse
-    """
-    return FileResponse(
-        (settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb")
-    )
+def favicon(request: HttpRequest) -> FileResponse:
+    """Generates favicon file."""
+    return FileResponse((settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb"))
 
 
 @require_http_methods(["GET", "HEAD"])
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def robots(request):
-    """Generates robots.txt file.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse
-    """
+def robots(request: HttpRequest) -> HttpResponse:
+    """Generates robots.txt file."""
     return HttpResponse(
         "\n".join(
             [
@@ -96,15 +64,8 @@ def robots(request):
 @require_http_methods(["GET", "HEAD"])
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def security(request):
-    """Generates security.txt file containing contact details etc.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse
-    """
+def security(request: HttpRequest) -> HttpResponse:
+    """Generates security.txt file containing contact details etc."""
     return HttpResponse(
         "\n".join(
             [
