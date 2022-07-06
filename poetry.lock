@@ -1243,6 +1243,49 @@ python-versions = ">=3.7"
 test = ["pre-commit", "pytest"]
 
 [[package]]
+name = "types-bleach"
+version = "5.0.2"
+description = "Typing stubs for bleach"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "types-markdown"
+version = "3.3.29"
+description = "Typing stubs for Markdown"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "types-python-dateutil"
+version = "2.8.18"
+description = "Typing stubs for python-dateutil"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "types-requests"
+version = "2.28.0"
+description = "Typing stubs for requests"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+types-urllib3 = "<1.27"
+
+[[package]]
+name = "types-urllib3"
+version = "1.26.16"
+description = "Typing stubs for urllib3"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "tzdata"
 version = "2022.1"
 description = "Provider of IANA time zone data"
@@ -1324,7 +1367,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "e9c6d5d50dbdf5e91e6775e8b3fce2c1b5402d02de947aa81189e751f7e62aab"
+content-hash = "905c451041e0768b6d8d0c84d806b04cdf8eebf4fa9dd2df0ee70dc183da40a4"
 
 [metadata.files]
 appnope = [
@@ -2248,6 +2291,26 @@ tqdm = [
 traitlets = [
     {file = "traitlets-5.3.0-py3-none-any.whl", hash = "sha256:65fa18961659635933100db8ca120ef6220555286949774b9cfc106f941d1c7a"},
     {file = "traitlets-5.3.0.tar.gz", hash = "sha256:0bb9f1f9f017aa8ec187d8b1b2a7a6626a2a1d877116baba52a129bfa124f8e2"},
+]
+types-bleach = [
+    {file = "types-bleach-5.0.2.tar.gz", hash = "sha256:e1498c512a62117496cf82be3d129972bb89fd1d6482b001cdeb2759ab3c82f5"},
+    {file = "types_bleach-5.0.2-py3-none-any.whl", hash = "sha256:6fcb75ee4b69190fe60340147b66442cecddaefe3c0629433a4240da1ec2dcf6"},
+]
+types-markdown = [
+    {file = "types-Markdown-3.3.29.tar.gz", hash = "sha256:41297ac02240a8e1d7a9f242dbb4880fd5f390467fb1e2821408580378052160"},
+    {file = "types_Markdown-3.3.29-py3-none-any.whl", hash = "sha256:d2b35c78e8e646d3e09c3af5778697ee92942ee6fc71421f57a08684e7b0eb3b"},
+]
+types-python-dateutil = [
+    {file = "types-python-dateutil-2.8.18.tar.gz", hash = "sha256:8695c7d7a5b1aef4002f3ab4e1247e23b1d41cd7cc1286d4594c2d8c5593c991"},
+    {file = "types_python_dateutil-2.8.18-py3-none-any.whl", hash = "sha256:fd5ed97262b76ae684695ea38ace8dd7c1bc9491aba7eb4edf6654b7ecabc870"},
+]
+types-requests = [
+    {file = "types-requests-2.28.0.tar.gz", hash = "sha256:9863d16dfbb3fa55dcda64fa3b989e76e8859033b26c1e1623e30465cfe294d3"},
+    {file = "types_requests-2.28.0-py3-none-any.whl", hash = "sha256:85383b4ef0535f639c3f06c5bbb6494bbf59570c4cd88bbcf540f0b2ac1b49ab"},
+]
+types-urllib3 = [
+    {file = "types-urllib3-1.26.16.tar.gz", hash = "sha256:8bb3832c684c30cbed40b96e28bc04703becb2b97d82ac65ba4b968783453b0e"},
+    {file = "types_urllib3-1.26.16-py3-none-any.whl", hash = "sha256:20588c285e5ca336d908d2705994830a83cfb6bda40fc356bbafaf430a262013"},
 ]
 tzdata = [
     {file = "tzdata-2022.1-py2.py3-none-any.whl", hash = "sha256:238e70234214138ed7b4e8a0fab0e5e13872edab3be586ab8198c407620e2ab9"},
