@@ -65,6 +65,7 @@ types-requests = "^2.28.0"
 types-bleach = "^5.0.2"
 types-Markdown = "^3.3.29"
 types-python-dateutil = "^2.8.18"
+mypy = "^0.961"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -131,3 +132,11 @@ warn_unused_ignores = false
 warn_redundant_casts = false
 warn_unused_configs = false
 warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module="*.tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module="*.migrations.*"
+ignore_errors = true

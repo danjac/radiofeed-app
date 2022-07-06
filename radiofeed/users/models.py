@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -5,40 +7,20 @@ from django.db import models
 class UserQuerySet(models.QuerySet):
     """Custom QuerySet for User model."""
 
-    def email_notification_recipients(self):
-        """Returns all active users who have enabled email notifications in their settings.
-
-        Returns:
-            QuerySet
-        """
+    def email_notification_recipients(self) -> models.QuerySet[User]:
+        """Returns all active users who have enabled email notifications in their settings."""
         return self.filter(is_active=True, send_email_notifications=True)
 
-    def for_email(self, email):
-        """Returns users matching this email address, including both primary and secondary email addresses.
-
-        Returns:
-            QuerySet
-        """
-        return self.filter(
-            models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
-        )
+    def for_email(self, email: str) -> models.QuerySet[User]:
+        """Returns users matching this email address, including both primary and secondary email addresses."""
+        return self.filter(models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email))
 
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     """Custom Manager for User model."""
 
-    def create_user(self, username, email, password=None, **kwargs):
-        """Create new user.
-
-        Args:
-            username (str)
-            email (str)
-            password (str | None): if None sets unusable password
-            `**kwargs`: any other User fields
-
-        Returns:
-            User: saved User instance
-        """
+    def create_user(self, username: str, email: str, password: str | None = None, **kwargs) -> User:
+        """Create new user."""
         user = self.model(
             username=username,
             email=self.normalize_email(email),
@@ -48,18 +30,8 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password, **kwargs):
-        """Create new superuser.
-
-        Args:
-            username (str)
-            email (str)
-            password (str)
-            `**kwargs`: any other User fields
-
-        Returns:
-            User: saved User instance
-        """
+    def create_superuser(self, username: str, email: str, password: str | None = None, **kwargs) -> User:
+        """Create new superuser."""
         return self.create_user(
             username,
             email,
@@ -77,10 +49,6 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def get_email_addresses(self):
-        """Get set of all emails belonging to user.
-
-        Returns:
-            set[str]: set of email addresses
-        """
+    def get_email_addresses(self) -> set[str]:
+        """Get set of all emails belonging to user."""
         return {self.email} | set(self.emailaddress_set.values_list("email", flat=True))

@@ -1,31 +1,17 @@
 from radiofeed.common.template import normalize_url
 
 
-def language(value):
-    """Returns two-character language code.
-
-    Args:
-        value (str)
-
-    Returns:
-        str
-    """
+def language(value: str) -> str:
+    """Returns two-character language code."""
     return value[:2].casefold()
 
 
-def explicit(value):
-    """Checks if podcast or episode explicit.
-
-    Args:
-        value (str | None)
-
-    Returns:
-        bool
-    """
+def explicit(value: str | None) -> bool:
+    """Checks if podcast or episode explicit."""
     return bool(value and value.casefold() in ("clean", "yes"))
 
 
-def url(value):
+def url(value: str | None) -> str | None:
     """Returns a URL value. Will try to prefix with https:// if only domain provided.
 
     If cannot resolve as a valid URL will return None.
@@ -39,7 +25,7 @@ def url(value):
     return normalize_url(value) or None
 
 
-def duration(value):
+def duration(value: str | None) -> str:
     """Given a duration value will ensure all values fall within range.
 
     Examples:
@@ -64,12 +50,6 @@ def duration(value):
         pass
 
     try:
-        return ":".join(
-            [
-                str(v)
-                for v in [int(v) for v in value.split(":")[:3]]
-                if v in range(0, 60)
-            ]
-        )
+        return ":".join([str(v) for v in [int(v) for v in value.split(":")[:3]] if v in range(0, 60)])
     except ValueError:
         return ""
