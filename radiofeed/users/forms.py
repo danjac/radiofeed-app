@@ -1,5 +1,7 @@
 import itertools
 
+from typing import Generator
+
 import lxml
 
 from django import forms
@@ -40,24 +42,18 @@ class OpmlUploadForm(forms.Form):
         ),
     )
 
-    def subscribe_to_feeds(self, user, limit=300):
+    def subscribe_to_feeds(self, user: User, limit: int = 300) -> int:
         """Subscribes user to feeds in uploaded OPML.
 
-        Args:
-            user (User)
-            limit (int): limit of OPML feeds
-
         Returns:
-            int: number of new subscribed feeds
+            nt: number of new subscribed feeds
         """
         return len(
             Subscription.objects.bulk_create(
                 [
                     Subscription(podcast=podcast, user=user)
                     for podcast in itertools.islice(
-                        Podcast.objects.filter(rss__in=self._parse_opml())
-                        .exclude(subscription__user=user)
-                        .distinct(),
+                        Podcast.objects.filter(rss__in=self._parse_opml()).exclude(subscription__user=user).distinct(),
                         limit,
                     )
                 ],
@@ -65,7 +61,7 @@ class OpmlUploadForm(forms.Form):
             )
         )
 
-    def _parse_opml(self):
+    def _parse_opml(self) -> Generator[str, None, None]:
         self.cleaned_data["opml"].seek(0)
 
         try:
