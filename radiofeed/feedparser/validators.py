@@ -1,3 +1,5 @@
+from typing import Any
+
 import attrs
 
 from django.core.exceptions import ValidationError
@@ -53,13 +55,8 @@ audio = attrs.validators.in_(_audio_mimetypes)
 _url_validator = URLValidator(["http", "https"])
 
 
-def required(instance, attr, value):
+def required(instance: Any, attr: attrs.Attribute, value: Any) -> None:
     """Checks if value is truthy.
-
-    Args:
-        instance (object | None)
-        attr (attrs.Attribute)
-        value (Any)
 
     Raises:
         ValueError: any falsy value
@@ -68,13 +65,8 @@ def required(instance, attr, value):
         raise ValueError(f"{attr=} cannot be empty or None")
 
 
-def url(instance, attr, value):
+def url(instance: Any, attr: attrs.Attribute, value: Any) -> None:
     """Checks if value is a valid URL.
-
-    Args:
-        instance (object | None)
-        attr (attrs.Attribute)
-        value (Any)
 
     Raises:
         ValueError: invalid URL
