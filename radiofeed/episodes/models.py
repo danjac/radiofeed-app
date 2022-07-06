@@ -3,7 +3,6 @@ from __future__ import annotations
 import mimetypes
 import pathlib
 
-from datetime import datetime
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -80,7 +79,7 @@ class Episode(models.Model):
 
     guid = models.TextField()
 
-    pub_date: datetime = models.DateTimeField()
+    pub_date = models.DateTimeField()
 
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
