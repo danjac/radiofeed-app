@@ -46,9 +46,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-            poetry install --no-interaction --no-root
-            xargs python -m nltk.downloader < nltk.txt
+        run: poetry install --no-interaction --no-root
 
       - name: Typechecking
         run: |
@@ -71,4 +69,5 @@ jobs:
           SECRET_KEY: seekrit
         run: |
           source .venv/bin/activate
+          xargs python -m nltk.downloader < nltk.txt
           pytest -x
