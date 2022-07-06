@@ -1,14 +1,13 @@
-from typing import Iterable
-
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
+from django.db.models import QuerySet
 from django.http import Http404, HttpRequest
 from django.template.response import TemplateResponse
 
 
 def pagination_response(
     request: HttpRequest,
-    object_list: Iterable,
+    object_list: QuerySet,
     template_name: str,
     pagination_template_name: str,
     extra_context: dict | None = None,
