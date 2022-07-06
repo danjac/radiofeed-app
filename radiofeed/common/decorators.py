@@ -1,14 +1,17 @@
 import functools
 
+from typing import Callable
+
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
+from django.http import HttpRequest, HttpResponse
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.common.http import HttpResponseUnauthorized
 
 
-def ajax_login_required(view):
+def ajax_login_required(view: Callable[[HttpRequest, ...], HttpResponse]):
     """Login required decorator for HTMX and AJAX views.
 
     Use this decorator instead of @login_required with views returning HTMX fragment and JSON responses.
@@ -16,10 +19,7 @@ def ajax_login_required(view):
     Returns redirect to login page if HTMX request, otherwise returns HTTP UNAUTHORIZED.
 
     Args:
-        view (Callable): Django view callable
-
-    Returns:
-        Callable: decorated callable
+        view: Django view callable
     """
 
     @functools.wraps(view)
