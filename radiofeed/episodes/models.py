@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import mimetypes
 import pathlib
 
@@ -5,6 +7,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
@@ -18,20 +21,17 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
 from radiofeed.common.utils.html import strip_html
+from radiofeed.users.models import User
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_current_time(self, user):
-        """Adds `current_time` and `listened` annotations. Both will be None
-        if user is anonymous or there is no listening history.
+    """QuerySet for Episode model."""
 
-        Args:
-            user (User | AnonymousUser)
+    def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet[Episode]:
+        """Adds `current_time` and `listened` annotations.
 
-        Returns:
-            QuerySet
+        Both will be None if user is anonymous or there is no listening history.
         """
-
         if user.is_anonymous:
             return self.annotate(
                 current_time=models.Value(0, output_field=models.IntegerField()),
@@ -45,15 +45,8 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("listened")),
         )
 
-    def get_next_episode(self, episode):
-        """Returns following episode in same podcast as this episode, if any.
-
-        Args:
-            episode (Episode)
-
-        Returns:
-            Episode | None
-        """
+    def get_next_episode(self, episode: Episode) -> Episode | None:
+        """Returns following episode in same podcast as this episode, if any."""
         return (
             self.filter(
                 podcast=episode.podcast_id,
@@ -64,15 +57,8 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             .first()
         )
 
-    def get_previous_episode(self, episode):
-        """Returns previous episode in same podcast as this episode, if any.
-
-        Args:
-            episode (Episode)
-
-        Returns:
-            Episode | None
-        """
+    def get_previous_episode(self, episode: Episode) -> Episode | None:
+        """Returns previous episode in same podcast as this episode, if any."""
         return (
             self.filter(
                 podcast=episode.podcast_id,
@@ -88,6 +74,7 @@ EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 
 class Episode(models.Model):
+    """Individual podcast episode."""
 
     podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
@@ -137,117 +124,72 @@ class Episode(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Returns title or guid."""
         return self.title or self.guid
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
+        """URL of episode detail page."""
         return reverse("episodes:episode_detail", args=[self.pk, self.slug])
 
     @property
-    def slug(self):
-        """Returns slugified title, if any
-
-        Returns:
-            str
-        """
+    def slug(self) -> str:
+        """Returns slugified title, if any."""
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def get_link(self):
-        """Returns link to episode web page or podcast site if former not provided.
-
-        Returns:
-            str | None
-        """
+    def get_link(self) -> str | None:
+        """Returns link to episode web page or podcast site if former not provided."""
         return self.link or self.podcast.link
 
-    def get_file_size(self):
-        """Returns human readable file size e.g. 30MB. If length is zero or none returns None.
+    def get_file_size(self) -> str | None:
+        """Returns human readable file size e.g. 30MB.
 
-        Returns:
-            str | None
+        If length is zero or none returns None.
         """
         return filesizeformat(self.length) if self.length else None
 
-    def get_cover_url(self):
-        """Returns cover image URL or podcast cover image if former not provided.
-
-        Returns:
-            str | None
-        """
+    def get_cover_url(self) -> str | None:
+        """Returns cover image URL or podcast cover image if former not provided."""
         return self.cover_url or self.podcast.cover_url
 
-    def is_bookmarked(self, user):
-        """Check if episode has been bookmarked by this user.
-
-        Args:
-            user (User | AnonymousUser)
-
-        Returns:
-            bool
-        """
+    def is_bookmarked(self, user: User | AnonymousUser) -> bool:
+        """Check if episode has been bookmarked by this user."""
         if user.is_anonymous:
             return False
         return Bookmark.objects.filter(user=user, episode=self).exists()
 
     @cached_property
-    def cleaned_title(self):
-        """Strips HTML from title field
-
-        Returns:
-            str
-        """
+    def cleaned_title(self) -> str:
+        """Strips HTML from title field."""
         return strip_html(self.title)
 
     @cached_property
-    def cleaned_description(self):
-        """Strips HTML from description field
-
-        Returns:
-            str
-        """
+    def cleaned_description(self) -> str:
+        """Strips HTML from description field."""
         return strip_html(self.description)
 
     @cached_property
-    def duration_in_seconds(self):
-        """Returns total number of seconds given string in [h:][m:]s format.
-
-        Returns:
-            int: total duration in seconds. Will be 0 if invalid duration string.
-        """
-
+    def duration_in_seconds(self) -> int:
+        """Returns total number of seconds given string in [h:][m:]s format."""
         if not self.duration:
             return 0
 
         try:
             return sum(
                 (int(part) * multiplier)
-                for (part, multiplier) in zip(
-                    reversed(self.duration.split(":")[:3]), (1, 60, 3600)
-                )
+                for (part, multiplier) in zip(reversed(self.duration.split(":")[:3]), (1, 60, 3600))
             )
         except ValueError:
             return 0
 
-    def is_explicit(self):
-        """Check if either this specific episode or the podcast is explicit.
-
-        Returns:
-            bool
-        """
+    def is_explicit(self) -> bool:
+        """Check if either this specific episode or the podcast is explicit."""
         return self.explicit or self.podcast.explicit
 
-    def get_episode_metadata(self):
-        """Returns the episode season/episode/type as a single string,
-        e.g. "Episode 3 Season 4", "Trailer", etc.
-
-        Returns:
-            str
-        """
-
+    def get_episode_metadata(self) -> str:
+        """Returns the episode season/episode/type as a single string, e.g. "Episode 3 Season 4", "Trailer", etc."""
         episode_type = (
-            self.episode_type.capitalize()
-            if self.episode_type and self.episode_type.casefold() != "full"
-            else None
+            self.episode_type.capitalize() if self.episode_type and self.episode_type.casefold() != "full" else None
         )
 
         return " ".join(
@@ -255,34 +197,23 @@ class Episode(models.Model):
                 info
                 for info in (
                     episode_type,
-                    f"Episode {self.episode}"
-                    if self.episode and not episode_type
-                    else None,
-                    f"Season {self.season}"
-                    if self.season and not episode_type
-                    else None,
+                    f"Episode {self.episode}" if self.episode and not episode_type else None,
+                    f"Season {self.season}" if self.season and not episode_type else None,
                 )
                 if info
             ]
         )
 
-    def get_media_url_ext(self):
-        """Returns the path extension of the media URL, e.g. "mpeg"
-
-        Returns:
-            str
-        """
+    def get_media_url_ext(self) -> str:
+        """Returns the path extension of the media URL, e.g. "mpeg"."""
         return pathlib.Path(self.media_url).suffix[1:]
 
-    def get_media_metadata(self):
+    def get_media_metadata(self) -> dict:
         """Returns media session metadata for integration with client device.
 
         For more details:
 
             https://developers.google.com/web/updates/2017/02/media-session
-
-        Returns:
-            dict
         """
         cover_url = self.podcast.cover_url or static("img/podcast-icon.png")
         cover_url_type, _ = mimetypes.guess_type(urlparse(cover_url).path)
@@ -301,32 +232,22 @@ class Episode(models.Model):
             ],
         }
 
-    def get_player_target(self):
-        """Play button HTMX target
-
-        Returns:
-            str
-        """
+    def get_player_target(self) -> str:
+        """Play button HTMX target."""
         return f"player-actions-{self.id}"
 
-    def get_bookmark_target(self):
-        """Add/remove bookmark button HTMX target
-
-        Returns:
-            str
-        """
+    def get_bookmark_target(self) -> str:
+        """Add/remove bookmark button HTMX target."""
         return f"bookmark-actions-{self.id}"
 
-    def get_history_target(self):
-        """Listening history episode detail HTMX target
-
-        Returns:
-            str
-        """
+    def get_history_target(self) -> str:
+        """Listening history episode detail HTMX target."""
         return f"history-actions-{self.id}"
 
 
 class BookmarkQuerySet(SearchMixin, models.QuerySet):
+    """QuerySet for Bookmark model."""
+
     search_vectors = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
@@ -337,6 +258,7 @@ BookmarkManager = models.Manager.from_queryset(BookmarkQuerySet)
 
 
 class Bookmark(TimeStampedModel):
+    """Bookmarked episodes."""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
@@ -357,6 +279,8 @@ class Bookmark(TimeStampedModel):
 
 
 class AudioLogQuerySet(SearchMixin, models.QuerySet):
+    """QuerySet for AudioLog."""
+
     search_vectors = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
@@ -367,6 +291,7 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 
 class AudioLog(TimeStampedModel):
+    """Record of user listening history."""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
