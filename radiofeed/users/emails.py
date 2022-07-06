@@ -3,24 +3,25 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
+from radiofeed.users.models import User
+
 
 def send_user_notification_email(
-    recipient,
-    subject,
-    template_name,
-    html_template_name,
-    context=None,
-):
+    recipient: User,
+    subject: str,
+    template_name: str,
+    html_template_name: str,
+    context=dict | None,
+) -> None:
     """Common function for sending any notifications to a user.
 
     Args:
-        recipient (User): email recipient
-        subject (str): email subject line
-        template_name (str): plain text template for email body
-        html_template_name (str): template for email HTML attachment
-        context (dict | None): any template context for both templates
+        recipient: email recipient
+        subject: email subject line
+        template_name: plain text template for email body
+        html_template_name: template for email HTML attachment
+        context: any template context for both templates
     """
-
     site = Site.objects.get_current()
 
     context = {

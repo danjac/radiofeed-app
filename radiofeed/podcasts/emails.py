@@ -1,9 +1,10 @@
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.emails import send_user_notification_email
+from radiofeed.users.models import User
 
 
-def send_recommendations_email(user, min_podcasts=2, max_podcasts=3):
+def send_recommendations_email(user: User, min_podcasts: int = 2, max_podcasts: int = 3) -> bool:
     """Sends email to user with a list of recommended podcasts.
 
     Recommendaitons based on their subscriptions and listening history.
@@ -11,12 +12,12 @@ def send_recommendations_email(user, min_podcasts=2, max_podcasts=3):
     Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
 
     Args:
-        user (User): authenticated user
-        min_podcasts (int): minimum number of podcasts: if less than this amount then no email is sent
-        max_podcasts (int): maximum number of podcasts to include in email
+        user: authenticated user
+        min_podcasts: minimum number of podcasts: if less than this amount then no email is sent
+        max_podcasts: maximum number of podcasts to include in email
 
     Returns:
-        bool: whether user has been sent recommendations email
+        `True` user has been sent recommendations email
     """
     podcast_ids = (
         set(
@@ -35,8 +36,7 @@ def send_recommendations_email(user, min_podcasts=2, max_podcasts=3):
     recommended_ids = (
         Recommendation.objects.filter(podcast__pk__in=podcast_ids)
         .exclude(
-            recommended__pk__in=podcast_ids
-            | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
+            recommended__pk__in=podcast_ids | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
         )
         .values_list("recommended", flat=True)
     )
