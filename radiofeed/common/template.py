@@ -10,6 +10,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
@@ -39,7 +40,7 @@ _validate_url = URLValidator(["http", "https"])
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context, page_number, param="page"):
+def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
     """Inserts the "page" query string parameter with the provided page number into the template.
 
     Preserves the original request path and any other query string parameters.
@@ -48,12 +49,12 @@ def pagination_url(context, page_number, param="page"):
     be something like: "/search?q=test&page=3"
 
     Args:
-        context (dict): template context
-        page_number (int)
-        param (str): query string parameter for pages
+        context: template context
+        page_number
+        param: query string parameter for pages
 
     Returns:
-        str: updated URL path with new page
+        updated URL path with new page
     """
     request = context["request"]
     params = request.GET.copy()
@@ -62,41 +63,25 @@ def pagination_url(context, page_number, param="page"):
 
 
 @register.simple_tag
-def get_site_config():
-    """Returns the configuration defined in the setting SITE_CONFIG.
-
-    Returns:
-        dict: site configuration
-    """
+def get_site_config() -> dict:
+    """Returns the configuration defined in the setting SITE_CONFIG."""
     return settings.SITE_CONFIG
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context, url=None, *args, **kwargs):
+def absolute_uri(context: dict, url: str | None = None, *args, **kwargs) -> str:
     """Generate absolute URI based on server environment or current Site.
 
     Args:
-        context (dict): template context
-        url (str): URL name or path
-
-    Returns:
-        str
+        context: template context
+        url: URL name or path
     """
-    return _build_absolute_uri(
-        resolve_url(url, *args, **kwargs) if url else None, context.get("request")
-    )
+    return _build_absolute_uri(resolve_url(url, *args, **kwargs) if url else None, context.get("request"))
 
 
 @register.filter
-def format_duration(total_seconds):
-    """Formats duration (in seconds) as human readable value e.g. 1h 30min.
-
-    Args:
-        total_seconds (int | None)
-
-    Returns:
-        str: empty if total seconds None or under a minute
-    """
+def format_duration(total_seconds: int | None) -> str:
+    """Formats duration (in seconds) as human readable value e.g. 1h 30min."""
     if total_seconds is None or total_seconds < 60:
         return ""
 
@@ -112,16 +97,8 @@ def format_duration(total_seconds):
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context, url_name, *args, **kwargs):
-    """Returns url with active link info.
-
-    Args:
-        context (dict): template context
-        url_name (str): URL name
-
-    Returns:
-        ActiveLink
-    """
+def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
+    """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
 
     if context["request"].path == url:
@@ -134,17 +111,8 @@ def active_link(context, url_name, *args, **kwargs):
 
 
 @register.simple_tag(takes_context=True)
-def re_active_link(context, url_name, pattern, *args, **kwargs):
-    """Returns url with active link info.
-
-    Args:
-        context (dict): template context
-        url_name (str): URL name
-        pattern (str): regex pattern to match
-
-    Returns:
-        ActiveLink
-    """
+def re_active_link(context: dict, url_name: str, pattern: str, *args, **kwargs) -> ActiveLink:
+    """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
         return ActiveLink(url, match=True)
@@ -153,55 +121,32 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 
 
 @register.filter
-def login_url(url):
-    """Returns login URL with redirect parameter back to this url.
-
-    Args:
-        url (str)
-
-    Returns:
-        str
-    """
+def login_url(url: str) -> str:
+    """Returns login URL with redirect parameter back to this url."""
     return _auth_redirect_url(url, reverse("account_login"))
 
 
 @register.filter
-def signup_url(url):
-    """Returns signup URL with redirect parameter back to this url.
-
-    Args:
-        url (str)
-
-    Returns:
-        str
-    """
+def signup_url(url: str) -> str:
+    """Returns signup URL with redirect parameter back to this url."""
     return _auth_redirect_url(url, reverse("account_signup"))
 
 
 @register.inclusion_tag("includes/markdown.html")
-def markdown(value):
-    """Renders markdown content.
-
-    Args:
-        value (str | None)
-
-    Returns:
-        dict: context with `content` of markdown value
-    """
+def markdown(value: str | None) -> dict:
+    """Renders markdown content."""
     return {"content": mark_safe(markup(value))}  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
-def share_buttons(context, url, subject, css_class=""):
+def share_buttons(context: dict, url: str, subject: str, css_class: str = "") -> dict:
     """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin.
 
     Args:
-        url (str): URL on page to share in link (automatically expanded to absolute URI)
-        subject (str): subject line
-        css_class (str): CSS classes to render in button
-
-    Returns:
-        dict
+        context: template context
+        url: URL on page to share in link (automatically expanded to absolute URI)
+        subject: subject line
+        css_class: CSS classes to render in button
     """
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
@@ -218,29 +163,15 @@ def share_buttons(context, url, subject, css_class=""):
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
-def cookie_notice(context):
-    """Renders GDPR cookie notice. Notice should be hidden once user has clicked "Accept Cookies" button.
-
-    Args:
-        context (dict): request context
-
-    Returns:
-        dict
-    """
+def cookie_notice(context: dict) -> dict:
+    """Renders GDPR cookie notice. Notice should be hidden once user has clicked "Accept Cookies" button."""
     return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
 
 
 @register.filter
 @stringfilter
-def normalize_url(url):
-    """If a URL is provided minus http(s):// prefix, prepends protocol.
-
-    Args:
-        url (str)
-
-    Returns:
-        str
-    """
+def normalize_url(url: str) -> str:
+    """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if url:
         for value in (url, "https://" + url):
             try:
@@ -251,16 +182,12 @@ def normalize_url(url):
     return ""
 
 
-def _auth_redirect_url(url, redirect_url):
+def _auth_redirect_url(url: str, redirect_url) -> str:
 
-    return (
-        redirect_url
-        if url.startswith("/account/")
-        else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
-    )
+    return redirect_url if url.startswith("/account/") else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
-def _build_absolute_uri(url=None, request=None):
+def _build_absolute_uri(url: str | None = None, request: HttpRequest | None = None):
     if request:
         return request.build_absolute_uri(url)
 
