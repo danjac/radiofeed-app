@@ -1,20 +1,22 @@
+from typing import Iterable
+
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
-from django.http import Http404
+from django.http import Http404, HttpRequest
 from django.template.response import TemplateResponse
 
 
 def pagination_response(
-    request,
-    object_list,
-    template_name,
-    pagination_template_name,
-    extra_context=None,
-    target="object-list",
-    page_size=settings.DEFAULT_PAGE_SIZE,
-    param="page",
+    request: HttpRequest,
+    object_list: Iterable,
+    template_name: str,
+    pagination_template_name: str,
+    extra_context: dict | None = None,
+    target: str = "object-list",
+    page_size: int = settings.DEFAULT_PAGE_SIZE,
+    param: str = "page",
     **pagination_kwargs,
-):
+) -> TemplateResponse:
     """Creates a TemplateResponse for a paginated QuerySet or list.
 
     If the request has the HX-Request header and matching HTMX target,
@@ -54,34 +56,27 @@ def pagination_response(
         </div>
 
     Args:
-        request (HttpRequest)
-        object_list (Iterable): QuerySet or list of items
-        template_name (str): default template used if no matching HTMX headers
-        pagination_template_name (str): template used if matching HTMX headers
-        extra_context (dict | None): extra template context
-        target (str): HTMX target
-        page_size (int): number of items per page
-        param (str): query string parameter for page
+        request
+        object_list
+        template_name: default template used if no matching HTMX headers
+        pagination_template_name: template used if matching HTMX headers
+        extra_context: extra template context
+        target: HTMX target
+        page_size: number of items per page
+        param: query string parameter for page
         `**pagination_kwargs`: other Paginator kwargs
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404: invalid page
     """
     try:
-        page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(
-            int(request.GET.get(param, 1))
-        )
+        page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(int(request.GET.get(param, 1)))
     except (ValueError, InvalidPage):
         raise Http404("Invalid page")
 
     return TemplateResponse(
         request,
-        pagination_template_name
-        if request.htmx and request.htmx.target == target
-        else template_name,
+        pagination_template_name if request.htmx and request.htmx.target == target else template_name,
         {
             "page_obj": page_obj,
             "pagination_target": target,
