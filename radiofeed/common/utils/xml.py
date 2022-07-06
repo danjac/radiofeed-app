@@ -1,19 +1,19 @@
 import io
 
 from contextlib import contextmanager
+from typing import Generator, Iterable, TypeAlias
 
 import lxml
 
+Namespaces: TypeAlias = dict[str, str]
 
-def parse_xml(content, *tags):
+
+def parse_xml(content: bytes, *tags: str) -> Generator[lxml.etree.Element, None, None]:
     """Iterates through elements in XML document with matching tag names.
 
     Args:
-        content (bytes): XML document
-        `*tags` (str): tag names
-
-    Yields:
-        lxml.etree.Element
+        content: XML document
+        `*tags`: tag names
     """
     for _, element in lxml.etree.iterparse(
         io.BytesIO(content),
@@ -27,36 +27,19 @@ def parse_xml(content, *tags):
             yield element
 
 
-@contextmanager
-def xpath_finder(element, namespaces=None):
-    """Returns XPathFinder instance for an XML element as a context manager.
-
-    Args:
-        element (lxml.etree.Element): the root element you want to search
-        namespaces (dict | None): dict of XML namespaces
-
-    Yields:
-        XPathFinder
-    """
-    try:
-        yield XPathFinder(element, namespaces)
-    finally:
-        element.clear()
-
-
 class XPathFinder:
     """Wrapper class for doing XPath lookups to find text or attribute values on an XML element.
 
     Args:
-        element (lxml.etree.Element): the root element you want to search
-        namespaces (dict | None): dict of XML namespaces
+        element: the root element you want to search
+        namespaces: dict of XML namespaces
     """
 
-    def __init__(self, element, namespaces=None):
+    def __init__(self, element: lxml.etree.Element, namespaces: Namespaces | None):
         self._element = element
         self._namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
-    def first(self, *paths):
+    def first(self, *paths) -> str | None:
         """Returns first matching text or attribute value.
 
         Tries each path in turn. If no values found returns `default`.
@@ -65,23 +48,20 @@ class XPathFinder:
             `*paths` (str): list of XPath paths to search through in order
 
         Returns:
-            str | None: string of text/attribute, or None if not found
+            string of text/attribute, or None if not found
         """
         try:
             return next(self.iter(*paths))
         except StopIteration:
             return None
 
-    def iter(self, *paths):
+    def iter(self, *paths) -> Generator[str, None, None]:
         """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
 
         All strings are stripped of extra whitespace. Should skip any unicode errors.
 
         Args:
-            `*paths` (str): list of XPath paths to search through in order
-
-        Yields:
-            str
+            `*paths`: list of XPath paths to search through in order
         """
         try:
             for path in paths:
@@ -91,10 +71,10 @@ class XPathFinder:
         except UnicodeDecodeError:
             pass
 
-    def to_dict(self, **fields):
-        """Returns a dict with each field mapped to one or more xpaths.
+    def to_dict(self, **fields: str | Iterable) -> dict[str, str | None]:
+        """Returns dict with each field mapped to one or more xpaths.
 
-        Example:
+        Example of usage:
 
         .. code block:: python
 
@@ -118,12 +98,22 @@ class XPathFinder:
         As this calls `first()` will default to None for any fields that cannot be found.
 
         Args:
-            `**fields` (dict[str, str | Iterable]): dict of field and xpath mapping(s)
-
-        Returns:
-            dict[str, str | None]
+            `**fields`: dict of field and xpath mapping(s)
         """
-        return {
-            field: self.first(*[xpaths] if isinstance(xpaths, str) else xpaths)
-            for field, xpaths in fields.items()
-        }
+        return {field: self.first(*[xpaths] if isinstance(xpaths, str) else xpaths) for field, xpaths in fields.items()}
+
+
+@contextmanager
+def xpath_finder(
+    element: lxml.etree.Element, namespaces: Namespaces | None = None
+) -> Generator[XPathFinder, None, None]:
+    """Returns XPathFinder instance for an XML element as a context manager.
+
+    Args:
+        element: the root element you want to search
+        namespaces: dict of XML namespaces
+    """
+    try:
+        yield XPathFinder(element, namespaces)
+    finally:
+        element.clear()
