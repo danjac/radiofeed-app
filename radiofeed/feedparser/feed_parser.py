@@ -26,11 +26,18 @@ class FeedParser:
         podcast (Podcast)
     """
 
-    _feed_attrs = attrs.fields(Feed)
-    _item_attrs = attrs.fields(Item)
-
     def __init__(self, podcast):
         self._podcast = podcast
+
+        _feed_attrs = attrs.fields(Feed)
+
+        self._feed_attrs_filter = attrs.filters.exclude(
+            _feed_attrs.categories,
+            _feed_attrs.complete,
+            _feed_attrs.items,
+        )
+
+        self._item_attrs_filter = attrs.filters.exclude(attrs.fields(Item).categories)
 
     @transaction.atomic
     def parse(self):
@@ -114,36 +121,23 @@ class FeedParser:
             category for category in feed.categories if category not in categories_dct
         )
 
-        # mark inactive if discontinued
-        if feed.complete:
-            active = False
-            parse_result = Podcast.ParseResult.COMPLETE
-        else:
-            active = True
-            parse_result = Podcast.ParseResult.SUCCESS
-
         self._save_podcast(
-            active=active,
+            active=not (feed.complete),
+            parse_result=Podcast.ParseResult.COMPLETE
+            if feed.complete
+            else Podcast.ParseResult.SUCCESS,
             content_hash=content_hash,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
-            parse_result=parse_result,
             keywords=keywords,
             extracted_text=self._extract_text(
                 feed,
                 categories,
                 keywords,
             ),
-            **attrs.asdict(
-                feed,
-                filter=attrs.filters.exclude(
-                    self._feed_attrs.categories,
-                    self._feed_attrs.complete,
-                    self._feed_attrs.items,
-                ),
-            ),
+            **attrs.asdict(feed, filter=self._feed_attrs_filter),
         )
 
         self._podcast.categories.set(categories)
@@ -259,10 +253,5 @@ class FeedParser:
         return Episode(
             pk=episode_id,
             podcast=self._podcast,
-            **attrs.asdict(
-                item,
-                filter=attrs.filters.exclude(
-                    self._item_attrs.categories,
-                ),
-            ),
+            **attrs.asdict(item, filter=self._item_attrs_filter),
         )
