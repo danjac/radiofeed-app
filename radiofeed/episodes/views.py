@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -20,15 +20,8 @@ from radiofeed.podcasts.models import Podcast
 
 
 @require_http_methods(["GET"])
-def index(request):
-    """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        TemplateResponse
-    """
+def index(request: HttpRequest) -> TemplateResponse:
+    """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
     promoted = "promoted" in request.GET
 
     subscribed = (
@@ -70,15 +63,8 @@ def index(request):
 
 
 @require_http_methods(["GET"])
-def search_episodes(request):
-    """Search episodes. If search empty redirects to index page.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse
-    """
+def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
+    """Search episodes. If search empty redirects to index page."""
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
 
@@ -93,16 +79,8 @@ def search_episodes(request):
 
 
 @require_http_methods(["GET"])
-def episode_detail(request, episode_id, slug=None):
+def episode_detail(request: HttpRequest, episode_id: int, slug: str | None = None) -> TemplateResponse:
     """Renders episode detail.
-
-    Args:
-        request (HttpRequest)
-        episode_id (int): Episode PK
-        slug (str | None): used for SEO
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404: episode not found
@@ -123,15 +101,8 @@ def episode_detail(request, episode_id, slug=None):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def start_player(request, episode_id):
+def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Starts player. Creates new audio log if necessary and adds episode to player session tracker.
-
-    Args:
-        request (HttpRequest)
-        episode_id (int): Episode PK
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404: episode not found
@@ -162,12 +133,6 @@ def start_player(request, episode_id):
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes player. Removes episode to player session tracker.
 
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        HttpResponse: returns empty response if player not running.
-
     Raises:
         Http404: episode not found
     """
@@ -189,17 +154,13 @@ def close_player(request: HttpRequest) -> HttpResponse:
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
 @ajax_login_required
-def player_time_update(request):
+def player_time_update(request: HttpRequest) -> HttpResponseBadRequest | HttpResponseNoContent:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
 
-    Args:
-        request (HttpRequest)
-
     Returns:
-        HttpResponse: HTTP BAD REQUEST if missing/invalid `current_time`, otherwise
-            HTTP NO CONTENT.
+        HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
     if episode_id := request.player.get():
         try:
@@ -217,15 +178,8 @@ def player_time_update(request):
 
 @require_http_methods(["GET"])
 @login_required
-def history(request):
-    """Renders user's listening history. User can also search history.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        TemplateResponse
-    """
+def history(request: HttpRequest) -> TemplateResponse:
+    """Renders user's listening history. User can also search history."""
     newest_first = request.GET.get("o", "d") == "d"
 
     logs = AudioLog.objects.filter(user=request.user).select_related("episode", "episode__podcast")
@@ -249,15 +203,8 @@ def history(request):
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_audio_log(request, episode_id):
+def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Removes audio log from user history and returns HTMX snippet.
-
-    Args:
-        request (HttpRequest)
-        episode_id (int): Episode PK
-
-    Returns:
-        TemplateResponse
 
     Raises:
         Http404 if episode not found
@@ -277,15 +224,8 @@ def remove_audio_log(request, episode_id):
 
 @require_http_methods(["GET"])
 @login_required
-def bookmarks(request):
-    """Renders user's bookmarks. User can also search their bookmarks.
-
-    Args:
-        request (HttpRequest)
-
-    Returns:
-        TemplateResponse
-    """
+def bookmarks(request: HttpRequest) -> TemplateResponse:
+    """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = Bookmark.objects.filter(user=request.user).select_related("episode", "episode__podcast")
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
@@ -302,15 +242,8 @@ def bookmarks(request):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def add_bookmark(request, episode_id):
+def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponseConflict | TemplateResponse:
     """Add episode to bookmarks.
-
-    Args:
-        request (HttpRequest)
-        episode_id (int): Episode PK
-    Returns:
-        HttpResponse: returns HTMX snippet containing subscribe button. Returns HTTP CONFLICT
-            if episode already bookmarked.
 
     Raises:
         Http404: episode not found
@@ -329,15 +262,8 @@ def add_bookmark(request, episode_id):
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_bookmark(request, episode_id):
+def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Remove episode from bookmarks.
-
-    Args:
-        request (HttpRequest)
-        episode_id (int): Episode PK
-
-    Returns:
-        TemplateResponse: HTMX snippet containing subscribe button.
 
     Raises:
         Http404: episode not found
@@ -352,12 +278,12 @@ def remove_bookmark(request, episode_id):
 
 
 def _get_episode_or_404(
-    request,
-    episode_id,
+    request: HttpRequest,
+    episode_id: int,
     *,
-    with_podcast=False,
-    with_current_time=False,
-):
+    with_podcast: bool = False,
+    with_current_time: bool = False,
+) -> Episode:
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
@@ -370,10 +296,10 @@ def _player_response(
     request,
     episode: Episode,
     *,
-    start_player,
-    current_time,
-    listened,
-):
+    start_player: bool,
+    current_time: datetime | None,
+    listened: datetime | None,
+) -> TemplateResponse:
     return TemplateResponse(
         request,
         "episodes/player.html",
@@ -387,7 +313,7 @@ def _player_response(
     )
 
 
-def _bookmark_action_response(request, episode, is_bookmarked):
+def _bookmark_action_response(request: HttpRequest, episode: Episode, is_bookmarked: bool) -> TemplateResponse:
     return TemplateResponse(
         request,
         "episodes/actions/bookmark.html",
