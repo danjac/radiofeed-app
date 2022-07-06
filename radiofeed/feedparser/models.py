@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import attrs
 
@@ -66,14 +67,14 @@ class Item:
     keywords: str = attrs.field()
 
     @pub_date.validator
-    def _check_pub_date(self, attribute, value):
+    def _check_pub_date(self, attribute: attrs.Attribute, value: Any) -> None:
         if value is None:
             raise ValueError("pub_date cannot be null")
         if value > timezone.now():
             raise ValueError("pub_date cannot be in future")
 
     @keywords.default
-    def _default_keywords(self):
+    def _default_keywords(self) -> str:
         return " ".join(filter(None, self.categories))
 
 
@@ -131,5 +132,5 @@ class Feed:
     pub_date: datetime | None = attrs.field()
 
     @pub_date.default
-    def _default_pub_date(self):
+    def _default_pub_date(self) -> datetime:
         return max([item.pub_date for item in self.items])
