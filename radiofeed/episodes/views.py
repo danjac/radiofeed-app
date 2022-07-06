@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -82,11 +82,7 @@ def search_episodes(request):
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
 
-    episodes = (
-        Episode.objects.select_related("podcast")
-        .search(request.search.value)
-        .order_by("-rank", "-pub_date")
-    )
+    episodes = Episode.objects.select_related("podcast").search(request.search.value).order_by("-rank", "-pub_date")
 
     return pagination_response(
         request,
@@ -111,9 +107,7 @@ def episode_detail(request, episode_id, slug=None):
     Raises:
         Http404: episode not found
     """
-    episode = _get_episode_or_404(
-        request, episode_id, with_podcast=True, with_current_time=True
-    )
+    episode = _get_episode_or_404(request, episode_id, with_podcast=True, with_current_time=True)
     return TemplateResponse(
         request,
         "episodes/detail.html",
@@ -165,7 +159,7 @@ def start_player(request, episode_id):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def close_player(request):
+def close_player(request: HttpRequest) -> HttpResponse:
     """Closes player. Removes episode to player session tracker.
 
     Args:
@@ -234,9 +228,7 @@ def history(request):
     """
     newest_first = request.GET.get("o", "d") == "d"
 
-    logs = AudioLog.objects.filter(user=request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    logs = AudioLog.objects.filter(user=request.user).select_related("episode", "episode__podcast")
 
     if request.search:
         logs = logs.search(request.search.value).order_by("-rank", "-listened")
@@ -294,9 +286,7 @@ def bookmarks(request):
     Returns:
         TemplateResponse
     """
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related("episode", "episode__podcast")
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
 
