@@ -12,12 +12,20 @@ from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 episodes_url = reverse_lazy("episodes:index")
 
 
-def assert_player_episode(client, episode):
-    assert client.session.get(Player.session_key) == episode.id
+@pytest.fixture(scope="session")
+def assert_player_episode():
+    def _assert(client, episode):
+        assert client.session.get(Player.session_key) == episode.id
+
+    return _assert
 
 
-def assert_not_player_episode(client, episode):
-    assert client.session.get(Player.session_key) != episode.id
+@pytest.fixture(scope="session")
+def assert_not_player_episode():
+    def _assert(client, episode):
+        assert client.session.get(Player.session_key) != episode.id
+
+    return _assert
 
 
 class TestNewEpisodes:
@@ -162,7 +170,14 @@ class TestClosePlayer:
         response = client.post(self.url)
         assert_ok(response)
 
-    def test_close(self, client, auth_user, player_episode, assert_ok):
+    def test_close(
+        self,
+        client,
+        auth_user,
+        player_episode,
+        assert_ok,
+        assert_not_player_episode,
+    ):
 
         log = AudioLogFactory(
             user=auth_user,
