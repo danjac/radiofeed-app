@@ -5,11 +5,8 @@ from radiofeed.podcasts.models import Podcast
 
 
 @db_task()
-def parse_feed(podcast_id):
+def parse_feed(podcast_id: int) -> None:
     """Handles single podcast feed update.
-
-    Args:
-        podcast_id (int): Podcast PK
 
     Raises:
         PodcastDoesNotExist: if no podcast found
