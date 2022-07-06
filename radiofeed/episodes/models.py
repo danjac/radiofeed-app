@@ -296,7 +296,7 @@ class AudioLog(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
-    listened: datetime = models.DateTimeField()
+    listened = models.DateTimeField()
     current_time = models.IntegerField(default=0)
 
     objects = AudioLogManager()
