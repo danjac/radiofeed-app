@@ -5,6 +5,10 @@ on: push
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
+      REDIS_URL: redis://localhost:4321
+      SECRET_KEY: seekrit
 
     services:
       postgres:
@@ -54,19 +58,11 @@ jobs:
           mypy radiofeed
 
       - name: Validate templates
-        env:
-          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
-          REDIS_URL: redis://localhost:4321
-          SECRET_KEY: seekrit
         run: |
           source .venv/bin/activate
           python manage.py validate_templates
 
       - name: Run unit tests
-        env:
-          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
-          REDIS_URL: redis://localhost:4321
-          SECRET_KEY: seekrit
         run: |
           source .venv/bin/activate
           xargs python -m nltk.downloader < nltk.txt
