@@ -1,5 +1,7 @@
 import http
 
+from typing import Generator
+
 import attrs
 import requests
 
@@ -29,21 +31,19 @@ class FeedParser:
     _feed_attrs = attrs.fields(Feed)
     _item_attrs = attrs.fields(Item)
 
-    def __init__(self, podcast):
+    def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
     @transaction.atomic
-    def parse(self):
+    def parse(self) -> bool:
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
 
-        If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is
-        marked as complete) then the podcast is set inactive.
+        If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
 
         Returns:
-            bool: if podcast has been successfully updated. This will be False if there are no new updates or
-                there is some other problem e.g. HTTP error.
+            if podcast has been successfully updated. This will be False if there are no new updates or there is some other problem e.g. HTTP error.
         """
         try:
             return self._handle_success(*self._parse_rss())
@@ -51,7 +51,7 @@ class FeedParser:
         except Exception as e:
             return self._handle_failure(e)
 
-    def _parse_rss(self):
+    def _parse_rss(self) -> tuple[requests.Response, Feed, str]:
         response = requests.get(
             self._podcast.rss,
             headers=self._get_feed_headers(),
@@ -78,7 +78,7 @@ class FeedParser:
 
         return response, parse_rss(response.content), content_hash
 
-    def _get_feed_headers(self):
+    def _get_feed_headers(self) -> dict:
         headers = {
             "Accept": "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1",
             "User-Agent": settings.USER_AGENT,
@@ -90,7 +90,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _handle_success(self, response, feed, content_hash):
+    def _handle_success(self, response: requests.Response, feed: Feed, content_hash: str) -> bool:
 
         # taxonomy
         categories_dct = Category.objects.in_bulk(field_name="name")
@@ -123,7 +123,7 @@ class FeedParser:
             ),
             **attrs.asdict(
                 feed,
-                filter=attrs.filters.exclude(
+                filter=attrs.filters.exclude(  # type: ignore
                     self._feed_attrs.categories,
                     self._feed_attrs.complete,
                     self._feed_attrs.items,
@@ -137,7 +137,7 @@ class FeedParser:
 
         return True
 
-    def _extract_text(self, feed, categories, keywords):
+    def _extract_text(self, feed: Feed, categories: list[Category], keywords: str) -> str:
         text = " ".join(
             value
             for value in [
@@ -152,7 +152,7 @@ class FeedParser:
         )
         return " ".join(tokenize(self._podcast.language, text))
 
-    def _handle_failure(self, exc):
+    def _handle_failure(self, exc: Exception) -> bool:
         match exc:
             case NotModified():
                 active = True
@@ -170,7 +170,7 @@ class FeedParser:
                 raise
 
         try:
-            http_status = exc.response.status_code
+            http_status = exc.response.status_code  # type: ignore
         except AttributeError:
             http_status = None
 
@@ -181,7 +181,7 @@ class FeedParser:
         )
         return False
 
-    def _save_podcast(self, **fields):
+    def _save_podcast(self, **fields) -> None:
         now = timezone.now()
         Podcast.objects.filter(pk=self._podcast.id).update(
             updated=now,
@@ -189,7 +189,7 @@ class FeedParser:
             **fields,
         )
 
-    def _handle_episode_updates(self, feed, batch_size=100):
+    def _handle_episode_updates(self, feed: Feed, batch_size: int = 100) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
 
         # remove any episodes that may have been deleted on the podcast
@@ -226,7 +226,7 @@ class FeedParser:
         for batch in batcher(self._episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
-    def _episodes_for_update(self, feed, guids):
+    def _episodes_for_update(self, feed: Feed, guids: dict[str, int]) -> Generator[Episode, None, None]:
 
         episode_ids = set()
 
@@ -235,16 +235,16 @@ class FeedParser:
                 yield self._make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
-    def _episodes_for_insert(self, feed, guids):
+    def _episodes_for_insert(self, feed: Feed, guids: dict[str, int]) -> Generator[Episode, None, None]:
         return (self._make_episode(item) for item in feed.items if item.guid not in guids)
 
-    def _make_episode(self, item, episode_id=None):
+    def _make_episode(self, item: Item, episode_id: int | None = None) -> Episode:
         return Episode(
             pk=episode_id,
             podcast=self._podcast,
             **attrs.asdict(
                 item,
-                filter=attrs.filters.exclude(
+                filter=attrs.filters.exclude(  # type: ignore
                     self._item_attrs.categories,
                 ),
             ),
