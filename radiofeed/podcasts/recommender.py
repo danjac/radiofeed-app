@@ -2,10 +2,12 @@ import collections
 import operator
 
 from datetime import timedelta
+from typing import Generator
 
 import numpy
 import pandas
 
+from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -17,17 +19,19 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation
 DEFAULT_TIME_PERIOD = timedelta(days=90)
 
 
-def recommend(since=DEFAULT_TIME_PERIOD, num_matches=12):
+def recommend(
+    since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12
+) -> Generator[tuple[str, list[Recommendation]], None, None]:
     """Generates Recommendation instances based on podcast similarity, grouped by language.
 
     Any existing recommendations are first deleted.
 
     Args:
-        since (timedelta | None): include podcasts last published since this period.
-        num_matches (int): total number of recommendations to create for each podcast
+        since: include podcasts last published since this period.
+        num_matches: total number of recommendations to create for each podcast
 
     Yields:
-        tuple[str, list[Recommendation]]: language + list of new matches
+        language + list of new matches
     """
     podcasts = (
         Podcast.objects.filter(pub_date__gt=timezone.now() - since)
@@ -42,20 +46,18 @@ def recommend(since=DEFAULT_TIME_PERIOD, num_matches=12):
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-        yield language, Recommender(language, num_matches).recommend(
-            podcasts, categories
-        )
+        yield language, Recommender(language, num_matches).recommend(podcasts, categories)
 
 
 class Recommender:
     """Creates recommendations for given language, based around text content and common categories.
 
     Args:
-        language (str): two-character language code e.g. "en"
-        num_matches (int): number of recommendations to create
+        language: two-character language code e.g. "en"
+        num_matches: number of recommendations to create
     """
 
-    def __init__(self, language, num_matches):
+    def __init__(self, language: str, num_matches: int):
 
         self._language = language
         self._num_matches = num_matches
@@ -66,15 +68,15 @@ class Recommender:
             ngram_range=(1, 2),
         )
 
-    def recommend(self, podcasts, categories):
+    def recommend(self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]) -> list[Recommendation]:
         """Creates recommendation instances.
 
         Args:
-            podcasts (QuerySet): podcast instances
-            categories (QuerySet): category instances
+            podcasts: podcast instances
+            categories: category instances
 
         Returns:
-            list[Recommendation]: list of new Recommendation instances
+            list of new Recommendation instances
         """
         return Recommendation.objects.bulk_create(
             (
@@ -84,15 +86,15 @@ class Recommender:
                     similarity=numpy.median(values),
                     frequency=len(values),
                 )
-                for (podcast_id, recommended_id), values in self._build_matches_dict(
-                    podcasts, categories
-                ).items()
+                for (podcast_id, recommended_id), values in self._build_matches_dict(podcasts, categories).items()
             ),
             batch_size=100,
             ignore_conflicts=True,
         )
 
-    def _build_matches_dict(self, podcasts, categories):
+    def _build_matches_dict(
+        self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
+    ) -> collections.defaultdict[tuple[int, int], list]:
 
         matches = collections.defaultdict(list)
 
@@ -105,7 +107,7 @@ class Recommender:
 
         return matches
 
-    def _find_similarities(self, podcasts):
+    def _find_similarities(self, podcasts: QuerySet[Podcast]) -> Generator[tuple[int, int, float], None, None]:
         df = pandas.DataFrame(podcasts.values("id", "extracted_text"))
 
         if df.empty:
@@ -114,9 +116,7 @@ class Recommender:
         df.drop_duplicates(inplace=True)
 
         try:
-            cosine_sim = cosine_similarity(
-                self._vectorizer.fit_transform(df["extracted_text"])
-            )
+            cosine_sim = cosine_similarity(self._vectorizer.fit_transform(df["extracted_text"]))
         except ValueError:  # pragma: no cover
             return
 
@@ -135,7 +135,9 @@ class Recommender:
             except IndexError:  # pragma: no cover
                 continue
 
-    def _find_similarity(self, df, similar, current_id):
+    def _find_similarity(
+        self, df: pandas.DataFrame, similar: list[float], current_id: int
+    ) -> tuple[int, Generator[tuple[int, float], None, None]]:
 
         sorted_similar = sorted(
             enumerate(similar),
@@ -145,9 +147,5 @@ class Recommender:
 
         return (
             current_id,
-            (
-                (df.loc[row, "id"], similarity)
-                for row, similarity in sorted_similar
-                if df.loc[row, "id"] != current_id
-            ),
+            ((df.loc[row, "id"], similarity) for row, similarity in sorted_similar if df.loc[row, "id"] != current_id),
         )
