@@ -12,11 +12,11 @@ from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 episodes_url = reverse_lazy("episodes:index")
 
 
-def assert_playing(client, episode):
+def assert_player_episode(client, episode):
     assert client.session.get(Player.session_key) == episode.id
 
 
-def assert_not_playing(client, episode):
+def assert_not_player_episode(client, episode):
     assert client.session.get(Player.session_key) != episode.id
 
 
@@ -177,7 +177,7 @@ class TestClosePlayer:
 
         assert log.current_time == 2000
 
-        assert_not_playing(client, player_episode)
+        assert_not_player_episode(client, player_episode)
 
 
 class TestPlayerTimeUpdate:
