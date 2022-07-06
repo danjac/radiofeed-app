@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
+from django.contrib.users.models import AnonymousUser
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
@@ -15,24 +18,17 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
 from radiofeed.common.utils.html import strip_html
+from radiofeed.users.models import User
 
 
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term, base_similarity=0.2):
-        """Does a trigram similarity search for podcasts.
-
-        Args:
-            search_term (str)
-            base_similarity (float): base similarity for trigram search
-
-        Returns:
-            QuerySet
-        """
-        return self.annotate(
-            similarity=TrigramSimilarity("name", force_str(search_term))
-        ).filter(similarity__gte=base_similarity)
+    def search(self, search_term: str, base_similarity: float = 0.2) -> models.QuerySet:
+        """Does a trigram similarity search for podcasts."""
+        return self.annotate(similarity=TrigramSimilarity("name", force_str(search_term))).filter(
+            similarity__gte=base_similarity
+        )
 
 
 class Category(models.Model):
@@ -53,57 +49,40 @@ class Category(models.Model):
         verbose_name_plural = "categories"
         ordering = ("name",)
 
-    def __str__(self):
-        """Returns category name.
-
-        Returns:
-            str
-        """
+    def __str__(self) -> str:
+        """Returns category name."""
         return self.name
 
     @property
-    def slug(self):
-        """Returns slugified name.
-
-        Returns:
-            str
-        """
+    def slug(self) -> str:
+        """Returns slugified name."""
         return slugify(self.name, allow_unicode=False)
 
-    def get_absolute_url(self):
-        """Absolute URL to a category.
-
-        Returns:
-            str
-        """
+    def get_absolute_url(self) -> str:
+        """Absolute URL to a category."""
         return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    def scheduled(self):
+    def scheduled(self) -> models.QuerySet[Podcast]:
         """Returns podcasts scheduled for update.
 
-         Scheduling algorithm:
+        Scheduling algorithm:
 
-             1. check once every n hours, where "n" is the number
-                 of days since the podcast was last updated (i.e. last pub date)
-             2. if podcast was last updated within 24 hours, check once an hour.
-             3. if podcast was last updated > 24 days, check every 24 hours.
-             4. if podcast has not been checked yet (i.e. just added to database), check immediately.
+            1. check once every n hours, where "n" is the number
+                of days since the podcast was last updated (i.e. last pub date)
+            2. if podcast was last updated within 24 hours, check once an hour.
+            3. if podcast was last updated > 24 days, check every 24 hours.
+            4. if podcast has not been checked yet (i.e. just added to database), check immediately.
 
-         Only *active* podcasts should be included.
-
-        Returns:
-             QuerySet: scheduled podcasts
+        Only *active* podcasts should be included.
         """
         now = timezone.now()
 
         return Podcast.objects.annotate(
-            days_since_last_pub_date=models.functions.ExtractDay(
-                now - models.F("pub_date")
-            ),
+            days_since_last_pub_date=models.functions.ExtractDay(now - models.F("pub_date")),
         ).filter(
             models.Q(
                 parsed__isnull=True,
@@ -121,8 +100,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
             | models.Q(
                 days_since_last_pub_date__range=(1, 24),
-                parsed__lt=now
-                - timedelta(hours=1) * models.F("days_since_last_pub_date"),
+                parsed__lt=now - timedelta(hours=1) * models.F("days_since_last_pub_date"),
             ),
             active=True,
         )
@@ -176,9 +154,7 @@ class Podcast(models.Model):
     funding_url = models.URLField(max_length=2083, null=True, blank=True)
     funding_text = models.TextField(blank=True)
 
-    language = models.CharField(
-        max_length=2, default="en", validators=[MinLengthValidator(2)]
-    )
+    language = models.CharField(max_length=2, default="en", validators=[MinLengthValidator(2)])
     description = models.TextField(blank=True)
     link = models.URLField(max_length=2083, null=True, blank=True)
     keywords = models.TextField(blank=True)
@@ -212,100 +188,53 @@ class Podcast(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
-        """Returns podcast title or RSS if missing.
-
-        Returns:
-            str
-        """
+    def __str__(self) -> str:
+        """Returns podcast title or RSS if missing."""
         return self.title or self.rss
 
-    def get_absolute_url(self):
-        """Default absolute URL of podcast.
-
-        Returns:
-            str
-        """
+    def get_absolute_url(self) -> str:
+        """Default absolute URL of podcast."""
         return self.get_detail_url()
 
-    def get_detail_url(self):
-        """Absolute URL of podcast detail page.
-
-        Returns:
-            str
-        """
+    def get_detail_url(self) -> str:
+        """Absolute URL of podcast detail page."""
         return reverse("podcasts:podcast_detail", args=[self.pk, self.slug])
 
-    def get_episodes_url(self):
-        """Absolute URL of podcast episode list page.
-
-        Returns:
-            str
-        """
+    def get_episodes_url(self) -> str:
+        """Absolute URL of podcast episode list page."""
         return reverse("podcasts:podcast_episodes", args=[self.pk, self.slug])
 
-    def get_similar_url(self):
-        """Absolute URL of podcast similar recommendations page.
-
-        Returns:
-            str
-        """
+    def get_similar_url(self) -> str:
+        """Absolute URL of podcast similar recommendations page."""
         return reverse("podcasts:podcast_similar", args=[self.pk, self.slug])
 
-    def get_latest_episode_url(self):
-        """Absolute URL to latest episode redirect.
-
-        Returns:
-            str
-        """
+    def get_latest_episode_url(self) -> str:
+        """Absolute URL to latest episode redirect."""
         return reverse("podcasts:latest_episode", args=[self.pk, self.slug])
 
     @cached_property
-    def cleaned_title(self):
-        """Strips HTML from title field.
-
-        Returns:
-            str
-        """
+    def cleaned_title(self) -> str:
+        """Strips HTML from title field."""
         return strip_html(self.title)
 
     @cached_property
-    def cleaned_description(self):
-        """Strips HTML from description field.
-
-        Returns:
-            str
-        """
+    def cleaned_description(self) -> str:
+        """Strips HTML from description field."""
         return strip_html(self.description)
 
     @cached_property
-    def slug(self):
-        """Returns slugified title.
-
-        Returns:
-            str
-        """
+    def slug(self) -> str:
+        """Returns slugified title."""
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def is_subscribed(self, user):
-        """Check if user is subscribed to this podcast.
-
-        Args:
-            user (User | AnonymousUser)
-
-        Returns:
-            bool
-        """
+    def is_subscribed(self, user: User | AnonymousUser) -> bool:
+        """Check if user is subscribed to this podcast."""
         if user.is_anonymous:
             return False
         return Subscription.objects.filter(podcast=self, user=user).exists()
 
-    def get_subscribe_target(self):
-        """Returns HTMX subscribe action target.
-
-        Returns:
-            str
-        """
+    def get_subscribe_target(self) -> str:
+        """Returns HTMX subscribe action target."""
         return f"subscribe-actions-{self.id}"
 
 
@@ -328,11 +257,11 @@ class Subscription(TimeStampedModel):
 class RecommendationQuerySet(models.QuerySet):
     """Custom QuerySet for Recommendation model."""
 
-    def bulk_delete(self):
+    def bulk_delete(self) -> int:
         """More efficient quick delete.
 
         Returns:
-            int: number of rows deleted
+            number of rows deleted
         """
         return self._raw_delete(self.db)
 
@@ -357,9 +286,7 @@ class Recommendation(models.Model):
 
     frequency = models.PositiveIntegerField(default=0)
 
-    similarity = models.DecimalField(
-        decimal_places=10, max_digits=100, null=True, blank=True
-    )
+    similarity = models.DecimalField(decimal_places=10, max_digits=100, null=True, blank=True)
 
     objects = RecommendationManager()
 
