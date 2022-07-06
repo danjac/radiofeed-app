@@ -1,3 +1,5 @@
+from typing import Generator
+
 import lxml.etree
 
 from radiofeed.common.utils.xml import parse_xml, xpath_finder
@@ -5,14 +7,11 @@ from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
 
 
-def parse_rss(content):
+def parse_rss(content: bytes) -> Feed:
     """Parses RSS or Atom feed and returns the feed details and individual episodes.
 
     Args:
-        content (bytes): the body of the RSS or Atom feed
-
-    Returns:
-        Feed
+        content: the body of the RSS or Atom feed
 
     Raises:
         RssParserError: if XML content is invalid, or the feed is otherwise invalid or empty
@@ -38,14 +37,11 @@ class RssParser:
         "podcast": "https://podcastindex.org/namespace/1.0",
     }
 
-    def __init__(self, channel):
+    def __init__(self, channel: lxml.etree.Element):
         self._channel = channel
 
-    def parse(self):
+    def parse(self) -> Feed:
         """Parses RSS into a Feed instance.
-
-        Returns:
-            Feed
 
         Raises:
             RssParserError: missing or invalid RSS content
@@ -68,13 +64,13 @@ class RssParser:
                             "itunes:author/text()",
                             "itunes:owner/itunes:name/text()",
                         ),
-                        title="title/text()",
+                        title="title/text()",  # type: ignore
                     ),
                 )
             except (TypeError, ValueError) as e:
                 raise RssParserError from e
 
-    def _parse_item(self, item):
+    def _parse_item(self, item: Item) -> Item:
         with xpath_finder(item, self._namespaces) as finder:
             return Item(
                 categories=list(finder.iter("category/text()")),
@@ -96,11 +92,11 @@ class RssParser:
                     media_url=("enclosure//@url", "media:content//@url"),
                     pub_date=("pubDate/text()", "pubdate/text()"),
                     season="itunes:season/text()",
-                    title="title/text()",
+                    title="title/text()",  # type: ignore
                 ),
             )
 
-    def _parse_items(self):
+    def _parse_items(self) -> Generator[Item, None, None]:
         for item in self._channel.iterfind("item"):
             try:
                 yield self._parse_item(item)

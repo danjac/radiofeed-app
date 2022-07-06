@@ -5,15 +5,10 @@ from radiofeed.users.models import User
 
 
 @db_task()
-def send_recommendations_email(user_id):
+def send_recommendations_email(user_id: int) -> None:
     """Sends recommendation email to user.
-
-    Args:
-        user_id (int): User PK
 
     Raises:
         UserDoesNotExist: if no matching recipient user found
     """
-    emails.send_recommendations_email(
-        User.objects.email_notification_recipients().get(pk=user_id)
-    )
+    emails.send_recommendations_email(User.objects.email_notification_recipients().get(pk=user_id))
