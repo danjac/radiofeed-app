@@ -1,11 +1,6 @@
 from split_settings.tools import include
 
-from radiofeed.settings.base import (
-    ADMIN_SITE_HEADER,
-    INSTALLED_APPS,
-    MIDDLEWARE,
-    TEMPLATES,
-)
+from radiofeed.settings.base import ADMIN_SITE_HEADER, INSTALLED_APPS, MIDDLEWARE, TEMPLATES
 
 include("base.py")
 
