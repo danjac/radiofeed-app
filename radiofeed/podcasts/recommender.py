@@ -19,8 +19,6 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 DEFAULT_TIME_PERIOD = timedelta(days=90)
 
-logger = logging.Logger(__name__)
-
 
 def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by language.
@@ -38,6 +36,8 @@ def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> 
         .exclude(extracted_text="")
     )
 
+    logging.info("Deleting existing recommendations...")
+
     Recommendation.objects.bulk_delete()
 
     categories = Category.objects.order_by("name")
@@ -45,7 +45,7 @@ def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> 
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-        logger.info("Recommendations for language [%s]", language)
+        logging.info("Recommendations for language [%s]...", language)
         Recommender(language, num_matches).recommend(podcasts, categories)
 
 
@@ -83,7 +83,9 @@ class Recommender:
                     similarity=numpy.median(values),
                     frequency=len(values),
                 )
-                for (podcast_id, recommended_id), values in self._build_matches_dict(podcasts, categories).items()
+                for (podcast_id, recommended_id), values in self._build_matches_dict(
+                    podcasts.filter(language=self._language), categories
+                ).items()
             ),
             batch_size=100,
             ignore_conflicts=True,
@@ -95,19 +97,24 @@ class Recommender:
 
         matches = collections.defaultdict(list)
 
-        # individual graded category matches
+        logging.info("Building matches for language [%s]...", self._language)
+
         for category in categories:
-            for podcast_id, recommended_id, similarity in self._find_similarities(
-                podcasts.filter(categories=category, language=self._language)
-            ):
+
+            for podcast_id, recommended_id, similarity in self._find_similarities(category, podcasts):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
-        logger.info("Matches for language [en]: %d", len(matches))
+        logging.info("Matches for language [%s]: %d", self._language, len(matches))
 
         return matches
 
-    def _find_similarities(self, podcasts: QuerySet[Podcast]) -> Generator[tuple[int, int, float], None, None]:
-        df = pandas.DataFrame(podcasts.values("id", "extracted_text"))
+    def _find_similarities(
+        self, category: Category, podcasts: QuerySet[Podcast]
+    ) -> Generator[tuple[int, int, float], None, None]:
+
+        df = pandas.DataFrame(podcasts.filter(categories=category).values("id", "extracted_text").distinct())
+
+        logging.info("Category [%s] [%s]: %d", self._language, category.name, len(df))
 
         if df.empty:
             return  # pragma: no cover
