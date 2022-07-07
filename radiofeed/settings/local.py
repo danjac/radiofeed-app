@@ -6,6 +6,8 @@ include("base.py")
 
 ADMIN_SITE_HEADER += " [LOCAL]"
 
+DEBUG = True
+
 INSTALLED_APPS = ["whitenoise.runserver_nostatic", "debug_toolbar"] + INSTALLED_APPS
 
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]

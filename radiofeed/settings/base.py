@@ -41,6 +41,7 @@ CACHES = {
             # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
             "IGNORE_EXCEPTIONS": True,
             "PARSER_CLASS": "redis.connection.HiredisParser",
+            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
         },
     },
 }
