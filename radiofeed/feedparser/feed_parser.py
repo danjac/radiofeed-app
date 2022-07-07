@@ -99,22 +99,14 @@ class FeedParser:
 
         keywords = " ".join(category for category in feed.categories if category not in categories_dct)
 
-        # mark inactive if discontinued
-        if feed.complete:
-            active = False
-            parse_result = Podcast.ParseResult.COMPLETE
-        else:
-            active = True
-            parse_result = Podcast.ParseResult.SUCCESS
-
         self._save_podcast(
-            active=active,
+            active=not (feed.complete),
+            parse_result=Podcast.ParseResult.COMPLETE if feed.complete else Podcast.ParseResult.SUCCESS,
             content_hash=content_hash,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
-            parse_result=parse_result,
             keywords=keywords,
             extracted_text=self._extract_text(
                 feed,
