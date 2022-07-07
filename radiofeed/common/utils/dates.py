@@ -5,7 +5,7 @@ from datetime import date, datetime
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
 
-TZ_INFOS = {
+_tz_infos: dict[str, float] = {
     k: v * 3600
     for k, v in (
         ("A", 1),
@@ -281,6 +281,6 @@ def _(value: date) -> datetime | None:
 def _(value: str) -> datetime | None:
 
     try:
-        return parse_date(date_parser.parse(value, tzinfos=TZ_INFOS)) if value else None
+        return parse_date(date_parser.parse(value, tzinfos=_tz_infos)) if value else None
     except date_parser.ParserError:
         return None
