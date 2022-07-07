@@ -12,20 +12,16 @@ from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 episodes_url = reverse_lazy("episodes:index")
 
 
-@pytest.fixture(scope="session")
-def assert_player_episode():
-    def _assert(client, episode):
-        assert client.session.get(Player.session_key) == episode.id
+@pytest.fixture
+def player_episode(client, episode):
+    session = client.session
+    session[Player.session_key] = episode.id
+    session.save()
+    return episode
 
-    return _assert
 
-
-@pytest.fixture(scope="session")
-def assert_not_player_episode():
-    def _assert(client, episode):
-        assert client.session.get(Player.session_key) != episode.id
-
-    return _assert
+def is_player_episode(client, episode):
+    return client.session.get(Player.session_key) == episode.id
 
 
 class TestNewEpisodes:
@@ -142,7 +138,7 @@ class TestStartPlayer:
         assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-        assert client.session[Player.session_key] == episode.id
+        assert is_player_episode(client, episode)
 
     def test_another_episode_in_player(self, client, auth_user, episode, assert_ok):
         client.session[Player.session_key] = EpisodeFactory().id
@@ -150,8 +146,7 @@ class TestStartPlayer:
         assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-
-        assert client.session[Player.session_key] == episode.id
+        assert is_player_episode(client, episode)
 
     def test_resume(self, client, auth_user, episode, assert_ok):
         log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
@@ -160,7 +155,7 @@ class TestStartPlayer:
         log.refresh_from_db()
 
         assert log.current_time == 2000
-        assert client.session[Player.session_key] == episode.id
+        assert is_player_episode(client, episode)
 
 
 class TestClosePlayer:
@@ -176,7 +171,6 @@ class TestClosePlayer:
         auth_user,
         player_episode,
         assert_ok,
-        assert_not_player_episode,
     ):
 
         log = AudioLogFactory(
@@ -191,8 +185,7 @@ class TestClosePlayer:
         log.refresh_from_db()
 
         assert log.current_time == 2000
-
-        assert_not_player_episode(client, player_episode)
+        assert not is_player_episode(client, log.episode)
 
 
 class TestPlayerTimeUpdate:

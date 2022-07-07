@@ -9,7 +9,6 @@ from django.http import HttpResponse
 from faker import Faker
 
 from radiofeed.episodes.factories import EpisodeFactory
-from radiofeed.episodes.middleware import Player
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory, SubscriptionFactory
 from radiofeed.users.factories import UserFactory
 
@@ -65,14 +64,6 @@ def category(db):
 @pytest.fixture
 def subscription(auth_user, podcast):
     return SubscriptionFactory(podcast=podcast, user=auth_user)
-
-
-@pytest.fixture
-def player_episode(client, episode):
-    session = client.session
-    session[Player.session_key] = episode.id
-    session.save()
-    return episode
 
 
 def assert_status(response, status):
