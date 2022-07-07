@@ -66,19 +66,8 @@ class Recommender:
         )
 
     def recommend(self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]) -> None:
-        """Creates recommendation instances.
-
-        Args:
-            podcasts: podcasts to filter
-            categories: podcast categories
-        """
-        for batch in batcher(
-            self._build_matches_dict(
-                podcasts.filter(language=self._language),
-                categories,
-            ).items(),
-            1000,
-        ):
+        """Creates recommendation instances."""
+        for batch in batcher(self._build_matches_dict(podcasts, categories).items(), 1000):
 
             Recommendation.objects.bulk_create(
                 (
@@ -100,10 +89,7 @@ class Recommender:
         matches = collections.defaultdict(list)
 
         for category in categories:
-            for podcast_id, recommended_id, similarity in self._find_similarities(
-                category,
-                podcasts.filter(categories=category).distinct(),
-            ):
+            for podcast_id, recommended_id, similarity in self._find_similarities(category, podcasts):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
@@ -112,7 +98,14 @@ class Recommender:
         self, category: Category, podcasts: QuerySet[Podcast]
     ) -> Generator[tuple[int, int, float], None, None]:
 
-        df = pandas.DataFrame(podcasts.values("id", "extracted_text"))
+        df = pandas.DataFrame(
+            podcasts.filter(
+                language=self._language,
+                categories=category,
+            )
+            .values("id", "extracted_text")
+            .distinct()
+        )
 
         if df.empty:
             return  # pragma: no cover
