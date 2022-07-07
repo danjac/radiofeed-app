@@ -14,6 +14,7 @@ from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
@@ -45,7 +46,6 @@ def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> 
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-        logging.info("Recommendations for language [%s]...", language)
         Recommender(language, num_matches).recommend(podcasts, categories)
 
 
@@ -56,6 +56,8 @@ class Recommender:
         language: two-character language code e.g. "en"
         num_matches: number of recommendations to create
     """
+
+    _batch_size = 1000
 
     def __init__(self, language: str, num_matches: int):
 
@@ -75,46 +77,49 @@ class Recommender:
             podcasts: podcast instances
             categories: category instances
         """
-        Recommendation.objects.bulk_create(
-            (
-                Recommendation(
-                    podcast_id=podcast_id,
-                    recommended_id=recommended_id,
-                    similarity=numpy.median(values),
-                    frequency=len(values),
-                )
-                for (podcast_id, recommended_id), values in self._build_matches_dict(
-                    podcasts.filter(language=self._language), categories
-                ).items()
-            ),
-            batch_size=1000,
-            ignore_conflicts=True,
-        )
-
-    def _build_matches_dict(
-        self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
-    ) -> collections.defaultdict[tuple[int, int], list]:
-
-        matches = collections.defaultdict(list)
-
         logging.info("Building matches for language [%s]...", self._language)
+
+        podcasts = podcasts.filter(language=self._language)
+        matches = collections.defaultdict(list)
 
         for category in categories:
 
             for podcast_id, recommended_id, similarity in self._find_similarities(category, podcasts):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
-        logging.info("Matches for language [%s]: %d", self._language, len(matches))
+        num_matches = len(matches)
 
-        return matches
+        logging.info("Matches for language [%s]: %d", self._language, num_matches)
+
+        for counter, batch in enumerate(batcher(matches.items(), self._batch_size)):
+
+            logging.info(
+                "Saving batch for language [%s]: %d-%d / %d",
+                self._language,
+                counter,
+                counter * self._batch_size,
+                num_matches,
+            )
+
+            Recommendation.objects.bulk_create(
+                (
+                    Recommendation(
+                        podcast_id=podcast_id,
+                        recommended_id=recommended_id,
+                        similarity=numpy.median(values),
+                        frequency=len(values),
+                    )
+                    for (podcast_id, recommended_id), values in batch
+                ),
+                ignore_conflicts=True,
+            )
 
     def _find_similarities(
         self, category: Category, podcasts: QuerySet[Podcast]
     ) -> Generator[tuple[int, int, float], None, None]:
+        logging.info("Building matches for category [%s] [%s]", self._language, category.name)
 
         df = pandas.DataFrame(podcasts.filter(categories=category).values("id", "extracted_text").distinct())
-
-        logging.info("Category [%s] [%s]: %d", self._language, category.name, len(df))
 
         if df.empty:
             return  # pragma: no cover
