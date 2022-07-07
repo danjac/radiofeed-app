@@ -1,4 +1,5 @@
 import collections
+import logging
 import operator
 
 from datetime import timedelta
@@ -17,6 +18,8 @@ from radiofeed.common.utils.text import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 DEFAULT_TIME_PERIOD = timedelta(days=90)
+
+logger = logging.Logger(__name__)
 
 
 def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> None:
@@ -42,6 +45,7 @@ def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> 
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
+        logger.info("Recommendations for language [%s]", language)
         Recommender(language, num_matches).recommend(podcasts, categories)
 
 
@@ -97,6 +101,8 @@ class Recommender:
                 podcasts.filter(categories=category, language=self._language)
             ):
                 matches[(podcast_id, recommended_id)].append(similarity)
+
+        logger.info("Matches for language [en]: %d", len(matches))
 
         return matches
 
