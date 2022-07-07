@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, TypeAlias
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, Model, Q, QuerySet
 from django.utils.encoding import force_str
 
 if TYPE_CHECKING:
-    BaseQuerySet: TypeAlias = QuerySet
+    BaseQuerySet: TypeAlias = QuerySet[Model]
 else:
     BaseQuerySet = object
 
