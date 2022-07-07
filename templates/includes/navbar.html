@@ -60,7 +60,7 @@
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2">
 
                     <button type="submit"
-                        title="Search"
+                        title="{% translate "Search" %}"
                         class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
                         {% include "icons/search.svg" with css_class="h-4 w-4" %}
                     </button>
@@ -128,12 +128,12 @@
                         @click="$el.select()"
                         name="q"
                         autocomplete="off"
-                        aria-label="Search"
-                        placeholder="Search"
+                        aria-label="{% translate "Search" %}"
+                        placeholder="{% translate "Search" %}"
                         class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm">
                     <div class="absolute inset-y-0 right-0 flex items-center pr-2">
                         <button type="submit"
-                            title="Search"
+                            title="{% translate "Search" %}"
                             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
                             {% include "icons/search.svg" with css_class="h-4 w-4" %}
                         </button>
