@@ -60,12 +60,13 @@ class SearchMixin(BaseQuerySet):
             return self.none()
 
         query = SearchQuery(force_str(search_term), search_type="websearch")
-        ranks = {}
-        filters = []
+
+        ranks: dict[str, SearchRank] = {}
+        filters: list[Q] = []
 
         if self.search_vectors:
 
-            combined_rank = []
+            combined_rank: list[F] = []
 
             for field, rank in self.search_vectors:
                 ranks[rank] = SearchRank(F(field), query=query)
