@@ -48,18 +48,20 @@ class SearchMixin(BaseQuerySet):
         search_vectors: SearchVector fields (if multiple)
         search_vector_field: single SearchVectorField
         search_rank: SearchRank field for ordering
+        search_type: PostgreSQL search type
     """
 
     search_vectors: list[tuple[str, str]] = []
     search_vector_field: str = "search_vector"
     search_rank: str = "rank"
+    search_type: str = "websearch"
 
     def search(self, search_term: str) -> QuerySet:
         """Returns result of search."""
         if not search_term:
             return self.none()
 
-        query = SearchQuery(force_str(search_term), search_type="websearch")
+        query = SearchQuery(force_str(search_term), search_type=self.search_type)
 
         ranks: dict[str, SearchRank] = {}
         filters: list[Q] = []
