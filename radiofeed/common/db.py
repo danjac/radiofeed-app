@@ -1,15 +1,38 @@
+from __future__ import annotations
+
 import functools
 import operator
 
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING, Type, TypeVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, Model, Protocol, Q, QuerySet, sql
+from django.db.models.sql.where import WhereNode
 from django.utils.encoding import force_str
 
+_MT = TypeVar("_MT", bound=Model)
+_QT = TypeVar("_QT", bound=QuerySet[_MT])
+
+
 if TYPE_CHECKING:
-    BaseQuerySet: TypeAlias = QuerySet
+
+    class BaseQuerySet(Protocol[_MT]):
+        """Protocol for QuerySet mixins."""
+
+        model: Type[_MT]
+        _db: str | None
+        _query: sql.Query
+        _where: WhereNode
+
+        def count(self) -> int:
+            """Protocol for QuerySet method."""
+            ...
+
+        def annotate(self, **kwargs) -> BaseQuerySet:
+            """Protocol for QuerySet method."""
+            ...
+
 else:
     BaseQuerySet = object
 
@@ -23,7 +46,7 @@ class FastCountMixin(BaseQuerySet):
 
     fast_count_row_limit: int = 1000
 
-    def count(self):
+    def count(self) -> int:
         """Does optimized COUNT.
 
         If query contains WHERE, DISTINCT or GROUP BY, or number of rows under `fast_count_row_limit`, returns standard SELECT COUNT.
@@ -54,7 +77,7 @@ class SearchMixin(BaseQuerySet):
     search_vector_field: str = "search_vector"
     search_rank: str = "rank"
 
-    def search(self, search_term: str) -> QuerySet:
+    def search(self, search_term: str) -> _QT:
         """Returns result of search."""
         if not search_term:
             return self.none()
