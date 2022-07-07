@@ -19,9 +19,7 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation
 DEFAULT_TIME_PERIOD = timedelta(days=90)
 
 
-def recommend(
-    since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12
-) -> Generator[tuple[str, list[Recommendation]], None, None]:
+def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by language.
 
     Any existing recommendations are first deleted.
@@ -30,8 +28,6 @@ def recommend(
         since: include podcasts last published since this period.
         num_matches: total number of recommendations to create for each podcast
 
-    Yields:
-        language + list of new matches
     """
     podcasts = (
         Podcast.objects.filter(pub_date__gt=timezone.now() - since)
@@ -46,7 +42,7 @@ def recommend(
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-        yield language, Recommender(language, num_matches).recommend(podcasts, categories)
+        Recommender(language, num_matches).recommend(podcasts, categories)
 
 
 class Recommender:
@@ -68,17 +64,14 @@ class Recommender:
             ngram_range=(1, 2),
         )
 
-    def recommend(self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]) -> list[Recommendation]:
+    def recommend(self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]) -> None:
         """Creates recommendation instances.
 
         Args:
             podcasts: podcast instances
             categories: category instances
-
-        Returns:
-            list of new Recommendation instances
         """
-        return Recommendation.objects.bulk_create(
+        Recommendation.objects.bulk_create(
             (
                 Recommendation(
                     podcast_id=podcast_id,

@@ -24,12 +24,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Command handler implementation."""
         if options["email"]:
-            send_recommendations_email.map(
-                User.objects.email_notification_recipients().values_list("pk")
-            )
+            send_recommendations_email.map(User.objects.email_notification_recipients().values_list("pk"))
             return
 
-        for language, recommendations in recommender.recommend():
-            self.stdout.write(
-                f"Recommendations for language {language}: {len(recommendations)}"
-            )
+        recommender.recommend()
