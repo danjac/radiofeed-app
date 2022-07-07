@@ -87,7 +87,7 @@ class Recommender:
                     podcasts.filter(language=self._language), categories
                 ).items()
             ),
-            batch_size=100,
+            batch_size=1000,
             ignore_conflicts=True,
         )
 
