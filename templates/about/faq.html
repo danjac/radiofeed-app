@@ -7,12 +7,12 @@
 
     {% with site_name=request.site.name %}
 
-        {% url 'about:terms' as terms_url %}
-        {% url 'account_signup' as signup_url %}
-        {% url 'episodes:bookmarks' as bookmarks_url %}
-        {% url 'users:delete_account' as delete_account_url %}
-        {% url 'users:import_export_podcast_feeds' as import_export_feeds_url %}
-        {% url 'users:preferences' as preferences_url %}
+        {% url "about:terms" as terms_url %}
+        {% url "account_signup" as signup_url %}
+        {% url "episodes:bookmarks" as bookmarks_url %}
+        {% url "users:delete_account" as delete_account_url %}
+        {% url "users:import_export_podcast_feeds" as import_export_feeds_url %}
+        {% url "users:preferences" as preferences_url %}
 
         <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
