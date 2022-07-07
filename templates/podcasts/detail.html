@@ -71,7 +71,8 @@
                 <a href="{{ podcast.get_latest_episode_url }}"
                     class="link"
                     title="Latest Episode">
-                    {% translate "Latest episode released" %}{% include "includes/date.html" with value=podcast.pub_date %}
+                    {% translate "Latest episode released" %}
+                    {% include "includes/date.html" with value=podcast.pub_date %}
                 </a>
             </div>
 
