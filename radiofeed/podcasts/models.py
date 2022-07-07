@@ -71,8 +71,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
         Scheduling algorithm:
 
-            1. check once every n hours, where "n" is the number
-                of days since the podcast was last updated (i.e. last pub date)
+            1. check once every n hours, where "n" is the number of days since the podcast was last updated (i.e. last pub date).
             2. if podcast was last updated within 24 hours, check once an hour.
             3. if podcast was last updated > 24 days, check every 24 hours.
             4. if podcast has not been checked yet (i.e. just added to database), check immediately.
