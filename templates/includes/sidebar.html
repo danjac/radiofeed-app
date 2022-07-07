@@ -6,7 +6,7 @@
                 {% active_link 'podcasts:index' as link %}
                 <a href="{{ link.url }}"
                     accesskey="p"
-                    title="Podcasts"
+                    title="{% translate "Podcasts" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% include "icons/rss.svg" with css_class=ICON_CSS %}
                     {% translate "Podcasts" %}
@@ -16,7 +16,7 @@
                 {% active_link 'episodes:index' as link %}
                 <a href="{{ link.url }}"
                     accesskey="n"
-                    title="New Releases"
+                    title="{% translate "New Releases" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% include "icons/sparkles.svg" with css_class=ICON_CSS %}
                     {% translate "New Releases" %}
@@ -26,7 +26,7 @@
                 {% active_link 'podcasts:category_list' as link %}
                 <a href="{{ link.url }}"
                     accesskey="c"
-                    title="Categories"
+                    title="{% translate "Categories" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% include "icons/tag.svg" with css_class=ICON_CSS %}
                     {% translate "Categories" %}
@@ -36,7 +36,7 @@
                 {% active_link 'episodes:bookmarks' as link %}
                 <a href="{{ link.url }}"
                     accesskey="f"
-                    title="Bookmarks"
+                    title="{% translate "Bookmarks" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% include "icons/star.svg" with css_class=ICON_CSS %}
                     {% translate "Bookmarks" %}
@@ -47,7 +47,7 @@
                 {% active_link 'episodes:history' as link %}
                 <a href="{{ link.url }}"
                     accesskey="h"
-                    title="History"
+                    title="{% translate "History" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% include "icons/database.svg" with css_class=ICON_CSS %}
                     {% translate "History" %}
@@ -58,7 +58,7 @@
                 {% re_active_link 'users:preferences' '/account/*' as link %}
                 <a href="{{ link.url }}"
                     accesskey="s"
-                    title="Settings"
+                    title="{% translate "Settings" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% include "icons/adjustments.svg" with css_class=ICON_CSS %}
                     {% translate "Settings" %}
@@ -69,7 +69,7 @@
                 {% re_active_link 'about:faq' '/about/*' as link %}
                 <a href="{{ link.url }}"
                     accesskey="a"
-                    title="About"
+                    title="{% translate "About" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                     {% include "icons/info.svg" with css_class=ICON_CSS %}
                     {% translate "About" %}
@@ -83,7 +83,7 @@
                     method="post">
                     {% csrf_token %}
                     <button accesskey="l"
-                        title="Logout"
+                        title="{% translate "Logout" %}"
                         class="{{ SIDEBAR_CSS }}">
                         {% include "icons/logout.svg" with css_class=ICON_CSS %}
                         {% translate "Logout" %}
