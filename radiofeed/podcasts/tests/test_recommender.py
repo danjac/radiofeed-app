@@ -10,7 +10,7 @@ class TestRecommender:
             keywords="science physics astronomy",
         )
 
-        Recommender("en", 12).recommend(Podcast.objects.none(), Category.objects.all())
+        Recommender("en", 12, Podcast.objects.none(), Category.objects.all()).recommend()
 
         assert Recommendation.objects.count() == 0
 

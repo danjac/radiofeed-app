@@ -1,5 +1,4 @@
 import collections
-import logging
 import operator
 
 from datetime import timedelta
@@ -29,15 +28,12 @@ def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> 
     Args:
         since: include podcasts last published since this period.
         num_matches: total number of recommendations to create for each podcast
-
     """
     podcasts = (
         Podcast.objects.filter(pub_date__gt=timezone.now() - since)
         .filter(language__in=NLTK_LANGUAGES)
         .exclude(extracted_text="")
     )
-
-    logging.info("Deleting existing recommendations...")
 
     Recommendation.objects.bulk_delete()
 
@@ -46,7 +42,7 @@ def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> 
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-        Recommender(language, num_matches).recommend(podcasts, categories)
+        Recommender(language, num_matches, podcasts, categories).recommend()
 
 
 class Recommender:
@@ -55,14 +51,23 @@ class Recommender:
     Args:
         language: two-character language code e.g. "en"
         num_matches: number of recommendations to create
+        podcasts: podcasts to filter
+        categories: podcast categories
     """
 
-    _batch_size = 1000
-
-    def __init__(self, language: str, num_matches: int):
+    def __init__(
+        self,
+        language: str,
+        num_matches: int,
+        podcasts: QuerySet[Podcast],
+        categories: QuerySet[Category],
+    ):
 
         self._language = language
         self._num_matches = num_matches
+
+        self._podcasts = podcasts.filter(language=self._language)
+        self._categories = categories
 
         self._vectorizer = TfidfVectorizer(
             stop_words=get_stopwords(self._language),
@@ -70,26 +75,9 @@ class Recommender:
             ngram_range=(1, 2),
         )
 
-    def recommend(self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]) -> None:
-        """Creates recommendation instances.
-
-        Args:
-            podcasts: podcast instances
-            categories: category instances
-        """
-        logging.info("Building matches for language [%s]...", self._language)
-
-        podcasts = podcasts.filter(language=self._language)
-        matches = collections.defaultdict(list)
-
-        for category in categories:
-
-            for podcast_id, recommended_id, similarity in self._find_similarities(category, podcasts):
-                matches[(podcast_id, recommended_id)].append(similarity)
-
-        logging.info("Matches for language [%s]: %d", self._language, len(matches))
-
-        for batch in batcher(matches.items(), self._batch_size):
+    def recommend(self) -> None:
+        """Creates recommendation instances."""
+        for batch in batcher(self._build_matches_dict().items(), 1000):
 
             Recommendation.objects.bulk_create(
                 (
@@ -104,12 +92,19 @@ class Recommender:
                 ignore_conflicts=True,
             )
 
-    def _find_similarities(
-        self, category: Category, podcasts: QuerySet[Podcast]
-    ) -> Generator[tuple[int, int, float], None, None]:
-        logging.info("Building matches for category [%s] [%s]", self._language, category.name)
+    def _build_matches_dict(self) -> collections.defaultdict[tuple[int, int], list[float]]:
 
-        df = pandas.DataFrame(podcasts.filter(categories=category).values("id", "extracted_text").distinct())
+        matches = collections.defaultdict(list)
+
+        for category in self._categories:
+            for podcast_id, recommended_id, similarity in self._find_similarities(category):
+                matches[(podcast_id, recommended_id)].append(similarity)
+
+        return matches
+
+    def _find_similarities(self, category: Category) -> Generator[tuple[int, int, float], None, None]:
+
+        df = pandas.DataFrame(self._podcasts.filter(categories=category).values("id", "extracted_text").distinct())
 
         if df.empty:
             return  # pragma: no cover
