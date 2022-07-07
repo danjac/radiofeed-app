@@ -139,27 +139,26 @@ def markdown(value: str | None) -> dict:
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
-def share_buttons(context: dict, url: str, subject: str, css_class: str = "") -> dict:
+def share_buttons(context: dict, url: str, subject: str, extra_context: dict | None = None) -> dict:
     """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin.
 
     Args:
         context: template context
         url: URL on page to share in link (automatically expanded to absolute URI)
         subject: subject line
-        css_class: CSS classes to render in button
+        extra_context: extra template context
     """
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 
     return {
-        "css_class": css_class,
         "share_urls": {
             "email": f"mailto:?subject={subject}&body={url}",
             "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
             "twitter": f"https://twitter.com/share?url={url}&text={subject}",
             "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
         },
-    }
+    } | (extra_context or {})
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
