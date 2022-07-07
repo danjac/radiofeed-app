@@ -6,6 +6,14 @@
 {% block about_content %}
 
     {% with site_name=request.site.name %}
+
+        {% url 'about:terms' as terms_url %}
+        {% url 'account_signup' as signup_url %}
+        {% url 'episodes:bookmarks' as bookmarks_url %}
+        {% url 'users:delete_account' as delete_account_url %}
+        {% url 'users:import_export_podcast_feeds' as import_export_feeds_url %}
+        {% url 'users:preferences' as preferences_url %}
+
         <div class="prose dark:prose-invert prose-sm md:prose break-words">
 
             <details class="mb-3">
@@ -28,8 +36,7 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">Does {{ site_name }} store data about me?</summary>
                 <p>
-                    <strong>{{ site_name }}</strong> keeps track of your podcast subscriptions, bookmarks and individual episodes you listen to. This data is not shared with any third party. If you delete your account, all this data is also permanently deleted. More detailed terms and conditions <a class="link"
-                        href="{% url 'about:terms' %}">here</a>.
+                    <strong>{{ site_name }}</strong> keeps track of your podcast subscriptions, bookmarks and individual episodes you listen to. This data is not shared with any third party. If you delete your account, all this data is also permanently deleted. More detailed terms and conditions <a class="link" href="{{ terms_url }}">here</a>.
                 </p>
             </details>
             <details class="mb-3">
@@ -39,8 +46,10 @@
                     {% endblocktranslate %}
                 </summary>
                 <p>
-                    You don't have to <a class="link"
-                        href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
+                    {% blocktranslate %}
+                        You don't have to <a class="link"
+                            href="{{ signup_url }}">sign up</a> to discover new podcasts and episodes and download content.
+                    {% endblocktranslate %}
                 </p>
                 <p>
                     You'll have to register at <strong>{{ site_name }}</strong> to do all of these:
@@ -56,9 +65,11 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "What if I want to download an episode to my device?" %}</summary>
                 <p>
-                    Click the download icon {% include "icons/download.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %} on the episode page to save the audio file to your device. You can then
-                    listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
-                    play History.
+                    {% blocktranslate %}
+                        Click the download icon or link on the episode page to save the audio file to your device. You can then
+                        listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
+                        play History.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
@@ -85,29 +96,35 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "How do I stop receiving email notifications?" %}</summary>
                 <p>
-                    Go to the <a class="link"
-                        href="{% url 'users:preferences'%}">Preferences</a> section in the <strong>Settings</strong> area, uncheck the option <strong>Send email notifications</strong> and click the save button.
+                    {% blocktranslate %}
+                        Go to the <a class="link"
+                            href="{{ preferences_url }}">Preferences</a> section in the <strong>Settings</strong> area, uncheck the option <strong>Send email notifications</strong> and click the save button.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "How do I remove an episode from my history?" %}</summary>
                 <p>
-                    Go to the episode page and click the trash icon {% include "icons/trash.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %}
-                    to permanently remove the episode from your History.
+                    {% blocktranslate %}
+                        Go to the episode page and click the trash icon to permanently remove the episode from your History.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "Can I import my feeds from another podcast app?" %}</summary>
                 <p>
-                    If your podcast app supports <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> export, you can download the OPML file to your device and upload it to <strong>{{ request.site.name }}</strong> in the <a class="link"
-                        href="{% url 'users:import_export_podcast_feeds' %}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
+                    {% blocktranslate %}
+                        If your podcast app supports <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> export, you can download the OPML file to your device and upload it to <strong>{{ request.site.name }}</strong> in the <a class="link" href="{{ import_export_feeds_url  }}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "Can I save my podcast subscriptions to my device?" %}</summary>
                 <p>
-                    You can download your podcast feed collection in <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> format in the <a class="link"
-                        href="{% url 'users:import_export_podcast_feeds' %}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
+                    {% blocktranslate %}
+                        You can download your podcast feed collection in <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OPML">OPML</a> format in the <a class="link"
+                            href="{{ import_export_feeds_url }}">Import/Export OPML</a> section in the <strong>Settings</strong> area.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
@@ -123,9 +140,11 @@
             <details class="mb-3">
                 <summary class="cursor-pointer focus:font-bold">{% translate "How do I save an episode to listen to later?" %}</summary>
                 <p>
-                    Click the star icon {% include "icons/star.svg" with css_class="inline h-4 w-4 md:h-6 md:w-6" %}
-                    in the episode page to add an episode to your <a class="link" href="{% url 'episodes:bookmarks' %}">Bookmarks</a>.
-                    You can add episodes you want to listen to later, or favorites you want to listen to again.
+                    {% blocktranslate %}
+                        First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
+                        Click the star icon in the episode page to add an episode to your <a class="link" href="{{ bookmarks_url }}">Bookmarks</a>.
+                        You can add episodes you want to listen to later, or favorites you want to listen to again.
+                    {% endblocktranslate %}
                 </p>
             </details>
             <details class="mb-3">
@@ -175,9 +194,8 @@
             <details>
                 <summary class="cursor-pointer focus:font-bold">{% translate "How do I delete my account?" %}</summary>
                 <p>
-                    Go to <a class="link"
-                        href="{% url 'users:delete_account' %}">Delete Account</a> section in the <strong>Settings</strong> area. If you delete your account,
-                    your collection, bookmarks and history will also be <strong>permanently</strong> deleted.
+                    {% blocktranslate %} Go to <a class="link" href="{{ delete_account_url }}">Delete Account</a> tab in the <strong>Settings</strong> area. If you delete your account, your collection, bookmarks and history will also be <strong>permanently</strong> deleted.
+                    {% endblocktranslate %}
                 </p>
             </details>
         </div>
