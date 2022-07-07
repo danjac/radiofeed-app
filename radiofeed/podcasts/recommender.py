@@ -96,8 +96,8 @@ class Recommender:
             logging.info(
                 "Saving batch for language [%s]: %d-%d / %d",
                 self._language,
-                counter,
                 counter * self._batch_size,
+                (counter * self._batch_size) + self._batch_size,
                 num_matches,
             )
 
