@@ -8,8 +8,8 @@
             {% with page_number=page_obj.previous_page_number %}
                 <a class="link"
                     href="{% pagination_url page_number %}"
-                    aria-label="Page {{ page_number }}"
-                    title="Page {{ page_number }}">
+                    aria-label="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}"
+                    title="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}">
                     {% translate "Previous" %}
                 </a>
             {% endwith %}
@@ -24,8 +24,8 @@
             {% with page_number=page_obj.next_page_number %}
                 <a class="link"
                     href="{% pagination_url page_number %}"
-                    aria-label="Page {{ page_number }}"
-                    title="Page {{ page_number }}">
+                    aria-label="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}"
+                    title="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}">
                     {% translate "Next" %}
                 </a>
             {% endwith %}
