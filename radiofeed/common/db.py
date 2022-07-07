@@ -23,7 +23,7 @@ class FastCountMixin(BaseQuerySet):
 
     fast_count_row_limit: int = 1000
 
-    def count(self):
+    def count(self) -> int:
         """Does optimized COUNT.
 
         If query contains WHERE, DISTINCT or GROUP BY, or number of rows under `fast_count_row_limit`, returns standard SELECT COUNT.
