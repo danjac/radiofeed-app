@@ -87,29 +87,19 @@ class Recommender:
             for podcast_id, recommended_id, similarity in self._find_similarities(category, podcasts):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
-        num_matches = len(matches)
+        logging.info("Matches for language [%s]: %d", self._language, len(matches))
 
-        logging.info("Matches for language [%s]: %d", self._language, num_matches)
-
-        for counter, batch in enumerate(batcher(matches.items(), self._batch_size)):
-
-            logging.info(
-                "Saving batch for language [%s]: %d-%d / %d",
-                self._language,
-                counter * self._batch_size,
-                (counter * self._batch_size) + self._batch_size,
-                num_matches,
-            )
+        for batch in batcher(matches.items(), self._batch_size):
 
             Recommendation.objects.bulk_create(
                 (
                     Recommendation(
                         podcast_id=podcast_id,
                         recommended_id=recommended_id,
-                        similarity=numpy.median(values),
-                        frequency=len(values),
+                        similarity=numpy.median(scores),
+                        frequency=len(scores),
                     )
-                    for (podcast_id, recommended_id), values in batch
+                    for (podcast_id, recommended_id), scores in batch
                 ),
                 ignore_conflicts=True,
             )
