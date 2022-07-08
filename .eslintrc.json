@@ -1,18 +1,16 @@
 {
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
-  "env": {
-    "es6": true,
-    "browser": true
-  },
-  "globals": {
-    "require": true
-  },
-  "rules": {
-    "prettier/prettier": "error"
-  },
-  "parser": "babel-eslint",
-  "plugins": ["prettier"],
-  "parserOptions": {
-    "sourceType": "module"
-  }
+    "plugins": ["prettier"],
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "globals": {
+        "require": true
+    },
+    "rules": {
+        "prettier/prettier": "error"
+    },
+    "parserOptions": {
+        "sourceType": "module"
+    }
 }
