@@ -1,12 +1,14 @@
 import datetime
 
 from django.conf import settings
-from django.http import FileResponse, HttpRequest, HttpResponse
+from django.http import FileResponse, HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
+
+from radiofeed.common.http import HttpRequest
 
 
 @require_http_methods(["POST"])
