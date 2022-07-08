@@ -57,7 +57,7 @@ class SearchMiddleware(BaseMiddleware):
     """Adds Search instance to the request as `request.search`."""
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Resolves middleware."""
+        """Adds Search instance to request."""
         request.search = SimpleLazyObject(lambda: Search(request))
         return self.get_response(request)
 
