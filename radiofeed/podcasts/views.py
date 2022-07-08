@@ -1,7 +1,3 @@
-import logging
-
-import requests
-
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
@@ -83,11 +79,12 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
+    feeds: list[itunes.Feed] = []
+
     try:
         feeds = itunes.search_cached(request.search.value)
-    except requests.RequestException as e:
-        logging.exception(e)
-        feeds = []
+    except itunes.ItunesException:
+        messages.error(request, _("Sorry, an error occurred trying to access iTunes."))
 
     return TemplateResponse(
         request,

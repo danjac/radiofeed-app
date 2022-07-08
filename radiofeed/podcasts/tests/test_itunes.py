@@ -82,7 +82,7 @@ class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 
     def test_not_ok(self, db, mock_bad_response):
-        with pytest.raises(requests.HTTPError):
+        with pytest.raises(itunes.ItunesException):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 

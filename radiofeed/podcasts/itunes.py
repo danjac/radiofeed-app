@@ -29,6 +29,12 @@ _itunes_locations = (
 )
 
 
+class ItunesException(requests.RequestException):
+    """Exception connecting to Itunes API."""
+
+    ...
+
+
 @dataclasses.dataclass(frozen=True)
 class Feed:
     """Encapsulates iTunes API result.
@@ -149,15 +155,18 @@ def _parse_feeds(json_data: dict) -> Generator[Feed, None, None]:
 
 
 def _get_response(url: str, data: dict | None = None) -> requests.Response:
-    response = requests.get(
-        url,
-        data,
-        headers={"User-Agent": settings.USER_AGENT},
-        timeout=10,
-        allow_redirects=True,
-    )
-    response.raise_for_status()
-    return response
+    try:
+        response = requests.get(
+            url,
+            data,
+            headers={"User-Agent": settings.USER_AGENT},
+            timeout=10,
+            allow_redirects=True,
+        )
+        response.raise_for_status()
+        return response
+    except requests.RequestException as e:
+        raise ItunesException from e
 
 
 def _build_feeds_from_json(json_data: dict) -> Generator[Feed, None, None]:
