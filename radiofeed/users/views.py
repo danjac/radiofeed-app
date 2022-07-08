@@ -72,7 +72,8 @@ def import_podcast_feeds(
                     "%(count)d podcast feed added to your collection",
                     "%(count)d podcast feeds added to your collection",
                     new_feeds,
-                ),
+                )
+                % {"count": new_feeds},
             )
         else:
             messages.info(request, _("No new podcasts found in uploaded file"))
