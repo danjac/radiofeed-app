@@ -113,7 +113,13 @@ def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
 
 
 @register.simple_tag(takes_context=True)
-def re_active_link(context: dict, url_name: str, pattern: str, *args, **kwargs) -> ActiveLink:
+def re_active_link(
+    context: dict,
+    url_name: str,
+    pattern: str,
+    *args,
+    **kwargs,
+) -> ActiveLink:
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
@@ -184,7 +190,6 @@ def normalize_url(url: str) -> str:
 
 
 def _auth_redirect_url(url: str, redirect_url) -> str:
-
     return redirect_url if url.startswith("/account/") else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
