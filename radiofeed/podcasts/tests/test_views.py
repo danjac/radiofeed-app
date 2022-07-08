@@ -6,7 +6,12 @@ from django.urls import reverse, reverse_lazy
 
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory, RecommendationFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
 from radiofeed.podcasts.models import Subscription
 
 podcasts_url = reverse_lazy("podcasts:index")
@@ -53,7 +58,10 @@ class TestLatestEpisode:
         assert_not_found(client.get(podcast.get_latest_episode_url()))
 
     def test_ok(self, client, episode):
-        assert client.get(episode.podcast.get_latest_episode_url()).url == episode.get_absolute_url()
+        assert (
+            client.get(episode.podcast.get_latest_episode_url()).url
+            == episode.get_absolute_url()
+        )
 
 
 class TestSearchPodcasts:
@@ -92,7 +100,9 @@ class TestSearchITunes:
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
             )
         ]
-        mock_search = mocker.patch("radiofeed.podcasts.itunes.search_cached", return_value=feeds)
+        mock_search = mocker.patch(
+            "radiofeed.podcasts.itunes.search_cached", return_value=feeds
+        )
 
         response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
         assert_ok(response)
@@ -118,7 +128,9 @@ class TestPodcastSimilar:
     def test_get(self, client, db, podcast, assert_ok):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
-        response = client.get(reverse("podcasts:podcast_similar", args=[podcast.id, podcast.slug]))
+        response = client.get(
+            reverse("podcasts:podcast_similar", args=[podcast.id, podcast.slug])
+        )
         assert_ok(response)
         assert response.context_data["podcast"] == podcast
         assert len(response.context_data["recommendations"]) == 3
@@ -126,12 +138,16 @@ class TestPodcastSimilar:
 
 class TestPodcastDetail:
     def test_get_podcast_anonymous(self, client, podcast, assert_ok):
-        response = client.get(reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug]))
+        response = client.get(
+            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
+        )
         assert_ok(response)
         assert response.context_data["podcast"] == podcast
 
     def test_get_podcast_authenticated(self, client, auth_user, podcast, assert_ok):
-        response = client.get(reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug]))
+        response = client.get(
+            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
+        )
         assert_ok(response)
         assert response.context_data["podcast"] == podcast
 
@@ -222,7 +238,9 @@ class TestCategoryDetail:
 
     def test_search(self, client, category, faker, assert_ok):
 
-        PodcastFactory.create_batch(12, title="zzzz", keywords="zzzz", categories=[category])
+        PodcastFactory.create_batch(
+            12, title="zzzz", keywords="zzzz", categories=[category]
+        )
         podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
         response = client.get(category.get_absolute_url(), {"q": podcast.title})

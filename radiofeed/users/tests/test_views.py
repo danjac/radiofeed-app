@@ -8,7 +8,11 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from radiofeed.episodes.factories import (
+    AudioLogFactory,
+    BookmarkFactory,
+    EpisodeFactory,
+)
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.models import Subscription
 from radiofeed.users.models import User
@@ -69,13 +73,17 @@ class TestImportPodcastFeeds:
         )
 
     def test_post_has_new_feeds(self, client, auth_user, upload_file, assert_ok):
-        podcast = PodcastFactory(rss="https://feeds.99percentinvisible.org/99percentinvisible")
+        podcast = PodcastFactory(
+            rss="https://feeds.99percentinvisible.org/99percentinvisible"
+        )
 
         assert_ok(client.post(self.url, data={"opml": upload_file}))
 
         assert Subscription.objects.filter(user=auth_user, podcast=podcast).exists()
 
-    def test_post_has_no_new_feeds(self, client, auth_user, mocker, upload_file, assert_ok):
+    def test_post_has_no_new_feeds(
+        self, client, auth_user, mocker, upload_file, assert_ok
+    ):
         SubscriptionFactory(
             podcast__rss="https://feeds.99percentinvisible.org/99percentinvisible",
             user=auth_user,

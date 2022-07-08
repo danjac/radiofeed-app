@@ -11,7 +11,11 @@ from django.http import HttpResponse
 from faker import Faker
 
 from radiofeed.episodes.factories import EpisodeFactory
-from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import (
+    CategoryFactory,
+    PodcastFactory,
+    SubscriptionFactory,
+)
 from radiofeed.users.factories import UserFactory
 
 
@@ -22,7 +26,9 @@ def faker():
 
 @pytest.fixture
 def locmem_cache(settings):
-    settings.CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+    settings.CACHES = {
+        "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+    }
     yield
     cache.clear()
 

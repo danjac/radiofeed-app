@@ -6,7 +6,11 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from radiofeed.episodes.factories import (
+    AudioLogFactory,
+    BookmarkFactory,
+    EpisodeFactory,
+)
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast
 
@@ -106,7 +110,9 @@ class TestEpisodeModel:
 
     def test_get_link_if_podcast(self):
 
-        assert Episode(link=None, podcast=Podcast(link=self.link)).get_link() == self.link
+        assert (
+            Episode(link=None, podcast=Podcast(link=self.link)).get_link() == self.link
+        )
 
     def test_get_link_if_none(self):
 
@@ -117,11 +123,17 @@ class TestEpisodeModel:
 
     def test_podcast_explicit(self):
 
-        assert Episode(explicit=False, podcast=Podcast(explicit=True)).is_explicit() is True
+        assert (
+            Episode(explicit=False, podcast=Podcast(explicit=True)).is_explicit()
+            is True
+        )
 
     def test_not_explicit(self):
 
-        assert Episode(explicit=False, podcast=Podcast(explicit=False)).is_explicit() is False
+        assert (
+            Episode(explicit=False, podcast=Podcast(explicit=False)).is_explicit()
+            is False
+        )
 
     def test_slug(self):
         episode = Episode(title="Testing")
@@ -201,7 +213,9 @@ class TestEpisodeModel:
         }
 
     def test_get_cover_url_if_episode_cover(self, podcast):
-        episode = EpisodeFactory(podcast=podcast, cover_url="https://example.com/episode-cover.jpg")
+        episode = EpisodeFactory(
+            podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
+        )
         assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
 
     def test_get_cover_url_if_podcast_cover(self, episode):

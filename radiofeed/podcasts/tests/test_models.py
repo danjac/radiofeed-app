@@ -8,7 +8,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 from django.utils import timezone
 
-from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory, RecommendationFactory
+from radiofeed.podcasts.factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+)
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.users.factories import UserFactory
 
@@ -170,7 +174,9 @@ class TestPodcastModel:
 
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()
-        assert url == reverse("podcasts:latest_episode", args=[podcast.id, podcast.slug])
+        assert url == reverse(
+            "podcasts:latest_episode", args=[podcast.id, podcast.slug]
+        )
 
     def test_get_subscribe_target(self):
         return Podcast(id=12345).get_subscribe_target() == "subscribe-actions-12345"

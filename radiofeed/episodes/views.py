@@ -15,7 +15,11 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
-from radiofeed.common.http import HttpRequest, HttpResponseConflict, HttpResponseNoContent
+from radiofeed.common.http import (
+    HttpRequest,
+    HttpResponseConflict,
+    HttpResponseNoContent,
+)
 from radiofeed.common.pagination import pagination_response
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast
@@ -70,7 +74,11 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
 
-    episodes = Episode.objects.select_related("podcast").search(request.search.value).order_by("-rank", "-pub_date")
+    episodes = (
+        Episode.objects.select_related("podcast")
+        .search(request.search.value)
+        .order_by("-rank", "-pub_date")
+    )
 
     return pagination_response(
         request,
@@ -81,13 +89,17 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
 
 
 @require_http_methods(["GET"])
-def episode_detail(request: HttpRequest, episode_id: int, slug: str | None = None) -> TemplateResponse:
+def episode_detail(
+    request: HttpRequest, episode_id: int, slug: str | None = None
+) -> TemplateResponse:
     """Renders episode detail.
 
     Raises:
         Http404: episode not found
     """
-    episode = _get_episode_or_404(request, episode_id, with_podcast=True, with_current_time=True)
+    episode = _get_episode_or_404(
+        request, episode_id, with_podcast=True, with_current_time=True
+    )
     return TemplateResponse(
         request,
         "episodes/detail.html",
@@ -186,7 +198,9 @@ def history(request: HttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     newest_first = request.GET.get("o", "d") == "d"
 
-    logs = AudioLog.objects.filter(user=request.user).select_related("episode", "episode__podcast")
+    logs = AudioLog.objects.filter(user=request.user).select_related(
+        "episode", "episode__podcast"
+    )
 
     if request.search:
         logs = logs.search(request.search.value).order_by("-rank", "-listened")
@@ -230,7 +244,9 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 @login_required
 def bookmarks(request: HttpRequest) -> TemplateResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related("episode", "episode__podcast")
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
+        "episode", "episode__podcast"
+    )
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
 
@@ -246,7 +262,9 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponseConflict | TemplateResponse:
+def add_bookmark(
+    request: HttpRequest, episode_id: int
+) -> HttpResponseConflict | TemplateResponse:
     """Add episode to bookmarks.
 
     Raises:
@@ -317,7 +335,9 @@ def _player_response(
     )
 
 
-def _bookmark_action_response(request: HttpRequest, episode: Episode, is_bookmarked: bool) -> TemplateResponse:
+def _bookmark_action_response(
+    request: HttpRequest, episode: Episode, is_bookmarked: bool
+) -> TemplateResponse:
     return TemplateResponse(
         request,
         "episodes/actions/bookmark.html",

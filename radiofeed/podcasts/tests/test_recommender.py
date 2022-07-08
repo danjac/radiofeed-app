@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory, RecommendationFactory
+from radiofeed.podcasts.factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+)
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.podcasts.recommender import Recommender, recommend
 
@@ -39,7 +43,9 @@ class TestRecommend:
         PodcastFactory(title="Philosophy things", keywords="thinking")
         recommend()
         recommendations = (
-            Recommendation.objects.filter(podcast=podcast_1).order_by("similarity").select_related("recommended")
+            Recommendation.objects.filter(podcast=podcast_1)
+            .order_by("similarity")
+            .select_related("recommended")
         )
         assert recommendations.count() == 0
 
@@ -71,13 +77,17 @@ class TestRecommend:
         recommend()
 
         recommendations = (
-            Recommendation.objects.filter(podcast=podcast_1).order_by("similarity").select_related("recommended")
+            Recommendation.objects.filter(podcast=podcast_1)
+            .order_by("similarity")
+            .select_related("recommended")
         )
         assert recommendations.count() == 1
         assert recommendations[0].recommended == podcast_2
 
         recommendations = (
-            Recommendation.objects.filter(podcast=podcast_2).order_by("similarity").select_related("recommended")
+            Recommendation.objects.filter(podcast=podcast_2)
+            .order_by("similarity")
+            .select_related("recommended")
         )
         assert recommendations.count() == 1
         assert recommendations[0].recommended == podcast_1
