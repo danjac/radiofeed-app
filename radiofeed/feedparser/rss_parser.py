@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generator
+from typing import Iterator
 
 import lxml.etree
 
@@ -98,7 +98,7 @@ class RssParser:
                 ),
             )
 
-    def _parse_items(self) -> Generator[Item, None, None]:
+    def _parse_items(self) -> Iterator[Item]:
         for item in self._channel.iterfind("item"):
             try:
                 yield self._parse_item(item)
