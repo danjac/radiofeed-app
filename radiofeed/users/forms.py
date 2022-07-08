@@ -47,6 +47,8 @@ class OpmlUploadForm(forms.Form):
     def subscribe_to_feeds(self, user: User, limit: int = 300) -> int:
         """Subscribes user to feeds in uploaded OPML.
 
+        Only feeds that already exist in the database will be included.
+
         Returns:
             number of new subscribed feeds
         """
