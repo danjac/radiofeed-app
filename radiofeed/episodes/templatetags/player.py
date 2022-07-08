@@ -1,5 +1,8 @@
+from typing import cast
+
 from django import template
 
+from radiofeed.common.http import HttpRequest
 from radiofeed.episodes.models import AudioLog
 
 register = template.Library()
@@ -8,7 +11,7 @@ register = template.Library()
 @register.inclusion_tag("episodes/player.html", takes_context=True)
 def audio_player(context: dict) -> dict:
     """Returns details of current episode in player."""
-    request = context["request"]
+    request = cast(HttpRequest, context["request"])
 
     if (
         request.user.is_authenticated

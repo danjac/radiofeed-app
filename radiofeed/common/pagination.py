@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest
+from django.http import Http404
 from django.template.response import TemplateResponse
+
+from radiofeed.common.http import HttpRequest
 
 
 def pagination_response(

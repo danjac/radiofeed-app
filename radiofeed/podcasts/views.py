@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
-from radiofeed.common.http import HttpResponseConflict
+from radiofeed.common.http import HttpRequest, HttpResponseConflict
 from radiofeed.common.pagination import pagination_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
@@ -22,7 +22,6 @@ def index(request: HttpRequest) -> TemplateResponse:
     """Render default podcast home page.
 
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
-
     """
     subscribed = (
         frozenset(request.user.subscription_set.values_list("podcast", flat=True))
@@ -159,7 +158,10 @@ def podcast_detail(request: HttpRequest, podcast_id: int, slug: str | None = Non
 
 @require_http_methods(["GET"])
 def episodes(
-    request: HttpRequest, podcast_id: int, slug: str | None = None, target: str = "object-list"
+    request: HttpRequest,
+    podcast_id: int,
+    slug: str | None = None,
+    target: str = "object-list",
 ) -> TemplateResponse:
     """Render episodes for a single podcast.
 

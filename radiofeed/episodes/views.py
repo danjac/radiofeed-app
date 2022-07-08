@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -13,7 +13,7 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
-from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
+from radiofeed.common.http import HttpRequest, HttpResponseConflict, HttpResponseNoContent
 from radiofeed.common.pagination import pagination_response
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast
@@ -154,7 +154,9 @@ def close_player(request: HttpRequest) -> HttpResponse:
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
 @ajax_login_required
-def player_time_update(request: HttpRequest) -> HttpResponseBadRequest | HttpResponseNoContent:
+def player_time_update(
+    request: HttpRequest,
+) -> HttpResponseBadRequest | HttpResponseNoContent:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.

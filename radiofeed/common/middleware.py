@@ -1,4 +1,4 @@
-from typing import Callable, TypeAlias
+from typing import TYPE_CHECKING, Callable, TypeAlias
 from urllib.parse import urlencode
 
 from django.http import HttpRequest, HttpResponse
@@ -6,6 +6,11 @@ from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
 HttpRequestResponse: TypeAlias = Callable[[HttpRequest], HttpResponse]
+
+if TYPE_CHECKING:
+    from radiofeed.common.http import HttpRequest
+else:
+    from django.http import HttpRequest
 
 
 class BaseMiddleware:
