@@ -21,7 +21,7 @@ DEFAULT_TIME_PERIOD = timedelta(days=90)
 
 
 def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> None:
-    """Generates Recommendation instances based on podcast similarity, grouped by language.
+    """Generates Recommendation instances based on podcast similarity, grouped by language and category.
 
     Any existing recommendations are first deleted.
 
