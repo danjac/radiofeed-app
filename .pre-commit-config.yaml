@@ -57,7 +57,7 @@ repos:
       rev: v2.7.1
       hooks:
         - id: prettier
-          files: \.(|ts|css)$
+          files: \.(|js|css)$
           exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/rtts/djhtml
       rev: 'v1.5.1'

@@ -1,6 +1,7 @@
 import Alpine from "alpinejs";
 
 // test commit
+//
 document.addEventListener("alpine:init", () => {
     Alpine.data(
         "player",
