@@ -129,21 +129,6 @@ class FeedParser:
 
         return True
 
-    def _extract_text(self, feed: Feed, categories: list[Category], keywords: str) -> str:
-        text = " ".join(
-            value
-            for value in [
-                feed.title,
-                feed.description,
-                feed.owner,
-                keywords,
-            ]
-            + [c.name for c in categories]
-            + [item.title for item in feed.items][:6]
-            if value
-        )
-        return " ".join(tokenize(self._podcast.language, text))
-
     def _handle_failure(self, exc: Exception) -> bool:
         match exc:
             case NotModified():
@@ -172,6 +157,21 @@ class FeedParser:
             parse_result=parse_result,
         )
         return False
+
+    def _extract_text(self, feed: Feed, categories: list[Category], keywords: str) -> str:
+        text = " ".join(
+            value
+            for value in [
+                feed.title,
+                feed.description,
+                feed.owner,
+                keywords,
+            ]
+            + [c.name for c in categories]
+            + [item.title for item in feed.items][:6]
+            if value
+        )
+        return " ".join(tokenize(self._podcast.language, text))
 
     def _save_podcast(self, **fields) -> None:
         now = timezone.now()
