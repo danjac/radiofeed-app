@@ -18,7 +18,6 @@ class HttpRequest(_HttpRequest):
     htmx: HtmxDetails
     player: Player
     search: Search
-
     user: User | AnonymousUser
 
 
