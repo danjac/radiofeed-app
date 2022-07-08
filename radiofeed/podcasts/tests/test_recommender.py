@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory, RecommendationFactory
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.podcasts.recommender import Recommender, recommend

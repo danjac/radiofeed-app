@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from huey.contrib.djhuey import db_task
 
 from radiofeed.feedparser.feed_parser import FeedParser

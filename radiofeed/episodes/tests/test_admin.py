@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from django.contrib.admin.sites import AdminSite
@@ -38,8 +40,6 @@ class TestEpisodeAdmin:
 
         episode = EpisodeFactory(title="testing python")
 
-        qs, _ = admin.get_search_results(
-            rf.get("/"), Episode.objects.all(), "testing python"
-        )
+        qs, _ = admin.get_search_results(rf.get("/"), Episode.objects.all(), "testing python")
         assert qs.count() == 1
         assert qs.first() == episode

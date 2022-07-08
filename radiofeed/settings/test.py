@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from split_settings.tools import include
 
 from radiofeed.settings.base import ALLOWED_HOSTS, HUEY

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from allauth.account.models import EmailAddress
@@ -17,9 +19,7 @@ class TestUserManager:
             (False, True, False),
         ],
     )
-    def test_email_notification_recipients(
-        self, db, active, send_email_notifications, exists
-    ):
+    def test_email_notification_recipients(self, db, active, send_email_notifications, exists):
         UserFactory(is_active=active, send_email_notifications=send_email_notifications)
         assert User.objects.email_notification_recipients().exists() == exists
 
@@ -27,18 +27,14 @@ class TestUserManager:
 
         password = User.objects.make_random_password()
 
-        user = User.objects.create_user(
-            username="tester1", email=self.email, password=password
-        )
+        user = User.objects.create_user(username="tester1", email=self.email, password=password)
         assert user.check_password(password)
 
     def test_create_superuser(self, db):
 
         password = User.objects.make_random_password()
 
-        user = User.objects.create_superuser(
-            username="tester2", email=self.email, password=password
-        )
+        user = User.objects.create_superuser(username="tester2", email=self.email, password=password)
         assert user.is_superuser
         assert user.is_staff
 

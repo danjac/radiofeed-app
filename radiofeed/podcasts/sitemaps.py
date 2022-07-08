@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 
 from django.contrib.sitemaps import Sitemap

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from radiofeed.podcasts.tasks import send_recommendations_email
 
 

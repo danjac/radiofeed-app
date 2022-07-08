@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from radiofeed.episodes.factories import AudioLogFactory
 from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.templatetags.player import audio_player

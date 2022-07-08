@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import http
 
 from typing import Iterator

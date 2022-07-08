@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import http
 
 from unittest import mock
@@ -53,15 +55,11 @@ class TestCategoryAdmin:
 class TestPodcastAdmin:
     @pytest.fixture
     def mock_feed_parser(self, mocker):
-        return mocker.patch(
-            "radiofeed.podcasts.management.commands.feed_update.feed_parser"
-        )
+        return mocker.patch("radiofeed.podcasts.management.commands.feed_update.feed_parser")
 
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
-        qs, _ = podcast_admin.get_search_results(
-            req, Podcast.objects.all(), "Indie Hackers"
-        )
+        qs, _ = podcast_admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")
         assert qs.count() == 1
         assert qs.first() == podcast
 

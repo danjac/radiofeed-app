@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from radiofeed.podcasts import emails
 from radiofeed.podcasts.factories import RecommendationFactory, SubscriptionFactory
 

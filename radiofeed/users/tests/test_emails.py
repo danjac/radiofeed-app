@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from radiofeed.users.emails import send_user_notification_email
 
 

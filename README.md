@@ -63,8 +63,6 @@ python manage.py loaddata podcasts \
 This should provide some useful data to get started with.
 
 
-
-
 ### Frontend setup
 
 To install frontend dependencies just run `npm ci`.

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.core.management import call_command
 
 from radiofeed.podcasts.factories import RecommendationFactory
@@ -16,9 +18,7 @@ class TestRecommender:
         patched.assert_called()
 
     def test_send_emails(self, db, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.tasks.send_recommendations_email.map"
-        )
+        patched = mocker.patch("radiofeed.podcasts.tasks.send_recommendations_email.map")
         call_command("recommender", email=True)
         patched.assert_called()
 
