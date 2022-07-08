@@ -2,7 +2,7 @@ import collections
 import operator
 
 from datetime import timedelta
-from typing import Generator
+from typing import Iterator
 
 import numpy
 import pandas
@@ -94,9 +94,7 @@ class Recommender:
 
         return matches
 
-    def _find_similarities(
-        self, category: Category, podcasts: QuerySet[Podcast]
-    ) -> Generator[tuple[int, int, float], None, None]:
+    def _find_similarities(self, category: Category, podcasts: QuerySet[Podcast]) -> Iterator[tuple[int, int, float]]:
 
         df = pandas.DataFrame(
             podcasts.filter(
@@ -134,7 +132,7 @@ class Recommender:
 
     def _find_similarity(
         self, df: pandas.DataFrame, similar: list[float], current_id: int
-    ) -> tuple[int, Generator[tuple[int, float], None, None]]:
+    ) -> tuple[int, Iterator[tuple[int, float]]]:
 
         sorted_similar = sorted(
             enumerate(similar),

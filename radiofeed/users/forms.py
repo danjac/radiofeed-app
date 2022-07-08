@@ -1,6 +1,6 @@
 import itertools
 
-from typing import Generator
+from typing import Iterator
 
 import lxml
 
@@ -61,7 +61,7 @@ class OpmlUploadForm(forms.Form):
             )
         )
 
-    def _parse_opml(self) -> Generator[str, None, None]:
+    def _parse_opml(self) -> Iterator[str]:
         self.cleaned_data["opml"].seek(0)
 
         try:

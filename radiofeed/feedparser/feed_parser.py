@@ -1,6 +1,6 @@
 import http
 
-from typing import Generator
+from typing import Iterator
 
 import attrs
 import requests
@@ -224,7 +224,7 @@ class FeedParser:
         for batch in batcher(self._episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
-    def _episodes_for_update(self, feed: Feed, guids: dict[str, int]) -> Generator[Episode, None, None]:
+    def _episodes_for_update(self, feed: Feed, guids: dict[str, int]) -> Iterator[Episode]:
 
         episode_ids = set()
 
@@ -233,7 +233,7 @@ class FeedParser:
                 yield self._make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
-    def _episodes_for_insert(self, feed: Feed, guids: dict[str, int]) -> Generator[Episode, None, None]:
+    def _episodes_for_insert(self, feed: Feed, guids: dict[str, int]) -> Iterator[Episode]:
         return (self._make_episode(item) for item in feed.items if item.guid not in guids)
 
     def _make_episode(self, item: Item, episode_id: int | None = None) -> Episode:

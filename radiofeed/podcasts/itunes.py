@@ -3,7 +3,7 @@ import dataclasses
 import itertools
 import re
 
-from typing import Generator
+from typing import Iterator
 from urllib.parse import urlparse
 
 import requests
@@ -63,7 +63,7 @@ def search_cached(search_term: str) -> list[Feed]:
     return feeds
 
 
-def search(search_term: str) -> Generator[Feed, None, None]:
+def search(search_term: str) -> Iterator[Feed]:
     """Runs search for podcasts on iTunes API."""
     return _parse_feeds(
         _get_response(
@@ -76,7 +76,7 @@ def search(search_term: str) -> Generator[Feed, None, None]:
     )
 
 
-def crawl() -> Generator[Feed, None, None]:
+def crawl() -> Iterator[Feed]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
     for location in _itunes_locations:
         yield from Crawler(location).crawl()
@@ -92,7 +92,7 @@ class Crawler:
     def __init__(self, location: str):
         self._location = location
 
-    def crawl(self) -> Generator[Feed, None, None]:
+    def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the database."""
         for url in self._parse_genre_urls():
             for batch in batcher(self._parse_podcast_ids(url), _batch_size):
@@ -106,7 +106,7 @@ class Crawler:
                     ).json(),
                 )
 
-    def _parse_genre_urls(self) -> Generator[str, None, None]:
+    def _parse_genre_urls(self) -> Iterator[str]:
         return (
             href
             for href in self._parse_urls(
@@ -115,7 +115,7 @@ class Crawler:
             if href.startswith(f"https://podcasts.apple.com/{self._location}/genre/podcasts")
         )
 
-    def _parse_podcast_ids(self, url: str) -> Generator[str, None, None]:
+    def _parse_podcast_ids(self, url: str) -> Iterator[str]:
         return (
             podcast_id
             for podcast_id in (
@@ -126,7 +126,7 @@ class Crawler:
             if podcast_id
         )
 
-    def _parse_urls(self, content: bytes) -> Generator[str, None, None]:
+    def _parse_urls(self, content: bytes) -> Iterator[str]:
         return (href for href in (el.attrib.get("href") for el in parse_xml(content, "a")) if href)
 
     def _parse_podcast_id(self, url: str) -> str | None:
@@ -135,7 +135,7 @@ class Crawler:
         return None
 
 
-def _parse_feeds(json_data: dict) -> Generator[Feed, None, None]:
+def _parse_feeds(json_data: dict) -> Iterator[Feed]:
     for batch in batcher(_build_feeds_from_json(json_data), _batch_size):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
@@ -169,7 +169,7 @@ def _get_response(url: str, data: dict | None = None) -> requests.Response:
         raise ItunesException from e
 
 
-def _build_feeds_from_json(json_data: dict) -> Generator[Feed, None, None]:
+def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
     for result in json_data.get("results", []):
         try:
             yield Feed(

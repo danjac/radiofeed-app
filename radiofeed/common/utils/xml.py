@@ -1,14 +1,14 @@
 import io
 
 from contextlib import contextmanager
-from typing import Generator, Iterable, TypeAlias
+from typing import Iterable, Iterator, TypeAlias
 
 import lxml
 
 Namespaces: TypeAlias = dict[str, str]
 
 
-def parse_xml(content: bytes, *tags: str) -> Generator[lxml.etree.Element, None, None]:
+def parse_xml(content: bytes, *tags: str) -> Iterator[lxml.etree.Element]:
     """Iterates through elements in XML document with matching tag names.
 
     Args:
@@ -55,7 +55,7 @@ class XPathFinder:
         except StopIteration:
             return None
 
-    def iter(self, *paths) -> Generator[str, None, None]:
+    def iter(self, *paths) -> Iterator[str]:
         """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
 
         All strings are stripped of extra whitespace. Should skip any unicode errors.
@@ -104,9 +104,7 @@ class XPathFinder:
 
 
 @contextmanager
-def xpath_finder(
-    element: lxml.etree.Element, namespaces: Namespaces | None = None
-) -> Generator[XPathFinder, None, None]:
+def xpath_finder(element: lxml.etree.Element, namespaces: Namespaces | None = None) -> Iterator[XPathFinder]:
     """Returns XPathFinder instance for an XML element as a context manager.
 
     Args:
