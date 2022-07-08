@@ -3,8 +3,8 @@ import pytest
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.episodes.factories import EpisodeFactory
+from radiofeed.podcasts import itunes
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory, RecommendationFactory, SubscriptionFactory
-from radiofeed.podcasts.itunes import Feed, ItunesException
 from radiofeed.podcasts.models import Subscription
 
 podcasts_url = reverse_lazy("podcasts:index")
@@ -83,7 +83,7 @@ class TestSearchITunes:
 
     def test_search(self, client, db, mocker, assert_ok):
         feeds = [
-            Feed(
+            itunes.Feed(
                 url="https://example.com/id123456",
                 rss="https://feeds.fireside.fm/testandcode/rss",
                 title="Test & Code : Py4hon Testing",
@@ -101,7 +101,7 @@ class TestSearchITunes:
     def test_search_exception(self, client, db, mocker, assert_ok):
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search_cached",
-            side_effect=ItunesException,
+            side_effect=itunes.ItunesException,
         )
 
         response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
