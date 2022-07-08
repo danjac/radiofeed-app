@@ -22,11 +22,7 @@ from radiofeed.podcasts.models import Category, Podcast
 
 
 class FeedParser:
-    """Updates a Podcast instance with its RSS or Atom feed source.
-
-    Args:
-        podcast (Podcast)
-    """
+    """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _feed_attrs = attrs.fields(Feed)
     _item_attrs = attrs.fields(Item)
@@ -80,7 +76,17 @@ class FeedParser:
 
     def _get_feed_headers(self) -> dict:
         headers = {
-            "Accept": "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1",
+            "Accept": ",".join(
+                (
+                    "application/atom+xml",
+                    "application/rdf+xml",
+                    "application/rss+xml",
+                    "application/x-netcdf",
+                    "application/xml;q=0.9",
+                    "text/xml;q=0.2",
+                    "*/*;q=0.1",
+                )
+            ),
             "User-Agent": settings.USER_AGENT,
         }
 
