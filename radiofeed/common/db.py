@@ -10,10 +10,12 @@ from django.db import connections
 from django.db.models import F, Model, Q, QuerySet
 from django.utils.encoding import force_str
 
-_T = TypeVar("_T", bound=Model)
+_MT = TypeVar("_MT", bound=Model)
+_T = TypeVar("_T", bound=QuerySet[_MT])
+
 
 if TYPE_CHECKING:
-    _QuerySet: TypeAlias = QuerySet[_T]
+    _QuerySet: TypeAlias = QuerySet[_MT]
 else:
     _QuerySet = object
 
@@ -62,7 +64,7 @@ class SearchMixin(_QuerySet):
     search_rank: str = "rank"
     search_type: str = "websearch"
 
-    def search(self, search_term: str) -> QuerySet:
+    def search(self, search_term: str) -> _T:
         """Returns result of search."""
         if not search_term:
             return self.none()
