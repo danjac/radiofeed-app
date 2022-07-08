@@ -48,7 +48,7 @@ class OpmlUploadForm(forms.Form):
         """Subscribes user to feeds in uploaded OPML.
 
         Returns:
-            nt: number of new subscribed feeds
+            number of new subscribed feeds
         """
         return len(
             Subscription.objects.bulk_create(
