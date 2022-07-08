@@ -283,6 +283,8 @@ def _(value: date) -> datetime | None:
 def _(value: str) -> datetime | None:
 
     try:
-        return parse_date(date_parser.parse(value, tzinfos=_tz_infos)) if value else None
+        return (
+            parse_date(date_parser.parse(value, tzinfos=_tz_infos)) if value else None
+        )
     except date_parser.ParserError:
         return None

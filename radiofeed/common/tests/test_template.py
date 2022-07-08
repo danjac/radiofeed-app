@@ -125,7 +125,9 @@ class TestSignupUrl:
 
     def test_signup_url_with_query_string(self):
         url = "/podcasts/1234/test/?ok=true"
-        assert signup_url(url) == "/account/signup/?next=/podcasts/1234/test/%3Fok%3Dtrue"
+        assert (
+            signup_url(url) == "/account/signup/?next=/podcasts/1234/test/%3Fok%3Dtrue"
+        )
 
     def test_signup_url_to_same_path(self):
         url = "/account/signup/"
@@ -177,7 +179,10 @@ class TestShareButtons:
         context = {"request": rf.get(url)}
         share_urls = share_buttons(context, url, "Test Podcast")["share_urls"]
 
-        assert share_urls["email"] == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/12344/test/"
+        assert (
+            share_urls["email"]
+            == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/12344/test/"
+        )
 
         assert (
             share_urls["facebook"]

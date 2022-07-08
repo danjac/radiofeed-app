@@ -20,7 +20,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Parse command args."""
-        parser.add_argument("--limit", help="Number of feeds for update", type=int, default=360)
+        parser.add_argument(
+            "--limit", help="Number of feeds for update", type=int, default=360
+        )
 
     def handle(self, *args, **options) -> None:
         """Command handler implmentation."""

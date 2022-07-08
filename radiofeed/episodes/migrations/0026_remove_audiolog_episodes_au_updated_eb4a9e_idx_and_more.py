@@ -27,10 +27,14 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="audiolog",
-            index=models.Index(fields=["-listened"], name="episodes_au_listene_7f0fdd_idx"),
+            index=models.Index(
+                fields=["-listened"], name="episodes_au_listene_7f0fdd_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="audiolog",
-            index=models.Index(fields=["listened"], name="episodes_au_listene_e5a9d5_idx"),
+            index=models.Index(
+                fields=["listened"], name="episodes_au_listene_e5a9d5_idx"
+            ),
         ),
     ]

@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddIndex(
             model_name="episode",
-            index=models.Index(fields=["-pub_date", "-id"], name="episodes_ep_pub_dat_9b17cd_idx"),
+            index=models.Index(
+                fields=["-pub_date", "-id"], name="episodes_ep_pub_dat_9b17cd_idx"
+            ),
         ),
     ]

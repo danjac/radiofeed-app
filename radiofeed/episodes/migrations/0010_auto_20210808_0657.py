@@ -26,14 +26,20 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="audiolog",
-            constraint=models.UniqueConstraint(fields=("user", "episode"), name="unique_episodes_audiolog"),
+            constraint=models.UniqueConstraint(
+                fields=("user", "episode"), name="unique_episodes_audiolog"
+            ),
         ),
         migrations.AddConstraint(
             model_name="episode",
-            constraint=models.UniqueConstraint(fields=("podcast", "guid"), name="unique_episodes_episode"),
+            constraint=models.UniqueConstraint(
+                fields=("podcast", "guid"), name="unique_episodes_episode"
+            ),
         ),
         migrations.AddConstraint(
             model_name="favorite",
-            constraint=models.UniqueConstraint(fields=("user", "episode"), name="unique_episodes_favorite"),
+            constraint=models.UniqueConstraint(
+                fields=("user", "episode"), name="unique_episodes_favorite"
+            ),
         ),
     ]

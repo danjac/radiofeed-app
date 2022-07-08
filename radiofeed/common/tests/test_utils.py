@@ -33,7 +33,9 @@ class TestXPathFinder:
             assert finder.first("title/text()") == "Mysterious Universe"
 
     def test_iter(self, channel):
-        assert list(XPathFinder(channel).iter("title/text()")) == ["Mysterious Universe"]
+        assert list(XPathFinder(channel).iter("title/text()")) == [
+            "Mysterious Universe"
+        ]
 
     def test_to_dict(self, channel):
 
@@ -60,7 +62,10 @@ class TestXPathFinder:
         )
 
     def test_default(self, channel):
-        assert XPathFinder(channel).first("editor/text()", "managingEditor2/text()") is None
+        assert (
+            XPathFinder(channel).first("editor/text()", "managingEditor2/text()")
+            is None
+        )
 
 
 class TestStopwords:
@@ -154,7 +159,9 @@ class TestParseDate:
         assert parse_date(None) is None
 
     def test_invalid_offset(self):
-        assert parse_date("Sun, 14 Jan 2018 21:38:44 -4400") == datetime.datetime(2018, 1, 14, 21, 38, 44, tzinfo=UTC)
+        assert parse_date("Sun, 14 Jan 2018 21:38:44 -4400") == datetime.datetime(
+            2018, 1, 14, 21, 38, 44, tzinfo=UTC
+        )
 
     def test_not_tz_aware(self):
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3)

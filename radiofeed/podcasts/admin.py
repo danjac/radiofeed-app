@@ -141,7 +141,9 @@ class HttpStatusFilter(admin.SimpleListFilter):
         """
         return tuple(
             (status, f"{status} {http.HTTPStatus(status).name}")
-            for status in models.Podcast.objects.filter(http_status__in={status.value for status in http.HTTPStatus})
+            for status in models.Podcast.objects.filter(
+                http_status__in={status.value for status in http.HTTPStatus}
+            )
             .values_list("http_status", flat=True)
             .order_by("http_status")
             .distinct()
@@ -262,7 +264,9 @@ class SubscribedFilter(admin.SimpleListFilter):
             QuerySet
         """
         return (
-            queryset.annotate(subscribers=Count("subscription")).filter(subscribers__gt=0)
+            queryset.annotate(subscribers=Count("subscription")).filter(
+                subscribers__gt=0
+            )
             if self.value() == "yes"
             else queryset
         )

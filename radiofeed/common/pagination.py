@@ -73,13 +73,17 @@ def pagination_response(
         Http404: invalid page
     """
     try:
-        page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(int(request.GET.get(param, 1)))
+        page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(
+            int(request.GET.get(param, 1))
+        )
     except (ValueError, InvalidPage):
         raise Http404("Invalid page")
 
     return TemplateResponse(
         request,
-        pagination_template_name if request.htmx and request.htmx.target == target else template_name,
+        pagination_template_name
+        if request.htmx and request.htmx.target == target
+        else template_name,
         {
             "page_obj": page_obj,
             "pagination_target": target,

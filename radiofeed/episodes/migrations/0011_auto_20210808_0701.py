@@ -18,6 +18,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="queueitem",
-            constraint=models.UniqueConstraint(fields=("user", "episode"), name="unique_episodes_queueitem"),
+            constraint=models.UniqueConstraint(
+                fields=("user", "episode"), name="unique_episodes_queueitem"
+            ),
         ),
     ]

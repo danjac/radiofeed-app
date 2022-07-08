@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddIndex(
             model_name="audiolog",
-            index=models.Index(fields=["updated"], name="episodes_au_updated_033e45_idx"),
+            index=models.Index(
+                fields=["updated"], name="episodes_au_updated_033e45_idx"
+            ),
         ),
     ]

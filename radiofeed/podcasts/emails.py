@@ -6,7 +6,9 @@ from radiofeed.users.emails import send_user_notification_email
 from radiofeed.users.models import User
 
 
-def send_recommendations_email(user: User, min_podcasts: int = 2, max_podcasts: int = 3) -> bool:
+def send_recommendations_email(
+    user: User, min_podcasts: int = 2, max_podcasts: int = 3
+) -> bool:
     """Sends email to user with a list of recommended podcasts.
 
     Recommendaitons based on their subscriptions and listening history.
@@ -38,7 +40,8 @@ def send_recommendations_email(user: User, min_podcasts: int = 2, max_podcasts: 
     recommended_ids = (
         Recommendation.objects.filter(podcast__pk__in=podcast_ids)
         .exclude(
-            recommended__pk__in=podcast_ids | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
+            recommended__pk__in=podcast_ids
+            | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
         )
         .values_list("recommended", flat=True)
     )

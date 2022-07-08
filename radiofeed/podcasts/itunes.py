@@ -112,9 +112,13 @@ class Crawler:
         return (
             href
             for href in self._parse_urls(
-                _get_response(f"https://itunes.apple.com/{self._location}/genre/podcasts/id26").content
+                _get_response(
+                    f"https://itunes.apple.com/{self._location}/genre/podcasts/id26"
+                ).content
             )
-            if href.startswith(f"https://podcasts.apple.com/{self._location}/genre/podcasts")
+            if href.startswith(
+                f"https://podcasts.apple.com/{self._location}/genre/podcasts"
+            )
         )
 
     def _parse_podcast_ids(self, url: str) -> Iterator[str]:
@@ -123,13 +127,19 @@ class Crawler:
             for podcast_id in (
                 self._parse_podcast_id(href)
                 for href in self._parse_urls(_get_response(url).content)
-                if href.startswith(f"https://podcasts.apple.com/{self._location}/podcast/")
+                if href.startswith(
+                    f"https://podcasts.apple.com/{self._location}/podcast/"
+                )
             )
             if podcast_id
         )
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
-        return (href for href in (el.attrib.get("href") for el in parse_xml(content, "a")) if href)
+        return (
+            href
+            for href in (el.attrib.get("href") for el in parse_xml(content, "a"))
+            if href
+        )
 
     def _parse_podcast_id(self, url: str) -> str | None:
         if match := _itunes_podcast_id_re.search(urlparse(url).path.split("/")[-1]):
@@ -142,14 +152,23 @@ def _parse_feeds(json_data: dict) -> Iterator[Feed]:
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
-        podcasts = Podcast.objects.filter(rss__in={f.rss for f in feeds_for_podcasts}).in_bulk(field_name="rss")
+        podcasts = Podcast.objects.filter(
+            rss__in={f.rss for f in feeds_for_podcasts}
+        ).in_bulk(field_name="rss")
 
         feeds_for_insert, feeds = itertools.tee(
-            (dataclasses.replace(feed, podcast=podcasts.get(feed.rss)) for feed in feeds),
+            (
+                dataclasses.replace(feed, podcast=podcasts.get(feed.rss))
+                for feed in feeds
+            ),
         )
 
         Podcast.objects.bulk_create(
-            (Podcast(title=feed.title, rss=feed.rss) for feed in feeds_for_insert if feed.podcast is None),
+            (
+                Podcast(title=feed.title, rss=feed.rss)
+                for feed in feeds_for_insert
+                if feed.podcast is None
+            ),
             ignore_conflicts=True,
         )
 

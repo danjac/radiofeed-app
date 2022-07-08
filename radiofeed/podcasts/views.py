@@ -35,7 +35,11 @@ def index(request: HttpRequest) -> TemplateResponse:
 
     podcasts = _get_podcasts().order_by("-pub_date").distinct()
 
-    podcasts = podcasts.filter(promoted=True) if promoted else podcasts.filter(pk__in=subscribed)
+    podcasts = (
+        podcasts.filter(promoted=True)
+        if promoted
+        else podcasts.filter(pk__in=subscribed)
+    )
 
     return pagination_response(
         request,
@@ -98,20 +102,28 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
 
 
 @require_http_methods(["GET"])
-def latest_episode(request: HttpRequest, podcast_id: int, slug: str | None = None) -> HttpResponseRedirect:
+def latest_episode(
+    request: HttpRequest, podcast_id: int, slug: str | None = None
+) -> HttpResponseRedirect:
     """Redirects to the latest episode for a given podcast.
 
     Raises:
         Http404: podcast not found
     """
-    if (episode := Episode.objects.filter(podcast=podcast_id).order_by("-pub_date").first()) is None:
+    if (
+        episode := Episode.objects.filter(podcast=podcast_id)
+        .order_by("-pub_date")
+        .first()
+    ) is None:
         raise Http404()
 
     return HttpResponseRedirect(episode.get_absolute_url())
 
 
 @require_http_methods(["GET"])
-def similar(request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12) -> TemplateResponse:
+def similar(
+    request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
+) -> TemplateResponse:
     """List similar podcasts based on recommendations.
 
     Raises:
@@ -137,7 +149,9 @@ def similar(request: HttpRequest, podcast_id: int, slug: str | None = None, limi
 
 
 @require_http_methods(["GET"])
-def podcast_detail(request: HttpRequest, podcast_id: int, slug: str | None = None) -> TemplateResponse:
+def podcast_detail(
+    request: HttpRequest, podcast_id: int, slug: str | None = None
+) -> TemplateResponse:
     """Render details for a single podcast.
 
     Raises:
@@ -204,7 +218,9 @@ def episodes(
 def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
-        Category.objects.annotate(has_podcasts=Exists(_get_podcasts().filter(categories=OuterRef("pk"))))
+        Category.objects.annotate(
+            has_podcasts=Exists(_get_podcasts().filter(categories=OuterRef("pk")))
+        )
         .filter(has_podcasts=True)
         .order_by("name")
     )
@@ -212,11 +228,15 @@ def category_list(request: HttpRequest) -> TemplateResponse:
     if request.search:
         categories = categories.search(request.search.value)
 
-    return TemplateResponse(request, "podcasts/categories.html", {"categories": categories})
+    return TemplateResponse(
+        request, "podcasts/categories.html", {"categories": categories}
+    )
 
 
 @require_http_methods(["GET"])
-def category_detail(request: HttpRequest, category_id: int, slug: str | None = None) -> TemplateResponse:
+def category_detail(
+    request: HttpRequest, category_id: int, slug: str | None = None
+) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -247,7 +267,9 @@ def category_detail(request: HttpRequest, category_id: int, slug: str | None = N
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponseConflict | TemplateResponse:
+def subscribe(
+    request: HttpRequest, podcast_id: int
+) -> HttpResponseConflict | TemplateResponse:
     """Subscribe a user to a podcast.
 
     Returns:
@@ -292,7 +314,9 @@ def _get_podcast_or_404(podcast_id: int) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id)
 
 
-def _podcast_detail_context(request: HttpRequest, podcast: Podcast, extra_context: dict | None = None) -> dict:
+def _podcast_detail_context(
+    request: HttpRequest, podcast: Podcast, extra_context: dict | None = None
+) -> dict:
     return {
         "podcast": podcast,
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
@@ -300,7 +324,9 @@ def _podcast_detail_context(request: HttpRequest, podcast: Podcast, extra_contex
     } | (extra_context or {})
 
 
-def _subscribe_action_response(request: HttpRequest, podcast: Podcast, is_subscribed: bool) -> TemplateResponse:
+def _subscribe_action_response(
+    request: HttpRequest, podcast: Podcast, is_subscribed: bool
+) -> TemplateResponse:
     return TemplateResponse(
         request,
         "podcasts/actions/subscribe.html",

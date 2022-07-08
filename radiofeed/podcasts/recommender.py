@@ -67,9 +67,13 @@ class Recommender:
             ngram_range=(1, 2),
         )
 
-    def recommend(self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]) -> None:
+    def recommend(
+        self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
+    ) -> None:
         """Creates recommendation instances."""
-        for batch in batcher(self._build_matches_dict(podcasts, categories).items(), 1000):
+        for batch in batcher(
+            self._build_matches_dict(podcasts, categories).items(), 1000
+        ):
 
             Recommendation.objects.bulk_create(
                 (
@@ -91,12 +95,16 @@ class Recommender:
         matches = collections.defaultdict(list)
 
         for category in categories:
-            for podcast_id, recommended_id, similarity in self._find_similarities(category, podcasts):
+            for podcast_id, recommended_id, similarity in self._find_similarities(
+                category, podcasts
+            ):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
-    def _find_similarities(self, category: Category, podcasts: QuerySet[Podcast]) -> Iterator[tuple[int, int, float]]:
+    def _find_similarities(
+        self, category: Category, podcasts: QuerySet[Podcast]
+    ) -> Iterator[tuple[int, int, float]]:
 
         df = pandas.DataFrame(
             podcasts.filter(
@@ -113,7 +121,9 @@ class Recommender:
         df.drop_duplicates(inplace=True)
 
         try:
-            cosine_sim = cosine_similarity(self._vectorizer.fit_transform(df["extracted_text"]))
+            cosine_sim = cosine_similarity(
+                self._vectorizer.fit_transform(df["extracted_text"])
+            )
         except ValueError:  # pragma: no cover
             return
 
@@ -144,5 +154,9 @@ class Recommender:
 
         return (
             current_id,
-            ((df.loc[row, "id"], similarity) for row, similarity in sorted_similar if df.loc[row, "id"] != current_id),
+            (
+                (df.loc[row, "id"], similarity)
+                for row, similarity in sorted_similar
+                if df.loc[row, "id"] != current_id
+            ),
         )

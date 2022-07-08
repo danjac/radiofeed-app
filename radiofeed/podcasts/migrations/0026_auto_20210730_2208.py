@@ -22,6 +22,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="podcast",
-            index=models.Index(fields=["scheduled", "-pub_date"], name="podcasts_po_schedul_e5e73a_idx"),
+            index=models.Index(
+                fields=["scheduled", "-pub_date"], name="podcasts_po_schedul_e5e73a_idx"
+            ),
         ),
     ]

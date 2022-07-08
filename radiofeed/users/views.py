@@ -18,7 +18,9 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 @require_http_methods(["GET", "POST"])
 @login_required
-def user_preferences(request: HttpRequest, target: str = "preferences-form") -> TemplateResponse:
+def user_preferences(
+    request: HttpRequest, target: str = "preferences-form"
+) -> TemplateResponse:
     """Handle user preferences."""
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
@@ -30,7 +32,9 @@ def user_preferences(request: HttpRequest, target: str = "preferences-form") -> 
 
     return TemplateResponse(
         request,
-        "account/forms/preferences.html" if request.htmx.target == target else "account/preferences.html",
+        "account/forms/preferences.html"
+        if request.htmx.target == target
+        else "account/preferences.html",
         {
             "form": form,
             "target": target,
@@ -54,7 +58,9 @@ def import_export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_http_methods(["POST"])
 @login_required
-def import_podcast_feeds(request: HttpRequest, target: str = "opml-import-form") -> TemplateResponse:
+def import_podcast_feeds(
+    request: HttpRequest, target: str = "opml-import-form"
+) -> TemplateResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
@@ -100,7 +106,9 @@ def export_podcast_feeds(request: HttpRequest) -> SimpleTemplateResponse:
         "account/podcasts.opml",
         {"podcasts": podcasts},
         content_type="text/x-opml",
-        headers={"Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"},
+        headers={
+            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+        },
     )
 
 

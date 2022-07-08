@@ -27,10 +27,14 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="subscription",
-            index=models.Index(fields=["-created"], name="podcasts_su_created_55323d_idx"),
+            index=models.Index(
+                fields=["-created"], name="podcasts_su_created_55323d_idx"
+            ),
         ),
         migrations.AddConstraint(
             model_name="subscription",
-            constraint=models.UniqueConstraint(fields=("user", "podcast"), name="unique_podcasts_subscription"),
+            constraint=models.UniqueConstraint(
+                fields=("user", "podcast"), name="unique_podcasts_subscription"
+            ),
         ),
     ]

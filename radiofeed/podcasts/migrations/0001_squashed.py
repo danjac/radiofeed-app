@@ -118,11 +118,15 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="podcast",
-            index=models.Index(fields=["-pub_date"], name="podcasts_po_pub_dat_850a22_idx"),
+            index=models.Index(
+                fields=["-pub_date"], name="podcasts_po_pub_dat_850a22_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="podcast",
-            index=models.Index(fields=["pub_date"], name="podcasts_po_pub_dat_2e433a_idx"),
+            index=models.Index(
+                fields=["pub_date"], name="podcasts_po_pub_dat_2e433a_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="podcast",
@@ -179,11 +183,15 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="subscription",
-            index=models.Index(fields=["-created"], name="podcasts_su_created_55323d_idx"),
+            index=models.Index(
+                fields=["-created"], name="podcasts_su_created_55323d_idx"
+            ),
         ),
         migrations.AddConstraint(
             model_name="subscription",
-            constraint=models.UniqueConstraint(fields=("user", "podcast"), name="uniq_subscription"),
+            constraint=models.UniqueConstraint(
+                fields=("user", "podcast"), name="uniq_subscription"
+            ),
         ),
         migrations.CreateModel(
             name="Recommendation",
@@ -200,7 +208,9 @@ class Migration(migrations.Migration):
                 ("frequency", models.PositiveIntegerField(default=0)),
                 (
                     "similarity",
-                    models.DecimalField(blank=True, decimal_places=10, max_digits=100, null=True),
+                    models.DecimalField(
+                        blank=True, decimal_places=10, max_digits=100, null=True
+                    ),
                 ),
                 (
                     "podcast",
@@ -222,11 +232,15 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="recommendation",
-            index=models.Index(fields=["podcast"], name="podcasts_re_podcast_10c46d_idx"),
+            index=models.Index(
+                fields=["podcast"], name="podcasts_re_podcast_10c46d_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="recommendation",
-            index=models.Index(fields=["recommended"], name="podcasts_re_recomme_244ce9_idx"),
+            index=models.Index(
+                fields=["recommended"], name="podcasts_re_recomme_244ce9_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="recommendation",
@@ -237,7 +251,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="recommendation",
-            constraint=models.UniqueConstraint(fields=("podcast", "recommended"), name="unique_recommendation"),
+            constraint=models.UniqueConstraint(
+                fields=("podcast", "recommended"), name="unique_recommendation"
+            ),
         ),
         migrations.RemoveIndex(
             model_name="podcast",
@@ -250,7 +266,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="podcast",
             name="search_vector",
-            field=django.contrib.postgres.search.SearchVectorField(editable=False, null=True),
+            field=django.contrib.postgres.search.SearchVectorField(
+                editable=False, null=True
+            ),
         ),
         migrations.AddIndex(
             model_name="podcast",
@@ -265,7 +283,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="category",
             name="itunes_genre_id",
-            field=models.IntegerField(blank=True, null=True, unique=True, verbose_name="iTunes Genre ID"),
+            field=models.IntegerField(
+                blank=True, null=True, unique=True, verbose_name="iTunes Genre ID"
+            ),
         ),
         migrations.AlterField(
             model_name="podcast",
@@ -312,12 +332,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="podcast",
             name="id",
-            field=models.BigAutoField(editable=False, primary_key=True, serialize=False),
+            field=models.BigAutoField(
+                editable=False, primary_key=True, serialize=False
+            ),
         ),
         migrations.AlterField(
             model_name="podcast",
             name="id",
-            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
+            field=models.AutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.RunSQL(
             sql="\n            DROP TRIGGER IF EXISTS podcast_update_search_trigger\n            ON podcasts_podcast;\n            CREATE TRIGGER podcast_update_search_trigger\n            BEFORE INSERT OR UPDATE OF title, keywords, authors, search_vector\n            ON podcasts_podcast\n            FOR EACH ROW EXECUTE PROCEDURE\n            tsvector_update_trigger(\n              search_vector,\n              'pg_catalog.english',\n              title,\n              keywords,\n              authors);\n            UPDATE podcasts_podcast SET search_vector = NULL;\n            ",
@@ -348,7 +372,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="follow",
-            index=models.Index(fields=["-created"], name="podcasts_fo_created_0c8c22_idx"),
+            index=models.Index(
+                fields=["-created"], name="podcasts_fo_created_0c8c22_idx"
+            ),
         ),
         migrations.RemoveConstraint(
             model_name="follow",
@@ -356,17 +382,23 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="follow",
-            constraint=models.UniqueConstraint(fields=("user", "podcast"), name="uniq_follow"),
+            constraint=models.UniqueConstraint(
+                fields=("user", "podcast"), name="uniq_follow"
+            ),
         ),
         migrations.AddField(
             model_name="podcast",
             name="created",
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddIndex(
             model_name="podcast",
-            index=models.Index(fields=["-created", "-pub_date"], name="podcasts_po_created_47ec2f_idx"),
+            index=models.Index(
+                fields=["-created", "-pub_date"], name="podcasts_po_created_47ec2f_idx"
+            ),
         ),
         migrations.RunSQL(
             sql="\n            DROP TRIGGER IF EXISTS podcast_update_search_trigger\n            ON podcasts_podcast;\n            CREATE TRIGGER podcast_update_search_trigger\n            BEFORE INSERT OR UPDATE OF title, authors, search_vector\n            ON podcasts_podcast\n            FOR EACH ROW EXECUTE PROCEDURE\n            tsvector_update_trigger(\n              search_vector,\n              'pg_catalog.english',\n              title,\n              authors);\n            UPDATE podcasts_podcast SET search_vector = NULL;\n            ",
@@ -384,22 +416,30 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="category",
             name="id",
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
+            field=models.BigAutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
             model_name="follow",
             name="id",
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
+            field=models.BigAutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
             model_name="podcast",
             name="id",
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
+            field=models.BigAutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
             model_name="recommendation",
             name="id",
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID"),
+            field=models.BigAutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
             model_name="podcast",

@@ -36,11 +36,15 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="podcast",
             name="requested",
-            field=models.DateTimeField(blank=True, null=True, verbose_name="WebHub subscription requested at"),
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name="WebHub subscription requested at"
+            ),
         ),
         migrations.AlterField(
             model_name="podcast",
             name="subscribed",
-            field=models.DateTimeField(blank=True, null=True, verbose_name="WebHub subscribed until"),
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name="WebHub subscribed until"
+            ),
         ),
     ]

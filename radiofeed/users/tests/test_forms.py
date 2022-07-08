@@ -26,7 +26,9 @@ class TestOpmlUploadForm:
 
     @pytest.fixture
     def podcast(self, db):
-        return PodcastFactory(rss="https://feeds.99percentinvisible.org/99percentinvisible")
+        return PodcastFactory(
+            rss="https://feeds.99percentinvisible.org/99percentinvisible"
+        )
 
     def test_subscribe_to_feeds(self, form, user, podcast):
         assert form.subscribe_to_feeds(user) == 1
@@ -34,6 +36,8 @@ class TestOpmlUploadForm:
 
     def test_subscribe_to_feeds_parser_error(self, user, podcast, mocker):
         form = OpmlUploadForm()
-        form.cleaned_data = {"opml": SimpleUploadedFile("feeds.opml", b"", content_type="text/xml")}
+        form.cleaned_data = {
+            "opml": SimpleUploadedFile("feeds.opml", b"", content_type="text/xml")
+        }
         assert form.subscribe_to_feeds(user) == 0
         assert Subscription.objects.filter(user=user, podcast=podcast).count() == 0

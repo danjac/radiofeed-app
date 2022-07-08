@@ -29,7 +29,9 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def static_page(request: HttpRequest, template_name: str, extra_context: dict | None = None) -> TemplateResponse:
+def static_page(
+    request: HttpRequest, template_name: str, extra_context: dict | None = None
+) -> TemplateResponse:
     """Renders a simple web page. Use for help pages, "About" pages etc."""
     return TemplateResponse(request, template_name, extra_context)
 
@@ -38,7 +40,9 @@ def static_page(request: HttpRequest, template_name: str, extra_context: dict | 
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 def favicon(request: HttpRequest) -> FileResponse:
     """Generates favicon file."""
-    return FileResponse((settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb"))
+    return FileResponse(
+        (settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb")
+    )
 
 
 @require_http_methods(["GET", "HEAD"])

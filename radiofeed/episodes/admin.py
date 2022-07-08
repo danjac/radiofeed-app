@@ -29,7 +29,9 @@ class EpisodeAdmin(admin.ModelAdmin):
 
     podcast_title.short_description = "Podcast"  # type: ignore
 
-    def get_search_results(self, request: HttpRequest, queryset: QuerySet, search_term: str) -> QuerySet:
+    def get_search_results(
+        self, request: HttpRequest, queryset: QuerySet, search_term: str
+    ) -> QuerySet:
         """Search episodes."""
         if not search_term:
             return super().get_search_results(request, queryset, search_term)

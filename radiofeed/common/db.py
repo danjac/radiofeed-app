@@ -37,7 +37,9 @@ class FastCountMixin(_QuerySet):
         """
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
-        if (count := get_reltuple_count(self.db, self.model._meta.db_table)) > self.fast_count_row_limit:
+        if (
+            count := get_reltuple_count(self.db, self.model._meta.db_table)
+        ) > self.fast_count_row_limit:
             return count
         # exact count for small tables
         return super().count()
@@ -82,7 +84,9 @@ class SearchMixin(_QuerySet):
             ranks[self.search_rank] = functools.reduce(operator.add, combined_rank)
 
         else:
-            ranks[self.search_rank] = SearchRank(F(self.search_vector_field), query=query)
+            ranks[self.search_rank] = SearchRank(
+                F(self.search_vector_field), query=query
+            )
             filters.append(Q(**{self.search_vector_field: query}))
 
         return self.annotate(**ranks).filter(functools.reduce(operator.or_, filters))

@@ -37,7 +37,9 @@ class XPathFinder:
         namespaces: dict of XML namespaces
     """
 
-    def __init__(self, element: lxml.etree.Element, namespaces: Namespaces | None = None):
+    def __init__(
+        self, element: lxml.etree.Element, namespaces: Namespaces | None = None
+    ):
         self._element = element
         self._namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
 
@@ -102,11 +104,16 @@ class XPathFinder:
         Args:
             `**fields`: dict of field and xpath mapping(s)
         """
-        return {field: self.first(*[xpaths] if isinstance(xpaths, str) else xpaths) for field, xpaths in fields.items()}
+        return {
+            field: self.first(*[xpaths] if isinstance(xpaths, str) else xpaths)
+            for field, xpaths in fields.items()
+        }
 
 
 @contextmanager
-def xpath_finder(element: lxml.etree.Element, namespaces: Namespaces | None = None) -> Iterator[XPathFinder]:
+def xpath_finder(
+    element: lxml.etree.Element, namespaces: Namespaces | None = None
+) -> Iterator[XPathFinder]:
     """Returns XPathFinder instance for an XML element as a context manager.
 
     Args:

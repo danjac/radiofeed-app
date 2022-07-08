@@ -24,11 +24,13 @@ from radiofeed.users.models import User
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term: str, base_similarity: float = 0.2) -> models.QuerySet[Category]:
+    def search(
+        self, search_term: str, base_similarity: float = 0.2
+    ) -> models.QuerySet[Category]:
         """Does a trigram similarity search for categories."""
-        return self.annotate(similarity=TrigramSimilarity("name", force_str(search_term))).filter(
-            similarity__gte=base_similarity
-        )
+        return self.annotate(
+            similarity=TrigramSimilarity("name", force_str(search_term))
+        ).filter(similarity__gte=base_similarity)
 
 
 class Category(models.Model):
@@ -81,7 +83,9 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         now = timezone.now()
 
         return Podcast.objects.annotate(
-            days_since_last_pub_date=models.functions.ExtractDay(now - models.F("pub_date")),
+            days_since_last_pub_date=models.functions.ExtractDay(
+                now - models.F("pub_date")
+            ),
         ).filter(
             models.Q(
                 parsed__isnull=True,
@@ -99,7 +103,8 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
             | models.Q(
                 days_since_last_pub_date__range=(1, 24),
-                parsed__lt=now - timedelta(hours=1) * models.F("days_since_last_pub_date"),
+                parsed__lt=now
+                - timedelta(hours=1) * models.F("days_since_last_pub_date"),
             ),
             active=True,
         )
@@ -153,7 +158,9 @@ class Podcast(models.Model):
     funding_url = models.URLField(max_length=2083, null=True, blank=True)
     funding_text = models.TextField(blank=True)
 
-    language = models.CharField(max_length=2, default="en", validators=[MinLengthValidator(2)])
+    language = models.CharField(
+        max_length=2, default="en", validators=[MinLengthValidator(2)]
+    )
     description = models.TextField(blank=True)
     link = models.URLField(max_length=2083, null=True, blank=True)
     keywords = models.TextField(blank=True)
@@ -285,7 +292,9 @@ class Recommendation(models.Model):
 
     frequency = models.PositiveIntegerField(default=0)
 
-    similarity = models.DecimalField(decimal_places=10, max_digits=100, null=True, blank=True)
+    similarity = models.DecimalField(
+        decimal_places=10, max_digits=100, null=True, blank=True
+    )
 
     objects = RecommendationManager()
 

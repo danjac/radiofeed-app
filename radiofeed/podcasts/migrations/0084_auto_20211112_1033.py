@@ -44,6 +44,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="podcast",
             name="subscribed",
-            field=models.DateTimeField(blank=True, null=True, verbose_name="Subscribed until"),
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name="Subscribed until"
+            ),
         ),
     ]

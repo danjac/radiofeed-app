@@ -21,7 +21,9 @@ class TestAjaxLoginRequired:
         assert_ok(resp)
         assert resp.headers["HX-Redirect"] == f"{reverse('account_login')}?next=/"
 
-    def test_anonymous_plain_ajax(self, rf, anonymous_user, assert_unauthorized, ajax_view):
+    def test_anonymous_plain_ajax(
+        self, rf, anonymous_user, assert_unauthorized, ajax_view
+    ):
         req = rf.get("/")
         req.user = anonymous_user
         req.htmx = False

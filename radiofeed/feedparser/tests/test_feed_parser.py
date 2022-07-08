@@ -65,7 +65,9 @@ class TestFeedParser:
         ]
 
     def get_rss_content(self, filename=""):
-        return (pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)).read_bytes()
+        return (
+            pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)
+        ).read_bytes()
 
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")

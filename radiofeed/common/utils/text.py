@@ -95,7 +95,11 @@ def tokenize(language: str, text: str) -> list[str]:
 
     stopwords_for_language = get_stopwords(language)
 
-    return [token for token in _lemmatized_tokens(text) if token and token not in stopwords_for_language]
+    return [
+        token
+        for token in _lemmatized_tokens(text)
+        if token and token not in stopwords_for_language
+    ]
 
 
 def _get_date_stopwords(language: str) -> Generator[str, None, None]:
@@ -117,7 +121,13 @@ def _get_extra_stopwords(language: str) -> list[str]:
     path = _stopwords_dir / f"stopwords_{language}.txt"
 
     return (
-        [word for word in (word.strip().casefold() for word in path.read_text().splitlines()) if word]
+        [
+            word
+            for word in (
+                word.strip().casefold() for word in path.read_text().splitlines()
+            )
+            if word
+        ]
         if path.exists()
         else []
     )

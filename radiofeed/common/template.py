@@ -78,7 +78,9 @@ def absolute_uri(context: dict, url: str | None = None, *args, **kwargs) -> str:
         context: template context
         url: URL name or path
     """
-    return _build_absolute_uri(resolve_url(url, *args, **kwargs) if url else None, context.get("request"))
+    return _build_absolute_uri(
+        resolve_url(url, *args, **kwargs) if url else None, context.get("request")
+    )
 
 
 @register.filter
@@ -147,7 +149,9 @@ def markdown(value: str | None) -> dict:
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
-def share_buttons(context: dict, url: str, subject: str, extra_context: dict | None = None) -> dict:
+def share_buttons(
+    context: dict, url: str, subject: str, extra_context: dict | None = None
+) -> dict:
     """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin.
 
     Args:
@@ -190,7 +194,11 @@ def normalize_url(url: str) -> str:
 
 
 def _auth_redirect_url(url: str, redirect_url) -> str:
-    return redirect_url if url.startswith("/account/") else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
+    return (
+        redirect_url
+        if url.startswith("/account/")
+        else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
+    )
 
 
 def _build_absolute_uri(url: str | None = None, request: HttpRequest | None = None):

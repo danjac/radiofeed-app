@@ -38,6 +38,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="episode",
-            constraint=models.UniqueConstraint(fields=("podcast", "guid"), name="unique_episodes_episode_podcast_guid"),
+            constraint=models.UniqueConstraint(
+                fields=("podcast", "guid"), name="unique_episodes_episode_podcast_guid"
+            ),
         ),
     ]

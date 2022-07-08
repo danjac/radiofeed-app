@@ -13,13 +13,17 @@ class UserQuerySet(models.QuerySet):
 
     def for_email(self, email: str) -> models.QuerySet[User]:
         """Returns users matching this email address, including both primary and secondary email addresses."""
-        return self.filter(models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email))
+        return self.filter(
+            models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
+        )
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     """Custom Manager for User model."""
 
-    def create_user(self, username: str, email: str, password: str | None = None, **kwargs) -> User:
+    def create_user(
+        self, username: str, email: str, password: str | None = None, **kwargs
+    ) -> User:
         """Create new user."""
         user = self.model(
             username=username,
@@ -30,7 +34,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username: str, email: str, password: str | None = None, **kwargs) -> User:
+    def create_superuser(
+        self, username: str, email: str, password: str | None = None, **kwargs
+    ) -> User:
         """Create new superuser."""
         return self.create_user(
             username,

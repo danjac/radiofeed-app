@@ -8,7 +8,9 @@ from django.db import migrations
 
 
 def set_removed_from_http_gone(apps, schema_editor):
-    apps.get_model("podcasts.Podcast").objects.filter(http_status=http.HTTPStatus.GONE).update(result="removed")
+    apps.get_model("podcasts.Podcast").objects.filter(
+        http_status=http.HTTPStatus.GONE
+    ).update(result="removed")
 
 
 class Migration(migrations.Migration):
@@ -17,4 +19,8 @@ class Migration(migrations.Migration):
         ("podcasts", "0136_alter_podcast_result"),
     ]
 
-    operations = [migrations.RunPython(set_removed_from_http_gone, reverse_code=migrations.RunPython.noop)]
+    operations = [
+        migrations.RunPython(
+            set_removed_from_http_gone, reverse_code=migrations.RunPython.noop
+        )
+    ]

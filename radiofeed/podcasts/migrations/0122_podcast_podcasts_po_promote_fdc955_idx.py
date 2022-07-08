@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddIndex(
             model_name="podcast",
-            index=models.Index(fields=["promoted"], name="podcasts_po_promote_fdc955_idx"),
+            index=models.Index(
+                fields=["promoted"], name="podcasts_po_promote_fdc955_idx"
+            ),
         ),
     ]

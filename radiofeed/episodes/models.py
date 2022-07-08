@@ -176,7 +176,9 @@ class Episode(models.Model):
         try:
             return sum(
                 (int(part) * multiplier)
-                for (part, multiplier) in zip(reversed(self.duration.split(":")[:3]), (1, 60, 3600))
+                for (part, multiplier) in zip(
+                    reversed(self.duration.split(":")[:3]), (1, 60, 3600)
+                )
             )
         except ValueError:
             return 0
@@ -188,7 +190,9 @@ class Episode(models.Model):
     def get_episode_metadata(self) -> str:
         """Returns the episode season/episode/type as a single string, e.g. "Episode 3 Season 4", "Trailer", etc."""
         episode_type = (
-            self.episode_type.capitalize() if self.episode_type and self.episode_type.casefold() != "full" else None
+            self.episode_type.capitalize()
+            if self.episode_type and self.episode_type.casefold() != "full"
+            else None
         )
 
         return " ".join(
@@ -196,8 +200,12 @@ class Episode(models.Model):
                 info
                 for info in (
                     episode_type,
-                    f"Episode {self.episode}" if self.episode and not episode_type else None,
-                    f"Season {self.season}" if self.season and not episode_type else None,
+                    f"Episode {self.episode}"
+                    if self.episode and not episode_type
+                    else None,
+                    f"Season {self.season}"
+                    if self.season and not episode_type
+                    else None,
                 )
                 if info
             ]

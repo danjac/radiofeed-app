@@ -23,6 +23,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="podcast",
-            index=models.Index(fields=["-changed", "-pub_date"], name="podcasts_po_changed_2e38d6_idx"),
+            index=models.Index(
+                fields=["-changed", "-pub_date"], name="podcasts_po_changed_2e38d6_idx"
+            ),
         ),
     ]

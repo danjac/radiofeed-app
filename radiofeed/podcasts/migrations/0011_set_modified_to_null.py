@@ -16,4 +16,8 @@ class Migration(migrations.Migration):
         ("podcasts", "0010_podcast_updated"),
     ]
 
-    operations = [migrations.RunPython(set_modified_to_none, reverse_code=migrations.RunPython.noop)]
+    operations = [
+        migrations.RunPython(
+            set_modified_to_none, reverse_code=migrations.RunPython.noop
+        )
+    ]

@@ -27,10 +27,14 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="bookmark",
-            index=models.Index(fields=["-created"], name="episodes_bo_created_d69e08_idx"),
+            index=models.Index(
+                fields=["-created"], name="episodes_bo_created_d69e08_idx"
+            ),
         ),
         migrations.AddConstraint(
             model_name="bookmark",
-            constraint=models.UniqueConstraint(fields=("user", "episode"), name="unique_episodes_bookmark"),
+            constraint=models.UniqueConstraint(
+                fields=("user", "episode"), name="unique_episodes_bookmark"
+            ),
         ),
     ]
