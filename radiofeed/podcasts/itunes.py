@@ -3,7 +3,7 @@ import dataclasses
 import itertools
 import re
 
-from typing import Generator, Iterable
+from typing import Generator
 from urllib.parse import urlparse
 
 import requests
@@ -18,6 +18,15 @@ from radiofeed.podcasts.models import Podcast
 _batch_size = 100
 
 _itunes_podcast_id_re = re.compile(r"id(?P<id>\d+)")
+
+_itunes_locations = (
+    "de",
+    "fi",
+    "fr",
+    "gb",
+    "se",
+    "us",
+)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -61,9 +70,9 @@ def search(search_term: str) -> Generator[Feed, None, None]:
     )
 
 
-def crawl(locations: Iterable[str]) -> Generator[Feed, None, None]:
+def crawl() -> Generator[Feed, None, None]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
-    for location in locations:
+    for location in _itunes_locations:
         yield from Crawler(location).crawl()
 
 

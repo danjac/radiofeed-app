@@ -20,9 +20,7 @@ MOCK_RESULT = {
 class MockResponse:
     def __init__(self, *, mock_file=None, json=None, exception=None):
         if mock_file is not None:
-            self.content = (
-                pathlib.Path(__file__).parent / "mocks" / mock_file
-            ).read_bytes()
+            self.content = (pathlib.Path(__file__).parent / "mocks" / mock_file).read_bytes()
         else:
             self.content = b""
 
@@ -53,9 +51,7 @@ def mock_bad_response(mocker):
 
 @pytest.fixture
 def mock_invalid_response(mocker):
-    yield mock_request(
-        mocker, MockResponse(json={"results": [{"id": 12345, "url": "bad-url"}]})
-    )
+    yield mock_request(mocker, MockResponse(json={"results": [{"id": 12345, "url": "bad-url"}]}))
 
 
 class TestCrawl:
@@ -77,7 +73,7 @@ class TestCrawl:
 
         mocker.patch("requests.get", side_effect=side_effect)
 
-        list(itunes.crawl(["us"]))
+        list(itunes.crawl())
 
         assert Podcast.objects.count() == 1
 
