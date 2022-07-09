@@ -11,6 +11,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
 
 from radiofeed.common.http import HttpRequest
+from radiofeed.common.template import get_site_config
 
 
 @require_http_methods(["POST"])
@@ -77,7 +78,7 @@ def security(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
             [
-                f"Contact: mailto:{settings.SITE_CONFIG.contact_email}",
+                f"Contact: mailto:{get_site_config().contact_email}",
             ]
         ),
         content_type="text/plain",

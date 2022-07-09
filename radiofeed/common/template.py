@@ -22,6 +22,8 @@ from radiofeed.common.utils.html import markup
 
 register = template.Library()
 
+_validate_url = URLValidator(["http", "https"])
+
 
 @dataclasses.dataclass
 class ActiveLink:
@@ -38,7 +40,15 @@ class ActiveLink:
     exact: bool = False
 
 
-_validate_url = URLValidator(["http", "https"])
+@dataclasses.dataclass(frozen=True)
+class SiteConfig:
+    """General site information."""
+
+    contact_email: str
+    country: str
+    description: str
+    keywords: str
+    owner: str
 
 
 @register.simple_tag(takes_context=True)
@@ -65,9 +75,9 @@ def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
 
 
 @register.simple_tag
-def get_site_config() -> dict:
+def get_site_config() -> SiteConfig:
     """Returns the configuration defined in the setting SITE_CONFIG."""
-    return settings.SITE_CONFIG
+    return SiteConfig(**settings.SITE_CONFIG)
 
 
 @register.simple_tag(takes_context=True)
