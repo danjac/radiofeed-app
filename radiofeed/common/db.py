@@ -15,7 +15,7 @@ _T = TypeVar("_T", bound=QuerySet[_MT])
 
 
 if TYPE_CHECKING:
-    _QuerySet: TypeAlias = QuerySet[_MT]
+    _QuerySet: TypeAlias = QuerySet[_MT]  # pragma: no cover
 else:
     _QuerySet = object
 

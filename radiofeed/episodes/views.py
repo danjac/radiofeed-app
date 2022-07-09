@@ -134,7 +134,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return _player_response(
+    return _audio_player_response(
         request,
         episode,
         start_player=True,
@@ -155,7 +155,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
         episode = _get_episode_or_404(request, episode_id, with_current_time=True)
 
-        return _player_response(
+        return _audio_player_response(
             request,
             episode,
             start_player=False,
@@ -311,7 +311,7 @@ def _get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def _player_response(
+def _audio_player_response(
     request,
     episode: Episode,
     *,
@@ -321,7 +321,7 @@ def _player_response(
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "episodes/player.html",
+        "episodes/audio_player.html",
         {
             "episode": episode,
             "start_player": start_player,

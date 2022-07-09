@@ -4,10 +4,10 @@ from django.template.context import RequestContext
 
 from radiofeed.episodes.factories import AudioLogFactory
 from radiofeed.episodes.middleware import Player
-from radiofeed.episodes.templatetags.player import audio_player
+from radiofeed.episodes.templatetags.audio_player import audio_player
 
 
-class TestRenderPlayer:
+class TestAudioPlayer:
     def test_is_anonymous(self, rf, anonymous_user):
         req = rf.get("/")
         req.user = anonymous_user
