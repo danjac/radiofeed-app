@@ -33,7 +33,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-
 CACHES = {
     "default": {
         **env.cache("REDIS_URL"),
@@ -46,7 +45,6 @@ CACHES = {
         },
     },
 }
-
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
@@ -216,7 +214,6 @@ TEMPLATES = [
     }
 ]
 
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -226,8 +223,15 @@ LOGGING = {
     },
     "loggers": {
         "root": {"handlers": ["console"], "level": "INFO"},
-        "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
-        "django.request": {"handlers": ["console"], "level": "ERROR"},
+        "django.security.DisallowedHost": {
+            "handlers": ["null"],
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
     },
 }
 
@@ -245,7 +249,6 @@ HUEY = {
         "url": REDIS_URL,
     },
 }
-
 
 # Project specific
 
