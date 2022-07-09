@@ -3,14 +3,13 @@ from __future__ import annotations
 import datetime
 
 from django.conf import settings
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
 
-from radiofeed.common.http import HttpRequest
 from radiofeed.common.template import get_site_config
 
 
@@ -32,7 +31,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 def static_page(
     request: HttpRequest, template_name: str, extra_context: dict | None = None
-) -> TemplateResponse:
+) -> HttpResponse:
     """Renders a simple web page. Use for help pages, "About" pages etc."""
     return TemplateResponse(request, template_name, extra_context)
 

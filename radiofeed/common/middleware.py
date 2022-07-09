@@ -1,24 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, TypeAlias
+from typing import Callable
 from urllib.parse import urlencode
 
 from django.http import HttpRequest, HttpResponse
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
-HttpRequestResponse: TypeAlias = Callable[[HttpRequest], HttpResponse]
-
-if TYPE_CHECKING:
-    from radiofeed.common.http import HttpRequest
-else:
-    from django.http import HttpRequest
-
 
 class BaseMiddleware:
     """Convenient base class for custom middleware."""
 
-    def __init__(self, get_response: HttpRequestResponse):
+    def __init__(self, get_response: Callable):
         self.get_response = get_response
 
 

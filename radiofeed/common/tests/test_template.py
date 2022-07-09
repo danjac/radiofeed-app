@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from django.template.context import RequestContext
 from django.urls import reverse
 
 from radiofeed.common.template import (
@@ -140,7 +141,7 @@ class TestActiveLink:
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
-        route = active_link({"request": req}, self.episodes_url)
+        route = active_link(RequestContext(req), self.episodes_url)
         assert route.url == reverse(self.episodes_url)
         assert not route.match
         assert not route.exact
@@ -148,7 +149,7 @@ class TestActiveLink:
     def test_active_link_exact_match(self, rf):
         url = reverse(self.episodes_url)
         req = rf.get(url)
-        route = active_link({"request": req}, self.episodes_url)
+        route = active_link(RequestContext(req), self.episodes_url)
         assert route.url == reverse(self.episodes_url)
         assert route.match
         assert route.exact
@@ -160,14 +161,14 @@ class TestReActiveLink:
     def test_re_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
-        route = re_active_link({"request": req}, self.about_url, "/about/*")
+        route = re_active_link(RequestContext(req), self.about_url, "/about/*")
         assert route.url == reverse(self.about_url)
         assert not route.match
         assert not route.exact
 
     def test_active_link_non_exact_match(self, rf):
         req = rf.get(reverse(self.about_url))
-        route = re_active_link({"request": req}, self.about_url, "/about/*")
+        route = re_active_link(RequestContext(req), self.about_url, "/about/*")
         assert route.url == reverse(self.about_url)
         assert route.match
         assert not route.exact
@@ -176,8 +177,9 @@ class TestReActiveLink:
 class TestShareButtons:
     def test_share_buttons(self, rf):
         url = "/podcasts/12344/test/"
-        context = {"request": rf.get(url)}
-        share_urls = share_buttons(context, url, "Test Podcast")["share_urls"]
+        share_urls = share_buttons(RequestContext(rf.get(url)), url, "Test Podcast")[
+            "share_urls"
+        ]
 
         assert (
             share_urls["email"]
@@ -235,7 +237,7 @@ class TestPaginationUrl:
     def test_append_page_number_to_querystring(self, rf):
 
         req = rf.get("/search/", {"q": "test"})
-        url = pagination_url({"request": req}, 5)
+        url = pagination_url(RequestContext(req), 5)
         assert url.startswith("/search/?")
         assert "q=test" in url
         assert "page=5" in url

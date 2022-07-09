@@ -7,10 +7,10 @@ from typing import Callable
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django_htmx.http import HttpResponseClientRedirect
 
-from radiofeed.common.http import HttpRequest, HttpResponseUnauthorized
+from radiofeed.common.http import HttpResponseUnauthorized
 
 
 def ajax_login_required(view: Callable) -> Callable:

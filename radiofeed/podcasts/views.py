@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
-from radiofeed.common.http import HttpRequest, HttpResponseConflict
+from radiofeed.common.http import HttpResponseConflict
 from radiofeed.common.pagination import pagination_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
@@ -20,7 +20,7 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscri
 
 
 @require_http_methods(["GET"])
-def index(request: HttpRequest) -> TemplateResponse:
+def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page.
 
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
@@ -55,7 +55,7 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 
 @require_http_methods(["GET"])
-def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
+def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
@@ -79,7 +79,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
 
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
-def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
+def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
@@ -104,7 +104,7 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
 @require_http_methods(["GET"])
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponseRedirect:
+) -> HttpResponse:
     """Redirects to the latest episode for a given podcast.
 
     Raises:
@@ -123,7 +123,7 @@ def latest_episode(
 @require_http_methods(["GET"])
 def similar(
     request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
-) -> TemplateResponse:
+) -> HttpResponse:
     """List similar podcasts based on recommendations.
 
     Raises:
@@ -151,7 +151,7 @@ def similar(
 @require_http_methods(["GET"])
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> TemplateResponse:
+) -> HttpResponse:
     """Render details for a single podcast.
 
     Raises:
@@ -178,7 +178,7 @@ def episodes(
     podcast_id: int,
     slug: str | None = None,
     target: str = "object-list",
-) -> TemplateResponse:
+) -> HttpResponse:
     """Render episodes for a single podcast.
 
     Raises:
@@ -215,7 +215,7 @@ def episodes(
 
 
 @require_http_methods(["GET"])
-def category_list(request: HttpRequest) -> TemplateResponse:
+def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.annotate(
@@ -236,7 +236,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 @require_http_methods(["GET"])
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
-) -> TemplateResponse:
+) -> HttpResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -267,9 +267,7 @@ def category_detail(
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def subscribe(
-    request: HttpRequest, podcast_id: int
-) -> HttpResponseConflict | TemplateResponse:
+def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast.
 
     Returns:
@@ -291,7 +289,7 @@ def subscribe(
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
+def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast.
 
     Raises:

@@ -4,14 +4,13 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_http_methods
 
-from radiofeed.common.http import HttpRequest
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
@@ -21,7 +20,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @login_required
 def user_preferences(
     request: HttpRequest, target: str = "preferences-form"
-) -> TemplateResponse:
+) -> HttpResponse:
     """Handle user preferences."""
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
@@ -45,7 +44,7 @@ def user_preferences(
 
 @require_http_methods(["GET"])
 @login_required
-def import_export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
+def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
     return TemplateResponse(
         request,
@@ -61,7 +60,7 @@ def import_export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 @login_required
 def import_podcast_feeds(
     request: HttpRequest, target: str = "opml-import-form"
-) -> TemplateResponse:
+) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
@@ -93,7 +92,7 @@ def import_podcast_feeds(
 
 @require_http_methods(["POST"])
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> SimpleTemplateResponse:
+def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing feeds from user's subscriptions."""
     podcasts = (
         Podcast.objects.filter(
@@ -116,7 +115,7 @@ def export_podcast_feeds(request: HttpRequest) -> SimpleTemplateResponse:
 
 @require_http_methods(["GET"])
 @login_required
-def user_stats(request: HttpRequest) -> TemplateResponse:
+def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     logs = AudioLog.objects.filter(user=request.user)
 
@@ -135,7 +134,7 @@ def user_stats(request: HttpRequest) -> TemplateResponse:
 
 @require_http_methods(["GET", "POST"])
 @login_required
-def delete_account(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
+def delete_account(request: HttpRequest) -> HttpResponse:
     """Delete account on confirmation.
 
     Returns:

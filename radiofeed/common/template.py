@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.http import HttpRequest
 from django.shortcuts import resolve_url
+from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -55,7 +56,9 @@ _validate_url = URLValidator(["http", "https"])
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
+def pagination_url(
+    context: RequestContext, page_number: int, param: str = "page"
+) -> str:
     """Inserts the "page" query string parameter with the provided page number into the template.
 
     Preserves the original request path and any other query string parameters.
@@ -71,10 +74,9 @@ def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
     Returns:
         updated URL path with new page
     """
-    request = context["request"]
-    params = request.GET.copy()
+    params = context.request.GET.copy()
     params[param] = page_number
-    return request.path + "?" + params.urlencode()
+    return context.request.path + "?" + params.urlencode()
 
 
 @register.simple_tag
@@ -84,7 +86,12 @@ def get_site_config() -> SiteConfig:
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context: dict, url: str | None = None, *args, **kwargs) -> str:
+def absolute_uri(
+    context: RequestContext,
+    url: str | None = None,
+    *args,
+    **kwargs,
+) -> str:
     """Generate absolute URI based on server environment or current Site.
 
     Args:
@@ -102,7 +109,7 @@ def format_duration(total_seconds: int | None) -> str:
     if total_seconds is None or total_seconds < 60:
         return ""
 
-    rv = []
+    rv: list[str] = []
 
     if total_hours := math.floor(total_seconds / 3600):
         rv.append(f"{total_hours}h")
@@ -114,14 +121,14 @@ def format_duration(total_seconds: int | None) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> ActiveLink:
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
 
-    if context["request"].path == url:
+    if context.request.path == url:
         return ActiveLink(url, match=True, exact=True)
 
-    if context["request"].path.startswith(url):
+    if context.request.path.startswith(url):
         return ActiveLink(url, match=True)
 
     return ActiveLink(url)
@@ -129,7 +136,7 @@ def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
 
 @register.simple_tag(takes_context=True)
 def re_active_link(
-    context: dict,
+    context: RequestContext,
     url_name: str,
     pattern: str,
     *args,
@@ -137,7 +144,7 @@ def re_active_link(
 ) -> ActiveLink:
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
-    if re.match(pattern, context["request"].path):
+    if re.match(pattern, context.request.path):
         return ActiveLink(url, match=True)
 
     return ActiveLink(url)
@@ -163,7 +170,7 @@ def markdown(value: str | None) -> dict:
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
 def share_buttons(
-    context: dict, url: str, subject: str, extra_context: dict | None = None
+    context: RequestContext, url: str, subject: str, extra_context: dict | None = None
 ) -> dict:
     """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin.
 
@@ -173,7 +180,7 @@ def share_buttons(
         subject: subject line
         extra_context: extra template context
     """
-    url = parse.quote(context["request"].build_absolute_uri(url))
+    url = parse.quote(context.request.build_absolute_uri(url))
     subject = parse.quote(subject)
 
     return {
@@ -187,9 +194,9 @@ def share_buttons(
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
-def cookie_notice(context: dict) -> dict:
+def cookie_notice(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked "Accept Cookies" button."""
-    return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
+    return {"accept_cookies": "accept-cookies" in context.request.COOKIES}
 
 
 @register.filter
