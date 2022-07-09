@@ -23,7 +23,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 # log DB queries
 
-LOGGING["loggers"]["django.db.backends"] = {
+LOGGING["loggers"]["django.db.backends"] = {  # type: ignore
     "level": "DEBUG",
     "handlers": ["console"],
     "propagate": False,

@@ -77,7 +77,7 @@ def security(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
             [
-                f"Contact: mailto:{settings.SITE_CONFIG['contact_email']}",
+                f"Contact: mailto:{settings.SITE_CONFIG.contact_email}",
             ]
         ),
         content_type="text/plain",

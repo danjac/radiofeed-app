@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import pathlib
 
 from email.utils import getaddresses
@@ -258,15 +259,27 @@ DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
 ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
-SITE_CONFIG = {
-    "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
-    "description": env("SITE_DESCRIPTION", default="Podcast aggregator site"),
-    "country": env("HOST_COUNTRY", default="Finland"),
-    "keywords": env("SITE_KEYWORDS", default="podcasts, rss, feeds"),
-    "owner": env("SITE_OWNER", default=None),
-}
-
 USER_AGENT = env(
     "USER_AGENT",
     default=f"radiofeed/{__version__} +https://github.com/danjac/radiofeed-app/",
+)
+
+
+@dataclasses.dataclass(frozen=True)
+class SiteConfig:
+    """General site information."""
+
+    contact_email: str
+    country: str
+    description: str
+    keywords: str
+    owner: str
+
+
+SITE_CONFIG = SiteConfig(
+    contact_email=env("CONTACT_EMAIL", default="admin@localhost"),
+    description=env("SITE_DESCRIPTION", default="Podcast aggregator site"),
+    country=env("HOST_COUNTRY", default="Finland"),
+    keywords=env("SITE_KEYWORDS", default="podcasts, rss, feeds"),
+    owner=env("SITE_OWNER", default=None),
 )
