@@ -66,11 +66,6 @@ def pagination_url(
     Given the above and a URL of "/search?q=test" the result would
     be something like: "/search?q=test&page=3"
 
-    Args:
-        context: template context
-        page_number
-        param: query string parameter for pages
-
     Returns:
         updated URL path with new page
     """
@@ -172,14 +167,7 @@ def markdown(value: str | None) -> dict:
 def share_buttons(
     context: RequestContext, url: str, subject: str, extra_context: dict | None = None
 ) -> dict:
-    """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin.
-
-    Args:
-        context: template context
-        url: URL on page to share in link (automatically expanded to absolute URI)
-        subject: subject line
-        extra_context: extra template context
-    """
+    """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin."""
     url = parse.quote(context.request.build_absolute_uri(url))
     subject = parse.quote(subject)
 
