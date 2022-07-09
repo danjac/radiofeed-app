@@ -23,7 +23,7 @@ from radiofeed.common.utils.html import markup
 register = template.Library()
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class ActiveLink:
     """Active link info returned from `active_link` or `re_active_link` filters.
 
