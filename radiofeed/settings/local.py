@@ -11,9 +11,9 @@ from radiofeed.settings.base import (
 
 include("base.py")
 
-ADMIN_SITE_HEADER += " [LOCAL]"
-
 DEBUG = True
+
+ADMIN_SITE_HEADER += " [LOCAL]"
 
 INSTALLED_APPS = ["whitenoise.runserver_nostatic", "debug_toolbar"] + INSTALLED_APPS
 
