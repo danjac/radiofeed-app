@@ -28,6 +28,7 @@ class FastCountMixin(_QuerySet):
     """
 
     fast_count_row_limit: int = 1000
+    model: Model
 
     def count(self) -> int:
         """Does optimized COUNT.
