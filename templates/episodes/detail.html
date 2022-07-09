@@ -3,7 +3,6 @@
 
 {% block title %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 {% block content_metadata %}
-    {% get_site_config as site_config %}
     {% with podcast=episode.podcast %}
         {% with episode_title=episode.cleaned_title|escapejs episode_description=episode.cleaned_description|default:podcast.cleaned_description|truncatechars:200|escapejs cover_url=episode.get_cover_url %}
             {% if episode_description %}

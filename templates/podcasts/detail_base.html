@@ -4,7 +4,6 @@
 {% block title %} | {{ podcast.cleaned_title }}{% endblock %}
 
 {% block content_metadata %}
-    {% get_site_config as site_config %}
     {% with podcast_title=podcast.cleaned_title|escapejs podcast_description=podcast.cleaned_description|truncatechars:200|escapejs cover_url=podcast.cover_url %}
 
         {% if podcast_description %}
@@ -37,7 +36,6 @@
             <meta name="og:image:width"
                 content="200" />
         {% endif %}
-
 
         <meta name="twitter:card"
             content="{{ cover_url|yesno:'summary_large_image,summary' }}">
