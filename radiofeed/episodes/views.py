@@ -321,7 +321,7 @@ def _audio_player_response(
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "episodes/audio_player.html",
+        "episodes/player.html",
         {
             "episode": episode,
             "start_player": start_player,
