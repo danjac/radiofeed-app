@@ -4,13 +4,14 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_http_methods
 
+from radiofeed.common.http import HttpRequest
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
