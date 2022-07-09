@@ -7,7 +7,8 @@ import re
 
 from datetime import date, timedelta
 from functools import lru_cache
-from typing import Generator
+from types import MappingProxyType
+from typing import Iterator
 
 from django.template.defaultfilters import striptags
 from django.utils import timezone, translation
@@ -16,31 +17,33 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
-NLTK_LANGUAGES = {
-    "ar": "arabic",
-    "az": "azerbaijani",
-    "da": "danish",
-    "de": "german",
-    "el": "greek",
-    "en": "english",
-    "es": "spanish",
-    "fi": "finnish",
-    "fr": "french",
-    "hu": "hungarian",
-    "id": "indonesian",
-    "it": "italian",
-    "kk": "kazakh",
-    "ne": "nepali",
-    "nl": "dutch",
-    "no": "norwegian",
-    "pt": "portuguese",
-    "ro": "romanian",
-    "ru": "russian",
-    "sl": "slovene",
-    "sv": "swedish",
-    "tg": "tajik",
-    "tr": "turkish",
-}
+NLTK_LANGUAGES = MappingProxyType(
+    {
+        "ar": "arabic",
+        "az": "azerbaijani",
+        "da": "danish",
+        "de": "german",
+        "el": "greek",
+        "en": "english",
+        "es": "spanish",
+        "fi": "finnish",
+        "fr": "french",
+        "hu": "hungarian",
+        "id": "indonesian",
+        "it": "italian",
+        "kk": "kazakh",
+        "ne": "nepali",
+        "nl": "dutch",
+        "no": "norwegian",
+        "pt": "portuguese",
+        "ro": "romanian",
+        "ru": "russian",
+        "sl": "slovene",
+        "sv": "swedish",
+        "tg": "tajik",
+        "tr": "turkish",
+    }
+)
 
 _corporate_stopwords = [
     "apple",
@@ -102,7 +105,7 @@ def tokenize(language: str, text: str) -> list[str]:
     ]
 
 
-def _get_date_stopwords(language: str) -> Generator[str, None, None]:
+def _get_date_stopwords(language: str) -> Iterator[str]:
     now = timezone.now()
     with translation.override(language):
 
@@ -133,7 +136,7 @@ def _get_extra_stopwords(language: str) -> list[str]:
     )
 
 
-def _lemmatized_tokens(text: str) -> Generator[str, None, None]:
+def _lemmatized_tokens(text: str) -> Iterator[str]:
     for token in _tokenizer.tokenize(text):
         try:
             yield _lemmatizer.lemmatize(token)
