@@ -123,32 +123,32 @@ class TestClean:
 
 
 class TestStripHtml:
-    def test_value_none(self):
-        return html.strip_html(None) == ""
-
-    def test_value_empty(self):
-        return html.strip_html("") == ""
-
-    def test_value_has_content(self):
-        return html.strip_html("<p>this &amp; that</p>") == "this & that"
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (None, ""),
+            ("", ""),
+            ("", ""),
+            ("<p>this &amp; that</p>", "this & that"),
+        ],
+    )
+    def test_strip_html(self, value, expected):
+        return html.strip_html(value) == expected
 
 
 class TestMarkup:
-    def test_value_none(self):
-        return html.markup(None) == ""
-
-    def test_value_empty(self):
-        return html.markup("  ") == ""
-
-    def test_markdown(self):
-        return html.markup("*test*") == "<b>test</b>"
-
-    def test_html(self):
-        return html.markup("<p>test</p>") == "<p>test</p>"
-
-    def test_unsafe(self):
-        text = "<script>alert('xss ahoy!')</script>"
-        assert html.markup(text) == "alert('xss ahoy!')"
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (None, ""),
+            (" ", ""),
+            ("*test*", "<b>test</b>"),
+            ("<p>test</p>", "<p>test</p>"),
+            ("<script>alert('xss ahoy!')</script>", "alert('xss ahoy!')"),
+        ],
+    )
+    def test_markup(self, value, expected):
+        return html.markup(value) == expected
 
 
 class TestParseDate:
