@@ -118,7 +118,7 @@ class FeedParser:
             active = True
             parse_result = Podcast.ParseResult.SUCCESS
 
-        categories, keywords = self._parse_categories(feed)
+        categories_dct = Category.objects.in_bulk(field_name="name")
 
         self._podcast_update(
             active=active,
@@ -129,7 +129,11 @@ class FeedParser:
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self._extract_text(feed),
-            keywords=" ".join(keywords),
+            keywords=" ".join(
+                category
+                for category in feed.categories
+                if category not in categories_dct
+            ),
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(  # type: ignore
@@ -140,7 +144,13 @@ class FeedParser:
             ),
         )
 
-        self._podcast.categories.set(categories)
+        self._podcast.categories.set(
+            [
+                categories_dct[category]
+                for category in feed.categories
+                if category in categories_dct
+            ]
+        )
 
         self._episode_updates(feed)
 
@@ -182,21 +192,6 @@ class FeedParser:
             parsed=now,
             **fields,
         )
-
-    def _parse_categories(self, feed: Feed) -> tuple[list[Category], list[str]]:
-
-        categories_dct = Category.objects.in_bulk(field_name="name")
-
-        categories: list[Category] = []
-        keywords: list[str] = []
-
-        for category in feed.categories:
-            if category in categories_dct:
-                categories.append(categories_dct[category])
-            else:
-                keywords.append(category)
-
-        return categories, keywords
 
     def _extract_text(self, feed) -> str:
         text = " ".join(
