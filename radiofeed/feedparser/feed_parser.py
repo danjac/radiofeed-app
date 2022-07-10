@@ -175,6 +175,14 @@ class FeedParser:
         )
         return False
 
+    def _podcast_update(self, **fields) -> None:
+        now = timezone.now()
+        Podcast.objects.filter(pk=self._podcast.id).update(
+            updated=now,
+            parsed=now,
+            **fields,
+        )
+
     def _parse_categories(self, feed: Feed) -> tuple[list[Category], list[str]]:
 
         categories_dct = Category.objects.in_bulk(field_name="name")
@@ -203,14 +211,6 @@ class FeedParser:
             if value
         )
         return " ".join(tokenize(self._podcast.language, text))
-
-    def _podcast_update(self, **fields) -> None:
-        now = timezone.now()
-        Podcast.objects.filter(pk=self._podcast.id).update(
-            updated=now,
-            parsed=now,
-            **fields,
-        )
 
     def _episode_updates(self, feed: Feed, batch_size: int = 100) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
