@@ -119,7 +119,7 @@ document.addEventListener("alpine:init", () => {
             skipForward() {
                 this.skipTo(10);
             },
-            shortcuts(even) {
+            shortcuts(event) {
                 if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
                     return;
                 }
