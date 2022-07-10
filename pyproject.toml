@@ -145,3 +145,7 @@ ignore_errors = true
 [tool.pyright]
 reportGeneralTypeIssues = false
 reportOptionalMemberAccess = false
+
+[tool.bandit]
+exclude_dirs = ["**/tests/**.*"]
+skips = ["B410"]
