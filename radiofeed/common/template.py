@@ -50,8 +50,6 @@ class SiteConfig:
     owner: str
 
 
-_site_config = SiteConfig(**settings.SITE_CONFIG)
-
 _validate_url = URLValidator(["http", "https"])
 
 
@@ -77,7 +75,7 @@ def pagination_url(
 @register.simple_tag
 def get_site_config() -> SiteConfig:
     """Returns the configuration defined in the setting SITE_CONFIG."""
-    return _site_config
+    return SiteConfig(**settings.SITE_CONFIG)
 
 
 @register.simple_tag(takes_context=True)
