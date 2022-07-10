@@ -111,35 +111,25 @@ class FeedParser:
         self, response: requests.Response, feed: Feed, content_hash: str
     ) -> bool:
 
-        # taxonomy
-        categories_dct = Category.objects.in_bulk(field_name="name")
+        if feed.complete:
+            active = False
+            parse_result = Podcast.ParseResult.COMPLETE
+        else:
+            active = True
+            parse_result = Podcast.ParseResult.SUCCESS
 
-        categories = [
-            categories_dct[category]
-            for category in feed.categories
-            if category in categories_dct
-        ]
-
-        keywords = " ".join(
-            category for category in feed.categories if category not in categories_dct
-        )
+        categories, keywords = self._parse_categories(feed)
 
         self._podcast_update(
-            active=not (feed.complete),
-            parse_result=Podcast.ParseResult.COMPLETE
-            if feed.complete
-            else Podcast.ParseResult.SUCCESS,
+            active=active,
+            parse_result=parse_result,
             content_hash=content_hash,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
-            keywords=keywords,
-            extracted_text=self._extract_text(
-                feed,
-                categories,
-                keywords,
-            ),
+            extracted_text=self._extract_text(feed),
+            keywords=" ".join(keywords),
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(  # type: ignore
@@ -185,18 +175,30 @@ class FeedParser:
         )
         return False
 
-    def _extract_text(
-        self, feed: Feed, categories: list[Category], keywords: str
-    ) -> str:
+    def _parse_categories(self, feed: Feed) -> tuple[list[Category], list[str]]:
+
+        categories_dct = Category.objects.in_bulk(field_name="name")
+
+        categories: list[Category] = []
+        keywords: list[str] = []
+
+        for category in feed.categories:
+            if category in categories_dct:
+                categories.append(categories_dct[category])
+            else:
+                keywords.append(category)
+
+        return categories, keywords
+
+    def _extract_text(self, feed) -> str:
         text = " ".join(
             value
             for value in [
                 feed.title,
                 feed.description,
                 feed.owner,
-                keywords,
             ]
-            + [c.name for c in categories]
+            + feed.categories
             + [item.title for item in feed.items][:6]
             if value
         )
