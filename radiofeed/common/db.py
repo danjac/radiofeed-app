@@ -26,14 +26,18 @@ class FastCountMixin:
         Returns:
             number of rows
         """
-        if self._query.group_by or self._query.where or self._query.distinct:
-            return super().count()
-        if (
+        if any(
+            (
+                self._query.distinct,
+                self._query.group_by,
+                self._query.where,
+            )
+        ) or self.fast_count_row_limit > (
             count := get_reltuple_count(self.db, self.model._meta.db_table)
-        ) > self.fast_count_row_limit:
-            return count
-        # exact count for small tables
-        return super().count()
+        ):
+            return super().count()
+
+        return count
 
 
 class SearchMixin:
