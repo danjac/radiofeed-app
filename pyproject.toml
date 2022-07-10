@@ -141,3 +141,6 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module="*.migrations.*"
 ignore_errors = true
+
+[tool.pyright]
+reportGeneralTypeIssues = false
