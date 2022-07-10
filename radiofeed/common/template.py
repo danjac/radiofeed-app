@@ -91,7 +91,7 @@ def absolute_uri(
 
     Args:
         context: template context
-        url: URL name or path
+        url: relative URL name or path
     """
     return _build_absolute_uri(
         resolve_url(url, *args, **kwargs) if url else None, context.get("request")
