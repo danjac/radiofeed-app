@@ -68,14 +68,6 @@ repos:
           - id: prettier
             files: \.(|js|css)$
             exclude: bundle.js|bundle.js.map|bundle.css
-    # - repo: https://github.com/pre-commit/mirrors-eslint
-    #rev: "v8.19.0"
-    #hooks:
-    #- id: eslint
-    #files: \.(|js)$
-    #exclude: bundle.js|bundle.js.map
-    #additional_dependencies:
-    #["@babel/eslint-parser", "eslint-plugin-prettier", "prettier"]
     - repo: https://github.com/rtts/djhtml
       rev: "v1.5.1"
       hooks:

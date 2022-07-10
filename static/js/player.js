@@ -1,6 +1,6 @@
 import Alpine from "alpinejs";
 
-ok: document.addEventListener("alpine:init", () => {
+document.addEventListener("alpine:init", () => {
     Alpine.data(
         "player",
         (
