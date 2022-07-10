@@ -165,7 +165,10 @@ def markdown(value: str | None) -> dict:
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
 def share_buttons(
-    context: RequestContext, url: str, subject: str, extra_context: dict | None = None
+    context: RequestContext,
+    url: str,
+    subject: str,
+    extra_context: dict | None = None,
 ) -> dict:
     """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin."""
     url = parse.quote(context.request.build_absolute_uri(url))
