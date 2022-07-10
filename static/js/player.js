@@ -26,6 +26,10 @@ document.addEventListener("alpine:init", () => {
                 total: "00:00:00",
             },
             init() {
+                if ("mediaSession" in navigator) {
+                    navigator.mediaSession.metadata = this.getMediaMetadata();
+                }
+
                 this.$watch("runtime", value => {
                     this.counters.current = this.formatCounter(value);
                 });
@@ -39,10 +43,6 @@ document.addEventListener("alpine:init", () => {
                 });
 
                 this.$refs.audio.load();
-
-                if ("mediaSession" in navigator) {
-                    navigator.mediaSession.metadata = this.getMediaMetadata();
-                }
             },
             destroy() {
                 this.clearTimer();

@@ -124,7 +124,7 @@ class FeedParser:
             category for category in feed.categories if category not in categories_dct
         )
 
-        self._save_podcast(
+        self._podcast_update(
             active=not (feed.complete),
             parse_result=Podcast.ParseResult.COMPLETE
             if feed.complete
@@ -152,7 +152,7 @@ class FeedParser:
 
         self._podcast.categories.set(categories)
 
-        self._handle_episode_updates(feed)
+        self._episode_updates(feed)
 
         return True
 
@@ -178,7 +178,7 @@ class FeedParser:
         except AttributeError:
             http_status = None
 
-        self._save_podcast(
+        self._podcast_update(
             active=active,
             http_status=http_status,
             parse_result=parse_result,
@@ -202,7 +202,7 @@ class FeedParser:
         )
         return " ".join(tokenize(self._podcast.language, text))
 
-    def _save_podcast(self, **fields) -> None:
+    def _podcast_update(self, **fields) -> None:
         now = timezone.now()
         Podcast.objects.filter(pk=self._podcast.id).update(
             updated=now,
@@ -210,7 +210,7 @@ class FeedParser:
             **fields,
         )
 
-    def _handle_episode_updates(self, feed: Feed, batch_size: int = 100) -> None:
+    def _episode_updates(self, feed: Feed, batch_size: int = 100) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
 
         # remove any episodes that may have been deleted on the podcast
@@ -247,6 +247,13 @@ class FeedParser:
         for batch in batcher(self._episodes_for_insert(feed, guids), batch_size):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
+    def _episodes_for_insert(
+        self, feed: Feed, guids: dict[str, int]
+    ) -> Iterator[Episode]:
+        return (
+            self._make_episode(item) for item in feed.items if item.guid not in guids
+        )
+
     def _episodes_for_update(
         self, feed: Feed, guids: dict[str, int]
     ) -> Iterator[Episode]:
@@ -257,13 +264,6 @@ class FeedParser:
             if (episode_id := guids[item.guid]) not in episode_ids:
                 yield self._make_episode(item, episode_id)
                 episode_ids.add(episode_id)
-
-    def _episodes_for_insert(
-        self, feed: Feed, guids: dict[str, int]
-    ) -> Iterator[Episode]:
-        return (
-            self._make_episode(item) for item in feed.items if item.guid not in guids
-        )
 
     def _make_episode(self, item: Item, episode_id: int | None = None) -> Episode:
         return Episode(
