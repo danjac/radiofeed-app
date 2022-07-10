@@ -144,3 +144,4 @@ ignore_errors = true
 
 [tool.pyright]
 reportGeneralTypeIssues = false
+reportOptionalMemberAccess = false

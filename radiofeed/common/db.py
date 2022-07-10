@@ -3,24 +3,13 @@ from __future__ import annotations
 import functools
 import operator
 
-from typing import TYPE_CHECKING, TypeAlias, TypeVar
-
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
 from django.db.models import F, Model, Q, QuerySet
 from django.utils.encoding import force_str
 
-_MT = TypeVar("_MT", bound=Model)
-_T = TypeVar("_T", bound=QuerySet[_MT])
 
-
-if TYPE_CHECKING:
-    _QuerySet: TypeAlias = QuerySet[_MT]  # pragma: no cover
-else:
-    _QuerySet = object
-
-
-class FastCountMixin(_QuerySet):
+class FastCountMixin:
     """Provides faster alternative to COUNT for very large tables, using PostgreSQL retuple SELECT.
 
     Attributes:
@@ -47,7 +36,7 @@ class FastCountMixin(_QuerySet):
         return super().count()
 
 
-class SearchMixin(_QuerySet):
+class SearchMixin:
     """Provides standard search interface for models supporting search vector and ranking.
 
     Adds a `search` method to automatically resolve simple PostgreSQL search vector queries.
@@ -64,7 +53,7 @@ class SearchMixin(_QuerySet):
     search_rank: str = "rank"
     search_type: str = "websearch"
 
-    def search(self, search_term: str) -> _T:
+    def search(self, search_term: str) -> QuerySet[Model]:
         """Returns result of search."""
         if not search_term:
             return self.none()
