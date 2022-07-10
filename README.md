@@ -93,7 +93,7 @@ python -m pytest
 Use `mypy` for type-checking:
 
 ```bash
-python -m mypy
+python -m mypy radiofeed
 ```
 
 ## Deployment
