@@ -56,7 +56,7 @@ repos:
             args:
                 [
                     --recursive,
-                    podtracker,
+                    radiofeed,
                     --exclude,
                     "**/tests/**.*",
                     --skip,
