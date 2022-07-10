@@ -108,7 +108,10 @@ class FeedParser:
         return headers
 
     def _handle_success(
-        self, response: requests.Response, feed: Feed, content_hash: str
+        self,
+        response: requests.Response,
+        feed: Feed,
+        content_hash: str,
     ) -> bool:
 
         if feed.complete:
