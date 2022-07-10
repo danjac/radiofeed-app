@@ -120,7 +120,7 @@ class FeedParser:
 
         categories_dct = Category.objects.in_bulk(field_name="name")
 
-        self._podcast_update(
+        self._update_podcast(
             active=active,
             parse_result=parse_result,
             content_hash=content_hash,
@@ -178,14 +178,14 @@ class FeedParser:
         except AttributeError:
             http_status = None
 
-        self._podcast_update(
+        self._update_podcast(
             active=active,
             http_status=http_status,
             parse_result=parse_result,
         )
         return False
 
-    def _podcast_update(self, **fields) -> None:
+    def _update_podcast(self, **fields) -> None:
         now = timezone.now()
         Podcast.objects.filter(pk=self._podcast.id).update(
             updated=now,
