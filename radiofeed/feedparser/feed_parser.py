@@ -51,7 +51,7 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
 
         Returns:
-            if podcast has been successfully updated. This will be False if there are no new updates or there is some other problem e.g. HTTP error.
+            True if podcast has been successfully updated.
         """
         try:
             return self._handle_success(*self._parse_rss())
