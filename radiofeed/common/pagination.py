@@ -7,7 +7,7 @@ from django.http import Http404, HttpRequest
 from django.template.response import TemplateResponse
 
 
-def pagination_response(
+def render_pagination_response(
     request: HttpRequest,
     object_list: QuerySet,
     template_name: str,

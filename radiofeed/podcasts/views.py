@@ -13,7 +13,7 @@ from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.http import HttpResponseConflict
-from radiofeed.common.pagination import pagination_response
+from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
@@ -41,7 +41,7 @@ def index(request: HttpRequest) -> HttpResponse:
         else podcasts.filter(pk__in=subscribed)
     )
 
-    return pagination_response(
+    return render_pagination_response(
         request,
         podcasts,
         "podcasts/index.html",
@@ -69,7 +69,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         )
     )
 
-    return pagination_response(
+    return render_pagination_response(
         request,
         podcasts,
         "podcasts/search.html",
@@ -202,7 +202,7 @@ def episodes(
         "oldest_first": not (newest_first),
     }
 
-    return pagination_response(
+    return render_pagination_response(
         request,
         episodes,
         "podcasts/episodes.html",
@@ -256,7 +256,7 @@ def category_detail(
         else podcasts.order_by("-pub_date")
     )
 
-    return pagination_response(
+    return render_pagination_response(
         request,
         podcasts,
         "podcasts/category_detail.html",
@@ -284,7 +284,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, _("You are now subscribed to this podcast"))
-    return _subscribe_action_response(request, podcast, True)
+    return _render_subscribe_action(request, podcast, True)
 
 
 @require_http_methods(["DELETE"])
@@ -300,7 +300,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
 
     messages.info(request, _("You are no longer subscribed to this podcast"))
-    return _subscribe_action_response(request, podcast, False)
+    return _render_subscribe_action(request, podcast, False)
 
 
 def _get_podcasts() -> QuerySet[Podcast]:
@@ -322,7 +322,7 @@ def _podcast_detail_context(
     } | (extra_context or {})
 
 
-def _subscribe_action_response(
+def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> TemplateResponse:
     return TemplateResponse(

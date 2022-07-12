@@ -5,7 +5,7 @@ import pytest
 from django.http import Http404
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.common.pagination import pagination_response
+from radiofeed.common.pagination import render_pagination_response
 from radiofeed.podcasts.factories import PodcastFactory
 
 
@@ -21,7 +21,7 @@ class TestPaginationResponse:
     def test_render(self, rf, podcasts, assert_ok):
         req = rf.get("/")
         req.htmx = HtmxDetails(req)
-        resp = pagination_response(
+        resp = render_pagination_response(
             req,
             podcasts,
             self.base_template,
@@ -33,7 +33,7 @@ class TestPaginationResponse:
     def test_render_htmx(self, rf, podcasts, assert_ok):
         req = rf.get("/", HTTP_HX_REQUEST="true")
         req.htmx = HtmxDetails(req)
-        resp = pagination_response(
+        resp = render_pagination_response(
             req,
             podcasts,
             self.base_template,
@@ -45,7 +45,7 @@ class TestPaginationResponse:
     def test_render_htmx_pagination_target(self, rf, podcasts, assert_ok):
         req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="object-list")
         req.htmx = HtmxDetails(req)
-        resp = pagination_response(
+        resp = render_pagination_response(
             req,
             podcasts,
             self.base_template,
@@ -56,7 +56,7 @@ class TestPaginationResponse:
 
     def test_invalid_page(self, rf, podcasts):
         with pytest.raises(Http404):
-            pagination_response(
+            render_pagination_response(
                 rf.get("/", {"page": "fubar"}),
                 podcasts,
                 self.base_template,

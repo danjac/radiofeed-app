@@ -21,7 +21,7 @@ from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
-from radiofeed.common.pagination import pagination_response
+from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast
 
@@ -56,7 +56,7 @@ def index(request: HttpRequest) -> HttpResponse:
         .distinct()
     )
 
-    return pagination_response(
+    return render_pagination_response(
         request,
         episodes,
         "episodes/index.html",
@@ -81,7 +81,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         .order_by("-rank", "-pub_date")
     )
 
-    return pagination_response(
+    return render_pagination_response(
         request,
         episodes,
         "episodes/search.html",
@@ -134,7 +134,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return _audio_player_response(
+    return _render_audio_player(
         request,
         episode,
         start_player=True,
@@ -155,7 +155,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
         episode = _get_episode_or_404(request, episode_id, with_current_time=True)
 
-        return _audio_player_response(
+        return _render_audio_player(
             request,
             episode,
             start_player=False,
@@ -206,7 +206,7 @@ def history(request: HttpRequest) -> HttpResponse:
     else:
         logs = logs.order_by("-listened" if newest_first else "listened")
 
-    return pagination_response(
+    return render_pagination_response(
         request,
         logs,
         "episodes/history.html",
@@ -251,7 +251,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
     else:
         bookmarks = bookmarks.order_by("-created")
-    return pagination_response(
+    return render_pagination_response(
         request,
         bookmarks,
         "episodes/bookmarks.html",
@@ -276,7 +276,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.success(request, _("Added to Bookmarks"))
 
-    return _bookmark_action_response(request, episode, True)
+    return _render_bookmark_action(request, episode, True)
 
 
 @require_http_methods(["DELETE"])
@@ -293,7 +293,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, _("Removed from Bookmarks"))
 
-    return _bookmark_action_response(request, episode, False)
+    return _render_bookmark_action(request, episode, False)
 
 
 def _get_episode_or_404(
@@ -311,7 +311,7 @@ def _get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def _audio_player_response(
+def _render_audio_player(
     request,
     episode: Episode,
     *,
@@ -332,7 +332,7 @@ def _audio_player_response(
     )
 
 
-def _bookmark_action_response(
+def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> TemplateResponse:
     return TemplateResponse(
