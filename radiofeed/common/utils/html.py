@@ -69,8 +69,8 @@ def clean(value: str) -> str:
         bleach.linkify(
             bleach.clean(
                 value,
-                tags=_ALLOWED_TAGS,
                 attributes=_ALLOWED_ATTRS,
+                tags=_ALLOWED_TAGS,
                 strip=True,
             ),
             [_linkify_callback],  # type: ignore

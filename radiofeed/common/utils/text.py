@@ -45,7 +45,7 @@ NLTK_LANGUAGES: Final = MappingProxyType(
     }
 )
 
-_corporate_stopwords = [
+_CORPORATE_STOPWORDS: Final = [
     "apple",
     "patreon",
     "spotify",
@@ -69,7 +69,7 @@ def get_stopwords(language: str) -> frozenset[str]:
     try:
         return frozenset(
             stopwords.words(NLTK_LANGUAGES[language])
-            + _corporate_stopwords
+            + _CORPORATE_STOPWORDS
             + _get_extra_stopwords(language)
             + list(_get_date_stopwords(language))
         )
