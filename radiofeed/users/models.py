@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from typing import final
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 
+@final
 class UserQuerySet(models.QuerySet):
     """Custom QuerySet for User model."""
 
@@ -18,6 +21,7 @@ class UserQuerySet(models.QuerySet):
         )
 
 
+@final
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     """Custom Manager for User model."""
 
@@ -48,6 +52,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
         )
 
 
+@final
 class User(AbstractUser):
     """Custom User model."""
 

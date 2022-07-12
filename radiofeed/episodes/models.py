@@ -3,6 +3,7 @@ from __future__ import annotations
 import mimetypes
 import pathlib
 
+from typing import final
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -23,6 +24,7 @@ from radiofeed.common.utils.html import strip_html
 from radiofeed.users.models import User
 
 
+@final
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     """QuerySet for Episode model."""
 
@@ -72,6 +74,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 
+@final
 class Episode(models.Model):
     """Individual podcast episode."""
 
@@ -252,6 +255,7 @@ class Episode(models.Model):
         return f"history-actions-{self.id}"
 
 
+@final
 class BookmarkQuerySet(SearchMixin, models.QuerySet):
     """QuerySet for Bookmark model."""
 
@@ -264,6 +268,7 @@ class BookmarkQuerySet(SearchMixin, models.QuerySet):
 BookmarkManager = models.Manager.from_queryset(BookmarkQuerySet)
 
 
+@final
 class Bookmark(TimeStampedModel):
     """Bookmarked episodes."""
 
@@ -285,6 +290,7 @@ class Bookmark(TimeStampedModel):
         ]
 
 
+@final
 class AudioLogQuerySet(SearchMixin, models.QuerySet):
     """QuerySet for AudioLog."""
 
@@ -297,6 +303,7 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
 AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 
+@final
 class AudioLog(TimeStampedModel):
     """Record of user listening history."""
 
