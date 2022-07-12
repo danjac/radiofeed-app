@@ -13,7 +13,7 @@ from radiofeed.podcasts.models import Category, Podcast
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin[Category]):
+class CategoryAdmin(admin.ModelAdmin):
     """Admin for podcast categories."""
 
     ordering = ("name",)
@@ -194,7 +194,7 @@ class SubscribedFilter(admin.SimpleListFilter):
 
 
 @admin.register(Podcast)
-class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin[Podcast]):
+class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     """Podcast model admin."""
 
     date_hierarchy = "pub_date"
