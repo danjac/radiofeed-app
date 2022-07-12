@@ -114,9 +114,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
 
-PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
-
-
 @final
 class Podcast(models.Model):
     """Podcast channel or feed."""
@@ -189,7 +186,7 @@ class Podcast(models.Model):
 
     search_vector = SearchVectorField(null=True, editable=False)
 
-    objects = PodcastManager()
+    objects = PodcastQuerySet.as_manager()
 
     class Meta:
         indexes = [
@@ -279,9 +276,6 @@ class RecommendationQuerySet(models.QuerySet):
         return self._raw_delete(self.db)
 
 
-RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
-
-
 @final
 class Recommendation(models.Model):
     """Recommendation based on similarity between two podcasts."""
@@ -304,7 +298,7 @@ class Recommendation(models.Model):
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 
-    objects = RecommendationManager()
+    objects = RecommendationQuerySet.as_manager()
 
     class Meta:
         indexes = [

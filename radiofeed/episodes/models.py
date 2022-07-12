@@ -71,9 +71,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
 
-EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
-
-
 @final
 class Episode(models.Model):
     """Individual podcast episode."""
@@ -105,7 +102,7 @@ class Episode(models.Model):
 
     search_vector = SearchVectorField(null=True, editable=False)
 
-    objects = EpisodeManager()
+    objects = EpisodeQuerySet.as_manager()
     fast_update_objects = FastUpdateManager()
 
     class Meta:
@@ -265,9 +262,6 @@ class BookmarkQuerySet(SearchMixin, models.QuerySet):
     ]
 
 
-BookmarkManager = models.Manager.from_queryset(BookmarkQuerySet)
-
-
 @final
 class Bookmark(TimeStampedModel):
     """Bookmarked episodes."""
@@ -275,7 +269,7 @@ class Bookmark(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
-    objects = BookmarkManager()
+    objects = BookmarkQuerySet.as_manager()
 
     class Meta:
 
@@ -300,9 +294,6 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
     ]
 
 
-AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
-
-
 @final
 class AudioLog(TimeStampedModel):
     """Record of user listening history."""
@@ -313,7 +304,7 @@ class AudioLog(TimeStampedModel):
     listened = models.DateTimeField()
     current_time = models.IntegerField(default=0)
 
-    objects = AudioLogManager()
+    objects = AudioLogQuerySet.as_manager()
 
     class Meta:
         constraints = [
