@@ -7,7 +7,7 @@ import re
 from datetime import date, timedelta
 from functools import lru_cache
 from types import MappingProxyType
-from typing import Iterator
+from typing import Final, Iterator
 
 from django.utils import timezone, translation
 from django.utils.formats import date_format
@@ -17,7 +17,7 @@ from nltk.tokenize import RegexpTokenizer
 
 from radiofeed.common.utils.html import strip_html
 
-NLTK_LANGUAGES = MappingProxyType(
+NLTK_LANGUAGES: Final = MappingProxyType(
     {
         "ar": "arabic",
         "az": "azerbaijani",

@@ -5,7 +5,7 @@ import dataclasses
 import itertools
 import re
 
-from typing import Iterator
+from typing import Final, Iterator
 from urllib.parse import urlparse
 
 import requests
@@ -17,11 +17,11 @@ from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.xml import parse_xml
 from radiofeed.podcasts.models import Podcast
 
-_batch_size = 100
+_BATCH_SIZE: Final = 100
 
-_itunes_podcast_id_re = re.compile(r"id(?P<id>\d+)")
+_ITUNES_PODCAST_ID_RE: Final = re.compile(r"id(?P<id>\d+)")
 
-_itunes_locations = (
+_ITUNES_LOCATIONS: Final = (
     "de",
     "fi",
     "fr",
@@ -80,7 +80,7 @@ def search(search_term: str) -> Iterator[Feed]:
 
 def crawl() -> Iterator[Feed]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
-    for location in _itunes_locations:
+    for location in _ITUNES_LOCATIONS:
         yield from Crawler(location).crawl()
 
 
@@ -97,7 +97,7 @@ class Crawler:
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the database."""
         for url in self._parse_genre_urls():
-            for batch in batcher(self._parse_podcast_ids(url), _batch_size):
+            for batch in batcher(self._parse_podcast_ids(url), _BATCH_SIZE):
                 yield from _parse_feeds(
                     _get_response(
                         "https://itunes.apple.com/lookup",
@@ -142,13 +142,13 @@ class Crawler:
         )
 
     def _parse_podcast_id(self, url: str) -> str | None:
-        if match := _itunes_podcast_id_re.search(urlparse(url).path.split("/")[-1]):
+        if match := _ITUNES_PODCAST_ID_RE.search(urlparse(url).path.split("/")[-1]):
             return match.group("id")
         return None
 
 
 def _parse_feeds(json_data: dict) -> Iterator[Feed]:
-    for batch in batcher(_build_feeds_from_json(json_data), _batch_size):
+    for batch in batcher(_build_feeds_from_json(json_data), _BATCH_SIZE):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 

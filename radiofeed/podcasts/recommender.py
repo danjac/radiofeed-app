@@ -4,7 +4,7 @@ import collections
 import operator
 
 from datetime import timedelta
-from typing import Iterator
+from typing import Final, Iterator
 
 import numpy
 import pandas
@@ -19,7 +19,7 @@ from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
-DEFAULT_TIME_PERIOD = timedelta(days=90)
+DEFAULT_TIME_PERIOD: Final = timedelta(days=90)
 
 
 def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> None:

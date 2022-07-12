@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Final
 
 import attrs
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
-_audio_mimetypes = frozenset(
+_AUDIO_MIMETYPES: Final = frozenset(
     [
         "audio/aac",
         "audio/aacp",
@@ -54,7 +54,7 @@ pg_integer = attrs.validators.and_(
     attrs.validators.lt(2147483647),
 )
 
-audio = attrs.validators.in_(_audio_mimetypes)
+audio = attrs.validators.in_(_AUDIO_MIMETYPES)
 
 _url_validator = URLValidator(["http", "https"])
 
