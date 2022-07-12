@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from debug_toolbar.settings import PANELS_DEFAULTS
 from split_settings.tools import include
 
 from radiofeed.settings.base import (
@@ -28,3 +29,7 @@ LOGGING["loggers"]["django.db.backends"] = {  # type: ignore
     "handlers": ["console"],
     "propagate": False,
 }
+
+DEBUG_TOOLBAR_PANELS = PANELS_DEFAULTS + [
+    "cachalot.panels.CachalotPanel",
+]
