@@ -4,11 +4,12 @@ import functools
 
 from datetime import date, datetime
 from types import MappingProxyType
+from typing import Final
 
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
 
-_tz_infos = MappingProxyType(
+_TZ_INFOS: Final = MappingProxyType(
     {
         k: v * 3600
         for k, v in (
@@ -287,7 +288,7 @@ def _(value: str) -> datetime | None:
 
     try:
         return (
-            parse_date(date_parser.parse(value, tzinfos=_tz_infos)) if value else None
+            parse_date(date_parser.parse(value, tzinfos=_TZ_INFOS)) if value else None
         )
     except date_parser.ParserError:
         return None
