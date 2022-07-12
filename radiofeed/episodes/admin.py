@@ -5,10 +5,10 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
-from radiofeed.episodes import models
+from radiofeed.episodes.models import Episode
 
 
-@admin.register(models.Episode)
+@admin.register(Episode)
 class EpisodeAdmin(admin.ModelAdmin):
     """Django admin for Episode model."""
 
@@ -17,13 +17,13 @@ class EpisodeAdmin(admin.ModelAdmin):
     raw_id_fields = ("podcast",)
     search_fields = ("search_document",)
 
-    def episode_title(self, obj: models.Episode) -> str:
+    def episode_title(self, obj: Episode) -> str:
         """Render truncated episode title."""
         return truncatechars(obj.title, 30)
 
     episode_title.short_description = "Title"  # type: ignore
 
-    def podcast_title(self, obj: models.Episode) -> str:
+    def podcast_title(self, obj: Episode) -> str:
         """Render truncated podcast title."""
         return truncatechars(obj.podcast.title, 30)
 
