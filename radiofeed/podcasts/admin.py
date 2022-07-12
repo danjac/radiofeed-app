@@ -131,15 +131,7 @@ class PubDateFilter(admin.SimpleListFilter):
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
-        """Returns filtered queryset.
-
-        Args:
-            request (HttpRequest)
-            queryset (QuerySet)
-
-        Returns:
-            QuerySet
-        """
+        """Returns filtered queryset."""
         match self.value():
             case "yes":
                 return queryset.filter(pub_date__isnull=False)
