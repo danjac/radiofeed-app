@@ -3,16 +3,17 @@ from __future__ import annotations
 import http
 
 from django.contrib import admin, messages
-from django.db.models import Count
+from django.db.models import Count, QuerySet
+from django.http import HttpRequest
 from django.utils.translation import gettext as _
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.feedparser.tasks import parse_feed
-from radiofeed.podcasts import models
+from radiofeed.podcasts.models import Category, Podcast
 
 
-@admin.register(models.Category)
-class CategoryAdmin(admin.ModelAdmin):
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin[Category]):
     """Admin for podcast categories."""
 
     ordering = ("name",)
@@ -23,26 +24,12 @@ class CategoryAdmin(admin.ModelAdmin):
     )
     search_fields = ("name",)
 
-    def get_queryset(self, request):
-        """Returns queryset with number of podcasts.
-
-        Args:
-            request (HttpRequest)
-
-        Returns:
-            QuerySet: annotated queryset with `num_podcasts`
-        """
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Category]:
+        """Returns queryset with number of podcasts."""
         return super().get_queryset(request).annotate(num_podcasts=Count("podcast"))
 
-    def num_podcasts(self, obj):
-        """Returns number of podcasts in this category.
-
-        Args:
-            obj (Podcast)
-
-        Returns:
-            int
-        """
+    def num_podcasts(self, obj: Category) -> int:
+        """Returns number of podcasts in this category."""
         return obj.num_podcasts or 0
 
 
@@ -52,31 +39,17 @@ class ActiveFilter(admin.SimpleListFilter):
     title = "Active"
     parameter_name = "active"
 
-    def lookups(self, request, model_admin):
-        """Returns lookup values/labels.
-
-        Args:
-            request (HttpRequest)
-            model_admin (ModelAdmin)
-
-        Returns:
-            tuple[tuple[str, str]]
-        """
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
         return (
             ("yes", _("Active")),
             ("no", _("Inactive")),
         )
 
-    def queryset(self, request, queryset):
-        """Returns filtered queryset.
-
-        Args:
-            request (HttpRequest)
-            queryset (QuerySet)
-
-        Returns:
-            QuerySet
-        """
+    def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
+        """Returns filtered queryset."""
         match self.value():
             case "yes":
                 return queryset.filter(active=True)
@@ -92,32 +65,20 @@ class ParseResultFilter(admin.SimpleListFilter):
     title = "Parse Result"
     parameter_name = "parse_result"
 
-    def lookups(self, request, model_admin):
-        """Returns lookup values/labels.
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("none", _("None")),) + tuple(Podcast.ParseResult.choices)
 
-        Args:
-            request (HttpRequest)
-            model_admin (ModelAdmin)
-
-        Returns:
-            tuple[tuple[str, str]]
-        """
-        return (("none", _("None")),) + tuple(models.Podcast.ParseResult.choices)
-
-    def queryset(self, request, queryset):
-        """Returns filtered queryset.
-
-        Args:
-            request (HttpRequest)
-            queryset (QuerySet)
-
-        Returns:
-            QuerySet
-        """
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
         match value := self.value():
             case "none":
                 return queryset.filter(parse_result=None)
-            case value if value in models.Podcast.ParseResult:
+            case value if value in Podcast.ParseResult:  # type: ignore
                 return queryset.filter(parse_result=value)
             case _:
                 return queryset
@@ -129,19 +90,13 @@ class HttpStatusFilter(admin.SimpleListFilter):
     title = "HTTP Status"
     parameter_name = "http_status"
 
-    def lookups(self, request, model_admin):
-        """Returns lookup values/labels.
-
-        Args:
-            request (HttpRequest)
-            model_admin (ModelAdmin)
-
-        Returns:
-            tuple[tuple[str, str]]
-        """
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
         return tuple(
             (status, f"{status} {http.HTTPStatus(status).name}")
-            for status in models.Podcast.objects.filter(
+            for status in Podcast.objects.filter(
                 http_status__in={status.value for status in http.HTTPStatus}
             )
             .values_list("http_status", flat=True)
@@ -149,16 +104,10 @@ class HttpStatusFilter(admin.SimpleListFilter):
             .distinct()
         )
 
-    def queryset(self, request, queryset):
-        """Returns filtered queryset.
-
-        Args:
-            request (HttpRequest)
-            queryset (QuerySet)
-
-        Returns:
-            QuerySet
-        """
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
         if value := self.value():
             return queryset.filter(http_status=value)
         return queryset
@@ -170,22 +119,18 @@ class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
 
-    def lookups(self, request, model_admin):
-        """Returns lookup values/labels.
-
-        Args:
-            request (HttpRequest)
-            model_admin (ModelAdmin)
-
-        Returns:
-            tuple[tuple[str, str]]
-        """
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
         return (
             ("yes", _("With pub date")),
             ("no", _("With no pub date")),
         )
 
-    def queryset(self, request, queryset):
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
         """Returns filtered queryset.
 
         Args:
@@ -210,28 +155,16 @@ class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
 
-    def lookups(self, request, model_admin):
-        """Returns lookup values/labels.
-
-        Args:
-            request (HttpRequest)
-            model_admin (ModelAdmin)
-
-        Returns:
-            tuple[tuple[str, str]]
-        """
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
         return (("yes", _("Promoted")),)
 
-    def queryset(self, request, queryset):
-        """Returns filtered queryset.
-
-        Args:
-            request (HttpRequest)
-            queryset (QuerySet)
-
-        Returns:
-            QuerySet
-        """
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
@@ -241,28 +174,16 @@ class SubscribedFilter(admin.SimpleListFilter):
     title = "Subscribed"
     parameter_name = "subscribed"
 
-    def lookups(self, request, model_admin):
-        """Returns lookup values/labels.
-
-        Args:
-            request (HttpRequest)
-            model_admin (ModelAdmin)
-
-        Returns:
-            tuple[tuple[str, str]]
-        """
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
         return (("yes", _("Subscribed")),)
 
-    def queryset(self, request, queryset):
-        """Returns filtered queryset.
-
-        Args:
-            request (HttpRequest)
-            queryset (QuerySet)
-
-        Returns:
-            QuerySet
-        """
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
         return (
             queryset.annotate(subscribers=Count("subscription")).filter(
                 subscribers__gt=0
@@ -272,8 +193,8 @@ class SubscribedFilter(admin.SimpleListFilter):
         )
 
 
-@admin.register(models.Podcast)
-class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
+@admin.register(Podcast)
+class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin[Podcast]):
     """Podcast model admin."""
 
     date_hierarchy = "pub_date"
@@ -318,13 +239,10 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     change_actions = ("parse_podcast_feed",)
 
-    def parse_podcast_feeds(self, request, queryset):
-        """Runs feed parser on all podcasts in selection.
-
-        Args:
-            request (HttpRequest): request
-            queryset (QuerySet): podcast queryset
-        """
+    def parse_podcast_feeds(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> None:
+        """Runs feed parser on all podcasts in selection."""
         parse_feed.map(queryset.values_list("pk", flat=True))
 
         self.message_user(
@@ -333,23 +251,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    def parse_podcast_feed(self, request, obj):
-        """Runs feed parser on single podcast.
-
-        Args:
-            request (HttpRequest): request
-            obj (Podcast): Podcast instance
-        """
+    def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
+        """Runs feed parser on single podcast."""
         parse_feed(obj.id)
         self.message_user(request, _("Podcast has been queued for update"))
 
-    def get_ordering(self, request):
-        """Returns default ordering.
-
-        Args:
-            request (HttpRequest)
-
-        Returns:
-            list[str]
-        """
+    def get_ordering(self, request: HttpRequest) -> list[str]:
+        """Returns default ordering."""
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
