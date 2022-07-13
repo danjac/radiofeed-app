@@ -16,9 +16,16 @@ DEBUG = True
 
 ADMIN_SITE_HEADER += " [LOCAL]"
 
-INSTALLED_APPS = ["whitenoise.runserver_nostatic", "debug_toolbar"] + INSTALLED_APPS
+INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
+    "debug_toolbar",
+    "silk",
+] + INSTALLED_APPS
 
-MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+MIDDLEWARE += [
+    "silk.middleware.SilkyMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
