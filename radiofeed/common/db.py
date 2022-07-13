@@ -11,7 +11,7 @@ from django.db.models import F, Model, Q, QuerySet
 from django.utils.encoding import force_str
 
 if TYPE_CHECKING:
-    _QuerySet: TypeAlias = QuerySet[Model]
+    _QuerySet: TypeAlias = QuerySet[Model]  # pragma: no cover
 else:
     _QuerySet = object
 
