@@ -48,7 +48,7 @@ if "debug_toolbar" in settings.INSTALLED_APPS:  # pragma: no cover
         path("__debug__/", include("debug_toolbar.urls")),
     ]
 
-if "silk" in settings.INSTALLED_APPS:
+if "silk" in settings.INSTALLED_APPS:  # pragma: no cover
     urlpatterns += [
         path("silk/", include("silk.urls")),
     ]

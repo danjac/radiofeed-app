@@ -5,12 +5,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import (
-    HttpRequest,
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseRedirect,
-)
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -21,13 +16,14 @@ from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.pagination import render_pagination_response
+from radiofeed.common.request import AuthenticatedRequest, Request
 from radiofeed.common.response import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast
 
 
 @require_http_methods(["GET"])
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: Request) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
     promoted = "promoted" in request.GET
 
@@ -70,7 +66,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def search_episodes(request: HttpRequest) -> HttpResponse:
+def search_episodes(request: Request) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
@@ -91,7 +87,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 def episode_detail(
-    request: HttpRequest, episode_id: int, slug: str | None = None
+    request: Request, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Renders episode detail.
 
@@ -116,7 +112,7 @@ def episode_detail(
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+def start_player(request: AuthenticatedRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if necessary and adds episode to player session tracker.
 
     Raises:
@@ -145,7 +141,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def close_player(request: HttpRequest) -> HttpResponse:
+def close_player(request: AuthenticatedRequest) -> HttpResponse:
     """Closes player. Removes episode to player session tracker.
 
     Raises:
@@ -169,7 +165,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
 @ajax_login_required
-def player_time_update(request: HttpRequest) -> HttpResponse:
+def player_time_update(request: AuthenticatedRequest) -> HttpResponse:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
@@ -193,7 +189,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @login_required
-def history(request: HttpRequest) -> HttpResponse:
+def history(request: AuthenticatedRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
     newest_first = request.GET.get("o", "d") == "d"
 
@@ -220,7 +216,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_audio_log(request: AuthenticatedRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet.
 
     Raises:
@@ -241,7 +237,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @login_required
-def bookmarks(request: HttpRequest) -> HttpResponse:
+def bookmarks(request: AuthenticatedRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
@@ -261,7 +257,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_bookmark(request: AuthenticatedRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks.
 
     Raises:
@@ -281,7 +277,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_bookmark(request: AuthenticatedRequest, episode_id: int) -> HttpResponse:
     """Remove episode from bookmarks.
 
     Raises:
@@ -297,7 +293,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 def _get_episode_or_404(
-    request: HttpRequest,
+    request: Request,
     episode_id: int,
     *,
     with_podcast: bool = False,
@@ -312,7 +308,7 @@ def _get_episode_or_404(
 
 
 def _render_audio_player(
-    request: HttpRequest,
+    request: AuthenticatedRequest,
     episode: Episode,
     *,
     start_player: bool,
@@ -333,7 +329,7 @@ def _render_audio_player(
 
 
 def _render_bookmark_action(
-    request: HttpRequest, episode: Episode, is_bookmarked: bool
+    request: AuthenticatedRequest, episode: Episode, is_bookmarked: bool
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
