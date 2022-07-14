@@ -95,7 +95,9 @@ class TestFeedParser:
     def test_parse_ok(self, db, mocker, categories):
 
         # set date to before latest
-        podcast = PodcastFactory(pub_date=datetime.datetime(year=2020, month=3, day=1))
+        podcast = PodcastFactory(
+            pub_date=datetime.datetime(year=2020, month=3, day=1), num_retries=3
+        )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
 
@@ -130,6 +132,7 @@ class TestFeedParser:
         assert podcast.rss
         assert podcast.active
         assert podcast.parse_result == Podcast.ParseResult.SUCCESS
+        assert podcast.num_retries == 0
         assert podcast.content_hash
         assert podcast.title == "Mysterious Universe"
 
