@@ -30,7 +30,7 @@ def user_preferences(
 
         messages.success(request, _("Your preferences have been saved"))
 
-    return HttpResponse(
+    return TemplateResponse(
         request,
         "account/forms/preferences.html"
         if request.htmx.target == target
