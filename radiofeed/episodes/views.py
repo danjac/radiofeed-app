@@ -312,7 +312,7 @@ def _get_episode_or_404(
 
 
 def _render_audio_player(
-    request,
+    request: HttpRequest,
     episode: Episode,
     *,
     start_player: bool,
