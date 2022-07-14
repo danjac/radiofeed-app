@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Final, Iterator, final
+from typing import Final, Iterator
 
 import lxml.etree
 
@@ -24,7 +24,6 @@ def parse_rss(content: bytes) -> Feed:
         raise RssParserError from e
 
 
-@final
 class RssParser:
     """Parses RSS or Atom field on <channel /> element.
 

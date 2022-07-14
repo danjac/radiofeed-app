@@ -5,7 +5,7 @@ import dataclasses
 import itertools
 import re
 
-from typing import Final, Iterator, final
+from typing import Final, Iterator
 from urllib.parse import urlparse
 
 import requests
@@ -84,7 +84,6 @@ def crawl() -> Iterator[Feed]:
         yield from Crawler(location).crawl()
 
 
-@final
 class Crawler:
     """Crawls iTunes podcast catalog.
 
