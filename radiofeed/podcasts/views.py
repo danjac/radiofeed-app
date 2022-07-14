@@ -12,8 +12,8 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
-from radiofeed.common.http import HttpResponseConflict
 from radiofeed.common.pagination import render_pagination_response
+from radiofeed.common.response import HttpResponseConflict
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
