@@ -423,9 +423,30 @@ class TestFeedParser:
         assert not FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
+        assert podcast.active
+        assert podcast.parse_result == Podcast.ParseResult.RSS_PARSER_ERROR
+        assert podcast.parsed
+        assert podcast.num_retries == 1
+
+    def test_parse_no_podcasts_max_retries(self, mocker, podcast, categories):
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content("rss_no_podcasts_mock.xml"),
+            ),
+        )
+
+        podcast.num_retries = 3
+
+        assert not FeedParser(podcast).parse()
+
+        podcast.refresh_from_db()
         assert not podcast.active
         assert podcast.parse_result == Podcast.ParseResult.RSS_PARSER_ERROR
         assert podcast.parsed
+        assert podcast.num_retries == 4
 
     def test_parse_empty_feed(self, mocker, podcast, categories):
 
@@ -440,9 +461,10 @@ class TestFeedParser:
         assert not FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
-        assert not podcast.active
+        assert podcast.active
         assert podcast.parse_result == Podcast.ParseResult.RSS_PARSER_ERROR
         assert podcast.parsed
+        assert podcast.num_retries == 1
 
     def test_parse_not_modified(self, mocker, podcast, categories):
         mocker.patch(

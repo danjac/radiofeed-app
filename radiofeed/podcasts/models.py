@@ -155,6 +155,8 @@ class Podcast(models.Model):
         choices=ParseResult.choices,
     )
 
+    num_retries = models.PositiveSmallIntegerField(default=0)
+
     cover_url = models.URLField(max_length=2083, null=True, blank=True)
 
     funding_url = models.URLField(max_length=2083, null=True, blank=True)

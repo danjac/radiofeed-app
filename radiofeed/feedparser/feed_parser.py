@@ -39,6 +39,8 @@ class FeedParser:
         "*/*;q=0.1",
     )
 
+    _max_retries = 3
+
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
@@ -126,6 +128,7 @@ class FeedParser:
         self._save_podcast(
             active=active,
             parse_result=parse_result,
+            num_retries=0,
             content_hash=content_hash,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
@@ -165,16 +168,20 @@ class FeedParser:
         except AttributeError:
             http_status = None
 
+        num_retries: int = self._podcast.num_retries
+
         match exc:
             case NotModified():
                 active = True
                 parse_result = Podcast.ParseResult.NOT_MODIFIED
+                num_retries = 0
             case DuplicateFeed():
                 active = False
                 parse_result = Podcast.ParseResult.DUPLICATE_FEED
             case RssParserError():
-                active = False
+                active = True
                 parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
+                num_retries += 1
             case requests.RequestException():
                 parse_result = Podcast.ParseResult.HTTP_ERROR
                 match http_status:
@@ -185,13 +192,15 @@ class FeedParser:
                         parse_result = Podcast.ParseResult.COMPLETE
                     case _:
                         active = True
+                        num_retries += 1
             case _:
                 raise
 
         self._save_podcast(
-            active=active,
+            active=active and num_retries < self._max_retries,
             http_status=http_status,
             parse_result=parse_result,
+            num_retries=num_retries,
         )
         return False
 
