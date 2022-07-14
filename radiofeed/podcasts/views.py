@@ -285,7 +285,15 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, _("You are now subscribed to this podcast"))
-    return _render_subscribe_action(request, podcast, True)
+
+    return TemplateResponse(
+        request,
+        "podcasts/actions/subscribe.html",
+        {
+            "podcast": podcast,
+            "is_subscribed": True,
+        },
+    )
 
 
 @require_http_methods(["DELETE"])
@@ -301,11 +309,18 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
 
     messages.info(request, _("You are no longer subscribed to this podcast"))
-    return _render_subscribe_action(request, podcast, False)
+
+    return TemplateResponse(
+        request,
+        "podcasts/actions/subscribe.html",
+        {
+            "podcast": podcast,
+            "is_subscribed": False,
+        },
+    )
 
 
 def _get_podcasts() -> QuerySet[Podcast]:
-    # we just want to include podcasts which have a pub date
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
@@ -321,16 +336,3 @@ def _podcast_detail_context(
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
         "num_episodes": Episode.objects.filter(podcast=podcast).count(),
     } | (extra_context or {})
-
-
-def _render_subscribe_action(
-    request: HttpRequest, podcast: Podcast, is_subscribed: bool
-) -> TemplateResponse:
-    return TemplateResponse(
-        request,
-        "podcasts/actions/subscribe.html",
-        {
-            "podcast": podcast,
-            "is_subscribed": is_subscribed,
-        },
-    )
