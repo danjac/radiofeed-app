@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Iterator
+from types import MappingProxyType
+from typing import Final, Iterator, final
 
 import lxml.etree
 
@@ -24,6 +25,7 @@ def parse_rss(content: bytes) -> Feed:
         raise RssParserError from e
 
 
+@final
 class RssParser:
     """Parses RSS or Atom field on <channel /> element.
 
@@ -31,13 +33,16 @@ class RssParser:
         channel (lxml.etree.Element): <channel /> element
     """
 
-    _namespaces = {
-        "atom": "http://www.w3.org/2005/Atom",
-        "content": "http://purl.org/rss/1.0/modules/content/",
-        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-        "media": "http://search.yahoo.com/mrss/",
-        "podcast": "https://podcastindex.org/namespace/1.0",
-    }
+    _NAMESPACES: Final = MappingProxyType(
+        {
+            "atom": "http://www.w3.org/2005/Atom",
+            "content": "http://purl.org/rss/1.0/modules/content/",
+            "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+            "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+            "media": "http://search.yahoo.com/mrss/",
+            "podcast": "https://podcastindex.org/namespace/1.0",
+        }
+    )
 
     def __init__(self, channel: lxml.etree.Element):
         self._channel = channel
@@ -48,10 +53,17 @@ class RssParser:
         Raises:
             RssParserError: missing or invalid RSS content
         """
-        with xpath_finder(self._channel, self._namespaces) as finder:
+        with xpath_finder(self._channel, self._NAMESPACES) as finder:
             try:
                 return Feed(
-                    categories=list(finder.iter("//itunes:category/@text")),
+                    categories=list(
+                        finder.iter(
+                            "//googleplay:category/@text",
+                            "//itunes:category/@text",
+                            "//media:category/@label",
+                            "//media:category/text()",
+                        )
+                    ),
                     items=list(self._parse_items()),
                     **finder.to_dict(
                         complete="itunes:complete/text()",
@@ -73,7 +85,7 @@ class RssParser:
                 raise RssParserError from e
 
     def _parse_item(self, item: Item) -> Item:
-        with xpath_finder(item, self._namespaces) as finder:
+        with xpath_finder(item, self._NAMESPACES) as finder:
             return Item(
                 categories=list(finder.iter("category/text()")),
                 **finder.to_dict(

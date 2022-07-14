@@ -141,7 +141,7 @@ class TestFeedParser:
 
         assert (
             podcast.extracted_text
-            == "mysterious universe blog specializing offbeat th kind science social science religion spirituality spirituality society culture philosophy mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton"
+            == "mysterious universe blog specializing offbeat th kind science medicine science social science religion spirituality spirituality society culture philosophy mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton"
         )
 
         assert podcast.modified
@@ -156,6 +156,8 @@ class TestFeedParser:
         assert podcast.cover_url
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        assert podcast.keywords == "science & medicine"
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 
