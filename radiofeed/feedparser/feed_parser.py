@@ -160,6 +160,11 @@ class FeedParser:
         return True
 
     def _handle_failure(self, exc: Exception) -> bool:
+        try:
+            http_status = exc.response.status_code  # type: ignore
+        except AttributeError:
+            http_status = None
+
         match exc:
             case NotModified():
                 active = True
@@ -171,15 +176,17 @@ class FeedParser:
                 active = False
                 parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
             case requests.RequestException():
-                active = False
                 parse_result = Podcast.ParseResult.HTTP_ERROR
+                match http_status:
+                    case http.HTTPStatus.FORBIDDEN | http.HTTPStatus.NOT_FOUND | http.HTTPStatus.UNAUTHORIZED:
+                        active = False
+                    case http.HTTPStatus.GONE:
+                        active = False
+                        parse_result = Podcast.ParseResult.COMPLETE
+                    case _:
+                        active = True
             case _:
                 raise
-
-        try:
-            http_status = exc.response.status_code  # type: ignore
-        except AttributeError:
-            http_status = None
 
         self._save_podcast(
             active=active,

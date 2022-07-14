@@ -468,7 +468,7 @@ class TestFeedParser:
 
         assert not podcast.active
         assert podcast.http_status == http.HTTPStatus.GONE
-        assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
+        assert podcast.parse_result == Podcast.ParseResult.COMPLETE
         assert podcast.parsed
 
     def test_parse_http_server_error(self, mocker, podcast, categories):
@@ -480,7 +480,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert not podcast.active
+        assert podcast.active
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed
@@ -497,7 +497,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert not podcast.active
+        assert podcast.active
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed
