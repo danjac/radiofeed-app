@@ -3,15 +3,17 @@ from __future__ import annotations
 import functools
 import operator
 
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING, TypeAlias, TypeVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
 from django.db.models import F, Model, Q, QuerySet
 from django.utils.encoding import force_str
 
+_T = TypeVar("_T", bound=Model)
+
 if TYPE_CHECKING:
-    _QuerySet: TypeAlias = QuerySet[Model]  # pragma: no cover
+    _QuerySet: TypeAlias = QuerySet[_T]  # pragma: no cover
 else:
     _QuerySet = object
 
@@ -64,7 +66,7 @@ class SearchMixin(_QuerySet):
     search_rank: str = "rank"
     search_type: str = "websearch"
 
-    def search(self, search_term: str) -> QuerySet[Model]:
+    def search(self, search_term: str) -> QuerySet[_T]:
         """Returns result of search."""
         if not search_term:
             return self.none()
