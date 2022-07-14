@@ -301,7 +301,7 @@ class Recommendation(models.Model):
 
     frequency: int = models.PositiveIntegerField(default=0)
 
-    similarity: decimal.Decimal = models.DecimalField(
+    similarity: decimal.Decimal | None = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 
