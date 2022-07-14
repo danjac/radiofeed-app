@@ -26,7 +26,6 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
 
 
-@final
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     """QuerySet for Episode model."""
 
@@ -106,6 +105,11 @@ class Episode(models.Model):
 
     objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
     fast_update_objects: models.Manager = FastUpdateManager()
+
+    # annotations
+
+    current_time: datetime | None = None
+    listened: datetime | None = None
 
     class Meta:
         constraints = [
