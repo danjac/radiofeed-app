@@ -26,7 +26,11 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     """Custom Manager for User model."""
 
     def create_user(
-        self, username: str, email: str, password: str | None = None, **kwargs
+        self,
+        username: str,
+        email: str,
+        password: str | None = None,
+        **kwargs,
     ) -> User:
         """Create new user."""
         user = self.model(
@@ -39,7 +43,11 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
         return user
 
     def create_superuser(
-        self, username: str, email: str, password: str | None = None, **kwargs
+        self,
+        username: str,
+        email: str,
+        password: str | None = None,
+        **kwargs,
     ) -> User:
         """Create new superuser."""
         return self.create_user(
@@ -56,9 +64,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 class User(AbstractUser):
     """Custom User model."""
 
-    send_email_notifications = models.BooleanField(default=True)
+    send_email_notifications: bool = models.BooleanField(default=True)
 
-    objects = UserManager()
+    objects: models.Manager["User"] = UserManager()
 
     def get_email_addresses(self) -> set[str]:
         """Get set of all emails belonging to user."""

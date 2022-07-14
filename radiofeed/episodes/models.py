@@ -3,6 +3,7 @@ from __future__ import annotations
 import mimetypes
 import pathlib
 
+from datetime import datetime
 from typing import final
 from urllib.parse import urlparse
 
@@ -21,6 +22,7 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
 from radiofeed.common.utils.html import strip_html
+from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
 
 
@@ -75,35 +77,35 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 class Episode(models.Model):
     """Individual podcast episode."""
 
-    podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
-    guid = models.TextField()
+    guid: str = models.TextField()
 
-    pub_date = models.DateTimeField()
+    pub_date: datetime = models.DateTimeField()
 
-    title = models.TextField(blank=True)
-    description = models.TextField(blank=True)
-    keywords = models.TextField(blank=True)
+    title: str = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    keywords: str = models.TextField(blank=True)
 
-    link = models.URLField(max_length=2083, null=True, blank=True)
+    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    episode_type = models.CharField(max_length=30, default="full")
-    episode = models.IntegerField(null=True, blank=True)
-    season = models.IntegerField(null=True, blank=True)
+    episode_type: str = models.CharField(max_length=30, default="full")
+    episode: int | None = models.IntegerField(null=True, blank=True)
+    season: int | None = models.IntegerField(null=True, blank=True)
 
-    cover_url = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    media_url = models.URLField(max_length=2083)
-    media_type = models.CharField(max_length=60)
-    length = models.BigIntegerField(null=True, blank=True)
+    media_url: str = models.URLField(max_length=2083)
+    media_type: str = models.CharField(max_length=60)
+    length: int | None = models.BigIntegerField(null=True, blank=True)
 
-    duration = models.CharField(max_length=30, blank=True)
-    explicit = models.BooleanField(default=False)
+    duration: str = models.CharField(max_length=30, blank=True)
+    explicit: bool = models.BooleanField(default=False)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str | None = SearchVectorField(null=True, editable=False)
 
-    objects = EpisodeQuerySet.as_manager()
-    fast_update_objects = FastUpdateManager()
+    objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
+    fast_update_objects: models.Manager = FastUpdateManager()
 
     class Meta:
         constraints = [
@@ -298,13 +300,13 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
 class AudioLog(TimeStampedModel):
     """Record of user listening history."""
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
 
-    listened = models.DateTimeField()
-    current_time = models.IntegerField(default=0)
+    listened: datetime = models.DateTimeField()
+    current_time: int = models.IntegerField(default=0)
 
-    objects = AudioLogQuerySet.as_manager()
+    objects: models.Manager["AudioLog"] = AudioLogQuerySet.as_manager()
 
     class Meta:
         constraints = [

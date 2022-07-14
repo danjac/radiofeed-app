@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from datetime import timedelta
+import decimal
+
+from datetime import datetime, timedelta
 from typing import final
 
 from django.conf import settings
@@ -39,8 +41,8 @@ class CategoryQuerySet(models.QuerySet):
 class Category(models.Model):
     """iTunes category."""
 
-    name = models.CharField(max_length=100, unique=True)
-    parent = models.ForeignKey(
+    name: str = models.CharField(max_length=100, unique=True)
+    parent: Category | None = models.ForeignKey(
         "self",
         null=True,
         blank=True,
@@ -48,7 +50,7 @@ class Category(models.Model):
         related_name="children",
     )
 
-    objects = CategoryQuerySet.as_manager()
+    objects: models.Manager["Category"] = CategoryQuerySet.as_manager()
 
     class Meta:
         verbose_name_plural = "categories"
@@ -128,67 +130,70 @@ class Podcast(models.Model):
         RSS_PARSER_ERROR = "rss_parser_error", _("RSS Parser Error")
         DUPLICATE_FEED = "duplicate_feed", _("Duplicate Feed")
 
-    rss = models.URLField(unique=True, max_length=500)
-    active = models.BooleanField(default=True)
+    rss: str = models.URLField(unique=True, max_length=500)
+    active: bool = models.BooleanField(default=True)
 
-    etag = models.TextField(blank=True)
-    title = models.TextField()
+    etag: str = models.TextField(blank=True)
+    title: str = models.TextField()
 
     # latest episode pub date from RSS feed
-    pub_date = models.DateTimeField(null=True, blank=True)
+    pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
-    parsed = models.DateTimeField(null=True, blank=True)
+    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # Last-Modified header from RSS feed
-    modified = models.DateTimeField(null=True, blank=True)
+    modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # hash of last polled content
-    content_hash = models.CharField(max_length=64, null=True, blank=True)
+    content_hash: str | None = models.CharField(max_length=64, null=True, blank=True)
 
-    http_status = models.SmallIntegerField(null=True, blank=True)
+    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
-    parse_result = models.CharField(
+    parse_result: str = models.CharField(
         max_length=30,
         null=True,
         blank=True,
         choices=ParseResult.choices,
     )
 
-    num_retries = models.PositiveSmallIntegerField(default=0)
+    num_retries: int = models.PositiveSmallIntegerField(default=0)
 
-    cover_url = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    funding_url = models.URLField(max_length=2083, null=True, blank=True)
-    funding_text = models.TextField(blank=True)
+    funding_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    funding_text: str = models.TextField(blank=True)
 
-    language = models.CharField(
+    language: str = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]
     )
-    description = models.TextField(blank=True)
-    link = models.URLField(max_length=2083, null=True, blank=True)
-    keywords = models.TextField(blank=True)
+
+    description: str = models.TextField(blank=True)
+    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    keywords: str = models.TextField(blank=True)
     extracted_text = models.TextField(blank=True)
-    owner = models.TextField(blank=True)
+    owner: str = models.TextField(blank=True)
 
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created: datetime = models.DateTimeField(auto_now_add=True)
+    updated: datetime = models.DateTimeField(auto_now=True)
 
-    explicit = models.BooleanField(default=False)
-    promoted = models.BooleanField(default=False)
+    explicit: bool = models.BooleanField(default=False)
+    promoted: bool = models.BooleanField(default=False)
 
-    categories = models.ManyToManyField("podcasts.Category", blank=True)
+    categories: models.QuerySet[Category] = models.ManyToManyField(
+        "podcasts.Category", blank=True
+    )
 
     # received recommendation email
-    recipients = models.ManyToManyField(
+    recipients: models.QuerySet[User] = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name="recommended_podcasts",
     )
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str | None = SearchVectorField(null=True, editable=False)
 
-    objects = PodcastQuerySet.as_manager()
+    objects: models.Manager["Podcast"] = PodcastQuerySet.as_manager()
 
     class Meta:
         indexes = [
@@ -252,8 +257,8 @@ class Podcast(models.Model):
 class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -282,25 +287,25 @@ class RecommendationQuerySet(models.QuerySet):
 class Recommendation(models.Model):
     """Recommendation based on similarity between two podcasts."""
 
-    podcast = models.ForeignKey(
+    podcast: Podcast = models.ForeignKey(
         "podcasts.Podcast",
         related_name="+",
         on_delete=models.CASCADE,
     )
 
-    recommended = models.ForeignKey(
+    recommended: Podcast = models.ForeignKey(
         "podcasts.Podcast",
         related_name="+",
         on_delete=models.CASCADE,
     )
 
-    frequency = models.PositiveIntegerField(default=0)
+    frequency: int = models.PositiveIntegerField(default=0)
 
-    similarity = models.DecimalField(
+    similarity: decimal.Decimal = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 
-    objects = RecommendationQuerySet.as_manager()
+    objects: models.Manager["Recommendation"] = RecommendationQuerySet.as_manager()
 
     class Meta:
         indexes = [
