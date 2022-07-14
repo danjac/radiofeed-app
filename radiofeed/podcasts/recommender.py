@@ -4,7 +4,7 @@ import collections
 import operator
 
 from datetime import timedelta
-from typing import Final, Iterator
+from typing import Final, Iterator, final
 
 import numpy
 import pandas
@@ -48,6 +48,7 @@ def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> 
         Recommender(language, num_matches).recommend(podcasts, categories)
 
 
+@final
 class Recommender:
     """Creates recommendations for given language, based around text content and common categories.
 

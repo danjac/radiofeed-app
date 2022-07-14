@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import http
 
-from typing import Final, Iterator
+from typing import Final, Iterator, final
 
 import attrs
 import requests
@@ -23,6 +23,7 @@ from radiofeed.feedparser.rss_parser import parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
 
+@final
 class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
