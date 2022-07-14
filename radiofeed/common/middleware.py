@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, cast
 from urllib.parse import urlencode
 
 from django.http import HttpRequest, HttpResponse
@@ -51,7 +51,7 @@ class SearchMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Adds Search instance to request."""
-        request.search = SimpleLazyObject(lambda: Search(request))
+        request.search = cast(Search, SimpleLazyObject(lambda: Search(request)))
         return self.get_response(request)
 
 
