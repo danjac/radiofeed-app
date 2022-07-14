@@ -127,8 +127,8 @@ class FeedParser:
 
         category_names = {c.casefold() for c in feed.categories}
 
-        categories = Category.objects.annotate(lower_case_name=Lower("name")).filter(
-            lower_case_name__in=category_names
+        categories = Category.objects.annotate(lowercase_name=Lower("name")).filter(
+            lowercase_name__in=category_names
         )
 
         self._save_podcast(
@@ -141,7 +141,7 @@ class FeedParser:
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self._extract_text(feed),
-            keywords=" ".join(category_names - {c.lower_case_name for c in categories}),
+            keywords=" ".join(category_names - {c.lowercase_name for c in categories}),
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(  # type: ignore
