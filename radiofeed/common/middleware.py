@@ -1,17 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, cast
+from typing import Callable, cast
 from urllib.parse import urlencode
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
-
-if TYPE_CHECKING:
-    from radiofeed.common.request import Request as HttpRequest  # pragma: no cover
-
-else:
-    from django.http import HttpRequest
 
 
 class BaseMiddleware:

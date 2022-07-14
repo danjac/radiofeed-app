@@ -10,7 +10,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django_htmx.http import HttpResponseClientRedirect
 
-from radiofeed.common.response import HttpResponseUnauthorized
+from radiofeed.common.http import HttpResponseUnauthorized
 
 
 def ajax_login_required(view: Callable) -> Callable:
