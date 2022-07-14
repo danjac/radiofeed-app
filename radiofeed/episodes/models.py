@@ -4,7 +4,7 @@ import mimetypes
 import pathlib
 
 from datetime import datetime
-from typing import final
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -29,7 +29,9 @@ from radiofeed.users.models import User
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     """QuerySet for Episode model."""
 
-    def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet[Episode]:
+    def with_current_time(
+        self, user: User | AnonymousUser
+    ) -> models.QuerySet[EpisodeWithCurrentTime]:
         """Adds `current_time` and `listened` annotations.
 
         Both will be None if user is anonymous or there is no listening history.
@@ -72,7 +74,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
 
-@final
 class Episode(models.Model):
     """Individual podcast episode."""
 
@@ -105,11 +106,6 @@ class Episode(models.Model):
 
     objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
     fast_update_objects: models.Manager = FastUpdateManager()
-
-    # annotations
-
-    current_time: datetime | None = None
-    listened: datetime | None = None
 
     class Meta:
         constraints = [
@@ -258,7 +254,13 @@ class Episode(models.Model):
         return f"history-actions-{self.id}"
 
 
-@final
+if TYPE_CHECKING:
+
+    class EpisodeWithCurrentTime(Episode):
+        current_time: datetime | None = None
+        listened: datetime | None = None
+
+
 class BookmarkQuerySet(SearchMixin, models.QuerySet):
     """QuerySet for Bookmark model."""
 
@@ -268,7 +270,6 @@ class BookmarkQuerySet(SearchMixin, models.QuerySet):
     ]
 
 
-@final
 class Bookmark(TimeStampedModel):
     """Bookmarked episodes."""
 
@@ -290,7 +291,6 @@ class Bookmark(TimeStampedModel):
         ]
 
 
-@final
 class AudioLogQuerySet(SearchMixin, models.QuerySet):
     """QuerySet for AudioLog."""
 
@@ -300,7 +300,6 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
     ]
 
 
-@final
 class AudioLog(TimeStampedModel):
     """Record of user listening history."""
 

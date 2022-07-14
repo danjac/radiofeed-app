@@ -3,7 +3,6 @@ from __future__ import annotations
 import decimal
 
 from datetime import datetime, timedelta
-from typing import final
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -24,7 +23,6 @@ from radiofeed.common.utils.html import strip_html
 from radiofeed.users.models import User
 
 
-@final
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
@@ -37,7 +35,6 @@ class CategoryQuerySet(models.QuerySet):
         ).filter(similarity__gte=base_similarity)
 
 
-@final
 class Category(models.Model):
     """iTunes category."""
 
@@ -70,7 +67,6 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
 
-@final
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
@@ -116,7 +112,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
 
-@final
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
@@ -253,7 +248,6 @@ class Podcast(models.Model):
         return f"subscribe-actions-{self.id}"
 
 
-@final
 class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""
 
@@ -270,7 +264,6 @@ class Subscription(TimeStampedModel):
         indexes = [models.Index(fields=["-created"])]
 
 
-@final
 class RecommendationQuerySet(models.QuerySet):
     """Custom QuerySet for Recommendation model."""
 
@@ -283,7 +276,6 @@ class RecommendationQuerySet(models.QuerySet):
         return self._raw_delete(self.db)
 
 
-@final
 class Recommendation(models.Model):
     """Recommendation based on similarity between two podcasts."""
 
