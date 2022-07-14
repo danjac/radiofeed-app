@@ -169,30 +169,34 @@ class FeedParser:
             http_status = None
 
         num_retries: int = self._podcast.num_retries
+        active = True
 
         match exc:
             case NotModified():
-                active = True
                 parse_result = Podcast.ParseResult.NOT_MODIFIED
                 num_retries = 0
             case DuplicateFeed():
                 active = False
                 parse_result = Podcast.ParseResult.DUPLICATE_FEED
             case RssParserError():
-                active = True
                 parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
                 num_retries += 1
             case requests.RequestException():
-                parse_result = Podcast.ParseResult.HTTP_ERROR
-                match http_status:
-                    case http.HTTPStatus.FORBIDDEN | http.HTTPStatus.NOT_FOUND | http.HTTPStatus.UNAUTHORIZED:
-                        active = False
-                    case http.HTTPStatus.GONE:
-                        active = False
-                        parse_result = Podcast.ParseResult.COMPLETE
-                    case _:
-                        active = True
-                        num_retries += 1
+                parse_result = (
+                    Podcast.ParseResult.COMPLETE
+                    if http_status == http.HTTPStatus.GONE
+                    else Podcast.ParseResult.HTTP_ERROR
+                )
+
+                active = http_status not in (
+                    http.HTTPStatus.FORBIDDEN,
+                    http.HTTPStatus.NOT_FOUND,
+                    http.HTTPStatus.GONE,
+                    http.HTTPStatus.UNAUTHORIZED,
+                )
+
+                num_retries += 1
+
             case _:
                 raise
 
