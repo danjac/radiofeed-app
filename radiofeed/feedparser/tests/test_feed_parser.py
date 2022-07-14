@@ -467,6 +467,8 @@ class TestFeedParser:
         assert podcast.num_retries == 1
 
     def test_parse_not_modified(self, mocker, podcast, categories):
+
+        podcast.num_retries = 1
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED),
@@ -478,6 +480,7 @@ class TestFeedParser:
         assert podcast.parse_result == Podcast.ParseResult.NOT_MODIFIED
         assert podcast.modified is None
         assert podcast.parsed
+        assert podcast.num_retries == 0
 
     def test_parse_http_gone(self, mocker, podcast, categories):
         mocker.patch(
@@ -498,6 +501,7 @@ class TestFeedParser:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
+
         assert not FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -506,6 +510,25 @@ class TestFeedParser:
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed
+        assert podcast.num_retries == 1
+
+    def test_parse_http_server_error_max_retries(self, mocker, podcast, categories):
+        mocker.patch(
+            self.mock_http_get,
+            return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
+        )
+
+        podcast.num_retries = 3
+
+        assert not FeedParser(podcast).parse()
+
+        podcast.refresh_from_db()
+
+        assert not podcast.active
+        assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
+        assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
+        assert podcast.parsed
+        assert podcast.num_retries == 4
 
     def test_parse_http_server_error_no_pub_date(self, mocker, podcast, categories):
         mocker.patch(
