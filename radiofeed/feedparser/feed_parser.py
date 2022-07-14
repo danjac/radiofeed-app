@@ -9,6 +9,8 @@ import requests
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models import QuerySet
+from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
@@ -124,7 +126,11 @@ class FeedParser:
             active = True
             parse_result = Podcast.ParseResult.SUCCESS
 
-        categories_dct = Category.objects.in_bulk(field_name="name")
+        category_names = frozenset(c.casefold() for c in feed.categories)
+
+        categories = Category.objects.annotate(lower_case_name=Lower("name")).filter(
+            lower_case_name__in=category_names
+        )
 
         self._save_podcast(
             active=active,
@@ -137,9 +143,11 @@ class FeedParser:
             modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self._extract_text(feed),
             keywords=" ".join(
-                category
-                for category in feed.categories
-                if category not in categories_dct
+                [
+                    c
+                    for c in category_names
+                    if c not in [c.lower_case_name for c in categories]
+                ]
             ),
             **attrs.asdict(
                 feed,
@@ -151,17 +159,18 @@ class FeedParser:
             ),
         )
 
-        self._podcast.categories.set(
-            [
-                categories_dct[category]
-                for category in feed.categories
-                if category in categories_dct
-            ]
-        )
-
+        self._podcast.categories.set(categories)
         self._episode_updates(feed)
 
         return True
+
+    def _keyword_categories(
+        self, feed: Feed, categories: QuerySet[Category]
+    ) -> list[str]:
+
+        category_names = [c.name.casefold() for c in categories]
+
+        return [c for c in feed.categories if c.casefold() not in category_names]
 
     def _handle_failure(self, exc: Exception) -> bool:
         try:
