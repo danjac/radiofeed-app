@@ -27,7 +27,7 @@ class FastCountMixin(_QuerySet):
 
     fast_count_row_limit: int = 1000
 
-    def count(self) -> int:
+    def count(self: _QuerySet) -> int:
         """Does optimized COUNT.
 
         If query contains WHERE, DISTINCT or GROUP BY, or number of rows under `fast_count_row_limit`, returns standard SELECT COUNT.
@@ -66,7 +66,7 @@ class SearchMixin(_QuerySet):
     search_rank: str = "rank"
     search_type: str = "websearch"
 
-    def search(self, search_term: str) -> QuerySet[_T]:
+    def search(self: _QuerySet, search_term: str) -> _QuerySet:
         """Returns result of search."""
         if not search_term:
             return self.none()
