@@ -3,12 +3,11 @@ from __future__ import annotations
 import io
 
 from contextlib import contextmanager
-from types import MappingProxyType
 from typing import Iterable, Iterator, TypeAlias
 
 import lxml
 
-Namespaces: TypeAlias = MappingProxyType[str, str]
+Namespaces: TypeAlias = dict[str, str]
 
 
 def parse_xml(content: bytes, *tags: str) -> Iterator[lxml.etree.Element]:
