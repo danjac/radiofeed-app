@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import functools
-import http
-
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
@@ -79,37 +76,3 @@ def category(db):
 @pytest.fixture
 def subscription(auth_user, podcast):
     return SubscriptionFactory(podcast=podcast, user=auth_user)
-
-
-def assert_status(response, status):
-    assert response.status_code == status, response.content  # nosec
-
-
-@pytest.fixture(scope="session")
-def assert_ok():
-    return functools.partial(assert_status, status=http.HTTPStatus.OK)
-
-
-@pytest.fixture(scope="session")
-def assert_bad_request():
-    return functools.partial(assert_status, status=http.HTTPStatus.BAD_REQUEST)
-
-
-@pytest.fixture(scope="session")
-def assert_conflict():
-    return functools.partial(assert_status, status=http.HTTPStatus.CONFLICT)
-
-
-@pytest.fixture(scope="session")
-def assert_no_content():
-    return functools.partial(assert_status, status=http.HTTPStatus.NO_CONTENT)
-
-
-@pytest.fixture(scope="session")
-def assert_not_found():
-    return functools.partial(assert_status, status=http.HTTPStatus.NOT_FOUND)
-
-
-@pytest.fixture(scope="session")
-def assert_unauthorized():
-    return functools.partial(assert_status, status=http.HTTPStatus.UNAUTHORIZED)
