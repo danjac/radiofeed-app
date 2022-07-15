@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import pathlib
-import uuid
 
 import pytest
 
 from django.conf import settings
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
@@ -18,7 +16,6 @@ from radiofeed.episodes.factories import (
 )
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.models import Subscription
-from radiofeed.users.factories import UserFactory
 from radiofeed.users.models import User
 
 
@@ -156,70 +153,57 @@ class TestDeleteAccount:
 class TestSocialAccountTemplates:
     """Test overridden allauth account templates."""
 
-    def test_connections(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("socialaccount_connections")))
+    @pytest.fixture
+    def req(self, rf):
+        return rf.get("/")
+
+    def test_signup(self, req):
+        assert get_template("socialaccount/signup.html").render({}, request=req)
+
+    def test_login(self, req):
+        assert get_template("socialaccount/login.html").render({}, request=req)
 
 
 class TestAccountTemplates:
     """Test overridden allauth account templates."""
 
-    def test_email_verification_required(self, rf):
-        tmpl = get_template("account/verified_email_required.html")
-        tmpl.render({}, rf.get("/"))
+    @pytest.fixture
+    def req(self, rf):
+        return rf.get("/")
 
-    def test_email_verification_sent(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("account_email_verification_sent")))
-
-    def test_email(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("account_email")))
-
-    def test_account_inactive(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("account_inactive")))
-
-    def test_password_change(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("account_change_password")))
-
-    def test_password_reset(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("account_reset_password")))
-
-    def test_password_reset_done(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("account_reset_password_done")))
-
-    def test_password_reset_from_key(self, client, auth_user, assert_ok):
-        assert_ok(
-            client.get(
-                reverse(
-                    "account_reset_password_from_key", args=[uuid.uuid4().hex, "test"]
-                )
-            )
+    def test_email_verification_required(self, req):
+        assert get_template("account/verified_email_required.html").render(
+            {}, request=req
         )
 
-    def test_password_reset_from_key_done(self, client, auth_user, assert_ok):
-        assert_ok(client.get(reverse("account_reset_password_from_key_done")))
+    def test_verification_sent(self, req):
+        assert get_template("account/verification_sent.html").render({}, request=req)
 
-    def test_password_set(self, client, db, assert_ok):
-        user = UserFactory()
-        user.set_password(None)
-        user.save()
-        client.force_login(user)
-        assert_ok(client.get(reverse("account_set_password")))
+    def test_email(self, req):
+        assert get_template("account/email.html").render({}, request=req)
 
-    def test_login(self, db, client, assert_ok):
-        assert_ok(
-            client.get(
-                reverse("account_login"),
-                {
-                    REDIRECT_FIELD_NAME: "/podcasts/",
-                },
-            )
+    def test_account_inactive(self, req):
+        assert get_template("account/account_inactive.html").render({}, request=req)
+
+    def test_password_change(self, req):
+        assert get_template("account/password_change.html").render({}, request=req)
+
+    def test_password_reset(self, req):
+        assert get_template("account/password_reset.html").render({}, request=req)
+
+    def test_password_reset_done(self, req):
+        assert get_template("account/password_reset_done.html").render({}, request=req)
+
+    def test_password_reset_from_key_done(self, req):
+        assert get_template("account/password_reset_from_key_done.html").render(
+            {}, request=req
         )
 
-    def test_signup(self, db, client, assert_ok):
-        assert_ok(
-            client.get(
-                reverse("account_signup"),
-                {
-                    REDIRECT_FIELD_NAME: "/podcasts/",
-                },
-            )
-        )
+    def test_password_set(self, req):
+        assert get_template("account/password_set.html").render({}, request=req)
+
+    def test_login(self, req):
+        assert get_template("account/login.html").render({}, request=req)
+
+    def test_signup(self, req):
+        assert get_template("account/signup.html").render({}, request=req)
