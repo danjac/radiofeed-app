@@ -22,9 +22,11 @@
             {% endif %}
         </nav>
 
+        {% if page_obj.has_other_pages %}
         <div class="flex items-center justify-center sm:justify-end">
             {% include "search/search_form.html" with placeholder=_("Search: Episodes") %}
         </div>
+        {% endif %}
 
     </div>
     {% include pagination_template %}
