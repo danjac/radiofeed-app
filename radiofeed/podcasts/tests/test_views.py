@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import factory
 import pytest
 
 from django.urls import reverse, reverse_lazy
+from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
@@ -149,7 +151,28 @@ class TestPodcastSimilar:
 
 
 class TestPodcastDetail:
+    @pytest.fixture
+    def podcast(self, db):
+        podcast = PodcastFactory(
+            owner=factory.Faker("name"),
+            link=factory.Faker("url"),
+            funding_url=factory.Faker("url"),
+            funding_text=factory.Faker("text"),
+            keywords=factory.Faker("text"),
+        )
+        podcast.categories.set(CategoryFactory.create_batch(3))
+        return podcast
+
     def test_get_podcast_anonymous(self, client, podcast, assert_ok):
+        podcast.categories.set(CategoryFactory.create_batch(3))
+        response = client.get(
+            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
+        )
+        assert_ok(response)
+        assert response.context_data["podcast"] == podcast
+
+    def test_get_podcast_no_link(self, client, db, assert_ok):
+        podcast = PodcastFactory(link=None, owner=factory.Faker("name"))
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
@@ -157,11 +180,20 @@ class TestPodcastDetail:
         assert response.context_data["podcast"] == podcast
 
     def test_get_podcast_authenticated(self, client, auth_user, podcast, assert_ok):
+        podcast.categories.set(CategoryFactory.create_batch(3))
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
         assert response.context_data["podcast"] == podcast
+
+    def test_get_podcast_admin(self, client, staff_user, podcast, assert_ok):
+        response = client.get(
+            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
+        )
+        assert_ok(response)
+        assert response.context_data["podcast"] == podcast
+        assertContains(response, "Admin")
 
 
 class TestPodcastEpisodes:

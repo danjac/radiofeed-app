@@ -21,8 +21,6 @@ class PodcastFactory(DjangoModelFactory):
     title = factory.Faker("text")
     pub_date = factory.LazyFunction(timezone.now)
     cover_url = "https://example.com/cover.jpg"
-    owner = factory.Faker("name")
-    link = factory.Faker("url")
     description = factory.Faker("text")
 
     class Meta:

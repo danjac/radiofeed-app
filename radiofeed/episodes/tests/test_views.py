@@ -267,7 +267,10 @@ class TestBookmarks:
 class TestAddBookmark:
     def test_post(self, client, auth_user, episode, assert_ok):
 
-        response = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
+        response = client.post(
+            reverse("episodes:add_bookmark", args=[episode.id]),
+            HTTP_HX_TARGET=episode.get_bookmark_target(),
+        )
 
         assert_ok(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -275,7 +278,10 @@ class TestAddBookmark:
     @pytest.mark.django_db(transaction=True)
     def test_already_bookmark(self, client, auth_user, episode, assert_conflict):
         BookmarkFactory(episode=episode, user=auth_user)
-        response = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
+        response = client.post(
+            reverse("episodes:add_bookmark", args=[episode.id]),
+            HTTP_HX_TARGET=episode.get_bookmark_target(),
+        )
         assert_conflict(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -283,7 +289,10 @@ class TestAddBookmark:
 class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode, assert_ok):
         BookmarkFactory(user=auth_user, episode=episode)
-        response = client.delete(reverse("episodes:remove_bookmark", args=[episode.id]))
+        response = client.delete(
+            reverse("episodes:remove_bookmark", args=[episode.id]),
+            HTTP_HX_TARGET=episode.get_bookmark_target(),
+        )
         assert_ok(response)
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -328,7 +337,11 @@ class TestRemoveAudioLog:
         AudioLogFactory(user=auth_user, episode=episode)
         AudioLogFactory(user=auth_user)
 
-        assert_ok(client.delete(self.url(episode)))
+        assert_ok(
+            client.delete(
+                self.url(episode), HTTP_HX_TARGET=episode.get_history_target()
+            )
+        )
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
@@ -337,13 +350,23 @@ class TestRemoveAudioLog:
         """Do not remove log if episode is currently playing"""
         log = AudioLogFactory(user=auth_user, episode=player_episode)
 
-        assert_ok(client.delete(self.url(log.episode)))
+        assert_ok(
+            client.delete(
+                self.url(log.episode),
+                HTTP_HX_TARGET=player_episode.get_history_target(),
+            ),
+        )
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
     def test_none_remaining(self, client, auth_user, episode, assert_ok):
         log = AudioLogFactory(user=auth_user, episode=episode)
 
-        assert_ok(client.delete(self.url(log.episode)))
+        assert_ok(
+            client.delete(
+                self.url(log.episode),
+                HTTP_HX_TARGET=episode.get_history_target(),
+            ),
+        )
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
