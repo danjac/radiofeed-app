@@ -297,6 +297,18 @@ python-versions = "*"
 Django = ">=2.2,<4.1"
 
 [[package]]
+name = "django-coverage-plugin"
+version = "2.0.3"
+description = "Django template coverage.py plugin"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+coverage = "*"
+six = ">=1.4.0"
+
+[[package]]
 name = "django-debug-toolbar"
 version = "3.5.0"
 description = "A configurable set of panels that display various debug information about the current request/response."
@@ -1613,7 +1625,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "eb80a007e34ed50be13adf396967f3ef24b686d8531ba03c77bcf4e256942d74"
+content-hash = "53cd83cf5eb4f4d77dc94589d265c23f71ecfd2fb0bd5c3f45590fe33cc97fe8"
 
 [metadata.files]
 appnope = [
@@ -1851,6 +1863,10 @@ django-anymail = [
 django-cachalot = [
     {file = "django-cachalot-2.5.1.tar.gz", hash = "sha256:54cfdf3cf60863b762ff5b8ff9905be531639c52ebc05e2487365538f9bcec17"},
     {file = "django_cachalot-2.5.1-py3-none-any.whl", hash = "sha256:6304b6d9d56b646ab59f00fc9f72b3b29e9355c1dca1f584191ecd21f69f4b8c"},
+]
+django-coverage-plugin = [
+    {file = "django_coverage_plugin-2.0.3-py3-none-any.whl", hash = "sha256:fd888f2ff41e3410a004d799b198cf8b19694d692a2d2264e8c944b9321bedc3"},
+    {file = "django_coverage_plugin-2.0.3.tar.gz", hash = "sha256:e73231e3bfddb2ac836fd43cb0e6ec2ab3a97457b1d9ca2468085e506beb7935"},
 ]
 django-debug-toolbar = [
     {file = "django-debug-toolbar-3.5.0.tar.gz", hash = "sha256:97965f2630692de316ea0c1ca5bfa81660d7ba13146dbc6be2059cf55b35d0e5"},
