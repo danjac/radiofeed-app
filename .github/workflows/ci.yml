@@ -27,7 +27,12 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Set up Python 3.10
+            - name: eslint
+              uses: stefanoeb/eslint-action@1.0.2
+              with:
+                  files: static/js/
+
+            - name: set up Python 3.10
               uses: actions/setup-python@v4
               with:
                   python-version: "3.10"
@@ -51,12 +56,6 @@ jobs:
             - name: install backend dependencies
               if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
               run: poetry install --no-interaction --no-root
-
-            - name: install frontend dependencies
-              run: npm install
-
-            - name: eslint
-              run: eslint static/js/*.js
 
             - name: flake8
               run: |
