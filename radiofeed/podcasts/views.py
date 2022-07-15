@@ -35,15 +35,13 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcasts = _get_podcasts().order_by("-pub_date").distinct()
 
-    podcasts = (
-        podcasts.filter(promoted=True)
-        if promoted
-        else podcasts.filter(pk__in=subscribed)
-    )
-
     return render_pagination_response(
         request,
-        podcasts,
+        (
+            podcasts.filter(promoted=True)
+            if promoted
+            else podcasts.filter(pk__in=subscribed)
+        ),
         "podcasts/index.html",
         "podcasts/pagination/podcasts.html",
         {
@@ -60,18 +58,16 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
-    podcasts = (
-        _get_podcasts()
-        .search(request.search.value)
-        .order_by(
-            "-rank",
-            "-pub_date",
-        )
-    )
-
     return render_pagination_response(
         request,
-        podcasts,
+        (
+            _get_podcasts()
+            .search(request.search.value)
+            .order_by(
+                "-rank",
+                "-pub_date",
+            )
+        ),
         "podcasts/search.html",
         "podcasts/pagination/podcasts.html",
     )
@@ -134,18 +130,18 @@ def similar(
     """
     podcast = _get_podcast_or_404(podcast_id)
 
-    recommendations = (
-        Recommendation.objects.filter(podcast=podcast)
-        .select_related("recommended")
-        .order_by("-similarity", "-frequency")
-    )[:limit]
-
     return TemplateResponse(
         request,
         "podcasts/similar.html",
         _podcast_detail_context(
             podcast,
-            {"recommendations": recommendations},
+            {
+                "recommendations": (
+                    Recommendation.objects.filter(podcast=podcast)
+                    .select_related("recommended")
+                    .order_by("-similarity", "-frequency")
+                )[:limit]
+            },
         ),
     )
 
@@ -191,12 +187,6 @@ def episodes(
 
     episodes = Episode.objects.filter(podcast=podcast).select_related("podcast")
 
-    episodes = (
-        episodes.search(request.search.value).order_by("-rank", "-pub_date")
-        if request.search
-        else episodes.order_by("-pub_date" if newest_first else "pub_date")
-    )
-
     extra_context = {
         "is_podcast_detail": True,
         "newest_first": newest_first,
@@ -205,7 +195,11 @@ def episodes(
 
     return render_pagination_response(
         request,
-        episodes,
+        (
+            episodes.search(request.search.value).order_by("-rank", "-pub_date")
+            if request.search
+            else episodes.order_by("-pub_date" if newest_first else "pub_date")
+        ),
         "podcasts/episodes.html",
         "episodes/pagination/episodes.html",
         target=target,

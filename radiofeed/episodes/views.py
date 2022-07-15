@@ -46,19 +46,17 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.filter(promoted=True)
 
-    episodes = (
-        Episode.objects.filter(pub_date__gt=since)
-        .select_related("podcast")
-        .filter(
-            podcast__in=set(podcasts.values_list("pk", flat=True)),
-        )
-        .order_by("-pub_date", "-id")
-        .distinct()
-    )
-
     return render_pagination_response(
         request,
-        episodes,
+        (
+            Episode.objects.filter(pub_date__gt=since)
+            .select_related("podcast")
+            .filter(
+                podcast__in=set(podcasts.values_list("pk", flat=True)),
+            )
+            .order_by("-pub_date", "-id")
+            .distinct()
+        ),
         "episodes/index.html",
         "episodes/pagination/episodes.html",
         {
@@ -75,15 +73,13 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("episodes:index"))
 
-    episodes = (
-        Episode.objects.select_related("podcast")
-        .search(request.search.value)
-        .order_by("-rank", "-pub_date")
-    )
-
     return render_pagination_response(
         request,
-        episodes,
+        (
+            Episode.objects.select_related("podcast")
+            .search(request.search.value)
+            .order_by("-rank", "-pub_date")
+        ),
         "episodes/search.html",
         "episodes/pagination/episodes.html",
     )
@@ -260,14 +256,11 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         "episode", "episode__podcast"
     )
 
-    if request.search:
-        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
-
-    else:
-        bookmarks = bookmarks.order_by("-created")
     return render_pagination_response(
         request,
-        bookmarks,
+        bookmarks.search(request.search.value).order_by("-rank", "-created")
+        if request.search
+        else bookmarks.order_by("-created"),
         "episodes/bookmarks.html",
         "episodes/pagination/bookmarks.html",
     )
