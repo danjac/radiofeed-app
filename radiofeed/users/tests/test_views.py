@@ -6,7 +6,6 @@ import pytest
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.episodes.factories import (
@@ -16,7 +15,6 @@ from radiofeed.episodes.factories import (
 )
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.models import Subscription
-from radiofeed.users.factories import EmailAddressFactory
 from radiofeed.users.models import User
 
 
@@ -149,92 +147,3 @@ class TestDeleteAccount:
         response = client.post(self.url, {"confirm-delete": True})
         assert response.url == settings.HOME_URL
         assert not User.objects.exists()
-
-
-class TestSocialAccountTemplates:
-    """Test overridden allauth account templates."""
-
-    @pytest.fixture
-    def req(self, rf):
-        return rf.get("/")
-
-    def test_signup(self, req):
-        assert get_template("socialaccount/signup.html").render({}, request=req)
-
-    def test_login(self, req):
-        assert get_template("socialaccount/login.html").render({}, request=req)
-
-
-class TestAccountTemplates:
-    """Test overridden allauth account templates."""
-
-    @pytest.fixture
-    def req(self, rf):
-        return rf.get("/")
-
-    @pytest.fixture
-    def auth_req(self, req, user, mocker):
-        req.user = user
-
-        req.player = mocker.Mock()
-        req.player.get.return_value = None
-
-        return req
-
-    def test_email_verification_required(self, req):
-        assert get_template("account/verified_email_required.html").render(
-            {}, request=req
-        )
-
-    def test_verification_sent(self, req):
-        assert get_template("account/verification_sent.html").render({}, request=req)
-
-    def test_email(self, auth_req):
-        EmailAddressFactory(user=auth_req.user)
-        assert get_template("account/email.html").render(
-            {"user": auth_req.user}, request=auth_req
-        )
-
-    def test_email_confirm(self, req, mocker):
-        confirmation = mocker.Mock()
-        confirmation.key = "test"
-        assert get_template("account/email_confirm.html").render(
-            {
-                "confirmation": confirmation,
-            },
-            request=req,
-        )
-
-    def test_email_confirm_no_confirmation(self, req):
-        assert get_template("account/email_confirm.html").render(
-            {
-                "confirmation": None,
-            },
-            request=req,
-        )
-
-    def test_account_inactive(self, req):
-        assert get_template("account/account_inactive.html").render({}, request=req)
-
-    def test_password_change(self, req):
-        assert get_template("account/password_change.html").render({}, request=req)
-
-    def test_password_reset(self, req):
-        assert get_template("account/password_reset.html").render({}, request=req)
-
-    def test_password_reset_done(self, req):
-        assert get_template("account/password_reset_done.html").render({}, request=req)
-
-    def test_password_reset_from_key_done(self, req):
-        assert get_template("account/password_reset_from_key_done.html").render(
-            {}, request=req
-        )
-
-    def test_password_set(self, req):
-        assert get_template("account/password_set.html").render({}, request=req)
-
-    def test_login(self, req):
-        assert get_template("account/login.html").render({}, request=req)
-
-    def test_signup(self, req):
-        assert get_template("account/signup.html").render({}, request=req)

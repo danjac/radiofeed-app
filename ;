@@ -1,0 +1,98 @@
+{% extends "account/settings_base.html" %}
+{% load i18n %}
+
+{% block title %}{{ block.super }} | {% translate "E-mail Addresses" %}{% endblock %}
+
+{% block settings_content %}
+    {% if user.emailaddress_set.all %}
+        <p class="mb-3">{% translate "The following e-mail addresses are associated with your account:" %}</p>
+
+        <form class="space-y-3 mb-3"
+            hx-disable="true"
+            method="post"
+            id="email-addresses"
+            action="{% url 'account_email' %}">
+            {% csrf_token %}
+            {% with num_addresses=user.emailaddress_set.count %}
+                {% for emailaddress in user.emailaddress_set.all %}
+                    <div>
+                        <label for="email_radio_{{forloop.counter}}"
+                            class="flex items-center">
+
+                            <input id="email_radio_{{forloop.counter}}"
+                                type="radio"
+                                name="email"
+                                class="mr-3"
+                                {% if emailaddress.primary or num_addresses == 1 %}checked="checked"
+                                {% endif %}
+                                value="{{emailaddress.email}}" />
+
+                            <div class="{% if emailaddress.primary or num_addresses == 1 %}font-bold{% endif %}">
+                                <div class="flex items-center">
+                                    {{ emailaddress.email }}
+                                    {% if emailaddress.verified %}
+                                        {% include "icons/check.svg" with css_class="h-5 w-5 ml-2 text-green-500" %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </label>
+                    </div>
+                {% endfor %}
+                <div class="flex items-center space-x-2 md:space-x-3">
+                    {% with ICON_CSS="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                        <button class="inline-flex items-center btn btn-default"
+                            name="action_primary"
+                            value="1">
+                            {% include "icons/sparkles.svg" with css_class=ICON_CSS %}
+                            {% translate "Primary" %}
+                        </button>
+
+                        <button class="inline-flex items-center btn btn-secondary"
+                            name="action_send"
+                            value="1">
+                            {% include "icons/mail.svg" with css_class=ICON_CSS %}
+                            {% translate "Re-Verify" %}
+                        </button>
+
+                        <button class="inline-flex items-center btn btn-danger"
+                            name="action_remove"
+                            value="1">
+                            {% include "icons/trash.svg" with css_class=ICON_CSS %}
+                            {% translate "Remove" %}
+                        </button>
+                    {% endwith %}
+                </div>
+            {% endwith %}
+        </form>
+
+    {% else %}
+
+        <p class="border-b dark:border-gray-500 pb-3 mb-3"><strong>{% translate "Warning:" %}</strong>
+            {% blocktranslate %}
+                You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.
+            {% endblocktranslate %}
+        </p>
+
+    {% endif %}
+
+    {% if can_add_email %}
+        <h2 class="font-semibold mb-3 mt-6">{% translate "Add New E-mail Address" %}</h2>
+        <form method="post"
+            action="{{ request.path }}"
+            class="space-y-3"
+            hx-disable="true"
+            novalidate>
+            {% csrf_token %}
+            {{ form }}
+            <div class="flex items-center">
+                <button class="inline-flex items-center btn btn-default"
+                    name="action_add"
+                    value="true">
+                    {% include "icons/plus.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                    {% translate "Add E-Mail" %}
+                </button>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
