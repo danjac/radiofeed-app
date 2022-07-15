@@ -16,6 +16,7 @@ from radiofeed.episodes.factories import (
 )
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.models import Subscription
+from radiofeed.users.factories import EmailAddressFactory
 from radiofeed.users.models import User
 
 
@@ -171,6 +172,15 @@ class TestAccountTemplates:
     def req(self, rf):
         return rf.get("/")
 
+    @pytest.fixture
+    def auth_req(self, req, user, mocker):
+        req.user = user
+
+        req.player = mocker.Mock()
+        req.player.get.return_value = None
+
+        return req
+
     def test_email_verification_required(self, req):
         assert get_template("account/verified_email_required.html").render(
             {}, request=req
@@ -179,8 +189,29 @@ class TestAccountTemplates:
     def test_verification_sent(self, req):
         assert get_template("account/verification_sent.html").render({}, request=req)
 
-    def test_email(self, req):
-        assert get_template("account/email.html").render({}, request=req)
+    def test_email(self, auth_req):
+        EmailAddressFactory(user=auth_req.user)
+        assert get_template("account/email.html").render(
+            {"user": auth_req.user}, request=auth_req
+        )
+
+    def test_email_confirm(self, req, mocker):
+        confirmation = mocker.Mock()
+        confirmation.key = "test"
+        assert get_template("account/email_confirm.html").render(
+            {
+                "confirmation": confirmation,
+            },
+            request=req,
+        )
+
+    def test_email_confirm_no_confirmation(self, req):
+        assert get_template("account/email_confirm.html").render(
+            {
+                "confirmation": None,
+            },
+            request=req,
+        )
 
     def test_account_inactive(self, req):
         assert get_template("account/account_inactive.html").render({}, request=req)
