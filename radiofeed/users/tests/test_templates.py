@@ -7,27 +7,39 @@ from django.template.loader import get_template
 from radiofeed.users.factories import EmailAddressFactory
 
 
-class TestSocialAccountTemplates:
+@pytest.fixture
+def req(rf):
+    return rf.get("/")
+
+
+@pytest.fixture
+def auth_req(req, user, mocker):
+    req.user = user
+
+    req.player = mocker.Mock()
+    req.player.get.return_value = None
+
+    return req
+
+
+class TestSocialAccount:
     """Test overridden allauth account templates."""
-
-    @pytest.fixture
-    def req(self, rf):
-        return rf.get("/")
-
-    @pytest.fixture
-    def auth_req(self, req, user, mocker):
-        req.user = user
-
-        req.player = mocker.Mock()
-        req.player.get.return_value = None
-
-        return req
 
     def test_signup(self, req):
         assert get_template("socialaccount/signup.html").render({}, request=req)
 
     def test_login(self, req):
         assert get_template("socialaccount/login.html").render({}, request=req)
+
+    def test_authentication_error(self, req):
+        assert get_template("socialaccount/authentication_error.html").render(
+            {}, request=req
+        )
+
+    def test_login_connect(self, req):
+        assert get_template("socialaccount/login.html").render(
+            {"process": "connect"}, request=req
+        )
 
     def test_connections(self, auth_req, mocker):
         form = mocker.Mock()
@@ -44,21 +56,8 @@ class TestSocialAccountTemplates:
         )
 
 
-class TestAccountTemplates:
+class TestAccount:
     """Test overridden allauth account templates."""
-
-    @pytest.fixture
-    def req(self, rf):
-        return rf.get("/")
-
-    @pytest.fixture
-    def auth_req(self, req, user, mocker):
-        req.user = user
-
-        req.player = mocker.Mock()
-        req.player.get.return_value = None
-
-        return req
 
     def test_email_verification_required(self, req):
         assert get_template("account/verified_email_required.html").render(

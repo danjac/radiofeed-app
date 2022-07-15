@@ -63,3 +63,42 @@ class TestPaginationLinks:
         }
         rendered = tmpl.render(ctx, request=req)
         assert rendered.count("No More Pages") == 0
+
+
+class TestFormFields:
+    @pytest.fixture
+    def tmpl(self):
+        return get_template("forms/field.html")
+
+    def test_is_hidden(self, tmpl, mocker):
+        field = mocker.Mock()
+        field.is_hidden = True
+        assert tmpl.render({"field": field}, request=req)
+
+    def test_textinput(self, tmpl, mocker):
+        field = mocker.Mock()
+        field.is_hidden = False
+        field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
+        field.errors = []
+        assert tmpl.render({"field": field}, request=req)
+
+    def test_checkboxinput(self, tmpl, mocker):
+        field = mocker.Mock()
+        field.is_hidden = False
+        field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
+        field.errors = []
+        assert tmpl.render({"field": field}, request=req)
+
+    def test_fileinput(self, tmpl, mocker):
+        field = mocker.Mock()
+        field.is_hidden = False
+        field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
+        field.errors = []
+        assert tmpl.render({"field": field}, request=req)
+
+    def test_errors(self, tmpl, mocker):
+        field = mocker.Mock()
+        field.is_hidden = False
+        field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
+        field.errors = ["error"]
+        assert tmpl.render({"field": field}, request=req)
