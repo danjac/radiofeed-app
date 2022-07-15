@@ -1,0 +1,65 @@
+from __future__ import annotations
+
+import dataclasses
+
+import pytest
+
+from django.template.loader import get_template
+
+
+@pytest.fixture
+def req(rf):
+    return rf.get("/")
+
+
+@dataclasses.dataclass
+class PageObj:
+    has_other_pages: bool = False
+    has_next: bool = False
+    has_previous: bool = False
+    next_page_number: int = 0
+    previous_page_number: int = 0
+
+
+class TestPaginationLinks:
+    @pytest.fixture
+    def tmpl(self):
+        return get_template("includes/pagination_links.html")
+
+    def test_no_pagination(self, req, tmpl):
+        ctx = {
+            "page_obj": PageObj(has_other_pages=False),
+        }
+        rendered = tmpl.render(ctx, request=req)
+        assert "Pagination" not in rendered
+
+    def test_has_next(self, req, tmpl):
+        ctx = {
+            "page_obj": PageObj(
+                has_other_pages=True, has_next=True, next_page_number=2
+            ),
+        }
+        rendered = tmpl.render(ctx, request=req)
+        assert rendered.count("No More Pages") == 2
+
+    def test_has_previous(self, req, tmpl):
+        ctx = {
+            "page_obj": PageObj(
+                has_other_pages=True, has_previous=True, previous_page_number=1
+            ),
+        }
+        rendered = tmpl.render(ctx, request=req)
+        assert rendered.count("No More Pages") == 2
+
+    def test_has_next_and_previous(self, req, tmpl):
+        ctx = {
+            "page_obj": PageObj(
+                has_other_pages=True,
+                has_previous=True,
+                has_next=True,
+                previous_page_number=1,
+                next_page_number=3,
+            ),
+        }
+        rendered = tmpl.render(ctx, request=req)
+        assert rendered.count("No More Pages") == 0

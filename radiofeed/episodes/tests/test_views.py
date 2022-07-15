@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+import factory
 import pytest
 
 from django.urls import reverse, reverse_lazy
+from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.factories import (
     AudioLogFactory,
@@ -107,6 +109,21 @@ class TestSearchEpisodes:
 
 class TestEpisodeDetail:
     @pytest.fixture
+    def episode(self, db):
+        return EpisodeFactory(
+            podcast__owner=factory.Faker("name"),
+            podcast__link=factory.Faker("url"),
+            podcast__funding_url=factory.Faker("url"),
+            podcast__funding_text=factory.Faker("text"),
+            podcast__keywords=factory.Faker("text"),
+            episode_type="full",
+            season=1,
+            episode=3,
+            length=9000,
+            duration="3:30:30",
+        )
+
+    @pytest.fixture
     def prev_episode(self, episode):
         return EpisodeFactory(
             podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7)
@@ -136,6 +153,37 @@ class TestEpisodeDetail:
         assert_ok(response)
         assert response.context_data["episode"] == episode
 
+    def test_listened(
+        self,
+        client,
+        auth_user,
+        episode,
+        assert_ok,
+        prev_episode,
+        next_episode,
+    ):
+        AudioLogFactory(episode=episode, user=auth_user, current_time=900)
+
+        response = client.get(episode.get_absolute_url())
+        assert_ok(response)
+
+        assert response.context_data["episode"] == episode
+
+        assertContains(response, "Remove from History")
+        assertContains(response, "Completed")
+
+    def test_no_prev_next_episde(
+        self,
+        client,
+        auth_user,
+        episode,
+        assert_ok,
+    ):
+        response = client.get(episode.get_absolute_url())
+        assert_ok(response)
+        assert response.context_data["episode"] == episode
+        assertContains(response, "No more episodes")
+
 
 class TestStartPlayer:
     # we have a number of savepoints here adding to query count
@@ -145,7 +193,7 @@ class TestStartPlayer:
         return reverse("episodes:start_player", args=[episode.id])
 
     def test_play_from_start(self, client, db, auth_user, episode, assert_ok):
-        assert_ok(client.post(self.url(episode)))
+        assert_ok(client.post(self.url(episode), HTTP_HX_TARGET="player"))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert is_player_episode(client, episode)
@@ -153,14 +201,14 @@ class TestStartPlayer:
     def test_another_episode_in_player(self, client, auth_user, episode, assert_ok):
         client.session[Player.session_key] = EpisodeFactory().id
 
-        assert_ok(client.post(self.url(episode)))
+        assert_ok(client.post(self.url(episode), HTTP_HX_TARGET="player"))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert is_player_episode(client, episode)
 
     def test_resume(self, client, auth_user, episode, assert_ok):
         log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
-        assert_ok(client.post(self.url(episode)))
+        assert_ok(client.post(self.url(episode), HTTP_HX_TARGET="player"))
 
         log.refresh_from_db()
 
@@ -172,7 +220,7 @@ class TestClosePlayer:
     url = reverse_lazy("episodes:close_player")
 
     def test_player_empty(self, client, auth_user, assert_ok):
-        response = client.post(self.url)
+        response = client.post(self.url, HTTP_HX_TARGET="player")
         assert_ok(response)
 
     def test_close(
@@ -189,7 +237,7 @@ class TestClosePlayer:
             episode=player_episode,
         )
 
-        response = client.post(self.url)
+        response = client.post(self.url, HTTP_HX_TARGET="player")
         assert_ok(response)
 
         log.refresh_from_db()
@@ -247,6 +295,13 @@ class TestBookmarks:
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
 
+    def test_empty(self, client, auth_user, assert_ok):
+
+        response = client.get(self.url)
+
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 0
+
     def test_search(self, client, auth_user, assert_ok):
 
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
@@ -301,17 +356,23 @@ class TestHistory:
     url = reverse_lazy("episodes:history")
 
     def test_get(self, client, auth_user, assert_ok):
-        AudioLogFactory.create_batch(3, user=auth_user)
+        AudioLogFactory.create_batch(33, user=auth_user)
         response = client.get(self.url)
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+        assert len(response.context_data["page_obj"].object_list) == 30
+
+    def test_empty(self, client, auth_user, assert_ok):
+        response = client.get(self.url)
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 0
 
     def test_get_oldest_first(self, client, auth_user, assert_ok):
-        AudioLogFactory.create_batch(3, user=auth_user)
+        AudioLogFactory.create_batch(33, user=auth_user)
 
-        response = client.get(self.url, {"ordering": "asc"})
+        response = client.get(self.url, {"o": "a"})
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+
+        assert len(response.context_data["page_obj"].object_list) == 30
 
     def test_search(self, client, auth_user, assert_ok):
 
