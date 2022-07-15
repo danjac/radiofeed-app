@@ -3,7 +3,7 @@ name: Run CI
 on: push
 
 jobs:
-  tests:
+  ci:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
@@ -56,7 +56,6 @@ jobs:
         run: |
           source .venv/bin/activate
           flake8 radiofeed
-
 
       - name: Type-checking
         run: |
