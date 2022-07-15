@@ -266,7 +266,7 @@ class TestSubscribe:
         return reverse("podcasts:subscribe", args=[podcast.id])
 
     def test_subscribe(self, client, podcast, auth_user, url, assert_ok):
-        response = client.post(url)
+        response = client.post(url, HTTP_HX_TARGET=podcast.get_subscribe_target())
         assert_ok(response)
         assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
 
@@ -274,7 +274,7 @@ class TestSubscribe:
     def test_already_subscribed(self, client, podcast, auth_user, url, assert_conflict):
 
         SubscriptionFactory(user=auth_user, podcast=podcast)
-        response = client.post(url)
+        response = client.post(url, HTTP_HX_TARGET=podcast.get_subscribe_target())
         assert_conflict(response)
         assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
 
@@ -282,6 +282,9 @@ class TestSubscribe:
 class TestUnsubscribe:
     def test_unsubscribe(self, client, auth_user, podcast, assert_ok):
         SubscriptionFactory(user=auth_user, podcast=podcast)
-        response = client.delete(reverse("podcasts:unsubscribe", args=[podcast.id]))
+        response = client.delete(
+            reverse("podcasts:unsubscribe", args=[podcast.id]),
+            HTTP_HX_TARGET=podcast.get_subscribe_target(),
+        )
         assert_ok(response)
         assert not Subscription.objects.filter(podcast=podcast, user=auth_user).exists()

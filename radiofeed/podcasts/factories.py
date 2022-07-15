@@ -19,9 +19,11 @@ class CategoryFactory(DjangoModelFactory):
 class PodcastFactory(DjangoModelFactory):
     rss = factory.Sequence(lambda i: f"https://example.com/{i}.xml")
     title = factory.Faker("text")
-    description = factory.Faker("text")
     pub_date = factory.LazyFunction(timezone.now)
     cover_url = "https://example.com/cover.jpg"
+    owner = factory.Faker("name")
+    link = factory.Faker("url")
+    description = factory.Faker("text")
 
     class Meta:
         model = Podcast
