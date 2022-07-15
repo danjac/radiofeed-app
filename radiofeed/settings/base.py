@@ -220,16 +220,27 @@ LOGGING = {
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
         "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+        "django_rich_logging": {
+            "class": "django_rich_logging.logging.DjangoRequestHandler",
+            "level": "INFO",
+        },
     },
     "loggers": {
-        "root": {"handlers": ["console"], "level": "INFO"},
+        "root": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "django.server": {
+            "handlers": ["django_rich_logging"],
+            "level": "INFO",
+            "propagate": False,
+        },
         "django.security.DisallowedHost": {
             "handlers": ["null"],
             "propagate": False,
         },
         "django.request": {
-            "handlers": ["console"],
-            "level": "ERROR",
+            "level": "CRITICAL",
             "propagate": False,
         },
     },
