@@ -118,7 +118,7 @@ multi_line_output=3
 add_imports = "from __future__ import annotations"
 
 [tool.coverage.run]
-source=["radiofeed"]
+source=["radiofeed", "templates"]
 omit=[
     "**/factories.py",
     "*/migrations/*",
@@ -130,6 +130,9 @@ omit=[
 plugins = [
     "django_coverage_plugin"
 ]
+
+[tool.django_coverage_plugin]
+template_extensions = ["html"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings.test"

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-import pathlib
 import re
 
 from datetime import date, timedelta
@@ -9,6 +8,7 @@ from functools import lru_cache
 from types import MappingProxyType
 from typing import Final, Iterator
 
+from django.conf import settings
 from django.utils import timezone, translation
 from django.utils.formats import date_format
 from nltk.corpus import stopwords
@@ -56,7 +56,7 @@ _CORPORATE_STOPWORDS: Final = [
 _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
 
-_stopwords_dir = pathlib.Path(__file__).resolve(strict=True).parent / "stopwords"
+_stopwords_dir = settings.BASE_DIR / "stopwords"
 
 
 @lru_cache()

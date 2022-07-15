@@ -19,4 +19,4 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 HUEY["immediate"] = True
 
 # django-coverage-plugin
-TEMPLATES[0]["OPTIONS"]["debug"] = True # type: ignore
+TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore

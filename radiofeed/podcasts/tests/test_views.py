@@ -24,6 +24,11 @@ class TestPodcasts:
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
 
+    def test_empty(self, client, db, assert_ok):
+        response = client.get(podcasts_url)
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 0
+
     def test_user_is_subscribed_promoted(self, client, auth_user, assert_ok):
         """If user is not subscribed any podcasts, just show general feed"""
 
@@ -91,14 +96,21 @@ class TestSearchITunes:
         response = client.get(reverse("podcasts:search_itunes"), {"q": ""})
         assert response.url == reverse("podcasts:index")
 
-    def test_search(self, client, db, mocker, assert_ok):
+    def test_search(self, client, podcast, mocker, assert_ok):
         feeds = [
             itunes.Feed(
                 url="https://example.com/id123456",
                 rss="https://feeds.fireside.fm/testandcode/rss",
                 title="Test & Code : Py4hon Testing",
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-            )
+            ),
+            itunes.Feed(
+                url=podcast.link,
+                rss=podcast.rss,
+                title=podcast.title,
+                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                podcast=podcast,
+            ),
         ]
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search_cached", return_value=feeds
@@ -160,18 +172,18 @@ class TestPodcastEpisodes:
         )
 
     def test_get_episodes(self, client, podcast, assert_ok):
-        EpisodeFactory.create_batch(3, podcast=podcast)
+        EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(self.url(podcast))
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+        assert len(response.context_data["page_obj"].object_list) == 30
 
     def test_get_oldest_first(self, client, podcast, assert_ok):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
         response = client.get(
             self.url(podcast),
-            {"ordering": "asc"},
+            {"o": "a"},
         )
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
