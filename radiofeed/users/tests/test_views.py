@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import pathlib
+import uuid
 
 import pytest
 
 from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.episodes.factories import (
@@ -15,6 +18,7 @@ from radiofeed.episodes.factories import (
 )
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.models import Subscription
+from radiofeed.users.factories import UserFactory
 from radiofeed.users.models import User
 
 
@@ -32,6 +36,7 @@ class TestUserPreferences:
                 "send_email_notifications": False,
                 "autoplay": True,
             },
+            HTTP_HX_TARGET="preferences-form",
         )
 
         assert_ok(response)
@@ -77,7 +82,13 @@ class TestImportPodcastFeeds:
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
-        assert_ok(client.post(self.url, data={"opml": upload_file}))
+        assert_ok(
+            client.post(
+                self.url,
+                data={"opml": upload_file},
+                HTTP_HX_TARGET="opml-import-form",
+            )
+        )
 
         assert Subscription.objects.filter(user=auth_user, podcast=podcast).exists()
 
@@ -89,13 +100,25 @@ class TestImportPodcastFeeds:
             user=auth_user,
         )
 
-        assert_ok(client.post(self.url, data={"opml": upload_file}))
+        assert_ok(
+            client.post(
+                self.url,
+                data={"opml": upload_file},
+                HTTP_HX_TARGET="opml-import-form",
+            )
+        )
 
         assert Subscription.objects.filter(user=auth_user).exists()
 
     def test_post_is_empty(self, client, auth_user, mocker, upload_file, assert_ok):
 
-        assert_ok(client.post(self.url, data={"opml": upload_file}))
+        assert_ok(
+            client.post(
+                self.url,
+                data={"opml": upload_file},
+                HTTP_HX_TARGET="opml-import-form",
+            )
+        )
 
         assert not Subscription.objects.filter(user=auth_user).exists()
 
@@ -128,3 +151,75 @@ class TestDeleteAccount:
         response = client.post(self.url, {"confirm-delete": True})
         assert response.url == settings.HOME_URL
         assert not User.objects.exists()
+
+
+class TestSocialAccountTemplates:
+    """Test overridden allauth account templates."""
+
+    def test_connections(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("socialaccount_connections")))
+
+
+class TestAccountTemplates:
+    """Test overridden allauth account templates."""
+
+    def test_email_verification_required(self, rf):
+        tmpl = get_template("account/verified_email_required.html")
+        tmpl.render({}, rf.get("/"))
+
+    def test_email_verification_sent(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("account_email_verification_sent")))
+
+    def test_email(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("account_email")))
+
+    def test_account_inactive(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("account_inactive")))
+
+    def test_password_change(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("account_change_password")))
+
+    def test_password_reset(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("account_reset_password")))
+
+    def test_password_reset_done(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("account_reset_password_done")))
+
+    def test_password_reset_from_key(self, client, auth_user, assert_ok):
+        assert_ok(
+            client.get(
+                reverse(
+                    "account_reset_password_from_key", args=[uuid.uuid4().hex, "test"]
+                )
+            )
+        )
+
+    def test_password_reset_from_key_done(self, client, auth_user, assert_ok):
+        assert_ok(client.get(reverse("account_reset_password_from_key_done")))
+
+    def test_password_set(self, client, db, assert_ok):
+        user = UserFactory()
+        user.set_password(None)
+        user.save()
+        client.force_login(user)
+        assert_ok(client.get(reverse("account_set_password")))
+
+    def test_login(self, db, client, assert_ok):
+        assert_ok(
+            client.get(
+                reverse("account_login"),
+                {
+                    REDIRECT_FIELD_NAME: "/podcasts/",
+                },
+            )
+        )
+
+    def test_signup(self, db, client, assert_ok):
+        assert_ok(
+            client.get(
+                reverse("account_signup"),
+                {
+                    REDIRECT_FIELD_NAME: "/podcasts/",
+                },
+            )
+        )

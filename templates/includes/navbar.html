@@ -25,20 +25,6 @@
                         href="{{ home_url }}">{{ site_name }}</a>
                 </li>
 
-                {% if debug %}
-                    <li>
-                        <div class="text-xs">
-                            <span class="sm:hidden">xs</span>
-                            <span class="hidden sm:inline-block md:hidden">sm</span>
-                            <span class="hidden md:inline-block md:hidden">md</span>
-                            <span class="hidden md:inline-block xl:hidden">lg</span>
-                            <span class="hidden xl:inline-block 2xl:hidden">xl</span>
-                            <span class="hidden 2xl:inline-block 3xl:hidden">2xl</span>
-                            <span class="hidden 3xl:inline-block">3xl+</span>
-                        </div>
-                    </li>
-                {% endif %}
-
             </ul>
 
             <form action="{% url 'podcasts:search_podcasts' %}"

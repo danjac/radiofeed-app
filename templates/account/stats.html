@@ -45,22 +45,6 @@
         {% endif %}
 
 
-        {% if stats.in_queue %}
-            <div class="flex justify-between pt-4">
-                <div class="w-1/2">{% translate "In Queue" %}</div>
-                <div class="w-1/2 font-bold text-right">
-                    <a href="{% url 'episodes:queue' %}"
-                        class="link font-bold underline">
-                        {% blocktranslate count counter=stats.in_queue %}
-                            1 episode
-                        {% plural %}
-                            {{ counter }} episodes
-                        {% endblocktranslate %}
-                    </a>
-                </div>
-            </div>
-        {% endif %}
-
         {% url 'episodes:history' as history_url %}
 
         {% if stats.listened %}

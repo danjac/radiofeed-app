@@ -26,6 +26,17 @@ class TestPodcasts:
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
 
+    def test_htmx(self, client, db, assert_ok):
+
+        PodcastFactory.create_batch(3, promoted=True)
+        response = client.get(
+            podcasts_url,
+            HTTP_HX_TARGET="layout",
+            HTTP_HX_REQUEST="true",
+        )
+        assert_ok(response)
+        assert len(response.context_data["page_obj"].object_list) == 3
+
     def test_empty(self, client, db, assert_ok):
         response = client.get(podcasts_url)
         assert_ok(response)
