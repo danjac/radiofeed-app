@@ -68,6 +68,10 @@ types-python-dateutil = "^2.8.18"
 mypy = "^0.961"
 django-silk = "^5.0.1"
 pytest-sugar = "^0.9.5"
+pytest-flake8 = "^1.1.1"
+pytest-mypy = "^0.9.1"
+flake8 = "^4.0.1"
+pytest-icdiff = "^0.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -123,7 +127,7 @@ omit=[
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings.test"
-addopts="-v -x --ff --reuse-db -p no:warnings --tb=short"
+addopts="-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --flake8"
 testpaths="radiofeed"
 
 [tool.mypy]
