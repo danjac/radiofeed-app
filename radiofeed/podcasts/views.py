@@ -242,18 +242,16 @@ def category_detail(
     category = get_object_or_404(Category, pk=category_id)
     podcasts = _get_podcasts().filter(categories=category).distinct()
 
-    podcasts = (
-        podcasts.search(request.search.value).order_by(
-            "-rank",
-            "-pub_date",
-        )
-        if request.search
-        else podcasts.order_by("-pub_date")
-    )
-
     return render_pagination_response(
         request,
-        podcasts,
+        (
+            podcasts.search(request.search.value).order_by(
+                "-rank",
+                "-pub_date",
+            )
+            if request.search
+            else podcasts.order_by("-pub_date")
+        ),
         "podcasts/category_detail.html",
         "podcasts/pagination/podcasts.html",
         {"category": category},
