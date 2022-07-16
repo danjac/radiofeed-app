@@ -191,7 +191,7 @@ msgstr ""
 #: templates/podcasts/detail_base.html:91
 #: templates/podcasts/detail_base.html:92
 msgid "About"
-msgstr ""
+msgstr "Tiedot"
 
 #: templates/about/base.html:9
 #, python-format
