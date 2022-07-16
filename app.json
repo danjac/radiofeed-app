@@ -1,14 +1,10 @@
 {
     "name": "Radiofeed Dokku deployment",
-    "addons": [
-        "dokku-letsencrypt",
-        "dokku-redis",
-        "dokku-postgres"
-    ],
+    "addons": ["dokku-letsencrypt", "dokku-redis", "dokku-postgres"],
     "env": {
         "DJANGO_SETTINGS_MODULE": "radiofeed.settings.production"
     },
-   "formation": {
+    "formation": {
         "web": {
             "quantity": 1
         },
@@ -18,24 +14,24 @@
     },
     "cron": [
         {
-          "command": "python manage.py feed_updater",
-          "schedule": "*/6 * * * *"
+            "command": "python manage.py feed_updater",
+            "schedule": "*/6 * * * *"
         },
         {
-          "command": "python manage.py recommender",
-          "schedule": "15 6 * * *"
+            "command": "python manage.py recommender",
+            "schedule": "15 6 * * *"
         },
         {
-          "command": "python manage.py recommender --email",
-          "schedule": "15 9 * * 1"
+            "command": "python manage.py recommender --email",
+            "schedule": "15 9 * * 1"
         },
         {
-          "command": "python manage.py itunes_crawler",
-          "schedule": "15 3 * * *"
+            "command": "python manage.py itunes_crawler",
+            "schedule": "15 3 * * *"
         },
         {
-          "command": "python manage.py clearsessions",
-          "schedule": "5 6 * * *"
+            "command": "python manage.py clearsessions",
+            "schedule": "5 6 * * *"
         }
     ]
 }
