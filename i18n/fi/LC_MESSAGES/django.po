@@ -236,7 +236,7 @@ msgstr ""
 
 #: templates/about/base.html:32 templates/about/base.html:33
 msgid "Shortcuts"
-msgstr "Pikanäppäiment"
+msgstr "Pikanäppäimet"
 
 #: templates/about/base.html:38
 msgid "Terms &amp; Conditions"
