@@ -1960,7 +1960,13 @@ msgid_plural ""
 "                            %(counter)s podcasts\n"
 "                        "
 msgstr[0] ""
+"\n"
+"                            1 podcast\n"
+"                        "
 msgstr[1] ""
+"\n"
+"                            %(counter)s podcastia\n"
+"                        "
 
 #: templates/account/stats.html:37 templates/account/stats.html:56
 #, python-format
@@ -1973,7 +1979,13 @@ msgid_plural ""
 "                            %(counter)s episodes\n"
 "                        "
 msgstr[0] ""
+"\n"
+"                            1 jakso\n"
+"                        "
 msgstr[1] ""
+"\n"
+"                            %(counter)s jaksoa\n"
+"                        "
 
 #: templates/account/stats.html:52 templates/episodes/timestamps.html:24
 msgid "Listened"
