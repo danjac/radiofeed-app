@@ -1793,20 +1793,20 @@ msgstr ""
 
 #: templates/account/import_export_podcast_feeds.html:9
 msgid "Export your podcast feeds to an OPML file."
-msgstr ""
+msgstr "Vie podcastisi OPML-tiedostoon."
 
 #: templates/account/import_export_podcast_feeds.html:19
 msgid "Download OPML"
-msgstr ""
+msgstr "Lataa OPML"
 
 #: templates/account/import_export_podcast_feeds.html:24
 msgid "Import feeds from an OPML file into your collection."
-msgstr ""
+msgstr "Tuo syötteitä OPML-tiedostosta kokoelmaasi."
 
 #: templates/account/login.html:7 templates/account/login.html:36
 #: templates/socialaccount/login.html:27
 msgid "Sign In"
-msgstr ""
+msgstr "Kirjaudu"
 
 #: templates/account/login.html:11
 #, python-format
@@ -1820,11 +1820,11 @@ msgstr ""
 
 #: templates/account/login.html:32
 msgid "Recover Your Password"
-msgstr ""
+msgstr "Hae salasanasi"
 
 #: templates/account/login.html:33 templates/account/password_change.html:16
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Unohditko salasanasi?"
 
 #: templates/account/password_change.html:4
 #: templates/account/password_change.html:21
@@ -1834,18 +1834,18 @@ msgstr ""
 #: templates/account/settings_base.html:42
 #: templates/account/settings_base.html:43
 msgid "Change Password"
-msgstr ""
+msgstr "Vaihda Salasana"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset_done.html:5
 #: templates/account/password_reset_done.html:8
 msgid "Password Reset"
-msgstr ""
+msgstr "Nollaa Salasana"
 
 #: templates/account/password_reset.html:27
 #: templates/account/password_reset_from_key.html:32
 msgid "Reset Password"
-msgstr ""
+msgstr "Nollaa Salasana"
 
 #: templates/account/password_reset_done.html:15
 msgid ""
@@ -1868,16 +1868,16 @@ msgstr ""
 #: templates/account/password_reset_from_key.html:38
 #: templates/account/password_reset_from_key_done.html:8
 msgid "Your password is now changed."
-msgstr ""
+msgstr "Salasana vaihdettu"
 
 #: templates/account/password_set.html:4 templates/account/password_set.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Aseta Salasana"
 
 #: templates/account/preferences.html:4 templates/account/settings_base.html:18
 #: templates/account/settings_base.html:19
 msgid "Preferences"
-msgstr ""
+msgstr "Asetukset"
 
 #: templates/account/settings_base.html:9 templates/includes/navbar.html:60
 #, python-format
@@ -1887,7 +1887,7 @@ msgstr "Asetukset: %(username)s"
 #: templates/account/settings_base.html:24
 #: templates/account/settings_base.html:25
 msgid "Import/Export OPML"
-msgstr "Tuo/Vie OPML"
+msgstr "OPML:in Tuonti/Vienti"
 
 #: templates/account/settings_base.html:30
 #: templates/account/settings_base.html:31 templates/account/stats.html:4
