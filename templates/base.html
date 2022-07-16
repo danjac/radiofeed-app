@@ -33,7 +33,7 @@ __________             .___.__        _____                 .___
 
         <link rel="stylesheet"
             media="screen"
-            href="{% static 'bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
+            href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
 
         <meta charset="UTF-8">
 
@@ -143,7 +143,7 @@ __________             .___.__        _____                 .___
 
         {% django_htmx_script %}
 
-        <script defer src="{% static 'bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
+        <script defer src="{% static 'dist/bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
 
         </body>
 

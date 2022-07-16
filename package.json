@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "watch:css": "NODE_ENV=production tailwindcss -i ./assets/css/app.css -o ./static/bundle.css --minify --watch --verbose",
+        "watch:css": "NODE_ENV=production tailwindcss -i ./static/css/app.css -o ./static/dist/bundle.css --minify --watch --verbose",
         "watch:js": "vite build --watch --mode=production"
     },
     "dependencies": {
