@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     "health_check.contrib.redis",
     "health_check.db",
     "huey.contrib.djhuey",
+    "modeltranslation",
     "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.feedparser",
@@ -261,6 +262,15 @@ HUEY = {
         "url": REDIS_URL,
     },
 }
+
+# Model translations
+# https://django-modeltranslation.readthedocs.io/en/latest/installation.html#configuration
+#
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
+
+MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
+
 
 # Project specific
 

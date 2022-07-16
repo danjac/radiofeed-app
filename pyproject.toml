@@ -48,6 +48,7 @@ django-fast-update = "^0.2.0"
 huey = "^2.4.3"
 attrs = "^21.4.0"
 django-rich-logging = "^0.1.1"
+django-modeltranslation = "^0.18.2"
 
 [tool.poetry.dev-dependencies]
 Faker = "^13.11.0"

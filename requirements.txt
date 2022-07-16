@@ -26,6 +26,7 @@ django-fast-update==0.2.0
 django-health-check==3.16.5
 django-htmx==1.12.0; python_version >= "3.7"
 django-model-utils==4.2.0
+django-modeltranslation==0.18.2
 django-object-actions==4.0.0; python_version >= "3.7" and python_version < "4.0"
 django-permissions-policy==4.12.0; python_version >= "3.7"
 django-postgres-metrics==0.13.1; python_version >= "3.6"

@@ -389,6 +389,18 @@ python-versions = "*"
 Django = ">=2.0.1"
 
 [[package]]
+name = "django-modeltranslation"
+version = "0.18.2"
+description = "Translates Django models using a registration approach."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Django = ">=2.2"
+six = "*"
+
+[[package]]
 name = "django-object-actions"
 version = "4.0.0"
 description = "A Django app for adding object tools for models in the admin"
@@ -1625,7 +1637,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "53cd83cf5eb4f4d77dc94589d265c23f71ecfd2fb0bd5c3f45590fe33cc97fe8"
+content-hash = "0e673bf1e9139a30ccbf4956225e4c6da63222cbb445cdd2ae5de349c9872d8d"
 
 [metadata.files]
 appnope = [
@@ -1892,6 +1904,7 @@ django-model-utils = [
     {file = "django-model-utils-4.2.0.tar.gz", hash = "sha256:e7a95e102f9c9653427eadab980d5d59e1dea972913b9c9e01ac37f86bba0ddf"},
     {file = "django_model_utils-4.2.0-py3-none-any.whl", hash = "sha256:a768a25c80514e0ad4e4a6f9c02c44498985f36c5dfdea47b5b1e8cf994beba6"},
 ]
+django-modeltranslation = []
 django-object-actions = [
     {file = "django-object-actions-4.0.0.tar.gz", hash = "sha256:e08f46ff4b41509d6647486ab2a2305692e80c126bdf9327b7a357d9724db53b"},
     {file = "django_object_actions-4.0.0-py3-none-any.whl", hash = "sha256:d87b4bb8a31e8485291acae39ceede40316091914d24bfb3073b54138f409313"},
