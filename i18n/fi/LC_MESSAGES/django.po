@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 09:25+0000\n"
+"POT-Creation-Date: 2022-07-16 10:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: radiofeed/episodes/models.py:208
+#, python-brace-format
+msgid "Episode {episode}"
+msgstr "Jakso {episode}"
+
+#: radiofeed/episodes/models.py:211
+#, python-brace-format
+msgid "Season {season}"
+msgstr "Kausi {season}"
 
 #: radiofeed/episodes/views.py:242
 msgid "Removed from History"
@@ -1685,7 +1695,6 @@ msgid ""
 "Please confirm that you want to delete your account. You will not be able to "
 "undo this action!"
 msgstr "Varmista, että haluat poistaa tilisi, et voi kumota tämä toiminto!"
-
 
 #: templates/account/delete_account.html:15
 msgid "Are you sure?"

@@ -16,6 +16,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
@@ -204,10 +205,10 @@ class Episode(models.Model):
                 info
                 for info in (
                     episode_type,
-                    f"Episode {self.episode}"
+                    _("Episode {episode}").format(episode=self.episode)
                     if self.episode and not episode_type
                     else None,
-                    f"Season {self.season}"
+                    _("Season {season}").format(season=self.season)
                     if self.season and not episode_type
                     else None,
                 )
