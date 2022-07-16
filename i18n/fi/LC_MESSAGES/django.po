@@ -127,7 +127,7 @@ msgstr "Valitse OPML-tiedosto"
 
 #: radiofeed/users/models.py:64
 msgid "Send email notifications"
-msgstr ""
+msgstr "Lähetä ilmauksia sähköpostilla"
 
 #: radiofeed/users/views.py:31
 msgid "Your preferences have been saved"
