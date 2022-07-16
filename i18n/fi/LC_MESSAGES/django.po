@@ -2121,11 +2121,11 @@ msgstr "Päivämäärä"
 
 #: templates/episodes/history.html:17 templates/podcasts/episodes.html:18
 msgid "Oldest First"
-msgstr "Uusimmat"
+msgstr "Vanhemmat"
 
 #: templates/episodes/history.html:20 templates/podcasts/episodes.html:21
 msgid "Newest First"
-msgstr "Vanhemmat"
+msgstr "Uusimmat"
 
 #: templates/episodes/history.html:25
 msgid "Search: History"
