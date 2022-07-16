@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 12:06+0000\n"
+"POT-Creation-Date: 2022-07-16 18:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,6 +91,11 @@ msgstr "Podcast(it) päivystysjonossa"
 msgid "Podcast has been queued for update"
 msgstr "Podcast päivystysjonossa"
 
+#: radiofeed/podcasts/emails.py:63
+#, python-brace-format
+msgid "Hi {username}, here are some new podcasts you might like!"
+msgstr "Hei {username}, tässä on uusia podcasteja, joista saatat pitää!"
+
 #: radiofeed/podcasts/models.py:121
 msgid "Success"
 msgstr "Menestys"
@@ -125,7 +130,7 @@ msgstr "Olet tilaanut podcastin"
 
 #: radiofeed/podcasts/views.py:303
 msgid "You are no longer subscribed to this podcast"
-msgstr "Olet peruttanut tilauksen podcastiin"
+msgstr "Olet lopettanut tilauksen podcastiin"
 
 #: radiofeed/users/forms.py:28
 msgid "I'd like to receive notications of new content and recommendations."
@@ -143,22 +148,22 @@ msgstr "Lähetä ilmauksia sähköpostilla"
 msgid "Language"
 msgstr "Kieli"
 
-#: radiofeed/users/views.py:31
+#: radiofeed/users/views.py:34
 msgid "Your preferences have been saved"
-msgstr "Asetukset päivitetty"
+msgstr "Asetuksesi tallennettu"
 
-#: radiofeed/users/views.py:72
+#: radiofeed/users/views.py:77
 #, python-format
 msgid "%(count)d podcast feed added to your collection"
 msgid_plural "%(count)d podcast feeds added to your collection"
 msgstr[0] "%(count)d podcast lisätty kokoelmaasi"
 msgstr[1] "%(count)d podcastia lisätty kokoelmaasi"
 
-#: radiofeed/users/views.py:79
+#: radiofeed/users/views.py:84
 msgid "No new podcasts found in uploaded file"
 msgstr "Ei uusia podcasteja löydetty tiedostosta"
 
-#: radiofeed/users/views.py:146
+#: radiofeed/users/views.py:151
 msgid "Your account has been deleted"
 msgstr "Tilisi on poistettu"
 
@@ -734,9 +739,8 @@ msgstr ""
 
 #: templates/about/shortcuts.html:81 templates/includes/sidebar.html:9
 #: templates/includes/sidebar.html:12 templates/podcasts/category_detail.html:4
-#: templates/podcasts/category_detail.html:12 templates/podcasts/detail.html:84
-#: templates/podcasts/index.html:4 templates/podcasts/search.html:4
-#: templates/search/search_base.html:17
+#: templates/podcasts/detail.html:84 templates/podcasts/index.html:4
+#: templates/podcasts/search.html:4 templates/search/search_base.html:17
 msgid "Podcasts"
 msgstr "Podcastit"
 
@@ -1722,7 +1726,7 @@ msgstr "Ensisijainen"
 
 #: templates/account/email.html:55
 msgid "Re-Verify"
-msgstr "Vahvista uudelleen"
+msgstr "Vahvista"
 
 #: templates/account/email.html:62 templates/socialaccount/connections.html:46
 msgid "Remove"
@@ -1798,11 +1802,11 @@ msgstr ""
 
 #: templates/account/forms/preferences.html:16
 msgid "Save Changes"
-msgstr "Päivitä Muutokset"
+msgstr "Tallenna Muutokset"
 
 #: templates/account/import_export_podcast_feeds.html:4
 msgid "Export"
-msgstr ""
+msgstr "Vie"
 
 #: templates/account/import_export_podcast_feeds.html:9
 msgid "Export your podcast feeds to an OPML file."
@@ -1814,7 +1818,7 @@ msgstr "Lataa OPML"
 
 #: templates/account/import_export_podcast_feeds.html:24
 msgid "Import feeds from an OPML file into your collection."
-msgstr "Tuo syötteitä OPML-tiedostosta kokoelmaasi."
+msgstr "Tuo podcast-syötteet OPML-tiedostosta kokoelmaasi."
 
 #: templates/account/login.html:7 templates/account/login.html:36
 #: templates/socialaccount/login.html:27
@@ -2084,7 +2088,7 @@ msgstr ""
 #: templates/episodes/bookmarks.html:16 templates/episodes/history.html:14
 #: templates/podcasts/episodes.html:15
 msgid "Search All Podcasts"
-msgstr ""
+msgstr "Hae kaikista podcasteista"
 
 #: templates/episodes/bookmarks.html:24
 msgid "Search: Bookmarks"
@@ -2344,7 +2348,7 @@ msgstr ""
 
 #: templates/podcasts/actions/subscribe.html:10
 msgid "Unsubscribe from this Podcast"
-msgstr "Lopeta tilaus podcastiin"
+msgstr "Lopeta podcastin tilaus"
 
 #: templates/podcasts/actions/subscribe.html:13
 msgid "Unsubscribe"
@@ -2370,6 +2374,11 @@ msgstr "Haku: Kategoriat"
 #: templates/podcasts/category_detail.html:8
 msgid "Search: "
 msgstr "Haku: "
+
+#: templates/podcasts/category_detail.html:12
+#, python-format
+msgid "%(category_name)s Podcasts"
+msgstr "Podcasts - %(category_name)s"
 
 #: templates/podcasts/category_detail.html:28
 msgid "Search All Categories"
