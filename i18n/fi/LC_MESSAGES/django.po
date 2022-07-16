@@ -1881,32 +1881,32 @@ msgstr ""
 #: templates/account/settings_base.html:9 templates/includes/navbar.html:60
 #, python-format
 msgid "Settings for %(username)s"
-msgstr ""
+msgstr "Asetukset: %(username)s"
 
 #: templates/account/settings_base.html:24
 #: templates/account/settings_base.html:25
 msgid "Import/Export OPML"
-msgstr ""
+msgstr "Tuo/Vie OPML"
 
 #: templates/account/settings_base.html:30
 #: templates/account/settings_base.html:31 templates/account/stats.html:4
 msgid "Statistics"
-msgstr ""
+msgstr "Tilastot"
 
 #: templates/account/settings_base.html:36
 #: templates/account/settings_base.html:37
 msgid "Email Addresses"
-msgstr ""
+msgstr "Sähköpostiosoitteet"
 
 #: templates/account/settings_base.html:48
 #: templates/account/settings_base.html:49
 #: templates/socialaccount/connections.html:4
 msgid "Social Logins"
-msgstr ""
+msgstr "Sotetilit"
 
 #: templates/account/signup.html:4 templates/socialaccount/signup.html:4
 msgid "Signup"
-msgstr ""
+msgstr "Rekisteröidy"
 
 #: templates/account/signup.html:13
 #, python-format
@@ -1920,7 +1920,7 @@ msgstr ""
 
 #: templates/account/signup.html:37 templates/socialaccount/signup.html:28
 msgid "Sign Up"
-msgstr ""
+msgstr "Rekisteröidy"
 
 #: templates/account/signup.html:46
 #, python-format
@@ -1933,11 +1933,11 @@ msgstr ""
 
 #: templates/account/social_logins.html:5
 msgid "Login or Sign up with"
-msgstr ""
+msgstr "Kirjaudu tai rekisteröidy"
 
 #: templates/account/stats.html:11
 msgid "Joined"
-msgstr ""
+msgstr "Rekisteröity"
 
 #: templates/account/stats.html:21
 #, python-format
@@ -1974,7 +1974,7 @@ msgstr "Kuunneltu"
 #: templates/account/verified_email_required.html:5
 #: templates/account/verified_email_required.html:8
 msgid "Verify Your E-mail Address"
-msgstr ""
+msgstr "Vahvista Sähköpostiosoite"
 
 #: templates/account/verification_sent.html:9
 msgid ""
