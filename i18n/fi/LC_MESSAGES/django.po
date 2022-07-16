@@ -2155,7 +2155,7 @@ msgstr "Haku: Historia"
 #: templates/podcasts/index.html:4 templates/podcasts/index.html:14
 #: templates/podcasts/index.html:20
 msgid "My Podcasts"
-msgstr "Podcastini"
+msgstr "Minun Podcastit"
 
 #: templates/episodes/index.html:17 templates/episodes/index.html:35
 msgid "Find an episode..."
