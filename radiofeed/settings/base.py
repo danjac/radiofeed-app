@@ -170,8 +170,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 LANGUAGE_CODE = "en"
 LANGUAGES = [
-    ("en", "English (US)"),
-    ("en-gb", "English (GB)"),
+    ("en", "English"),
     ("fi", "Finnish"),
 ]
 LANGUAGE_COOKIE_DOMAIN = env("LANGUAGE_COOKIE_DOMAIN", default=None)
@@ -268,7 +267,6 @@ HUEY = {
 #
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
-
 MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
 
 
