@@ -171,6 +171,7 @@ LANGUAGE_CODE = "en"
 LANGUAGES = [
     ("en", "English (US)"),
     ("en-gb", "English (GB)"),
+    ("fi", "Finnish"),
 ]
 LANGUAGE_COOKIE_DOMAIN = env("LANGUAGE_COOKIE_DOMAIN", default=None)
 LANGUAGE_COOKIE_SAMESITE = "Lax"

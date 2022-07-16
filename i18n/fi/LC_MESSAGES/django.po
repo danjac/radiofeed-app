@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 08:16+0000\n"
+"POT-Creation-Date: 2022-07-16 08:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -185,7 +185,7 @@ msgid ""
 "notified."
 msgstr ""
 
-#: templates/about/base.html:4 templates/about/shortcuts.html:113
+#: templates/about/base.html:4 templates/about/shortcuts.html:105
 #: templates/includes/navbar.html:88 templates/includes/sidebar.html:72
 #: templates/includes/sidebar.html:75 templates/podcasts/detail.html:4
 #: templates/podcasts/detail_base.html:91
@@ -704,7 +704,7 @@ msgstr ""
 #: templates/podcasts/index.html:4 templates/podcasts/search.html:4
 #: templates/search/search_base.html:17
 msgid "Podcasts"
-msgstr ""
+msgstr "Podcastit"
 
 #: templates/about/shortcuts.html:85 templates/episodes/index.html:4
 #: templates/episodes/index.html:10 templates/includes/sidebar.html:19
@@ -717,47 +717,42 @@ msgstr "Uudet Episodit"
 #: templates/podcasts/categories.html:9
 #: templates/podcasts/category_detail.html:4
 msgid "Categories"
-msgstr ""
+msgstr "Kategoriat"
 
-#: templates/about/shortcuts.html:93
-msgid "Discover"
-msgstr ""
+#: templates/about/shortcuts.html:93 templates/account/stats.html:33
+#: templates/episodes/bookmarks.html:4 templates/episodes/bookmarks.html:9
+#: templates/episodes/bookmarks.html:19 templates/includes/sidebar.html:39
+#: templates/includes/sidebar.html:42
+msgid "Bookmarks"
+msgstr "Kirjanmerkit"
 
-#: templates/about/shortcuts.html:97
-msgid "Play Queue"
-msgstr ""
-
-#: templates/about/shortcuts.html:101
-msgid "Favorites"
-msgstr ""
-
-#: templates/about/shortcuts.html:105 templates/episodes/history.html:4
+#: templates/about/shortcuts.html:97 templates/episodes/history.html:4
 #: templates/episodes/history.html:8 templates/includes/sidebar.html:50
 #: templates/includes/sidebar.html:53
 msgid "History"
-msgstr ""
+msgstr "Historia"
 
-#: templates/about/shortcuts.html:109 templates/account/settings_base.html:4
+#: templates/about/shortcuts.html:101 templates/account/settings_base.html:4
 #: templates/includes/sidebar.html:61 templates/includes/sidebar.html:64
 msgid "Settings"
-msgstr ""
+msgstr "Asetukset"
 
-#: templates/about/shortcuts.html:117 templates/episodes/search.html:4
+#: templates/about/shortcuts.html:109 templates/episodes/search.html:4
 #: templates/includes/navbar.html:43 templates/includes/navbar.html:44
 #: templates/includes/navbar.html:49 templates/includes/navbar.html:117
 #: templates/includes/navbar.html:118 templates/includes/navbar.html:122
 #: templates/podcasts/itunes_search.html:4 templates/podcasts/search.html:4
 #: templates/search/search_form.html:12 templates/search/search_form.html:26
 msgid "Search"
-msgstr ""
+msgstr "Haku"
 
-#: templates/about/shortcuts.html:121
+#: templates/about/shortcuts.html:113
 msgid "Login/Logout"
-msgstr ""
+msgstr "Kirjaudu sisään/ulos"
 
-#: templates/about/shortcuts.html:125
+#: templates/about/shortcuts.html:117
 msgid "Join"
-msgstr ""
+msgstr "Luo tili"
 
 #: templates/about/terms.html:12
 msgid "Last updated"
@@ -951,7 +946,7 @@ msgstr ""
 
 #: templates/about/terms.html:144
 msgid "Email address"
-msgstr ""
+msgstr "Sähköpostiosoite"
 
 #: templates/about/terms.html:145 templates/about/terms.html:148
 msgid "Usage Data"
@@ -1937,12 +1932,6 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/account/stats.html:33 templates/episodes/bookmarks.html:4
-#: templates/episodes/bookmarks.html:9 templates/episodes/bookmarks.html:19
-#: templates/includes/sidebar.html:39 templates/includes/sidebar.html:42
-msgid "Bookmarks"
-msgstr ""
-
 #: templates/account/stats.html:37 templates/account/stats.html:56
 #, python-format
 msgid ""
@@ -2023,11 +2012,11 @@ msgstr ""
 
 #: templates/episodes/actions/player.html:13 templates/episodes/player.html:98
 msgid "Close Player"
-msgstr ""
+msgstr "Sulje Soitin"
 
 #: templates/episodes/actions/player.html:15
 msgid "Close"
-msgstr ""
+msgstr "Sulje"
 
 #: templates/episodes/actions/player.html:23
 msgid "Open Episode in Player"
@@ -2036,7 +2025,7 @@ msgstr ""
 #: templates/episodes/actions/player.html:25
 #: templates/episodes/actions/player.html:37 templates/episodes/player.html:90
 msgid "Play"
-msgstr ""
+msgstr "Soita"
 
 #: templates/episodes/actions/player.html:35
 msgid "You must sign up or log in to play this episode"
@@ -2053,7 +2042,7 @@ msgstr ""
 
 #: templates/episodes/bookmarks.html:24
 msgid "Search: Bookmarks"
-msgstr ""
+msgstr "Haku: Kirjanmerkit"
 
 #: templates/episodes/detail.html:89 templates/includes/pagination_links.html:5
 msgid "Pagination"
@@ -2063,7 +2052,7 @@ msgstr ""
 #: templates/includes/pagination_links.html:13
 #: templates/includes/pagination_links.html:20
 msgid "Previous"
-msgstr ""
+msgstr "Edellinen"
 
 #: templates/episodes/detail.html:101 templates/episodes/detail.html:113
 msgid "No more episodes"
@@ -2073,7 +2062,7 @@ msgstr ""
 #: templates/includes/pagination_links.html:29
 #: templates/includes/pagination_links.html:36
 msgid "Next"
-msgstr ""
+msgstr "Seuraava"
 
 #: templates/episodes/detail.html:120
 #, python-format
@@ -2082,7 +2071,7 @@ msgstr ""
 
 #: templates/episodes/detail.html:150
 msgid "Download"
-msgstr ""
+msgstr "Lataa"
 
 #: templates/episodes/detail.html:174
 msgid "May contain adult themes and language. Listener discretion advised."
@@ -2090,11 +2079,11 @@ msgstr ""
 
 #: templates/episodes/detail.html:177
 msgid "Explicit"
-msgstr ""
+msgstr "Varoitus"
 
 #: templates/episodes/detail.html:192 templates/podcasts/detail.html:40
 msgid "Website"
-msgstr ""
+msgstr "Kotisivu"
 
 #: templates/episodes/episode.html:28 templates/episodes/timestamps.html:6
 msgid "Release Date"
@@ -2102,21 +2091,21 @@ msgstr ""
 
 #: templates/episodes/history.html:17 templates/podcasts/episodes.html:18
 msgid "Oldest First"
-msgstr ""
+msgstr "Uusimmat"
 
 #: templates/episodes/history.html:20 templates/podcasts/episodes.html:21
 msgid "Newest First"
-msgstr ""
+msgstr "Vanhemmat"
 
 #: templates/episodes/history.html:25
 msgid "Search: History"
-msgstr ""
+msgstr "Haku: Historia"
 
 #: templates/episodes/index.html:12 templates/episodes/index.html:27
 #: templates/podcasts/index.html:4 templates/podcasts/index.html:14
 #: templates/podcasts/index.html:20
 msgid "My Podcasts"
-msgstr ""
+msgstr "Minun Podcastini"
 
 #: templates/episodes/index.html:17 templates/episodes/index.html:35
 msgid "Find an episode..."
@@ -2136,11 +2125,11 @@ msgstr ""
 
 #: templates/episodes/player.html:61 templates/episodes/player.html:141
 msgid "Error"
-msgstr ""
+msgstr "Virhe"
 
 #: templates/episodes/player.html:81
 msgid "Pause"
-msgstr ""
+msgstr "Paussi"
 
 #: templates/episodes/player.html:150 templates/episodes/player.html:170
 msgid "Skip Back 10 Seconds"
@@ -2158,19 +2147,19 @@ msgstr ""
 #: templates/podcasts/detail_base.html:102 templates/podcasts/episodes.html:4
 #: templates/search/search_base.html:23
 msgid "Episodes"
-msgstr ""
+msgstr "Episodit"
 
 #: templates/episodes/timestamps.html:11
 msgid "Completed"
-msgstr ""
+msgstr "Kuunneteltu loppuun"
 
 #: templates/episodes/timestamps.html:15
 msgid "Duration"
-msgstr ""
+msgstr "Pituus"
 
 #: templates/error_base.html:50 templates/includes/navbar.html:24
 msgid "Home Page"
-msgstr ""
+msgstr "Kotisivu"
 
 #: templates/error_base.html:60
 msgid "An error has occurred"
@@ -2182,15 +2171,15 @@ msgstr ""
 
 #: templates/includes/cookie_notice.html:10
 msgid "Terms and Conditions"
-msgstr ""
+msgstr "Käyttöehdot"
 
 #: templates/includes/cookie_notice.html:11
 msgid "Learn more"
-msgstr ""
+msgstr "Lue lisää"
 
 #: templates/includes/cookie_notice.html:19
 msgid "Got it!"
-msgstr ""
+msgstr "Ymmärrään!"
 
 #: templates/includes/empty.html:4
 #, python-format
@@ -2207,7 +2196,7 @@ msgstr ""
 
 #: templates/includes/footer.html:17
 msgid "Source Code"
-msgstr ""
+msgstr "Lähdekoodi"
 
 #: templates/includes/footer.html:25
 msgid "Report an Issue"
@@ -2226,7 +2215,7 @@ msgstr ""
 
 #: templates/includes/navbar.html:67 templates/includes/navbar.html:74
 msgid "Toggle Menu"
-msgstr ""
+msgstr "Vaihda Valikko"
 
 #: templates/includes/navbar.html:84
 msgid "About this Site"
@@ -2238,30 +2227,30 @@ msgstr ""
 #: templates/includes/pagination_links.html:28
 #, python-format
 msgid "Page %(page_number)s"
-msgstr ""
+msgstr "Sivu %(page_number)s"
 
 #: templates/includes/pagination_links.html:18
 #: templates/includes/pagination_links.html:19
 #: templates/includes/pagination_links.html:34
 #: templates/includes/pagination_links.html:35
 msgid "No More Pages"
-msgstr ""
+msgstr "Viimeinen Sivu"
 
 #: templates/includes/share_buttons.html:8
 msgid "Share with Email"
-msgstr ""
+msgstr "Jaa Sähköpostilla"
 
 #: templates/includes/share_buttons.html:16
 msgid "Share on Facebook"
-msgstr ""
+msgstr "Jaa Facebookissa"
 
 #: templates/includes/share_buttons.html:24
 msgid "Share on Twitter"
-msgstr ""
+msgstr "Jaa Twitterissa"
 
 #: templates/includes/share_buttons.html:31
 msgid "Share on Linkedin"
-msgstr ""
+msgstr "Jaa Linkedinissa"
 
 #: templates/includes/share_buttons.html:35
 msgid "Copy link to Clipboard"
@@ -2273,7 +2262,7 @@ msgstr ""
 
 #: templates/includes/sidebar.html:86 templates/includes/sidebar.html:89
 msgid "Logout"
-msgstr ""
+msgstr "Kirjaudu ulos"
 
 #: templates/includes/signup_cta.html:9
 #, python-format
@@ -2292,20 +2281,20 @@ msgstr ""
 
 #: templates/podcasts/actions/subscribe.html:10
 msgid "Unsubscribe from this Podcast"
-msgstr ""
+msgstr "Peruuta tilaus"
 
 #: templates/podcasts/actions/subscribe.html:13
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Peruuta"
 
 #: templates/podcasts/actions/subscribe.html:17
 msgid "Subscribe to this Podcast"
-msgstr ""
+msgstr "Tilaa Podcast"
 
 #: templates/podcasts/actions/subscribe.html:20
 #: templates/podcasts/actions/subscribe.html:31
 msgid "Subscribe"
-msgstr ""
+msgstr "Tilaa"
 
 #: templates/podcasts/actions/subscribe.html:29
 msgid "Log in or sign up to subscribe to this podcast"
@@ -2317,11 +2306,11 @@ msgstr ""
 
 #: templates/podcasts/category_detail.html:8
 msgid "Search: "
-msgstr ""
+msgstr "Haku: "
 
 #: templates/podcasts/category_detail.html:28
 msgid "Search All Categories"
-msgstr ""
+msgstr "Etsi Kaikista Kategoreista"
 
 #: templates/podcasts/detail.html:46
 msgid "RSS"
@@ -2329,7 +2318,7 @@ msgstr ""
 
 #: templates/podcasts/detail.html:52
 msgid "Admin"
-msgstr ""
+msgstr "Hallinto"
 
 #: templates/podcasts/detail.html:74
 msgid "Latest episode released"
@@ -2338,7 +2327,7 @@ msgstr ""
 #: templates/podcasts/detail_base.html:112
 #: templates/podcasts/detail_base.html:113 templates/podcasts/similar.html:4
 msgid "Similar"
-msgstr ""
+msgstr "Samanlaiset"
 
 #: templates/podcasts/emails/recommendations.html:4
 #: templates/podcasts/emails/recommendations.txt:4
@@ -2347,23 +2336,23 @@ msgstr ""
 
 #: templates/podcasts/episodes.html:27
 msgid "Search: Episodes"
-msgstr ""
+msgstr "Haku: Episodit"
 
 #: templates/podcasts/itunes_feed.html:25
 msgid "Adding podcast to database..."
-msgstr ""
+msgstr "Lisätään podcastin tietokantaan..."
 
 #: templates/podcasts/podcast.html:24 templates/podcasts/podcast.html:26
 msgid "Latest Episode"
-msgstr ""
+msgstr "Viimeinen Episodi"
 
 #: templates/search/search_base.html:16
 msgid "Search Podcasts"
-msgstr ""
+msgstr "Etsi Podcasteista"
 
 #: templates/search/search_base.html:28
 msgid "Search iTunes"
-msgstr ""
+msgstr "Etsi iTunesista"
 
 #: templates/search/search_base.html:29
 msgid "iTunes"
