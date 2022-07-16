@@ -710,7 +710,7 @@ msgstr "Podcastit"
 #: templates/episodes/index.html:10 templates/includes/sidebar.html:19
 #: templates/includes/sidebar.html:22
 msgid "New Releases"
-msgstr "Uudet Episodit"
+msgstr "Uudet jaskot"
 
 #: templates/about/shortcuts.html:89 templates/includes/sidebar.html:29
 #: templates/includes/sidebar.html:32 templates/podcasts/categories.html:4
@@ -2147,7 +2147,7 @@ msgstr ""
 #: templates/podcasts/detail_base.html:102 templates/podcasts/episodes.html:4
 #: templates/search/search_base.html:23
 msgid "Episodes"
-msgstr "Episodit"
+msgstr "jaskot"
 
 #: templates/episodes/timestamps.html:11
 msgid "Completed"
@@ -2278,6 +2278,17 @@ msgid ""
 "                to follow your favorite podcasts and listen to episodes!\n"
 "            "
 msgstr ""
+"\n"
+"                <a class=\"%(css_class)s\"\n"
+"                    hx-disable=\"true\"\n"
+"                    href=\"%(signup_url)s\">Kirjaudu</a>\n"
+"                tai\n"
+"                <a class=\"%(css_class)s\"\n"
+"                    hx-disable=\"true\"\n"
+"                    href=\"%(login_url)s\">rekisteröidy</a>\n"
+"                  seurataksesi suosikkipodcastejasi ja kuunnellaksesi jaksoja!\n"
+"            "
+
 
 #: templates/podcasts/actions/subscribe.html:10
 msgid "Unsubscribe from this Podcast"
@@ -2322,7 +2333,7 @@ msgstr "Hallinto"
 
 #: templates/podcasts/detail.html:74
 msgid "Latest episode released"
-msgstr "Viimeinen episodi julkaistu"
+msgstr "Viimeinen jakso julkaistu"
 
 #: templates/podcasts/detail_base.html:112
 #: templates/podcasts/detail_base.html:113 templates/podcasts/similar.html:4
@@ -2336,7 +2347,7 @@ msgstr ""
 
 #: templates/podcasts/episodes.html:27
 msgid "Search: Episodes"
-msgstr "Haku: Episodit"
+msgstr "Haku: Jaksot"
 
 #: templates/podcasts/itunes_feed.html:25
 msgid "Adding podcast to database..."
@@ -2344,7 +2355,7 @@ msgstr "Lisätään podcastin tietokantaan..."
 
 #: templates/podcasts/podcast.html:24 templates/podcasts/podcast.html:26
 msgid "Latest Episode"
-msgstr "Viimeinen Episodi"
+msgstr "Viimeinen Jakso"
 
 #: templates/search/search_base.html:16
 msgid "Search Podcasts"
