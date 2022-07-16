@@ -8,8 +8,16 @@ from django.template.loader import get_template
 
 
 @pytest.fixture
-def req(rf):
-    return rf.get("/")
+def req(rf, anonymous_user):
+    req = rf.get("/")
+    req.user = anonymous_user
+    return req
+
+
+@pytest.fixture
+def auth_req(req, user):
+    req.user = user
+    return req
 
 
 @dataclasses.dataclass
@@ -19,6 +27,20 @@ class PageObj:
     has_previous: bool = False
     next_page_number: int = 0
     previous_page_number: int = 0
+
+
+class TestNavbar:
+    @pytest.fixture
+    def tmpl(self):
+        return get_template("includes/navbar.html")
+
+    def test_authenticated(self, tmpl, auth_req):
+        rendered = tmpl.render({}, request=auth_req)
+        assert auth_req.user.username in rendered
+
+    def test_anonymous(self, tmpl, req):
+        rendered = tmpl.render({}, request=req)
+        assert "About this Site" in rendered
 
 
 class TestPaginationLinks:
