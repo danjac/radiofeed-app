@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.views.decorators.http import require_http_methods
+from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
@@ -29,6 +30,7 @@ def user_preferences(
         form.save()
 
         messages.success(request, _("Your preferences have been saved"))
+        return HttpResponseClientRedirect(request.path)
 
     return TemplateResponse(
         request,

@@ -17,6 +17,8 @@ def send_user_notification_email(
 ) -> None:
     """Common function for sending any notifications to a user.
 
+    NOTE: should be run under `django.utils.translation.override` to ensure the correct translations for the entire email message.
+
     Args:
         recipient: email recipient
         subject: email subject line

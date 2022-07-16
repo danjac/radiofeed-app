@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from django.utils.translation import gettext as _
+from django.utils.translation import override
+
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.emails import send_user_notification_email
@@ -53,14 +56,18 @@ def send_recommendations_email(
 
     user.recommended_podcasts.add(*podcasts)
 
-    send_user_notification_email(
-        user,
-        f"Hi {user.username}, here are some new podcasts you might like!",
-        "podcasts/emails/recommendations.txt",
-        "podcasts/emails/recommendations.html",
-        {
-            "podcasts": podcasts,
-        },
-    )
+    with override(user.language):
+
+        send_user_notification_email(
+            user,
+            _("Hi {username}, here are some new podcasts you might like!").format(
+                username=user.username
+            ),
+            "podcasts/emails/recommendations.txt",
+            "podcasts/emails/recommendations.html",
+            {
+                "podcasts": podcasts,
+            },
+        )
 
     return True

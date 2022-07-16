@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 10:53+0000\n"
+"POT-Creation-Date: 2022-07-16 12:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -127,17 +127,21 @@ msgstr "Olet tilaanut podcastin"
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet peruttanut tilauksen podcastiin"
 
-#: radiofeed/users/forms.py:25
+#: radiofeed/users/forms.py:28
 msgid "I'd like to receive notications of new content and recommendations."
 msgstr "Haluan ilmauksia uusista suosituksista"
 
-#: radiofeed/users/forms.py:34
+#: radiofeed/users/forms.py:37
 msgid "Select OPML file"
 msgstr "Valitse OPML-tiedosto"
 
-#: radiofeed/users/models.py:64
+#: radiofeed/users/models.py:65
 msgid "Send email notifications"
 msgstr "Lähetä ilmauksia sähköpostilla"
+
+#: radiofeed/users/models.py:72
+msgid "Language"
+msgstr "Kieli"
 
 #: radiofeed/users/views.py:31
 msgid "Your preferences have been saved"

@@ -66,7 +66,10 @@ class User(AbstractUser):
     )
 
     language: str = models.CharField(
-        max_length=2, choices=settings.LANGUAGES, default="en"
+        max_length=2,
+        choices=settings.LANGUAGES,
+        default="en",
+        verbose_name=_("Language"),
     )
 
     objects: models.Manager["User"] = UserManager()

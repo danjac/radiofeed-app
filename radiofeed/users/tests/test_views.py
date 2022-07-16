@@ -31,7 +31,7 @@ class TestUserPreferences:
             self.url,
             {
                 "send_email_notifications": False,
-                "autoplay": True,
+                "language": "en",
             },
             HTTP_HX_TARGET="preferences-form",
         )

@@ -116,6 +116,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "radiofeed.users.middleware.LanguageMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -171,7 +172,7 @@ SOCIALACCOUNT_PROVIDERS = {
 LANGUAGE_CODE = "en"
 LANGUAGES = [
     ("en", "English"),
-    ("fi", "Finnish"),
+    ("fi", "Suomi"),
 ]
 LANGUAGE_COOKIE_DOMAIN = env("LANGUAGE_COOKIE_DOMAIN", default=None)
 LANGUAGE_COOKIE_SAMESITE = "Lax"
