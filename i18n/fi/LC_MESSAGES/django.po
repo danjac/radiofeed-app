@@ -1947,7 +1947,7 @@ msgstr[1] ""
 
 #: templates/account/stats.html:52 templates/episodes/timestamps.html:24
 msgid "Listened"
-msgstr ""
+msgstr "Kuunneltu"
 
 #: templates/account/verification_sent.html:4
 #: templates/account/verification_sent.html:7
@@ -2151,11 +2151,11 @@ msgstr "Episodit"
 
 #: templates/episodes/timestamps.html:11
 msgid "Completed"
-msgstr "Kuunneteltu loppuun"
+msgstr "Kuunnetltu loppuun"
 
 #: templates/episodes/timestamps.html:15
 msgid "Duration"
-msgstr "Pituus"
+msgstr "Kesto"
 
 #: templates/error_base.html:50 templates/includes/navbar.html:24
 msgid "Home Page"
@@ -2163,11 +2163,11 @@ msgstr "Kotisivu"
 
 #: templates/error_base.html:60
 msgid "An error has occurred"
-msgstr ""
+msgstr "Virhe on tapahtunut"
 
 #: templates/includes/cookie_notice.html:8
 msgid "This site uses cookies to ensure you get the best experience."
-msgstr ""
+msgstr "Tämä sivusto käyttää evästeitä varmistaakseen, että saat parhaan käyttökokemuksen."
 
 #: templates/includes/cookie_notice.html:10
 msgid "Terms and Conditions"
@@ -2192,7 +2192,7 @@ msgstr ""
 
 #: templates/includes/empty.html:8
 msgid "Nothing to see here."
-msgstr ""
+msgstr "Ei tuloksia"
 
 #: templates/includes/footer.html:17
 msgid "Source Code"
@@ -2200,7 +2200,7 @@ msgstr "Lähdekoodi"
 
 #: templates/includes/footer.html:25
 msgid "Report an Issue"
-msgstr ""
+msgstr "Ilmoita Ongelma"
 
 #: templates/includes/footer.html:32
 #, python-format
@@ -2219,7 +2219,7 @@ msgstr "Vaihda Valikko"
 
 #: templates/includes/navbar.html:84
 msgid "About this Site"
-msgstr ""
+msgstr "Tiedot Sivustosta"
 
 #: templates/includes/pagination_links.html:11
 #: templates/includes/pagination_links.html:12
@@ -2254,11 +2254,11 @@ msgstr "Jaa Linkedinissa"
 
 #: templates/includes/share_buttons.html:35
 msgid "Copy link to Clipboard"
-msgstr ""
+msgstr "Kopioi linkki Leikepödälle"
 
 #: templates/includes/share_buttons.html:46
 msgid "Copied link to Clipboard"
-msgstr ""
+msgstr "Linkki kopioittu Leikepödälle"
 
 #: templates/includes/sidebar.html:86 templates/includes/sidebar.html:89
 msgid "Logout"
@@ -2360,11 +2360,11 @@ msgstr ""
 
 #: templates/search/search_base.html:34
 msgid "Search..."
-msgstr ""
+msgstr "Haku"
 
 #: templates/search/search_form.html:19
 msgid "Clear Search"
-msgstr ""
+msgstr "Poita haku"
 
 #: templates/socialaccount/connections.html:11
 msgid ""
