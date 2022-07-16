@@ -2322,7 +2322,7 @@ msgstr "Hallinto"
 
 #: templates/podcasts/detail.html:74
 msgid "Latest episode released"
-msgstr ""
+msgstr "Viimeinen episodi julkaistu"
 
 #: templates/podcasts/detail_base.html:112
 #: templates/podcasts/detail_base.html:113 templates/podcasts/similar.html:4
