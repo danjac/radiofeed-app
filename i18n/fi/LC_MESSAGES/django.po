@@ -2378,7 +2378,7 @@ msgstr "Haku: "
 #: templates/podcasts/category_detail.html:12
 #, python-format
 msgid "%(category_name)s Podcasts"
-msgstr "Podcasts - %(category_name)s"
+msgstr "Podcastit - %(category_name)s"
 
 #: templates/podcasts/category_detail.html:28
 msgid "Search All Categories"
