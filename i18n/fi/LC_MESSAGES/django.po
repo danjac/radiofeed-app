@@ -1678,45 +1678,46 @@ msgstr ""
 #: templates/account/settings_base.html:54
 #: templates/account/settings_base.html:55
 msgid "Delete Account"
-msgstr ""
+msgstr "Poista tili"
 
 #: templates/account/delete_account.html:9
 msgid ""
 "Please confirm that you want to delete your account. You will not be able to "
 "undo this action!"
-msgstr ""
+msgstr "Varmista, että haluat poistaa tilisi, et voi kumota tämä toiminto!"
+
 
 #: templates/account/delete_account.html:15
 msgid "Are you sure?"
-msgstr ""
+msgstr "Oletko varma?"
 
 #: templates/account/delete_account.html:22
 msgid "Yes, delete my account"
-msgstr ""
+msgstr "Kyllä, poista tilini"
 
 #: templates/account/email.html:4
 msgid "E-mail Addresses"
-msgstr ""
+msgstr "Sähköpostiosoitteet"
 
 #: templates/account/email.html:9
 msgid "The following e-mail addresses are associated with your account:"
-msgstr ""
+msgstr "Seuraavat sähköpostiosoitteet on liitetty tiliisi:"
 
 #: templates/account/email.html:48
 msgid "Primary"
-msgstr ""
+msgstr "Ensisijainen"
 
 #: templates/account/email.html:55
 msgid "Re-Verify"
-msgstr ""
+msgstr "Vahvista uudelleen"
 
 #: templates/account/email.html:62 templates/socialaccount/connections.html:46
 msgid "Remove"
-msgstr ""
+msgstr "Poista"
 
 #: templates/account/email.html:71
 msgid "Warning:"
-msgstr ""
+msgstr "Varoitus:"
 
 #: templates/account/email.html:72
 msgid ""
@@ -1729,16 +1730,16 @@ msgstr ""
 
 #: templates/account/email.html:81
 msgid "Add New E-mail Address"
-msgstr ""
+msgstr "Lisää Sähköpostiosoite"
 
 #: templates/account/email.html:94
 msgid "Add E-Mail"
-msgstr ""
+msgstr "Lisää Sähköpostiosoite"
 
 #: templates/account/email_confirm.html:5
 #: templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
-msgstr ""
+msgstr "Vahvista Sähköpostiosoite"
 
 #: templates/account/email_confirm.html:14
 #, python-format
@@ -1751,7 +1752,7 @@ msgstr ""
 
 #: templates/account/email_confirm.html:30
 msgid "Confirm E-Mail"
-msgstr ""
+msgstr "Vahvista Sähköpostiosoite"
 
 #: templates/account/email_confirm.html:37
 #, python-format
@@ -1784,7 +1785,7 @@ msgstr ""
 
 #: templates/account/forms/preferences.html:16
 msgid "Save Changes"
-msgstr ""
+msgstr "Päivitä Muutokset"
 
 #: templates/account/import_export_podcast_feeds.html:4
 msgid "Export"
