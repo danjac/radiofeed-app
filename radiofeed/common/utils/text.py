@@ -53,10 +53,10 @@ _CORPORATE_STOPWORDS: Final = [
     "itunes",
 ]
 
+_STOPWORDS_DIR = settings.BASE_DIR / "stopwords"
+
 _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
-
-_stopwords_dir = settings.BASE_DIR / "stopwords"
 
 
 @lru_cache()
@@ -121,7 +121,7 @@ def _get_date_stopwords(language: str) -> Iterator[str]:
 
 
 def _get_extra_stopwords(language: str) -> list[str]:
-    path = _stopwords_dir / f"stopwords_{language}.txt"
+    path = _STOPWORDS_DIR / f"stopwords_{language}.txt"
 
     return (
         [
