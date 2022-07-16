@@ -710,7 +710,7 @@ msgstr "Podcastit"
 #: templates/episodes/index.html:10 templates/includes/sidebar.html:19
 #: templates/includes/sidebar.html:22
 msgid "New Releases"
-msgstr "Uudet jaskot"
+msgstr "Uudet jaksot"
 
 #: templates/about/shortcuts.html:89 templates/includes/sidebar.html:29
 #: templates/includes/sidebar.html:32 templates/podcasts/categories.html:4
@@ -2147,7 +2147,7 @@ msgstr ""
 #: templates/podcasts/detail_base.html:102 templates/podcasts/episodes.html:4
 #: templates/search/search_base.html:23
 msgid "Episodes"
-msgstr "jaskot"
+msgstr "jaksot"
 
 #: templates/episodes/timestamps.html:11
 msgid "Completed"
