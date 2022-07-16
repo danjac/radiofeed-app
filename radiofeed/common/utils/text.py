@@ -5,7 +5,6 @@ import re
 
 from datetime import date, timedelta
 from functools import lru_cache
-from types import MappingProxyType
 from typing import Final, Iterator
 
 from django.conf import settings
@@ -17,33 +16,31 @@ from nltk.tokenize import RegexpTokenizer
 
 from radiofeed.common.utils.html import strip_html
 
-NLTK_LANGUAGES: Final = MappingProxyType(
-    {
-        "ar": "arabic",
-        "az": "azerbaijani",
-        "da": "danish",
-        "de": "german",
-        "el": "greek",
-        "en": "english",
-        "es": "spanish",
-        "fi": "finnish",
-        "fr": "french",
-        "hu": "hungarian",
-        "id": "indonesian",
-        "it": "italian",
-        "kk": "kazakh",
-        "ne": "nepali",
-        "nl": "dutch",
-        "no": "norwegian",
-        "pt": "portuguese",
-        "ro": "romanian",
-        "ru": "russian",
-        "sl": "slovene",
-        "sv": "swedish",
-        "tg": "tajik",
-        "tr": "turkish",
-    }
-)
+NLTK_LANGUAGES: Final = {
+    "ar": "arabic",
+    "az": "azerbaijani",
+    "da": "danish",
+    "de": "german",
+    "el": "greek",
+    "en": "english",
+    "es": "spanish",
+    "fi": "finnish",
+    "fr": "french",
+    "hu": "hungarian",
+    "id": "indonesian",
+    "it": "italian",
+    "kk": "kazakh",
+    "ne": "nepali",
+    "nl": "dutch",
+    "no": "norwegian",
+    "pt": "portuguese",
+    "ro": "romanian",
+    "ru": "russian",
+    "sl": "slovene",
+    "sv": "swedish",
+    "tg": "tajik",
+    "tr": "turkish",
+}
 
 _CORPORATE_STOPWORDS: Final = [
     "apple",
