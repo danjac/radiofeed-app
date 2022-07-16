@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 09:03+0000\n"
+"POT-Creation-Date: 2022-07-16 09:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,6 +124,10 @@ msgstr "Haluan ilmauksia uusista suosituksista"
 #: radiofeed/users/forms.py:34
 msgid "Select OPML file"
 msgstr "Valitse OPML-tiedosto"
+
+#: radiofeed/users/models.py:64
+msgid "Send email notifications"
+msgstr ""
 
 #: radiofeed/users/views.py:31
 msgid "Your preferences have been saved"

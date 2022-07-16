@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class UserQuerySet(models.QuerySet):
@@ -59,7 +60,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 class User(AbstractUser):
     """Custom User model."""
 
-    send_email_notifications: bool = models.BooleanField(default=True)
+    send_email_notifications: bool = models.BooleanField(
+        default=True, verbose_name=_("Send email notifications")
+    )
 
     objects: models.Manager["User"] = UserManager()
 
