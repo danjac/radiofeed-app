@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -62,6 +63,10 @@ class User(AbstractUser):
 
     send_email_notifications: bool = models.BooleanField(
         default=True, verbose_name=_("Send email notifications")
+    )
+
+    language: str = models.CharField(
+        max_length=2, choices=settings.LANGUAGES, default="en"
     )
 
     objects: models.Manager["User"] = UserManager()
