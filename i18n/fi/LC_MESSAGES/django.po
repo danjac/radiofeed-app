@@ -2098,7 +2098,7 @@ msgstr ""
 #: templates/includes/pagination_links.html:13
 #: templates/includes/pagination_links.html:20
 msgid "Previous"
-msgstr "Edellinen"
+msgstr "Edelliset"
 
 #: templates/episodes/detail.html:101 templates/episodes/detail.html:113
 msgid "No more episodes"
@@ -2108,7 +2108,7 @@ msgstr "Ei enää jaksoja"
 #: templates/includes/pagination_links.html:29
 #: templates/includes/pagination_links.html:36
 msgid "Next"
-msgstr "Seuraava"
+msgstr "Seuraavat"
 
 #: templates/episodes/detail.html:120
 #, python-format
