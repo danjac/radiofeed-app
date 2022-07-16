@@ -40,7 +40,7 @@ msgstr "Ei Aktiivinen"
 
 #: radiofeed/podcasts/admin.py:65
 msgid "Parse Result"
-msgstr ""
+msgstr "Jäsennystulos"
 
 #: radiofeed/podcasts/admin.py:72
 msgid "None"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: radiofeed/podcasts/admin.py:119
 msgid "Pub Date"
-msgstr ""
+msgstr "Päivämäärä"
 
 #: radiofeed/podcasts/admin.py:127
 msgid "With pub date"
