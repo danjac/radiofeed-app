@@ -8,10 +8,10 @@ export default defineConfig({
         sourcemap: true,
         rollupOptions: {
             input: {
-                main: path.resolve("static", "js", "app.js"),
+                main: path.resolve("assets", "js", "app.js"),
             },
             output: {
-                entryFileNames: "dist/bundle.js",
+                entryFileNames: "bundle.js",
             },
         },
     },
