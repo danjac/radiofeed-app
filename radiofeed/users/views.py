@@ -8,7 +8,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.utils.translation import ngettext
+from django.utils.translation import ngettext, override
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -27,9 +27,12 @@ def user_preferences(
 
     if request.method == "POST" and form.is_valid():
 
-        form.save()
+        user = form.save()
 
-        messages.success(request, _("Your preferences have been saved"))
+        # override message with new language settings
+        with override(user.language):
+            messages.success(request, _("Your preferences have been saved"))
+
         return HttpResponseClientRedirect(request.path)
 
     return TemplateResponse(
