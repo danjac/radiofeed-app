@@ -2147,7 +2147,7 @@ msgstr ""
 #: templates/podcasts/detail_base.html:102 templates/podcasts/episodes.html:4
 #: templates/search/search_base.html:23
 msgid "Episodes"
-msgstr "jaksot"
+msgstr "Jaksot"
 
 #: templates/episodes/timestamps.html:11
 msgid "Completed"
