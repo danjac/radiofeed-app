@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 08:32+0000\n"
+"POT-Creation-Date: 2022-07-16 09:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "Lisätty Kirjanmerkkeihin"
 msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
-#: radiofeed/podcasts/admin.py:47
+#: radiofeed/podcasts/admin.py:39 radiofeed/podcasts/admin.py:47
 msgid "Active"
 msgstr "Aktiivinen"
 
@@ -38,9 +38,21 @@ msgstr "Aktiivinen"
 msgid "Inactive"
 msgstr "Ei Aktiivinen"
 
+#: radiofeed/podcasts/admin.py:65
+msgid "Parse Result"
+msgstr ""
+
 #: radiofeed/podcasts/admin.py:72
 msgid "None"
 msgstr "Ei mitään"
+
+#: radiofeed/podcasts/admin.py:90
+msgid "HTTP Status"
+msgstr ""
+
+#: radiofeed/podcasts/admin.py:119
+msgid "Pub Date"
+msgstr ""
 
 #: radiofeed/podcasts/admin.py:127
 msgid "With pub date"
@@ -50,9 +62,10 @@ msgstr "Päivämäärän kanssa"
 msgid "With no pub date"
 msgstr "Ilman päivämäärää"
 
-#: radiofeed/podcasts/admin.py:154 templates/episodes/index.html:4
-#: templates/episodes/index.html:11 templates/episodes/index.html:30
-#: templates/podcasts/index.html:12 templates/podcasts/index.html:23
+#: radiofeed/podcasts/admin.py:147 radiofeed/podcasts/admin.py:154
+#: templates/episodes/index.html:4 templates/episodes/index.html:11
+#: templates/episodes/index.html:30 templates/podcasts/index.html:12
+#: templates/podcasts/index.html:23
 msgid "Promoted"
 msgstr "Ylennetty"
 
@@ -2167,7 +2180,9 @@ msgstr "Virhe on tapahtunut"
 
 #: templates/includes/cookie_notice.html:8
 msgid "This site uses cookies to ensure you get the best experience."
-msgstr "Tämä sivusto käyttää evästeitä varmistaakseen, että saat parhaan käyttökokemuksen."
+msgstr ""
+"Tämä sivusto käyttää evästeitä varmistaakseen, että saat parhaan "
+"käyttökokemuksen."
 
 #: templates/includes/cookie_notice.html:10
 msgid "Terms and Conditions"
@@ -2286,9 +2301,9 @@ msgstr ""
 "                <a class=\"%(css_class)s\"\n"
 "                    hx-disable=\"true\"\n"
 "                    href=\"%(login_url)s\">rekisteröidy</a>\n"
-"                  seurataksesi suosikkipodcastejasi ja kuunnellaksesi jaksoja!\n"
+"                  seurataksesi suosikkipodcastejasi ja kuunnellaksesi "
+"jaksoja!\n"
 "            "
-
 
 #: templates/podcasts/actions/subscribe.html:10
 msgid "Unsubscribe from this Podcast"

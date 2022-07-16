@@ -36,7 +36,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ActiveFilter(admin.SimpleListFilter):
     """Filters active/inactive podcasts."""
 
-    title = "Active"
+    title = _("Active")
     parameter_name = "active"
 
     def lookups(
@@ -62,7 +62,7 @@ class ActiveFilter(admin.SimpleListFilter):
 class ParseResultFilter(admin.SimpleListFilter):
     """Filters podcasts based on last feed parser result."""
 
-    title = "Parse Result"
+    title = _("Parse Result")
     parameter_name = "parse_result"
 
     def lookups(
@@ -87,7 +87,7 @@ class ParseResultFilter(admin.SimpleListFilter):
 class HttpStatusFilter(admin.SimpleListFilter):
     """Filters podcasts based on last feed parser HTTP status."""
 
-    title = "HTTP Status"
+    title = _("HTTP Status")
     parameter_name = "http_status"
 
     def lookups(
@@ -116,7 +116,7 @@ class HttpStatusFilter(admin.SimpleListFilter):
 class PubDateFilter(admin.SimpleListFilter):
     """Filters podcasts based on last pub date."""
 
-    title = "Pub Date"
+    title = _("Pub Date")
     parameter_name = "pub_date"
 
     def lookups(
@@ -144,7 +144,7 @@ class PubDateFilter(admin.SimpleListFilter):
 class PromotedFilter(admin.SimpleListFilter):
     """Filters podcasts promoted status."""
 
-    title = "Promoted"
+    title = _("Promoted")
     parameter_name = "promoted"
 
     def lookups(
@@ -163,7 +163,7 @@ class PromotedFilter(admin.SimpleListFilter):
 class SubscribedFilter(admin.SimpleListFilter):
     """Filters podcasts based on subscription status."""
 
-    title = "Subscribed"
+    title = ("Subscribed")
     parameter_name = "subscribed"
 
     def lookups(
