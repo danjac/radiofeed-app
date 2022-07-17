@@ -16,9 +16,8 @@ jobs:
                   fetch-depth: 0
 
             - name: Deploy to dokku
-              uses: idoberko2/dokku-deploy-github-action@v1
+              uses: dokku/github-action@master
               with:
-                  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  dokku-host: ${{ secrets.DOKKU_HOST }}
-                  app-name: ${{ secrets.DOKKU_APP }}
-                  remote-branch: dokku
+                  branch: dokku
+                  git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
+                  ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
