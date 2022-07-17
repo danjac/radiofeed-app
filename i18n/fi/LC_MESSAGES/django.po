@@ -397,6 +397,11 @@ msgid ""
 "episodes.\n"
 "                    "
 msgstr ""
+"\n"
+"<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien löytämiseen "
+" ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
+"                    "
+
 
 #: templates/about/faq.html:30
 #, python-format
