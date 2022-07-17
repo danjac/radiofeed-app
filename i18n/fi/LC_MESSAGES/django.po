@@ -251,7 +251,7 @@ msgstr ""
 #: templates/about/base.html:26 templates/about/base.html:27
 #: templates/about/credits.html:4
 msgid "Credits"
-msgstr ""
+msgstr "Kunniat"
 
 #: templates/about/base.html:32 templates/about/base.html:33
 msgid "Shortcuts"
