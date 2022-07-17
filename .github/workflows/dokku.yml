@@ -20,4 +20,4 @@ jobs:
               with:
                   branch: dokku
                   git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
-                  ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
