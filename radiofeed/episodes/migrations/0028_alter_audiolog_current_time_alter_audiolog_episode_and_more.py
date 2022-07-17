@@ -10,124 +10,168 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('podcasts', '0150_remove_subscription_unique_podcasts_subscription_user_podcast_and_more'),
-        ('episodes', '0027_remove_audiolog_completed'),
+        (
+            "podcasts",
+            "0150_remove_subscription_unique_podcasts_subscription_user_podcast_and_more",
+        ),
+        ("episodes", "0027_remove_audiolog_completed"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='audiolog',
-            name='current_time',
-            field=models.IntegerField(default=0, verbose_name='Timestamp Mark (Seconds)'),
+            model_name="audiolog",
+            name="current_time",
+            field=models.IntegerField(
+                default=0, verbose_name="Timestamp Mark (Seconds)"
+            ),
         ),
         migrations.AlterField(
-            model_name='audiolog',
-            name='episode',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='episodes.episode', verbose_name='Episode'),
+            model_name="audiolog",
+            name="episode",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="episodes.episode",
+                verbose_name="Episode",
+            ),
         ),
         migrations.AlterField(
-            model_name='audiolog',
-            name='listened',
-            field=models.DateTimeField(verbose_name='Last Listened At'),
+            model_name="audiolog",
+            name="listened",
+            field=models.DateTimeField(verbose_name="Last Listened At"),
         ),
         migrations.AlterField(
-            model_name='audiolog',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="audiolog",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AlterField(
-            model_name='bookmark',
-            name='episode',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='episodes.episode', verbose_name='User'),
+            model_name="bookmark",
+            name="episode",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="episodes.episode",
+                verbose_name="User",
+            ),
         ),
         migrations.AlterField(
-            model_name='bookmark',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="bookmark",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='cover_url',
-            field=models.URLField(blank=True, max_length=2083, null=True, verbose_name='Cover Image'),
+            model_name="episode",
+            name="cover_url",
+            field=models.URLField(
+                blank=True, max_length=2083, null=True, verbose_name="Cover Image"
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='description',
-            field=models.TextField(blank=True, verbose_name='Episode Description'),
+            model_name="episode",
+            name="description",
+            field=models.TextField(blank=True, verbose_name="Episode Description"),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='duration',
-            field=models.CharField(blank=True, max_length=30, verbose_name='Duration (Text)'),
+            model_name="episode",
+            name="duration",
+            field=models.CharField(
+                blank=True, max_length=30, verbose_name="Duration (Text)"
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='episode',
-            field=models.IntegerField(blank=True, null=True, verbose_name='Season Episode Number'),
+            model_name="episode",
+            name="episode",
+            field=models.IntegerField(
+                blank=True, null=True, verbose_name="Season Episode Number"
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='episode_type',
-            field=models.CharField(default='full', max_length=30, verbose_name='Episode Type'),
+            model_name="episode",
+            name="episode_type",
+            field=models.CharField(
+                default="full", max_length=30, verbose_name="Episode Type"
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='explicit',
-            field=models.BooleanField(default=False, verbose_name='Contains Explicit or Adult Content'),
+            model_name="episode",
+            name="explicit",
+            field=models.BooleanField(
+                default=False, verbose_name="Contains Explicit or Adult Content"
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='guid',
-            field=models.TextField(verbose_name='RSS Feed GUID'),
+            model_name="episode",
+            name="guid",
+            field=models.TextField(verbose_name="RSS Feed GUID"),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='keywords',
-            field=models.TextField(blank=True, verbose_name='Episode Keywords'),
+            model_name="episode",
+            name="keywords",
+            field=models.TextField(blank=True, verbose_name="Episode Keywords"),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='length',
-            field=models.BigIntegerField(blank=True, null=True, verbose_name='Duration (Seconds)'),
+            model_name="episode",
+            name="length",
+            field=models.BigIntegerField(
+                blank=True, null=True, verbose_name="Duration (Seconds)"
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='link',
-            field=models.URLField(blank=True, max_length=2083, null=True, verbose_name='Episode Website Page'),
+            model_name="episode",
+            name="link",
+            field=models.URLField(
+                blank=True,
+                max_length=2083,
+                null=True,
+                verbose_name="Episode Website Page",
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='media_type',
-            field=models.CharField(max_length=60, verbose_name='Audio MIME Type'),
+            model_name="episode",
+            name="media_type",
+            field=models.CharField(max_length=60, verbose_name="Audio MIME Type"),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='media_url',
-            field=models.URLField(max_length=2083, verbose_name='Audio URL Source'),
+            model_name="episode",
+            name="media_url",
+            field=models.URLField(max_length=2083, verbose_name="Audio URL Source"),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='podcast',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='podcasts.podcast', verbose_name='Podcast'),
+            model_name="episode",
+            name="podcast",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="podcasts.podcast",
+                verbose_name="Podcast",
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='pub_date',
-            field=models.DateTimeField(verbose_name='Release Date'),
+            model_name="episode",
+            name="pub_date",
+            field=models.DateTimeField(verbose_name="Release Date"),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='search_vector',
-            field=django.contrib.postgres.search.SearchVectorField(editable=False, null=True, verbose_name='PostgreSQL Search Vector'),
+            model_name="episode",
+            name="search_vector",
+            field=django.contrib.postgres.search.SearchVectorField(
+                editable=False, null=True, verbose_name="PostgreSQL Search Vector"
+            ),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='season',
-            field=models.IntegerField(blank=True, null=True, verbose_name='Season'),
+            model_name="episode",
+            name="season",
+            field=models.IntegerField(blank=True, null=True, verbose_name="Season"),
         ),
         migrations.AlterField(
-            model_name='episode',
-            name='title',
-            field=models.TextField(blank=True, verbose_name='Episode Title'),
+            model_name="episode",
+            name="title",
+            field=models.TextField(blank=True, verbose_name="Episode Title"),
         ),
     ]

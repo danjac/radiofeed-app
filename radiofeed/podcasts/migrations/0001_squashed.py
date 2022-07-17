@@ -16,7 +16,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [
+    _replaces = [
         ("podcasts", "0001_squashed_0006_podcast_search_trigger"),
         ("podcasts", "0002_category_itunes_genre_id"),
         ("podcasts", "0003_auto_20201217_2126"),

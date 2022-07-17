@@ -14,7 +14,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [
+    _replaces = [
         ("episodes", "0001_squashed_0010_auto_20201216_1254"),
         ("episodes", "0002_audiolog_completed"),
         ("episodes", "0003_queueitem"),
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("podcasts", "0001_squashed_0006_podcast_search_trigger"),
+        # ("podcasts", "0001_squashed_0006_podcast_search_trigger"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

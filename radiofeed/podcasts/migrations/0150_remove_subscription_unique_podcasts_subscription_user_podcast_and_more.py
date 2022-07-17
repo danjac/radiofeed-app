@@ -6,16 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('podcasts', '0149_rename_user_subscription_subscriber'),
+        ("podcasts", "0149_rename_user_subscription_subscriber"),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='subscription',
-            name='unique_podcasts_subscription_user_podcast',
+            model_name="subscription",
+            name="unique_podcasts_subscription_user_podcast",
         ),
         migrations.AddConstraint(
-            model_name='subscription',
-            constraint=models.UniqueConstraint(fields=('subscriber', 'podcast'), name='unique_podcasts_subscription_user_podcast'),
+            model_name="subscription",
+            constraint=models.UniqueConstraint(
+                fields=("subscriber", "podcast"),
+                name="unique_podcasts_subscription_user_podcast",
+            ),
         ),
     ]

@@ -11,193 +11,299 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('podcasts', '0147_remove_category_name_en_gb'),
+        ("podcasts", "0147_remove_category_name_en_gb"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='name',
-            field=models.CharField(max_length=100, unique=True, verbose_name='Category Name'),
+            model_name="category",
+            name="name",
+            field=models.CharField(
+                max_length=100, unique=True, verbose_name="Category Name"
+            ),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='name_en',
-            field=models.CharField(max_length=100, null=True, unique=True, verbose_name='Category Name'),
+            model_name="category",
+            name="name_en",
+            field=models.CharField(
+                max_length=100, null=True, unique=True, verbose_name="Category Name"
+            ),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='name_fi',
-            field=models.CharField(max_length=100, null=True, unique=True, verbose_name='Category Name'),
+            model_name="category",
+            name="name_fi",
+            field=models.CharField(
+                max_length=100, null=True, unique=True, verbose_name="Category Name"
+            ),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='children', to='podcasts.category', verbose_name='Parent Category'),
+            model_name="category",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="children",
+                to="podcasts.category",
+                verbose_name="Parent Category",
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='active',
-            field=models.BooleanField(default=True, help_text='Inactive podcasts will no longer be updated from their RSS feeds.', verbose_name='Active'),
+            model_name="podcast",
+            name="active",
+            field=models.BooleanField(
+                default=True,
+                help_text="Inactive podcasts will no longer be updated from their RSS feeds.",
+                verbose_name="Active",
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='categories',
-            field=models.ManyToManyField(blank=True, to='podcasts.category', verbose_name='iTunes Categories'),
+            model_name="podcast",
+            name="categories",
+            field=models.ManyToManyField(
+                blank=True, to="podcasts.category", verbose_name="iTunes Categories"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='content_hash',
-            field=models.CharField(blank=True, max_length=64, null=True, verbose_name='Content Hash of RSS Feed'),
+            model_name="podcast",
+            name="content_hash",
+            field=models.CharField(
+                blank=True,
+                max_length=64,
+                null=True,
+                verbose_name="Content Hash of RSS Feed",
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='cover_url',
-            field=models.URLField(blank=True, max_length=2083, null=True, verbose_name='Cover Image'),
+            model_name="podcast",
+            name="cover_url",
+            field=models.URLField(
+                blank=True, max_length=2083, null=True, verbose_name="Cover Image"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='created',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Podcast Added to Database'),
+            model_name="podcast",
+            name="created",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Podcast Added to Database"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='description',
-            field=models.TextField(blank=True, verbose_name='Podcast Description'),
+            model_name="podcast",
+            name="description",
+            field=models.TextField(blank=True, verbose_name="Podcast Description"),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='etag',
-            field=models.TextField(blank=True, verbose_name='HTTP Etag Header'),
+            model_name="podcast",
+            name="etag",
+            field=models.TextField(blank=True, verbose_name="HTTP Etag Header"),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='explicit',
-            field=models.BooleanField(default=False, verbose_name='Podcast Contains Explicit or Adult Content'),
+            model_name="podcast",
+            name="explicit",
+            field=models.BooleanField(
+                default=False, verbose_name="Podcast Contains Explicit or Adult Content"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='extracted_text',
-            field=models.TextField(blank=True, verbose_name='Keywords Extracted from Podcast Content'),
+            model_name="podcast",
+            name="extracted_text",
+            field=models.TextField(
+                blank=True, verbose_name="Keywords Extracted from Podcast Content"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='funding_text',
-            field=models.TextField(blank=True, verbose_name='Funding Website Text'),
+            model_name="podcast",
+            name="funding_text",
+            field=models.TextField(blank=True, verbose_name="Funding Website Text"),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='funding_url',
-            field=models.URLField(blank=True, max_length=2083, null=True, verbose_name='Funding Website URL'),
+            model_name="podcast",
+            name="funding_url",
+            field=models.URLField(
+                blank=True,
+                max_length=2083,
+                null=True,
+                verbose_name="Funding Website URL",
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='http_status',
-            field=models.SmallIntegerField(blank=True, null=True, verbose_name='Last HTTP Status from RSS Feed'),
+            model_name="podcast",
+            name="http_status",
+            field=models.SmallIntegerField(
+                blank=True, null=True, verbose_name="Last HTTP Status from RSS Feed"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='keywords',
-            field=models.TextField(blank=True, verbose_name='Non-iTunes Category Keywords'),
+            model_name="podcast",
+            name="keywords",
+            field=models.TextField(
+                blank=True, verbose_name="Non-iTunes Category Keywords"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='language',
-            field=models.CharField(default='en', max_length=2, validators=[django.core.validators.MinLengthValidator(2)], verbose_name='Podcast Language'),
+            model_name="podcast",
+            name="language",
+            field=models.CharField(
+                default="en",
+                max_length=2,
+                validators=[django.core.validators.MinLengthValidator(2)],
+                verbose_name="Podcast Language",
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='link',
-            field=models.URLField(blank=True, max_length=2083, null=True, verbose_name='Website'),
+            model_name="podcast",
+            name="link",
+            field=models.URLField(
+                blank=True, max_length=2083, null=True, verbose_name="Website"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='modified',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='HTTP Modified Header'),
+            model_name="podcast",
+            name="modified",
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name="HTTP Modified Header"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='num_retries',
-            field=models.PositiveSmallIntegerField(default=0, verbose_name='Number of RSS Feed Retries'),
+            model_name="podcast",
+            name="num_retries",
+            field=models.PositiveSmallIntegerField(
+                default=0, verbose_name="Number of RSS Feed Retries"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='owner',
-            field=models.TextField(blank=True, verbose_name='Podcast Owner(s)'),
+            model_name="podcast",
+            name="owner",
+            field=models.TextField(blank=True, verbose_name="Podcast Owner(s)"),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='parse_result',
-            field=models.CharField(blank=True, choices=[('success', 'Success'), ('complete', 'Complete'), ('not_modified', 'Not Modified'), ('http_error', 'HTTP Error'), ('rss_parser_error', 'RSS Parser Error'), ('duplicate_feed', 'Duplicate Feed')], max_length=30, null=True, verbose_name='Last Result from RSS Feed Update'),
+            model_name="podcast",
+            name="parse_result",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("success", "Success"),
+                    ("complete", "Complete"),
+                    ("not_modified", "Not Modified"),
+                    ("http_error", "HTTP Error"),
+                    ("rss_parser_error", "RSS Parser Error"),
+                    ("duplicate_feed", "Duplicate Feed"),
+                ],
+                max_length=30,
+                null=True,
+                verbose_name="Last Result from RSS Feed Update",
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='parsed',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Last RSS Feed Check'),
+            model_name="podcast",
+            name="parsed",
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name="Last RSS Feed Check"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='promoted',
-            field=models.BooleanField(default=False, verbose_name='Promoted to Home Page'),
+            model_name="podcast",
+            name="promoted",
+            field=models.BooleanField(
+                default=False, verbose_name="Promoted to Home Page"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='pub_date',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Latest Release Date'),
+            model_name="podcast",
+            name="pub_date",
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name="Latest Release Date"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='recipients',
-            field=models.ManyToManyField(blank=True, related_name='recommended_podcasts', to=settings.AUTH_USER_MODEL, verbose_name='Recommended to Users'),
+            model_name="podcast",
+            name="recipients",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="recommended_podcasts",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Recommended to Users",
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='rss',
-            field=models.URLField(max_length=500, unique=True, verbose_name='RSS Feed'),
+            model_name="podcast",
+            name="rss",
+            field=models.URLField(max_length=500, unique=True, verbose_name="RSS Feed"),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='search_vector',
-            field=django.contrib.postgres.search.SearchVectorField(editable=False, null=True, verbose_name='PostgreSQL Search Vector'),
+            model_name="podcast",
+            name="search_vector",
+            field=django.contrib.postgres.search.SearchVectorField(
+                editable=False, null=True, verbose_name="PostgreSQL Search Vector"
+            ),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='title',
-            field=models.TextField(verbose_name='Podcast Title'),
+            model_name="podcast",
+            name="title",
+            field=models.TextField(verbose_name="Podcast Title"),
         ),
         migrations.AlterField(
-            model_name='podcast',
-            name='updated',
-            field=models.DateTimeField(auto_now=True, verbose_name='Podcast Updated in Database'),
+            model_name="podcast",
+            name="updated",
+            field=models.DateTimeField(
+                auto_now=True, verbose_name="Podcast Updated in Database"
+            ),
         ),
         migrations.AlterField(
-            model_name='recommendation',
-            name='frequency',
-            field=models.PositiveIntegerField(default=0, verbose_name='Frequency Count'),
+            model_name="recommendation",
+            name="frequency",
+            field=models.PositiveIntegerField(
+                default=0, verbose_name="Frequency Count"
+            ),
         ),
         migrations.AlterField(
-            model_name='recommendation',
-            name='podcast',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='podcasts.podcast', verbose_name='Podcast'),
+            model_name="recommendation",
+            name="podcast",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="podcasts.podcast",
+                verbose_name="Podcast",
+            ),
         ),
         migrations.AlterField(
-            model_name='recommendation',
-            name='recommended',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='podcasts.podcast', verbose_name='Similar Podcast'),
+            model_name="recommendation",
+            name="recommended",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="podcasts.podcast",
+                verbose_name="Similar Podcast",
+            ),
         ),
         migrations.AlterField(
-            model_name='recommendation',
-            name='similarity',
-            field=models.DecimalField(blank=True, decimal_places=10, max_digits=100, null=True, verbose_name='Similarity Rating'),
+            model_name="recommendation",
+            name="similarity",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=10,
+                max_digits=100,
+                null=True,
+                verbose_name="Similarity Rating",
+            ),
         ),
         migrations.AlterField(
-            model_name='subscription',
-            name='podcast',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='podcasts.podcast', verbose_name='Podcast'),
+            model_name="subscription",
+            name="podcast",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="podcasts.podcast",
+                verbose_name="Podcast",
+            ),
         ),
         migrations.AlterField(
-            model_name='subscription',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Subscriber'),
+            model_name="subscription",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Subscriber",
+            ),
         ),
     ]
