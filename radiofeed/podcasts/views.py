@@ -320,7 +320,7 @@ def _podcast_detail_context(
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
-) -> render:
+) -> HttpResponse:
     return render(
         request,
         "podcasts/actions/subscribe.html",
