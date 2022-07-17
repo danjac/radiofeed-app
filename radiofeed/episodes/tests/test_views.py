@@ -45,8 +45,8 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
         response = client.get(episodes_url)
         assert_ok(response)
-        assert not response.context_data["has_subscriptions"]
-        assert len(response.context_data["page_obj"].object_list) == 1
+        assert not response.context["has_subscriptions"]
+        assert len(response.context["page_obj"].object_list) == 1
 
     def test_not_subscribed(self, client, db, auth_user):
         promoted = PodcastFactory(promoted=True)
@@ -54,8 +54,8 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
         response = client.get(episodes_url)
         assert_ok(response)
-        assert not response.context_data["has_subscriptions"]
-        assert len(response.context_data["page_obj"].object_list) == 1
+        assert not response.context["has_subscriptions"]
+        assert len(response.context["page_obj"].object_list) == 1
 
     def test_user_has_subscribed(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
@@ -68,10 +68,10 @@ class TestNewEpisodes:
 
         response = client.get(episodes_url)
         assert_ok(response)
-        assert not response.context_data["promoted"]
-        assert response.context_data["has_subscriptions"]
-        assert len(response.context_data["page_obj"].object_list) == 1
-        assert response.context_data["page_obj"].object_list[0] == episode
+        assert not response.context["promoted"]
+        assert response.context["has_subscriptions"]
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == episode
 
     def test_user_has_subscribed_promoted(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
@@ -85,10 +85,10 @@ class TestNewEpisodes:
         response = client.get(episodes_url, {"promoted": True})
 
         assert_ok(response)
-        assert response.context_data["promoted"]
-        assert response.context_data["has_subscriptions"]
-        assert len(response.context_data["page_obj"].object_list) == 1
-        assert response.context_data["page_obj"].object_list[0].podcast == promoted
+        assert response.context["promoted"]
+        assert response.context["has_subscriptions"]
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0].podcast == promoted
 
 
 class TestSearchEpisodes:
@@ -109,8 +109,8 @@ class TestSearchEpisodes:
             {"q": episode.title},
         )
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 1
-        assert response.context_data["page_obj"].object_list[0] == episode
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == episode
 
 
 class TestEpisodeDetail:
@@ -144,7 +144,7 @@ class TestEpisodeDetail:
     def test_anonymous(self, client, episode, prev_episode, next_episode):
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
-        assert response.context_data["episode"] == episode
+        assert response.context["episode"] == episode
 
     def test_authenticated(
         self,
@@ -156,7 +156,7 @@ class TestEpisodeDetail:
     ):
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
-        assert response.context_data["episode"] == episode
+        assert response.context["episode"] == episode
 
     def test_listened(
         self,
@@ -171,7 +171,7 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
 
-        assert response.context_data["episode"] == episode
+        assert response.context["episode"] == episode
 
         assertContains(response, "Remove from History")
         assertContains(response, "Completed")
@@ -184,7 +184,7 @@ class TestEpisodeDetail:
     ):
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
-        assert response.context_data["episode"] == episode
+        assert response.context["episode"] == episode
         assertContains(response, "No more episodes")
 
 
@@ -295,14 +295,14 @@ class TestBookmarks:
         response = client.get(self.url)
 
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+        assert len(response.context["page_obj"].object_list) == 3
 
     def test_empty(self, client, auth_user):
 
         response = client.get(self.url)
 
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 0
+        assert len(response.context["page_obj"].object_list) == 0
 
     def test_search(self, client, auth_user):
 
@@ -318,7 +318,7 @@ class TestBookmarks:
 
         response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 1
+        assert len(response.context["page_obj"].object_list) == 1
 
 
 class TestAddBookmark:
@@ -361,12 +361,12 @@ class TestHistory:
         AudioLogFactory.create_batch(33, user=auth_user)
         response = client.get(self.url)
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 30
+        assert len(response.context["page_obj"].object_list) == 30
 
     def test_empty(self, client, auth_user):
         response = client.get(self.url)
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 0
+        assert len(response.context["page_obj"].object_list) == 0
 
     def test_get_oldest_first(self, client, auth_user):
         AudioLogFactory.create_batch(33, user=auth_user)
@@ -374,7 +374,7 @@ class TestHistory:
         response = client.get(self.url, {"o": "a"})
         assert_ok(response)
 
-        assert len(response.context_data["page_obj"].object_list) == 30
+        assert len(response.context["page_obj"].object_list) == 30
 
     def test_search(self, client, auth_user):
 
@@ -389,7 +389,7 @@ class TestHistory:
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
         response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 1
+        assert len(response.context["page_obj"].object_list) == 1
 
 
 class TestRemoveAudioLog:

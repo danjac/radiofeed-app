@@ -5,14 +5,8 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import (
-    HttpRequest,
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseRedirect,
-)
-from django.shortcuts import get_object_or_404
-from django.template.response import TemplateResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -83,7 +77,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             "episodes/pagination/episodes.html",
         )
         if request.search
-        else HttpResponseRedirect(reverse("episodes:index"))
+        else redirect("episodes:index")
     )
 
 
@@ -101,7 +95,7 @@ def episode_detail(
         pk=episode_id,
     )
 
-    return TemplateResponse(
+    return render(
         request,
         "episodes/detail.html",
         {
@@ -236,7 +230,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         AudioLog.objects.filter(user=request.user, episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
-    return TemplateResponse(
+    return render(
         request,
         "episodes/actions/history.html",
         {"episode": episode},
@@ -303,8 +297,8 @@ def _render_audio_player(
     start_player: bool,
     current_time: datetime | None,
     listened: datetime | None,
-) -> TemplateResponse:
-    return TemplateResponse(
+) -> HttpResponse:
+    return render(
         request,
         "episodes/player.html",
         {
@@ -319,8 +313,8 @@ def _render_audio_player(
 
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
-) -> TemplateResponse:
-    return TemplateResponse(
+) -> HttpResponse:
+    return render(
         request,
         "episodes/actions/bookmark.html",
         {
