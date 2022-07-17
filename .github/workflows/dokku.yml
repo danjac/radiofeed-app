@@ -3,7 +3,7 @@ name: Deploy to Dokku
 on:
     workflow_run:
         workflows: ["Run Tests"]
-        branches: [dokku]
+        branches: [main]
         types:
             - completed
 
