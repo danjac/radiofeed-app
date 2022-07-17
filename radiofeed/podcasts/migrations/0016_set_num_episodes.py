@@ -3,18 +3,11 @@
 from __future__ import annotations
 
 from django.db import migrations
-from django.db.models import Count, OuterRef, Subquery
 
 
 def set_num_episodes(apps, schema_editor):
     podcast_model = apps.get_model("podcasts.Podcast")
-    podcast_model.objects.filter(pub_date__isnull=False).update(
-        num_episodes=Subquery(
-            podcast_model.objects.filter(pk=OuterRef("id"))
-            .annotate(episode_count=Count("episode"))
-            .values("episode_count")[:1]
-        )
-    )
+    podcast_model.objects.filter(pub_date__isnull=False).update(num_episodes=1)
 
 
 def reset_num_episodes(apps, schema_editor):
