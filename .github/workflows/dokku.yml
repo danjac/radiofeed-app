@@ -1,9 +1,11 @@
 name: Deploy to Dokku Server
 
 on:
-    push:
-        branches:
-            - dokku
+    workflow_run:
+        workflows: ["Run Tests"]
+        branches: [dokku]
+        types:
+            - completed
 
 jobs:
     deploy:
