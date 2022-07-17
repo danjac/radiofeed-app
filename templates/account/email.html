@@ -41,12 +41,14 @@
                 {% endfor %}
                 <div class="flex items-center space-x-2 md:space-x-3">
                     {% with ICON_CSS="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                    {% if num_addresses > 1 %}
                         <button class="inline-flex items-center btn btn-default"
                             name="action_primary"
                             value="1">
                             {% include "icons/sparkles.svg" with css_class=ICON_CSS %}
                             {% translate "Primary" %}
                         </button>
+                    {% endif %}
 
                         <button class="inline-flex items-center btn btn-secondary"
                             name="action_send"
