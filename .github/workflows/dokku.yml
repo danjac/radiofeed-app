@@ -16,8 +16,9 @@ jobs:
                   fetch-depth: 0
 
             - name: Deploy to dokku
-              uses: dokku/github-action@master
-              with:
-                  branch: dokku
-                  git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
-                  ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+              uses: vitalyliber/dokku-github-action@v7.0
+              env:
+                  PRIVATE_KEY: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+                  HOST: radiofeed.me
+                  PROJECT: radiofeed
+                  BRANCH: main
