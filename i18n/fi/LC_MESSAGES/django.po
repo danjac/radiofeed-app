@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-16 18:30+0000\n"
+"POT-Creation-Date: 2022-07-17 09:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -398,25 +398,31 @@ msgid ""
 "                    "
 msgstr ""
 "\n"
-"<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien löytämiseen "
-" ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
+"<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien "
+"löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
 "                    "
 
-
 #: templates/about/faq.html:30
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                        <strong>%(site_name)s</strong> is a web "
+#| "application for discovering new podcasts and collecting your favorite "
+#| "podcasts and episodes.\n"
+#| "                    "
 msgid ""
 "\n"
-"                        <strong>%(site_name)s</strong> is a web application "
-"for discovering new podcasts and collecting your favorite podcasts and "
-"episodes.\n"
 "                        <strong>%(site_name)s</strong> is free of charge. "
 "It's also <a href=\"https://github.com/danjac/radiofeed/\">free, open-source "
 "software!</a>\n"
 "                    "
 msgstr ""
+"\n"
+"<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien "
+"löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
+"                    "
 
-#: templates/about/faq.html:44
+#: templates/about/faq.html:43
 #, python-format
 msgid ""
 "\n"
@@ -425,7 +431,7 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:49
+#: templates/about/faq.html:48
 #, python-format
 msgid ""
 "\n"
@@ -435,31 +441,31 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:58
+#: templates/about/faq.html:57
 msgid "Play episodes in our custom Player"
 msgstr ""
 
-#: templates/about/faq.html:59
+#: templates/about/faq.html:58
 msgid "Bookmark episodes to listen to later"
 msgstr ""
 
-#: templates/about/faq.html:60
+#: templates/about/faq.html:59
 msgid "Add podcasts to your collection"
 msgstr ""
 
-#: templates/about/faq.html:61
+#: templates/about/faq.html:60
 msgid "Get new weekly recommendations"
 msgstr ""
 
-#: templates/about/faq.html:62
+#: templates/about/faq.html:61
 msgid "Keep track of episodes you have listened to"
 msgstr ""
 
-#: templates/about/faq.html:66
+#: templates/about/faq.html:65
 msgid "What if I want to download an episode to my device?"
 msgstr ""
 
-#: templates/about/faq.html:68
+#: templates/about/faq.html:67
 msgid ""
 "\n"
 "                        Click the download icon or link on the episode page "
@@ -471,11 +477,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:76
+#: templates/about/faq.html:75
 msgid "How do I add podcasts to my collection?"
 msgstr ""
 
-#: templates/about/faq.html:78
+#: templates/about/faq.html:77
 msgid ""
 "\n"
 "                        Just click the <strong>Subscribe</strong> button on "
@@ -484,7 +490,7 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:86
+#: templates/about/faq.html:85
 #, python-format
 msgid ""
 "\n"
@@ -493,7 +499,7 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:91
+#: templates/about/faq.html:90
 msgid ""
 "\n"
 "                        We will send you an email with new recommendations "
@@ -502,11 +508,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:97
+#: templates/about/faq.html:96
 msgid "How do I stop receiving email notifications?"
 msgstr ""
 
-#: templates/about/faq.html:99
+#: templates/about/faq.html:98
 #, python-format
 msgid ""
 "\n"
@@ -517,11 +523,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:106
+#: templates/about/faq.html:105
 msgid "How do I remove an episode from my history?"
 msgstr ""
 
-#: templates/about/faq.html:108
+#: templates/about/faq.html:107
 msgid ""
 "\n"
 "                        Go to the episode page and click the trash icon to "
@@ -529,11 +535,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:114
+#: templates/about/faq.html:113
 msgid "Can I import my feeds from another podcast app?"
 msgstr ""
 
-#: templates/about/faq.html:116
+#: templates/about/faq.html:115
 #, python-format
 msgid ""
 "\n"
@@ -546,11 +552,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:122
+#: templates/about/faq.html:121
 msgid "Can I save my podcast subscriptions to my device?"
 msgstr ""
 
-#: templates/about/faq.html:124
+#: templates/about/faq.html:123
 #, python-format
 msgid ""
 "\n"
@@ -562,7 +568,7 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:133
+#: templates/about/faq.html:132
 msgid ""
 "\n"
 "                        First try looking for the podcast in the Search box "
@@ -574,11 +580,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:141
+#: templates/about/faq.html:140
 msgid "How do I save an episode to listen to later?"
 msgstr ""
 
-#: templates/about/faq.html:143
+#: templates/about/faq.html:142
 #, python-format
 msgid ""
 "\n"
@@ -591,11 +597,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:151
+#: templates/about/faq.html:150
 msgid "How often are podcasts updated?"
 msgstr ""
 
-#: templates/about/faq.html:153
+#: templates/about/faq.html:152
 msgid ""
 "\n"
 "                        Popular podcasts are refreshed several times an hour "
@@ -605,7 +611,7 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:162
+#: templates/about/faq.html:161
 #, python-format
 msgid ""
 "\n"
@@ -622,11 +628,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:172
+#: templates/about/faq.html:171
 msgid "Help! I've found a bug. How do I report it?"
 msgstr ""
 
-#: templates/about/faq.html:174
+#: templates/about/faq.html:173
 msgid ""
 "\n"
 "                        Sorry! If you find a bug we would be very grateful "
@@ -639,7 +645,7 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:186
+#: templates/about/faq.html:185
 msgid ""
 "\n"
 "                        Absolutely, this is an open source project that can "
@@ -651,11 +657,11 @@ msgid ""
 "                    "
 msgstr ""
 
-#: templates/about/faq.html:195
+#: templates/about/faq.html:194
 msgid "How do I delete my account?"
 msgstr ""
 
-#: templates/about/faq.html:197
+#: templates/about/faq.html:196
 #, python-format
 msgid ""
 " Go to <a class=\"link\" href=\"%(delete_account_url)s\">Delete Account</a> "
@@ -1725,23 +1731,23 @@ msgstr "Sähköpostiosoitteet"
 msgid "The following e-mail addresses are associated with your account:"
 msgstr "Seuraavat sähköpostiosoitteet on liitetty tiliisi:"
 
-#: templates/account/email.html:48
+#: templates/account/email.html:49
 msgid "Primary"
 msgstr "Ensisijainen"
 
-#: templates/account/email.html:55
+#: templates/account/email.html:57
 msgid "Re-Verify"
 msgstr "Vahvista"
 
-#: templates/account/email.html:62 templates/socialaccount/connections.html:46
+#: templates/account/email.html:64 templates/socialaccount/connections.html:46
 msgid "Remove"
 msgstr "Poista"
 
-#: templates/account/email.html:71
+#: templates/account/email.html:73
 msgid "Warning:"
 msgstr "Varoitus:"
 
-#: templates/account/email.html:72
+#: templates/account/email.html:74
 msgid ""
 "\n"
 "                    You currently do not have any e-mail address set up. You "
@@ -1750,11 +1756,11 @@ msgid ""
 "                "
 msgstr ""
 
-#: templates/account/email.html:81
+#: templates/account/email.html:83
 msgid "Add New E-mail Address"
 msgstr "Lisää Sähköpostiosoite"
 
-#: templates/account/email.html:94
+#: templates/account/email.html:96
 msgid "Add E-Mail"
 msgstr "Lisää Sähköpostiosoite"
 
@@ -2140,7 +2146,7 @@ msgstr "Varoitus"
 msgid "Website"
 msgstr "Kotisivu"
 
-#: templates/episodes/episode.html:28 templates/episodes/timestamps.html:6
+#: templates/episodes/episode.html:27 templates/episodes/timestamps.html:6
 msgid "Release Date"
 msgstr "Päivämäärä"
 
@@ -2415,7 +2421,7 @@ msgstr ""
 msgid "Search: Episodes"
 msgstr "Haku: Jaksot"
 
-#: templates/podcasts/itunes_feed.html:25
+#: templates/podcasts/itunes_feed.html:24
 msgid "Adding podcast to database..."
 msgstr "Lisätään podcastin tietokantaan..."
 
