@@ -4,7 +4,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ## Running Radiofeed on your local machine
 
-Radiofeed requires the following:
+Radiofeed requires the following dependencies:
 
 * Python 3.10+
 * Node 16+
