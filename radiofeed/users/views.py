@@ -4,8 +4,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.template.response import SimpleTemplateResponse, TemplateResponse
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
+from django.template.response import SimpleTemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext, override
@@ -35,7 +36,7 @@ def user_preferences(
 
         return HttpResponseClientRedirect(request.path)
 
-    return TemplateResponse(
+    return render(
         request,
         "account/forms/preferences.html"
         if request.htmx.target == target
@@ -51,7 +52,7 @@ def user_preferences(
 @login_required
 def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
-    return TemplateResponse(
+    return render(
         request,
         "account/import_export_podcast_feeds.html",
         {
@@ -83,7 +84,7 @@ def import_podcast_feeds(
         else:
             messages.info(request, _("No new podcasts found in uploaded file"))
 
-    return TemplateResponse(
+    return render(
         request,
         "account/forms/import_podcast_feeds.html"
         if request.htmx.target == target
@@ -124,7 +125,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     logs = AudioLog.objects.filter(user=request.user)
 
-    return TemplateResponse(
+    return render(
         request,
         "account/stats.html",
         {
@@ -151,5 +152,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, _("Your account has been deleted"))
-        return HttpResponseRedirect(settings.HOME_URL)
-    return TemplateResponse(request, "account/delete_account.html")
+        return redirect(settings.HOME_URL)
+    return render(request, "account/delete_account.html")
