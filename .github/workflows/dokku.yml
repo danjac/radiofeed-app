@@ -1,0 +1,22 @@
+name: Deploy to Dokku Server
+
+on:
+    push:
+        branches:
+            - dokku
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+
+            - name: Deploy to dokku
+              uses: idoberko2/dokku-deploy-github-action@v1
+              with:
+                  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  dokku-host: ${{ secrets.DOKKU_HOST }}
+                  app-name: ${{ secrets.DOKKU_APP }}
+                  remote-branch: "dokku"
