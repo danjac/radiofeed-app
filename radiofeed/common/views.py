@@ -14,6 +14,9 @@ from radiofeed.common.template import get_site_config
 
 static_page = require_safe(render)
 
+_cache_control = cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
+_cache_page = cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+
 
 @require_POST
 def accept_cookies(request: HttpRequest) -> HttpResponse:
@@ -31,7 +34,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
+@_cache_control
 def favicon(request: HttpRequest) -> FileResponse:
     """Generates favicon file."""
     return FileResponse(
@@ -40,8 +43,8 @@ def favicon(request: HttpRequest) -> FileResponse:
 
 
 @require_safe
-@cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+@_cache_control
+@_cache_page
 def robots(request: HttpRequest) -> HttpResponse:
     """Generates robots.txt file."""
     return HttpResponse(
@@ -64,8 +67,8 @@ def robots(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+@_cache_control
+@_cache_page
 def security(request: HttpRequest) -> HttpResponse:
     """Generates security.txt file containing contact details etc."""
     return HttpResponse(
