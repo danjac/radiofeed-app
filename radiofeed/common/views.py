@@ -4,12 +4,15 @@ import datetime
 
 from django.conf import settings
 from django.http import FileResponse, HttpRequest, HttpResponse
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_http_methods
 
 from radiofeed.common.template import get_site_config
+
+static_page = require_http_methods(["GET"])(render)
 
 
 @require_http_methods(["POST"])
