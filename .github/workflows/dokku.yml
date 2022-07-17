@@ -1,4 +1,4 @@
-name: Deploy to Dokku Server
+name: Deploy to Dokku
 
 on:
     workflow_run:
