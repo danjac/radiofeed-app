@@ -75,32 +75,57 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 class Episode(models.Model):
     """Individual podcast episode."""
 
-    podcast: Podcast = models.ForeignKey("podcasts.Podcast", on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(
+        "podcasts.Podcast", on_delete=models.CASCADE, verbose_name=_("Podcast")
+    )
 
-    guid: str = models.TextField()
+    guid: str = models.TextField(verbose_name=_("RSS Feed GUID"))
 
-    pub_date: datetime = models.DateTimeField()
+    pub_date: datetime = models.DateTimeField(verbose_name=_("Release Date"))
 
-    title: str = models.TextField(blank=True)
-    description: str = models.TextField(blank=True)
-    keywords: str = models.TextField(blank=True)
+    title: str = models.TextField(blank=True, verbose_name=_("Episode Title"))
+    description: str = models.TextField(
+        blank=True, verbose_name=_("Episode Description")
+    )
+    keywords: str = models.TextField(blank=True, verbose_name=_("Episode Keywords"))
 
-    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    link: str | None = models.URLField(
+        max_length=2083, null=True, blank=True, verbose_name=_("Episode Website Page")
+    )
 
-    episode_type: str = models.CharField(max_length=30, default="full")
-    episode: int | None = models.IntegerField(null=True, blank=True)
-    season: int | None = models.IntegerField(null=True, blank=True)
+    episode_type: str = models.CharField(
+        max_length=30, default="full", verbose_name=_("Episode Type")
+    )
+    episode: int | None = models.IntegerField(
+        null=True, blank=True, verbose_name=_("Season Episode Number")
+    )
+    season: int | None = models.IntegerField(
+        null=True, blank=True, verbose_name=_("Season")
+    )
 
-    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url: str | None = models.URLField(
+        max_length=2083, null=True, blank=True, verbose_name=_("Cover Image")
+    )
 
-    media_url: str = models.URLField(max_length=2083)
-    media_type: str = models.CharField(max_length=60)
-    length: int | None = models.BigIntegerField(null=True, blank=True)
+    media_url: str = models.URLField(
+        max_length=2083, verbose_name=_("Audio URL Source")
+    )
+    media_type: str = models.CharField(max_length=60, verbose_name=_("Audio MIME Type"))
 
-    duration: str = models.CharField(max_length=30, blank=True)
-    explicit: bool = models.BooleanField(default=False)
+    length: int | None = models.BigIntegerField(
+        null=True, blank=True, verbose_name=_("Duration (Seconds)")
+    )
+    duration: str = models.CharField(
+        max_length=30, blank=True, verbose_name=_("Duration (Text)")
+    )
 
-    search_vector: str | None = SearchVectorField(null=True, editable=False)
+    explicit: bool = models.BooleanField(
+        default=False, verbose_name=_("Contains Explicit or Adult Content")
+    )
+
+    search_vector: str | None = SearchVectorField(
+        null=True, editable=False, verbose_name=_("PostgreSQL Search Vector")
+    )
 
     objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
     fast_update_objects: models.Manager = FastUpdateManager()
@@ -269,8 +294,17 @@ class BookmarkQuerySet(SearchMixin, models.QuerySet):
 class Bookmark(TimeStampedModel):
     """Bookmarked episodes."""
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+    )
+
+    episode = models.ForeignKey(
+        "episodes.Episode",
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+    )
 
     objects = BookmarkQuerySet.as_manager()
 
@@ -299,11 +333,17 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
 class AudioLog(TimeStampedModel):
     """Record of user listening history."""
 
-    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode: Episode = models.ForeignKey("episodes.Episode", on_delete=models.CASCADE)
+    user: User = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("User")
+    )
+    episode: Episode = models.ForeignKey(
+        "episodes.Episode", on_delete=models.CASCADE, verbose_name=_("Episode")
+    )
 
-    listened: datetime = models.DateTimeField()
-    current_time: int = models.IntegerField(default=0)
+    listened: datetime = models.DateTimeField(verbose_name=_("Last Listened At"))
+    current_time: int = models.IntegerField(
+        default=0, verbose_name=_("Timestamp Mark (Seconds)")
+    )
 
     objects: models.Manager["AudioLog"] = AudioLogQuerySet.as_manager()
 

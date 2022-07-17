@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-17 09:26+0000\n"
+"POT-Creation-Date: 2022-07-17 10:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,120 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: radiofeed/episodes/models.py:208
+#: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:305
+#: radiofeed/podcasts/models.py:337
+#, fuzzy
+#| msgid "Podcasts"
+msgid "Podcast"
+msgstr "Podcastit"
+
+#: radiofeed/episodes/models.py:82
+msgid "RSS Feed GUID"
+msgstr ""
+
+#: radiofeed/episodes/models.py:84 templates/episodes/episode.html:27
+#: templates/episodes/timestamps.html:6
+msgid "Release Date"
+msgstr "Päivämäärä"
+
+#: radiofeed/episodes/models.py:86
+#, fuzzy
+#| msgid "Episode {episode}"
+msgid "Episode Title"
+msgstr "Jakso {episode}"
+
+#: radiofeed/episodes/models.py:88
+#, fuzzy
+#| msgid "Episode {episode}"
+msgid "Episode Description"
+msgstr "Jakso {episode}"
+
+#: radiofeed/episodes/models.py:90
+#, fuzzy
+#| msgid "Episode {episode}"
+msgid "Episode Keywords"
+msgstr "Jakso {episode}"
+
+#: radiofeed/episodes/models.py:93
+msgid "Episode Website Page"
+msgstr ""
+
+#: radiofeed/episodes/models.py:97
+#, fuzzy
+#| msgid "Episodes"
+msgid "Episode Type"
+msgstr "Jaksot"
+
+#: radiofeed/episodes/models.py:100
+msgid "Season Episode Number"
+msgstr ""
+
+#: radiofeed/episodes/models.py:103
+msgid "Season"
+msgstr ""
+
+#: radiofeed/episodes/models.py:107 radiofeed/podcasts/models.py:178
+msgid "Cover Image"
+msgstr ""
+
+#: radiofeed/episodes/models.py:111
+msgid "Audio URL Source"
+msgstr ""
+
+#: radiofeed/episodes/models.py:113
+msgid "Audio MIME Type"
+msgstr ""
+
+#: radiofeed/episodes/models.py:116
+#, fuzzy
+#| msgid "Duration"
+msgid "Duration (Seconds)"
+msgstr "Kesto"
+
+#: radiofeed/episodes/models.py:119
+#, fuzzy
+#| msgid "Duration"
+msgid "Duration (Text)"
+msgstr "Kesto"
+
+#: radiofeed/episodes/models.py:123
+msgid "Contains Explicit or Adult Content"
+msgstr ""
+
+#: radiofeed/episodes/models.py:127 radiofeed/podcasts/models.py:235
+msgid "PostgreSQL Search Vector"
+msgstr ""
+
+#: radiofeed/episodes/models.py:233
 #, python-brace-format
 msgid "Episode {episode}"
 msgstr "Jakso {episode}"
 
-#: radiofeed/episodes/models.py:211
+#: radiofeed/episodes/models.py:236
 #, python-brace-format
 msgid "Season {season}"
 msgstr "Kausi {season}"
+
+#: radiofeed/episodes/models.py:300 radiofeed/episodes/models.py:306
+#: radiofeed/episodes/models.py:337
+msgid "User"
+msgstr ""
+
+#: radiofeed/episodes/models.py:340
+#, fuzzy
+#| msgid "Episodes"
+msgid "Episode"
+msgstr "Jaksot"
+
+#: radiofeed/episodes/models.py:343
+#, fuzzy
+#| msgid "Listened"
+msgid "Last Listened At"
+msgstr "Kuunneltu"
+
+#: radiofeed/episodes/models.py:345
+msgid "Timestamp Mark (Seconds)"
+msgstr ""
 
 #: radiofeed/episodes/views.py:242
 msgid "Removed from History"
@@ -41,6 +146,7 @@ msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
 #: radiofeed/podcasts/admin.py:39 radiofeed/podcasts/admin.py:47
+#: radiofeed/podcasts/models.py:134
 msgid "Active"
 msgstr "Aktiivinen"
 
@@ -91,44 +197,189 @@ msgstr "Podcast(it) päivystysjonossa"
 msgid "Podcast has been queued for update"
 msgstr "Podcast päivystysjonossa"
 
-#: radiofeed/podcasts/emails.py:63
+#: radiofeed/podcasts/emails.py:67
 #, python-brace-format
 msgid "Hi {username}, here are some new podcasts you might like!"
 msgstr "Hei {username}, tässä on uusia podcasteja, joista saatat pitää!"
 
-#: radiofeed/podcasts/models.py:121
+#: radiofeed/podcasts/models.py:42
+#, fuzzy
+#| msgid "Categories"
+msgid "Category Name"
+msgstr "Kategoriat"
+
+#: radiofeed/podcasts/models.py:50
+msgid "Parent Category"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:124
 msgid "Success"
 msgstr "Menestys"
 
-#: radiofeed/podcasts/models.py:122
+#: radiofeed/podcasts/models.py:125
 msgid "Complete"
 msgstr "Valmis"
 
-#: radiofeed/podcasts/models.py:123
+#: radiofeed/podcasts/models.py:126
 msgid "Not Modified"
 msgstr "Ei muokkaattu"
 
-#: radiofeed/podcasts/models.py:124
+#: radiofeed/podcasts/models.py:127
 msgid "HTTP Error"
 msgstr "HTTP-Virhe"
 
-#: radiofeed/podcasts/models.py:125
+#: radiofeed/podcasts/models.py:128
 msgid "RSS Parser Error"
 msgstr "RSS-Jäsennysvirhe"
 
-#: radiofeed/podcasts/models.py:126
+#: radiofeed/podcasts/models.py:129
 msgid "Duplicate Feed"
 msgstr "Kaksoispodcast"
 
-#: radiofeed/podcasts/views.py:88
+#: radiofeed/podcasts/models.py:131
+msgid "RSS Feed"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:136
+msgid "Inactive podcasts will no longer be updated from their RSS feeds."
+msgstr ""
+
+#: radiofeed/podcasts/models.py:140
+msgid "HTTP Etag Header"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:141
+#, fuzzy
+#| msgid "Podcasts"
+msgid "Podcast Title"
+msgstr "Podcastit"
+
+#: radiofeed/podcasts/models.py:144
+#, fuzzy
+#| msgid "Release Date"
+msgid "Latest Release Date"
+msgstr "Päivämäärä"
+
+#: radiofeed/podcasts/models.py:148
+msgid "Last RSS Feed Check"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:154
+msgid "HTTP Modified Header"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:158
+msgid "Content Hash of RSS Feed"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:162
+msgid "Last HTTP Status from RSS Feed"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:170
+msgid "Last Result from RSS Feed Update"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:174
+msgid "Number of RSS Feed Retries"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:182
+msgid "Funding Website URL"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:185
+msgid "Funding Website Text"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:192
+#, fuzzy
+#| msgid "Language"
+msgid "Podcast Language"
+msgstr "Kieli"
+
+#: radiofeed/podcasts/models.py:196
+msgid "Podcast Description"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:199 templates/episodes/detail.html:192
+#: templates/podcasts/detail.html:40
+msgid "Website"
+msgstr "Kotisivu"
+
+#: radiofeed/podcasts/models.py:202
+msgid "Non-iTunes Category Keywords"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:205
+msgid "Keywords Extracted from Podcast Content"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:207
+#, fuzzy
+#| msgid "Podcasts"
+msgid "Podcast Owner(s)"
+msgstr "Podcastit"
+
+#: radiofeed/podcasts/models.py:210
+#, fuzzy
+#| msgid "Adding podcast to database..."
+msgid "Podcast Added to Database"
+msgstr "Lisätään podcastin tietokantaan..."
+
+#: radiofeed/podcasts/models.py:213
+msgid "Podcast Updated in Database"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:217
+msgid "Podcast Contains Explicit or Adult Content"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:220
+#, fuzzy
+#| msgid "Home Page"
+msgid "Promoted to Home Page"
+msgstr "Kotisivu"
+
+#: radiofeed/podcasts/models.py:224
+#, fuzzy
+#| msgid "Categories"
+msgid "iTunes Categories"
+msgstr "Kategoriat"
+
+#: radiofeed/podcasts/models.py:231
+msgid "Recommended to Users"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:302
+#, fuzzy
+#| msgid "Subscribe"
+msgid "Subscriber"
+msgstr "Tilaa"
+
+#: radiofeed/podcasts/models.py:344
+#, fuzzy
+#| msgid "Search Podcasts"
+msgid "Similar Podcast"
+msgstr "Etsi Podcasteista"
+
+#: radiofeed/podcasts/models.py:348
+msgid "Frequency Count"
+msgstr ""
+
+#: radiofeed/podcasts/models.py:356
+msgid "Similarity Rating"
+msgstr ""
+
+#: radiofeed/podcasts/views.py:92
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
-#: radiofeed/podcasts/views.py:279
+#: radiofeed/podcasts/views.py:283
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:303
+#: radiofeed/podcasts/views.py:307
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
@@ -163,7 +414,7 @@ msgstr[1] "%(count)d podcastia lisätty kokoelmaasi"
 msgid "No new podcasts found in uploaded file"
 msgstr "Ei uusia podcasteja löydetty tiedostosta"
 
-#: radiofeed/users/views.py:151
+#: radiofeed/users/views.py:153
 msgid "Your account has been deleted"
 msgstr "Tilisi on poistettu"
 
@@ -402,6 +653,8 @@ msgstr ""
 "löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
 "                    "
 
+#: templates/about/faq.html:30
+#, python-format
 msgid ""
 "\n"
 "                        <strong>%(site_name)s</strong> is free of charge. "
@@ -2133,14 +2386,6 @@ msgstr ""
 #: templates/episodes/detail.html:177
 msgid "Explicit"
 msgstr "Varoitus"
-
-#: templates/episodes/detail.html:192 templates/podcasts/detail.html:40
-msgid "Website"
-msgstr "Kotisivu"
-
-#: templates/episodes/episode.html:27 templates/episodes/timestamps.html:6
-msgid "Release Date"
-msgstr "Päivämäärä"
 
 #: templates/episodes/history.html:17 templates/podcasts/episodes.html:18
 msgid "Oldest First"
