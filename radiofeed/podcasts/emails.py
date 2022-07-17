@@ -37,7 +37,11 @@ def send_recommendations_email(
             .select_related("episode__podcast")
             .values_list("episode__podcast", flat=True)
         )
-        | set(Subscription.objects.filter(user=user).values_list("podcast", flat=True))
+        | set(
+            Subscription.objects.filter(subscriber=user).values_list(
+                "podcast", flat=True
+            )
+        )
     )
 
     recommended_ids = (

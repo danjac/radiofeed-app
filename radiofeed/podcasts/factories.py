@@ -47,7 +47,7 @@ class RecommendationFactory(DjangoModelFactory):
 
 
 class SubscriptionFactory(DjangoModelFactory):
-    user = factory.SubFactory(UserFactory)
+    subscriber = factory.SubFactory(UserFactory)
     podcast = factory.SubFactory(PodcastFactory)
 
     class Meta:

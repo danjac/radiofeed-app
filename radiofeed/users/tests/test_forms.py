@@ -32,7 +32,9 @@ class TestOpmlUploadForm:
 
     def test_subscribe_to_feeds(self, form, user, podcast):
         assert form.subscribe_to_feeds(user) == 1
-        assert Subscription.objects.filter(user=user, podcast=podcast).count() == 1
+        assert (
+            Subscription.objects.filter(subscriber=user, podcast=podcast).count() == 1
+        )
 
     def test_subscribe_to_feeds_parser_error(self, user, podcast, mocker):
         form = OpmlUploadForm()
@@ -40,4 +42,6 @@ class TestOpmlUploadForm:
             "opml": SimpleUploadedFile("feeds.opml", b"", content_type="text/xml")
         }
         assert form.subscribe_to_feeds(user) == 0
-        assert Subscription.objects.filter(user=user, podcast=podcast).count() == 0
+        assert (
+            Subscription.objects.filter(subscriber=user, podcast=podcast).count() == 0
+        )

@@ -47,7 +47,7 @@ class TestPodcasts:
         """If user is not subscribed any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        sub = SubscriptionFactory(user=auth_user).podcast
+        sub = SubscriptionFactory(subscriber=auth_user).podcast
         response = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 3
@@ -65,7 +65,7 @@ class TestPodcasts:
         """If user subscribed any podcasts, show only own feed with these podcasts"""
 
         PodcastFactory.create_batch(3)
-        sub = SubscriptionFactory(user=auth_user)
+        sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(podcasts_url)
         assert_ok(response)
         assert len(response.context_data["page_obj"].object_list) == 1
@@ -312,23 +312,29 @@ class TestSubscribe:
     def test_subscribe(self, client, podcast, auth_user, url):
         response = client.post(url, HTTP_HX_TARGET=podcast.get_subscribe_target())
         assert_ok(response)
-        assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
+        assert Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
 
     @pytest.mark.django_db(transaction=True)
     def test_already_subscribed(self, client, podcast, auth_user, url):
 
-        SubscriptionFactory(user=auth_user, podcast=podcast)
+        SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.post(url, HTTP_HX_TARGET=podcast.get_subscribe_target())
         assert_conflict(response)
-        assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
+        assert Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
 
 
 class TestUnsubscribe:
     def test_unsubscribe(self, client, auth_user, podcast):
-        SubscriptionFactory(user=auth_user, podcast=podcast)
+        SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.delete(
             reverse("podcasts:unsubscribe", args=[podcast.id]),
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
         )
         assert_ok(response)
-        assert not Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
+        assert not Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()

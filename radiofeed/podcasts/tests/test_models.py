@@ -170,7 +170,7 @@ class TestPodcastModel:
         assert not podcast.is_subscribed(UserFactory())
 
     def test_is_subscribed_true(self, subscription):
-        assert subscription.podcast.is_subscribed(subscription.user)
+        assert subscription.podcast.is_subscribed(subscription.subscriber)
 
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()

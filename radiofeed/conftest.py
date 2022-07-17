@@ -75,4 +75,4 @@ def category(db):
 
 @pytest.fixture
 def subscription(auth_user, podcast):
-    return SubscriptionFactory(podcast=podcast, user=auth_user)
+    return SubscriptionFactory(podcast=podcast, subscriber=auth_user)

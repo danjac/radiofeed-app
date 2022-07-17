@@ -288,7 +288,7 @@ class Podcast(models.Model):
         """Check if user is subscribed to this podcast."""
         if user.is_anonymous:
             return False
-        return Subscription.objects.filter(podcast=self, user=user).exists()
+        return Subscription.objects.filter(podcast=self, subscriber=user).exists()
 
     def get_subscribe_target(self) -> str:
         """Returns HTMX subscribe action target."""
@@ -298,7 +298,7 @@ class Podcast(models.Model):
 class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""
 
-    user: User = models.ForeignKey(
+    subscriber: User = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Subscriber")
     )
     podcast: Podcast = models.ForeignKey(
@@ -309,7 +309,7 @@ class Subscription(TimeStampedModel):
         constraints = [
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s_user_podcast",
-                fields=["user", "podcast"],
+                fields=["subscriber", "podcast"],
             )
         ]
         indexes = [models.Index(fields=["-created"])]

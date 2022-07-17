@@ -61,10 +61,10 @@ class OpmlUploadForm(forms.Form):
         return len(
             Subscription.objects.bulk_create(
                 [
-                    Subscription(podcast=podcast, user=user)
+                    Subscription(podcast=podcast, subscriber=user)
                     for podcast in itertools.islice(
                         Podcast.objects.filter(rss__in=self._parse_opml())
-                        .exclude(subscription__user=user)
+                        .exclude(subscription__subscriber=user)
                         .distinct(),
                         limit,
                     )

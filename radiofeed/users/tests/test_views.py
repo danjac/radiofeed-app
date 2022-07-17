@@ -46,7 +46,7 @@ class TestUserPreferences:
 class TestUserStats:
     def test_stats(self, client, auth_user, podcast):
 
-        SubscriptionFactory(podcast=podcast, user=auth_user)
+        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
         AudioLogFactory(user=auth_user)
@@ -87,12 +87,14 @@ class TestImportPodcastFeeds:
             )
         )
 
-        assert Subscription.objects.filter(user=auth_user, podcast=podcast).exists()
+        assert Subscription.objects.filter(
+            subscriber=auth_user, podcast=podcast
+        ).exists()
 
     def test_post_has_no_new_feeds(self, client, auth_user, mocker, upload_file):
         SubscriptionFactory(
             podcast__rss="https://feeds.99percentinvisible.org/99percentinvisible",
-            user=auth_user,
+            subscriber=auth_user,
         )
 
         assert_ok(
@@ -103,7 +105,7 @@ class TestImportPodcastFeeds:
             )
         )
 
-        assert Subscription.objects.filter(user=auth_user).exists()
+        assert Subscription.objects.filter(subscriber=auth_user).exists()
 
     def test_post_is_empty(self, client, auth_user, mocker, upload_file):
 
@@ -115,7 +117,7 @@ class TestImportPodcastFeeds:
             )
         )
 
-        assert not Subscription.objects.filter(user=auth_user).exists()
+        assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
 
 class TestExportPodcastFeeds:

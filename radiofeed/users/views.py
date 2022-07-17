@@ -101,7 +101,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing feeds from user's subscriptions."""
     podcasts = (
         Podcast.objects.filter(
-            subscription__user=request.user,
+            subscription__subscriber=request.user,
         )
         .distinct()
         .order_by("title")
@@ -130,7 +130,9 @@ def user_stats(request: HttpRequest) -> HttpResponse:
         {
             "stats": {
                 "listened": logs.count(),
-                "subscribed": Subscription.objects.filter(user=request.user).count(),
+                "subscribed": Subscription.objects.filter(
+                    subscriber=request.user
+                ).count(),
                 "bookmarks": Bookmark.objects.filter(user=request.user).count(),
             },
         },

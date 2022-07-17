@@ -64,7 +64,7 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
-        SubscriptionFactory(user=auth_user, podcast=episode.podcast)
+        SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
 
         response = client.get(episodes_url)
         assert_ok(response)
@@ -80,7 +80,7 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
-        SubscriptionFactory(user=auth_user, podcast=episode.podcast)
+        SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
 
         response = client.get(episodes_url, {"promoted": True})
 

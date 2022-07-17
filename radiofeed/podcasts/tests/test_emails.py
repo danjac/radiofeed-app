@@ -13,9 +13,9 @@ class TestRecommendations:
 
     def test_sufficient_recommendations(self, user, mailoutbox):
 
-        first = SubscriptionFactory(user=user).podcast
-        second = SubscriptionFactory(user=user).podcast
-        third = SubscriptionFactory(user=user).podcast
+        first = SubscriptionFactory(subscriber=user).podcast
+        second = SubscriptionFactory(subscriber=user).podcast
+        third = SubscriptionFactory(subscriber=user).podcast
 
         RecommendationFactory(podcast=first)
         RecommendationFactory(podcast=second)

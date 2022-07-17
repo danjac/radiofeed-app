@@ -26,7 +26,11 @@ def index(request: HttpRequest) -> HttpResponse:
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
     """
     subscribed = (
-        frozenset(request.user.subscription_set.values_list("podcast", flat=True))
+        frozenset(
+            Subscription.objects.filter(subscriber=request.user).values_list(
+                "podcast", flat=True
+            )
+        )
         if request.user.is_authenticated
         else frozenset()
     )
@@ -272,7 +276,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = _get_podcast_or_404(podcast_id)
 
     try:
-        Subscription.objects.create(user=request.user, podcast=podcast)
+        Subscription.objects.create(subscriber=request.user, podcast=podcast)
     except IntegrityError:
         return HttpResponseConflict()
 
@@ -298,7 +302,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """
     podcast = _get_podcast_or_404(podcast_id)
 
-    Subscription.objects.filter(podcast=podcast, user=request.user).delete()
+    Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
 
     messages.info(request, _("You are no longer subscribed to this podcast"))
 
