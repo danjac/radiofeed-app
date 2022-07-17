@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -134,16 +134,12 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return TemplateResponse(
+    return _render_audio_player(
         request,
-        "episodes/player.html",
-        {
-            "episode": episode,
-            "start_player": True,
-            "is_playing": True,
-            "current_time": log.current_time,
-            "listened": log.listened,
-        },
+        episode,
+        start_player=True,
+        current_time=log.current_time,
+        listened=log.listened,
     )
 
 
@@ -161,15 +157,12 @@ def close_player(request: HttpRequest) -> HttpResponse:
             Episode.objects.with_current_time(request.user), pk=episode_id
         )
 
-        return TemplateResponse(
+        return _render_audio_player(
             request,
-            "episodes/player.html",
-            {
-                "episode": episode,
-                "is_playing": False,
-                "current_time": episode.current_time,
-                "listened": episode.listened,
-            },
+            episode,
+            start_player=False,
+            current_time=episode.current_time,
+            listened=episode.listened,
         )
 
     return HttpResponse()
@@ -282,15 +275,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, _("Added to Bookmarks"))
-
-    return TemplateResponse(
-        request,
-        "episodes/actions/bookmark.html",
-        {
-            "episode": episode,
-            "is_bookmarked": True,
-        },
-    )
+    return _render_bookmark_action(request, episode, True)
 
 
 @require_http_methods(["DELETE"])
@@ -306,12 +291,38 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, _("Removed from Bookmarks"))
+    return _render_bookmark_action(request, episode, False)
 
+
+def _render_audio_player(
+    request: HttpRequest,
+    episode: Episode,
+    *,
+    start_player: bool,
+    current_time: datetime | None,
+    listened: datetime | None,
+) -> TemplateResponse:
+    return TemplateResponse(
+        request,
+        "episodes/player.html",
+        {
+            "episode": episode,
+            "start_player": start_player,
+            "is_playing": start_player,
+            "current_time": current_time,
+            "listened": listened,
+        },
+    )
+
+
+def _render_bookmark_action(
+    request: HttpRequest, episode: Episode, is_bookmarked: bool
+) -> TemplateResponse:
     return TemplateResponse(
         request,
         "episodes/actions/bookmark.html",
         {
             "episode": episode,
-            "is_bookmarked": False,
+            "is_bookmarked": is_bookmarked,
         },
     )

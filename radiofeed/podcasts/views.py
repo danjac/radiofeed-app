@@ -281,15 +281,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, _("You are now subscribed to this podcast"))
-
-    return TemplateResponse(
-        request,
-        "podcasts/actions/subscribe.html",
-        {
-            "podcast": podcast,
-            "is_subscribed": True,
-        },
-    )
+    return _render_subscribe_action(request, podcast, False)
 
 
 @require_http_methods(["DELETE"])
@@ -305,15 +297,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
 
     messages.info(request, _("You are no longer subscribed to this podcast"))
-
-    return TemplateResponse(
-        request,
-        "podcasts/actions/subscribe.html",
-        {
-            "podcast": podcast,
-            "is_subscribed": False,
-        },
-    )
+    return _render_subscribe_action(request, podcast, False)
 
 
 def _get_podcasts() -> QuerySet[Podcast]:
@@ -332,3 +316,16 @@ def _podcast_detail_context(
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
         "num_episodes": Episode.objects.filter(podcast=podcast).count(),
     } | (extra_context or {})
+
+
+def _render_subscribe_action(
+    request: HttpRequest, podcast: Podcast, is_subscribed: bool
+) -> TemplateResponse:
+    return TemplateResponse(
+        request,
+        "podcasts/actions/subscribe.html",
+        {
+            "podcast": podcast,
+            "is_subscribed": is_subscribed,
+        },
+    )
