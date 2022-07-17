@@ -32,7 +32,7 @@
             </a>
         </div>
     {% endif %}
+    {% if request.htmx.target == target %}
+        {% include "includes/messages.html" with hx_oob=True %}
+    {% endif %}
 {% endwith %}
-{% if request.htmx.target == target %}
-    {% include "includes/messages.html" with hx_oob=True %}
-{% endif %}
