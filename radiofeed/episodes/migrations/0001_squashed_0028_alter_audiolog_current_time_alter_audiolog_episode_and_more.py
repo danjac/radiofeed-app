@@ -24,6 +24,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ("podcasts", "0001_squashed_0150_remove_subscription_unique_podcasts_subscription_user_podcast_and_more"),
         ("users", "0002_user_autoplay"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
