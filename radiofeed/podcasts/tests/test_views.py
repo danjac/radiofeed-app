@@ -25,7 +25,7 @@ class TestPodcasts:
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(podcasts_url)
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+        assert len(response.context["page_obj"].object_list) == 3
 
     def test_htmx(self, client, db):
 
@@ -36,12 +36,12 @@ class TestPodcasts:
             HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+        assert len(response.context["page_obj"].object_list) == 3
 
     def test_empty(self, client, db):
         response = client.get(podcasts_url)
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 0
+        assert len(response.context["page_obj"].object_list) == 0
 
     def test_user_is_subscribed_promoted(self, client, auth_user):
         """If user is not subscribed any podcasts, just show general feed"""
@@ -50,8 +50,8 @@ class TestPodcasts:
         sub = SubscriptionFactory(subscriber=auth_user).podcast
         response = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
-        assert sub not in response.context_data["page_obj"].object_list
+        assert len(response.context["page_obj"].object_list) == 3
+        assert sub not in response.context["page_obj"].object_list
 
     def test_user_is_not_subscribed(self, client, auth_user):
         """If user is not subscribed any podcasts, just show general feed"""
@@ -59,7 +59,7 @@ class TestPodcasts:
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(podcasts_url)
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+        assert len(response.context["page_obj"].object_list) == 3
 
     def test_user_is_subscribed(self, client, auth_user):
         """If user subscribed any podcasts, show only own feed with these podcasts"""
@@ -68,8 +68,8 @@ class TestPodcasts:
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(podcasts_url)
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 1
-        assert response.context_data["page_obj"].object_list[0] == sub.podcast
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == sub.podcast
 
 
 class TestLatestEpisode:
@@ -101,8 +101,8 @@ class TestSearchPodcasts:
             {"q": podcast.title},
         )
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 1
-        assert response.context_data["page_obj"].object_list[0] == podcast
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == podcast
 
 
 class TestSearchITunes:
@@ -158,8 +158,8 @@ class TestPodcastSimilar:
             reverse("podcasts:podcast_similar", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
-        assert response.context_data["podcast"] == podcast
-        assert len(response.context_data["recommendations"]) == 3
+        assert response.context["podcast"] == podcast
+        assert len(response.context["recommendations"]) == 3
 
 
 class TestPodcastDetail:
@@ -181,7 +181,7 @@ class TestPodcastDetail:
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
-        assert response.context_data["podcast"] == podcast
+        assert response.context["podcast"] == podcast
 
     def test_get_podcast_no_link(self, client, db):
         podcast = PodcastFactory(link=None, owner=factory.Faker("name"))
@@ -189,7 +189,7 @@ class TestPodcastDetail:
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
-        assert response.context_data["podcast"] == podcast
+        assert response.context["podcast"] == podcast
 
     def test_get_podcast_authenticated(self, client, auth_user, podcast):
         podcast.categories.set(CategoryFactory.create_batch(3))
@@ -197,14 +197,14 @@ class TestPodcastDetail:
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
-        assert response.context_data["podcast"] == podcast
+        assert response.context["podcast"] == podcast
 
     def test_get_podcast_admin(self, client, staff_user, podcast):
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
-        assert response.context_data["podcast"] == podcast
+        assert response.context["podcast"] == podcast
         assertContains(response, "Admin")
 
 
@@ -220,7 +220,7 @@ class TestPodcastEpisodes:
 
         response = client.get(self.url(podcast))
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 30
+        assert len(response.context["page_obj"].object_list) == 30
 
     def test_get_oldest_first(self, client, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
@@ -230,7 +230,7 @@ class TestPodcastEpisodes:
             {"o": "a"},
         )
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 3
+        assert len(response.context["page_obj"].object_list) == 3
 
     def test_search(self, client, podcast, faker):
         EpisodeFactory.create_batch(3, podcast=podcast)
@@ -242,7 +242,7 @@ class TestPodcastEpisodes:
             {"q": episode.title},
         )
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 1
+        assert len(response.context["page_obj"].object_list) == 1
 
 
 class TestCategoryList:
@@ -255,13 +255,13 @@ class TestCategoryList:
 
         response = client.get(self.url)
         assert_ok(response)
-        assert len(response.context_data["categories"]) == 3
+        assert len(response.context["categories"]) == 3
 
     def test_no_matching_podcasts(self, db, client):
         CategoryFactory.create_batch(3)
         response = client.get(self.url)
         assert_ok(response)
-        assert len(response.context_data["categories"]) == 0
+        assert len(response.context["categories"]) == 0
 
     def test_search(self, client, category, faker):
 
@@ -272,7 +272,7 @@ class TestCategoryList:
 
         response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
-        assert len(response.context_data["categories"]) == 1
+        assert len(response.context["categories"]) == 1
 
     def test_search_no_matching_podcasts(self, client, category, faker):
 
@@ -282,7 +282,7 @@ class TestCategoryList:
 
         response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
-        assert len(response.context_data["categories"]) == 0
+        assert len(response.context["categories"]) == 0
 
 
 class TestCategoryDetail:
@@ -290,7 +290,7 @@ class TestCategoryDetail:
         PodcastFactory.create_batch(12, categories=[category])
         response = client.get(category.get_absolute_url())
         assert_ok(response)
-        assert response.context_data["category"] == category
+        assert response.context["category"] == category
 
     def test_search(self, client, category, faker):
 
@@ -301,7 +301,7 @@ class TestCategoryDetail:
 
         response = client.get(category.get_absolute_url(), {"q": podcast.title})
         assert_ok(response)
-        assert len(response.context_data["page_obj"].object_list) == 1
+        assert len(response.context["page_obj"].object_list) == 1
 
 
 class TestSubscribe:

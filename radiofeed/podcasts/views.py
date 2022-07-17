@@ -4,9 +4,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.template.response import TemplateResponse
+from django.http import Http404, HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
@@ -76,7 +75,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "podcasts/pagination/podcasts.html",
         )
         if request.search
-        else HttpResponseRedirect(settings.HOME_URL)
+        else redirect(settings.HOME_URL)
     )
 
 
@@ -85,7 +84,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if not request.search:
-        return HttpResponseRedirect(settings.HOME_URL)
+        return redirect(settings.HOME_URL)
 
     feeds: list[itunes.Feed] = []
 
@@ -94,7 +93,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     except itunes.ItunesException:
         messages.error(request, _("Sorry, an error occurred trying to access iTunes."))
 
-    return TemplateResponse(
+    return render(
         request,
         "podcasts/itunes_search.html",
         {
@@ -120,7 +119,7 @@ def latest_episode(
     ) is None:
         raise Http404()
 
-    return HttpResponseRedirect(episode.get_absolute_url())
+    return redirect(episode)
 
 
 @require_http_methods(["GET"])
@@ -137,7 +136,7 @@ def similar(
     """
     podcast = _get_podcast_or_404(podcast_id)
 
-    return TemplateResponse(
+    return render(
         request,
         "podcasts/similar.html",
         _podcast_detail_context(
@@ -164,7 +163,7 @@ def podcast_detail(
     """
     podcast = _get_podcast_or_404(podcast_id)
 
-    return TemplateResponse(
+    return render(
         request,
         "podcasts/detail.html",
         _podcast_detail_context(
@@ -230,9 +229,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         categories = categories.search(request.search.value)
 
-    return TemplateResponse(
-        request, "podcasts/categories.html", {"categories": categories}
-    )
+    return render(request, "podcasts/categories.html", {"categories": categories})
 
 
 @require_http_methods(["GET"])
@@ -323,8 +320,8 @@ def _podcast_detail_context(
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
-) -> TemplateResponse:
-    return TemplateResponse(
+) -> render:
+    return render(
         request,
         "podcasts/actions/subscribe.html",
         {
