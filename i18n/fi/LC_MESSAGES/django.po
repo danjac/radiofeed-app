@@ -402,14 +402,6 @@ msgstr ""
 "löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
 "                    "
 
-#: templates/about/faq.html:30
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                        <strong>%(site_name)s</strong> is a web "
-#| "application for discovering new podcasts and collecting your favorite "
-#| "podcasts and episodes.\n"
-#| "                    "
 msgid ""
 "\n"
 "                        <strong>%(site_name)s</strong> is free of charge. "
@@ -417,10 +409,6 @@ msgid ""
 "software!</a>\n"
 "                    "
 msgstr ""
-"\n"
-"<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien "
-"löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
-"                    "
 
 #: templates/about/faq.html:43
 #, python-format
@@ -430,6 +418,10 @@ msgid ""
 "%(site_name)s?\n"
 "                    "
 msgstr ""
+"\n"
+"                        Pitääkö minun luoda tili käyttääkseni "
+"%(site_name)s?\n"
+"                   "
 
 #: templates/about/faq.html:48
 #, python-format
