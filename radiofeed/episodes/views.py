@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
@@ -20,7 +20,7 @@ from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast
 
 
-@require_http_methods(["GET"])
+@require_safe
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
     promoted = "promoted" in request.GET
@@ -61,7 +61,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
 
@@ -81,7 +81,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -108,7 +108,7 @@ def episode_detail(
     )
 
 
-@require_http_methods(["POST"])
+@require_POST
 @ajax_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if necessary and adds episode to player session tracker.
@@ -139,7 +139,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     )
 
 
-@require_http_methods(["POST"])
+@require_POST
 @ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes player. Removes episode to player session tracker.
@@ -165,7 +165,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @ratelimit(key="ip", rate="20/m")
-@require_http_methods(["POST"])
+@require_POST
 @ajax_login_required
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode.
@@ -189,7 +189,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     return HttpResponseNoContent()
 
 
-@require_http_methods(["GET"])
+@require_safe
 @login_required
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
@@ -216,7 +216,7 @@ def history(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["DELETE"])
+@require_POST
 @ajax_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet.
@@ -237,7 +237,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 @login_required
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
@@ -255,7 +255,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["POST"])
+@require_POST
 @ajax_login_required
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks.
@@ -274,7 +274,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_action(request, episode, True)
 
 
-@require_http_methods(["DELETE"])
+@require_POST
 @ajax_login_required
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Remove episode from bookmarks.

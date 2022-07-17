@@ -346,7 +346,7 @@ class TestAddBookmark:
 class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode):
         BookmarkFactory(user=auth_user, episode=episode)
-        response = client.delete(
+        response = client.post(
             reverse("episodes:remove_bookmark", args=[episode.id]),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
         )
@@ -401,9 +401,7 @@ class TestRemoveAudioLog:
         AudioLogFactory(user=auth_user)
 
         assert_ok(
-            client.delete(
-                self.url(episode), HTTP_HX_TARGET=episode.get_history_target()
-            )
+            client.post(self.url(episode), HTTP_HX_TARGET=episode.get_history_target())
         )
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
@@ -414,7 +412,7 @@ class TestRemoveAudioLog:
         log = AudioLogFactory(user=auth_user, episode=player_episode)
 
         assert_ok(
-            client.delete(
+            client.post(
                 self.url(log.episode),
                 HTTP_HX_TARGET=player_episode.get_history_target(),
             ),
@@ -425,7 +423,7 @@ class TestRemoveAudioLog:
         log = AudioLogFactory(user=auth_user, episode=episode)
 
         assert_ok(
-            client.delete(
+            client.post(
                 self.url(log.episode),
                 HTTP_HX_TARGET=episode.get_history_target(),
             ),

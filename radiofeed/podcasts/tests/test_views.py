@@ -330,7 +330,7 @@ class TestSubscribe:
 class TestUnsubscribe:
     def test_unsubscribe(self, client, auth_user, podcast):
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
-        response = client.delete(
+        response = client.post(
             reverse("podcasts:unsubscribe", args=[podcast.id]),
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
         )

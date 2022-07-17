@@ -8,14 +8,14 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.template import get_site_config
 
-static_page = require_http_methods(["GET"])(render)
+static_page = require_safe(render)
 
 
-@require_http_methods(["POST"])
+@require_POST
 def accept_cookies(request: HttpRequest) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""
     response = HttpResponse()
@@ -30,7 +30,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
     return response
 
 
-@require_http_methods(["GET"])
+@require_safe
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 def favicon(request: HttpRequest) -> FileResponse:
     """Generates favicon file."""
@@ -39,7 +39,7 @@ def favicon(request: HttpRequest) -> FileResponse:
     )
 
 
-@require_http_methods(["GET", "HEAD"])
+@require_safe
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request: HttpRequest) -> HttpResponse:
@@ -63,7 +63,7 @@ def robots(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET", "HEAD"])
+@require_safe
 @cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def security(request: HttpRequest) -> HttpResponse:

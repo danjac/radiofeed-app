@@ -8,7 +8,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import ajax_login_required
@@ -19,7 +19,7 @@ from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 
 
-@require_http_methods(["GET"])
+@require_safe
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page.
 
@@ -56,7 +56,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
 
@@ -80,7 +80,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 
 @ratelimit(key="ip", rate="20/m")
-@require_http_methods(["GET"])
+@require_safe
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if not request.search:
@@ -103,7 +103,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -122,7 +122,7 @@ def latest_episode(
     return redirect(episode)
 
 
-@require_http_methods(["GET"])
+@require_safe
 def similar(
     request: HttpRequest,
     podcast_id: int,
@@ -152,7 +152,7 @@ def similar(
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -175,7 +175,7 @@ def podcast_detail(
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 def episodes(
     request: HttpRequest,
     podcast_id: int,
@@ -215,7 +215,7 @@ def episodes(
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
@@ -232,7 +232,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     return render(request, "podcasts/categories.html", {"categories": categories})
 
 
-@require_http_methods(["GET"])
+@require_safe
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -262,7 +262,7 @@ def category_detail(
     )
 
 
-@require_http_methods(["POST"])
+@require_POST
 @ajax_login_required
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast.
@@ -281,10 +281,10 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, _("You are now subscribed to this podcast"))
-    return _render_subscribe_action(request, podcast, False)
+    return _render_subscribe_action(request, podcast, True)
 
 
-@require_http_methods(["DELETE"])
+@require_POST
 @ajax_login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast.

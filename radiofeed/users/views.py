@@ -10,15 +10,16 @@ from django.template.response import SimpleTemplateResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext, override
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseClientRedirect
 
+from radiofeed.common.decorators import require_form_methods
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
-@require_http_methods(["GET", "POST"])
+@require_form_methods
 @login_required
 def user_preferences(
     request: HttpRequest, target: str = "preferences-form"
@@ -48,7 +49,7 @@ def user_preferences(
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 @login_required
 def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
@@ -62,7 +63,7 @@ def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["POST"])
+@require_POST
 @login_required
 def import_podcast_feeds(
     request: HttpRequest, target: str = "opml-import-form"
@@ -96,7 +97,7 @@ def import_podcast_feeds(
     )
 
 
-@require_http_methods(["POST"])
+@require_POST
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing feeds from user's subscriptions."""
@@ -119,7 +120,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET"])
+@require_safe
 @login_required
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
@@ -140,7 +141,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_http_methods(["GET", "POST"])
+@require_form_methods
 @login_required
 def delete_account(request: HttpRequest) -> HttpResponse:
     """Delete account on confirmation.

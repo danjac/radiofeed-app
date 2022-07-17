@@ -5,11 +5,10 @@
         hx-push-url="false"
         hx-target="this"
         hx-swap="outerHTML">
-
         {% if is_bookmarked %}
             <button title="{% translate "Remove from Bookmarks" %}"
                 class="link"
-                hx-delete="{% url 'episodes:remove_bookmark' episode.id %}">
+                hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
                 {% include "icons/star_solid.svg" with css_class=ICON_CSS %}
             </button>
         {% else %}
@@ -20,8 +19,7 @@
             </button>
         {% endif %}
     </div>
-
-    {% if request.htmx.target == target %}
-        {% include "includes/messages.html" with hx_oob=True %}
-    {% endif %}
 {% endwith %}
+{% if request.htmx.target == target %}
+    {% include "includes/messages.html" with hx_oob=True %}
+{% endif %}
