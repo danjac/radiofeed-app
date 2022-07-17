@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
@@ -59,21 +60,23 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
-    if not request.search:
-        return HttpResponseRedirect(reverse("podcasts:index"))
 
-    return render_pagination_response(
-        request,
-        (
-            _get_podcasts()
-            .search(request.search.value)
-            .order_by(
-                "-rank",
-                "-pub_date",
-            )
-        ),
-        "podcasts/search.html",
-        "podcasts/pagination/podcasts.html",
+    return (
+        render_pagination_response(
+            request,
+            (
+                _get_podcasts()
+                .search(request.search.value)
+                .order_by(
+                    "-rank",
+                    "-pub_date",
+                )
+            ),
+            "podcasts/search.html",
+            "podcasts/pagination/podcasts.html",
+        )
+        if request.search
+        else HttpResponseRedirect(settings.HOME_URL)
     )
 
 
@@ -82,7 +85,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if not request.search:
-        return HttpResponseRedirect(reverse("podcasts:index"))
+        return HttpResponseRedirect(settings.HOME_URL)
 
     feeds: list[itunes.Feed] = []
 

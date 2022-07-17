@@ -70,18 +70,20 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
-    if not request.search:
-        return HttpResponseRedirect(reverse("episodes:index"))
 
-    return render_pagination_response(
-        request,
-        (
-            Episode.objects.select_related("podcast")
-            .search(request.search.value)
-            .order_by("-rank", "-pub_date")
-        ),
-        "episodes/search.html",
-        "episodes/pagination/episodes.html",
+    return (
+        render_pagination_response(
+            request,
+            (
+                Episode.objects.select_related("podcast")
+                .search(request.search.value)
+                .order_by("-rank", "-pub_date")
+            ),
+            "episodes/search.html",
+            "episodes/pagination/episodes.html",
+        )
+        if request.search
+        else HttpResponseRedirect(reverse("episodes:index"))
     )
 
 
