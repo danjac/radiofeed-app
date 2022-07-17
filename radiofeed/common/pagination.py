@@ -3,8 +3,8 @@ from __future__ import annotations
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest
-from django.template.response import TemplateResponse
+from django.http import Http404, HttpRequest, HttpResponse
+from django.shortcuts import render
 
 
 def render_pagination_response(
@@ -17,7 +17,7 @@ def render_pagination_response(
     page_size: int = settings.DEFAULT_PAGE_SIZE,
     param: str = "page",
     **pagination_kwargs,
-) -> TemplateResponse:
+) -> HttpResponse:
     """Creates a TemplateResponse for a paginated QuerySet or list.
 
     If the request has the HX-Request header and matching HTMX target,
@@ -77,7 +77,7 @@ def render_pagination_response(
     except (ValueError, InvalidPage):
         raise Http404("Invalid page")
 
-    return TemplateResponse(
+    return render(
         request,
         pagination_template_name
         if request.htmx and request.htmx.target == target
