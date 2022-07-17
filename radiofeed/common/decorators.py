@@ -22,9 +22,6 @@ def ajax_login_required(view: Callable) -> Callable:
     Use this decorator instead of @login_required with views returning HTMX fragment and JSON responses.
 
     Returns redirect to login page if HTMX request, otherwise returns HTTP UNAUTHORIZED.
-
-    Args:
-        view: Django view callable
     """
 
     @functools.wraps(view)

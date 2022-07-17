@@ -56,17 +56,6 @@ def render_pagination_response(
             {% include "includes/pagination_links.html" %}
         </div>
 
-    Args:
-        request
-        object_list
-        template_name: default template used if no matching HTMX headers
-        pagination_template_name: template used if matching HTMX headers
-        extra_context: extra template context
-        target: HTMX target
-        page_size: number of items per page
-        param: query string parameter for page
-        `**pagination_kwargs`: other Paginator kwargs
-
     Raises:
         Http404: invalid page
     """
