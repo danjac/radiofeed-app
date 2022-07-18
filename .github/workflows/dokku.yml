@@ -1,4 +1,4 @@
-name: Deploy to Dokku
+name: deploy:dokku
 
 on:
     workflow_dispatch:
