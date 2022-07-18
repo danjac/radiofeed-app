@@ -773,11 +773,11 @@ source = ["Cython (>=0.29.7)"]
 
 [[package]]
 name = "markdown"
-version = "3.3.7"
+version = "3.4.1"
 description = "Python implementation of Markdown."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
@@ -1384,7 +1384,7 @@ numpy = ">=1.17.3,<1.25.0"
 
 [[package]]
 name = "sentry-sdk"
-version = "1.7.1"
+version = "1.7.2"
 description = "Python client for Sentry (https://sentry.io)"
 category = "main"
 optional = false
@@ -1514,7 +1514,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-markdown"
-version = "3.3.30"
+version = "3.4.0"
 description = "Typing stubs for Markdown"
 category = "dev"
 optional = false
@@ -2114,10 +2114,7 @@ lxml = [
     {file = "lxml-4.9.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:287605bede6bd36e930577c5925fcea17cb30453d96a7b4c63c14a257118dbb9"},
     {file = "lxml-4.9.1.tar.gz", hash = "sha256:fe749b052bb7233fe5d072fcb549221a8cb1a16725c47c37e42b0b9cb3ff2c3f"},
 ]
-markdown = [
-    {file = "Markdown-3.3.7-py3-none-any.whl", hash = "sha256:f5da449a6e1c989a4cea2631aa8ee67caa5a2ef855d551c88f9e309f4634c621"},
-    {file = "Markdown-3.3.7.tar.gz", hash = "sha256:cbb516f16218e643d8e0a95b309f77eb118cb138d39a4f27851e6a63581db874"},
-]
+markdown = []
 markupsafe = [
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:86b1f75c4e7c2ac2ccdaec2b9022845dbb81880ca318bb7a0a01fbf7813e3812"},
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f121a1420d4e173a5d96e47e9a0c0dcff965afdf1626d28de1460815f7c4ee7a"},
