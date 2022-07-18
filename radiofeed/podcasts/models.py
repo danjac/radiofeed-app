@@ -167,7 +167,7 @@ class Podcast(models.Model):
         null=True,
         blank=True,
         choices=ParseResult.choices,
-        verbose_name=_("Last Result from RSS Feed Update"),
+        verbose_name=_("Feed Update Result"),
     )
 
     num_retries: int = models.PositiveSmallIntegerField(

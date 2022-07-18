@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-18 07:31+0000\n"
+"POT-Creation-Date: 2022-07-18 11:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,8 +29,8 @@ msgstr "Podcastit"
 msgid "RSS Feed GUID"
 msgstr ""
 
-#: radiofeed/episodes/models.py:84 templates/episodes/episode.html:27
-#: templates/episodes/timestamps.html:6
+#: radiofeed/episodes/models.py:84 radiofeed/podcasts/admin.py:119
+#: templates/episodes/episode.html:27 templates/episodes/timestamps.html:6
 msgid "Release Date"
 msgstr "Päivämäärä"
 
@@ -154,8 +154,10 @@ msgstr "Aktiivinen"
 msgid "Inactive"
 msgstr "Ei Aktiivinen"
 
-#: radiofeed/podcasts/admin.py:65
-msgid "Parse Result"
+#: radiofeed/podcasts/admin.py:65 radiofeed/podcasts/models.py:170
+#, fuzzy
+#| msgid "Parse Result"
+msgid "Feed Update Result"
 msgstr "Jäsennystulos"
 
 #: radiofeed/podcasts/admin.py:72
@@ -165,10 +167,6 @@ msgstr "Ei mitään"
 #: radiofeed/podcasts/admin.py:90
 msgid "HTTP Status"
 msgstr ""
-
-#: radiofeed/podcasts/admin.py:119
-msgid "Pub Date"
-msgstr "Päivämäärä"
 
 #: radiofeed/podcasts/admin.py:127
 msgid "With pub date"
@@ -274,10 +272,6 @@ msgstr ""
 
 #: radiofeed/podcasts/models.py:162
 msgid "Last HTTP Status from RSS Feed"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:170
-msgid "Last Result from RSS Feed Update"
 msgstr ""
 
 #: radiofeed/podcasts/models.py:174
@@ -2335,7 +2329,8 @@ msgstr "Soita"
 
 #: templates/episodes/actions/player.html:35
 msgid "You must sign up or log in to play this episode"
-msgstr "Sinun täytyy rekisteröityä tai kirjautua sisään soittaaksesi tätä jaksoa"
+msgstr ""
+"Sinun täytyy rekisteröityä tai kirjautua sisään soittaaksesi tätä jaksoa"
 
 #: templates/episodes/bookmarks.html:15 templates/search/search_base.html:24
 msgid "Search Episodes"
@@ -2381,7 +2376,9 @@ msgstr "Lataa"
 
 #: templates/episodes/detail.html:174
 msgid "May contain adult themes and language. Listener discretion advised."
-msgstr "Saattaa sisältää aikuisille suunnattuja teemoja ja kieltä. Kuuntelijan harkintavaltaa suositellaan."
+msgstr ""
+"Saattaa sisältää aikuisille suunnattuja teemoja ja kieltä. Kuuntelijan "
+"harkintavaltaa suositellaan."
 
 #: templates/episodes/detail.html:177
 msgid "Explicit"
@@ -2667,6 +2664,7 @@ msgid "Latest Episode"
 msgstr "Viimeinen Jakso"
 
 #: templates/search/search_base.html:6
+#, python-format
 msgid ""
 "\n"
 "            Search %(site_name)s\n"
@@ -2752,3 +2750,6 @@ msgid ""
 "following form:\n"
 "            "
 msgstr ""
+
+#~ msgid "Pub Date"
+#~ msgstr "Päivämäärä"

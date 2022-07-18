@@ -62,7 +62,7 @@ class ActiveFilter(admin.SimpleListFilter):
 class ParseResultFilter(admin.SimpleListFilter):
     """Filters podcasts based on last feed parser result."""
 
-    title = _("Parse Result")
+    title = _("Feed Update Result")
     parameter_name = "parse_result"
 
     def lookups(
@@ -116,7 +116,7 @@ class HttpStatusFilter(admin.SimpleListFilter):
 class PubDateFilter(admin.SimpleListFilter):
     """Filters podcasts based on last pub date."""
 
-    title = _("Pub Date")
+    title = _("Release Date")
     parameter_name = "pub_date"
 
     def lookups(
@@ -163,7 +163,7 @@ class PromotedFilter(admin.SimpleListFilter):
 class SubscribedFilter(admin.SimpleListFilter):
     """Filters podcasts based on subscription status."""
 
-    title = ("Subscribed")
+    title = "Subscribed"
     parameter_name = "subscribed"
 
     def lookups(
