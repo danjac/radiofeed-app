@@ -572,7 +572,7 @@ msgstr ""
 
 #: templates/about/credits.html:53
 msgid "Additional Credits"
-msgstr ""
+msgstr "Lisää kunnioita"
 
 #: templates/about/credits.html:56
 msgid ""
@@ -609,7 +609,7 @@ msgstr ""
 
 #: templates/about/credits.html:85
 msgid "General Disclaimer"
-msgstr ""
+msgstr "Yleinen Vastuuvapauslauseke"
 
 #: templates/about/credits.html:88
 #, python-format
@@ -688,27 +688,27 @@ msgstr ""
 
 #: templates/about/faq.html:57
 msgid "Play episodes in our custom Player"
-msgstr ""
+msgstr "Kuunnella jaksoja mukautetulla soittimellamme"
 
 #: templates/about/faq.html:58
 msgid "Bookmark episodes to listen to later"
-msgstr ""
+msgstr "Lisää jaksoja Kirjanmerkkeihisi kunnellaksesi myöhemmin"
 
 #: templates/about/faq.html:59
 msgid "Add podcasts to your collection"
-msgstr ""
+msgstr "Lisätä podcasteja kokoelmaasi"
 
 #: templates/about/faq.html:60
 msgid "Get new weekly recommendations"
-msgstr ""
+msgstr "Saada uusia suosituksia joka viiko"
 
 #: templates/about/faq.html:61
 msgid "Keep track of episodes you have listened to"
-msgstr ""
+msgstr "Seurata sinun kuuntelemiasi jaksoja"
 
 #: templates/about/faq.html:65
 msgid "What if I want to download an episode to my device?"
-msgstr ""
+msgstr "Saanko lataa jakson omaan laitteeseeni?"
 
 #: templates/about/faq.html:67
 msgid ""
@@ -724,7 +724,7 @@ msgstr ""
 
 #: templates/about/faq.html:75
 msgid "How do I add podcasts to my collection?"
-msgstr ""
+msgstr "Miten lisätään podcasteja omaan kokoelmaani?"
 
 #: templates/about/faq.html:77
 msgid ""
@@ -770,7 +770,7 @@ msgstr ""
 
 #: templates/about/faq.html:105
 msgid "How do I remove an episode from my history?"
-msgstr ""
+msgstr "Miten poistan jakson historiastani?"
 
 #: templates/about/faq.html:107
 msgid ""
@@ -799,7 +799,7 @@ msgstr ""
 
 #: templates/about/faq.html:121
 msgid "Can I save my podcast subscriptions to my device?"
-msgstr ""
+msgstr "Saanko tallentaa podcast-tilauksia omaan laitteeseeni?"
 
 #: templates/about/faq.html:123
 #, python-format
@@ -827,7 +827,7 @@ msgstr ""
 
 #: templates/about/faq.html:140
 msgid "How do I save an episode to listen to later?"
-msgstr ""
+msgstr "Miten tallentaa jakson kunnellakseni myöhemmin?"
 
 #: templates/about/faq.html:142
 #, python-format
@@ -904,7 +904,7 @@ msgstr ""
 
 #: templates/about/faq.html:194
 msgid "How do I delete my account?"
-msgstr ""
+msgstr "Miten poistan oman tilini?"
 
 #: templates/about/faq.html:196
 #, python-format
@@ -918,11 +918,11 @@ msgstr ""
 
 #: templates/about/shortcuts.html:4
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "Yleiset Pikanäppäimet"
 
 #: templates/about/shortcuts.html:10
 msgid "Player Shortcuts"
-msgstr ""
+msgstr "Soittimen Pikanäppäimet"
 
 #: templates/about/shortcuts.html:13
 msgid "These keyboard shortcuts are available when the Player is running."
@@ -931,23 +931,23 @@ msgstr ""
 #: templates/about/shortcuts.html:16 templates/about/shortcuts.html:60
 #: templates/about/shortcuts.html:71
 msgid "Navigation Shortcuts"
-msgstr ""
+msgstr "Navigoinnin Pikanäppäimet"
 
 #: templates/about/shortcuts.html:19 templates/about/shortcuts.html:75
 msgid "Action"
-msgstr ""
+msgstr "Toiminta"
 
 #: templates/about/shortcuts.html:20 templates/about/shortcuts.html:77
 msgid "Key"
-msgstr ""
+msgstr "Näppäin"
 
 #: templates/about/shortcuts.html:25
 msgid "Toggle Play/Pause"
-msgstr ""
+msgstr "Vaihda Soitto/Paussi"
 
 #: templates/about/shortcuts.html:26
 msgid "Spacebar"
-msgstr ""
+msgstr "Välilyönti"
 
 #: templates/about/shortcuts.html:29
 msgid "Skip Backwards 10s"
@@ -955,11 +955,11 @@ msgstr ""
 
 #: templates/about/shortcuts.html:30
 msgid "Left Arrow"
-msgstr ""
+msgstr "Vasen Nuolinäppäin"
 
 #: templates/about/shortcuts.html:34
 msgid "Right Arrow"
-msgstr ""
+msgstr "Oikea Nuolinäppäin"
 
 #: templates/about/shortcuts.html:37 templates/episodes/player.html:199
 msgid "Increase Playback Rate"
@@ -975,11 +975,11 @@ msgstr ""
 
 #: templates/about/shortcuts.html:49
 msgid "Close Player (if running)"
-msgstr ""
+msgstr "Sulje Soitin"
 
 #: templates/about/shortcuts.html:53
 msgid "Reload Player (if running)"
-msgstr ""
+msgstr "Lataa Soitin Uudelleen"
 
 #: templates/about/shortcuts.html:63
 msgid ""
