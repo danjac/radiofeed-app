@@ -183,7 +183,7 @@ msgstr "Ilman päivämäärää"
 #: templates/episodes/index.html:30 templates/podcasts/index.html:12
 #: templates/podcasts/index.html:23
 msgid "Promoted"
-msgstr "Ylennetty"
+msgstr "Ylennetyt"
 
 #: radiofeed/podcasts/admin.py:173 templates/account/stats.html:17
 msgid "Subscribed"
