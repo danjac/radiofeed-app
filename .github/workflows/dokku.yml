@@ -3,7 +3,7 @@ name: Deploy to Dokku
 on:
     workflow_run:
         workflows: ["Run Tests"]
-        branches: [main]
+        branches: [dokku]
         types:
             - completed
 
@@ -21,4 +21,4 @@ jobs:
                   PRIVATE_KEY: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
                   HOST: ${{ secrets.DOKKU_HOST }}
                   PROJECT: ${{ secrets.DOKKU_APP }}
-                  BRANCH: main
+                  BRANCH: dokku
