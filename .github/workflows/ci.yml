@@ -1,0 +1,7 @@
+name: ci
+
+on: push
+
+jobs:
+    runtests:
+        uses: ./.github/workflows/tests.yml

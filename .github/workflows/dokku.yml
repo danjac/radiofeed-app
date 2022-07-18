@@ -2,13 +2,10 @@ name: deploy:dokku
 
 on:
     workflow_dispatch:
-    workflow_run:
-        workflows: ["runtests"]
-        types: [completed]
-        branches:
-            - main
 
 jobs:
+    runtests:
+        uses: ./.github/workflows/tests.yml
     deploy:
         runs-on: ubuntu-latest
         steps:

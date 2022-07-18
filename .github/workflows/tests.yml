@@ -1,6 +1,7 @@
 name: runtests
 
-on: push
+on:
+    workflow_call:
 
 jobs:
     tests:
