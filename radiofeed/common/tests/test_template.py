@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from django.template.context import RequestContext
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from radiofeed.common.template import (
     absolute_uri,
@@ -156,20 +156,19 @@ class TestActiveLink:
 
 
 class TestReActiveLink:
-    about_url = "about:terms"
+    url = reverse_lazy("account_login")
 
     def test_re_active_link_no_match(self, rf):
-        url = reverse("account_login")
-        req = rf.get(url)
-        route = re_active_link(RequestContext(req), self.about_url, "/about/*")
-        assert route.url == reverse(self.about_url)
+        req = rf.get(self.url)
+        route = re_active_link(RequestContext(req), self.url, "/social/*")
+        assert route.url == self.url
         assert not route.match
         assert not route.exact
 
     def test_active_link_non_exact_match(self, rf):
-        req = rf.get(reverse(self.about_url))
-        route = re_active_link(RequestContext(req), self.about_url, "/about/*")
-        assert route.url == reverse(self.about_url)
+        req = rf.get(self.url)
+        route = re_active_link(RequestContext(req), self.url, "/account/*")
+        assert route.url == self.url
         assert route.match
         assert not route.exact
 

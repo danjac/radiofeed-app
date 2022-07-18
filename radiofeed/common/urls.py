@@ -4,39 +4,6 @@ from django.urls import include, path
 
 from radiofeed.common import views
 
-about_urls = [
-    path(
-        "faq/",
-        views.static_page,
-        name="faq",
-        kwargs={
-            "template_name": "about/faq.html",
-        },
-    ),
-    path(
-        "credits/",
-        views.static_page,
-        name="credits",
-        kwargs={
-            "template_name": "about/credits.html",
-        },
-    ),
-    path(
-        "shortcuts/",
-        views.static_page,
-        name="shortcuts",
-        kwargs={"template_name": "about/shortcuts.html"},
-    ),
-    path(
-        "terms/",
-        views.static_page,
-        name="terms",
-        kwargs={
-            "template_name": "about/terms.html",
-        },
-    ),
-]
-
 error_urls = [
     path(
         "400/",
@@ -77,10 +44,15 @@ error_urls = [
 ]
 
 urlpatterns = [
-    path("about/", include((about_urls, "about"), namespace="about")),
-    path("error/", include((error_urls, "error"), namespace="error")),
+    path(
+        "about/",
+        views.static_page,
+        name="about",
+        kwargs={"template_name": "about.html"},
+    ),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
     path("robots.txt", views.robots, name="robots"),
     path("favicon.ico", views.favicon, name="favicon"),
     path(".well-known/security.txt", views.security, name="security"),
+    path("error/", include((error_urls, "error"), namespace="error")),
 ]

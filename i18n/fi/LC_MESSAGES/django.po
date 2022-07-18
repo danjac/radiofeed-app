@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-18 11:44+0000\n"
+"POT-Creation-Date: 2022-07-18 19:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -169,11 +169,15 @@ msgid "HTTP Status"
 msgstr ""
 
 #: radiofeed/podcasts/admin.py:127
-msgid "With pub date"
-msgstr "Päivämäärän kanssa"
+#, fuzzy
+#| msgid "Release Date"
+msgid "With release date"
+msgstr "Päivämäärä"
 
 #: radiofeed/podcasts/admin.py:128
-msgid "With no pub date"
+#, fuzzy
+#| msgid "With no pub date"
+msgid "With no release date"
 msgstr "Ilman päivämäärää"
 
 #: radiofeed/podcasts/admin.py:147 radiofeed/podcasts/admin.py:154
@@ -369,11 +373,11 @@ msgstr ""
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
-#: radiofeed/podcasts/views.py:283
+#: radiofeed/podcasts/views.py:291
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:299
+#: radiofeed/podcasts/views.py:307
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
@@ -466,15 +470,14 @@ msgid ""
 "notified."
 msgstr ""
 
-#: templates/about/base.html:4 templates/about/shortcuts.html:105
-#: templates/includes/navbar.html:88 templates/includes/sidebar.html:72
-#: templates/includes/sidebar.html:75 templates/podcasts/detail.html:4
-#: templates/podcasts/detail_base.html:91
+#: templates/about.html:4 templates/includes/navbar.html:88
+#: templates/includes/sidebar.html:72 templates/includes/sidebar.html:75
+#: templates/podcasts/detail.html:4 templates/podcasts/detail_base.html:91
 #: templates/podcasts/detail_base.html:92
 msgid "About"
 msgstr "Tiedot"
 
-#: templates/about/base.html:9
+#: templates/about.html:8
 #, python-format
 msgid ""
 "\n"
@@ -482,39 +485,14 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"            Tiedot sivusosta %(site_name)s\n"
+"            Tiedot: %(site_name)s\n"
 "        "
 
-#: templates/about/base.html:20
-msgid "Frequenly Asked Questions"
-msgstr "Usein Kysytyt Kysymykset"
-
-#: templates/about/base.html:21
-msgid "FAQ"
-msgstr ""
-
-#: templates/about/base.html:26 templates/about/base.html:27
-#: templates/about/credits.html:4
-msgid "Credits"
-msgstr "Kunniat"
-
-#: templates/about/base.html:32 templates/about/base.html:33
-msgid "Shortcuts"
-msgstr "Pikanäppäimet"
-
-#: templates/about/base.html:38
-msgid "Terms &amp; Conditions"
-msgstr "Käyttöehdot"
-
-#: templates/about/base.html:39 templates/about/terms.html:4
-msgid "Terms"
-msgstr "Käyttöehdot"
-
-#: templates/about/credits.html:12
+#: templates/about.html:18
 msgid "About Us"
-msgstr "Tiedot meistä"
+msgstr "Tiedot Meistä"
 
-#: templates/about/credits.html:15
+#: templates/about.html:21
 #, python-format
 msgid ""
 "\n"
@@ -523,12 +501,16 @@ msgid ""
 "new content.\n"
 "                "
 msgstr ""
+"\n"
+"                    <strong>%(site_name)s</strong> on <strong>ilmainen</strong>"
+" on ilmainen podcast-sovellus suosikkiohjelmiesi keräämiseen ja uuden sisällön löytämiseen.\n"
+"                "
 
-#: templates/about/credits.html:20
+#: templates/about.html:26
 msgid "Technology"
 msgstr "Teknikka"
 
-#: templates/about/credits.html:23
+#: templates/about.html:29
 #, python-format
 msgid ""
 "\n"
@@ -545,7 +527,7 @@ msgid ""
 "                "
 msgstr ""
 
-#: templates/about/credits.html:37
+#: templates/about.html:43
 msgid ""
 "\n"
 "                    Runs on <a href=\"https://www.djangoproject.com/\"\n"
@@ -564,11 +546,11 @@ msgid ""
 "                "
 msgstr ""
 
-#: templates/about/credits.html:53
+#: templates/about.html:59
 msgid "Additional Credits"
 msgstr "Lisää kunnioita"
 
-#: templates/about/credits.html:56
+#: templates/about.html:62
 msgid ""
 "\n"
 "                    <li>\n"
@@ -601,11 +583,11 @@ msgid ""
 "                "
 msgstr ""
 
-#: templates/about/credits.html:85
+#: templates/about.html:91
 msgid "General Disclaimer"
 msgstr "Yleinen Vastuuvapauslauseke"
 
-#: templates/about/credits.html:88
+#: templates/about.html:94
 #, python-format
 msgid ""
 "\n"
@@ -615,1323 +597,23 @@ msgid ""
 "played directly from the source.\n"
 "                "
 msgstr ""
+"\n"
+"                     Kaikki podcast-kuvat ja -sisältö ovat yksittäisten "
+"podcast-omistajien omaisuutta. Podcastit eivät ole sidoksissa %(site_name)s:iin tai tue sitä."
+"Kaikki äänitiedostot toistetaan suoraan lähteestä.\n"
+"                "
 
-#: templates/about/credits.html:94 templates/about/terms.html:636
-#: templates/includes/footer.html:9
+#: templates/about.html:100 templates/includes/footer.html:9
 msgid "Contact Us"
 msgstr "Ota yhteyttä"
 
-#: templates/about/credits.html:101
+#: templates/about.html:107
 msgid "Feedback"
 msgstr "Palauteet"
 
-#: templates/about/credits.html:106
+#: templates/about.html:112
 msgid "Issues"
 msgstr "Ongelmat"
-
-#: templates/about/faq.html:4
-msgid "Frequently Asked Questions"
-msgstr "Usein Kysytyt Kysymykset"
-
-#: templates/about/faq.html:22
-#, python-format
-msgid ""
-"\n"
-"                        <strong>%(site_name)s</strong> is a web application "
-"for discovering new podcasts and collecting your favorite podcasts and "
-"episodes.\n"
-"                    "
-msgstr ""
-"\n"
-"<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien "
-"löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
-"                    "
-
-#: templates/about/faq.html:30
-#, python-format
-msgid ""
-"\n"
-"                        <strong>%(site_name)s</strong> is free of charge. "
-"It's also <a href=\"https://github.com/danjac/radiofeed/\">free, open-source "
-"software!</a>\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:43
-#, python-format
-msgid ""
-"\n"
-"                        Do I have to create an account to use "
-"%(site_name)s?\n"
-"                    "
-msgstr ""
-"\n"
-"                        Pitääkö minun luoda tili käyttääkseni "
-"%(site_name)s?\n"
-"                   "
-
-#: templates/about/faq.html:48
-#, python-format
-msgid ""
-"\n"
-"                        You don't have to <a class=\"link\"\n"
-"                            href=\"%(signup_url)s\">sign up</a> to discover "
-"new podcasts and episodes and download content.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:57
-msgid "Play episodes in our custom Player"
-msgstr "Kuunnella jaksoja mukautetulla soittimellamme"
-
-#: templates/about/faq.html:58
-msgid "Bookmark episodes to listen to later"
-msgstr "Lisää jaksoja Kirjanmerkkeihisi kunnellaksesi myöhemmin"
-
-#: templates/about/faq.html:59
-msgid "Add podcasts to your collection"
-msgstr "Lisätä podcasteja kokoelmaasi"
-
-#: templates/about/faq.html:60
-msgid "Get new weekly recommendations"
-msgstr "Saada uusia suosituksia joka viiko"
-
-#: templates/about/faq.html:61
-msgid "Keep track of episodes you have listened to"
-msgstr "Seurata sinun kuuntelemiasi jaksoja"
-
-#: templates/about/faq.html:65
-msgid "What if I want to download an episode to my device?"
-msgstr "Saanko lataa jakson omaan laitteeseeni?"
-
-#: templates/about/faq.html:67
-msgid ""
-"\n"
-"                        Click the download icon or link on the episode page "
-"to save the audio file to your device. You can then\n"
-"                        listen to the episode using any suitable audio "
-"player software. However if you download on your device, it won't be added "
-"to your\n"
-"                        play History.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:75
-msgid "How do I add podcasts to my collection?"
-msgstr "Miten lisätään podcasteja omaan kokoelmaani?"
-
-#: templates/about/faq.html:77
-msgid ""
-"\n"
-"                        Just click the <strong>Subscribe</strong> button on "
-"the podcast&apos;s <strong>About</strong> page to add the podcast\n"
-"                        to your collection.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:85
-#, python-format
-msgid ""
-"\n"
-"                        How does %(site_name)s recommend new podcasts to "
-"me?\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:90
-msgid ""
-"\n"
-"                        We will send you an email with new recommendations "
-"every week. We recommend new podcasts using a machine-learning algorithm "
-"based on your collection and listening history.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:96
-msgid "How do I stop receiving email notifications?"
-msgstr ""
-
-#: templates/about/faq.html:98
-#, python-format
-msgid ""
-"\n"
-"                        Go to the <a class=\"link\"\n"
-"                            href=\"%(preferences_url)s\">Preferences</a> "
-"section in the <strong>Settings</strong> area, uncheck the option "
-"<strong>Send email notifications</strong> and click the save button.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:105
-msgid "How do I remove an episode from my history?"
-msgstr "Miten poistan jakson historiastani?"
-
-#: templates/about/faq.html:107
-msgid ""
-"\n"
-"                        Go to the episode page and click the trash icon to "
-"permanently remove the episode from your History.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:113
-msgid "Can I import my feeds from another podcast app?"
-msgstr ""
-
-#: templates/about/faq.html:115
-#, python-format
-msgid ""
-"\n"
-"                        If your podcast app supports <a class=\"link\" "
-"target=\"_blank\" rel=\"noopener\" href=\"https://en.wikipedia.org/wiki/"
-"OPML\">OPML</a> export, you can download the OPML file to your device and "
-"upload it to <strong>%(request.site.name)s</strong> in the <a class=\"link\" "
-"href=\"%(import_export_feeds_url)s\">Import/Export OPML</a> section in the "
-"<strong>Settings</strong> area.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:121
-msgid "Can I save my podcast subscriptions to my device?"
-msgstr "Saanko tallentaa podcast-tilauksia omaan laitteeseeni?"
-
-#: templates/about/faq.html:123
-#, python-format
-msgid ""
-"\n"
-"                        You can download your podcast feed collection in <a "
-"class=\"link\" target=\"_blank\" rel=\"noopener\" href=\"https://en."
-"wikipedia.org/wiki/OPML\">OPML</a> format in the <a class=\"link\"\n"
-"                            href=\"%(import_export_feeds_url)s\">Import/"
-"Export OPML</a> section in the <strong>Settings</strong> area.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:132
-msgid ""
-"\n"
-"                        First try looking for the podcast in the Search box "
-"in the navigation bar. If you can't find what you are looking for,\n"
-"                        click the <strong>iTunes</strong> link in the search "
-"results page. Any new podcasts you find in iTunes will be automatically\n"
-"                        added to our database. We're also adding new "
-"podcasts every day!\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:140
-msgid "How do I save an episode to listen to later?"
-msgstr "Miten tallentaa jakson kunnellakseni myöhemmin?"
-
-#: templates/about/faq.html:142
-#, python-format
-msgid ""
-"\n"
-"                        First try looking for the podcast in the Search box "
-"in the navigation bar. If you can't find what you are looking for,\n"
-"                        Click the star icon in the episode page to add an "
-"episode to your <a class=\"link\" href=\"%(bookmarks_url)s\">Bookmarks</a>.\n"
-"                        You can add episodes you want to listen to later, or "
-"favorites you want to listen to again.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:150
-msgid "How often are podcasts updated?"
-msgstr ""
-
-#: templates/about/faq.html:152
-msgid ""
-"\n"
-"                        Popular podcasts are refreshed several times an hour "
-"and other podcasts every few hours. Podcasts which haven't\n"
-"                        submitted new content in a long time may be updated "
-"every few days.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:161
-#, python-format
-msgid ""
-"\n"
-"                        <strong>%(site_name)s</strong> has been tested on "
-"Chrome and Firefox browsers on Windows, Linux and Android operating "
-"systems.\n"
-"                        It should work OK on other browsers and operating "
-"systems, but no guarantee. If you run into an issue in your particular "
-"device or browser please file a <a class=\"link\"\n"
-"                            target=\"_blank\"\n"
-"                            rel=\"noopener\"\n"
-"                            href=\"https://github.com/danjac/radiofeed/"
-"issues\">bug</a> and provide as much detail as possible.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:171
-msgid "Help! I've found a bug. How do I report it?"
-msgstr ""
-
-#: templates/about/faq.html:173
-msgid ""
-"\n"
-"                        Sorry! If you find a bug we would be very grateful "
-"if you report it\n"
-"                        <a class=\"link\"\n"
-"                            target=\"_blank\"\n"
-"                            rel=\"noopener\"\n"
-"                            href=\"https://github.com/danjac/radiofeed/"
-"issues\">here</a>. You can also submit any ideas or suggestions you have!\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:185
-msgid ""
-"\n"
-"                        Absolutely, this is an open source project that can "
-"be hosted on your own server. Please see the <a class=\"link\"\n"
-"                            target=\"_blank\"\n"
-"                            rel=\"noopener\"\n"
-"                            href=\"https://github.com/danjac/radiofeed/"
-"\">README</a> for instructions on setting up and running an instance.\n"
-"                    "
-msgstr ""
-
-#: templates/about/faq.html:194
-msgid "How do I delete my account?"
-msgstr "Miten poistan oman tilini?"
-
-#: templates/about/faq.html:196
-#, python-format
-msgid ""
-" Go to <a class=\"link\" href=\"%(delete_account_url)s\">Delete Account</a> "
-"tab in the <strong>Settings</strong> area. If you delete your account, your "
-"collection, bookmarks and history will also be <strong>permanently</strong> "
-"deleted.\n"
-"                    "
-msgstr ""
-
-#: templates/about/shortcuts.html:4
-msgid "Keyboard Shortcuts"
-msgstr "Yleiset Pikanäppäimet"
-
-#: templates/about/shortcuts.html:10
-msgid "Player Shortcuts"
-msgstr "Soittimen Pikanäppäimet"
-
-#: templates/about/shortcuts.html:13
-msgid "These keyboard shortcuts are available when the Player is running."
-msgstr ""
-
-#: templates/about/shortcuts.html:16 templates/about/shortcuts.html:60
-#: templates/about/shortcuts.html:71
-msgid "Navigation Shortcuts"
-msgstr "Navigoinnin Pikanäppäimet"
-
-#: templates/about/shortcuts.html:19 templates/about/shortcuts.html:75
-msgid "Action"
-msgstr "Toiminta"
-
-#: templates/about/shortcuts.html:20 templates/about/shortcuts.html:77
-msgid "Key"
-msgstr "Näppäin"
-
-#: templates/about/shortcuts.html:25
-msgid "Toggle Play/Pause"
-msgstr "Vaihda Soitto/Paussi"
-
-#: templates/about/shortcuts.html:26
-msgid "Spacebar"
-msgstr "Välilyönti"
-
-#: templates/about/shortcuts.html:29
-msgid "Skip Backwards 10s"
-msgstr ""
-
-#: templates/about/shortcuts.html:30
-msgid "Left Arrow"
-msgstr "Vasen Nuolinäppäin"
-
-#: templates/about/shortcuts.html:34
-msgid "Right Arrow"
-msgstr "Oikea Nuolinäppäin"
-
-#: templates/about/shortcuts.html:37 templates/episodes/player.html:199
-msgid "Increase Playback Rate"
-msgstr ""
-
-#: templates/about/shortcuts.html:41 templates/episodes/player.html:190
-msgid "Decrease Playback Rate"
-msgstr ""
-
-#: templates/about/shortcuts.html:45
-msgid "Reset Default Playback Rate"
-msgstr ""
-
-#: templates/about/shortcuts.html:49
-msgid "Close Player (if running)"
-msgstr "Sulje Soitin"
-
-#: templates/about/shortcuts.html:53
-msgid "Reload Player (if running)"
-msgstr "Lataa Soitin Uudelleen"
-
-#: templates/about/shortcuts.html:63
-msgid ""
-"\n"
-"                These keyboard shortcuts should be used in combination with "
-"<strong>Alt+Shift</strong> keys on Windows and Linux\n"
-"                devices (Chrome/Firefox/Edge) and <strong>Ctrl+Option</"
-"strong> keys on Mac devices (Chrome/Firefox/Safari).\n"
-"                These keyboard shortcuts should be used in combination with "
-"<strong>Alt+Shift</strong> keys on Windows and Linux\n"
-"            "
-msgstr ""
-
-#: templates/about/shortcuts.html:81 templates/includes/sidebar.html:9
-#: templates/includes/sidebar.html:12 templates/podcasts/category_detail.html:4
-#: templates/podcasts/detail.html:84 templates/podcasts/index.html:4
-#: templates/podcasts/search.html:4 templates/search/search_base.html:19
-msgid "Podcasts"
-msgstr "Podcastit"
-
-#: templates/about/shortcuts.html:85 templates/episodes/index.html:4
-#: templates/episodes/index.html:10 templates/includes/sidebar.html:19
-#: templates/includes/sidebar.html:22
-msgid "New Releases"
-msgstr "Uudet Jaksot"
-
-#: templates/about/shortcuts.html:89 templates/includes/sidebar.html:29
-#: templates/includes/sidebar.html:32 templates/podcasts/categories.html:4
-#: templates/podcasts/categories.html:9
-#: templates/podcasts/category_detail.html:4
-msgid "Categories"
-msgstr "Kategoriat"
-
-#: templates/about/shortcuts.html:93 templates/account/stats.html:33
-#: templates/episodes/bookmarks.html:4 templates/episodes/bookmarks.html:9
-#: templates/episodes/bookmarks.html:19 templates/includes/sidebar.html:39
-#: templates/includes/sidebar.html:42
-msgid "Bookmarks"
-msgstr "Kirjanmerkit"
-
-#: templates/about/shortcuts.html:97 templates/episodes/history.html:4
-#: templates/episodes/history.html:8 templates/includes/sidebar.html:50
-#: templates/includes/sidebar.html:53
-msgid "History"
-msgstr "Historia"
-
-#: templates/about/shortcuts.html:101 templates/account/settings_base.html:4
-#: templates/includes/sidebar.html:61 templates/includes/sidebar.html:64
-msgid "Settings"
-msgstr "Asetukset"
-
-#: templates/about/shortcuts.html:109 templates/episodes/search.html:4
-#: templates/includes/navbar.html:43 templates/includes/navbar.html:44
-#: templates/includes/navbar.html:49 templates/includes/navbar.html:117
-#: templates/includes/navbar.html:118 templates/includes/navbar.html:122
-#: templates/podcasts/itunes_search.html:4 templates/podcasts/search.html:4
-#: templates/search/search_form.html:12 templates/search/search_form.html:26
-msgid "Search"
-msgstr "Haku"
-
-#: templates/about/shortcuts.html:113
-msgid "Login/Logout"
-msgstr "Kirjaudu sisään/ulos"
-
-#: templates/about/shortcuts.html:117
-msgid "Join"
-msgstr "Luo tili"
-
-#: templates/about/terms.html:12
-msgid "Last updated"
-msgstr "Viimein päivitetty"
-
-#: templates/about/terms.html:15
-msgid ""
-"\n"
-"                This Privacy Policy describes Our policies and procedures on "
-"the collection, use and disclosure of\n"
-"                Your information when You use the Service and tells You "
-"about Your privacy rights and how the law protects You.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:22
-msgid ""
-"\n"
-"                We use Your Personal data to provide and improve the "
-"Service. By using the Service, You agree to the\n"
-"                collection and use of information in accordance with this "
-"Privacy Policy. This Privacy Policy has been created with\n"
-"                the help of the Privacy Policy Generator.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:29
-msgid "Interpretation and Definitions"
-msgstr ""
-
-#: templates/about/terms.html:30
-msgid "Interpretation"
-msgstr ""
-
-#: templates/about/terms.html:33
-msgid ""
-"\n"
-"                The words of which the initial letter is capitalized have "
-"meanings defined under the following\n"
-"                conditions. The following definitions shall have the same "
-"meaning regardless of whether they appear in singular or\n"
-"                in plural.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:40
-msgid "Definitions"
-msgstr ""
-
-#: templates/about/terms.html:42
-msgid "For the purposes of this Privacy Policy"
-msgstr ""
-
-#: templates/about/terms.html:45
-msgid ""
-"\n"
-"                <strong>Account</strong> means a unique account created for "
-"You to access our Service or parts of our\n"
-"                Service.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:52
-#, python-format
-msgid ""
-"\n"
-"                <strong>Company (referred to as either \"the Company\", "
-"\"We\", \"Us\" or \"Our\" in this Agreement)</strong>\n"
-"                refers to <strong>%(request.site.name)s</strong>.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:59
-msgid ""
-"\n"
-"                <strong>Cookies</strong> are small files that are placed on "
-"Your computer, mobile device or any other device by a website, containing "
-"the details of Your browsing history on that website among its many uses.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:65
-#, python-format
-msgid ""
-"\n"
-"                <strong>Country</strong> refers to: "
-"<strong>%(site_config.country)s</strong>\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:71
-msgid ""
-"\n"
-"                <strong>Device</strong> means any device that can access the "
-"Service such as a computer, a cellphone\n"
-"                or a digital tablet.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:78
-msgid ""
-"\n"
-"                <strong>Personal Data</strong> is any information that "
-"relates to an identified or identifiable\n"
-"                individual.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:85
-msgid ""
-"\n"
-"                <strong>Service</strong> refers to the Website.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:91
-msgid ""
-"\n"
-"                <strong>Service Provider</strong> means any natural or legal "
-"person who processes the data on behalf\n"
-"                of the Company. It refers to third-party companies or "
-"individuals employed by the Company to facilitate the\n"
-"                Service, to provide the Service on behalf of the Company, to "
-"perform services related to the Service or to assist\n"
-"                the Company in analyzing how the Service is used.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:101
-msgid ""
-"\n"
-"                    <strong>Third-party Social Media Service</strong> refers "
-"to any website or any social network\n"
-"                    website through which a User can log in or create an "
-"account to use the Service.\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:109
-msgid ""
-"\n"
-"                <strong>Usage Data</strong> refers to data collected "
-"automatically, either generated by the use of\n"
-"                the Service or from the Service infrastructure itself (for "
-"example, the duration of a page visit).\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:116
-#, python-format
-msgid ""
-"\n"
-"                <strong>Website</strong> refers to <strong>%(site_name)s</"
-"strong>, accessible from\n"
-"                <strong>http://%(domain)s</strong>\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:123
-msgid ""
-"\n"
-"                <strong>You</strong> means the individual accessing or using "
-"the Service, or the company, or other\n"
-"                legal entity on behalf of which such individual is accessing "
-"or using the Service, as applicable.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:129
-msgid "Collecting and Using Your Personal Data"
-msgstr ""
-
-#: templates/about/terms.html:131
-msgid "Types of Data Collected"
-msgstr ""
-
-#: templates/about/terms.html:133
-msgid "Personal Data"
-msgstr ""
-
-#: templates/about/terms.html:136
-msgid ""
-"\n"
-"                While using Our Service, We may ask You to provide Us with "
-"certain personally identifiable\n"
-"                information that can be used to contact or identify You. "
-"Personally identifiable information may include, but is\n"
-"                not limited to:\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:144
-msgid "Email address"
-msgstr "Sähköpostiosoite"
-
-#: templates/about/terms.html:145 templates/about/terms.html:148
-msgid "Usage Data"
-msgstr ""
-
-#: templates/about/terms.html:151
-msgid ""
-"\n"
-"                Usage Data is collected automatically when using the "
-"Service.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:157
-msgid ""
-"\n"
-"                Usage Data may include information such as Your Device's "
-"Internet Protocol address (e.g. IP\n"
-"                address), browser type, browser version, the pages of our "
-"Service that You visit, the time and date of Your visit,\n"
-"                the time spent on those pages, unique device identifiers and "
-"other diagnostic data.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:165
-msgid ""
-"\n"
-"                When You access the Service by or through a mobile device, "
-"We may collect certain information\n"
-"                automatically, including, but not limited to, the type of "
-"mobile device You use, Your mobile device unique ID, the\n"
-"                IP address of Your mobile device, Your mobile operating "
-"system, the type of mobile Internet browser You use,\n"
-"                unique device identifiers and other diagnostic data.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:174
-msgid ""
-"\n"
-"                We may also collect information that Your browser sends "
-"whenever You visit our Service or when You\n"
-"                access the Service by or through a mobile device.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:181
-msgid "Information from Third-Party Social Media Services"
-msgstr ""
-
-#: templates/about/terms.html:184
-msgid ""
-"\n"
-"                    The Company allows You to create an account and log in "
-"to use the Service through the following\n"
-"                    Third-party Social Media Services:\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:197
-msgid ""
-"\n"
-"                    If You decide to register through or otherwise grant us "
-"access to a Third-Party Social Media\n"
-"                    Service, We may collect Personal data that is already "
-"associated with Your Third-Party Social Media Service's\n"
-"                    account, such as Your name, Your email address, Your "
-"activities or Your contact list associated with that account.\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:205
-msgid ""
-"\n"
-"                    You may also have the option of sharing additional "
-"information with the Company through Your\n"
-"                    Third-Party Social Media Service's account. If You "
-"choose to provide such information and Personal Data, during\n"
-"                    registration or otherwise, You are giving the Company "
-"permission to use, share, and store it in a manner\n"
-"                    consistent with this Privacy Policy.\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:215
-msgid "Tracking Technologies and Cookies"
-msgstr ""
-
-#: templates/about/terms.html:218
-msgid ""
-"\n"
-"                We use Cookies and similar tracking technologies to track "
-"the activity on Our Service and store\n"
-"                certain information. Tracking technologies used are beacons, "
-"tags, and scripts to collect and track information\n"
-"                and to improve and analyze Our Service. The technologies We "
-"use may include:\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:226
-msgid ""
-"\n"
-"                <strong>Cookies or Browser Cookies</strong>. A cookie is a "
-"small file placed on Your Device. You can\n"
-"                instruct Your browser to refuse all Cookies or to indicate "
-"when a Cookie is being sent. However, if You do not\n"
-"                accept Cookies, You may not be able to use some parts of our "
-"Service. Unless you have adjusted Your browser\n"
-"                setting so that it will refuse Cookies, our Service may use "
-"Cookies.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:235
-msgid ""
-"\n"
-"                <strong>Web Beacons</strong>. Certain sections of our "
-"Service and our emails may contain small\n"
-"                electronic files known as web beacons (also referred to as "
-"clear gifs, pixel tags, and single-pixel gifs) that\n"
-"                permit the Company, for example, to count users who have "
-"visited those pages or opened an email and for other\n"
-"                related website statistics (for example, recording the "
-"popularity of a certain section and verifying system and\n"
-"                server integrity).\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:245
-msgid ""
-"\n"
-"                Cookies can be \"Persistent\" or \"Session\" Cookies. "
-"Persistent Cookies remain on Your personal\n"
-"                computer or mobile device when You go offline, while Session "
-"Cookies are deleted as soon as You close Your web\n"
-"                browser.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:253
-msgid ""
-"\n"
-"                We use both Session and Persistent Cookies for the purposes "
-"set out below:\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:258
-msgid "Necessary / Essential Cookies"
-msgstr ""
-
-#: templates/about/terms.html:261
-msgid ""
-"\n"
-"                <strong>Type:</strong> Session Cookies\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:267 templates/about/terms.html:290
-#: templates/about/terms.html:311
-msgid ""
-"\n"
-"                <strong>Administered by:</strong> Us\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:273
-msgid ""
-"\n"
-"                <strong>Purpose:</strong> These Cookies are essential to "
-"provide You with services available\n"
-"                through the Website and to enable You to use some of its "
-"features. They help to authenticate users and\n"
-"                prevent fraudulent use of user accounts. Without these "
-"Cookies, the services that You have asked for\n"
-"                cannot be provided, and We only use these Cookies to provide "
-"You with those services.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:281
-msgid "Cookies Policy / Notice Acceptance Cookies"
-msgstr ""
-
-#: templates/about/terms.html:284
-msgid ""
-"\n"
-"                <strong>Type</strong>: Persistent Cookies\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:296
-msgid ""
-"\n"
-"                <strong>Purpose:</strong> These Cookies identify if users "
-"have accepted the use of\n"
-"                cookies on the Website.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:302
-msgid "Functionality Cookies"
-msgstr ""
-
-#: templates/about/terms.html:305
-msgid ""
-"\n"
-"                <strong>Type:</strong> Persistent Cookies\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:317
-msgid ""
-"\n"
-"                <strong>Purpose:</strong> These Cookies allow us to remember "
-"choices You make when\n"
-"                You use the Website, such as remembering your login details "
-"or language preference. The purpose\n"
-"                of these Cookies is to provide You with a more personal "
-"experience and to avoid You having to\n"
-"                re-enter your preferences every time You use the Website.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:326
-msgid ""
-"\n"
-"                Learn more about cookies at: <a\n"
-"                    rel=\"noopener\"\n"
-"                    target=\"_blank\"\n"
-"                    href=\"https://www.internetcookies.org/\">https://www."
-"internetcookies.org/</a>.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:334
-msgid "Use of Your Personal Data"
-msgstr ""
-
-#: templates/about/terms.html:337
-msgid ""
-"\n"
-"                The Company may use Personal Data for the following "
-"purposes:\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:343
-msgid ""
-"\n"
-"                To provide and maintain our Service, including to monitor "
-"the usage of our\n"
-"                Service.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:350
-msgid ""
-"\n"
-"                To manage Your Account: to manage Your registration as a "
-"user of the Service. The\n"
-"                Personal Data You provide can give You access to different "
-"functionalities of the Service that\n"
-"                are available to You as a registered user.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:358
-msgid ""
-"\n"
-"                For the performance of a contract: the development, "
-"compliance and undertaking of\n"
-"                the purchase contract for the products, items or services "
-"You have purchased or of any other\n"
-"                contract with Us through the Service.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:366
-msgid ""
-"\n"
-"                To contact You: To contact You by email, telephone calls, "
-"SMS, or other equivalent\n"
-"                forms of electronic communication, such as a mobile "
-"application's push notifications regarding\n"
-"                updates or informative communications related to the "
-"functionalities, products or contracted\n"
-"                services, including the security updates, when necessary or "
-"reasonable for their implementation.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:375
-msgid ""
-"\n"
-"                To provide You with news, special offers and general "
-"information about other\n"
-"                goods, services and events which we offer that are similar "
-"to those that you have already\n"
-"                purchased or enquired about unless You have opted not to "
-"receive such information.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:383
-msgid ""
-"\n"
-"                To manage Your requests: To attend and manage Your requests "
-"to Us.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:389
-msgid ""
-"\n"
-"                For business transfers: We may use Your information to "
-"evaluate or conduct a\n"
-"                merger, divestiture, restructuring, reorganization, "
-"dissolution, or other sale or transfer of\n"
-"                some or all of Our assets, whether as a going concern or as "
-"part of bankruptcy, liquidation, or\n"
-"                similar proceeding, in which Personal Data held by Us about "
-"our Service users is among the\n"
-"                assets transferred.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:399
-msgid ""
-"\n"
-"                For other purposes: We may use Your information for other "
-"purposes, such as data\n"
-"                analysis, identifying usage trends, determining the "
-"effectiveness of our promotional campaigns\n"
-"                and to evaluate and improve our Service, products, services, "
-"marketing and your experience.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:407
-msgid ""
-"\n"
-"                We may share Your personal information in the following "
-"situations:\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:413
-msgid ""
-"\n"
-"                With Service Providers: We may share Your personal "
-"information with Service\n"
-"                Providers to monitor and analyze the use of our Service, to "
-"contact You.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:419
-msgid ""
-"\n"
-"                For business transfers: We may share or transfer Your "
-"personal information in\n"
-"                connection with, or during negotiations of, any merger, sale "
-"of Company assets, financing, or\n"
-"                acquisition of all or a portion of Our business to another "
-"company.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:426
-msgid ""
-"\n"
-"                With Affiliates: We may share Your information with Our "
-"affiliates, in which\n"
-"                case we will require those affiliates to honor this Privacy "
-"Policy. Affiliates include Our\n"
-"                parent company and any other subsidiaries, joint venture "
-"partners or other companies that We\n"
-"                control or that are under common control with Us.\n"
-"                With business partners: We may share Your information with "
-"Our business partners to offer\n"
-"                You certain products, services or promotions.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:436
-msgid ""
-"\n"
-"                With other users: when You share personal information or "
-"otherwise interact in\n"
-"                the public areas with other users, such information may be "
-"viewed by all users and may be\n"
-"                publicly distributed outside. If You interact with other "
-"users or register through a\n"
-"                Third-Party Social Media Service, Your contacts on the Third-"
-"Party Social Media Service may\n"
-"                see Your name, profile, pictures and description of Your "
-"activity. Similarly, other users\n"
-"                will be able to view descriptions of Your activity, "
-"communicate with You and view Your\n"
-"                profile.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:447
-msgid ""
-"\n"
-"                With Your consent: We may disclose Your personal information "
-"for any other\n"
-"                purpose with Your consent.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:453
-msgid "Retention of Your Personal Data"
-msgstr ""
-
-#: templates/about/terms.html:456
-msgid ""
-"\n"
-"                The Company will retain Your Personal Data only for as long "
-"as is necessary\n"
-"                for the purposes set out in this Privacy Policy. We will "
-"retain and use Your Personal Data\n"
-"                to the extent necessary to comply with our legal obligations "
-"(for example, if we are\n"
-"                required to retain your data to comply with applicable "
-"laws), resolve disputes, and enforce\n"
-"                our legal agreements and policies.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:466
-msgid ""
-"\n"
-"                The Company will also retain Usage Data for internal "
-"analysis purposes. Usage\n"
-"                Data is generally retained for a shorter period of time, "
-"except when this data is used to\n"
-"                strengthen the security or to improve the functionality of "
-"Our Service, or We are legally\n"
-"                obligated to retain this data for longer time periods.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:474
-msgid "Transfer of Your Personal Data"
-msgstr ""
-
-#: templates/about/terms.html:477
-msgid ""
-"\n"
-"                Your information, including Personal Data, is processed at "
-"the Company's\n"
-"                operating offices and in any other places where the parties "
-"involved in the processing are\n"
-"                located. It means that this information may be transferred "
-"to — and maintained on —\n"
-"                computers located outside of Your state, province, country "
-"or other governmental\n"
-"                jurisdiction where the data protection laws may differ than "
-"those from Your jurisdiction.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:487
-msgid ""
-"\n"
-"                Your consent to this Privacy Policy followed by Your "
-"submission of such\n"
-"                information represents Your agreement to that transfer.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:494
-msgid ""
-"\n"
-"                The Company will take all steps reasonably necessary to "
-"ensure that Your\n"
-"                data is treated securely and in accordance with this Privacy "
-"Policy and no transfer of\n"
-"                Your Personal Data will take place to an organization or a "
-"country unless there are\n"
-"                adequate controls in place including the security of Your "
-"data and other personal\n"
-"                information.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:503
-msgid "Disclosure of Your Personal Data"
-msgstr ""
-
-#: templates/about/terms.html:505
-msgid "Business Transactions"
-msgstr ""
-
-#: templates/about/terms.html:508
-msgid ""
-"\n"
-"                If the Company is involved in a merger, acquisition or asset "
-"sale, Your\n"
-"                Personal Data may be transferred. We will provide notice "
-"before Your Personal Data is\n"
-"                transferred and becomes subject to a different Privacy "
-"Policy.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:515
-msgid "Law enforcement"
-msgstr ""
-
-#: templates/about/terms.html:518
-msgid ""
-"\n"
-"                Under certain circumstances, the Company may be required to "
-"disclose Your\n"
-"                Personal Data if required to do so by law or in response to "
-"valid requests by public\n"
-"                authorities (e.g. a court or a government agency).\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:525
-msgid "Other legal requirements"
-msgstr ""
-
-#: templates/about/terms.html:528
-msgid ""
-"\n"
-"                The Company may disclose Your Personal Data in the good "
-"faith belief that\n"
-"                such action is necessary to:\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:536
-msgid ""
-"\n"
-"                    Comply with a legal obligation\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:541
-msgid ""
-"\n"
-"                    Protect and defend the rights or property of the "
-"Company\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:546
-msgid ""
-"\n"
-"                    Prevent or investigate possible wrongdoing in connection "
-"with the Service\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:551
-msgid ""
-"\n"
-"                    Protect the personal safety of Users of the Service or "
-"the public\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:556
-msgid ""
-"\n"
-"                    Protect against legal liability\n"
-"                "
-msgstr ""
-
-#: templates/about/terms.html:562
-msgid "Security of Your Personal Data"
-msgstr ""
-
-#: templates/about/terms.html:565
-#, python-format
-msgid ""
-"\n"
-"                The security of Your Personal Data is important to Us, but "
-"remember that no\n"
-"                method of transmission over the Internet, or method of "
-"electronic storage is 100%% secure.\n"
-"                While We strive to use commercially acceptable means to "
-"protect Your Personal Data, We\n"
-"                cannot guarantee its absolute security.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:573
-msgid "Children's Privacy"
-msgstr ""
-
-#: templates/about/terms.html:576
-#, python-format
-msgid ""
-"\n"
-"                Our Service does not address anyone under the age of "
-"<strong>%(age)s</strong>. We do not\n"
-"                knowingly collect personally identifiable information from "
-"anyone under the age of\n"
-"                %(age)s. If You are a parent or guardian and You are aware "
-"that Your child has provided\n"
-"                Us with Personal Data, please contact Us. If We become aware "
-"that We have collected\n"
-"                Personal Data from anyone under the age of %(age)s without "
-"verification of parental\n"
-"                consent, We take steps to remove that information from Our "
-"servers.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:587
-msgid ""
-"\n"
-"                If We need to rely on consent as a legal basis for "
-"processing Your\n"
-"                information and Your country requires consent from a parent, "
-"We may require Your parent's\n"
-"                consent before We collect and use that information.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:594
-msgid "Links to Other Websites"
-msgstr ""
-
-#: templates/about/terms.html:597
-msgid ""
-"\n"
-"                Our Service may contain links to other websites that are not "
-"operated by Us.\n"
-"                If You click on a third party link, You will be directed to "
-"that third party's site. We\n"
-"                strongly advise You to review the Privacy Policy of every "
-"site You visit.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:605
-msgid ""
-"\n"
-"                We have no control over and assume no responsibility for the "
-"content,\n"
-"                privacy policies or practices of any third party sites or "
-"services.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:611
-msgid "Changes to this Privacy Policy"
-msgstr ""
-
-#: templates/about/terms.html:614
-msgid ""
-"\n"
-"                We may update Our Privacy Policy from time to time. We will "
-"notify You of\n"
-"                any changes by posting the new Privacy Policy on this page.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:621
-msgid ""
-"\n"
-"                We will let You know via email and/or a prominent notice on "
-"Our Service,\n"
-"                prior to the change becoming effective and update the \"Last "
-"updated\" date at the top of\n"
-"                this Privacy Policy.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:629
-msgid ""
-"\n"
-"                You are advised to review this Privacy Policy periodically "
-"for any changes.\n"
-"                Changes to this Privacy Policy are effective when they are "
-"posted on this page.\n"
-"            "
-msgstr ""
-
-#: templates/about/terms.html:639
-#, python-format
-msgid ""
-"\n"
-"                If you have any questions about this Privacy Policy, You can "
-"contact us at\n"
-"                <a href=\"mailto:%(email)s\">%(email)s</a>."
-msgstr ""
 
 #: templates/account/account_inactive.html:4
 #: templates/account/account_inactive.html:7
@@ -2146,6 +828,11 @@ msgstr "Aseta Salasana"
 msgid "Preferences"
 msgstr "Asetukset"
 
+#: templates/account/settings_base.html:4 templates/includes/sidebar.html:61
+#: templates/includes/sidebar.html:64
+msgid "Settings"
+msgstr "Asetukset"
+
 #: templates/account/settings_base.html:9 templates/includes/navbar.html:60
 #, python-format
 msgid "Settings for %(username)s"
@@ -2190,15 +877,6 @@ msgstr ""
 msgid "Sign Up"
 msgstr "Rekisteröidy"
 
-#: templates/account/signup.html:46
-#, python-format
-msgid ""
-"\n"
-"            Please review our <a class=\"underline link\"\n"
-"                href=\"%(terms_url)s\">Privacy Policy</a> before you join.\n"
-"        "
-msgstr ""
-
 #: templates/account/social_logins.html:5
 msgid "Login or Sign up with"
 msgstr "Kirjaudu tai rekisteröidy"
@@ -2225,6 +903,12 @@ msgstr[1] ""
 "\n"
 "                            %(counter)s podcastia\n"
 "                        "
+
+#: templates/account/stats.html:33 templates/episodes/bookmarks.html:4
+#: templates/episodes/bookmarks.html:9 templates/episodes/bookmarks.html:19
+#: templates/includes/sidebar.html:39 templates/includes/sidebar.html:42
+msgid "Bookmarks"
+msgstr "Kirjanmerkit"
 
 #: templates/account/stats.html:37 templates/account/stats.html:56
 #, python-format
@@ -2296,15 +980,15 @@ msgstr ""
 
 #: templates/episodes/actions/bookmark.html:9
 msgid "Remove from Bookmarks"
-msgstr ""
+msgstr "Poista Kirjanmerkkeistä"
 
 #: templates/episodes/actions/bookmark.html:15
 msgid "Add to Bookmarks"
-msgstr ""
+msgstr "Lisää Kirjanmerkkeihin"
 
 #: templates/episodes/actions/history.html:10
 msgid "Remove from History"
-msgstr ""
+msgstr "Poista Historiasta"
 
 #: templates/episodes/actions/history.html:12
 msgid "Are you sure you want to remove this episode from your History?"
@@ -2384,6 +1068,11 @@ msgstr ""
 msgid "Explicit"
 msgstr "Varoitus"
 
+#: templates/episodes/history.html:4 templates/episodes/history.html:8
+#: templates/includes/sidebar.html:50 templates/includes/sidebar.html:53
+msgid "History"
+msgstr "Historia"
+
 #: templates/episodes/history.html:17 templates/podcasts/episodes.html:18
 msgid "Oldest First"
 msgstr "Vanhemmat"
@@ -2395,6 +1084,11 @@ msgstr "Uusimmat"
 #: templates/episodes/history.html:25
 msgid "Search: History"
 msgstr "Haku: Historia"
+
+#: templates/episodes/index.html:4 templates/episodes/index.html:10
+#: templates/includes/sidebar.html:19 templates/includes/sidebar.html:22
+msgid "New Releases"
+msgstr "Uudet Jaksot"
 
 #: templates/episodes/index.html:12 templates/episodes/index.html:27
 #: templates/podcasts/index.html:4 templates/podcasts/index.html:14
@@ -2434,9 +1128,26 @@ msgstr "Taaksepäin 10 Sekuntia"
 msgid "Skip Forward 10 Seconds"
 msgstr "Eteenpäin 10 Sekuntia"
 
+#: templates/episodes/player.html:190
+msgid "Decrease Playback Rate"
+msgstr ""
+
+#: templates/episodes/player.html:199
+msgid "Increase Playback Rate"
+msgstr ""
+
 #: templates/episodes/player.html:202
 msgid "Reload Player"
 msgstr "Lataa Soitin Uudestaan"
+
+#: templates/episodes/search.html:4 templates/includes/navbar.html:43
+#: templates/includes/navbar.html:44 templates/includes/navbar.html:49
+#: templates/includes/navbar.html:117 templates/includes/navbar.html:118
+#: templates/includes/navbar.html:122 templates/podcasts/itunes_search.html:4
+#: templates/podcasts/search.html:4 templates/search/search_form.html:12
+#: templates/search/search_form.html:26
+msgid "Search"
+msgstr "Haku"
 
 #: templates/episodes/search.html:4 templates/podcasts/detail_base.html:101
 #: templates/podcasts/detail_base.html:102 templates/podcasts/episodes.html:4
@@ -2466,15 +1177,7 @@ msgstr ""
 "Tämä sivusto käyttää evästeitä varmistaakseen, että saat parhaan "
 "käyttökokemuksen."
 
-#: templates/includes/cookie_notice.html:10
-msgid "Terms and Conditions"
-msgstr "Käyttöehdot"
-
-#: templates/includes/cookie_notice.html:11
-msgid "Learn more"
-msgstr "Lue lisää"
-
-#: templates/includes/cookie_notice.html:19
+#: templates/includes/cookie_notice.html:16
 msgid "Got it!"
 msgstr "Ymmärrään!"
 
@@ -2560,6 +1263,19 @@ msgstr "Kopioi linkki Leikepödälle"
 #: templates/includes/share_buttons.html:46
 msgid "Copied link to Clipboard"
 msgstr "Linkki kopioittu Leikepödälle"
+
+#: templates/includes/sidebar.html:9 templates/includes/sidebar.html:12
+#: templates/podcasts/category_detail.html:4 templates/podcasts/detail.html:84
+#: templates/podcasts/index.html:4 templates/podcasts/search.html:4
+#: templates/search/search_base.html:19
+msgid "Podcasts"
+msgstr "Podcastit"
+
+#: templates/includes/sidebar.html:29 templates/includes/sidebar.html:32
+#: templates/podcasts/categories.html:4 templates/podcasts/categories.html:9
+#: templates/podcasts/category_detail.html:4
+msgid "Categories"
+msgstr "Kategoriat"
 
 #: templates/includes/sidebar.html:86 templates/includes/sidebar.html:89
 msgid "Logout"
@@ -2649,7 +1365,7 @@ msgstr "Samanlaiset"
 #: templates/podcasts/emails/recommendations.html:4
 #: templates/podcasts/emails/recommendations.txt:4
 msgid "Here are some podcasts you might find interesting:"
-msgstr ""
+msgstr "Tässä on joitain podcasteja, jotka saattavat olla kiinnostavia:"
 
 #: templates/podcasts/episodes.html:27
 msgid "Search: Episodes"
@@ -2750,6 +1466,136 @@ msgid ""
 "following form:\n"
 "            "
 msgstr ""
+
+#~ msgid "With pub date"
+#~ msgstr "Päivämäärän kanssa"
+
+#~ msgid "Frequenly Asked Questions"
+#~ msgstr "Usein Kysytyt Kysymykset"
+
+#~ msgid "Credits"
+#~ msgstr "Kunniat"
+
+#~ msgid "Shortcuts"
+#~ msgstr "Pikanäppäimet"
+
+#~ msgid "Terms &amp; Conditions"
+#~ msgstr "Käyttöehdot"
+
+#~ msgid "Terms"
+#~ msgstr "Käyttöehdot"
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "Usein Kysytyt Kysymykset"
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "                        <strong>%(site_name)s</strong> is a web "
+#~ "application for discovering new podcasts and collecting your favorite "
+#~ "podcasts and episodes.\n"
+#~ "                    "
+#~ msgstr ""
+#~ "\n"
+#~ "<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien "
+#~ "löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
+#~ "                    "
+
+#, python-format
+#~ msgid ""
+#~ "\n"
+#~ "                        Do I have to create an account to use "
+#~ "%(site_name)s?\n"
+#~ "                    "
+#~ msgstr ""
+#~ "\n"
+#~ "                        Pitääkö minun luoda tili käyttääkseni "
+#~ "%(site_name)s?\n"
+#~ "                   "
+
+#~ msgid "Play episodes in our custom Player"
+#~ msgstr "Kuunnella jaksoja mukautetulla soittimellamme"
+
+#~ msgid "Bookmark episodes to listen to later"
+#~ msgstr "Lisää jaksoja Kirjanmerkkeihisi kunnellaksesi myöhemmin"
+
+#~ msgid "Add podcasts to your collection"
+#~ msgstr "Lisätä podcasteja kokoelmaasi"
+
+#~ msgid "Get new weekly recommendations"
+#~ msgstr "Saada uusia suosituksia joka viiko"
+
+#~ msgid "Keep track of episodes you have listened to"
+#~ msgstr "Seurata sinun kuuntelemiasi jaksoja"
+
+#~ msgid "What if I want to download an episode to my device?"
+#~ msgstr "Saanko lataa jakson omaan laitteeseeni?"
+
+#~ msgid "How do I add podcasts to my collection?"
+#~ msgstr "Miten lisätään podcasteja omaan kokoelmaani?"
+
+#~ msgid "How do I remove an episode from my history?"
+#~ msgstr "Miten poistan jakson historiastani?"
+
+#~ msgid "Can I save my podcast subscriptions to my device?"
+#~ msgstr "Saanko tallentaa podcast-tilauksia omaan laitteeseeni?"
+
+#~ msgid "How do I save an episode to listen to later?"
+#~ msgstr "Miten tallentaa jakson kunnellakseni myöhemmin?"
+
+#~ msgid "How do I delete my account?"
+#~ msgstr "Miten poistan oman tilini?"
+
+#~ msgid "Keyboard Shortcuts"
+#~ msgstr "Yleiset Pikanäppäimet"
+
+#~ msgid "Player Shortcuts"
+#~ msgstr "Soittimen Pikanäppäimet"
+
+#~ msgid "Navigation Shortcuts"
+#~ msgstr "Navigoinnin Pikanäppäimet"
+
+#~ msgid "Action"
+#~ msgstr "Toiminta"
+
+#~ msgid "Key"
+#~ msgstr "Näppäin"
+
+#~ msgid "Toggle Play/Pause"
+#~ msgstr "Vaihda Soitto/Paussi"
+
+#~ msgid "Spacebar"
+#~ msgstr "Välilyönti"
+
+#~ msgid "Left Arrow"
+#~ msgstr "Vasen Nuolinäppäin"
+
+#~ msgid "Right Arrow"
+#~ msgstr "Oikea Nuolinäppäin"
+
+#~ msgid "Close Player (if running)"
+#~ msgstr "Sulje Soitin"
+
+#~ msgid "Reload Player (if running)"
+#~ msgstr "Lataa Soitin Uudelleen"
+
+#~ msgid "Login/Logout"
+#~ msgstr "Kirjaudu sisään/ulos"
+
+#~ msgid "Join"
+#~ msgstr "Luo tili"
+
+#~ msgid "Last updated"
+#~ msgstr "Viimein päivitetty"
+
+#~ msgid "Email address"
+#~ msgstr "Sähköpostiosoite"
+
+#~ msgid "Terms and Conditions"
+#~ msgstr "Käyttöehdot"
+
+#~ msgid "Learn more"
+#~ msgstr "Lue lisää"
 
 #~ msgid "Pub Date"
 #~ msgstr "Päivämäärä"

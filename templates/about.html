@@ -1,9 +1,15 @@
-{% extends "about/base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{{ block.super }} | {% translate "Credits" %} {% endblock %}
+{% block title %} | {% translate "About" %} {% endblock %}
 
-{% block about_content %}
+{% block content %}
+    <h1 class="flex flex-wrap mb-6 text-lg font-bold md:text-xl xl:text-2xl border-b dark:border-gray-500 pb-3">
+        {% blocktranslate with site_name=request.site.name %}
+            About {{ site_name }}
+        {% endblocktranslate %}
+    </h1>
+
     {% get_site_config as site_config %}
     {% with site_name=request.site.name %}
         <div class="prose dark:prose-invert prose-sm md:prose-base break-words">
@@ -107,4 +113,4 @@
             </p>
         </div>
     {% endwith %}
-{% endblock about_content %}
+{% endblock content %}
