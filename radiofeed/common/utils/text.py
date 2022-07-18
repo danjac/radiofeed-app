@@ -50,7 +50,7 @@ _CORPORATE_STOPWORDS: Final = [
     "itunes",
 ]
 
-_STOPWORDS_DIR = settings.BASE_DIR / "stopwords"
+_STOPWORDS_DIR = settings.BASE_DIR / "nltk" / "stopwords"
 
 _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
