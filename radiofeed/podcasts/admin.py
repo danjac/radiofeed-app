@@ -124,8 +124,8 @@ class PubDateFilter(admin.SimpleListFilter):
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (
-            ("yes", _("With pub date")),
-            ("no", _("With no pub date")),
+            ("yes", _("With release date")),
+            ("no", _("With no release date")),
         )
 
     def queryset(
