@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-17 10:45+0000\n"
+"POT-Creation-Date: 2022-07-18 07:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,15 +133,15 @@ msgstr "Kuunneltu"
 msgid "Timestamp Mark (Seconds)"
 msgstr ""
 
-#: radiofeed/episodes/views.py:242
+#: radiofeed/episodes/views.py:231
 msgid "Removed from History"
 msgstr "Poistettu Historiasta"
 
-#: radiofeed/episodes/views.py:284
+#: radiofeed/episodes/views.py:273
 msgid "Added to Bookmarks"
 msgstr "Lisätty Kirjanmerkkeihin"
 
-#: radiofeed/episodes/views.py:308
+#: radiofeed/episodes/views.py:289
 msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
@@ -371,7 +371,7 @@ msgstr ""
 msgid "Similarity Rating"
 msgstr ""
 
-#: radiofeed/podcasts/views.py:92
+#: radiofeed/podcasts/views.py:94
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
@@ -379,7 +379,7 @@ msgstr "Yhteys iTunesiin ei menestynyt"
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:307
+#: radiofeed/podcasts/views.py:299
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
@@ -399,22 +399,22 @@ msgstr "Lähetä ilmauksia sähköpostilla"
 msgid "Language"
 msgstr "Kieli"
 
-#: radiofeed/users/views.py:34
+#: radiofeed/users/views.py:36
 msgid "Your preferences have been saved"
 msgstr "Asetuksesi tallennettu"
 
-#: radiofeed/users/views.py:77
+#: radiofeed/users/views.py:79
 #, python-format
 msgid "%(count)d podcast feed added to your collection"
 msgid_plural "%(count)d podcast feeds added to your collection"
 msgstr[0] "%(count)d podcast lisätty kokoelmaasi"
 msgstr[1] "%(count)d podcastia lisätty kokoelmaasi"
 
-#: radiofeed/users/views.py:84
+#: radiofeed/users/views.py:86
 msgid "No new podcasts found in uploaded file"
 msgstr "Ei uusia podcasteja löydetty tiedostosta"
 
-#: radiofeed/users/views.py:153
+#: radiofeed/users/views.py:155
 msgid "Your account has been deleted"
 msgstr "Tilisi on poistettu"
 
@@ -996,7 +996,7 @@ msgstr ""
 #: templates/about/shortcuts.html:81 templates/includes/sidebar.html:9
 #: templates/includes/sidebar.html:12 templates/podcasts/category_detail.html:4
 #: templates/podcasts/detail.html:84 templates/podcasts/index.html:4
-#: templates/podcasts/search.html:4 templates/search/search_base.html:17
+#: templates/podcasts/search.html:4 templates/search/search_base.html:19
 msgid "Podcasts"
 msgstr "Podcastit"
 
@@ -2300,11 +2300,11 @@ msgid ""
 "        "
 msgstr ""
 
-#: templates/episodes/actions/bookmark.html:10
+#: templates/episodes/actions/bookmark.html:9
 msgid "Remove from Bookmarks"
 msgstr ""
 
-#: templates/episodes/actions/bookmark.html:16
+#: templates/episodes/actions/bookmark.html:15
 msgid "Add to Bookmarks"
 msgstr ""
 
@@ -2337,9 +2337,9 @@ msgstr "Soita"
 msgid "You must sign up or log in to play this episode"
 msgstr ""
 
-#: templates/episodes/bookmarks.html:15 templates/search/search_base.html:22
+#: templates/episodes/bookmarks.html:15 templates/search/search_base.html:24
 msgid "Search Episodes"
-msgstr ""
+msgstr "Haku: Jaksot"
 
 #: templates/episodes/bookmarks.html:16 templates/episodes/history.html:14
 #: templates/podcasts/episodes.html:15
@@ -2443,7 +2443,7 @@ msgstr "Lataa Soitin Uudestaan"
 
 #: templates/episodes/search.html:4 templates/podcasts/detail_base.html:101
 #: templates/podcasts/detail_base.html:102 templates/podcasts/episodes.html:4
-#: templates/search/search_base.html:23
+#: templates/search/search_base.html:25
 msgid "Episodes"
 msgstr "Jaksot"
 
@@ -2666,19 +2666,29 @@ msgstr "Lisätään podcastin tietokantaan..."
 msgid "Latest Episode"
 msgstr "Viimeinen Jakso"
 
-#: templates/search/search_base.html:16
+#: templates/search/search_base.html:6
+msgid ""
+"\n"
+"            Search %(site_name)s\n"
+"        "
+msgstr ""
+"\n"
+"            Haku: %(site_name)s\n"
+"        "
+
+#: templates/search/search_base.html:18
 msgid "Search Podcasts"
 msgstr "Etsi Podcasteista"
 
-#: templates/search/search_base.html:28
+#: templates/search/search_base.html:30
 msgid "Search iTunes"
 msgstr "Etsi iTunesista"
 
-#: templates/search/search_base.html:29
+#: templates/search/search_base.html:31
 msgid "iTunes"
 msgstr ""
 
-#: templates/search/search_base.html:34
+#: templates/search/search_base.html:36
 msgid "Search..."
 msgstr "Haku"
 
