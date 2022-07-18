@@ -83,24 +83,27 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 @require_safe
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
-    if not request.search:
-        return redirect(settings.HOME_URL)
+    if request.search:
 
-    feeds: list[itunes.Feed] = []
+        feeds: list[itunes.Feed] = []
 
-    try:
-        feeds = itunes.search_cached(request.search.value)
-    except itunes.ItunesException:
-        messages.error(request, _("Sorry, an error occurred trying to access iTunes."))
+        try:
+            feeds = itunes.search_cached(request.search.value)
+        except itunes.ItunesException:
+            messages.error(
+                request, _("Sorry, an error occurred trying to access iTunes.")
+            )
 
-    return render(
-        request,
-        "podcasts/itunes_search.html",
-        {
-            "feeds": feeds,
-            "clear_search_url": reverse("podcasts:index"),
-        },
-    )
+        return render(
+            request,
+            "podcasts/itunes_search.html",
+            {
+                "feeds": feeds,
+                "clear_search_url": reverse("podcasts:index"),
+            },
+        )
+
+    return redirect(settings.HOME_URL)
 
 
 @require_safe
@@ -226,10 +229,15 @@ def category_list(request: HttpRequest) -> HttpResponse:
         .order_by("name")
     )
 
-    if request.search:
-        categories = categories.search(request.search.value)
-
-    return render(request, "podcasts/categories.html", {"categories": categories})
+    return render(
+        request,
+        "podcasts/categories.html",
+        {
+            "categories": categories.search(request.search.value)
+            if request.search
+            else categories
+        },
+    )
 
 
 @require_safe
