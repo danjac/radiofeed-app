@@ -2,7 +2,7 @@ name: deploy:dokku
 
 on:
     workflow_dispatch:
-        workflows: ["Run Tests"]
+        workflows: ["runtests"]
         branches: [main]
         types:
             - completed
