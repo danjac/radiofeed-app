@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0004_rename_send_recommendations_email_user_send_email_notifications'),
+        (
+            "users",
+            "0004_rename_send_recommendations_email_user_send_email_notifications",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='send_email_notifications',
-            field=models.BooleanField(default=True, verbose_name='Send email notifications'),
+            model_name="user",
+            name="send_email_notifications",
+            field=models.BooleanField(
+                default=True, verbose_name="Send email notifications"
+            ),
         ),
     ]

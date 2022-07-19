@@ -310,7 +310,11 @@ class TestSubscribe:
         return reverse("podcasts:subscribe", args=[podcast.id])
 
     def test_subscribe(self, client, podcast, auth_user, url):
-        response = client.post(url, HTTP_HX_TARGET=podcast.get_subscribe_target())
+        response = client.post(
+            url,
+            HTTP_HX_TARGET=podcast.get_subscribe_target(),
+            HTTP_HX_REQUEST="true",
+        )
         assert_ok(response)
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -320,7 +324,11 @@ class TestSubscribe:
     def test_already_subscribed(self, client, podcast, auth_user, url):
 
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
-        response = client.post(url, HTTP_HX_TARGET=podcast.get_subscribe_target())
+        response = client.post(
+            url,
+            HTTP_HX_TARGET=podcast.get_subscribe_target(),
+            HTTP_HX_REQUEST="true",
+        )
         assert_conflict(response)
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -333,6 +341,7 @@ class TestUnsubscribe:
         response = client.post(
             reverse("podcasts:unsubscribe", args=[podcast.id]),
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
+            HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
         assert not Subscription.objects.filter(

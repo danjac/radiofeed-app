@@ -34,6 +34,7 @@ class TestUserPreferences:
                 "language": "en",
             },
             HTTP_HX_TARGET="preferences-form",
+            HTTP_HX_REQUEST="true",
         )
 
         assert_ok(response)
@@ -84,6 +85,7 @@ class TestImportPodcastFeeds:
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="opml-import-form",
+                HTTP_HX_REQUEST="true",
             )
         )
 
@@ -102,6 +104,7 @@ class TestImportPodcastFeeds:
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="opml-import-form",
+                HTTP_HX_REQUEST="true",
             )
         )
 
@@ -114,6 +117,7 @@ class TestImportPodcastFeeds:
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="opml-import-form",
+                HTTP_HX_REQUEST="true",
             )
         )
 

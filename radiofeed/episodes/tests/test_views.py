@@ -196,7 +196,13 @@ class TestStartPlayer:
         return reverse("episodes:start_player", args=[episode.id])
 
     def test_play_from_start(self, client, db, auth_user, episode):
-        assert_ok(client.post(self.url(episode), HTTP_HX_TARGET="player"))
+        assert_ok(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET="player",
+                HTTP_HX_REQUEST="true",
+            ),
+        )
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert is_player_episode(client, episode)
@@ -204,14 +210,26 @@ class TestStartPlayer:
     def test_another_episode_in_player(self, client, auth_user, episode):
         client.session[Player.session_key] = EpisodeFactory().id
 
-        assert_ok(client.post(self.url(episode), HTTP_HX_TARGET="player"))
+        assert_ok(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET="player",
+                HTTP_HX_REQUEST="true",
+            ),
+        )
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert is_player_episode(client, episode)
 
     def test_resume(self, client, auth_user, episode):
         log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
-        assert_ok(client.post(self.url(episode), HTTP_HX_TARGET="player"))
+        assert_ok(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET="player",
+                HTTP_HX_REQUEST="true",
+            ),
+        )
 
         log.refresh_from_db()
 
@@ -223,7 +241,11 @@ class TestClosePlayer:
     url = reverse_lazy("episodes:close_player")
 
     def test_player_empty(self, client, auth_user):
-        response = client.post(self.url, HTTP_HX_TARGET="player")
+        response = client.post(
+            self.url,
+            HTTP_HX_TARGET="player",
+            HTTP_HX_REQUEST="true",
+        )
         assert_ok(response)
 
     def test_close(
@@ -239,7 +261,11 @@ class TestClosePlayer:
             episode=player_episode,
         )
 
-        response = client.post(self.url, HTTP_HX_TARGET="player")
+        response = client.post(
+            self.url,
+            HTTP_HX_TARGET="player",
+            HTTP_HX_REQUEST="true",
+        )
         assert_ok(response)
 
         log.refresh_from_db()
@@ -327,6 +353,7 @@ class TestAddBookmark:
         response = client.post(
             reverse("episodes:add_bookmark", args=[episode.id]),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
+            HTTP_HX_REQUEST="true",
         )
 
         assert_ok(response)
@@ -338,6 +365,7 @@ class TestAddBookmark:
         response = client.post(
             reverse("episodes:add_bookmark", args=[episode.id]),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
+            HTTP_HX_REQUEST="true",
         )
         assert_conflict(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -349,6 +377,7 @@ class TestRemoveBookmark:
         response = client.post(
             reverse("episodes:remove_bookmark", args=[episode.id]),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
+            HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -401,7 +430,11 @@ class TestRemoveAudioLog:
         AudioLogFactory(user=auth_user)
 
         assert_ok(
-            client.post(self.url(episode), HTTP_HX_TARGET=episode.get_history_target())
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET=episode.get_history_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
@@ -415,6 +448,7 @@ class TestRemoveAudioLog:
             client.post(
                 self.url(log.episode),
                 HTTP_HX_TARGET=player_episode.get_history_target(),
+                HTTP_HX_REQUEST="true",
             ),
         )
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
@@ -426,6 +460,7 @@ class TestRemoveAudioLog:
             client.post(
                 self.url(log.episode),
                 HTTP_HX_TARGET=episode.get_history_target(),
+                HTTP_HX_REQUEST="true",
             ),
         )
 
