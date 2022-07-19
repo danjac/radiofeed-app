@@ -5,7 +5,7 @@
     {% include "includes/pagination_links.html" %}
 
     {% for podcast in page_obj.object_list %}
-        {% include "podcasts/podcast.html" %}
+        {% include "podcasts/includes/podcast.html" %}
     {% empty %}
         {% include "includes/empty.html" %}
     {% endfor %}

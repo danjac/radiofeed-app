@@ -164,7 +164,7 @@
                 </div>
             </div>
 
-            {% include "episodes/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
+            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
 
             {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
                 {% if file_size or link or explicit %}

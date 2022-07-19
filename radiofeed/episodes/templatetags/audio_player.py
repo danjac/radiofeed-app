@@ -8,7 +8,7 @@ from radiofeed.episodes.models import AudioLog
 register = template.Library()
 
 
-@register.inclusion_tag("episodes/player.html", takes_context=True)
+@register.inclusion_tag("episodes/includes/player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Returns details of current episode in player."""
     if (
