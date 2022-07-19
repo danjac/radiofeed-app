@@ -25,9 +25,11 @@
 
             <div class="flex items-center space-x-3 sm:space-x-6">
 
-                <div class="h-28 w-28 md:h-36 md:w-36">
-                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 md:w-36 md:h-36 border dark:border-gray-500" %}
-                </div>
+                {% with COVER_IMAGE_CSS="h-28 w-28 md:h-36 md:w-36 lg:h-40 lg:w-40" %}
+                    <div class="{{ COVER_IMAGE_CSS}}">
+                        {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=36 css_class=COVER_IMAGE_CSS|add:" border dark:border-gray-500" %}
+                    </div>
+                {% endwith %}
 
                 <div class="flex flex-col place-content-between h-24 md:h-28 xl:32">
                     {% include "podcasts/actions/subscribe.html" %}
