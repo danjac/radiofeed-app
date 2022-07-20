@@ -159,7 +159,7 @@ class Podcast(models.Model):
     )
 
     http_status: int | None = models.SmallIntegerField(
-        null=True, blank=True, verbose_name=_("Last HTTP Status from RSS Feed")
+        null=True, blank=True, verbose_name=_("HTTP Status")
     )
 
     parse_result: str = models.CharField(
@@ -171,7 +171,7 @@ class Podcast(models.Model):
     )
 
     num_retries: int = models.PositiveSmallIntegerField(
-        default=0, verbose_name=_("Number of RSS Feed Retries")
+        default=0, verbose_name=_("RSS Feed Retry Count")
     )
 
     cover_url: str | None = models.URLField(

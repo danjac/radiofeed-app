@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-18 19:11+0000\n"
+"POT-Creation-Date: 2022-07-20 13:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,8 @@ msgid "RSS Feed GUID"
 msgstr ""
 
 #: radiofeed/episodes/models.py:84 radiofeed/podcasts/admin.py:119
-#: templates/episodes/episode.html:27 templates/episodes/timestamps.html:6
+#: templates/episodes/includes/episode.html:24
+#: templates/episodes/includes/timestamps.html:6
 msgid "Release Date"
 msgstr "Päivämäärä"
 
@@ -164,7 +165,7 @@ msgstr "Jäsennystulos"
 msgid "None"
 msgstr "Ei mitään"
 
-#: radiofeed/podcasts/admin.py:90
+#: radiofeed/podcasts/admin.py:90 radiofeed/podcasts/models.py:162
 msgid "HTTP Status"
 msgstr ""
 
@@ -274,12 +275,8 @@ msgstr ""
 msgid "Content Hash of RSS Feed"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:162
-msgid "Last HTTP Status from RSS Feed"
-msgstr ""
-
 #: radiofeed/podcasts/models.py:174
-msgid "Number of RSS Feed Retries"
+msgid "RSS Feed Retry Count"
 msgstr ""
 
 #: radiofeed/podcasts/models.py:182
@@ -300,8 +297,8 @@ msgstr "Kieli"
 msgid "Podcast Description"
 msgstr "Podcastin Kuvaus"
 
-#: radiofeed/podcasts/models.py:199 templates/episodes/detail.html:192
-#: templates/podcasts/detail.html:40
+#: radiofeed/podcasts/models.py:199 templates/episodes/detail.html:195
+#: templates/podcasts/detail.html:42
 msgid "Website"
 msgstr "Kotisivu"
 
@@ -502,8 +499,9 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"                    <strong>%(site_name)s</strong> on <strong>ilmainen</strong>"
-" on ilmainen podcast-sovellus suosikkiohjelmiesi keräämiseen ja uuden sisällön löytämiseen.\n"
+"                    <strong>%(site_name)s</strong> on <strong>ilmainen</"
+"strong> on ilmainen podcast-sovellus suosikkiohjelmiesi keräämiseen ja uuden "
+"sisällön löytämiseen.\n"
 "                "
 
 #: templates/about.html:26
@@ -599,8 +597,8 @@ msgid ""
 msgstr ""
 "\n"
 "                     Kaikki podcast-kuvat ja -sisältö ovat yksittäisten "
-"podcast-omistajien omaisuutta. Podcastit eivät ole sidoksissa %(site_name)s:iin tai tue sitä."
-"Kaikki äänitiedostot toistetaan suoraan lähteestä.\n"
+"podcast-omistajien omaisuutta. Podcastit eivät ole sidoksissa %(site_name)s:"
+"iin tai tue sitä.Kaikki äänitiedostot toistetaan suoraan lähteestä.\n"
 "                "
 
 #: templates/about.html:100 templates/includes/footer.html:9
@@ -929,7 +927,8 @@ msgstr[1] ""
 "                            %(counter)s jaksoa\n"
 "                        "
 
-#: templates/account/stats.html:52 templates/episodes/timestamps.html:24
+#: templates/account/stats.html:52
+#: templates/episodes/includes/timestamps.html:24
 msgid "Listened"
 msgstr "Kuunneltu"
 
@@ -994,7 +993,8 @@ msgstr "Poista Historiasta"
 msgid "Are you sure you want to remove this episode from your History?"
 msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
 
-#: templates/episodes/actions/player.html:13 templates/episodes/player.html:98
+#: templates/episodes/actions/player.html:13
+#: templates/episodes/includes/player.html:98
 msgid "Close Player"
 msgstr "Sulje Soitin"
 
@@ -1007,7 +1007,8 @@ msgid "Open Episode in Player"
 msgstr "Avaa Jakso Soitimella"
 
 #: templates/episodes/actions/player.html:25
-#: templates/episodes/actions/player.html:37 templates/episodes/player.html:90
+#: templates/episodes/actions/player.html:37
+#: templates/episodes/includes/player.html:90
 msgid "Play"
 msgstr "Soita"
 
@@ -1054,17 +1055,17 @@ msgstr "Seuraavat"
 msgid "See All Episodes for %(podcast)s"
 msgstr "Katso Kaikki Jaksot Podcastissa %(podcast)s"
 
-#: templates/episodes/detail.html:150
+#: templates/episodes/detail.html:153
 msgid "Download"
 msgstr "Lataa"
 
-#: templates/episodes/detail.html:174
+#: templates/episodes/detail.html:177
 msgid "May contain adult themes and language. Listener discretion advised."
 msgstr ""
 "Saattaa sisältää aikuisille suunnattuja teemoja ja kieltä. Kuuntelijan "
 "harkintavaltaa suositellaan."
 
-#: templates/episodes/detail.html:177
+#: templates/episodes/detail.html:180
 msgid "Explicit"
 msgstr "Varoitus"
 
@@ -1085,6 +1086,60 @@ msgstr "Uusimmat"
 msgid "Search: History"
 msgstr "Haku: Historia"
 
+#: templates/episodes/includes/player.html:45
+#: templates/episodes/includes/player.html:124
+msgid "Current Time"
+msgstr "Aika"
+
+#: templates/episodes/includes/player.html:48
+#: templates/episodes/includes/player.html:128
+msgid "Time Remaining"
+msgstr "Jäljellä"
+
+#: templates/episodes/includes/player.html:55
+#: templates/episodes/includes/player.html:135
+msgid "Loading..."
+msgstr "Latautuu..."
+
+#: templates/episodes/includes/player.html:61
+#: templates/episodes/includes/player.html:141
+msgid "Error"
+msgstr "Virhe"
+
+#: templates/episodes/includes/player.html:81
+msgid "Pause"
+msgstr "Paussi"
+
+#: templates/episodes/includes/player.html:150
+#: templates/episodes/includes/player.html:170
+msgid "Skip Back 10 Seconds"
+msgstr "Taaksepäin 10 Sekuntia"
+
+#: templates/episodes/includes/player.html:157
+#: templates/episodes/includes/player.html:177
+msgid "Skip Forward 10 Seconds"
+msgstr "Eteenpäin 10 Sekuntia"
+
+#: templates/episodes/includes/player.html:190
+msgid "Decrease Playback Rate"
+msgstr ""
+
+#: templates/episodes/includes/player.html:199
+msgid "Increase Playback Rate"
+msgstr ""
+
+#: templates/episodes/includes/player.html:202
+msgid "Reload Player"
+msgstr "Lataa Soitin Uudestaan"
+
+#: templates/episodes/includes/timestamps.html:11
+msgid "Completed"
+msgstr "Kuunnetltu loppuun"
+
+#: templates/episodes/includes/timestamps.html:15
+msgid "Duration"
+msgstr "Kesto"
+
 #: templates/episodes/index.html:4 templates/episodes/index.html:10
 #: templates/includes/sidebar.html:19 templates/includes/sidebar.html:22
 msgid "New Releases"
@@ -1100,46 +1155,6 @@ msgstr "Minun Podcastit"
 msgid "Find an episode..."
 msgstr "Haku: Jaksot"
 
-#: templates/episodes/player.html:45 templates/episodes/player.html:124
-msgid "Current Time"
-msgstr "Aika"
-
-#: templates/episodes/player.html:48 templates/episodes/player.html:128
-msgid "Time Remaining"
-msgstr "Jäljellä"
-
-#: templates/episodes/player.html:55 templates/episodes/player.html:135
-msgid "Loading..."
-msgstr "Latautuu..."
-
-#: templates/episodes/player.html:61 templates/episodes/player.html:141
-msgid "Error"
-msgstr "Virhe"
-
-#: templates/episodes/player.html:81
-msgid "Pause"
-msgstr "Paussi"
-
-#: templates/episodes/player.html:150 templates/episodes/player.html:170
-msgid "Skip Back 10 Seconds"
-msgstr "Taaksepäin 10 Sekuntia"
-
-#: templates/episodes/player.html:157 templates/episodes/player.html:177
-msgid "Skip Forward 10 Seconds"
-msgstr "Eteenpäin 10 Sekuntia"
-
-#: templates/episodes/player.html:190
-msgid "Decrease Playback Rate"
-msgstr ""
-
-#: templates/episodes/player.html:199
-msgid "Increase Playback Rate"
-msgstr ""
-
-#: templates/episodes/player.html:202
-msgid "Reload Player"
-msgstr "Lataa Soitin Uudestaan"
-
 #: templates/episodes/search.html:4 templates/includes/navbar.html:43
 #: templates/includes/navbar.html:44 templates/includes/navbar.html:49
 #: templates/includes/navbar.html:117 templates/includes/navbar.html:118
@@ -1154,14 +1169,6 @@ msgstr "Haku"
 #: templates/search/search_base.html:25
 msgid "Episodes"
 msgstr "Jaksot"
-
-#: templates/episodes/timestamps.html:11
-msgid "Completed"
-msgstr "Kuunnetltu loppuun"
-
-#: templates/episodes/timestamps.html:15
-msgid "Duration"
-msgstr "Kesto"
 
 #: templates/error_base.html:50 templates/includes/navbar.html:24
 msgid "Home Page"
@@ -1265,7 +1272,7 @@ msgid "Copied link to Clipboard"
 msgstr "Linkki kopioittu Leikepödälle"
 
 #: templates/includes/sidebar.html:9 templates/includes/sidebar.html:12
-#: templates/podcasts/category_detail.html:4 templates/podcasts/detail.html:84
+#: templates/podcasts/category_detail.html:4 templates/podcasts/detail.html:86
 #: templates/podcasts/index.html:4 templates/podcasts/search.html:4
 #: templates/search/search_base.html:19
 msgid "Podcasts"
@@ -1345,15 +1352,15 @@ msgstr "Podcastit - %(category_name)s"
 msgid "Search All Categories"
 msgstr "Etsi Kaikista Kategoreista"
 
-#: templates/podcasts/detail.html:46
+#: templates/podcasts/detail.html:48
 msgid "RSS"
 msgstr ""
 
-#: templates/podcasts/detail.html:52
+#: templates/podcasts/detail.html:54
 msgid "Admin"
 msgstr "Hallinto"
 
-#: templates/podcasts/detail.html:74
+#: templates/podcasts/detail.html:76
 msgid "Latest episode released"
 msgstr "Viimeinen jakso julkaistu"
 
@@ -1371,11 +1378,12 @@ msgstr "Tässä on joitain podcasteja, jotka saattavat olla kiinnostavia:"
 msgid "Search: Episodes"
 msgstr "Haku: Jaksot"
 
-#: templates/podcasts/itunes_feed.html:24
+#: templates/podcasts/includes/itunes_feed.html:19
 msgid "Adding podcast to database..."
 msgstr "Lisätään podcastin tietokantaan..."
 
-#: templates/podcasts/podcast.html:24 templates/podcasts/podcast.html:26
+#: templates/podcasts/includes/podcast.html:18
+#: templates/podcasts/includes/podcast.html:20
 msgid "Latest Episode"
 msgstr "Viimeinen Jakso"
 
