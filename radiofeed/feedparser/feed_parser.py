@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import http
 
-from typing import Final, Iterator
+from typing import Iterator
 
 import attrs
 import requests
@@ -27,7 +27,7 @@ from radiofeed.podcasts.models import Category, Podcast
 class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
-    _ACCEPT_HEADER: Final = (
+    _accept_header: tuple[str, ...] = (
         "application/atom+xml",
         "application/rdf+xml",
         "application/rss+xml",
@@ -37,7 +37,7 @@ class FeedParser:
         "*/*;q=0.1",
     )
 
-    _MAX_RETRIES: Final = 3
+    _max_retries: int = 3
 
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
@@ -100,7 +100,7 @@ class FeedParser:
 
     def _get_feed_headers(self) -> dict:
         headers = {
-            "Accept": ",".join(self._ACCEPT_HEADER),
+            "Accept": ",".join(self._accept_header),
             "User-Agent": settings.USER_AGENT,
         }
 
@@ -195,7 +195,7 @@ class FeedParser:
                 raise
 
         self._save_podcast(
-            active=active and num_retries < self._MAX_RETRIES,
+            active=active and num_retries < self._max_retries,
             http_status=http_status,
             parse_result=parse_result,
             num_retries=num_retries,
