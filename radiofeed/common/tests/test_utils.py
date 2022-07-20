@@ -37,9 +37,12 @@ class TestXPathFinder:
             "Mysterious Universe"
         ]
 
-    def test_to_dict(self, channel):
+    def test_list(self, channel):
+        assert XPathFinder(channel).list("title/text()") == ["Mysterious Universe"]
 
-        assert XPathFinder(channel).to_dict(
+    def test_asdict(self, channel):
+
+        assert XPathFinder(channel).asdict(
             title="title/text()",
             cover_url=(
                 "itunes:image/@href",
