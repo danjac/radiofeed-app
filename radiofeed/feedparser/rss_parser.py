@@ -53,13 +53,13 @@ class RssParser:
             try:
                 return Feed(
                     items=list(self._parse_items()),
-                    categories=finder.list(
+                    categories=finder.to_list(
                         "//googleplay:category/@text",
                         "//itunes:category/@text",
                         "//media:category/@label",
                         "//media:category/text()",
                     ),
-                    **finder.asdict(
+                    **finder.to_dict(
                         complete="itunes:complete/text()",
                         cover_url=("itunes:image/@href", "image/url/text()"),
                         description=("description/text()", "itunes:summary/text()"),
@@ -81,8 +81,8 @@ class RssParser:
     def _parse_item(self, item: Item) -> Item:
         with xpath_finder(item, self._NAMESPACES) as finder:
             return Item(
-                categories=finder.list("category/text()"),
-                **finder.asdict(
+                categories=finder.to_list("category/text()"),
+                **finder.to_dict(
                     cover_url="itunes:image/@href",
                     description=(
                         "content:encoded/text()",

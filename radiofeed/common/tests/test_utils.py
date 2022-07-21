@@ -37,17 +37,18 @@ class TestXPathFinder:
             "Mysterious Universe"
         ]
 
-    def test_list(self, channel):
-        assert XPathFinder(channel).list("title/text()") == ["Mysterious Universe"]
+    def test_to_list(self, channel):
+        assert XPathFinder(channel).to_list("title/text()") == ["Mysterious Universe"]
 
-    def test_asdict(self, channel):
+    def test_to_dict(self, channel):
 
-        assert XPathFinder(channel).asdict(
+        assert XPathFinder(channel).to_dict(
             title="title/text()",
             cover_url=(
                 "itunes:image/@href",
                 "image/url/text()",
             ),
+            # this path does not exist, should be None
             editor="managingEditor2/text()",
         ) == {
             "title": "Mysterious Universe",

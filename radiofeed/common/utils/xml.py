@@ -75,11 +75,11 @@ class XPathFinder:
         except UnicodeDecodeError:
             pass
 
-    def list(self, *paths: str | Iterable) -> list[str]:
+    def to_list(self, *paths: str | Iterable) -> list[str]:
         """Returns path values as list."""
         return list(self.iter(*paths))
 
-    def asdict(self, **fields: str | Iterable) -> dict[str, str | None]:
+    def to_dict(self, **fields: str | Iterable) -> dict[str, str | None]:
         """Returns dict with each field mapped to one or more xpaths.
 
         Example of usage:
