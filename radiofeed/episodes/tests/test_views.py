@@ -45,8 +45,10 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
         response = client.get(episodes_url)
         assert_ok(response)
-        assert not response.context["has_subscriptions"]
+
         assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
 
     def test_not_subscribed(self, client, db, auth_user):
         promoted = PodcastFactory(promoted=True)
@@ -54,8 +56,10 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
         response = client.get(episodes_url)
         assert_ok(response)
-        assert not response.context["has_subscriptions"]
+
         assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
 
     def test_user_has_subscribed(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
@@ -68,10 +72,11 @@ class TestNewEpisodes:
 
         response = client.get(episodes_url)
         assert_ok(response)
-        assert not response.context["promoted"]
-        assert response.context["has_subscriptions"]
+
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
+        assert not response.context["promoted"]
+        assert response.context["has_subscriptions"]
 
     def test_user_has_subscribed_promoted(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
@@ -85,10 +90,11 @@ class TestNewEpisodes:
         response = client.get(episodes_url, {"promoted": True})
 
         assert_ok(response)
-        assert response.context["promoted"]
-        assert response.context["has_subscriptions"]
+
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0].podcast == promoted
+        assert response.context["promoted"]
+        assert response.context["has_subscriptions"]
 
 
 class TestSearchEpisodes:

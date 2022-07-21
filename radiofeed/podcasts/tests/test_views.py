@@ -25,7 +25,10 @@ class TestPodcasts:
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(podcasts_url)
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 3
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
 
     def test_htmx(self, client, db):
 
@@ -41,7 +44,10 @@ class TestPodcasts:
     def test_empty(self, client, db):
         response = client.get(podcasts_url)
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 0
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
 
     def test_user_is_subscribed_promoted(self, client, auth_user):
         """If user is not subscribed any podcasts, just show general feed"""
@@ -50,8 +56,11 @@ class TestPodcasts:
         sub = SubscriptionFactory(subscriber=auth_user).podcast
         response = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 3
         assert sub not in response.context["page_obj"].object_list
+        assert response.context["promoted"]
+        assert response.context["has_subscriptions"]
 
     def test_user_is_not_subscribed(self, client, auth_user):
         """If user is not subscribed any podcasts, just show general feed"""
@@ -59,7 +68,10 @@ class TestPodcasts:
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(podcasts_url)
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 3
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
 
     def test_user_is_subscribed(self, client, auth_user):
         """If user subscribed any podcasts, show only own feed with these podcasts"""
@@ -68,8 +80,11 @@ class TestPodcasts:
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(podcasts_url)
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == sub.podcast
+        assert not response.context["promoted"]
+        assert response.context["has_subscriptions"]
 
 
 class TestLatestEpisode:

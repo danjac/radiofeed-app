@@ -49,7 +49,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "podcasts/pagination/podcasts.html",
         {
             "promoted": promoted,
-            "has_subscriptions": not (subscribed),
+            "has_subscriptions": bool(subscribed),
             "search_url": reverse("podcasts:search_podcasts"),
         },
     )
