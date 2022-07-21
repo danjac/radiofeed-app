@@ -135,4 +135,4 @@ class Feed:
 
     @pub_date.default
     def _default_pub_date(self) -> datetime:
-        return max([item.pub_date for item in self.items])
+        return max(item.pub_date for item in self.items)

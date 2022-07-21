@@ -35,12 +35,12 @@ class TestAbsoluteUri:
 
     def test_has_request_no_url(self, db, rf):
         url = absolute_uri({"request": rf.get("/")})
-        assert url == TESTSERVER_URL + "/"
+        assert url == f"{TESTSERVER_URL}/"
 
     def test_has_request_no_url_https(self, db, rf, settings):
         settings.SECURE_SSL_REDIRECT = True
         url = absolute_uri({"request": rf.get("/")})
-        assert url == TESTSERVER_URL + "/"
+        assert url == f"{TESTSERVER_URL}/"
 
     def test_has_request_static_url(self, db, rf):
         url = absolute_uri({"request": rf.get("/")}, self.SEARCH_URL)

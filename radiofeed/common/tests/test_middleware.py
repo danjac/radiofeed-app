@@ -52,4 +52,4 @@ class TestSearchMiddleware:
     def test_no_search(self, req, mw):
         mw(req)
         assert not req.search
-        assert str(req.search) == ""
+        assert not str(req.search)

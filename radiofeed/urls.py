@@ -38,9 +38,10 @@ urlpatterns = [
     ),
     path("account/", include("allauth.urls")),
     path("ht/", include("health_check.urls")),
-    path(settings.ADMIN_URL + "pg-metrics/", include("postgres_metrics.urls")),
+    path(f"{settings.ADMIN_URL}pg-metrics/", include("postgres_metrics.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
+
 
 if "debug_toolbar" in settings.INSTALLED_APPS:  # pragma: no cover
 

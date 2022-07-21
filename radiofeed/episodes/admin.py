@@ -33,9 +33,11 @@ class EpisodeAdmin(admin.ModelAdmin):
         self, request: HttpRequest, queryset: QuerySet, search_term: str
     ) -> QuerySet:
         """Search episodes."""
-        if not search_term:
-            return super().get_search_results(request, queryset, search_term)
-        return queryset.search(search_term).order_by("-rank", "-pub_date"), False
+        return (
+            (queryset.search(search_term).order_by("-rank", "-pub_date"), False)
+            if search_term
+            else super().get_search_results(request, queryset, search_term)
+        )
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns optimized search ordering.
