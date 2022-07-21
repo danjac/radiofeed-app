@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.response import SimpleTemplateResponse
 from django.utils import timezone
@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.common.decorators import require_form_methods
+from radiofeed.common.http import HttpRequest
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
