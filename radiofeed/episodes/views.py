@@ -28,21 +28,26 @@ from radiofeed.podcasts.models import Podcast, Subscription
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
 
-    subscribed = Subscription.objects.podcast_ids(request.user)
-    promoted = "promoted" in request.GET or not subscribed
-
-    podcast_ids = (
-        set(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
-        if promoted
-        else subscribed
+    subscribed = (
+        set(Subscription.objects.filter(subscriber=request.user).values_list("podcast"))
+        if request.user.is_authenticated
+        else set()
     )
+
+    promoted = "promoted" in request.GET or not subscribed
 
     return render_pagination_response(
         request,
         (
             Episode.objects.filter(pub_date__gt=timezone.now() - timedelta(days=14))
             .select_related("podcast")
-            .filter(podcast__in=podcast_ids)
+            .filter(
+                podcast__in=set(
+                    Podcast.objects.filter(promoted=True).values_list("pk", flat=True)
+                )
+                if promoted
+                else subscribed
+            )
             .order_by("-pub_date", "-id")
             .distinct()
         ),
