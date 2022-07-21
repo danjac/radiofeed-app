@@ -1,5 +1,7 @@
 This is the source code for a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself.
 
+[![Coverage Status](https://coveralls.io/repos/github/danjac/radiofeed-app/badge.svg?branch=main)](https://coveralls.io/github/danjac/radiofeed-app?branch=main)
+
 ![desktop](/screenshots/desktop.png?raw=True)
 
 
