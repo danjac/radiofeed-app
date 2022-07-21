@@ -14,9 +14,9 @@ _T = TypeVar("_T", bound=Model)
 
 
 if TYPE_CHECKING:
-    _QuerySet: TypeAlias = QuerySet[_T]
+    _QuerySet: TypeAlias = QuerySet[_T]  # pragma: no cover
 else:
-    _QuerySet = object  # noqa
+    _QuerySet = object
 
 
 class FastCountMixin(_QuerySet):
@@ -87,17 +87,13 @@ class SearchMixin(_QuerySet):
             yield Q(**{self.search_vector_field: query})
 
     def _search_ranks(self, query: SearchQuery) -> Iterable[tuple[str, SearchRank]]:
-        search_vectors = self.search_vectors or [
-            (self.search_vector_field, self.search_rank)
-        ]
-
         if not self.search_vectors:
             yield self.search_rank, SearchRank(F(self.search_vector_field), query=query)
             return
 
         combined: list[F] = []
 
-        for field, rank in search_vectors:
+        for field, rank in self.search_vectors:
             yield rank, SearchRank(F(field), query=query)
 
             combined.append(F(rank))
