@@ -13,7 +13,7 @@ from django.utils.encoding import force_str
 _T = TypeVar("_T", bound=Model)
 
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # sourcery skip
     _QuerySet: TypeAlias = QuerySet[_T]  # pragma: no cover
 else:
     _QuerySet = object
