@@ -2,6 +2,8 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ![coverage](/screenshots/coverage.svg)
 
+[![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
+
 ![desktop](/screenshots/desktop.png?raw=True)
 
 
