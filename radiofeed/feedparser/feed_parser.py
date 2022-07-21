@@ -9,6 +9,7 @@ import requests
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
@@ -72,26 +73,20 @@ class FeedParser:
 
         response.raise_for_status()
 
-        if response.status_code == http.HTTPStatus.NOT_MODIFIED:
-            raise NotModified(response=response)
-
-        # check if another feed already has new URL
+        # Check if not modified: feed should return a 304 if no new updates,
+        # but not in all cases, so we should also check the content body.
         if (
-            response.url != self._podcast.rss
-            and Podcast.objects.filter(rss=response.url).exists()
+            response.status_code == http.HTTPStatus.NOT_MODIFIED
+            or (content_hash := make_content_hash(response.content))
+            == self._podcast.content_hash
         ):
-            raise DuplicateFeed(response=response)
-
-        # check if content has changed (feed is not checking etag etc)
-        if (
-            content_hash := make_content_hash(response.content)
-        ) == self._podcast.content_hash:
             raise NotModified(response=response)
 
-        # check if another feed has exact same content
+        # Check if there is another active feed with the same URL/content
         if (
             Podcast.objects.exclude(pk=self._podcast.id).filter(
-                content_hash=content_hash, active=True
+                Q(content_hash=content_hash) | Q(rss=response.url),
+                active=True,
             )
         ).exists():
             raise DuplicateFeed(response=response)
