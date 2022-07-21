@@ -17,37 +17,28 @@ from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.models import Podcast, Subscription
 
 
 @require_safe
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
+
+    subscribed = Subscription.objects.podcast_ids(request.user)
     promoted = "promoted" in request.GET
 
-    subscribed = (
-        frozenset(request.user.subscription_set.values_list("podcast", flat=True))
-        if request.user.is_authenticated
-        else frozenset()
+    podcast_ids = (
+        subscribed
+        if subscribed and not promoted
+        else set(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
     )
-
-    since = timezone.now() - timedelta(days=14)
-
-    podcasts = Podcast.objects.filter(pub_date__gt=since)
-
-    if subscribed and not promoted:
-        podcasts = podcasts.filter(pk__in=subscribed)
-    else:
-        podcasts = podcasts.filter(promoted=True)
 
     return render_pagination_response(
         request,
         (
-            Episode.objects.filter(pub_date__gt=since)
+            Episode.objects.filter(pub_date__gt=timezone.now() - timedelta(days=14))
             .select_related("podcast")
-            .filter(
-                podcast__in=set(podcasts.values_list("pk", flat=True)),
-            )
+            .filter(podcast__in=podcast_ids)
             .order_by("-pub_date", "-id")
             .distinct()
         ),

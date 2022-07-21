@@ -12,8 +12,9 @@ from radiofeed.podcasts.factories import (
     CategoryFactory,
     PodcastFactory,
     RecommendationFactory,
+    SubscriptionFactory,
 )
-from radiofeed.podcasts.models import Category, Podcast, Recommendation
+from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import UserFactory
 
 
@@ -38,6 +39,17 @@ class TestCategoryModel:
     def test_str(self):
         category = Category(name="Testing")
         assert str(category) == "Testing"
+
+
+class TestSubscriptionManager:
+    def test_authenticated(self, user):
+        PodcastFactory()
+        podcast = SubscriptionFactory(subscriber=user).podcast
+        assert Subscription.objects.podcast_ids(user) == {podcast.id}
+
+    def test_anonoymous(self, db, anonymous_user):
+        PodcastFactory()
+        assert Subscription.objects.podcast_ids(anonymous_user) == set()
 
 
 class TestPodcastManager:
