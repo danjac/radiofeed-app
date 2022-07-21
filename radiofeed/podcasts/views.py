@@ -38,7 +38,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     promoted = "promoted" in request.GET or not subscribed
 
-    podcasts = _get_podcasts()
+    podcasts = _get_podcasts().order_by("-pub_date")
 
     return render_pagination_response(
         request,
