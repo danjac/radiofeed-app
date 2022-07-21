@@ -10,11 +10,9 @@ from django.db import connections
 from django.db.models import F, Model, Q, QuerySet
 from django.utils.encoding import force_str
 
-_T = TypeVar("_T", bound=Model)
-
-
-if TYPE_CHECKING:  # sourcery skip
-    _QuerySet: TypeAlias = QuerySet[_T]  # pragma: no cover
+if TYPE_CHECKING:  # pragma: no cover
+    _T = TypeVar("_T", bound=Model)
+    _QuerySet: TypeAlias = QuerySet[_T]
 else:
     _QuerySet = object
 
