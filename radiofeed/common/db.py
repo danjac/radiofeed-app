@@ -12,7 +12,11 @@ from django.utils.encoding import force_str
 
 _T = TypeVar("_T", bound=Model)
 
-_QuerySet = QuerySet[_T] if TYPE_CHECKING else object
+
+if TYPE_CHECKING:
+    _QuerySet: TypeAlias = QuerySet[_T]
+else:
+    QuerySet = object  # noqa
 
 
 class FastCountMixin(_QuerySet):
