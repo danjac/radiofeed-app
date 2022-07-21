@@ -25,12 +25,12 @@ def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
 
     subscribed = Subscription.objects.podcast_ids(request.user)
-    promoted = "promoted" in request.GET
+    promoted = "promoted" in request.GET or not subscribed
 
     podcast_ids = (
-        subscribed
-        if subscribed and not promoted
-        else set(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
+        set(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
+        if promoted
+        else subscribed
     )
 
     return render_pagination_response(
