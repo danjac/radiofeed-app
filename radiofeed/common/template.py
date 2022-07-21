@@ -69,7 +69,7 @@ def pagination_url(
     """
     params = context.request.GET.copy()
     params[param] = page_number
-    return context.request.path + "?" + params.urlencode()
+    return f"{context.request.path}?{params.urlencode()}"
 
 
 @register.simple_tag
@@ -193,7 +193,7 @@ def cookie_notice(context: RequestContext) -> dict:
 def normalize_url(url: str) -> str:
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if url:
-        for value in (url, "https://" + url):
+        for value in (url, f"https://{url}"):
             try:
                 _validate_url(value)
                 return value
@@ -217,6 +217,6 @@ def _build_absolute_uri(url: str | None = None, request: HttpRequest | None = No
     # in case we don't have a request, e.g. in email job
     domain = Site.objects.get_current().domain
     protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
-    base_url = protocol + "://" + domain
+    base_url = f"{protocol}://{domain}"
 
     return parse.urljoin(base_url, url) if url else base_url

@@ -99,7 +99,7 @@ class TestSearch:
 
     def test_bad_data(self, db, mock_invalid_response):
         feeds = list(itunes.search("test"))
-        assert len(feeds) == 0
+        assert not feeds
 
     def test_is_not_cached(
         self,

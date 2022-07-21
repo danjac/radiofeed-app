@@ -111,7 +111,7 @@ def _get_date_stopwords(language: str) -> Iterator[str]:
             yield _format_date(dt, "b")
             yield _format_date(dt, "F")
 
-        for day in range(0, 7):
+        for day in range(7):
             dt = now + timedelta(days=day)
             yield _format_date(dt, "D")
             yield _format_date(dt, "l")

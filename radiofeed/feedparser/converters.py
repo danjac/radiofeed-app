@@ -56,8 +56,9 @@ def duration(value: str | None) -> str:
             [
                 str(v)
                 for v in [int(v) for v in value.split(":")[:3]]
-                if v in range(0, 60)
+                if v in range(60)
             ]
         )
+
     except ValueError:
         return ""
