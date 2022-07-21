@@ -158,7 +158,7 @@ class FeedParser:
             http_status = None
 
         num_retries: int = self._podcast.num_retries
-        active = True
+        active: bool = True
 
         match exc:
             case NotModified():
