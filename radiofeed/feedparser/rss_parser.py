@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Final, Iterator
+from typing import Iterator
 
 import lxml.etree
 
@@ -31,7 +31,7 @@ class RssParser:
         channel (lxml.etree.Element): <channel /> element
     """
 
-    _NAMESPACES: Final = {
+    _namespaces: dict[str, str] = {
         "atom": "http://www.w3.org/2005/Atom",
         "content": "http://purl.org/rss/1.0/modules/content/",
         "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
@@ -49,7 +49,7 @@ class RssParser:
         Raises:
             RssParserError: missing or invalid RSS content
         """
-        with xpath_finder(self._channel, self._NAMESPACES) as finder:
+        with xpath_finder(self._channel, self._namespaces) as finder:
             try:
                 return Feed(
                     items=list(self._parse_items()),
@@ -79,7 +79,7 @@ class RssParser:
                 raise RssParserError from e
 
     def _parse_item(self, item: Item) -> Item:
-        with xpath_finder(item, self._NAMESPACES) as finder:
+        with xpath_finder(item, self._namespaces) as finder:
             return Item(
                 categories=finder.to_list("category/text()"),
                 **finder.to_dict(
