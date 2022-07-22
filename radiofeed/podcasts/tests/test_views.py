@@ -238,14 +238,14 @@ class TestPodcastEpisodes:
         assert len(response.context["page_obj"].object_list) == 30
 
     def test_get_oldest_first(self, client, podcast):
-        EpisodeFactory.create_batch(3, podcast=podcast)
+        EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(
             self.url(podcast),
             {"o": "a"},
         )
         assert_ok(response)
-        assert len(response.context["page_obj"].object_list) == 3
+        assert len(response.context["page_obj"].object_list) == 30
 
     def test_search(self, client, podcast, faker):
         EpisodeFactory.create_batch(3, podcast=podcast)
