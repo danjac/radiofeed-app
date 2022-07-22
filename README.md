@@ -94,12 +94,6 @@ Tests can be run with `pytest`:
 python -m pytest
 ```
 
-Use `mypy` for type-checking:
-
-```bash
-python -m mypy radiofeed
-```
-
 ## Deployment
 
 The following environment variables should be set in your production installation. Some providers may set some of these automatically e.g. `DATABASE_URL`:
