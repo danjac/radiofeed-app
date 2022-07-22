@@ -235,17 +235,20 @@ class TestPodcastEpisodes:
 
         response = client.get(self.url(podcast))
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 30
 
-    def test_reverse(self, client, podcast):
+    def test_ascending(self, client, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(
             self.url(podcast),
-            {"reverse": True},
+            {"ordering": "asc"},
         )
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 30
+        assert response.context["ordering"] == "asc"
 
     def test_search(self, client, podcast, faker):
         EpisodeFactory.create_batch(3, podcast=podcast)
@@ -316,6 +319,7 @@ class TestCategoryDetail:
 
         response = client.get(category.get_absolute_url(), {"q": podcast.title})
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 1
 
 

@@ -194,19 +194,19 @@ def history(request: HttpRequest) -> HttpResponse:
         "episode", "episode__podcast"
     )
 
-    reverse = "reverse" in request.GET
+    ordering = request.GET.get("ordering", "desc")
 
     if request.search:
         logs = logs.search(request.search.value).order_by("-rank", "-listened")
     else:
-        logs = logs.order_by("listened" if reverse else "-listened")
+        logs = logs.order_by("listened" if ordering == "asc" else "-listened")
 
     return render_pagination_response(
         request,
         logs,
         "episodes/history.html",
         "episodes/pagination/history.html",
-        {"reverse": reverse},
+        {"ordering": ordering},
     )
 
 
@@ -240,19 +240,19 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         "episode", "episode__podcast"
     )
 
-    reverse = "reverse" in request.GET
+    ordering = request.GET.get("ordering", "desc")
 
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
     else:
-        bookmarks = bookmarks.order_by("created" if reverse else "-created")
+        bookmarks = bookmarks.order_by("created" if ordering == "asc" else "-created")
 
     return render_pagination_response(
         request,
         bookmarks,
         "episodes/bookmarks.html",
         "episodes/pagination/bookmarks.html",
-        {"reverse": reverse},
+        {"ordering": ordering},
     )
 
 

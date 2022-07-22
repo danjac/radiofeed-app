@@ -189,14 +189,15 @@ def episodes(
     Raises:
         Http404: podcast not found
     """
-    podcast = _get_podcast_or_404(podcast_id)
-    reverse = "reverse" in request.GET
 
+    podcast = _get_podcast_or_404(podcast_id)
     episodes = Episode.objects.filter(podcast=podcast).select_related("podcast")
+
+    ordering = request.GET.get("ordering", "desc")
 
     extra_context = {
         "is_podcast_detail": True,
-        "reverse": reverse,
+        "ordering": ordering,
     }
 
     return render_pagination_response(
@@ -204,7 +205,7 @@ def episodes(
         (
             episodes.search(request.search.value).order_by("-rank", "-pub_date")
             if request.search
-            else episodes.order_by("pub_date" if reverse else "-pub_date")
+            else episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
         ),
         "podcasts/episodes.html",
         "episodes/pagination/episodes.html",
