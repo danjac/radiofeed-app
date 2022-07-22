@@ -22,7 +22,7 @@ class Search:
         search_param: query string parameter
     """
 
-    search_param: str = "search"
+    param: str = "q"
 
     def __init__(self, request: HttpRequest):
         self._request = request
@@ -38,12 +38,12 @@ class Search:
     @cached_property
     def value(self) -> str:
         """Returns the search query value, if any."""
-        return force_str(self._request.GET.get(self.search_param, "")).strip()
+        return force_str(self._request.GET.get(self.param, "")).strip()
 
     @cached_property
     def qs(self) -> str:
         """Returns encoded query string value, if any."""
-        return urlencode({self.search_param: self.value}) if self.value else ""
+        return urlencode({self.param: self.value}) if self.value else ""
 
 
 class SearchMiddleware(BaseMiddleware):

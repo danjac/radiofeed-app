@@ -44,7 +44,7 @@ class TestSearchMiddleware:
         return SearchMiddleware(get_response)
 
     def test_search(self, rf, mw):
-        req = rf.get("/", {"search": "testing"})
+        req = rf.get("/", {"q": "testing"})
         mw(req)
         assert req.search
         assert str(req.search) == "testing"

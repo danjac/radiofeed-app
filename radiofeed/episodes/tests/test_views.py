@@ -101,18 +101,18 @@ class TestSearchEpisodes:
     url = reverse_lazy("episodes:search_episodes")
 
     def test_no_results(self, db, client):
-        response = client.get(self.url, {"search": "test"})
+        response = client.get(self.url, {"q": "test"})
         assert_ok(response)
 
     def test_search_empty(self, db, client):
-        assert client.get(self.url, {"search": ""}).url == episodes_url
+        assert client.get(self.url, {"q": ""}).url == episodes_url
 
     def test_search(self, db, client, faker):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(
             self.url,
-            {"search": episode.title},
+            {"q": episode.title},
         )
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
@@ -356,7 +356,7 @@ class TestBookmarks:
 
         BookmarkFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
 
-        response = client.get(self.url, {"search": "testing"})
+        response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
 
@@ -430,7 +430,7 @@ class TestHistory:
             )
 
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
-        response = client.get(self.url, {"search": "testing"})
+        response = client.get(self.url, {"q": "testing"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
 

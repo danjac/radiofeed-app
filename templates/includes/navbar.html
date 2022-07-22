@@ -112,7 +112,7 @@
                     <input type="search"
                         x-model="search"
                         @click="$el.select()"
-                        name="search"
+                        name="{{ request.search.param }}"
                         autocomplete="off"
                         aria-label="{% translate "Search" %}"
                         placeholder="{% translate "Search" %}"
