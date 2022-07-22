@@ -237,17 +237,24 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @login_required
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
+
+    newest_first = request.GET.get("o", "d") == "d"
+
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
 
+    if request.search:
+        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
+    else:
+        bookmarks = bookmarks.order_by("-created" if newest_first else "created")
+
     return render_pagination_response(
         request,
-        bookmarks.search(request.search.value).order_by("-rank", "-created")
-        if request.search
-        else bookmarks.order_by("-created"),
+        bookmarks,
         "episodes/bookmarks.html",
         "episodes/pagination/bookmarks.html",
+        {"newest_first": newest_first},
     )
 
 

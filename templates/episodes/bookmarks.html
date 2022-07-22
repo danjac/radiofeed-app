@@ -4,27 +4,26 @@
 {% block title %} | {% translate "Bookmarks" %}{% endblock %}
 
 {% block content %}
-
-    {% if request.search %}
-        <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">{% translate "Bookmarks" %}</h1>
-    {% endif %}
-
-    <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
-        {% if request.search %}
+    <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">{% translate "Bookmarks" %}</h1>
+    {% if request.search or page_obj.has_other_pages %}
+        <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
             <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
-                <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                    title="{% translate "Search Episodes" %}"
-                    class="link">{% translate "Search All Podcasts" %}</a>
+                {% if request.search %}
+                    <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
+                        class="link">{% translate "Search All Podcasts" %}</a>
+                {% elif newest_first %}
+                    <a href="{{ request.path|add:'?o=a' }}"
+                        class="link">{% translate "Oldest First" %}</a>
+                {% else %}
+                    <a href="{{ request.path|add:'?o=d' }}"
+                        class="link">{% translate "Newest First" %}</a>
+                {% endif %}
             </nav>
-        {% else %}
-            <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">{% translate "Bookmarks" %}</h1>
-        {% endif %}
 
-        {% if request.search or page_obj.has_other_pages %}
             <div class="flex items-center justify-center sm:justify-end">
                 {% include "search/search_form.html" with placeholder=_("Search: Bookmarks") %}
             </div>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
     {% include pagination_template %}
 {% endblock content %}

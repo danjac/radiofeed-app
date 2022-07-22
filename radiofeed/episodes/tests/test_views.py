@@ -322,12 +322,20 @@ class TestBookmarks:
     url = reverse_lazy("episodes:bookmarks")
 
     def test_get(self, client, auth_user):
-        BookmarkFactory.create_batch(3, user=auth_user)
+        BookmarkFactory.create_batch(33, user=auth_user)
 
         response = client.get(self.url)
 
         assert_ok(response)
-        assert len(response.context["page_obj"].object_list) == 3
+        assert len(response.context["page_obj"].object_list) == 30
+
+    def test_oldest_first(self, client, auth_user):
+        BookmarkFactory.create_batch(33, user=auth_user)
+
+        response = client.get(self.url, {"o": "a"})
+
+        assert_ok(response)
+        assert len(response.context["page_obj"].object_list) == 30
 
     def test_empty(self, client, auth_user):
 
