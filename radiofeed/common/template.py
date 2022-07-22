@@ -210,7 +210,9 @@ def _auth_redirect_url(url: str, redirect_url) -> str:
     )
 
 
-def _build_absolute_uri(url: str | None = None, request: HttpRequest | None = None):
+def _build_absolute_uri(
+    url: str | None = None, request: HttpRequest | None = None
+) -> str:
     if request:
         return request.build_absolute_uri(url)
 
