@@ -22,7 +22,7 @@ class Search:
         search_param: query string parameter
     """
 
-    search_param: str = "q"
+    search_param: str = "search"
 
     def __init__(self, request: HttpRequest):
         self._request = request

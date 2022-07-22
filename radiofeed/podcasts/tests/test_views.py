@@ -103,7 +103,7 @@ class TestSearchPodcasts:
         assert (
             client.get(
                 reverse("podcasts:search_podcasts"),
-                {"q": ""},
+                {"search": ""},
             ).url
             == podcasts_url
         )
@@ -113,7 +113,7 @@ class TestSearchPodcasts:
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(
             reverse("podcasts:search_podcasts"),
-            {"q": podcast.title},
+            {"search": podcast.title},
         )
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
@@ -122,7 +122,7 @@ class TestSearchPodcasts:
 
 class TestSearchITunes:
     def test_empty(self, client, db):
-        response = client.get(reverse("podcasts:search_itunes"), {"q": ""})
+        response = client.get(reverse("podcasts:search_itunes"), {"search": ""})
         assert response.url == reverse("podcasts:index")
 
     def test_search(self, client, podcast, mocker):
@@ -145,7 +145,7 @@ class TestSearchITunes:
             "radiofeed.podcasts.itunes.search_cached", return_value=feeds
         )
 
-        response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        response = client.get(reverse("podcasts:search_itunes"), {"search": "test"})
         assert_ok(response)
 
         assert response.context["feeds"] == feeds
@@ -157,7 +157,7 @@ class TestSearchITunes:
             side_effect=itunes.ItunesException,
         )
 
-        response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        response = client.get(reverse("podcasts:search_itunes"), {"search": "test"})
         assert_ok(response)
 
         assert response.context["feeds"] == []
@@ -254,7 +254,7 @@ class TestPodcastEpisodes:
 
         response = client.get(
             self.url(podcast),
-            {"q": episode.title},
+            {"search": episode.title},
         )
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
@@ -285,7 +285,7 @@ class TestCategoryList:
         category = CategoryFactory(name="testing")
         category.podcast_set.add(PodcastFactory())
 
-        response = client.get(self.url, {"q": "testing"})
+        response = client.get(self.url, {"search": "testing"})
         assert_ok(response)
         assert len(response.context["categories"]) == 1
 
@@ -295,7 +295,7 @@ class TestCategoryList:
 
         CategoryFactory(name="testing")
 
-        response = client.get(self.url, {"q": "testing"})
+        response = client.get(self.url, {"search": "testing"})
         assert_ok(response)
         assert len(response.context["categories"]) == 0
 
@@ -314,7 +314,7 @@ class TestCategoryDetail:
         )
         podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
-        response = client.get(category.get_absolute_url(), {"q": podcast.title})
+        response = client.get(category.get_absolute_url(), {"search": podcast.title})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
 
