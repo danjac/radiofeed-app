@@ -1,6 +1,9 @@
 {% load i18n static %}
+
+{% url 'podcasts:index' as home_url %}
+{% url 'podcasts:search' as search_url %}
+
 {% with site_name=request.site.name %}
-    {% url 'podcasts:index' as home_url %}
     <header class="bg-black text-white sticky top-0 w-full z-20 shadow"
         x-data="{sidebar: false}"
         @htmx:before-request.window="sidebar=false">
@@ -27,7 +30,7 @@
 
             </ul>
 
-            <form action="{% url 'podcasts:search_podcasts' %}"
+            <form action="{{ search_url }}"
                 method="get"
                 class="relative bg-transparent hidden sm:block"
                 x-data="{search: ''}"
@@ -37,7 +40,7 @@
                     x-ref="search"
                     x-model="search"
                     @click="$el.select()"
-                    name="search"
+                    name="{{ request.search.param }}"
                     accesskey="k"
                     autocomplete="off"
                     aria-label="{% translate "Search" %}"
@@ -104,7 +107,7 @@
             <div class="flex justify-center sm:justify-start sm:hidden mb-6"
                 @click.away="sidebar=false">
 
-                <form action="{% url 'podcasts:search_podcasts' %}"
+                <form action="{{ search_url }}"
                     method="get"
                     class="relative bg-transparent"
                     x-data="{search: ''}"
