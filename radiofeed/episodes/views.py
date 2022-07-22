@@ -189,26 +189,24 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @login_required
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    newest_first = request.GET.get("o", "d") == "d"
 
     logs = AudioLog.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
 
+    reverse = "reverse" in request.GET
+
     if request.search:
         logs = logs.search(request.search.value).order_by("-rank", "-listened")
     else:
-        logs = logs.order_by("-listened" if newest_first else "listened")
+        logs = logs.order_by("listened" if reverse else "-listened")
 
     return render_pagination_response(
         request,
         logs,
         "episodes/history.html",
         "episodes/pagination/history.html",
-        {
-            "newest_first": newest_first,
-            "oldest_first": not (newest_first),
-        },
+        {"reverse": reverse},
     )
 
 
@@ -238,23 +236,23 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
 
-    newest_first = request.GET.get("o", "d") == "d"
-
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
 
+    reverse = "reverse" in request.GET
+
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
     else:
-        bookmarks = bookmarks.order_by("-created" if newest_first else "created")
+        bookmarks = bookmarks.order_by("created" if reverse else "-created")
 
     return render_pagination_response(
         request,
         bookmarks,
         "episodes/bookmarks.html",
         "episodes/pagination/bookmarks.html",
-        {"newest_first": newest_first},
+        {"reverse": reverse},
     )
 
 

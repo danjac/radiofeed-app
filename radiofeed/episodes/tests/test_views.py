@@ -329,10 +329,10 @@ class TestBookmarks:
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
 
-    def test_oldest_first(self, client, auth_user):
+    def test_reverse(self, client, auth_user):
         BookmarkFactory.create_batch(33, user=auth_user)
 
-        response = client.get(self.url, {"o": "a"})
+        response = client.get(self.url, {"reverse": True})
 
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
@@ -411,10 +411,10 @@ class TestHistory:
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
 
-    def test_get_oldest_first(self, client, auth_user):
+    def test_reverse(self, client, auth_user):
         AudioLogFactory.create_batch(33, user=auth_user)
 
-        response = client.get(self.url, {"o": "a"})
+        response = client.get(self.url, {"reverse": True})
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 30

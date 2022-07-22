@@ -237,12 +237,12 @@ class TestPodcastEpisodes:
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
 
-    def test_get_oldest_first(self, client, podcast):
+    def test_reverse(self, client, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(
             self.url(podcast),
-            {"o": "a"},
+            {"reverse": True},
         )
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30

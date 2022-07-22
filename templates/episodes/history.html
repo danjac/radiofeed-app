@@ -11,12 +11,12 @@
                 {% if request.search %}
                     <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                         class="link">{% translate "Search All Podcasts" %}</a>
-                {% elif newest_first %}
-                    <a href="{{ request.path|add:'?o=a' }}"
-                        class="link">{% translate "Oldest First" %}</a>
-                {% else %}
-                    <a href="{{ request.path|add:'?o=d' }}"
+                {% elif reverse %}
+                    <a href="{{ request.path }}"
                         class="link">{% translate "Newest First" %}</a>
+                {% else %}
+                    <a href="{{ request.path|add:'?reverse' }}"
+                        class="link">{% translate "Oldest First" %}</a>
                 {% endif %}
             </nav>
 
