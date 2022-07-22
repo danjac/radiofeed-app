@@ -1,16 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
 from radiofeed.common.middleware import BaseMiddleware
-
-if TYPE_CHECKING:
-    from radiofeed.common.http import HttpRequest  # pragma: no cover
-else:
-    from django.http import HttpRequest
 
 
 class Player:

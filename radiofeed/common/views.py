@@ -3,14 +3,13 @@ from __future__ import annotations
 import datetime
 
 from django.conf import settings
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.common.http import HttpRequest
 from radiofeed.common.template import get_site_config
 
 static_page = require_safe(render)
