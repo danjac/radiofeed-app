@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-20 13:27+0000\n"
+"POT-Creation-Date: 2022-07-23 11:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,8 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:305
-#: radiofeed/podcasts/models.py:337
+#: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:324
+#: radiofeed/podcasts/models.py:358
 #, fuzzy
 #| msgid "Podcasts"
 msgid "Podcast"
@@ -116,7 +116,7 @@ msgstr "Kausi {season}"
 #: radiofeed/episodes/models.py:300 radiofeed/episodes/models.py:306
 #: radiofeed/episodes/models.py:337
 msgid "User"
-msgstr ""
+msgstr "Käyttäjä"
 
 #: radiofeed/episodes/models.py:340
 #, fuzzy
@@ -132,17 +132,17 @@ msgstr "Kuunneltu"
 
 #: radiofeed/episodes/models.py:345
 msgid "Timestamp Mark (Seconds)"
-msgstr ""
+msgstr "Aikamerkki"
 
-#: radiofeed/episodes/views.py:231
+#: radiofeed/episodes/views.py:220
 msgid "Removed from History"
 msgstr "Poistettu Historiasta"
 
-#: radiofeed/episodes/views.py:273
+#: radiofeed/episodes/views.py:269
 msgid "Added to Bookmarks"
 msgstr "Lisätty Kirjanmerkkeihin"
 
-#: radiofeed/episodes/views.py:289
+#: radiofeed/episodes/views.py:285
 msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
@@ -346,35 +346,35 @@ msgstr "Kategoriat"
 msgid "Recommended to Users"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:302
+#: radiofeed/podcasts/models.py:320
 #, fuzzy
 #| msgid "Subscribe"
 msgid "Subscriber"
 msgstr "Tilaa"
 
-#: radiofeed/podcasts/models.py:344
+#: radiofeed/podcasts/models.py:365
 #, fuzzy
 #| msgid "Search Podcasts"
 msgid "Similar Podcast"
 msgstr "Etsi Podcasteista"
 
-#: radiofeed/podcasts/models.py:348
+#: radiofeed/podcasts/models.py:369
 msgid "Frequency Count"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:356
+#: radiofeed/podcasts/models.py:377
 msgid "Similarity Rating"
 msgstr ""
 
-#: radiofeed/podcasts/views.py:94
+#: radiofeed/podcasts/views.py:83
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
-#: radiofeed/podcasts/views.py:291
+#: radiofeed/podcasts/views.py:279
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:307
+#: radiofeed/podcasts/views.py:295
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
@@ -467,7 +467,7 @@ msgid ""
 "notified."
 msgstr ""
 
-#: templates/about.html:4 templates/includes/navbar.html:88
+#: templates/about.html:4 templates/includes/navbar.html:94
 #: templates/includes/sidebar.html:72 templates/includes/sidebar.html:75
 #: templates/podcasts/detail.html:4 templates/podcasts/detail_base.html:91
 #: templates/podcasts/detail_base.html:92
@@ -616,11 +616,11 @@ msgstr "Ongelmat"
 #: templates/account/account_inactive.html:4
 #: templates/account/account_inactive.html:7
 msgid "Account Inactive"
-msgstr ""
+msgstr "Tili ei ole käytössä"
 
 #: templates/account/account_inactive.html:9
 msgid "This account is inactive."
-msgstr ""
+msgstr "Tämä tili ei ole käytössä"
 
 #: templates/account/delete_account.html:4
 #: templates/account/settings_base.html:54
@@ -696,6 +696,10 @@ msgid ""
 "address for user <strong>%(user_display)s</strong>.\n"
 "            "
 msgstr ""
+"\n"
+"                Varmista, että <strong>%(email)s</strong> on oikea "
+"sähköpostiosoite käyttäjälle<strong>%(user_display)s</strong>.\n"
+"            "
 
 #: templates/account/email_confirm.html:30
 msgid "Confirm E-Mail"
@@ -717,6 +721,9 @@ msgid ""
 "                Hi %(username)s, greetings from %(site_name)s!\n"
 "            "
 msgstr ""
+"\n"
+"                Hei %(username)s, terve sivustosta %(site_name)s!\n"
+"            "
 
 #: templates/account/emails/base.html:21
 #, python-format
@@ -726,9 +733,14 @@ msgid ""
 "uncheck the \"Send email notifications\"\n"
 "                option\n"
 "                on your <a style=\"text-decoration: underline; color: #000;"
-"\" href=\"%(preferences_url)s\">Settings</a> page.</p>\n"
+"\" href=\"%(preferences_url)s\">Settings</a> page.\n"
 "            "
 msgstr ""
+"\n"
+"              Jos et halua saada enää ilmoituksia, paina \"Lähetä "
+"sähköpostiilmoituksia\"painike <a style=\"text-decoration: underline; color: "
+"#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
+"            "
 
 #: templates/account/forms/preferences.html:16
 msgid "Save Changes"
@@ -749,6 +761,10 @@ msgstr "Lataa OPML"
 #: templates/account/import_export_podcast_feeds.html:24
 msgid "Import feeds from an OPML file into your collection."
 msgstr "Tuo podcast-syötteet OPML-tiedostosta kokoelmaasi."
+
+#: templates/account/includes/social_logins.html:5
+msgid "Login or Sign up with"
+msgstr "Kirjaudu tai rekisteröidy"
 
 #: templates/account/login.html:7 templates/account/login.html:36
 #: templates/socialaccount/login.html:27
@@ -831,7 +847,7 @@ msgstr "Asetukset"
 msgid "Settings"
 msgstr "Asetukset"
 
-#: templates/account/settings_base.html:9 templates/includes/navbar.html:60
+#: templates/account/settings_base.html:9 templates/includes/navbar.html:66
 #, python-format
 msgid "Settings for %(username)s"
 msgstr "Asetukset: %(username)s"
@@ -875,10 +891,6 @@ msgstr ""
 msgid "Sign Up"
 msgstr "Rekisteröidy"
 
-#: templates/account/social_logins.html:5
-msgid "Login or Sign up with"
-msgstr "Kirjaudu tai rekisteröidy"
-
 #: templates/account/stats.html:11
 msgid "Joined"
 msgstr "Rekisteröity"
@@ -903,8 +915,8 @@ msgstr[1] ""
 "                        "
 
 #: templates/account/stats.html:33 templates/episodes/bookmarks.html:4
-#: templates/episodes/bookmarks.html:9 templates/episodes/bookmarks.html:19
-#: templates/includes/sidebar.html:39 templates/includes/sidebar.html:42
+#: templates/episodes/bookmarks.html:7 templates/includes/sidebar.html:39
+#: templates/includes/sidebar.html:42
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
@@ -1017,14 +1029,20 @@ msgid "You must sign up or log in to play this episode"
 msgstr ""
 "Sinun täytyy rekisteröityä tai kirjautua sisään soittaaksesi tätä jaksoa"
 
-#: templates/episodes/bookmarks.html:15 templates/search/search_base.html:24
-msgid "Search Episodes"
-msgstr "Haku: Jaksot"
-
-#: templates/episodes/bookmarks.html:16 templates/episodes/history.html:14
-#: templates/podcasts/episodes.html:15
+#: templates/episodes/bookmarks.html:13 templates/episodes/history.html:13
+#: templates/podcasts/episodes.html:16
 msgid "Search All Podcasts"
 msgstr "Hae kaikista podcasteista"
+
+#: templates/episodes/bookmarks.html:16 templates/episodes/history.html:16
+#: templates/podcasts/episodes.html:19
+msgid "Newest First"
+msgstr "Uusimmat"
+
+#: templates/episodes/bookmarks.html:19 templates/episodes/history.html:19
+#: templates/podcasts/episodes.html:22
+msgid "Oldest First"
+msgstr "Vanhemmat"
 
 #: templates/episodes/bookmarks.html:24
 msgid "Search: Bookmarks"
@@ -1069,20 +1087,12 @@ msgstr ""
 msgid "Explicit"
 msgstr "Varoitus"
 
-#: templates/episodes/history.html:4 templates/episodes/history.html:8
+#: templates/episodes/history.html:4 templates/episodes/history.html:7
 #: templates/includes/sidebar.html:50 templates/includes/sidebar.html:53
 msgid "History"
 msgstr "Historia"
 
-#: templates/episodes/history.html:17 templates/podcasts/episodes.html:18
-msgid "Oldest First"
-msgstr "Vanhemmat"
-
-#: templates/episodes/history.html:20 templates/podcasts/episodes.html:21
-msgid "Newest First"
-msgstr "Uusimmat"
-
-#: templates/episodes/history.html:25
+#: templates/episodes/history.html:24
 msgid "Search: History"
 msgstr "Haku: Historia"
 
@@ -1155,12 +1165,9 @@ msgstr "Minun Podcastit"
 msgid "Find an episode..."
 msgstr "Haku: Jaksot"
 
-#: templates/episodes/search.html:4 templates/includes/navbar.html:43
-#: templates/includes/navbar.html:44 templates/includes/navbar.html:49
-#: templates/includes/navbar.html:117 templates/includes/navbar.html:118
-#: templates/includes/navbar.html:122 templates/podcasts/itunes_search.html:4
-#: templates/podcasts/search.html:4 templates/search/search_form.html:12
-#: templates/search/search_form.html:26
+#: templates/episodes/search.html:4 templates/includes/navbar.html:6
+#: templates/podcasts/itunes_search.html:4 templates/podcasts/search.html:4
+#: templates/search/search_form.html:12 templates/search/search_form.html:26
 msgid "Search"
 msgstr "Haku"
 
@@ -1170,7 +1177,7 @@ msgstr "Haku"
 msgid "Episodes"
 msgstr "Jaksot"
 
-#: templates/error_base.html:50 templates/includes/navbar.html:24
+#: templates/error_base.html:50 templates/includes/navbar.html:30
 msgid "Home Page"
 msgstr "Kotisivu"
 
@@ -1223,12 +1230,17 @@ msgid ""
 "%(site_name)s.\n"
 "                "
 msgstr ""
+"\n"
+"Podcast-äänitallenteet, esitysmuistiinpanot ja taideteokset ovat "
+"yksittäisten omistajien omaisuutta\n"
+", eivätkä ne ole sidoksissa tai tukemaan niitä %(site_name)s:in tukemia."
+"                "
 
-#: templates/includes/navbar.html:67 templates/includes/navbar.html:74
+#: templates/includes/navbar.html:7
 msgid "Toggle Menu"
 msgstr "Vaihda Valikko"
 
-#: templates/includes/navbar.html:84
+#: templates/includes/navbar.html:90
 msgid "About this Site"
 msgstr "Tiedot Sivustosta"
 
@@ -1402,6 +1414,10 @@ msgstr ""
 msgid "Search Podcasts"
 msgstr "Etsi Podcasteista"
 
+#: templates/search/search_base.html:24
+msgid "Search Episodes"
+msgstr "Haku: Jaksot"
+
 #: templates/search/search_base.html:30
 msgid "Search iTunes"
 msgstr "Etsi iTunesista"
@@ -1474,136 +1490,3 @@ msgid ""
 "following form:\n"
 "            "
 msgstr ""
-
-#~ msgid "With pub date"
-#~ msgstr "Päivämäärän kanssa"
-
-#~ msgid "Frequenly Asked Questions"
-#~ msgstr "Usein Kysytyt Kysymykset"
-
-#~ msgid "Credits"
-#~ msgstr "Kunniat"
-
-#~ msgid "Shortcuts"
-#~ msgstr "Pikanäppäimet"
-
-#~ msgid "Terms &amp; Conditions"
-#~ msgstr "Käyttöehdot"
-
-#~ msgid "Terms"
-#~ msgstr "Käyttöehdot"
-
-#~ msgid "Frequently Asked Questions"
-#~ msgstr "Usein Kysytyt Kysymykset"
-
-#, python-format
-#~ msgid ""
-#~ "\n"
-#~ "                        <strong>%(site_name)s</strong> is a web "
-#~ "application for discovering new podcasts and collecting your favorite "
-#~ "podcasts and episodes.\n"
-#~ "                    "
-#~ msgstr ""
-#~ "\n"
-#~ "<strong>%(site_name)s</strong> on verkkosovellus uusien podcastien "
-#~ "löytämiseen  ja suosikkipodcastien ja -jaksojen keräämiseen.\n"
-#~ "                    "
-
-#, python-format
-#~ msgid ""
-#~ "\n"
-#~ "                        Do I have to create an account to use "
-#~ "%(site_name)s?\n"
-#~ "                    "
-#~ msgstr ""
-#~ "\n"
-#~ "                        Pitääkö minun luoda tili käyttääkseni "
-#~ "%(site_name)s?\n"
-#~ "                   "
-
-#~ msgid "Play episodes in our custom Player"
-#~ msgstr "Kuunnella jaksoja mukautetulla soittimellamme"
-
-#~ msgid "Bookmark episodes to listen to later"
-#~ msgstr "Lisää jaksoja Kirjanmerkkeihisi kunnellaksesi myöhemmin"
-
-#~ msgid "Add podcasts to your collection"
-#~ msgstr "Lisätä podcasteja kokoelmaasi"
-
-#~ msgid "Get new weekly recommendations"
-#~ msgstr "Saada uusia suosituksia joka viiko"
-
-#~ msgid "Keep track of episodes you have listened to"
-#~ msgstr "Seurata sinun kuuntelemiasi jaksoja"
-
-#~ msgid "What if I want to download an episode to my device?"
-#~ msgstr "Saanko lataa jakson omaan laitteeseeni?"
-
-#~ msgid "How do I add podcasts to my collection?"
-#~ msgstr "Miten lisätään podcasteja omaan kokoelmaani?"
-
-#~ msgid "How do I remove an episode from my history?"
-#~ msgstr "Miten poistan jakson historiastani?"
-
-#~ msgid "Can I save my podcast subscriptions to my device?"
-#~ msgstr "Saanko tallentaa podcast-tilauksia omaan laitteeseeni?"
-
-#~ msgid "How do I save an episode to listen to later?"
-#~ msgstr "Miten tallentaa jakson kunnellakseni myöhemmin?"
-
-#~ msgid "How do I delete my account?"
-#~ msgstr "Miten poistan oman tilini?"
-
-#~ msgid "Keyboard Shortcuts"
-#~ msgstr "Yleiset Pikanäppäimet"
-
-#~ msgid "Player Shortcuts"
-#~ msgstr "Soittimen Pikanäppäimet"
-
-#~ msgid "Navigation Shortcuts"
-#~ msgstr "Navigoinnin Pikanäppäimet"
-
-#~ msgid "Action"
-#~ msgstr "Toiminta"
-
-#~ msgid "Key"
-#~ msgstr "Näppäin"
-
-#~ msgid "Toggle Play/Pause"
-#~ msgstr "Vaihda Soitto/Paussi"
-
-#~ msgid "Spacebar"
-#~ msgstr "Välilyönti"
-
-#~ msgid "Left Arrow"
-#~ msgstr "Vasen Nuolinäppäin"
-
-#~ msgid "Right Arrow"
-#~ msgstr "Oikea Nuolinäppäin"
-
-#~ msgid "Close Player (if running)"
-#~ msgstr "Sulje Soitin"
-
-#~ msgid "Reload Player (if running)"
-#~ msgstr "Lataa Soitin Uudelleen"
-
-#~ msgid "Login/Logout"
-#~ msgstr "Kirjaudu sisään/ulos"
-
-#~ msgid "Join"
-#~ msgstr "Luo tili"
-
-#~ msgid "Last updated"
-#~ msgstr "Viimein päivitetty"
-
-#~ msgid "Email address"
-#~ msgstr "Sähköpostiosoite"
-
-#~ msgid "Terms and Conditions"
-#~ msgstr "Käyttöehdot"
-
-#~ msgid "Learn more"
-#~ msgstr "Lue lisää"
-
-#~ msgid "Pub Date"
-#~ msgstr "Päivämäärä"
