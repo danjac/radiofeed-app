@@ -1,4 +1,4 @@
-This is the source code for a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself.
+This is the source code for a [simple, easy to use podcatcher web application](https://radiofeed.me). You are free to use this source to host the app yourself.
 
 ![coverage](/screenshots/coverage.svg) [![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -146,7 +146,7 @@ To upgrade Python dependencies just use Poetry:
 poetry update
 ```
 
-This will update `poetry.lock` which should be commmitted to the repo. Refer to Poetry docs for more details.
+This will update `poetry.lock` which should be committed to the repo. Refer to Poetry docs for more details.
 
 If you are using Heroku, Dokku or similar for deployment you should also re-generate the `requirements.txt` file, as Heroku will automatically detect and reinstall any changes:
 
