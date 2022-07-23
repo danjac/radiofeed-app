@@ -20,9 +20,12 @@ from radiofeed.common.utils.text import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 DEFAULT_TIME_PERIOD: Final = timedelta(days=90)
+DEFAULT_NUM_MATCHES: Final = 12
 
 
-def recommend(since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = 12) -> None:
+def recommend(
+    since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = DEFAULT_NUM_MATCHES
+) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by language and category.
 
     Any existing recommendations are first deleted.

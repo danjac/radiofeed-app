@@ -12,9 +12,24 @@ from radiofeed.podcasts.factories import (
     CategoryFactory,
     PodcastFactory,
     RecommendationFactory,
+    SubscriptionFactory,
 )
-from radiofeed.podcasts.models import Category, Podcast, Recommendation
+from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import UserFactory
+
+
+class TestSubscriptionManager:
+    def test_anonymous(self, db, anonymous_user):
+        assert Subscription.objects.podcast_ids(anonymous_user) == set()
+
+    def test_none(self, user):
+        assert Subscription.objects.podcast_ids(user) == set()
+
+    def test_subscribed(self, db):
+        subscription = SubscriptionFactory()
+        assert Subscription.objects.podcast_ids(subscription.subscriber) == {
+            subscription.podcast_id
+        }
 
 
 class TestRecommendationManager:

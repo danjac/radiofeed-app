@@ -15,7 +15,7 @@ from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.http import HttpResponseConflict
 from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts import itunes
+from radiofeed.podcasts import itunes, recommender
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 
 
@@ -26,18 +26,8 @@ def index(request: HttpRequest) -> HttpResponse:
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
     """
 
-    subscribed = (
-        set(
-            Subscription.objects.filter(subscriber=request.user).values_list(
-                "podcast", flat=True
-            )
-        )
-        if request.user.is_authenticated
-        else set()
-    )
-
+    subscribed = Subscription.objects.podcast_ids(request.user)
     promoted = "promoted" in request.GET or not subscribed
-
     podcasts = _get_podcasts().order_by("-pub_date")
 
     return render_pagination_response(
@@ -129,7 +119,7 @@ def similar(
     request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
-    limit: int = 12,
+    limit: int = recommender.DEFAULT_NUM_MATCHES,
 ) -> HttpResponse:
     """List similar podcasts based on recommendations.
 
