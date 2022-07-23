@@ -4,23 +4,33 @@
 {% block title %} | {% if promoted %} {% translate "Podcasts" %}{% else %}{% translate "My Podcasts" %}{% endif %}{% endblock %}
 
 {% block content %}
+
     {% if has_subscriptions %}
+
+        {% url 'podcasts:index' as index_url %}
+
+        {% translate "Promoted" as t_promoted %}
+        {% translate "My Podcasts" as t_my_podcasts %}
+
         <div class="sm:flex justify-between mb-6">
-            {% url 'podcasts:index' as index_url %}
             <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left mb-3 sm:mb-0">
                 {% if promoted %}
-                    {% translate "Promoted" %}
+                    {{ t_promoted }}
                 {% else %}
-                    {% translate "My Podcasts" %}
+                    {{ t_my_podcasts }}
                 {% endif %}
             </h1>
             <div class="flex items-center justify-center sm:justify-start">
                 {% if promoted %}
                     <a href="{{ index_url }}"
-                        class="link">{% translate "My Podcasts" %}</a>
+                        class="link">
+                        {{ t_my_podcasts }}
+                    </a>
                 {% else %}
                     <a href="{{ index_url }}?promoted=true"
-                        class="link">{% translate "Promoted" %}</a>
+                        class="link">
+                        {{ t_promoted }}
+                    </a>
                 {% endif %}
             </div>
         </div>
