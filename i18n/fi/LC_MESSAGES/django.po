@@ -1441,6 +1441,9 @@ msgid ""
 "third party accounts:\n"
 "            "
 msgstr ""
+"\n"
+"Voit kirjautua käyttäen seuraavia kirjautumispalveluita:"
+"            "
 
 #: templates/socialaccount/connections.html:52
 msgid ""
@@ -1452,7 +1455,7 @@ msgstr ""
 
 #: templates/socialaccount/connections.html:58
 msgid "Add a 3rd Party Account"
-msgstr ""
+msgstr "Lisää kolmannen osapuolen tili"
 
 #: templates/socialaccount/login.html:8
 #, python-format
