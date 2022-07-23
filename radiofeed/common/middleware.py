@@ -19,7 +19,7 @@ class Search:
     """Encapsulates generic search query.
 
     Attributes:
-        search_param: query string parameter
+        param: query string parameter
     """
 
     param: str = "q"
