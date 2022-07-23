@@ -135,7 +135,7 @@
 
                 {% with COVER_IMAGE_CSS="h-28 w-28 md:h-36 md:w-36" %}
                     <div class="{{ COVER_IMAGE_CSS}}">
-                        {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class=COVER_IMAGE_CSS|add:" border dark:border-gray-500" %}
+                        {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class=COVER_IMAGE_CSS|add:" border dark:border-gray-500" url=podcast.get_absolute_url %}
                     </div>
                 {% endwith %}
 
