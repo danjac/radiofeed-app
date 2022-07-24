@@ -167,8 +167,6 @@
                 </div>
             </div>
 
-            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
-
             {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
                 {% if file_size or link or explicit %}
                     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
@@ -199,6 +197,8 @@
                     </div>
                 {% endif %}
             {% endwith %}
+
+            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
 
             {% markdown episode.description %}
 

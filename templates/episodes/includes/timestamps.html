@@ -1,33 +1,36 @@
 {% load i18n %}
 {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
-    <div class="sm:flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-y-3 sm:space-y-0 sm:space-x-3"
+    <div class="space-y-3 font-semibold text-gray-600 dark:text-gray-30"
         id="episode-timestamps-{{ episode.id }}"
         {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+
+        {% translate "Release Date" as t_release_date %}
+        {% translate "Duration" as t_duration %}
+        {% translate "Listened" as t_listened %}
+
         <div class="flex items-center space-x-2 sm:space-x-3">
-            {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
-
-            {% if listened %}
-                <div>
-                    {% translate "Listened" %} {% include "includes/date.html" with value=listened %}
-                </div>
-                {% if duration %}
-                    <div>
-                        {% if current_time > 60 and current_time < duration %}
-                            <span title="{% translate "Completed" %}">
-                                {{ current_time|format_duration }}
-                            </span> /
-                        {% endif %}
-                        <span title="{% translate  "Duration" %}">
-                            {{ duration|format_duration }}
-                        </span>
-                    </div>
-                {% endif %}
-
-            {% elif duration %}
-                <div title="{% translate "Duration" %}">
+            <span>{{ t_release_date }}</span>
+            {% include "includes/date.html" with value=episode.pub_date title=t_release_date %}
+            {% if duration %}
+                <span title="{{ t_duration }}">
                     {{ duration|format_duration }}
-                </div>
+                </span>
             {% endif %}
         </div>
+
+        {% if listened %}
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <span>
+                    {{ t_listened }}
+                </span>
+                {% include "includes/date.html" with value=listened title=t_listened %}
+                {% if duration and current_time > 60 and current_time < duration %}
+                    <span title="{% translate "Completed" %}">
+                        {{ current_time|format_duration }}
+                    </span>
+                {% endif %}
+            </div>
+        {% endif %}
+
     </div>
 {% endwith %}
