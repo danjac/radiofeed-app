@@ -1,6 +1,6 @@
 {% load i18n %}
 {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
-    <div class="space-y-3 font-semibold text-gray-600 dark:text-gray-30"
+    <div class="space-y-3 font-semibold text-gray-600 dark:text-gray-300"
         id="episode-timestamps-{{ episode.id }}"
         {% if hx_oob %}hx-swap-oob="true"{% endif %}>
 
