@@ -99,7 +99,7 @@ class RssParser:
             try:
                 return Feed(
                     items=list(self._parse_items()),
-                    categories=finder.to_list(*self._item_categories),
+                    categories=finder.to_list(*self._feed_categories),
                     **finder.to_dict(**self._feed_fields),  # type: ignore
                 )
             except (TypeError, ValueError) as e:
@@ -108,7 +108,7 @@ class RssParser:
     def _parse_item(self, item: Item) -> Item:
         with xpath_finder(item, self._namespaces) as finder:
             return Item(
-                categories=finder.to_list(*self._feed_categories),
+                categories=finder.to_list(*self._item_categories),
                 **finder.to_dict(**self._item_fields),  # type: ignore
             )
 
