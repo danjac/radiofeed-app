@@ -13,7 +13,7 @@ def parse_rss(content: bytes) -> Feed:
     """Parses RSS or Atom feed and returns the feed details and individual episodes.
 
     Args:
-        content: the body of the RSS or Atom feed.
+        content: the body of the RSS or Atom feed
 
     Raises:
         RssParserError: if XML content is invalid, or the feed is otherwise invalid or empty
