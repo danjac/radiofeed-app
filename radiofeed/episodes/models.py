@@ -30,7 +30,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     """QuerySet for Episode model."""
 
     def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet[Episode]:
-        """Adds `current_time` and `listened` annotations.
+        """Adds `current_time`, `remaining` and `listened` annotations.
 
         Both will be None if user is anonymous or there is no listening history.
         """

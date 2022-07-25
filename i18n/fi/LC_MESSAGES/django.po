@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-23 11:27+0000\n"
+"POT-Creation-Date: 2022-07-25 07:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: radiofeed/common/template.py:109
+#, python-brace-format
+msgid "{total_hours}h"
+msgstr "{total_hours}t"
+
+#: radiofeed/common/template.py:112
+#, python-brace-format
+msgid "{total_minutes}min"
+msgstr ""
 
 #: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:324
 #: radiofeed/podcasts/models.py:358
@@ -31,7 +41,7 @@ msgstr ""
 
 #: radiofeed/episodes/models.py:84 radiofeed/podcasts/admin.py:119
 #: templates/episodes/includes/episode.html:24
-#: templates/episodes/includes/timestamps.html:6
+#: templates/episodes/includes/timestamps.html:7
 msgid "Release Date"
 msgstr "Päivämäärä"
 
@@ -182,9 +192,8 @@ msgid "With no release date"
 msgstr "Ilman päivämäärää"
 
 #: radiofeed/podcasts/admin.py:147 radiofeed/podcasts/admin.py:154
-#: templates/episodes/index.html:4 templates/episodes/index.html:11
-#: templates/episodes/index.html:30 templates/podcasts/index.html:12
-#: templates/podcasts/index.html:23
+#: templates/episodes/index.html:4 templates/episodes/index.html:10
+#: templates/podcasts/index.html:12
 msgid "Promoted"
 msgstr "Ylennetyt"
 
@@ -297,7 +306,7 @@ msgstr "Kieli"
 msgid "Podcast Description"
 msgstr "Podcastin Kuvaus"
 
-#: radiofeed/podcasts/models.py:199 templates/episodes/detail.html:195
+#: radiofeed/podcasts/models.py:199 templates/episodes/detail.html:193
 #: templates/podcasts/detail.html:42
 msgid "Website"
 msgstr "Kotisivu"
@@ -940,7 +949,7 @@ msgstr[1] ""
 "                        "
 
 #: templates/account/stats.html:52
-#: templates/episodes/includes/timestamps.html:24
+#: templates/episodes/includes/timestamps.html:12
 msgid "Listened"
 msgstr "Kuunneltu"
 
@@ -1077,13 +1086,13 @@ msgstr "Katso Kaikki Jaksot Podcastissa %(podcast)s"
 msgid "Download"
 msgstr "Lataa"
 
-#: templates/episodes/detail.html:177
+#: templates/episodes/detail.html:175
 msgid "May contain adult themes and language. Listener discretion advised."
 msgstr ""
 "Saattaa sisältää aikuisille suunnattuja teemoja ja kieltä. Kuuntelijan "
 "harkintavaltaa suositellaan."
 
-#: templates/episodes/detail.html:180
+#: templates/episodes/detail.html:178
 msgid "Explicit"
 msgstr "Varoitus"
 
@@ -1142,26 +1151,21 @@ msgstr ""
 msgid "Reload Player"
 msgstr "Lataa Soitin Uudestaan"
 
-#: templates/episodes/includes/timestamps.html:11
-msgid "Completed"
-msgstr "Kuunnetltu loppuun"
-
-#: templates/episodes/includes/timestamps.html:15
+#: templates/episodes/includes/timestamps.html:14
 msgid "Duration"
 msgstr "Kesto"
 
-#: templates/episodes/index.html:4 templates/episodes/index.html:10
+#: templates/episodes/index.html:4 templates/episodes/index.html:16
 #: templates/includes/sidebar.html:19 templates/includes/sidebar.html:22
 msgid "New Releases"
 msgstr "Uudet Jaksot"
 
-#: templates/episodes/index.html:12 templates/episodes/index.html:27
-#: templates/podcasts/index.html:4 templates/podcasts/index.html:14
-#: templates/podcasts/index.html:20
+#: templates/episodes/index.html:11 templates/podcasts/index.html:4
+#: templates/podcasts/index.html:13
 msgid "My Podcasts"
 msgstr "Minun Podcastit"
 
-#: templates/episodes/index.html:17 templates/episodes/index.html:35
+#: templates/episodes/index.html:12
 msgid "Find an episode..."
 msgstr "Haku: Jaksot"
 
@@ -1233,8 +1237,8 @@ msgstr ""
 "\n"
 "Podcast-äänitallenteet, esitysmuistiinpanot ja taideteokset ovat "
 "yksittäisten omistajien omaisuutta\n"
-", eivätkä ne ole sidoksissa tai tukemaan niitä %(site_name)s:in tukemia."
-"                "
+", eivätkä ne ole sidoksissa tai tukemaan niitä %(site_name)s:in "
+"tukemia.                "
 
 #: templates/includes/navbar.html:7
 msgid "Toggle Menu"
@@ -1442,8 +1446,7 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"Voit kirjautua käyttäen seuraavia kirjautumispalveluita:"
-"            "
+"Voit kirjautua käyttäen seuraavia kirjautumispalveluita:            "
 
 #: templates/socialaccount/connections.html:52
 msgid ""
@@ -1493,3 +1496,6 @@ msgid ""
 "following form:\n"
 "            "
 msgstr ""
+
+#~ msgid "Completed"
+#~ msgstr "Kuunnetltu loppuun"

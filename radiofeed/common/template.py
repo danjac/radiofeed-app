@@ -18,6 +18,7 @@ from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 
 from radiofeed.common.utils.html import markup
 
@@ -105,10 +106,10 @@ def format_duration(total_seconds: int | None) -> str:
     rv: list[str] = []
 
     if total_hours := math.floor(total_seconds / 3600):
-        rv.append(f"{total_hours}h")
+        rv.append(_("{total_hours}h").format(total_hours=total_hours))
 
     if total_minutes := round((total_seconds % 3600) / 60):
-        rv.append(f"{total_minutes}min")
+        rv.append(_("{total_minutes}min").format(total_minutes=total_minutes))
 
     return " ".join(rv)
 
