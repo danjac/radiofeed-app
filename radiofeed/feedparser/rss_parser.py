@@ -40,7 +40,12 @@ class RssParser:
         "podcast": "https://podcastindex.org/namespace/1.0",
     }
 
-    _feed_categories: tuple[str, ...] = ("category/text()",)
+    _feed_categories: tuple[str, ...] = (
+        "//googleplay:category/@text",
+        "//itunes:category/@text",
+        "//media:category/@label",
+        "//media:category/text()",
+    )
 
     _feed_fields: dict[str, str | tuple[str, ...]] = {
         "complete": "itunes:complete/text()",
@@ -58,12 +63,7 @@ class RssParser:
         "title": "title/text()",
     }
 
-    _item_categories: tuple[str, ...] = (
-        "//googleplay:category/@text",
-        "//itunes:category/@text",
-        "//media:category/@label",
-        "//media:category/text()",
-    )
+    _item_categories: tuple[str, ...] = ("category/text()",)
 
     _item_fields: dict[str, str | tuple[str, ...]] = {
         "cover_url": "itunes:image/@href",
