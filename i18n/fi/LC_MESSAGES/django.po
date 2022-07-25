@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-25 11:28+0000\n"
+"POT-Creation-Date: 2022-07-25 13:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -478,8 +478,7 @@ msgstr ""
 
 #: templates/about.html:4 templates/includes/navbar.html:94
 #: templates/includes/sidebar.html:72 templates/includes/sidebar.html:75
-#: templates/podcasts/detail.html:4 templates/podcasts/detail_base.html:91
-#: templates/podcasts/detail_base.html:92
+#: templates/podcasts/detail.html:4 templates/podcasts/detail_base.html:84
 msgid "About"
 msgstr "Tiedot"
 
@@ -1173,9 +1172,8 @@ msgstr "Haku: Jaksot"
 msgid "Search"
 msgstr "Haku"
 
-#: templates/episodes/search.html:4 templates/podcasts/detail_base.html:101
-#: templates/podcasts/detail_base.html:102 templates/podcasts/episodes.html:4
-#: templates/search/search_base.html:25
+#: templates/episodes/search.html:4 templates/podcasts/detail_base.html:85
+#: templates/podcasts/episodes.html:4 templates/search/search_base.html:25
 msgid "Episodes"
 msgstr "Jaksot"
 
@@ -1375,8 +1373,7 @@ msgstr "Hallinto"
 msgid "Latest episode released"
 msgstr "Viimeinen jakso julkaistu"
 
-#: templates/podcasts/detail_base.html:112
-#: templates/podcasts/detail_base.html:113 templates/podcasts/similar.html:4
+#: templates/podcasts/detail_base.html:86 templates/podcasts/similar.html:4
 msgid "Similar"
 msgstr "Samanlaiset"
 

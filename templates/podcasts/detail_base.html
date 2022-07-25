@@ -80,6 +80,11 @@
     <h1 class="font-bold text-lg md:text-xl xl:text-2xl mb-6 text-center sm:text-left">{{ podcast.cleaned_title }}</h1>
     <div id="podcast-content">
         {% if num_episodes or has_similar %}
+
+            {% translate "About" as t_about %}
+            {% translate "Episodes" as t_episodes %}
+            {% translate "Similar" as t_similar %}
+
             <nav class="flex items-center mb-3 justify-center sm:justify-start">
                 <ul class="flex items-center space-x-6">
 
@@ -88,8 +93,8 @@
                         <li>
                             <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                 href="{{ link.url }}"
-                                title="{{ podcast.cleaned_title }} | {% translate "About" %}">
-                                {% translate "About" %}
+                                title="{{ podcast.cleaned_title }} | {{ t_about }}">
+                                {{ t_about }}
                             </a>
                         </li>
 
@@ -98,8 +103,8 @@
                             <li>
                                 <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                     href="{{ link.url }}"
-                                    title="{{ podcast.cleaned_title }} | {% translate "Episodes" %}">
-                                    {% translate "Episodes" %} ({{ num_episodes }})
+                                    title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
+                                    {{ t_episodes }} ({{ num_episodes }})
                                 </a>
                             </li>
                         {% endif %}
@@ -109,8 +114,8 @@
                             <li>
                                 <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                     href="{{ link.url }}"
-                                    title="{{ podcast.cleaned_title }} | {% translate "Similar" %}">
-                                    {% translate "Similar" %}
+                                    title="{{ podcast.cleaned_title }} | {{ t_similar }}">
+                                    {{ t_similar }}
                                 </a>
                             </li>
                         {% endif %}
