@@ -40,6 +40,43 @@ class RssParser:
         "podcast": "https://podcastindex.org/namespace/1.0",
     }
 
+    _feed_fields: dict[str, str | tuple[str, ...]] = {
+        "complete": "itunes:complete/text()",
+        "cover_url": ("itunes:image/@href", "image/url/text()"),
+        "description": ("description/text()", "itunes:summary/text()"),
+        "explicit": "itunes:explicit/text()",
+        "funding_text": "podcast:funding/text()",
+        "funding_url": "podcast:funding/@url",
+        "language": "language/text()",
+        "link": "link/text()",
+        "owner": (
+            "itunes:author/text()",
+            "itunes:owner/itunes:name/text()",
+        ),
+        "title": "title/text()",
+    }
+
+    _item_fields: dict[str, str | tuple[str, ...]] = {
+        "cover_url": "itunes:image/@href",
+        "description": (
+            "content:encoded/text()",
+            "description/text()",
+            "itunes:summary/text()",
+        ),
+        "duration": "itunes:duration/text()",
+        "episode": "itunes:episode/text()",
+        "episode_type": "itunes:episodetype/text()",
+        "explicit": "itunes:explicit/text()",
+        "guid": "guid/text()",
+        "length": ("enclosure//@length", "media:content//@fileSize"),
+        "link": "link/text()",
+        "media_type": ("enclosure//@type", "media:content//@type"),
+        "media_url": ("enclosure//@url", "media:content//@url"),
+        "pub_date": ("pubDate/text()", "pubdate/text()"),
+        "season": "itunes:season/text()",
+        "title": "title/text()",
+    }
+
     def __init__(self, channel: lxml.etree.Element):
         self._channel = channel
 
@@ -59,21 +96,7 @@ class RssParser:
                         "//media:category/@label",
                         "//media:category/text()",
                     ),
-                    **finder.to_dict(
-                        complete="itunes:complete/text()",
-                        cover_url=("itunes:image/@href", "image/url/text()"),
-                        description=("description/text()", "itunes:summary/text()"),
-                        explicit="itunes:explicit/text()",
-                        funding_text="podcast:funding/text()",
-                        funding_url="podcast:funding/@url",
-                        language="language/text()",
-                        link="link/text()",
-                        owner=(
-                            "itunes:author/text()",
-                            "itunes:owner/itunes:name/text()",
-                        ),
-                        title="title/text()",  # type: ignore
-                    ),
+                    **finder.to_dict(**self._feed_fields),  # type: ignore
                 )
             except (TypeError, ValueError) as e:
                 raise RssParserError from e
@@ -82,26 +105,7 @@ class RssParser:
         with xpath_finder(item, self._namespaces) as finder:
             return Item(
                 categories=finder.to_list("category/text()"),
-                **finder.to_dict(
-                    cover_url="itunes:image/@href",
-                    description=(
-                        "content:encoded/text()",
-                        "description/text()",
-                        "itunes:summary/text()",
-                    ),
-                    duration="itunes:duration/text()",
-                    episode="itunes:episode/text()",
-                    episode_type="itunes:episodetype/text()",
-                    explicit="itunes:explicit/text()",
-                    guid="guid/text()",
-                    length=("enclosure//@length", "media:content//@fileSize"),
-                    link="link/text()",
-                    media_type=("enclosure//@type", "media:content//@type"),
-                    media_url=("enclosure//@url", "media:content//@url"),
-                    pub_date=("pubDate/text()", "pubdate/text()"),
-                    season="itunes:season/text()",
-                    title="title/text()",  # type: ignore
-                ),
+                **finder.to_dict(**self._item_fields),  # type: ignore
             )
 
     def _parse_items(self) -> Iterator[Item]:
