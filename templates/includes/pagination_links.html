@@ -1,39 +1,47 @@
 {% load i18n %}
 {% if page_obj.has_other_pages %}
+
+    {% translate "Pagination" as t_pagination %}
+    {% translate "Next" as t_next %}
+    {% translate "Previous" as t_previous %}
+    {% translate "No more pages" as t_no_more_pages %}
+
     <nav class="flex items-center justify-between"
         role="navigation"
-        aria-label="{% translate "Pagination" %}"
+        aria-label="{{ t_pagination }}"
         hx-target="#{{ pagination_target }}">
         {% if page_obj.has_previous %}
             {% with page_number=page_obj.previous_page_number %}
+                {% blocktranslate asvar t_page_number %}Page {{ page_number }}{% endblocktranslate %}
                 <a class="link"
                     href="{% pagination_url page_number %}"
-                    aria-label="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}"
-                    title="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}">
-                    {% translate "Previous" %}
+                    aria-label="{{ t_page_number }}"
+                    title="{{ t_page_number }}">
+                    {{ t_previous }}
                 </a>
             {% endwith %}
         {% else %}
             <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                title="{% translate "No More Pages" %}"
-                aria-label="{% translate "No More Pages" %}">
-                {% translate "Previous" %}
+                title="{{ t_no_more_pages }}"
+                aria-label="{{ t_no_more_pages }}">
+                {{ t_previous }}
             </span>
         {% endif %}
         {% if page_obj.has_next %}
             {% with page_number=page_obj.next_page_number %}
+                {% blocktranslate asvar t_page_number %}Page {{ page_number }}{% endblocktranslate %}
                 <a class="link"
                     href="{% pagination_url page_number %}"
-                    aria-label="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}"
-                    title="{% blocktranslate %}Page {{ page_number }}{% endblocktranslate %}">
-                    {% translate "Next" %}
+                    aria-label="{{ t_page_number }}"
+                    title="{{ t_page_number }}">
+                    {{ t_next }}
                 </a>
             {% endwith %}
         {% else %}
             <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                title="{% translate "No More Pages" %}"
-                aria-label="{% translate "No More Pages" %}">
-                {% translate "Next" %}
+                title="{{ t_no_more_pages }}"
+                aria-label="{{ t_no_more_pages }}">
+                {{ t_next }}
             </a>
             </span>
         {% endif %}
