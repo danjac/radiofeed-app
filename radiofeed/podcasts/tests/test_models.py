@@ -142,6 +142,18 @@ class TestPodcastManager:
                 timedelta(hours=24),
                 True,
             ),
+            (
+                True,
+                timedelta(days=100),
+                timedelta(hours=24),
+                False,
+            ),
+            (
+                True,
+                timedelta(days=100),
+                timedelta(hours=120),
+                True,
+            ),
         ],
     )
     def test_get_scheduled_feeds(self, db, mocker, active, pub_date, parsed, exists):
