@@ -61,10 +61,10 @@ def render_pagination_response(
     """
     try:
         page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(
-            int(request.GET.get(param, 1))
+            request.GET.get(param, 1)
         )
-    except (ValueError, InvalidPage):
-        raise Http404("Invalid page")
+    except InvalidPage:
+        raise Http404()
 
     return render(
         request,
