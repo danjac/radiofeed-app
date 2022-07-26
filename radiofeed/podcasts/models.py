@@ -80,7 +80,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
             1. check once every n hours, where "n" is the number of days since the podcast was last updated (i.e. last pub date).
             2. if podcast was last updated within 24 hours, check once an hour.
-            3. if podcast was last updated > 90 days, check every 90 hours.
+            3. if podcast was last updated > 90 days, check every 3 days.
             4. if podcast has not been checked yet (i.e. just added to database), check immediately.
 
         Only *active* podcasts should be included.
@@ -104,7 +104,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
             | models.Q(
                 days_since_last_pub_date__gt=90,
-                parsed__lt=now - timedelta(hours=90),
+                parsed__lt=now - timedelta(days=3),
             )
             | models.Q(
                 days_since_last_pub_date__range=(1, 24),
