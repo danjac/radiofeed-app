@@ -2,7 +2,7 @@
     class="space-y-3"
     id="{{ pagination_target }}">
 
-    {% include "includes/pagination_links.html" %}
+    {% include "pagination/pagination_links.html" %}
 
     {% for object in page_obj.object_list %}
     {% block pagination_item %}{% endblock %}
@@ -10,5 +10,5 @@
         {% include "includes/empty.html" %}
     {% endfor %}
 
-    {% include "includes/pagination_links.html" %}
+    {% include "pagination/pagination_links.html" %}
 </section>
