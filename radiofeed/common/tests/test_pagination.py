@@ -18,7 +18,7 @@ def podcasts(db):
 
 class TestRenderPaginationResponse:
     base_template = "podcasts/index.html"
-    pagination_template = "podcasts/pagination.html"
+    pagination_template = "podcasts/pagination/podcasts.html"
 
     def test_render(self, rf, podcasts):
         req = rf.get("/")

@@ -36,7 +36,7 @@ def index(request: HttpRequest) -> HttpResponse:
         if promoted
         else podcasts.filter(pk__in=subscribed),
         "podcasts/index.html",
-        "podcasts/pagination.html",
+        "podcasts/pagination/podcasts.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -61,7 +61,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 )
             ),
             "podcasts/search.html",
-            "podcasts/pagination.html",
+            "podcasts/pagination/podcasts.html",
         )
         if request.search
         else redirect(settings.HOME_URL)
@@ -253,7 +253,7 @@ def category_detail(
             else podcasts.order_by("-pub_date")
         ),
         "podcasts/category_detail.html",
-        "podcasts/pagination.html",
+        "podcasts/pagination/podcasts.html",
         {"category": category},
     )
 
