@@ -401,14 +401,14 @@ Django = ">=2.0.1"
 
 [[package]]
 name = "django-modeltranslation"
-version = "0.18.3"
+version = "0.18.4"
 description = "Translates Django models using a registration approach."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-Django = ">=2.2"
+Django = ">=3.2"
 
 [[package]]
 name = "django-object-actions"
@@ -542,7 +542,7 @@ testing = ["pre-commit"]
 
 [[package]]
 name = "executing"
-version = "0.8.3"
+version = "0.9.1"
 description = "Get the currently executing AST node of a frame, and other information"
 category = "main"
 optional = false
@@ -565,7 +565,7 @@ doc = ["sphinx", "sphinx-rtd-theme", "sphinxcontrib-spelling"]
 
 [[package]]
 name = "faker"
-version = "13.15.0"
+version = "13.15.1"
 description = "Faker is a Python package that generates fake data for you."
 category = "dev"
 optional = false
@@ -799,7 +799,7 @@ testing = ["coverage", "pyyaml"]
 name = "markupsafe"
 version = "2.1.1"
 description = "Safely add untrusted strings to HTML/XML markup."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -1306,7 +1306,7 @@ ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"
 
 [[package]]
 name = "regex"
-version = "2022.7.9"
+version = "2022.7.25"
 description = "Alternative regular expression module, to replace re."
 category = "main"
 optional = false
@@ -1542,7 +1542,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-requests"
-version = "2.28.3"
+version = "2.28.5"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
@@ -1553,7 +1553,7 @@ types-urllib3 = "<1.27"
 
 [[package]]
 name = "types-urllib3"
-version = "1.26.16"
+version = "1.26.17"
 description = "Typing stubs for urllib3"
 category = "dev"
 optional = false
@@ -1577,7 +1577,7 @@ python-versions = ">=2"
 
 [[package]]
 name = "urllib3"
-version = "1.26.10"
+version = "1.26.11"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
@@ -1606,11 +1606,14 @@ python-versions = "*"
 
 [[package]]
 name = "werkzeug"
-version = "2.1.2"
+version = "2.2.0"
 description = "The comprehensive WSGI web application library."
 category = "main"
 optional = false
 python-versions = ">=3.7"
+
+[package.dependencies]
+MarkupSafe = ">=2.1.1"
 
 [package.extras]
 watchdog = ["watchdog"]
@@ -1956,10 +1959,7 @@ execnet = [
     {file = "execnet-1.9.0-py2.py3-none-any.whl", hash = "sha256:a295f7cc774947aac58dde7fdc85f4aa00c42adf5d8f5468fc630c1acf30a142"},
     {file = "execnet-1.9.0.tar.gz", hash = "sha256:8f694f3ba9cc92cab508b152dcfe322153975c29bda272e2fd7f3f00f36e47c5"},
 ]
-executing = [
-    {file = "executing-0.8.3-py2.py3-none-any.whl", hash = "sha256:d1eef132db1b83649a3905ca6dd8897f71ac6f8cac79a7e58a1a09cf137546c9"},
-    {file = "executing-0.8.3.tar.gz", hash = "sha256:c6554e21c6b060590a6d3be4b82fb78f8f0194d809de5ea7df1c093763311501"},
-]
+executing = []
 factory-boy = [
     {file = "factory_boy-3.2.1-py2.py3-none-any.whl", hash = "sha256:eb02a7dd1b577ef606b75a253b9818e6f9eaf996d94449c9d5ebb124f90dc795"},
     {file = "factory_boy-3.2.1.tar.gz", hash = "sha256:a98d277b0c047c75eb6e4ab8508a7f81fb03d2cb21986f627913546ef7a2a55e"},
@@ -2533,10 +2533,7 @@ types-bleach = []
 types-markdown = []
 types-python-dateutil = []
 types-requests = []
-types-urllib3 = [
-    {file = "types-urllib3-1.26.16.tar.gz", hash = "sha256:8bb3832c684c30cbed40b96e28bc04703becb2b97d82ac65ba4b968783453b0e"},
-    {file = "types_urllib3-1.26.16-py3-none-any.whl", hash = "sha256:20588c285e5ca336d908d2705994830a83cfb6bda40fc356bbafaf430a262013"},
-]
+types-urllib3 = []
 typing-extensions = [
     {file = "typing_extensions-4.3.0-py3-none-any.whl", hash = "sha256:25642c956049920a5aa49edcdd6ab1e06d7e5d467fc00e0506c44ac86fbfca02"},
     {file = "typing_extensions-4.3.0.tar.gz", hash = "sha256:e6d2677a32f47fc7eb2795db1dd15c1f34eff616bcaf2cfb5e997f854fa1c4a6"},
@@ -2554,10 +2551,7 @@ webencodings = [
     {file = "webencodings-0.5.1-py2.py3-none-any.whl", hash = "sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78"},
     {file = "webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"},
 ]
-werkzeug = [
-    {file = "Werkzeug-2.1.2-py3-none-any.whl", hash = "sha256:72a4b735692dd3135217911cbeaa1be5fa3f62bffb8745c5215420a03dc55255"},
-    {file = "Werkzeug-2.1.2.tar.gz", hash = "sha256:1ce08e8093ed67d638d63879fd1ba3735817f7a80de3674d293f5984f25fb6e6"},
-]
+werkzeug = []
 whitenoise = [
     {file = "whitenoise-6.2.0-py3-none-any.whl", hash = "sha256:8e9c600a5c18bd17655ef668ad55b5edf6c24ce9bdca5bf607649ca4b1e8e2c2"},
     {file = "whitenoise-6.2.0.tar.gz", hash = "sha256:8fa943c6d4cd9e27673b70c21a07b0aa120873901e099cd46cab40f7cc96d567"},

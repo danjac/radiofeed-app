@@ -5,7 +5,7 @@
         "watch:js": "vite build --watch --mode=production"
     },
     "dependencies": {
-        "alpinejs": "^3.10.2",
+        "alpinejs": "^3.10.3",
         "htmx.org": "^1.8.0"
     },
     "devDependencies": {
@@ -17,6 +17,6 @@
         "eslint-plugin-prettier": "^4.2.1",
         "prettier": "2.7.1",
         "tailwindcss": "^3.1.6",
-        "vite": "^3.0.2"
+        "vite": "^3.0.3"
     }
 }
