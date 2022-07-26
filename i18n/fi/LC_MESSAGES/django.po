@@ -1168,12 +1168,12 @@ msgstr "Haku: Jaksot"
 
 #: templates/episodes/search.html:4 templates/includes/navbar.html:6
 #: templates/podcasts/itunes_search.html:4 templates/podcasts/search.html:4
-#: templates/search/search_form.html:12 templates/search/search_form.html:26
+#: templates/includes/search_form.html:12 templates/includes/search_form.html:26
 msgid "Search"
 msgstr "Haku"
 
 #: templates/episodes/search.html:4 templates/podcasts/detail_base.html:85
-#: templates/podcasts/episodes.html:4 templates/search/search_base.html:25
+#: templates/podcasts/episodes.html:4 templates/search_base.html:25
 msgid "Episodes"
 msgstr "Jaksot"
 
@@ -1283,7 +1283,7 @@ msgstr "Linkki kopioittu Leikepödälle"
 #: templates/includes/sidebar.html:9 templates/includes/sidebar.html:12
 #: templates/podcasts/category_detail.html:4 templates/podcasts/detail.html:86
 #: templates/podcasts/index.html:4 templates/podcasts/search.html:4
-#: templates/search/search_base.html:19
+#: templates/search_base.html:19
 msgid "Podcasts"
 msgstr "Podcastit"
 
@@ -1395,7 +1395,7 @@ msgstr "Lisätään podcastin tietokantaan..."
 msgid "Latest Episode"
 msgstr "Viimeinen Jakso"
 
-#: templates/search/search_base.html:6
+#: templates/search_base.html:6
 #, python-format
 msgid ""
 "\n"
@@ -1406,27 +1406,27 @@ msgstr ""
 "            Haku: %(site_name)s\n"
 "        "
 
-#: templates/search/search_base.html:18
+#: templates/search_base.html:18
 msgid "Search Podcasts"
 msgstr "Etsi Podcasteista"
 
-#: templates/search/search_base.html:24
+#: templates/search_base.html:24
 msgid "Search Episodes"
 msgstr "Haku: Jaksot"
 
-#: templates/search/search_base.html:30
+#: templates/search_base.html:30
 msgid "Search iTunes"
 msgstr "Etsi iTunesista"
 
-#: templates/search/search_base.html:31
+#: templates/search_base.html:31
 msgid "iTunes"
 msgstr ""
 
-#: templates/search/search_base.html:36
+#: templates/search_base.html:36
 msgid "Search..."
 msgstr "Haku"
 
-#: templates/search/search_form.html:19
+#: templates/includes/search_form.html:19
 msgid "Clear Search"
 msgstr "Poita haku"
 

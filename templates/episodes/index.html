@@ -20,7 +20,7 @@
         </h1>
         {% if not has_subscriptions %}
             <div class="flex items-center justify-center sm:justify-end space-x-3">
-                {% include "search/search_form.html" with placeholder=t_find_episode %}
+                {% include "includes/search_form.html" with placeholder=t_find_episode %}
             </div>
         {% endif %}
     </div>
@@ -38,7 +38,7 @@
             </div>
 
             <div class="flex items-center justify-center sm:justify-end space-x-3">
-                {% include "search/search_form.html" with placeholder=t_find_episode %}
+                {% include "includes/search_form.html" with placeholder=t_find_episode %}
             </div>
         </div>
     {% endif %}
