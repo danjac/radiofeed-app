@@ -9,13 +9,13 @@
             <button title="{% translate "Remove from Bookmarks" %}"
                 class="link"
                 hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
-                {% include "icons/star_solid.svg" with css_class=ICON_CSS %}
+                {% include "icons/star_solid.svg.html" with css_class=ICON_CSS %}
             </button>
         {% else %}
             <button title="{% translate "Add to Bookmarks" %}"
                 class="link"
                 hx-post="{% url 'episodes:add_bookmark' episode.id %}">
-                {% include "icons/star.svg" with css_class=ICON_CSS %}
+                {% include "icons/star.svg.html" with css_class=ICON_CSS %}
             </button>
         {% endif %}
     </div>

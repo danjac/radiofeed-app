@@ -15,7 +15,7 @@
             {% csrf_token %}
             <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
                 <button class="flex sm:inline-flex items-center justify-center btn btn-default">
-                    {% include "icons/download.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2"  %}
+                    {% include "icons/download.svg.html" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2"  %}
                     {% translate "Download OPML" %}
                 </button>
             </div>

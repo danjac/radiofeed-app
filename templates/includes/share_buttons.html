@@ -7,7 +7,7 @@
             rel="noopener"
             title="{% translate "Share with Email" %}"
             class="{{ LINK_CSS }}">
-            {% include "icons/mail.svg" with css_class=ICON_CSS %}
+            {% include "icons/mail.svg.html" with css_class=ICON_CSS %}
         </a>
 
         <a href="{{ share_urls.facebook }}"
@@ -15,7 +15,7 @@
             rel="noopener"
             title="{% translate "Share on Facebook" %}"
             class="{{ LINK_CSS }}">
-            {% include "icons/facebook.svg" with css_class=ICON_CSS %}
+            {% include "icons/facebook.svg.html" with css_class=ICON_CSS %}
         </a>
 
         <a href="{{ share_urls.twitter }}"
@@ -23,14 +23,14 @@
             rel="noopener"
             title="{% translate "Share on Twitter" %}"
             class="{{ LINK_CSS }}">
-            {% include "icons/twitter.svg" with css_class=ICON_CSS %}
+            {% include "icons/twitter.svg.html" with css_class=ICON_CSS %}
         </a>
         <a href="{{ share_urls.linkedin }}"
             target="_blank"
             rel="noopener"
             title="{% translate "Share on Linkedin" %}"
             class="{{ LINK_CSS }}">
-            {% include "icons/linkedin.svg" with css_class=ICON_CSS %}
+            {% include "icons/linkedin.svg.html" with css_class=ICON_CSS %}
         </a>
         <button title="{% translate "Copy link to Clipboard" %}"
             class="{{ LINK_CSS }}"
@@ -47,7 +47,7 @@
                     tags: 'success'
                 });
                 "{# fmt:on #}>
-                {% include "icons/link.svg" with css_class=ICON_CSS %}
+                {% include "icons/link.svg.html" with css_class=ICON_CSS %}
                 </button>
                 </div>
 {% endwith %}

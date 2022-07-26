@@ -20,7 +20,7 @@
             {% csrf_token %}
             <button class="inline-flex items-center btn btn-default"
                 type="submit">
-                {% include "icons/login.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                {% include "icons/login.svg.html" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
                 {% if process == "connect" %}
                     {% translate "Connect" %}
                 {% else %}

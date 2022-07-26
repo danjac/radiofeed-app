@@ -1,7 +1,7 @@
 This is the source code for a [simple, easy to use podcatcher web application](https://radiofeed.me). You are free to use this source to host the app yourself.
 
-![coverage](/screenshots/coverage.svg) [![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
- [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![coverage](/screenshots/coverage.svg.html) [![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
+ [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg.html)](https://github.com/psf/black)
 
 ![desktop](/screenshots/desktop.png?raw=True)
 

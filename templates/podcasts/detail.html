@@ -85,7 +85,7 @@
                             <a class="inline-flex items-center link"
                                 title="{{ category.name }} {% translate "Podcasts" %}"
                                 href="{{ category.get_absolute_url }}">
-                                {% include "icons/tag.svg" with css_class="h-4 w-4 mr-2" %}
+                                {% include "icons/tag.svg.html" with css_class="h-4 w-4 mr-2" %}
                                 {{ category.name }}
                             </a>
                         {% endfor %}

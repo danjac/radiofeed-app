@@ -8,7 +8,7 @@
                     accesskey="p"
                     title="{% translate "Podcasts" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/rss.svg" with css_class=ICON_CSS %}
+                    {% include "icons/rss.svg.html" with css_class=ICON_CSS %}
                     {% translate "Podcasts" %}
                 </a>
             </li>
@@ -18,7 +18,7 @@
                     accesskey="n"
                     title="{% translate "New Releases" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/sparkles.svg" with css_class=ICON_CSS %}
+                    {% include "icons/sparkles.svg.html" with css_class=ICON_CSS %}
                     {% translate "New Releases" %}
                 </a>
             </li>
@@ -28,7 +28,7 @@
                     accesskey="c"
                     title="{% translate "Categories" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/tag.svg" with css_class=ICON_CSS %}
+                    {% include "icons/tag.svg.html" with css_class=ICON_CSS %}
                     {% translate "Categories" %}
                 </a>
             </li>
@@ -38,7 +38,7 @@
                     accesskey="f"
                     title="{% translate "Bookmarks" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/star.svg" with css_class=ICON_CSS %}
+                    {% include "icons/star.svg.html" with css_class=ICON_CSS %}
                     {% translate "Bookmarks" %}
                 </a>
             </li>
@@ -49,7 +49,7 @@
                     accesskey="h"
                     title="{% translate "History" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/clock.svg" with css_class=ICON_CSS %}
+                    {% include "icons/clock.svg.html" with css_class=ICON_CSS %}
                     {% translate "History" %}
                 </a>
             </li>
@@ -60,7 +60,7 @@
                     accesskey="s"
                     title="{% translate "Settings" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/adjustments.svg" with css_class=ICON_CSS %}
+                    {% include "icons/adjustments.svg.html" with css_class=ICON_CSS %}
                     {% translate "Settings" %}
                 </a>
             </li>
@@ -71,7 +71,7 @@
                     accesskey="a"
                     title="{% translate "About" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/info.svg" with css_class=ICON_CSS %}
+                    {% include "icons/info.svg.html" with css_class=ICON_CSS %}
                     {% translate "About" %}
                 </a>
             </li>
@@ -85,7 +85,7 @@
                     <button accesskey="l"
                         title="{% translate "Logout" %}"
                         class="{{ SIDEBAR_CSS }}">
-                        {% include "icons/logout.svg" with css_class=ICON_CSS %}
+                        {% include "icons/logout.svg.html" with css_class=ICON_CSS %}
                         {% translate "Logout" %}
                     </button>
                 </form>

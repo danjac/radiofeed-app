@@ -32,7 +32,7 @@
                 title="{% translate "Recover Your Password" %}"
                 href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
             <button class="inline-flex items-center btn btn-default">
-                {% include "icons/login.svg" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                {% include "icons/login.svg.html" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
                 {% translate "Sign In" %}
             </button>
         </div>

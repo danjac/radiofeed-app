@@ -20,12 +20,12 @@
             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100 mr-1"
             x-show="search"
             x-cloak>
-            {% include "icons/x.svg" with css_class="h-4 w-4" %}
+            {% include "icons/x.svg.html" with css_class="h-4 w-4" %}
         </a>
         <button type="submit"
             title="{% translate "Search" %}"
             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-            {% include "icons/search.svg" with css_class="h-4 w-4" %}
+            {% include "icons/search.svg.html" with css_class="h-4 w-4" %}
         </button>
     </div>
 </form>

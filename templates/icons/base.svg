@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-    {% with size=size|default:"20" %}
-    height="{{ size }}"
-    width="{{ size }}"
-    {% endwith %}
-    {% if css_class %}class="{{ css_class }}"{% endif %}
-    {% block attrs %}{% endblock %}>
-    {% block path %}{% endblock %}
-</svg>
