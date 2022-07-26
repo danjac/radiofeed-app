@@ -45,7 +45,7 @@ def render_pagination_response(
 
         <div id="{{ pagination_target }}">
 
-            {% include "includes/pagination_links.html" %}
+            {% include "pagination/pagination_links.html" %}
 
             {% for podcast in page_obj.object_list %}
                 {% include "podcasts/podcast.html" %}
@@ -53,7 +53,7 @@ def render_pagination_response(
                 {% include "includes/empty.html" %}
             {% endfor %}
 
-            {% include "includes/pagination_links.html" %}
+            {% include "pagination/pagination_links.html" %}
         </div>
 
     Raises:

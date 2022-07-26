@@ -1,0 +1,14 @@
+<section role="list"
+    class="space-y-3"
+    id="{{ pagination_target }}">
+
+    {% include "pagination/pagination_links.html" %}
+
+    {% for object in page_obj.object_list %}
+    {% block pagination_item %}{% endblock %}
+    {% empty %}
+        {% include "includes/empty.html" %}
+    {% endfor %}
+
+    {% include "pagination/pagination_links.html" %}
+</section>
