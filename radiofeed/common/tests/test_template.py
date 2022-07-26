@@ -284,7 +284,7 @@ class TestNavbar:
 class TestPaginationLinks:
     @pytest.fixture
     def tmpl(self):
-        return get_template("pagination/pagination_links.html")
+        return get_template("includes/pagination_links.html")
 
     def test_no_pagination(self, req, tmpl):
         ctx = {
