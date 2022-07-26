@@ -103,10 +103,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 parsed__lt=now - timedelta(hours=1),
             )
             | models.Q(
-                days_since_last_pub_date__gt=24,
-                parsed__lt=now - timedelta(hours=24),
-            )
-            | models.Q(
                 days_since_last_pub_date__range=(1, 24),
                 parsed__lt=now
                 - timedelta(hours=1) * models.F("days_since_last_pub_date"),
