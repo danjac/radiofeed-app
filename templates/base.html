@@ -115,15 +115,15 @@ __________             .___.__        _____                 .___
 
                     {% include "includes/messages.html" %}
                     <div id="layout"
-                        class="flex relative p-2 pt-6 mx-auto min-h-screen xl:w-5/6">
+                        class="flex relative p-2 pt-6 mx-auto min-h-screen xl:w-11/12">
                         {% if user.is_authenticated %}
-                            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
+                            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-24">
                                 {% include "includes/sidebar.html" %}
                             </aside>
                         {% endif %}
     {% endif %}
 
-    <main class="w-full xl:block md:mx-auto md:w-4/5" id="content" hx-history-elt>
+    <main class="w-full xl:block md:mx-auto xl:w-4/5" id="content" hx-history-elt>
         {% block content %}{% endblock %}
     </main>
 
