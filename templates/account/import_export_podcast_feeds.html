@@ -10,7 +10,7 @@
         </p>
         <form method="POST"
             action="{% url 'users:export_podcast_feeds' %}"
-            class="pb-3 border-b dark:border-gray-500"
+            class="pb-3"
             hx-disable="true">
             {% csrf_token %}
             <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
