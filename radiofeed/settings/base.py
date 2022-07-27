@@ -87,7 +87,6 @@ INSTALLED_APPS = [
     "django_htmx",
     "django_object_actions",
     "fast_update",
-    "fontawesomefree",
     "health_check",
     "health_check.cache",
     "health_check.contrib.migrations",

@@ -21,6 +21,11 @@
         <link rel="apple-touch-icon image_src"
             href="{% static 'img/apple-touch-icon.png' %}">
 
+        <link href="{% static 'css/fontawesome.min.css' %}"
+            rel="stylesheet"
+            type="text/css"
+            media="screen">
+
         <link rel="stylesheet"
             media="screen"
             href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
