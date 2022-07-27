@@ -31,28 +31,14 @@
         {% url 'podcasts:index' as home_url %}
         <header class="bg-black text-white sticky top-0 w-full z-20 shadow">
             <nav class="flex items-center justify-between p-2">
-
-                <ul class="flex items-center flex-shrink-0 space-x-3">
-                    <li>
-                        <a href="{{ home_url }}"
-                            title="Radiofeed"
-                            class="flex items-center">
-                            <img src="{% static 'img/wave.png' %}"
-                                height="32"
-                                width="32"
-                                class="h-6 w-6 md:h-8 md:w-8"
-                                alt="Radiofeed">
-                        </a>
-                    </li>
-                    <li>
-
-                        <a class="font-bold text-lg md:text-xl xl:text-2xl hover:text-blue-300"
-                            title="{% translate "Home Page" %}"
-                            href="{{ home_url }}">Radiofeed</a>
-                    </li>
-
-                </ul>
-
+                <div class="flex items-center flex-shrink-0 space-x-3">
+                    <a class="font-bold text-lg md:text-xl xl:text-2xl hover:text-blue-300"
+                        href="{{ home_url }}"
+                        title="Radiofeed: {% translate "Home Page" %}">
+                        <i class="fa fa-radio fa-xl mr-2" aria-hidden="true"></i>
+                        Radiofeed
+                    </a>
+                </div>
             </nav>
         </header>
         <main class="w-full flex justify-center mt-12">
