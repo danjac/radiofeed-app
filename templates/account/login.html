@@ -32,7 +32,7 @@
                 title="{% translate "Recover Your Password" %}"
                 href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
             <button class="inline-flex items-center btn btn-default">
-                <i class="fa fa-sign-in mr-2" aria-hidden="true"></i>
+                {% icon "sign-in" css_class="mr-2" %}
                 {% translate "Sign In" %}
             </button>
         </div>

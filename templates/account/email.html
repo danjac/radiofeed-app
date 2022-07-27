@@ -31,7 +31,7 @@
                                 <div class="flex items-center">
                                     {{ emailaddress.email }}
                                     {% if emailaddress.verified %}
-                                        <i class="fa fa-check ml-2 text-green-500" aria-hidden="true"></i>
+                                        {% icon "check" css_class="mr-2" %}
                                     {% endif %}
                                 </div>
                             </div>
@@ -43,7 +43,7 @@
                     <button class="inline-flex items-center btn btn-secondary"
                         name="action_send"
                         value="1">
-                        <i class="fa fa-envelope mr-2" aria-hidden="true"></i>
+                        {% icon "envelope" css_class="mr-2" %}
                         {% translate "Re-Verify" %}
                     </button>
 
@@ -52,13 +52,13 @@
                         <button class="inline-flex items-center btn btn-default"
                             name="action_primary"
                             value="1">
-                            <i class="fa fa-hand-point-up mr-2" aria-hidden="true"></i>
+                            {% icon "hand-point-up" css_class="mr-2" %}
                             {% translate "Primary" %}
                         </button>
                         <button class="inline-flex items-center btn btn-danger"
                             name="action_remove"
                             value="1">
-                            <i class="fa fa-trash mr-2" aria-hidden="true"></i>
+                            {% icon "trash" css_class="mr-2" %}
                             {% translate "Remove" %}
                         </button>
                     {% endif %}
@@ -90,7 +90,7 @@
                 <button class="inline-flex items-center btn btn-default"
                     name="action_add"
                     value="true">
-                    <i class="fa fa-plus mr-2" aria-hidden="true"></i>
+                    {% icon "plus" css_class="mr-2" %}
                     {% translate "Add E-Mail" %}
                 </button>
             </div>

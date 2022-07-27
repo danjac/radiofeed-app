@@ -57,12 +57,21 @@ class TestGetSiteConfig:
 
 class TestIcon:
     def test_icon(self):
-        assert icon("rss") == {"name": "rss", "style": "fa"}
+        assert icon("rss") == {
+            "name": "rss",
+            "style": "fa",
+            "size": "",
+            "title": "",
+            "css_class": "",
+        }
 
     def test_brand_icon(self):
-        assert icon("facebook", style="brand") == {
+        assert icon("facebook", style="brands") == {
             "name": "facebook",
             "style": "fa-brands",
+            "size": "",
+            "title": "",
+            "css_class": "",
         }
 
 
