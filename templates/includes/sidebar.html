@@ -1,5 +1,6 @@
 {% load cache i18n %}
-{% cache 3600 sidebar request.LANGUAGE_CODE %}
+{% get_current_language as language_code %}
+{% cache 3600 sidebar language_code %}
     {% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
 
         {% translate "Podcasts" as t_podcasts %}
