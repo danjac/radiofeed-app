@@ -1,99 +1,101 @@
-{% load i18n %}
+{% load cache i18n %}
+{% cache 3600 sidebar request.LANGUAGE_CODE %}
+    {% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
 
-{% translate "Podcasts" as t_podcasts %}
-{% translate "New Releases" as t_new_releases %}
-{% translate "Categories" as t_categories %}
-{% translate "History" as t_history %}
-{% translate "Bookmarks" as t_bookmarks %}
-{% translate "Settings" as t_settings %}
-{% translate "About" as t_about %}
-{% translate "Logout" as t_logout %}
+        {% translate "Podcasts" as t_podcasts %}
+        {% translate "New Releases" as t_new_releases %}
+        {% translate "Categories" as t_categories %}
+        {% translate "History" as t_history %}
+        {% translate "Bookmarks" as t_bookmarks %}
+        {% translate "Settings" as t_settings %}
+        {% translate "About" as t_about %}
+        {% translate "Logout" as t_logout %}
 
-{% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
-    <nav class="pl-3 xl:pl-0 text-base md:text-lg xl:pt-12">
-        <ul class="space-y-3 sm:space-y-0 xl:space-y-5 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
-            <li>
-                <a href="{% url 'podcasts:index' %}"
-                    accesskey="p"
-                    title="{{ t_podcasts }}"
-                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "rss" css_class=ICON_CSS %}
-                    {{ t_podcasts }}
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'episodes:index' %}"
-                    accesskey="n"
-                    title="{{ t_new_releases }}"
-                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "satellite-dish" css_class=ICON_CSS %}
-                    {{ t_new_releases }}
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'podcasts:category_list' %}"
-                    accesskey="c"
-                    title="{{ t_categories }}"
-                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "tag" css_class=ICON_CSS %}
-                    {{ t_categories }}
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'episodes:bookmarks' %}"
-                    accesskey="f"
-                    title="{{ t_bookmarks }}"
-                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "star" css_class=ICON_CSS %}
-                    {{ t_bookmarks }}
-                </a>
-            </li>
-
-            <li>
-                <a href="{% url 'episodes:history' %}"
-                    accesskey="h"
-                    title="{{ t_history }}"
-                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "history" css_class=ICON_CSS %}
-                    {{ t_history }}
-                </a>
-            </li>
-
-            <li>
-                <a href="{% url 'users:preferences' %}"
-                    accesskey="s"
-                    title="{{ t_settings }}"
-                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "cog" css_class=ICON_CSS %}
-                    {{ t_settings }}
-                </a>
-            </li>
-
-            <li>
-                <a href="{% url 'about' %}"
-                    accesskey="a"
-                    title="{{ t_about }}"
-                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "info-circle" css_class=ICON_CSS %}
-                    {{ t_about }}
-                </a>
-            </li>
-
-            <li>
-                <form class="inline-block"
-                    hx-disable="true"
-                    action="{% url 'account_logout' %}"
-                    method="post">
-                    {% csrf_token %}
-                    <button accesskey="l"
-                        title="{{ t_logout }}"
+        <nav class="pl-3 xl:pl-0 text-base md:text-lg xl:pt-12">
+            <ul class="space-y-3 sm:space-y-0 xl:space-y-5 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
+                <li>
+                    <a href="{% url 'podcasts:index' %}"
+                        accesskey="p"
+                        title="{{ t_podcasts }}"
                         class="{{ SIDEBAR_CSS }}">
-                        {% icon "sign-out" css_class=ICON_CSS %}
-                        {{ t_logout }}
-                    </button>
-                </form>
-            </li>
+                        {% icon "rss" css_class=ICON_CSS %}
+                        {{ t_podcasts }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'episodes:index' %}"
+                        accesskey="n"
+                        title="{{ t_new_releases }}"
+                        class="{{ SIDEBAR_CSS }}">
+                        {% icon "satellite-dish" css_class=ICON_CSS %}
+                        {{ t_new_releases }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'podcasts:category_list' %}"
+                        accesskey="c"
+                        title="{{ t_categories }}"
+                        class="{{ SIDEBAR_CSS }}">
+                        {% icon "tag" css_class=ICON_CSS %}
+                        {{ t_categories }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'episodes:bookmarks' %}"
+                        accesskey="f"
+                        title="{{ t_bookmarks }}"
+                        class="{{ SIDEBAR_CSS }}">
+                        {% icon "star" css_class=ICON_CSS %}
+                        {{ t_bookmarks }}
+                    </a>
+                </li>
 
-        </ul>
-    </nav>
-{% endwith %}
+                <li>
+                    <a href="{% url 'episodes:history' %}"
+                        accesskey="h"
+                        title="{{ t_history }}"
+                        class="{{ SIDEBAR_CSS }}">
+                        {% icon "history" css_class=ICON_CSS %}
+                        {{ t_history }}
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'users:preferences' %}"
+                        accesskey="s"
+                        title="{{ t_settings }}"
+                        class="{{ SIDEBAR_CSS }}">
+                        {% icon "cog" css_class=ICON_CSS %}
+                        {{ t_settings }}
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'about' %}"
+                        accesskey="a"
+                        title="{{ t_about }}"
+                        class="{{ SIDEBAR_CSS }}">
+                        {% icon "info-circle" css_class=ICON_CSS %}
+                        {{ t_about }}
+                    </a>
+                </li>
+
+                <li>
+                    <form class="inline-block"
+                        hx-disable="true"
+                        action="{% url 'account_logout' %}"
+                        method="post">
+                        {% csrf_token %}
+                        <button accesskey="l"
+                            title="{{ t_logout }}"
+                            class="{{ SIDEBAR_CSS }}">
+                            {% icon "sign-out" css_class=ICON_CSS %}
+                            {{ t_logout }}
+                        </button>
+                    </form>
+                </li>
+
+            </ul>
+        </nav>
+    {% endwith %}
+{% endcache %}
