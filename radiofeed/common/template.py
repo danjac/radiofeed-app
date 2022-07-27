@@ -189,6 +189,20 @@ def cookie_notice(context: RequestContext) -> dict:
     return {"accept_cookies": "accept-cookies" in context.request.COOKIES}
 
 
+@register.inclusion_tag("includes/icon.html")
+def icon(
+    name: str, style: str = "", *, size="", title: str = "", css_class: str = ""
+) -> dict:
+    """Renders a FontAwesome icon."""
+    return {
+        "name": name,
+        "style": f"fa-{style}" if style else "fa",
+        "size": f"fa-{size}" if size else "",
+        "title": title,
+        "css_class": css_class,
+    }
+
+
 @register.filter
 @stringfilter
 def normalize_url(url: str) -> str:

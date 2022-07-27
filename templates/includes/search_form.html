@@ -22,12 +22,12 @@
             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100 mr-2"
             x-show="search"
             x-cloak>
-            <i class="fa fa-xmark" aria-hidden="true" title="{{ t_clear_search }}"></i>
+            {% icon "xmark" title=t_clear_search %}
         </a>
         <button type="submit"
             title="{{ t_search }}"
             class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-            <i class="fa fa-search" aria-hidden="true" title="{{ t_search }}"></i>
+            {% icon "search" title=t_search %}
         </button>
     </div>
 </form>

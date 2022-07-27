@@ -13,6 +13,7 @@ from radiofeed.common.template import (
     active_link,
     format_duration,
     get_site_config,
+    icon,
     login_url,
     markdown,
     normalize_url,
@@ -52,6 +53,17 @@ class PageObj:
 class TestGetSiteConfig:
     def test_get_site_config(self, db):
         assert get_site_config()
+
+
+class TestIcon:
+    def test_icon(self):
+        assert icon("rss") == {"name": "rss", "style": "fa"}
+
+    def test_brand_icon(self):
+        assert icon("facebook", style="brand") == {
+            "name": "facebook",
+            "style": "fa-brands",
+        }
 
 
 class TestAbsoluteUri:

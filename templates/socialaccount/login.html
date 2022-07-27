@@ -20,7 +20,7 @@
             {% csrf_token %}
             <button class="inline-flex items-center btn btn-default"
                 type="submit">
-                <i class="fa fa-sign-in mr-2" aria-hidden="true"></i>
+                {% icon "sign-in" css_class="mr-2" %}
                 {% if process == "connect" %}
                     {% translate "Connect" %}
                 {% else %}

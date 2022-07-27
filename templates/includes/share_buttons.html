@@ -12,7 +12,7 @@
             rel="noopener"
             title="{{ t_share_email }}"
             class="{{ LINK_CSS }}">
-            <i class="fa fa-envelope" aria-hidden="true" title="{{ t_share_email }}"></i>
+            {% icon "envelope" title=t_share_email %}
         </a>
 
         <a href="{{ share_urls.facebook }}"
@@ -20,7 +20,7 @@
             rel="noopener"
             title="{{ t_share_facebook }}"
             class="{{ LINK_CSS }}">
-            <i class="fa-brands fa-facebook" aria-hidden="true" title="{{ t_share_facebook }}"></i>
+            {% icon "facebook" "brands" title=t_share_facebook %}
         </a>
 
         <a href="{{ share_urls.twitter }}"
@@ -28,14 +28,14 @@
             rel="noopener"
             title="{{ t_share_twitter }}"
             class="{{ LINK_CSS }}">
-            <i class="fa-brands fa-twitter" aria-hidden="true" title="{{ t_share_twitter }}"></i>
+            {% icon "twitter" "brands" title=t_share_twitter %}
         </a>
         <a href="{{ share_urls.linkedin }}"
             target="_blank"
             rel="noopener"
             title="{{ t_share_linkedin }}"
             class="{{ LINK_CSS }}">
-            <i class="fa-brands fa-linkedin" aria-hidden="true" title="{{ t_share_linkedin }}"></i>
+            {% icon "linkedin" "brands" title=t_share_linkedin %}
         </a>
         <button title="{{ t_copy_link }}"
             class="{{ LINK_CSS }}"
@@ -52,8 +52,7 @@
                     tags: 'success'
                 });
                 "{# fmt:on #}>
-
-                <i class="fa fa-link" aria-hidden="true" title="{{ t_copy_link }}"></i>
+                {% icon "link" title=t_copy_link %}
             </button>
         </div>
 {% endwith %}

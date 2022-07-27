@@ -8,7 +8,7 @@
                     accesskey="p"
                     title="{% translate "Podcasts" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    <i class="fa fa-rss {{ ICON_CSS }}" aria-hidden="true"></i>
+                    {% icon "rss" css_class=ICON_CSS %}
                     {% translate "Podcasts" %}
                 </a>
             </li>
@@ -18,7 +18,7 @@
                     accesskey="n"
                     title="{% translate "New Releases" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    <i class="fa fa-satellite-dish {{ ICON_CSS }}" aria-hidden="true"></i>
+                    {% icon "satellite-dish" css_class=ICON_CSS %}
                     {% translate "New Releases" %}
                 </a>
             </li>
@@ -28,7 +28,7 @@
                     accesskey="c"
                     title="{% translate "Categories" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    <i class="fa fa-tag {{ ICON_CSS }}" aria-hidden="true"></i>
+                    {% icon "tag" css_class=ICON_CSS %}
                     {% translate "Categories" %}
                 </a>
             </li>
@@ -38,7 +38,7 @@
                     accesskey="f"
                     title="{% translate "Bookmarks" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    <i class="fa fa-star {{ ICON_CSS }}" aria-hidden="true"></i>
+                    {% icon "star" css_class=ICON_CSS %}
                     {% translate "Bookmarks" %}
                 </a>
             </li>
@@ -49,7 +49,7 @@
                     accesskey="h"
                     title="{% translate "History" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    <i class="fa fa-history {{ ICON_CSS }}" aria-hidden="true"></i>
+                    {% icon "history" css_class=ICON_CSS %}
                     {% translate "History" %}
                 </a>
             </li>
@@ -60,7 +60,7 @@
                     accesskey="s"
                     title="{% translate "Settings" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    <i class="fa fa-cog {{ ICON_CSS }}" aria-hidden="true"></i>
+                    {% icon "cog" css_class=ICON_CSS %}
                     {% translate "Settings" %}
                 </a>
             </li>
@@ -71,7 +71,7 @@
                     accesskey="a"
                     title="{% translate "About" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    <i class="fa fa-info-circle {{ ICON_CSS }}" aria-hidden="true"></i>
+                    {% icon "info-circle" css_class=ICON_CSS %}
                     {% translate "About" %}
                 </a>
             </li>
@@ -85,7 +85,7 @@
                     <button accesskey="l"
                         title="{% translate "Logout" %}"
                         class="{{ SIDEBAR_CSS }}">
-                        <i class="fa fa-sign-out {{ ICON_CSS }}" aria-hidden="true"></i>
+                        {% icon "sign-out" css_class=ICON_CSS %}
                         {% translate "Logout" %}
                     </button>
                 </form>

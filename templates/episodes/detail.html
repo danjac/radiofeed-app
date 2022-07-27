@@ -152,7 +152,7 @@
                             {% if user.is_anonymous %}
                                 {% translate "Download" %}
                             {% else %}
-                                <i class="fa fa-download fa-lg" aria-hidden="true" title="{% translate "Download" %}"></i>
+                                {% icon "download" size="lg" title=_("Download") %}
                             {% endif %}
                         </a>
 
@@ -174,7 +174,7 @@
                         {% if explicit %}
                             <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
                                 class="text-red-600 dark:text-red-500 flex items-center space-x-2">
-                                <i class="fa fa-warning" aria-hidden="true"></i>
+                                {% icon "warning" %}
                                 <span class="inline-block">{% translate "Explicit" %}</span>
                             </div>
                         {% endif %}

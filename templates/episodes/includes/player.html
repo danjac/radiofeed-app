@@ -94,7 +94,7 @@
                                             class="{{ BUTTON_CSS }} mr-3"
                                             :disabled="!isLoaded"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            <i class="fa fa-pause-circle fa-2xl" aria-hidden="true" title="{{ t_pause }}"></i>
+                                            {% icon "pause-circle" size="2xl" title=t_pause %}
                                         </button>
 
                                         <button title="{{ t_play }}"
@@ -102,7 +102,7 @@
                                             x-show="isPaused"
                                             class="{{ BUTTON_CSS }} mr-3"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            <i class="fa fa-play-circle fa-2xl" aria-hidden="true" title="{{ t_play }}"></i>
+                                            {% icon "play-circle" size="2xl" title=t_play %}
                                         </button>
 
                                         <button title="{{ t_close_player }}"
@@ -111,7 +111,7 @@
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
                                             hx-swap="innerHTML">
-                                            <i class="fa fa-stop-circle fa-xl" aria-hidden="true" title="{{ t_close_player }}"></i>
+                                            {% icon "stop-circle" size="xl" title=t_close_player %}
                                         </button>
 
                                     {% endwith %}
@@ -160,14 +160,14 @@
                                             @click="skipBack"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            <i class="fa-solid fa-backward-step fa-lg" aria-hidden="true" title="{{ t_skip_back }}"></i>
+                                            {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
                                         </button>
 
                                         <button title="{{ t_skip_forward }}"
                                             @click="skipForward"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            <i class="fa-solid fa-forward-step fa-lg" aria-hidden="true" title="{{ t_skip_forward }}"></i>
+                                            {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                         </button>
 
                                     </div>
@@ -180,14 +180,14 @@
                                                 @click="skipBack"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                <i class="fa-solid fa-backward-step fa-lg" aria-hidden="true" title="{{ t_skip_back }}"></i>
+                                                {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
                                             </button>
 
                                             <button title="{{ t_skip_forward }}"
                                                 @click="skipForward"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                <i class="fa-solid fa-forward-step fa-lg" aria-hidden="true" title="{{ t_skip_forward }}"></i>
+                                                {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                             </button>
 
                                         </div>
@@ -212,7 +212,7 @@
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 accesskey="r"
                                                 @click="window.location.reload()">
-                                                <i class="fa fa-arrows-rotate fa-lg" aria-hidden="true" title="{{ t_reload_player }}"></i>
+                                                {% icon "arrows-rotate" size="lg" title=t_reload_player %}
                                             </button>
                                         </div>
 
