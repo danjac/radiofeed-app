@@ -10,7 +10,7 @@
 
     <div id="search-results">
         <nav class="mb-3 sm:flex justify-between">
-            <ul class="flex items-center justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none space-x-6 mb-3 sm:mb-0">
+            <ul class="flex items-center justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none space-x-6 mb-3 sm:mb-0 no-scrollbar">
                 {% with search_qs="?"|add:request.search.qs TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
