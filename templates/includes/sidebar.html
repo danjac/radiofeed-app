@@ -1,78 +1,81 @@
 {% load i18n %}
-{% with SIDEBAR_CSS="inline-flex items-center link w-full sm:w-auto" SIDEBAR_ACTIVE_CSS="xl:text-blue-600 xl:font-bold xl:dark:text-blue-300" ICON_CSS="mr-3 lg:mr-6" %}
+
+{% translate "Podcasts" as t_podcasts %}
+{% translate "New Releases" as t_new_releases %}
+{% translate "Categories" as t_categories %}
+{% translate "History" as t_history %}
+{% translate "Bookmarks" as t_bookmarks %}
+{% translate "Settings" as t_settings %}
+{% translate "About" as t_about %}
+{% translate "Logout" as t_logout %}
+
+{% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
     <nav class="pl-3 xl:pl-0 text-base md:text-lg xl:pt-12">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-5 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
             <li>
-                {% active_link 'podcasts:index' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'podcasts:index' %}"
                     accesskey="p"
-                    title="{% translate "Podcasts" %}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    title="{{ t_podcasts }}"
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "rss" css_class=ICON_CSS %}
-                    {% translate "Podcasts" %}
+                    {{ t_podcasts }}
                 </a>
             </li>
             <li>
-                {% active_link 'episodes:index' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'episodes:index' %}"
                     accesskey="n"
-                    title="{% translate "New Releases" %}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    title="{{ t_new_releases }}"
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
-                    {% translate "New Releases" %}
+                    {{ t_new_releases }}
                 </a>
             </li>
             <li>
-                {% active_link 'podcasts:category_list' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'podcasts:category_list' %}"
                     accesskey="c"
-                    title="{% translate "Categories" %}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    title="{{ t_categories }}"
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "tag" css_class=ICON_CSS %}
-                    {% translate "Categories" %}
+                    {{ t_categories }}
                 </a>
             </li>
             <li>
-                {% active_link 'episodes:bookmarks' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'episodes:bookmarks' %}"
                     accesskey="f"
-                    title="{% translate "Bookmarks" %}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    title="{{ t_bookmarks }}"
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "star" css_class=ICON_CSS %}
-                    {% translate "Bookmarks" %}
+                    {{ t_bookmarks }}
                 </a>
             </li>
 
             <li>
-                {% active_link 'episodes:history' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'episodes:history' %}"
                     accesskey="h"
-                    title="{% translate "History" %}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    title="{{ t_history }}"
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "history" css_class=ICON_CSS %}
-                    {% translate "History" %}
+                    {{ t_history }}
                 </a>
             </li>
 
             <li>
-                {% re_active_link 'users:preferences' '/account/*' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'users:preferences' %}"
                     accesskey="s"
-                    title="{% translate "Settings" %}"
-                    class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    title="{{ t_settings }}"
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "cog" css_class=ICON_CSS %}
-                    {% translate "Settings" %}
+                    {{ t_settings }}
                 </a>
             </li>
 
             <li>
-                {% active_link 'about' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'about' %}"
                     accesskey="a"
-                    title="{% translate "About" %}"
-                    class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                    title="{{ t_about }}"
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "info-circle" css_class=ICON_CSS %}
-                    {% translate "About" %}
+                    {{ t_about }}
                 </a>
             </li>
 
@@ -83,10 +86,10 @@
                     method="post">
                     {% csrf_token %}
                     <button accesskey="l"
-                        title="{% translate "Logout" %}"
+                        title="{{ t_logout }}"
                         class="{{ SIDEBAR_CSS }}">
                         {% icon "sign-out" css_class=ICON_CSS %}
-                        {% translate "Logout" %}
+                        {{ t_logout }}
                     </button>
                 </form>
             </li>
