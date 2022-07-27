@@ -1,6 +1,16 @@
 {% load i18n %}
 {% if episode %}
     {% if is_playing %}
+        {% translate "Current Time" as t_current_time %}
+        {% translate "Time Remaining" as t_time_remaining %}
+        {% translate "Loading..." as t_loading %}
+        {% translate "Error" as t_error %}
+        {% translate "Play" as t_play %}
+        {% translate "Pause" as t_pause %}
+        {% translate "Close Player" as t_close_player %}
+        {% translate "Skip Back 10 Seconds" as t_skip_back %}
+        {% translate "Skip Forward 10 Seconds" as t_skip_forward %}
+        {% translate "Reload Player" as t_reload_player %}
         {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
             <div x-data="{# fmt:off #}
             player(
@@ -42,23 +52,23 @@
                             x-show="!isError && isLoaded"
                             :class="{'animate-pulse text-gray-300': !isPlaying}">
                             <span x-text="counters.current"
-                                title="{% translate "Current Time" %}"
+                                title="{{ t_current_time }}"
                             ></span> /
                             <span x-text="counters.total"
-                                title="{% translate "Time Remaining" %}"
+                                title="{{ t_time_remaining }}"
                             ></span>
                         </div>
 
                         <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
                             x-show="!isError && !isLoaded">
-                            {% translate "Loading..." %}
+                            {{ t_loading }}
                         </div>
 
                         <div class="text-xs text-center animate-pulse text-gray-300"
                             x-cloak
                             x-show="isError">
-                            {% translate "Error" %}
+                            {{ t_error }}
                         </div>
 
                     </div>
@@ -78,30 +88,30 @@
                                 <div class="flex items-center">
                                     {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" %}
 
-                                        <button title="{% translate "Pause" %}"
+                                        <button title="{{ t_pause }}"
                                             @click="togglePlayPause"
                                             x-show="!isPaused"
                                             class="{{ BUTTON_CSS }} mr-3"
                                             :disabled="!isLoaded"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            <i class="fa fa-pause-circle fa-2xl"></i>
+                                            <i class="fa fa-pause-circle fa-2xl" aria-hidden="true" title="{{ t_pause }}"></i>
                                         </button>
 
-                                        <button title="{% translate "Play" %}"
+                                        <button title="{{ t_play }}"
                                             @click="togglePlayPause"
                                             x-show="isPaused"
                                             class="{{ BUTTON_CSS }} mr-3"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            <i class="fa fa-play-circle fa-2xl"></i>
+                                            <i class="fa fa-play-circle fa-2xl" aria-hidden="true" title="{{ t_play }}"></i>
                                         </button>
 
-                                        <button title="{% translate "Close Player" %}"
+                                        <button title="{{ t_close_player }}"
                                             accesskey="x"
                                             class="{{ BUTTON_CSS }}"
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
                                             hx-swap="innerHTML">
-                                            <i class="fa fa-stop-circle fa-xl"></i>
+                                            <i class="fa fa-stop-circle fa-xl" aria-hidden="true" title="{{ t_close_player }}"></i>
                                         </button>
 
                                     {% endwith %}
@@ -121,24 +131,23 @@
                                         x-show="!isError && isLoaded"
                                         :class="{'animate-pulse text-gray-300': !isPlaying}">
                                         <span x-text="counters.current"
-                                            title="{% translate "Current Time" %}"
+                                            title="{{ t_current_time }}"
                                         ></span> /
                                         <span x-text="counters.total"
-
-                                            title="{% translate "Time Remaining" %}"
+                                            title="{{ t_time_remaining }}"
                                         ></span>
                                     </div>
 
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
                                         x-show="!isError && !isLoaded">
-                                        {% translate "Loading..." %}
+                                        {{ t_loading }}
                                     </div>
 
                                     <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
                                         x-cloak
                                         x-show="isError">
-                                        {% translate "Error" %}
+                                        {{ t_error }}
                                     </div>
 
                                 </div>
@@ -147,18 +156,18 @@
 
                                     <div class="flex items-center sm:hidden space-x-3">
 
-                                        <button title="{% translate "Skip Back 10 Seconds" %}"
+                                        <button title="{{ t_skip_back }}"
                                             @click="skipBack"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            <i class="fa-solid fa-backward-step fa-lg"></i>
+                                            <i class="fa-solid fa-backward-step fa-lg" aria-hidden="true" title="{{ t_skip_back }}"></i>
                                         </button>
 
-                                        <button title="{% translate "Skip Forward 10 Seconds" %}"
+                                        <button title="{{ t_skip_forward }}"
                                             @click="skipForward"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            <i class="fa-solid fa-forward-step fa-lg"></i>
+                                            <i class="fa-solid fa-forward-step fa-lg" aria-hidden="true" title="{{ t_skip_forward }}"></i>
                                         </button>
 
                                     </div>
@@ -167,18 +176,18 @@
 
                                         <div class="flex items-center space-x-3">
 
-                                            <button title="{% translate "Skip Back 10 Seconds" %}"
+                                            <button title="{{ t_skip_back }}"
                                                 @click="skipBack"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                <i class="fa-solid fa-backward-step fa-lg"></i>
+                                                <i class="fa-solid fa-backward-step fa-lg" aria-hidden="true" title="{{ t_skip_back }}"></i>
                                             </button>
 
-                                            <button title="{% translate "Skip Forward 10 Seconds" %}"
+                                            <button title="{{ t_skip_forward }}"
                                                 @click="skipForward"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                <i class="fa-solid fa-forward-step fa-lg"></i>
+                                                <i class="fa-solid fa-forward-step fa-lg" aria-hidden="true" title="{{ t_skip_forward }}"></i>
                                             </button>
 
                                         </div>
@@ -199,11 +208,11 @@
                                                 title="{% translate "Increase Playback Rate" %}">+</button>
                                         </div>
                                         <div class="flex items-center">
-                                            <button title="{% translate "Reload Player" %}"
+                                            <button title="{{ t_reload_player }}"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 accesskey="r"
                                                 @click="window.location.reload()">
-                                                <i class="fa fa-arrows-rotate fa-lg"></i>
+                                                <i class="fa fa-arrows-rotate fa-lg" aria-hidden="true" title="{{ t_reload_player }}"></i>
                                             </button>
                                         </div>
 
