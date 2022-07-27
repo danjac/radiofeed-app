@@ -11,7 +11,7 @@ export default defineConfig({
                 main: path.resolve("static", "js", "app.js"),
             },
             output: {
-                entryFileNames: "dist/bundle.js",
+                entryFileNames: "js/bundle.js",
             },
         },
     },

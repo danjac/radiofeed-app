@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "watch:css": "tailwindcss -i ./static/css/app.css -o ./static/dist/bundle.css --minify --watch --verbose",
+        "watch:css": "tailwindcss -i ./static/css/app.css -o ./static/css/bundle.css --minify --watch --verbose",
         "watch:js": "vite build --watch --mode=production"
     },
     "dependencies": {
