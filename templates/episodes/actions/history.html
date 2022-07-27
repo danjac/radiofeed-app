@@ -11,7 +11,7 @@
                 class="link"
                 hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}"
                 hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
-                <i class="fa fa-trash fa-lg"></i>
+                <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
             </button>
         {% endif %}
     </div>

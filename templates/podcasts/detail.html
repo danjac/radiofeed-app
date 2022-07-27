@@ -85,7 +85,7 @@
                             <a class="inline-flex items-center link"
                                 title="{{ category.name }} {% translate "Podcasts" %}"
                                 href="{{ category.get_absolute_url }}">
-                                <i class="fa fa-tag mr-2"></i>
+                                <i class="fa fa-tag mr-2" aria-hidden="true"></i>
                                 {{ category.name }}
                             </a>
                         {% endfor %}

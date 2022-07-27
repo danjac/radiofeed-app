@@ -9,14 +9,14 @@
                 <button class="btn btn-secondary inline-flex items-center"
                     title="{% translate "Unsubscribe from this Podcast" %}"
                     hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
-                    <i class="fa fa-eye-slash mr-2"></i>
+                    <i class="fa fa-eye-slash mr-2" aria-hidden="true"></i>
                     {% translate "Unsubscribe" %}
                 </button>
             {% else %}
                 <button class="btn btn-default inline-flex items-center"
                     title="{% translate "Subscribe to this Podcast" %}"
                     hx-post="{% url 'podcasts:subscribe' podcast.id %}">
-                    <i class="fa fa-eye mr-2"></i>
+                    <i class="fa fa-eye mr-2" aria-hidden="true"></i>
                     {% translate "Subscribe" %}
                 </button>
             {% endif %}
@@ -27,7 +27,7 @@
                 href="{{ podcast.get_absolute_url|login_url }}"
                 hx-disable="true"
                 title="{% translate "Log in or sign up to subscribe to this podcast" %}">
-                <i class="fa fa-eye mr-2"></i>
+                <i class="fa fa-eye mr-2" aria-hidden="true"></i>
                 {% translate "Subscribe" %}
             </a>
         </div>
