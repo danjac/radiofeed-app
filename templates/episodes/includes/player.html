@@ -94,7 +94,7 @@
                                             class="{{ BUTTON_CSS }} mr-3"
                                             :disabled="!isLoaded"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            {% icon "pause-circle" size="2xl" title=t_pause %}
+                                            {% icon "pause-circle" "regular" size="2xl" title=t_pause %}
                                         </button>
 
                                         <button title="{{ t_play }}"
@@ -102,7 +102,7 @@
                                             x-show="isPaused"
                                             class="{{ BUTTON_CSS }} mr-3"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            {% icon "play-circle" size="2xl" title=t_play %}
+                                            {% icon "play-circle" "regular" size="2xl" title=t_play %}
                                         </button>
 
                                         <button title="{{ t_close_player }}"
@@ -111,7 +111,7 @@
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
                                             hx-swap="innerHTML">
-                                            {% icon "stop-circle" size="xl" title=t_close_player %}
+                                            {% icon "stop-circle" "regular" size="xl" title=t_close_player %}
                                         </button>
 
                                     {% endwith %}
