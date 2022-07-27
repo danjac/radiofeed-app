@@ -1,5 +1,5 @@
 {% load i18n %}
-{% with SIDEBAR_CSS="inline-flex items-center link w-full sm:w-auto" SIDEBAR_ACTIVE_CSS="xl:text-blue-600 xl:font-bold xl:dark:text-blue-300" ICON_CSS="h-5 w-5 md:h-6 md:w-6 mr-3"%}
+{% with SIDEBAR_CSS="inline-flex items-center link w-full sm:w-auto" SIDEBAR_ACTIVE_CSS="xl:text-blue-600 xl:font-bold xl:dark:text-blue-300" ICON_CSS="mr-3 lg:mr-6" %}
     <nav class="pl-3 xl:pl-0 text-base md:text-lg xl:pt-12">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-5 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
             <li>
@@ -8,7 +8,7 @@
                     accesskey="p"
                     title="{% translate "Podcasts" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/rss.svg.html" with css_class=ICON_CSS %}
+                    <i class="fa fa-rss {{ ICON_CSS }}" aria-hidden="true"></i>
                     {% translate "Podcasts" %}
                 </a>
             </li>
@@ -18,7 +18,7 @@
                     accesskey="n"
                     title="{% translate "New Releases" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/sparkles.svg.html" with css_class=ICON_CSS %}
+                    <i class="fa fa-satellite-dish {{ ICON_CSS }}" aria-hidden="true"></i>
                     {% translate "New Releases" %}
                 </a>
             </li>
@@ -28,7 +28,7 @@
                     accesskey="c"
                     title="{% translate "Categories" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/tag.svg.html" with css_class=ICON_CSS %}
+                    <i class="fa fa-tag {{ ICON_CSS }}" aria-hidden="true"></i>
                     {% translate "Categories" %}
                 </a>
             </li>
@@ -38,7 +38,7 @@
                     accesskey="f"
                     title="{% translate "Bookmarks" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/star.svg.html" with css_class=ICON_CSS %}
+                    <i class="fa fa-star {{ ICON_CSS }}" aria-hidden="true"></i>
                     {% translate "Bookmarks" %}
                 </a>
             </li>
@@ -49,7 +49,7 @@
                     accesskey="h"
                     title="{% translate "History" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/clock.svg.html" with css_class=ICON_CSS %}
+                    <i class="fa fa-history {{ ICON_CSS }}" aria-hidden="true"></i>
                     {% translate "History" %}
                 </a>
             </li>
@@ -60,7 +60,7 @@
                     accesskey="s"
                     title="{% translate "Settings" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/adjustments.svg.html" with css_class=ICON_CSS %}
+                    <i class="fa fa-cog {{ ICON_CSS }}" aria-hidden="true"></i>
                     {% translate "Settings" %}
                 </a>
             </li>
@@ -71,7 +71,7 @@
                     accesskey="a"
                     title="{% translate "About" %}"
                     class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                    {% include "icons/info.svg.html" with css_class=ICON_CSS %}
+                    <i class="fa fa-info-circle {{ ICON_CSS }}" aria-hidden="true"></i>
                     {% translate "About" %}
                 </a>
             </li>
@@ -85,7 +85,7 @@
                     <button accesskey="l"
                         title="{% translate "Logout" %}"
                         class="{{ SIDEBAR_CSS }}">
-                        {% include "icons/logout.svg.html" with css_class=ICON_CSS %}
+                        <i class="fa fa-sign-out {{ ICON_CSS }}" aria-hidden="true"></i>
                         {% translate "Logout" %}
                     </button>
                 </form>

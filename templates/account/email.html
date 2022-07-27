@@ -31,7 +31,7 @@
                                 <div class="flex items-center">
                                     {{ emailaddress.email }}
                                     {% if emailaddress.verified %}
-                                        {% include "icons/check.svg.html" with css_class="h-5 w-5 ml-2 text-green-500" %}
+                                        <i class="fa fa-check ml-2 text-green-500" aria-hidden="true"></i>
                                     {% endif %}
                                 </div>
                             </div>
@@ -40,30 +40,28 @@
                     </div>
                 {% endfor %}
                 <div class="flex items-center space-x-2 md:space-x-3">
-                    {% with ICON_CSS="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                    <button class="inline-flex items-center btn btn-secondary"
+                        name="action_send"
+                        value="1">
+                        <i class="fa fa-envelope mr-2" aria-hidden="true"></i>
+                        {% translate "Re-Verify" %}
+                    </button>
+
+
                     {% if num_addresses > 1 %}
                         <button class="inline-flex items-center btn btn-default"
                             name="action_primary"
                             value="1">
-                            {% include "icons/sparkles.svg.html" with css_class=ICON_CSS %}
+                            <i class="fa fa-hand-point-up mr-2" aria-hidden="true"></i>
                             {% translate "Primary" %}
                         </button>
-                    {% endif %}
-
-                        <button class="inline-flex items-center btn btn-secondary"
-                            name="action_send"
-                            value="1">
-                            {% include "icons/mail.svg.html" with css_class=ICON_CSS %}
-                            {% translate "Re-Verify" %}
-                        </button>
-
                         <button class="inline-flex items-center btn btn-danger"
                             name="action_remove"
                             value="1">
-                            {% include "icons/trash.svg.html" with css_class=ICON_CSS %}
+                            <i class="fa fa-trash mr-2" aria-hidden="true"></i>
                             {% translate "Remove" %}
                         </button>
-                    {% endwith %}
+                    {% endif %}
                 </div>
             </form>
 
@@ -92,7 +90,7 @@
                 <button class="inline-flex items-center btn btn-default"
                     name="action_add"
                     value="true">
-                    {% include "icons/plus.svg.html" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                    <i class="fa fa-plus mr-2" aria-hidden="true"></i>
                     {% translate "Add E-Mail" %}
                 </button>
             </div>

@@ -1,5 +1,5 @@
 {% load i18n %}
-{% with ICON_CSS="h-5 w-5 md:h-6 md:w-6" target=episode.get_history_target %}
+{% with target=episode.get_history_target %}
     <div class="flex items-center space-x-3 md:space-x-4"
         id="{{ target }}"
         hx-target="this"
@@ -11,7 +11,7 @@
                 class="link"
                 hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}"
                 hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
-                {% include "icons/trash.svg.html" with css_class=ICON_CSS %}
+                <i class="fa fa-trash fa-lg"></i>
             </button>
         {% endif %}
     </div>

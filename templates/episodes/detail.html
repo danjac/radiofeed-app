@@ -152,7 +152,7 @@
                             {% if user.is_anonymous %}
                                 {% translate "Download" %}
                             {% else %}
-                                {% include "icons/download.svg.html" with css_class="h-5 w-5 md:h-6 md:w-6" %}
+                                <i class="fa fa-download fa-lg"></i>
                             {% endif %}
                         </a>
 
@@ -173,8 +173,8 @@
 
                         {% if explicit %}
                             <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
-                                class="text-red-600 dark:text-red-500 flex items-center">
-                                {% include "icons/warning.svg.html" with css_class="h-5 w-5 mr-1" %}
+                                class="text-red-600 dark:text-red-500 flex items-center space-x-2">
+                                <i class="fa fa-warning"></i>
                                 <span class="inline-block">{% translate "Explicit" %}</span>
                             </div>
                         {% endif %}

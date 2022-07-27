@@ -76,23 +76,23 @@
                             <div class="flex justify-between items-center">
 
                                 <div class="flex items-center">
-                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" ICON_CSS="h-8 w-8 md:h-9 md:w-9"  %}
+                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" %}
 
                                         <button title="{% translate "Pause" %}"
                                             @click="togglePlayPause"
                                             x-show="!isPaused"
-                                            class="{{ BUTTON_CSS }} mr-1 md:mr-2"
+                                            class="{{ BUTTON_CSS }} mr-3"
                                             :disabled="!isLoaded"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            {% include "icons/pause.svg.html" with css_class=ICON_CSS %}
+                                            <i class="fa fa-pause-circle fa-2xl"></i>
                                         </button>
 
                                         <button title="{% translate "Play" %}"
                                             @click="togglePlayPause"
                                             x-show="isPaused"
-                                            class="{{ BUTTON_CSS }} mr-1 md:mr-2"
+                                            class="{{ BUTTON_CSS }} mr-3"
                                             :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                            {% include "icons/play.svg.html" with css_class=ICON_CSS %}
+                                            <i class="fa fa-play-circle fa-2xl"></i>
                                         </button>
 
                                         <button title="{% translate "Close Player" %}"
@@ -101,7 +101,7 @@
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
                                             hx-swap="innerHTML">
-                                            {% include "icons/stop.svg.html" with css_class=ICON_CSS %}
+                                            <i class="fa fa-stop-circle fa-xl"></i>
                                         </button>
 
                                     {% endwith %}
@@ -143,42 +143,42 @@
 
                                 </div>
 
-                                {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" ICON_CSS="h-6 w-6 md:h-7 md:w-7" %}
+                                {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
 
-                                    <div class="flex items-center sm:hidden space-x-1">
+                                    <div class="flex items-center sm:hidden space-x-3">
 
                                         <button title="{% translate "Skip Back 10 Seconds" %}"
                                             @click="skipBack"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            {% include "icons/skip_back_10.svg.html" with css_class=ICON_CSS %}
+                                            <i class="fa-solid fa-backward-step fa-lg"></i>
                                         </button>
 
                                         <button title="{% translate "Skip Forward 10 Seconds" %}"
                                             @click="skipForward"
                                             :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                             class="{{ BUTTON_CSS }} inline-block">
-                                            {% include "icons/skip_forward_10.svg.html" with css_class=ICON_CSS %}
+                                            <i class="fa-solid fa-forward-step fa-lg"></i>
                                         </button>
 
                                     </div>
 
                                     <div class="flex items-center space-x-2 md:space-x-3">
 
-                                        <div class="flex items-center space-x-1 md:space-x-2">
+                                        <div class="flex items-center space-x-3">
 
                                             <button title="{% translate "Skip Back 10 Seconds" %}"
                                                 @click="skipBack"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                {% include "icons/skip_back_10.svg.html" with css_class=ICON_CSS %}
+                                                <i class="fa-solid fa-backward-step fa-lg"></i>
                                             </button>
 
                                             <button title="{% translate "Skip Forward 10 Seconds" %}"
                                                 @click="skipForward"
                                                 :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
-                                                {% include "icons/skip_forward_10.svg.html" with css_class=ICON_CSS %}
+                                                <i class="fa-solid fa-forward-step fa-lg"></i>
                                             </button>
 
                                         </div>
@@ -203,7 +203,7 @@
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 accesskey="r"
                                                 @click="window.location.reload()">
-                                                {% include "icons/refresh.svg.html" with css_class=ICON_CSS %}
+                                                <i class="fa fa-arrows-rotate fa-lg"></i>
                                             </button>
                                         </div>
 

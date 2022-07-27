@@ -10,7 +10,7 @@
                 hx-disable="true">
                 {% csrf_token %}
                 <button class="flex items-center btn btn-secondary">
-                    {% include "icons/"|add:provider.id|add:".svg.html" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
+                    <i class="fa-brands fa-{{ provider.id }} mr-2" aria-hidden="true"></i>
                     {{ provider.name }}
                 </button>
             </form>

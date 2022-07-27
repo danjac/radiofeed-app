@@ -1,3 +1,4 @@
+{% load i18n %}
 {% url 'users:import_podcast_feeds' as action_url %}
 <form method="post"
     action="{{ action_url }}"
@@ -13,8 +14,8 @@
     {{ form }}
     <div>
         <button class="inline-flex items-center btn btn-default">
-            {% include "icons/upload.svg.html" with css_class="h-4 w-4 md:h-5 md:w-5 mr-2" %}
-            Upload OPML
+                    <i class="mr-2 fa fa-upload" aria-hidden="true"></i>
+                    {% translate "Upload OPML" %}
         </button>
     </div>
 </form>

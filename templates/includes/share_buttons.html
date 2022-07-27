@@ -1,38 +1,43 @@
 {% load i18n %}
-{% with ICON_CSS="h-4 w-4 md:h-5 md:w-5" LINK_CSS="link focus:outline-none" %}
+{% translate "Share with Email" as t_share_email %}
+{% translate "Share on Facebook" as t_share_facebook %}
+{% translate "Share on Twitter" as t_share_twitter %}
+{% translate "Share on Linkedin" as t_share_linkedin %}
+{% translate "Copy link to Clipboard" as t_copy_link %}
+{% with LINK_CSS="link focus:outline-none" %}
     <div class="flex items-center space-x-3 {{ css_class|default:'' }}"
         x-data>
         <a href="{{ share_urls.email }}"
             target="_blank"
             rel="noopener"
-            title="{% translate "Share with Email" %}"
+            title="{{ t_share_email }}"
             class="{{ LINK_CSS }}">
-            {% include "icons/mail.svg.html" with css_class=ICON_CSS %}
+            <i class="fa fa-envelope" aria-hidden="true" title="{{ t_share_email }}"></i>
         </a>
 
         <a href="{{ share_urls.facebook }}"
             target="_blank"
             rel="noopener"
-            title="{% translate "Share on Facebook" %}"
+            title="{{ t_share_facebook }}"
             class="{{ LINK_CSS }}">
-            {% include "icons/facebook.svg.html" with css_class=ICON_CSS %}
+            <i class="fa-brands fa-facebook" aria-hidden="true" title="{{ t_share_facebook }}"></i>
         </a>
 
         <a href="{{ share_urls.twitter }}"
             target="_blank"
             rel="noopener"
-            title="{% translate "Share on Twitter" %}"
+            title="{{ t_share_twitter }}"
             class="{{ LINK_CSS }}">
-            {% include "icons/twitter.svg.html" with css_class=ICON_CSS %}
+            <i class="fa-brands fa-twitter" aria-hidden="true" title="{{ t_share_twitter }}"></i>
         </a>
         <a href="{{ share_urls.linkedin }}"
             target="_blank"
             rel="noopener"
-            title="{% translate "Share on Linkedin" %}"
+            title="{{ t_share_linkedin }}"
             class="{{ LINK_CSS }}">
-            {% include "icons/linkedin.svg.html" with css_class=ICON_CSS %}
+            <i class="fa-brands fa-linkedin" aria-hidden="true" title="{{ t_share_linkedin }}"></i>
         </a>
-        <button title="{% translate "Copy link to Clipboard" %}"
+        <button title="{{ t_copy_link }}"
             class="{{ LINK_CSS }}"
             @click="{# fmt:off #}
                 input = document.createElement('input');
@@ -47,7 +52,8 @@
                     tags: 'success'
                 });
                 "{# fmt:on #}>
-                {% include "icons/link.svg.html" with css_class=ICON_CSS %}
-                </button>
-                </div>
+
+                <i class="fa fa-link" aria-hidden="true" title="{{ t_copy_link }}"></i>
+            </button>
+        </div>
 {% endwith %}
