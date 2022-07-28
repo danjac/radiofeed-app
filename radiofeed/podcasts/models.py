@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
+from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
@@ -26,13 +26,11 @@ from radiofeed.users.models import User
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(
-        self, search_term: str, base_similarity: float = 0.2
-    ) -> models.QuerySet[Category]:
+    def search(self, search_term: str) -> models.QuerySet[Category]:
         """Does a trigram similarity search for categories."""
-        return self.annotate(
-            similarity=TrigramSimilarity("name", force_str(search_term))
-        ).filter(similarity__gte=base_similarity)
+        if value := force_str(search_term):
+            return self.filter(name__icontains=value)
+        return self.none()
 
 
 class Category(models.Model):

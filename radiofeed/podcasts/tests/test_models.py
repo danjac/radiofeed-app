@@ -7,6 +7,7 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import override
 
 from radiofeed.podcasts.factories import (
     CategoryFactory,
@@ -40,9 +41,24 @@ class TestRecommendationManager:
 
 
 class TestCategoryManager:
-    def test_search(self, db):
-        CategoryFactory(name="testing")
-        assert Category.objects.search("testing").count() == 1
+    @pytest.fixture
+    def category(self, db):
+        return CategoryFactory(name="testing", name_fi="testaaminen")
+
+    def test_search_empty(self, category):
+        assert Category.objects.search("").count() == 0
+
+    def test_search_english(self, category):
+
+        with override("en"):
+            assert Category.objects.search("testing").count() == 1
+            assert Category.objects.search("testaaminen").count() == 0
+
+    def test_search_finnish(self, category):
+
+        with override("fi"):
+            assert Category.objects.search("testing").count() == 0
+            assert Category.objects.search("testaaminen").count() == 1
 
 
 class TestCategoryModel:
