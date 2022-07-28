@@ -80,7 +80,7 @@
 
             {% with categories=podcast.categories.all %}
                 {% if categories %}
-                    <div class="max-w-max flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
+                    <div class="max-w-prose flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
                         {% for category in categories %}
                             <a class="inline-flex items-center link"
                                 title="{{ category.name }} {% translate "Podcasts" %}"
