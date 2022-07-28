@@ -6,7 +6,7 @@ import pytest
 
 from django.template.context import RequestContext
 from django.template.loader import get_template
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 from radiofeed.common.template import (
     absolute_uri,
@@ -18,7 +18,6 @@ from radiofeed.common.template import (
     markdown,
     normalize_url,
     pagination_url,
-    re_active_link,
     share_buttons,
     signup_url,
 )
@@ -199,24 +198,6 @@ class TestActiveLink:
         assert route.url == reverse(self.episodes_url)
         assert route.match
         assert route.exact
-
-
-class TestReActiveLink:
-    url = reverse_lazy("account_login")
-
-    def test_re_active_link_no_match(self, rf):
-        req = rf.get(self.url)
-        route = re_active_link(RequestContext(req), self.url, "/social/*")
-        assert route.url == self.url
-        assert not route.match
-        assert not route.exact
-
-    def test_active_link_non_exact_match(self, rf):
-        req = rf.get(self.url)
-        route = re_active_link(RequestContext(req), self.url, "/account/*")
-        assert route.url == self.url
-        assert route.match
-        assert not route.exact
 
 
 class TestShareButtons:

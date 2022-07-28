@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses
 import math
-import re
 
 from urllib import parse
 
@@ -123,22 +122,6 @@ def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> Acti
         return ActiveLink(url, match=True, exact=True)
 
     if context.request.path.startswith(url):
-        return ActiveLink(url, match=True)
-
-    return ActiveLink(url)
-
-
-@register.simple_tag(takes_context=True)
-def re_active_link(
-    context: RequestContext,
-    url_name: str,
-    pattern: str,
-    *args,
-    **kwargs,
-) -> ActiveLink:
-    """Returns url with active link info."""
-    url = resolve_url(url_name, *args, **kwargs)
-    if re.match(pattern, context.request.path):
         return ActiveLink(url, match=True)
 
     return ActiveLink(url)
