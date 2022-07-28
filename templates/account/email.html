@@ -17,7 +17,7 @@
                 {% for emailaddress in emailaddresses %}
                     <div>
                         <label for="email_radio_{{ forloop.counter }}"
-                            class="flex items-center space-x-3">
+                            class="flex items-center space-x-3{% if emailaddress.primary or num_addresses == 1 %} font-bold{% endif %}">
 
                             <input id="email_radio_{{ forloop.counter }}"
                                 type="radio"
