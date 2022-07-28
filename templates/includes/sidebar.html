@@ -1,5 +1,5 @@
 {% load i18n %}
-{% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ACTIVE_CSS="text-blue-600 dark:text-blue-300" ICON_CSS="mr-3 lg:mr-6" %}
+{% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
 
     {% translate "Podcasts" as t_podcasts %}
     {% translate "New Releases" as t_new_releases %}
@@ -13,74 +13,67 @@
     <nav class="pl-3 xl:pl-0 text-base md:text-lg lg:text-xl xl:pt-12">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-6 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
             <li>
-                {% active_link 'podcasts:index' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'podcasts:index' %}"
                     accesskey="p"
                     title="{{ t_podcasts }}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ ACTIVE_CSS }}{% endif %}">
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "rss" css_class=ICON_CSS %}
                     {{ t_podcasts }}
                 </a>
             </li>
             <li>
-                {% active_link 'episodes:index' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'episodes:index' %}"
                     accesskey="n"
                     title="{{ t_new_releases }}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ ACTIVE_CSS }}{% endif %}">
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
                     {{ t_new_releases }}
                 </a>
             </li>
             <li>
-                {% active_link 'podcasts:category_list' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'podcasts:category_list' %}"
                     accesskey="c"
                     title="{{ t_categories }}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ ACTIVE_CSS }}{% endif %}">
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "tag" css_class=ICON_CSS %}
                     {{ t_categories }}
                 </a>
             </li>
             <li>
-                {% active_link 'episodes:bookmarks' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'episodes:bookmarks' %}"
                     accesskey="f"
                     title="{{ t_bookmarks }}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ ACTIVE_CSS }}{% endif %}">
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "star" css_class=ICON_CSS %}
                     {{ t_bookmarks }}
                 </a>
             </li>
 
             <li>
-                {% active_link 'episodes:history' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'episodes:history' %}"
                     accesskey="h"
                     title="{{ t_history }}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ ACTIVE_CSS }}{% endif %}">
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "history" css_class=ICON_CSS %}
                     {{ t_history }}
                 </a>
             </li>
 
             <li>
-                {% re_active_link 'users:preferences' '/account/' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'users:preferences' %}"
                     accesskey="s"
                     title="{{ t_settings }}"
-                    class="{{ SIDEBAR_CSS }}{% if link.match %} {{ ACTIVE_CSS }}{% endif %}">
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "cog" css_class=ICON_CSS %}
                     {{ t_settings }}
                 </a>
             </li>
 
             <li>
-                {% active_link 'about' as link %}
-                <a href="{{ link.url }}"
+                <a href="{% url 'about' %}"
                     accesskey="a"
                     title="{{ t_about }}"
-                    class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ ACTIVE_CSS }}{% endif %}">
+                    class="{{ SIDEBAR_CSS }}">
                     {% icon "info-circle" css_class=ICON_CSS %}
                     {{ t_about }}
                 </a>

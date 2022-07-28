@@ -106,30 +106,32 @@ __________             .___.__        _____                 .___
 
         <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm md:text-base scroll-smooth"
             hx-boost="true"
-            hx-target="#layout"
+            hx-target="#content"
             hx-swap="outerHTML show:window:top"
             hx-indicator="#loader"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
             {% include "includes/hx_indicator.html" %}
-            {% include "includes/messages.html" %}
+
             <div class="flex flex-col h-screen">
                 <div class="flex-grow">
                     {% include "includes/navbar.html" %}
-    {% endif %}
-    <div id="layout"
-        hx-history-elt
-        class="flex relative p-2 pt-6 mx-auto min-h-screen xl:w-11/12">
-        {% if user.is_authenticated %}
-            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-24">
-                {% include "includes/sidebar.html" %}
-            </aside>
-        {% endif %}
 
-        <main class="w-full xl:block md:mx-auto xl:w-4/5" id="content">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
+                    {% include "includes/messages.html" %}
+                    <div id="layout"
+                        class="flex relative p-2 pt-6 mx-auto min-h-screen xl:w-11/12">
+                        {% if user.is_authenticated %}
+                            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-24">
+                                {% include "includes/sidebar.html" %}
+                            </aside>
+                        {% endif %}
+    {% endif %}
+
+    <main class="w-full xl:block md:mx-auto xl:w-4/5" id="content" hx-history-elt>
+        {% block content %}{% endblock %}
+    </main>
+
     {% if not request.htmx %}
+        </div>
         </div>
         {% cookie_notice %}
 
