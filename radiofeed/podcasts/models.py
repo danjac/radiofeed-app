@@ -27,7 +27,7 @@ class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
     def search(self, search_term: str) -> models.QuerySet[Category]:
-        """Does a trigram similarity search for categories."""
+        """Does a simple search for categories."""
         if value := force_str(search_term):
             return self.filter(name__icontains=value)
         return self.none()
@@ -78,7 +78,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
             1. check once every n hours, where "n" is the number of days since the podcast was last updated (i.e. last pub date).
             2. if podcast was last updated within 24 hours, check once an hour.
-            3. if podcast was last updated > 90 days, check every 90 hours
             3. if podcast has not been checked yet (i.e. just added to database), check immediately.
 
         Only *active* podcasts should be included.
@@ -101,11 +100,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 parsed__lt=now - timedelta(hours=1),
             )
             | models.Q(
-                days_since_last_pub_date__gt=90,
-                parsed__lt=now - timedelta(hours=90),
-            )
-            | models.Q(
-                days_since_last_pub_date__range=(1, 90),
+                days_since_last_pub_date__gte=1,
                 parsed__lt=now
                 - timedelta(hours=1) * models.F("days_since_last_pub_date"),
             ),
