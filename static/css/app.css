@@ -117,6 +117,7 @@ input[type="search"]::-webkit-search-results-decoration {
         font-weight: theme("fontWeight.semibold");
     }
 
+    .link.active,
     .link:active,
     .link:hover,
     .link:focus {
@@ -130,6 +131,7 @@ input[type="search"]::-webkit-search-results-decoration {
         .link {
             color: theme("colors.gray.100");
         }
+        .link.active,
         .link:active,
         .link:hover,
         .link:focus {
