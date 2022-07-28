@@ -17,24 +17,22 @@
                 {% for emailaddress in emailaddresses %}
                     <div>
                         <label for="email_radio_{{ forloop.counter }}"
-                            class="flex items-center">
+                            class="flex items-center space-x-3">
 
                             <input id="email_radio_{{ forloop.counter }}"
                                 type="radio"
                                 name="email"
-                                class="mr-3"
                                 {% if emailaddress.primary or num_addresses == 1 %}checked="checked"
                                 {% endif %}
                                 value="{{ emailaddress.email }}" />
 
-                            <div{% if emailaddress.primary or num_addresses == 1 %} class="font-bold"{% endif %}>
-                                <div class="flex items-center">
-                                    {{ emailaddress.email }}
-                                    {% if emailaddress.verified %}
-                                        {% icon "check" css_class="mr-2" %}
-                                    {% endif %}
-                                </div>
-                            </div>
+                            <span>
+                                {{ emailaddress.email }}
+                            </span>
+
+                            {% if emailaddress.verified %}
+                                {% icon "check" css_class="text-green-600" title=_("Verified") %}
+                            {% endif %}
 
                         </label>
                     </div>
