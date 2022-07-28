@@ -26,12 +26,12 @@ register = template.Library()
 
 @dataclasses.dataclass(frozen=True)
 class ActiveLink:
-    """Active link info returned from `active_link` or `re_active_link` filters.
+    """Active link info returned from `active_link` filters.
 
     Attributes:
         url: resolved URL
-        match: if the URL matches whatever pattern
-        exact: if the URL is an exact match
+        match: if the URL starts with the resolved URL
+        exact: if the URL is an exact path match
     """
 
     url: str
