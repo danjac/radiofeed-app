@@ -270,7 +270,6 @@ HUEY = {
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
 
-
 # Project specific
 
 DEFAULT_PAGE_SIZE = 30
@@ -284,10 +283,4 @@ USER_AGENT = env(
     default=f"radiofeed/{__version__} +https://github.com/danjac/radiofeed-app/",
 )
 
-SITE_CONFIG = {
-    "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
-    "description": env("SITE_DESCRIPTION", default="Podcast aggregator site"),
-    "country": env("HOST_COUNTRY", default="Finland"),
-    "keywords": env("SITE_KEYWORDS", default="podcasts, rss, feeds"),
-    "owner": env("SITE_OWNER", default=None),
-}
+CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")

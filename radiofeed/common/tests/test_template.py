@@ -12,7 +12,6 @@ from radiofeed.common.template import (
     absolute_uri,
     active_link,
     format_duration,
-    get_site_config,
     icon,
     login_url,
     markdown,
@@ -47,11 +46,6 @@ class PageObj:
     has_previous: bool = False
     next_page_number: int = 0
     previous_page_number: int = 0
-
-
-class TestGetSiteConfig:
-    def test_get_site_config(self, db):
-        assert get_site_config()
 
 
 class TestIcon:

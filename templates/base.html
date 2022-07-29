@@ -56,51 +56,45 @@ __________             .___.__        _____                 .___
             content="index,follow">
 
         {% block content_metadata %}
-            {% get_site_config as site_config %}
+            {% with site_name=request.site.name %}
+                {% absolute_uri '/' as site_uri %}
 
-            {% if site_config.description %}
                 <meta name="description"
-                    content="{{ site_config.description }}" />
-            {% endif %}
+                    content="Podcast aggregator site" />
 
-            {% if site_config.keywords %}
                 <meta name="keywords"
-                    content="{{ site_config.keywords }}" />
-            {% endif %}
+                    content="podcasts, rss, feeds" />
 
-            <meta name="og:type"
-                content="website" />
-            <meta name="og:title"
-                content="{{ site_name }}" />
-            {% if site_config.description %}
+                <meta name="og:type"
+                    content="website" />
+                <meta name="og:title"
+                    content="{{ site_name }}" />
                 <meta name="og:description"
-                    content="{{ site_config.description }}" />
-            {% endif %}
-            <meta name="og:url"
-                content="{% absolute_uri 'podcasts:index' %}" />
-            {% if site_config.description %}
+                    content="Podcast aggregator site" />
+                <meta name="og:url"
+                    content="{{ site_uri }}" />
                 <meta name="twitter:description"
-                    content="{{ site_config.description }}">
-            {% endif %}
-            <meta name="twitter:card"
-                content="summary">
-            <meta name="twitter:title"
-                content="{{ request.site.name }}">
-            <script type="application/ld+json">
-                {
-                    "@context": "https://schema.org",
-                    "@type": "WebSite",
-                    "url": "{% absolute_uri 'podcasts:index' %}",
-                    "potentialAction": {
-                        "@type": "SearchAction",
-                        "target": {
-                            "@type": "EntryPoint",
-                            "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?{{ request.search.param }}={search_term_string}"
-                        },
-                        "query-input": "required name=search_term_string"
+                    content="Podcast aggregator site">
+                <meta name="twitter:card"
+                    content="summary">
+                <meta name="twitter:title"
+                    content="{{ site_name }}">
+                <script type="application/ld+json">
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "url": "{{ site_uri }}",
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": {
+                                "@type": "EntryPoint",
+                                "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?{{ request.search.param }}={search_term_string}"
+                            },
+                            "query-input": "required name=search_term_string"
+                        }
                     }
-                }
-            </script>
+                </script>
+            {% endwith %}
         {% endblock content_metadata %}
         </head>
 

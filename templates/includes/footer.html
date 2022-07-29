@@ -1,11 +1,10 @@
 {% load cache i18n %}
-{% get_site_config as site_config %}
 <footer class="relative pt-20">
     <div class="space-y-1 bg-black text-white p-1 w-full text-xs md:text-sm absolute bottom-0">
         <div class="flex items-center flex-wrap justify-center space-x-3 font-semibold">
             <div>
                 <a class="text-gray-100 hover:text-blue-300"
-                    href="mailto:{{ site_config.contact_email }}">
+                    href="mailto:{% get_contact_email %}">
                     {% translate "Contact Us" %}
                 </a>
             </div>

@@ -39,17 +39,6 @@ class ActiveLink:
     exact: bool = False
 
 
-@dataclasses.dataclass(frozen=True)
-class SiteConfig:
-    """General site information."""
-
-    contact_email: str
-    country: str
-    description: str
-    keywords: str
-    owner: str
-
-
 _validate_url = URLValidator(["http", "https"])
 
 
@@ -73,9 +62,9 @@ def pagination_url(
 
 
 @register.simple_tag
-def get_site_config() -> SiteConfig:
-    """Returns the configuration defined in the setting SITE_CONFIG."""
-    return SiteConfig(**settings.SITE_CONFIG)
+def get_contact_email() -> str:
+    """Returns CONTACT_EMAIL setting"""
+    return settings.CONTACT_EMAIL
 
 
 @register.simple_tag(takes_context=True)

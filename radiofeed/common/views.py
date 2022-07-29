@@ -10,8 +10,6 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.common.template import get_site_config
-
 static_page = require_safe(render)
 
 _cache_control = cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
@@ -74,7 +72,7 @@ def security(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
             [
-                f"Contact: mailto:{get_site_config().contact_email}",
+                f"Contact: mailto:{settings.CONTACT_EMAIL}",
             ]
         ),
         content_type="text/plain",
