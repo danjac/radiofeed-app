@@ -57,7 +57,7 @@ __________             .___.__        _____                 .___
 
         {% block content_metadata %}
             {% with site_name=request.site.name %}
-                {% absolute_uri '/' as site_uri %}
+                {% absolute_uri as site_uri %}
 
                 <meta name="description"
                     content="Podcast aggregator site" />
