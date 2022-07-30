@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from datetime import timedelta
 
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import override
 
 from radiofeed.podcasts.factories import (
@@ -94,116 +92,6 @@ class TestPodcastManager:
         mocker.patch(self.reltuple_count, return_value=2000)
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
-
-    @pytest.mark.parametrize(
-        "active,pub_date,parsed,exists",
-        [
-            (
-                True,
-                None,
-                None,
-                True,
-            ),
-            (
-                False,
-                None,
-                None,
-                False,
-            ),
-            (
-                True,
-                timedelta(hours=3),
-                timedelta(hours=1),
-                True,
-            ),
-            (
-                False,
-                timedelta(hours=3),
-                timedelta(hours=1),
-                False,
-            ),
-            (
-                True,
-                timedelta(hours=3),
-                timedelta(minutes=30),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=3),
-                timedelta(hours=3),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=3),
-                timedelta(hours=1),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=8),
-                timedelta(hours=8),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=8),
-                timedelta(hours=9),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=14),
-                timedelta(hours=8),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=15),
-                timedelta(hours=8),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=15),
-                timedelta(hours=24),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=24),
-                timedelta(hours=24),
-                True,
-            ),
-            (
-                True,
-                timedelta(days=100),
-                timedelta(hours=12),
-                False,
-            ),
-            (
-                True,
-                timedelta(days=100),
-                timedelta(hours=100),
-                True,
-            ),
-        ],
-    )
-    def test_get_scheduled_feeds(self, db, mocker, active, pub_date, parsed, exists):
-        now = timezone.now()
-
-        PodcastFactory(
-            active=active,
-            pub_date=now - pub_date if pub_date else None,
-            parsed=now - parsed if parsed else None,
-        )
-
-        assert Podcast.objects.scheduled().exists() == exists, (
-            pub_date,
-            parsed,
-            exists,
-        )
 
 
 class TestPodcastModel:
