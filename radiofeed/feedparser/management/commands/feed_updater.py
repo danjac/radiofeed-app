@@ -5,10 +5,9 @@ import itertools
 from argparse import ArgumentParser
 
 from django.core.management.base import BaseCommand
-from django.db.models import Count, F
 
+from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.tasks import parse_feed
-from radiofeed.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
@@ -28,14 +27,7 @@ class Command(BaseCommand):
         """Command handler implmentation."""
         parse_feed.map(
             itertools.islice(
-                Podcast.objects.scheduled()
-                .alias(subscribers=Count("subscription"))
-                .order_by(
-                    F("subscribers").desc(),
-                    F("promoted").desc(),
-                    F("parsed").asc(nulls_first=True),
-                    F("pub_date").desc(nulls_first=True),
-                )
+                scheduler.get_scheduled_podcasts_for_update()
                 .values_list("pk")
                 .distinct(),
                 options["limit"],
