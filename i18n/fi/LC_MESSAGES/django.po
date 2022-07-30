@@ -869,8 +869,6 @@ msgid "Settings for %(username)s"
 msgstr "Asetukset: %(username)s"
 
 #: templates/account/settings_base.html:22
-#, fuzzy
-#| msgid "Import/Export OPML"
 msgid "Import/Export Feeds"
 msgstr "Syötteiden Tuonti/Vienti"
 
