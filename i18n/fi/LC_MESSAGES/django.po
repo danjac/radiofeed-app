@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-25 13:14+0000\n"
+"POT-Creation-Date: 2022-07-30 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,18 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: radiofeed/common/template.py:109
+#: radiofeed/common/template.py:97
 #, python-brace-format
 msgid "{total_hours}h"
 msgstr "{total_hours}t"
 
-#: radiofeed/common/template.py:112
+#: radiofeed/common/template.py:100
 #, python-brace-format
 msgid "{total_minutes}min"
 msgstr ""
 
-#: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:324
-#: radiofeed/podcasts/models.py:358
+#: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:317
+#: radiofeed/podcasts/models.py:351
 #, fuzzy
 #| msgid "Podcasts"
 msgid "Podcast"
@@ -81,7 +81,7 @@ msgstr ""
 msgid "Season"
 msgstr ""
 
-#: radiofeed/episodes/models.py:107 radiofeed/podcasts/models.py:178
+#: radiofeed/episodes/models.py:107 radiofeed/podcasts/models.py:171
 msgid "Cover Image"
 msgstr ""
 
@@ -109,7 +109,7 @@ msgstr "Kesto"
 msgid "Contains Explicit or Adult Content"
 msgstr ""
 
-#: radiofeed/episodes/models.py:127 radiofeed/podcasts/models.py:235
+#: radiofeed/episodes/models.py:127 radiofeed/podcasts/models.py:228
 msgid "PostgreSQL Search Vector"
 msgstr ""
 
@@ -157,7 +157,7 @@ msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
 #: radiofeed/podcasts/admin.py:39 radiofeed/podcasts/admin.py:47
-#: radiofeed/podcasts/models.py:134
+#: radiofeed/podcasts/models.py:127
 msgid "Active"
 msgstr "Aktiivinen"
 
@@ -165,7 +165,7 @@ msgstr "Aktiivinen"
 msgid "Inactive"
 msgstr "Ei Aktiivinen"
 
-#: radiofeed/podcasts/admin.py:65 radiofeed/podcasts/models.py:170
+#: radiofeed/podcasts/admin.py:65 radiofeed/podcasts/models.py:163
 #, fuzzy
 #| msgid "Parse Result"
 msgid "Feed Update Result"
@@ -175,7 +175,7 @@ msgstr "Jäsennystulos"
 msgid "None"
 msgstr "Ei mitään"
 
-#: radiofeed/podcasts/admin.py:90 radiofeed/podcasts/models.py:162
+#: radiofeed/podcasts/admin.py:90 radiofeed/podcasts/models.py:155
 msgid "HTTP Status"
 msgstr ""
 
@@ -214,164 +214,164 @@ msgstr "Podcast päivystysjonossa"
 msgid "Hi {username}, here are some new podcasts you might like!"
 msgstr "Hei {username}, tässä on uusia podcasteja, joista saatat pitää!"
 
-#: radiofeed/podcasts/models.py:42
+#: radiofeed/podcasts/models.py:40
 #, fuzzy
 #| msgid "Categories"
 msgid "Category Name"
 msgstr "Kategoriat"
 
-#: radiofeed/podcasts/models.py:50
+#: radiofeed/podcasts/models.py:48
 msgid "Parent Category"
 msgstr "Ylikategoria"
 
-#: radiofeed/podcasts/models.py:124
+#: radiofeed/podcasts/models.py:117
 msgid "Success"
 msgstr "Menestys"
 
-#: radiofeed/podcasts/models.py:125
+#: radiofeed/podcasts/models.py:118
 msgid "Complete"
 msgstr "Valmis"
 
-#: radiofeed/podcasts/models.py:126
+#: radiofeed/podcasts/models.py:119
 msgid "Not Modified"
 msgstr "Ei muokkaattu"
 
-#: radiofeed/podcasts/models.py:127
+#: radiofeed/podcasts/models.py:120
 msgid "HTTP Error"
 msgstr "HTTP-Virhe"
 
-#: radiofeed/podcasts/models.py:128
+#: radiofeed/podcasts/models.py:121
 msgid "RSS Parser Error"
 msgstr "RSS-Jäsennysvirhe"
 
-#: radiofeed/podcasts/models.py:129
+#: radiofeed/podcasts/models.py:122
 msgid "Duplicate Feed"
 msgstr "Kaksoispodcast"
 
-#: radiofeed/podcasts/models.py:131
+#: radiofeed/podcasts/models.py:124
 msgid "RSS Feed"
 msgstr "RSS-Syöte"
 
-#: radiofeed/podcasts/models.py:136
+#: radiofeed/podcasts/models.py:129
 msgid "Inactive podcasts will no longer be updated from their RSS feeds."
 msgstr ""
 
-#: radiofeed/podcasts/models.py:140
+#: radiofeed/podcasts/models.py:133
 msgid "HTTP Etag Header"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:141
+#: radiofeed/podcasts/models.py:134
 #, fuzzy
 #| msgid "Podcasts"
 msgid "Podcast Title"
 msgstr "Podcastit"
 
-#: radiofeed/podcasts/models.py:144
+#: radiofeed/podcasts/models.py:137
 #, fuzzy
 #| msgid "Release Date"
 msgid "Latest Release Date"
 msgstr "Päivämäärä"
 
-#: radiofeed/podcasts/models.py:148
+#: radiofeed/podcasts/models.py:141
 msgid "Last RSS Feed Check"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:154
+#: radiofeed/podcasts/models.py:147
 msgid "HTTP Modified Header"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:158
+#: radiofeed/podcasts/models.py:151
 msgid "Content Hash of RSS Feed"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:174
+#: radiofeed/podcasts/models.py:167
 msgid "RSS Feed Retry Count"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:182
+#: radiofeed/podcasts/models.py:175
 msgid "Funding Website URL"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:185
+#: radiofeed/podcasts/models.py:178
 msgid "Funding Website Text"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:192
+#: radiofeed/podcasts/models.py:185
 #, fuzzy
 #| msgid "Language"
 msgid "Podcast Language"
 msgstr "Kieli"
 
-#: radiofeed/podcasts/models.py:196
+#: radiofeed/podcasts/models.py:189
 msgid "Podcast Description"
 msgstr "Podcastin Kuvaus"
 
-#: radiofeed/podcasts/models.py:199 templates/episodes/detail.html:193
+#: radiofeed/podcasts/models.py:192 templates/episodes/detail.html:193
 #: templates/podcasts/detail.html:42
 msgid "Website"
 msgstr "Kotisivu"
 
-#: radiofeed/podcasts/models.py:202
+#: radiofeed/podcasts/models.py:195
 msgid "Non-iTunes Category Keywords"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:205
+#: radiofeed/podcasts/models.py:198
 msgid "Keywords Extracted from Podcast Content"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:207
+#: radiofeed/podcasts/models.py:200
 #, fuzzy
 #| msgid "Podcasts"
 msgid "Podcast Owner(s)"
 msgstr "Podcastit"
 
-#: radiofeed/podcasts/models.py:210
+#: radiofeed/podcasts/models.py:203
 #, fuzzy
 #| msgid "Adding podcast to database..."
 msgid "Podcast Added to Database"
 msgstr "Lisätään podcastin tietokantaan..."
 
-#: radiofeed/podcasts/models.py:213
+#: radiofeed/podcasts/models.py:206
 msgid "Podcast Updated in Database"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:217
+#: radiofeed/podcasts/models.py:210
 msgid "Podcast Contains Explicit or Adult Content"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:220
+#: radiofeed/podcasts/models.py:213
 #, fuzzy
 #| msgid "Home Page"
 msgid "Promoted to Home Page"
 msgstr "Kotisivu"
 
-#: radiofeed/podcasts/models.py:224
+#: radiofeed/podcasts/models.py:217
 #, fuzzy
 #| msgid "Categories"
 msgid "iTunes Categories"
 msgstr "Kategoriat"
 
-#: radiofeed/podcasts/models.py:231
+#: radiofeed/podcasts/models.py:224
 msgid "Recommended to Users"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:320
+#: radiofeed/podcasts/models.py:313
 #, fuzzy
 #| msgid "Subscribe"
 msgid "Subscriber"
 msgstr "Tilaa"
 
-#: radiofeed/podcasts/models.py:365
+#: radiofeed/podcasts/models.py:358
 #, fuzzy
 #| msgid "Search Podcasts"
 msgid "Similar Podcast"
 msgstr "Etsi Podcasteista"
 
-#: radiofeed/podcasts/models.py:369
+#: radiofeed/podcasts/models.py:362
 msgid "Frequency Count"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:377
+#: radiofeed/podcasts/models.py:370
 msgid "Similarity Rating"
 msgstr ""
 
@@ -476,18 +476,22 @@ msgid ""
 "notified."
 msgstr ""
 
-#: templates/about.html:4 templates/includes/navbar.html:94
-#: templates/includes/sidebar.html:72 templates/includes/sidebar.html:75
-#: templates/podcasts/detail.html:4 templates/podcasts/detail_base.html:84
+#: templates/about.html:4 templates/includes/navbar.html:82
+#: templates/includes/sidebar.html:10 templates/podcasts/detail.html:4
+#: templates/podcasts/detail_base.html:84
 msgid "About"
 msgstr "Tiedot"
 
-#: templates/about.html:8
-#, python-format
+#: templates/about.html:10
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "            About %(site_name)s\n"
+#| "        "
 msgid ""
 "\n"
-"            About %(site_name)s\n"
-"        "
+"                About %(site_name)s\n"
+"            "
 msgstr ""
 "\n"
 "            Tiedot: %(site_name)s\n"
@@ -541,31 +545,29 @@ msgid ""
 "                        target=\"_blank\">Django</a> with the help of <a "
 "href=\"https://htmx.org\"\n"
 "                            rel=\"noopener\"\n"
-"                            target=\"_blank\">\n"
+"                            target=\"_blank\"\n"
+"                        >\n"
 "                            HTMX</a>, <a href=\"https://alpinejs.dev/\"\n"
-"                                class=\"link underline\"\n"
 "                                rel=\"noopener\"\n"
 "                                target=\"_blank\">AlpineJS</a>\n"
 "                    and <a href=\"https://tailwindcss.com/\"\n"
 "                        rel=\"noopener\"\n"
-"                        target=\"_blank\">Tailwind</a>.\n"
+"                        target=\"_blank\"\n"
+"                    >Tailwind</a>.\n"
 "                "
 msgstr ""
 
-#: templates/about.html:59
+#: templates/about.html:60
 msgid "Additional Credits"
 msgstr "Lisää kunnioita"
 
-#: templates/about.html:62
+#: templates/about.html:63
 msgid ""
 "\n"
 "                    <li>\n"
-"                        SVG icons from <a target=\"_blank\"\n"
+"                        Icons from <a target=\"_blank\"\n"
 "                            href=\"https://fontawesome.com\"\n"
 "                            rel=\"noopener\">Font Awesome</a>\n"
-"                        and <a target=\"_blank\"\n"
-"                            href=\"https://heroicons.com/\"\n"
-"                            rel=\"noopener\">Heroicons</a>\n"
 "                    </li>\n"
 "\n"
 "                    <li>\n"
@@ -589,11 +591,11 @@ msgid ""
 "                "
 msgstr ""
 
-#: templates/about.html:91
+#: templates/about.html:89
 msgid "General Disclaimer"
 msgstr "Yleinen Vastuuvapauslauseke"
 
-#: templates/about.html:94
+#: templates/about.html:92
 #, python-format
 msgid ""
 "\n"
@@ -609,15 +611,15 @@ msgstr ""
 "iin tai tue sitä.Kaikki äänitiedostot toistetaan suoraan lähteestä.\n"
 "                "
 
-#: templates/about.html:100 templates/includes/footer.html:9
+#: templates/about.html:98 templates/includes/footer.html:8
 msgid "Contact Us"
 msgstr "Ota yhteyttä"
 
-#: templates/about.html:107
+#: templates/about.html:104
 msgid "Feedback"
 msgstr "Palauteet"
 
-#: templates/about.html:112
+#: templates/about.html:108
 msgid "Issues"
 msgstr "Ongelmat"
 
@@ -631,8 +633,7 @@ msgid "This account is inactive."
 msgstr "Tämä tili ei ole käytössä"
 
 #: templates/account/delete_account.html:4
-#: templates/account/settings_base.html:54
-#: templates/account/settings_base.html:55
+#: templates/account/settings_base.html:47
 msgid "Delete Account"
 msgstr "Poista tili"
 
@@ -658,23 +659,27 @@ msgstr "Sähköpostiosoitteet"
 msgid "The following e-mail addresses are associated with your account:"
 msgstr "Seuraavat sähköpostiosoitteet on liitetty tiliisi:"
 
-#: templates/account/email.html:49
-msgid "Primary"
-msgstr "Ensisijainen"
+#: templates/account/email.html:34
+msgid "Verified"
+msgstr ""
 
-#: templates/account/email.html:57
+#: templates/account/email.html:45
 msgid "Re-Verify"
 msgstr "Vahvista"
 
-#: templates/account/email.html:64 templates/socialaccount/connections.html:46
+#: templates/account/email.html:54
+msgid "Primary"
+msgstr "Ensisijainen"
+
+#: templates/account/email.html:60 templates/socialaccount/connections.html:46
 msgid "Remove"
 msgstr "Poista"
 
-#: templates/account/email.html:73
+#: templates/account/email.html:69
 msgid "Warning:"
 msgstr "Varoitus:"
 
-#: templates/account/email.html:74
+#: templates/account/email.html:70
 msgid ""
 "\n"
 "                    You currently do not have any e-mail address set up. You "
@@ -683,11 +688,11 @@ msgid ""
 "                "
 msgstr ""
 
-#: templates/account/email.html:83
+#: templates/account/email.html:79
 msgid "Add New E-mail Address"
 msgstr "Lisää Sähköpostiosoite"
 
-#: templates/account/email.html:96
+#: templates/account/email.html:92
 msgid "Add E-Mail"
 msgstr "Lisää Sähköpostiosoite"
 
@@ -750,6 +755,12 @@ msgstr ""
 "#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
 "            "
 
+#: templates/account/forms/import_podcast_feeds.html:18
+#, fuzzy
+#| msgid "Download OPML"
+msgid "Upload OPML"
+msgstr "Lataa OPML"
+
 #: templates/account/forms/preferences.html:16
 msgid "Save Changes"
 msgstr "Tallenna Muutokset"
@@ -802,8 +813,7 @@ msgstr "Unohditko salasanasi?"
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key_done.html:4
 #: templates/account/password_reset_from_key_done.html:7
-#: templates/account/settings_base.html:42
-#: templates/account/settings_base.html:43
+#: templates/account/settings_base.html:37
 msgid "Change Password"
 msgstr "Vaihda Salasana"
 
@@ -845,38 +855,34 @@ msgstr "Salasana vaihdettu"
 msgid "Set Password"
 msgstr "Aseta Salasana"
 
-#: templates/account/preferences.html:4 templates/account/settings_base.html:18
-#: templates/account/settings_base.html:19
+#: templates/account/preferences.html:4 templates/account/settings_base.html:17
 msgid "Preferences"
 msgstr "Asetukset"
 
-#: templates/account/settings_base.html:4 templates/includes/sidebar.html:61
-#: templates/includes/sidebar.html:64
+#: templates/account/settings_base.html:4 templates/includes/sidebar.html:9
 msgid "Settings"
 msgstr "Asetukset"
 
-#: templates/account/settings_base.html:9 templates/includes/navbar.html:66
+#: templates/account/settings_base.html:9 templates/includes/navbar.html:54
 #, python-format
 msgid "Settings for %(username)s"
 msgstr "Asetukset: %(username)s"
 
-#: templates/account/settings_base.html:24
-#: templates/account/settings_base.html:25
-msgid "Import/Export OPML"
-msgstr "OPML:in Tuonti/Vienti"
+#: templates/account/settings_base.html:22
+#, fuzzy
+#| msgid "Import/Export OPML"
+msgid "Import/Export Feeds"
+msgstr "Syötteiden Tuonti/Vienti"
 
-#: templates/account/settings_base.html:30
-#: templates/account/settings_base.html:31 templates/account/stats.html:4
+#: templates/account/settings_base.html:27 templates/account/stats.html:4
 msgid "Statistics"
 msgstr "Tilastot"
 
-#: templates/account/settings_base.html:36
-#: templates/account/settings_base.html:37
+#: templates/account/settings_base.html:32
 msgid "Email Addresses"
 msgstr "Sähköpostiosoitteet"
 
-#: templates/account/settings_base.html:48
-#: templates/account/settings_base.html:49
+#: templates/account/settings_base.html:42
 #: templates/socialaccount/connections.html:4
 msgid "Social Logins"
 msgstr "Sotetilit"
@@ -923,8 +929,7 @@ msgstr[1] ""
 "                        "
 
 #: templates/account/stats.html:33 templates/episodes/bookmarks.html:4
-#: templates/episodes/bookmarks.html:7 templates/includes/sidebar.html:39
-#: templates/includes/sidebar.html:42
+#: templates/episodes/bookmarks.html:7 templates/includes/sidebar.html:8
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
@@ -997,42 +1002,42 @@ msgid ""
 "        "
 msgstr ""
 
-#: templates/episodes/actions/bookmark.html:9
-msgid "Remove from Bookmarks"
-msgstr "Poista Kirjanmerkkeistä"
-
-#: templates/episodes/actions/bookmark.html:15
+#: templates/episodes/actions/bookmark.html:2
 msgid "Add to Bookmarks"
 msgstr "Lisää Kirjanmerkkeihin"
 
-#: templates/episodes/actions/history.html:10
+#: templates/episodes/actions/bookmark.html:3
+msgid "Remove from Bookmarks"
+msgstr "Poista Kirjanmerkkeistä"
+
+#: templates/episodes/actions/history.html:3
 msgid "Remove from History"
 msgstr "Poista Historiasta"
 
-#: templates/episodes/actions/history.html:12
+#: templates/episodes/actions/history.html:13
 msgid "Are you sure you want to remove this episode from your History?"
 msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
 
-#: templates/episodes/actions/player.html:13
-#: templates/episodes/includes/player.html:98
+#: templates/episodes/actions/player.html:12
+#: templates/episodes/includes/player.html:10
 msgid "Close Player"
 msgstr "Sulje Soitin"
 
-#: templates/episodes/actions/player.html:15
+#: templates/episodes/actions/player.html:14
 msgid "Close"
 msgstr "Sulje"
 
-#: templates/episodes/actions/player.html:23
+#: templates/episodes/actions/player.html:22
 msgid "Open Episode in Player"
 msgstr "Avaa Jakso Soitimella"
 
-#: templates/episodes/actions/player.html:25
-#: templates/episodes/actions/player.html:37
-#: templates/episodes/includes/player.html:90
+#: templates/episodes/actions/player.html:24
+#: templates/episodes/actions/player.html:36
+#: templates/episodes/includes/player.html:8
 msgid "Play"
 msgstr "Soita"
 
-#: templates/episodes/actions/player.html:35
+#: templates/episodes/actions/player.html:34
 msgid "You must sign up or log in to play this episode"
 msgstr ""
 "Sinun täytyy rekisteröityä tai kirjautua sisään soittaaksesi tätä jaksoa"
@@ -1079,7 +1084,7 @@ msgstr "Seuraavat"
 msgid "See All Episodes for %(podcast)s"
 msgstr "Katso Kaikki Jaksot Podcastissa %(podcast)s"
 
-#: templates/episodes/detail.html:153
+#: templates/episodes/detail.html:153 templates/episodes/detail.html:155
 msgid "Download"
 msgstr "Lataa"
 
@@ -1094,7 +1099,7 @@ msgid "Explicit"
 msgstr "Varoitus"
 
 #: templates/episodes/history.html:4 templates/episodes/history.html:7
-#: templates/includes/sidebar.html:50 templates/includes/sidebar.html:53
+#: templates/includes/sidebar.html:7
 msgid "History"
 msgstr "Historia"
 
@@ -1102,58 +1107,52 @@ msgstr "Historia"
 msgid "Search: History"
 msgstr "Haku: Historia"
 
-#: templates/episodes/includes/player.html:45
-#: templates/episodes/includes/player.html:124
+#: templates/episodes/includes/player.html:4
 msgid "Current Time"
 msgstr "Aika"
 
-#: templates/episodes/includes/player.html:48
-#: templates/episodes/includes/player.html:128
+#: templates/episodes/includes/player.html:5
 msgid "Time Remaining"
 msgstr "Jäljellä"
 
-#: templates/episodes/includes/player.html:55
-#: templates/episodes/includes/player.html:135
+#: templates/episodes/includes/player.html:6
 msgid "Loading..."
 msgstr "Latautuu..."
 
-#: templates/episodes/includes/player.html:61
-#: templates/episodes/includes/player.html:141
+#: templates/episodes/includes/player.html:7
 msgid "Error"
 msgstr "Virhe"
 
-#: templates/episodes/includes/player.html:81
+#: templates/episodes/includes/player.html:9
 msgid "Pause"
 msgstr "Paussi"
 
-#: templates/episodes/includes/player.html:150
-#: templates/episodes/includes/player.html:170
+#: templates/episodes/includes/player.html:11
 msgid "Skip Back 10 Seconds"
 msgstr "Taaksepäin 10 Sekuntia"
 
-#: templates/episodes/includes/player.html:157
-#: templates/episodes/includes/player.html:177
+#: templates/episodes/includes/player.html:12
 msgid "Skip Forward 10 Seconds"
 msgstr "Eteenpäin 10 Sekuntia"
 
-#: templates/episodes/includes/player.html:190
+#: templates/episodes/includes/player.html:13
+msgid "Reload Player"
+msgstr "Lataa Soitin Uudestaan"
+
+#: templates/episodes/includes/player.html:199
 msgid "Decrease Playback Rate"
 msgstr ""
 
-#: templates/episodes/includes/player.html:199
+#: templates/episodes/includes/player.html:208
 msgid "Increase Playback Rate"
 msgstr ""
-
-#: templates/episodes/includes/player.html:202
-msgid "Reload Player"
-msgstr "Lataa Soitin Uudestaan"
 
 #: templates/episodes/includes/timestamps.html:9
 msgid "Duration"
 msgstr "Kesto"
 
 #: templates/episodes/index.html:4 templates/episodes/index.html:16
-#: templates/includes/sidebar.html:19 templates/includes/sidebar.html:22
+#: templates/includes/sidebar.html:5
 msgid "New Releases"
 msgstr "Uudet Jaksot"
 
@@ -1167,8 +1166,8 @@ msgid "Find an episode..."
 msgstr "Haku: Jaksot"
 
 #: templates/episodes/search.html:4 templates/includes/navbar.html:6
+#: templates/includes/search_form.html:2 templates/includes/search_form.html:14
 #: templates/podcasts/itunes_search.html:4 templates/podcasts/search.html:4
-#: templates/includes/search_form.html:12 templates/includes/search_form.html:26
 msgid "Search"
 msgstr "Haku"
 
@@ -1177,11 +1176,11 @@ msgstr "Haku"
 msgid "Episodes"
 msgstr "Jaksot"
 
-#: templates/error_base.html:50 templates/includes/navbar.html:30
+#: templates/error_base.html:43 templates/includes/navbar.html:18
 msgid "Home Page"
 msgstr "Kotisivu"
 
-#: templates/error_base.html:60
+#: templates/error_base.html:53
 msgid "An error has occurred"
 msgstr "Virhe on tapahtunut"
 
@@ -1212,15 +1211,15 @@ msgstr ""
 msgid "Nothing to see here."
 msgstr "Ei tuloksia"
 
-#: templates/includes/footer.html:17
+#: templates/includes/footer.html:16
 msgid "Source Code"
 msgstr "Lähdekoodi"
 
-#: templates/includes/footer.html:25
+#: templates/includes/footer.html:24
 msgid "Report an Issue"
 msgstr "Ilmoita Ongelma"
 
-#: templates/includes/footer.html:32
+#: templates/includes/footer.html:31
 #, python-format
 msgid ""
 "\n"
@@ -1240,7 +1239,7 @@ msgstr ""
 msgid "Toggle Menu"
 msgstr "Vaihda Valikko"
 
-#: templates/includes/navbar.html:90
+#: templates/includes/navbar.html:78
 msgid "About this Site"
 msgstr "Tiedot Sivustosta"
 
@@ -1256,44 +1255,47 @@ msgstr "Viimeinen Sivu"
 msgid "Page %(page_number)s"
 msgstr "Sivu %(page_number)s"
 
-#: templates/includes/share_buttons.html:8
+#: templates/includes/search_form.html:3
+msgid "Clear Search"
+msgstr "Poita haku"
+
+#: templates/includes/share_buttons.html:2
 msgid "Share with Email"
 msgstr "Jaa Sähköpostilla"
 
-#: templates/includes/share_buttons.html:16
+#: templates/includes/share_buttons.html:3
 msgid "Share on Facebook"
 msgstr "Jaa Facebookissa"
 
-#: templates/includes/share_buttons.html:24
+#: templates/includes/share_buttons.html:4
 msgid "Share on Twitter"
 msgstr "Jaa Twitterissa"
 
-#: templates/includes/share_buttons.html:31
+#: templates/includes/share_buttons.html:5
 msgid "Share on Linkedin"
 msgstr "Jaa Linkedinissa"
 
-#: templates/includes/share_buttons.html:35
+#: templates/includes/share_buttons.html:6
 msgid "Copy link to Clipboard"
 msgstr "Kopioi linkki Leikepödälle"
 
-#: templates/includes/share_buttons.html:46
+#: templates/includes/share_buttons.html:51
 msgid "Copied link to Clipboard"
 msgstr "Linkki kopioittu Leikepödälle"
 
-#: templates/includes/sidebar.html:9 templates/includes/sidebar.html:12
-#: templates/podcasts/category_detail.html:4 templates/podcasts/detail.html:86
-#: templates/podcasts/index.html:4 templates/podcasts/search.html:4
-#: templates/search_base.html:19
+#: templates/includes/sidebar.html:4 templates/podcasts/category_detail.html:4
+#: templates/podcasts/detail.html:86 templates/podcasts/index.html:4
+#: templates/podcasts/search.html:4 templates/search_base.html:19
 msgid "Podcasts"
 msgstr "Podcastit"
 
-#: templates/includes/sidebar.html:29 templates/includes/sidebar.html:32
-#: templates/podcasts/categories.html:4 templates/podcasts/categories.html:9
+#: templates/includes/sidebar.html:6 templates/podcasts/categories.html:4
+#: templates/podcasts/categories.html:9
 #: templates/podcasts/category_detail.html:4
 msgid "Categories"
 msgstr "Kategoriat"
 
-#: templates/includes/sidebar.html:86 templates/includes/sidebar.html:89
+#: templates/includes/sidebar.html:11
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
@@ -1425,10 +1427,6 @@ msgstr ""
 #: templates/search_base.html:36
 msgid "Search..."
 msgstr "Haku"
-
-#: templates/includes/search_form.html:19
-msgid "Clear Search"
-msgstr "Poita haku"
 
 #: templates/socialaccount/connections.html:11
 msgid ""
