@@ -173,7 +173,7 @@ class TestPodcastManager:
             (
                 True,
                 timedelta(days=100),
-                timedelta(hours=24),
+                timedelta(hours=100),
                 True,
             ),
         ],
