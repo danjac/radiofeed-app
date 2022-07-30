@@ -105,10 +105,22 @@ class TestPodcastManager:
                 True,
             ),
             (
+                False,
+                None,
+                None,
+                False,
+            ),
+            (
                 True,
                 timedelta(hours=3),
                 timedelta(hours=1),
                 True,
+            ),
+            (
+                False,
+                timedelta(hours=3),
+                timedelta(hours=1),
+                False,
             ),
             (
                 True,
