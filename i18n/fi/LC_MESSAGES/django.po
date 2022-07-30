@@ -31,9 +31,8 @@ msgstr ""
 #: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:317
 #: radiofeed/podcasts/models.py:351
 #, fuzzy
-#| msgid "Podcasts"
 msgid "Podcast"
-msgstr "Podcastit"
+msgstr ""
 
 #: radiofeed/episodes/models.py:82
 msgid "RSS Feed GUID"
@@ -65,7 +64,7 @@ msgstr "Jakso {episode}"
 
 #: radiofeed/episodes/models.py:93
 msgid "Episode Website Page"
-msgstr ""
+msgstr "Jakson Kotisivu"
 
 #: radiofeed/episodes/models.py:97
 #, fuzzy
@@ -75,15 +74,15 @@ msgstr "Jaksot"
 
 #: radiofeed/episodes/models.py:100
 msgid "Season Episode Number"
-msgstr ""
+msgstr "Kauden Jaksonumero"
 
 #: radiofeed/episodes/models.py:103
 msgid "Season"
-msgstr ""
+msgstr "Kausi"
 
 #: radiofeed/episodes/models.py:107 radiofeed/podcasts/models.py:171
 msgid "Cover Image"
-msgstr ""
+msgstr "Kansikuva"
 
 #: radiofeed/episodes/models.py:111
 msgid "Audio URL Source"
