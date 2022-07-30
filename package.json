@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "watch:css": "tailwindcss -i ./static/css/app.css -o ./static/css/bundle.css --minify --watch --verbose",
-        "watch:js": "vite build --watch --mode=production"
+        "watch:js": "esbuild ./static/js/app.js --bundle --watch --minify --sourcemap --outfile=./static/js/bundle.js"
     },
     "dependencies": {
         "alpinejs": "^3.10.3",
@@ -13,10 +13,10 @@
         "@tailwindcss/forms": "^0.5.2",
         "@tailwindcss/line-clamp": "^0.4.0",
         "@tailwindcss/typography": "^0.5.4",
+        "esbuild": "^0.14.51",
         "eslint": "^8.20.0",
         "eslint-plugin-prettier": "^4.2.1",
         "prettier": "2.7.1",
-        "tailwindcss": "^3.1.6",
-        "vite": "^3.0.3"
+        "tailwindcss": "^3.1.6"
     }
 }
