@@ -5,14 +5,13 @@ import itertools
 from datetime import timedelta
 from typing import Final
 
-import numpy
-
 from django.db import models
 from django.utils import timezone
 
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
+DEFAULT_UPDATE_INTERVAL: Final = timedelta(hours=24)
 MIN_UPDATE_INTERVAL: Final = timedelta(hours=3)
 MAX_UPDATE_INTERVAL: Final = timedelta(days=30)
 
@@ -62,21 +61,22 @@ def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
 
 
 def calc_update_interval(feed: Feed) -> timedelta:
-    """Returns mean interval of episodes in feed."""
-    return _update_interval_within_bounds(
-        timedelta(
-            seconds=float(
-                numpy.mean(
+    """Returns min interval of episodes in feed."""
+    try:
+        return _update_interval_within_bounds(
+            timedelta(
+                seconds=min(
                     [
                         (a - b).total_seconds()
                         for a, b in itertools.pairwise(
-                            [timezone.now()] + [item.pub_date for item in feed.items]
+                            item.pub_date for item in feed.items
                         )
                     ]
                 )
             )
         )
-    )
+    except ValueError:
+        return DEFAULT_UPDATE_INTERVAL
 
 
 def increment_update_interval(podcast: Podcast, increment: float = 0.1) -> timedelta:

@@ -74,7 +74,7 @@ class TestCalcUpdateInterval:
             ],
         )
 
-        assert scheduler.calc_update_interval(feed).days == 3
+        assert scheduler.calc_update_interval(feed).days == 1
 
     def test_calc_interval(self):
         now = timezone.now()
