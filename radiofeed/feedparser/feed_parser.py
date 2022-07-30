@@ -19,9 +19,9 @@ from radiofeed.common.utils.dates import parse_date
 from radiofeed.common.utils.iterators import batcher
 from radiofeed.common.utils.text import tokenize
 from radiofeed.episodes.models import Episode
+from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.feedparser.rss_parser import parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -91,7 +91,7 @@ class FeedParser:
         ).exists():
             raise DuplicateFeed(response=response)
 
-        return response, parse_rss(response.content), content_hash
+        return response, rss_parser.parse_rss(response.content), content_hash
 
     def _get_feed_headers(self) -> dict:
         headers = {
@@ -136,6 +136,7 @@ class FeedParser:
             modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self._extract_text(feed),
             keywords=" ".join(category_names - {c.lowercase_name for c in categories}),
+            update_interval=scheduler.calc_update_interval(feed),
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(  # type: ignore
@@ -194,6 +195,7 @@ class FeedParser:
             http_status=http_status,
             parse_result=parse_result,
             num_retries=num_retries,
+            update_interval=scheduler.increment_update_interval(self._podcast),
         )
         return False
 
