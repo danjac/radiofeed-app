@@ -3,6 +3,7 @@ from __future__ import annotations
 import itertools
 
 from datetime import timedelta
+from typing import Final
 
 import numpy
 
@@ -12,18 +13,44 @@ from django.utils import timezone
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
+MIN_UPDATE_INTERVAL: Final = timedelta(hours=3)
+MAX_UPDATE_INTERVAL: Final = timedelta(days=30)
+
 
 def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
+    """
+    Returns podcasts scheduled for feed updates.
+
+    This includes podcasts with last pub date + update interval. If this is more than 30 days, then
+    we check last parsed date
+
+    Example:
+
+    - pub date 3 days ago, interval 7 days: next scheduled date is in 4 days
+    - pub date 90 days ago, last parsed 15 days ago, interval 30 days: next scheduled date in 15 days
+
+    Ordered by:
+        - number of subscribers
+        - promoted
+        - last parsed
+        - last pub date
+    """
+
+    now = timezone.now()
+    from_date = now - MAX_UPDATE_INTERVAL
+
     return (
         Podcast.objects.annotate(
             scheduled=models.ExpressionWrapper(
-                models.F("parsed") + models.F("update_interval"),
+                models.F("pub_date") + models.F("update_interval"),
                 output_field=models.DateTimeField(),
             ),
         )
         .alias(subscribers=models.Count("subscription"))
         .filter(
-            models.Q(parsed__isnull=True) | models.Q(scheduled__lt=timezone.now()),
+            models.Q(parsed__isnull=True)
+            | models.Q(parsed__lt=from_date)
+            | models.Q(scheduled__range=(from_date, now)),
             active=True,
         )
     ).order_by(
@@ -35,6 +62,7 @@ def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
 
 
 def calc_update_interval(feed: Feed) -> timedelta:
+    """Returns mean interval of episodes in feed."""
     return _update_interval_within_bounds(
         timedelta(
             seconds=float(
@@ -51,14 +79,15 @@ def calc_update_interval(feed: Feed) -> timedelta:
     )
 
 
-def increment_update_interval(podcast: Podcast) -> timedelta:
+def increment_update_interval(podcast: Podcast, increment: float = 0.1) -> timedelta:
+    """Increments update interval"""
 
     current_interval = podcast.update_interval.total_seconds()
 
     return _update_interval_within_bounds(
-        timedelta(seconds=current_interval + (current_interval * 0.1))
+        timedelta(seconds=current_interval + (current_interval * increment))
     )
 
 
 def _update_interval_within_bounds(interval: timedelta) -> timedelta:
-    return max(min(interval, Podcast.MAX_UPDATE_INTERVAL), Podcast.MIN_UPDATE_INTERVAL)
+    return max(min(interval, MAX_UPDATE_INTERVAL), MIN_UPDATE_INTERVAL)

@@ -14,23 +14,32 @@ from radiofeed.podcasts.models import Podcast
 
 class TestGetScheduledPodcastsForUpdate:
     @pytest.mark.parametrize(
-        "active,parsed,exists",
+        "active,parsed,pub_date,update_interval,exists",
         [
-            (True, None, True),
-            (False, None, False),
-            (True, timedelta(days=3), True),
-            (False, timedelta(days=3), False),
-            (True, timedelta(hours=3), False),
+            (True, None, None, timedelta(hours=24), True),
+            (False, None, None, timedelta(hours=24), False),
+            (True, timedelta(days=3), timedelta(days=3), timedelta(hours=24), True),
+            (False, timedelta(days=3), timedelta(days=3), timedelta(hours=24), False),
+            (True, timedelta(hours=3), timedelta(hours=3), timedelta(hours=24), False),
+            (True, timedelta(days=15), timedelta(days=90), timedelta(days=30), False),
+            (True, timedelta(days=30), timedelta(days=90), timedelta(days=30), True),
         ],
     )
-    def test_get_scheduled(self, db, active, parsed, exists):
+    def test_get_scheduled(self, db, active, parsed, pub_date, update_interval, exists):
         PodcastFactory(
             active=active,
             parsed=timezone.now() - parsed if parsed else None,
-            update_interval=timedelta(hours=24),
+            pub_date=timezone.now() - pub_date if pub_date else None,
+            update_interval=update_interval,
         )
 
-        assert scheduler.get_scheduled_podcasts_for_update().exists() == exists
+        assert scheduler.get_scheduled_podcasts_for_update().exists() == exists, (
+            active,
+            parsed,
+            pub_date,
+            update_interval,
+            exists,
+        )
 
 
 class TestIncrementUpdateInterval:
