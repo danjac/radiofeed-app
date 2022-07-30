@@ -111,6 +111,10 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
+    DEFAULT_UPDATE_INTERVAL = timedelta(hours=24)
+    MIN_UPDATE_INTERVAL = timedelta(hours=3)
+    MAX_UPDATE_INTERVAL = timedelta(days=30)
+
     class ParseResult(models.TextChoices):
         """Result of feed parser process."""
 
@@ -139,6 +143,10 @@ class Podcast(models.Model):
 
     parsed: datetime | None = models.DateTimeField(
         null=True, blank=True, verbose_name=_("Last RSS Feed Check")
+    )
+
+    update_interval: timedelta = models.DurationField(
+        default=DEFAULT_UPDATE_INTERVAL, verbose_name=_("Update Interval")
     )
 
     modified: datetime | None = models.DateTimeField(
