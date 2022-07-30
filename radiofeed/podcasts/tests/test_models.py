@@ -160,14 +160,20 @@ class TestPodcastManager:
             ),
             (
                 True,
-                timedelta(days=100),
+                timedelta(days=24),
                 timedelta(hours=24),
+                True,
+            ),
+            (
+                True,
+                timedelta(days=100),
+                timedelta(hours=12),
                 False,
             ),
             (
                 True,
                 timedelta(days=100),
-                timedelta(hours=120),
+                timedelta(hours=24),
                 True,
             ),
         ],
@@ -181,7 +187,11 @@ class TestPodcastManager:
             parsed=now - parsed if parsed else None,
         )
 
-        assert Podcast.objects.scheduled().exists() == exists
+        assert Podcast.objects.scheduled().exists() == exists, (
+            pub_date,
+            parsed,
+            exists,
+        )
 
 
 class TestPodcastModel:
