@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-30 08:22+0000\n"
+"POT-Creation-Date: 2022-07-30 09:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,6 @@ msgstr ""
 
 #: radiofeed/episodes/models.py:79 radiofeed/podcasts/models.py:317
 #: radiofeed/podcasts/models.py:351
-#, fuzzy
 msgid "Podcast"
 msgstr ""
 
@@ -191,8 +190,6 @@ msgid "With no release date"
 msgstr "Ilman päivämäärää"
 
 #: radiofeed/podcasts/admin.py:147 radiofeed/podcasts/admin.py:154
-#: templates/episodes/index.html:4 templates/episodes/index.html:10
-#: templates/podcasts/index.html:12
 msgid "Promoted"
 msgstr "Ylennetyt"
 
@@ -1153,10 +1150,15 @@ msgstr "Kesto"
 msgid "New Releases"
 msgstr "Uudet Jaksot"
 
-#: templates/episodes/index.html:11 templates/podcasts/index.html:4
-#: templates/podcasts/index.html:13
-msgid "My Podcasts"
-msgstr "Minun Podcastit"
+#: templates/episodes/index.html:4 templates/episodes/index.html:10
+#: templates/podcasts/index.html:4 templates/podcasts/index.html:9
+msgid "Promotions"
+msgstr "Ylennykset"
+
+#: templates/episodes/index.html:4 templates/episodes/index.html:11
+#: templates/podcasts/index.html:4 templates/podcasts/index.html:10
+msgid "Subscriptions"
+msgstr "Tilaukset"
 
 #: templates/episodes/index.html:12
 msgid "Find an episode..."
@@ -1282,7 +1284,8 @@ msgstr "Linkki kopioittu Leikepödälle"
 
 #: templates/includes/sidebar.html:4 templates/podcasts/category_detail.html:4
 #: templates/podcasts/detail.html:86 templates/podcasts/index.html:4
-#: templates/podcasts/search.html:4 templates/search_base.html:19
+#: templates/podcasts/index.html:8 templates/podcasts/search.html:4
+#: templates/search_base.html:19
 msgid "Podcasts"
 msgstr "Podcastit"
 
@@ -1483,3 +1486,6 @@ msgid ""
 "following form:\n"
 "            "
 msgstr ""
+
+#~ msgid "My Podcasts"
+#~ msgstr "Minun Podcastit"

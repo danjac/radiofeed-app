@@ -1,22 +1,20 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %} | {% translate "New Releases" %} {% if promoted %} | {% translate "Promoted" %} {% endif %} {% endblock %}
+{% block title %} | {% translate "New Releases" %}{% if has_subscriptions %} | {% if promoted %} {% translate "Promotions" %}{% else %}{% translate "Subscriptions" %}{% endif %}{% endif %} {% endblock %}
 
 {% block content %}
 
     {% url 'episodes:index' as index_url %}
 
-    {% translate "Promoted" as t_promoted %}
-    {% translate "My Podcasts" as t_my_podcasts %}
+    {% translate "Promotions" as t_promotions %}
+    {% translate "Subscriptions" as t_subscriptions %}
     {% translate "Find an episode..." as t_find_episode %}
 
     <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
         <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
             {% translate "New Releases" %}
-            {% if promoted and has_subscriptions %} - {{ t_promoted }}
-            {% elif has_subscriptions %} - {{ t_my_podcasts }}
-            {% endif %}
+            {% if has_subscriptions %}: {% if promoted %}{{ t_promotions }}{% else %}{{ t_subscriptions }}{% endif %}{% endif %}
         </h1>
         {% if not has_subscriptions %}
             <div class="flex items-center justify-center sm:justify-end space-x-3">
@@ -30,10 +28,10 @@
             <div class="flex items-center justify-center sm:justify-start">
                 {% if promoted %}
                     <a href="{{ index_url}}"
-                        class="link">{{ t_my_podcasts }}</a>
+                        class="link">{{ t_subscriptions }}</a>
                 {% else %}
                     <a href="{{ index_url }}?promoted=true"
-                        class="link">{{ t_promoted }}</a>
+                        class="link">{{ t_promotions }}</a>
                 {% endif %}
             </div>
 
