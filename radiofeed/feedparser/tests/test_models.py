@@ -6,39 +6,29 @@ import pytest
 
 from django.utils import timezone
 
+from radiofeed.feedparser.factories import FeedFactory, ItemFactory
 from radiofeed.feedparser.models import Feed, Item
 
 
-@pytest.fixture
-def item_dict():
-    return {
-        "guid": "test",
-        "title": "test",
-        "media_url": "https://example.com/",
-        "media_type": "audio/mpeg",
-        "pub_date": timezone.now() - timedelta(days=1),
-    }
-
-
 class TestItem:
-    def test_pub_date_none(self, item_dict):
+    def test_pub_date_none(self):
         with pytest.raises(ValueError):
-            Item(**item_dict | {"pub_date": None})
+            Item(**ItemFactory(pub_date=None))
 
-    def test_pub_date_in_future(self, item_dict):
+    def test_pub_date_in_future(self):
         with pytest.raises(ValueError):
-            Item(**item_dict | {"pub_date": timezone.now() + timedelta(days=1)})
+            Item(**ItemFactory(pub_date=timezone.now() + timedelta(days=1)))
 
-    def test_not_audio_mimetype(self, item_dict):
+    def test_not_audio_mimetype(self):
         with pytest.raises(ValueError):
-            Item(**item_dict | {"media_type": "video/mpeg"})
+            Item(**ItemFactory(media_type="video/mpeg"))
 
-    def test_default_keywords_from_categories(self, item_dict):
-        item = Item(**item_dict, categories=["Gaming", "Hobbies", "Video Games"])
+    def test_default_keywords_from_categories(self):
+        item = Item(**ItemFactory(), categories=["Gaming", "Hobbies", "Video Games"])
         assert item.keywords == "Gaming Hobbies Video Games"
 
-    def test_defaults(self, item_dict):
-        item = Item(**item_dict)
+    def test_defaults(self):
+        item = Item(**ItemFactory())
         assert item.explicit is False
         assert item.episode_type == "full"
         assert item.categories == []
@@ -47,12 +37,12 @@ class TestItem:
 
 class TestFeed:
     @pytest.fixture
-    def item(self, item_dict):
-        return Item(**item_dict)
+    def item(self):
+        return Item(**ItemFactory())
 
     def test_language(self, item):
         feed = Feed(
-            title="test",
+            **FeedFactory(),
             language="fr-CA",
             items=[item],
         )
@@ -60,14 +50,11 @@ class TestFeed:
 
     def test_no_items(self):
         with pytest.raises(ValueError):
-            Feed(
-                title="test",
-                items=[],
-            )
+            Feed(**FeedFactory(), items=[])
 
     def test_not_complete(self, item):
         feed = Feed(
-            title="test",
+            **FeedFactory(),
             items=[item],
             complete="no",
         )
@@ -76,7 +63,7 @@ class TestFeed:
 
     def test_complete(self, item):
         feed = Feed(
-            title="test",
+            **FeedFactory(),
             items=[item],
             complete="yes",
         )
@@ -85,7 +72,7 @@ class TestFeed:
 
     def test_defaults(self, item):
         feed = Feed(
-            title="test",
+            **FeedFactory(),
             items=[item],
         )
 

@@ -7,6 +7,7 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.feedparser import scheduler
+from radiofeed.feedparser.factories import FeedFactory, ItemFactory
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.models import Podcast
@@ -63,15 +64,12 @@ class TestIncrementUpdateInterval:
 class TestCalcUpdateInterval:
     def test_single_date(self):
         feed = Feed(
-            title="test",
-            complete="yes",
+            **FeedFactory(),
             items=[
                 Item(
-                    guid="test",
-                    title="test",
-                    media_url="https://example.com",
-                    media_type="audio/mpeg",
-                    pub_date=timezone.now() - timedelta(days=3),
+                    **ItemFactory(
+                        pub_date=timezone.now() - timedelta(days=3),
+                    )
                 )
             ],
         )
@@ -81,16 +79,9 @@ class TestCalcUpdateInterval:
     def test_calc_interval(self):
         now = timezone.now()
         feed = Feed(
-            title="test",
-            complete="yes",
+            **FeedFactory(),
             items=[
-                Item(
-                    guid="test",
-                    title="test",
-                    media_url="https://example.com",
-                    media_type="audio/mpeg",
-                    pub_date=pub_date,
-                )
+                Item(**ItemFactory(pub_date=pub_date))
                 for pub_date in [now - timedelta(days=3 * i) for i in range(1, 12)]
             ],
         )
@@ -100,15 +91,12 @@ class TestCalcUpdateInterval:
     def test_min_interval(self):
         now = timezone.now()
         feed = Feed(
-            title="test",
-            complete="yes",
+            **FeedFactory(),
             items=[
                 Item(
-                    guid="test",
-                    title="test",
-                    media_url="https://example.com",
-                    media_type="audio/mpeg",
-                    pub_date=pub_date,
+                    **ItemFactory(
+                        pub_date=pub_date,
+                    )
                 )
                 for pub_date in [
                     now - timedelta(seconds=1200 * i) for i in range(1, 12)
@@ -123,15 +111,12 @@ class TestCalcUpdateInterval:
     def test_max_interval(self):
         now = timezone.now()
         feed = Feed(
-            title="test",
-            complete="yes",
+            **FeedFactory(),
             items=[
                 Item(
-                    guid="test",
-                    title="test",
-                    media_url="https://example.com",
-                    media_type="audio/mpeg",
-                    pub_date=pub_date,
+                    **ItemFactory(
+                        pub_date=pub_date,
+                    )
                 )
                 for pub_date in [now - timedelta(days=33 * i) for i in range(1, 12)]
             ],
