@@ -10,7 +10,6 @@ from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.factories import FeedFactory, ItemFactory
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.factories import PodcastFactory
-from radiofeed.podcasts.models import Podcast
 
 
 class TestGetScheduledPodcastsForUpdate:
@@ -46,20 +45,10 @@ class TestGetScheduledPodcastsForUpdate:
 
 class TestIncrementUpdateInterval:
     def test_increment(self):
-        assert (
-            scheduler.increment_update_interval(
-                Podcast(update_interval=timedelta(days=10))
-            ).days
-            == 11
-        )
+        assert scheduler.increment_update_interval(timedelta(days=10)).days == 11
 
     def test_max_value(self):
-        assert (
-            scheduler.increment_update_interval(
-                Podcast(update_interval=timedelta(days=30))
-            ).days
-            == 30
-        )
+        assert scheduler.increment_update_interval(timedelta(days=30)).days == 30
 
 
 class TestCalcUpdateInterval:

@@ -74,14 +74,9 @@ def calc_update_interval(feed: Feed) -> timedelta:
 
     now = timezone.now()
 
-    # automatically set max interval if older than 30 days
-
-    if now - MAX_UPDATE_INTERVAL > feed.pub_date:
-        return MAX_UPDATE_INTERVAL
-
     # find the mean distance between episodes
 
-    return _update_interval_within_bounds(
+    interval = _update_interval_within_bounds(
         timedelta(
             seconds=numpy.mean(
                 [
@@ -94,11 +89,18 @@ def calc_update_interval(feed: Feed) -> timedelta:
         )
     )
 
+    # automatically increment while less than current time
 
-def increment_update_interval(podcast: Podcast, increment: float = 0.1) -> timedelta:
+    while now > feed.pub_date + interval and MAX_UPDATE_INTERVAL > interval:
+        interval = increment_update_interval(interval)
+
+    return interval
+
+
+def increment_update_interval(interval: timedelta, increment: float = 0.1) -> timedelta:
     """Increments update interval"""
 
-    current_interval = podcast.update_interval.total_seconds()
+    current_interval = interval.total_seconds()
 
     return _update_interval_within_bounds(
         timedelta(seconds=current_interval + (current_interval * increment))

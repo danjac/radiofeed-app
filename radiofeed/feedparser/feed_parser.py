@@ -194,7 +194,9 @@ class FeedParser:
             http_status=http_status,
             parse_result=parse_result,
             num_retries=num_retries,
-            update_interval=scheduler.increment_update_interval(self._podcast),
+            update_interval=scheduler.increment_update_interval(
+                self._podcast.update_interval
+            ),
         )
         return False
 
