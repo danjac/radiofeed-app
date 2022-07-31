@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Final
 
 import numpy
@@ -56,17 +56,15 @@ def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
 def calc_update_interval(feed: Feed) -> timedelta:
     """Returns mean interval of episodes in feed."""
 
-    return _update_interval_within_bounds(
-        timedelta(
-            seconds=numpy.mean(
-                [
-                    (a - b).total_seconds()
-                    for a, b in itertools.pairwise(
-                        [timezone.now()] + [item.pub_date for item in feed.items]
-                    )
-                ]
-            )
+    intervals = [
+        (a - b).total_seconds()
+        for a, b in itertools.pairwise(
+            [timezone.now()] + [item.pub_date for item in feed.items]
         )
+    ]
+
+    return _update_interval_within_bounds(
+        timedelta(seconds=numpy.mean(intervals) - numpy.std(intervals))
     )
 
 

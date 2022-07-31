@@ -77,16 +77,19 @@ class TestCalcUpdateInterval:
         assert scheduler.calc_update_interval(feed).days == 3
 
     def test_calc_interval(self):
-        now = timezone.now()
-        feed = Feed(
-            **FeedFactory(),
-            items=[
-                Item(**ItemFactory(pub_date=pub_date))
-                for pub_date in [now - timedelta(days=3 * i) for i in range(1, 12)]
-            ],
-        )
 
-        assert scheduler.calc_update_interval(feed).days == 3
+        items = []
+        last = timezone.now()
+
+        for day in [4, 3, 4, 2, 5, 2, 4, 4, 3, 4, 4, 4, 6, 5, 7, 7, 7, 7, 3]:
+
+            pub_date = last - timedelta(days=day)
+            items.append(Item(**ItemFactory(pub_date=pub_date)))
+            last = pub_date
+
+        feed = Feed(**FeedFactory(), items=items)
+
+        assert scheduler.calc_update_interval(feed).days == pytest.approx(2)
 
     def test_min_interval(self):
         now = timezone.now()
