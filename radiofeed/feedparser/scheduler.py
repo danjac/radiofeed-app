@@ -7,7 +7,7 @@ from typing import Final
 
 import numpy
 
-from django.db import models
+from django.db.models import Count, F, Q
 from django.utils import timezone
 
 from radiofeed.feedparser.models import Feed
@@ -44,28 +44,24 @@ def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
     now = timezone.now()
 
     return (
-        Podcast.objects.annotate(
-            scheduled=models.ExpressionWrapper(
-                models.F("pub_date") + models.F("update_interval"),
-                output_field=models.DateTimeField(),
-            ),
-        )
-        .alias(subscribers=models.Count("subscription"))
-        .filter(
-            models.Q(parsed__isnull=True)
-            | models.Q(pub_date__isnull=True)
-            | models.Q(
-                models.Q(scheduled__range=(now - MAX_UPDATE_INTERVAL, now))
-                | models.Q(parsed__lt=now - models.F("update_interval")),
+        Podcast.objects.alias(subscribers=Count("subscription")).filter(
+            Q(parsed__isnull=True)
+            | Q(pub_date__isnull=True)
+            | Q(parsed__lt=now - F("update_interval"))
+            | Q(
                 parsed__lt=now - MIN_UPDATE_INTERVAL,
+                pub_date__range=(
+                    now - MAX_UPDATE_INTERVAL,
+                    now - F("update_interval"),
+                ),
             ),
             active=True,
         )
     ).order_by(
-        models.F("subscribers").desc(),
-        models.F("promoted").desc(),
-        models.F("parsed").asc(nulls_first=True),
-        models.F("pub_date").desc(nulls_first=True),
+        F("subscribers").desc(),
+        F("promoted").desc(),
+        F("parsed").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
     )
 
 
@@ -77,7 +73,7 @@ def calc_update_interval(feed: Feed) -> timedelta:
     # find the mean distance between episodes
 
     try:
-        interval = _within_interval_bounds(
+        interval = _update_interval_within_bounds(
             timedelta(
                 seconds=float(
                     numpy.mean(
@@ -107,10 +103,10 @@ def increment_update_interval(interval: timedelta, increment: float = 0.1) -> ti
 
     current_interval = interval.total_seconds()
 
-    return _within_interval_bounds(
+    return _update_interval_within_bounds(
         timedelta(seconds=current_interval + (current_interval * increment))
     )
 
 
-def _within_interval_bounds(interval: timedelta) -> timedelta:
+def _update_interval_within_bounds(interval: timedelta) -> timedelta:
     return max(min(interval, MAX_UPDATE_INTERVAL), MIN_UPDATE_INTERVAL)
