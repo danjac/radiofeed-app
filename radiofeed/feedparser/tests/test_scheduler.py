@@ -76,6 +76,20 @@ class TestCalcUpdateInterval:
 
         assert scheduler.calc_update_interval(feed).days == 3
 
+    def test_single_date_gt_max(self):
+        feed = Feed(
+            **FeedFactory(),
+            items=[
+                Item(
+                    **ItemFactory(
+                        pub_date=timezone.now() - timedelta(days=33),
+                    )
+                )
+            ],
+        )
+
+        assert scheduler.calc_update_interval(feed).days == 30
+
     def test_calc_interval(self):
 
         items = []

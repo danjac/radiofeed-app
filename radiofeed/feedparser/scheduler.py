@@ -56,12 +56,20 @@ def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
 def calc_update_interval(feed: Feed) -> timedelta:
     """Returns mean interval of episodes in feed."""
 
+    now = timezone.now()
+
+    # automatically set max interval if older than 30 days
+
+    if now - MAX_UPDATE_INTERVAL > feed.pub_date:
+        return MAX_UPDATE_INTERVAL
+
     intervals = [
         (a - b).total_seconds()
-        for a, b in itertools.pairwise(
-            [timezone.now()] + [item.pub_date for item in feed.items]
-        )
+        for a, b in itertools.pairwise([now] + [item.pub_date for item in feed.items])
     ]
+
+    # find the mean and subtract standard deviation
+    # e.g. if mean is 3 days and stdev is 1 day result is 2 days
 
     return _update_interval_within_bounds(
         timedelta(seconds=numpy.mean(intervals) - numpy.std(intervals))
