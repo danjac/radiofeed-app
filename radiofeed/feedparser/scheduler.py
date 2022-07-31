@@ -54,10 +54,10 @@ def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
         .filter(
             models.Q(parsed__isnull=True)
             | models.Q(pub_date__isnull=True)
-            | models.Q(parsed__lt=now - models.F("update_interval"))
             | models.Q(
+                models.Q(scheduled__range=(now - MAX_UPDATE_INTERVAL, now))
+                | models.Q(parsed__lt=now - models.F("update_interval")),
                 parsed__lt=now - MIN_UPDATE_INTERVAL,
-                scheduled__range=(now - MAX_UPDATE_INTERVAL, now),
             ),
             active=True,
         )
