@@ -14,7 +14,7 @@ from radiofeed.podcasts.factories import PodcastFactory
 
 class TestScheduledPodcastsForUpdate:
     @pytest.mark.parametrize(
-        "active,parsed,pub_date,update_interval,exists",
+        "active,parsed,pub_date,frequency,exists",
         [
             (True, None, None, timedelta(hours=24), True),
             (False, None, None, timedelta(hours=24), False),
@@ -26,19 +26,19 @@ class TestScheduledPodcastsForUpdate:
             (True, timedelta(days=30), timedelta(days=90), timedelta(days=30), True),
         ],
     )
-    def test_get_scheduled(self, db, active, parsed, pub_date, update_interval, exists):
+    def test_get_scheduled(self, db, active, parsed, pub_date, frequency, exists):
         PodcastFactory(
             active=active,
             parsed=timezone.now() - parsed if parsed else None,
             pub_date=timezone.now() - pub_date if pub_date else None,
-            update_interval=update_interval,
+            frequency=frequency,
         )
 
         assert scheduler.scheduled_podcasts_for_update().exists() == exists, (
             active,
             parsed,
             pub_date,
-            update_interval,
+            frequency,
             exists,
         )
 
@@ -90,7 +90,7 @@ class TestSchedule:
 
         assert scheduler.schedule(feed).days == 30
 
-    def test_varied(self):
+    def test_varied_dates(self):
 
         items = []
         last = timezone.now()
@@ -105,7 +105,7 @@ class TestSchedule:
 
         assert scheduler.schedule(feed).days == pytest.approx(4)
 
-    def test_min_interval(self):
+    def test_min_frequency(self):
         now = timezone.now()
         feed = Feed(
             **FeedFactory(),
@@ -123,7 +123,7 @@ class TestSchedule:
 
         assert (scheduler.schedule(feed).total_seconds() / 3600) == pytest.approx(3)
 
-    def test_max_interval(self):
+    def test_max_frequency(self):
         now = timezone.now()
         feed = Feed(
             **FeedFactory(),

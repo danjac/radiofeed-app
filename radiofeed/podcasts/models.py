@@ -106,8 +106,8 @@ class Podcast(models.Model):
         null=True, blank=True, verbose_name=_("Last RSS Feed Check")
     )
 
-    update_interval: timedelta = models.DurationField(
-        default=timedelta(hours=24), verbose_name=_("Update Interval")
+    frequency: timedelta = models.DurationField(
+        default=timedelta(hours=24), verbose_name=_("RSS Update Frequency")
     )
 
     modified: datetime | None = models.DateTimeField(

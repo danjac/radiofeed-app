@@ -220,7 +220,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     readonly_fields = (
         "parsed",
         "pub_date",
-        "update_interval",
+        "frequency",
         "modified",
         "etag",
         "http_status",

@@ -135,7 +135,7 @@ class FeedParser:
             modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self._extract_text(feed),
             keywords=" ".join(category_names - {c.lowercase_name for c in categories}),
-            update_interval=scheduler.schedule(feed),
+            frequency=scheduler.schedule(feed),
             **attrs.asdict(
                 feed,
                 filter=attrs.filters.exclude(  # type: ignore
@@ -194,9 +194,9 @@ class FeedParser:
             http_status=http_status,
             parse_result=parse_result,
             num_retries=num_retries,
-            update_interval=scheduler.reschedule(
+            frequency=scheduler.reschedule(
                 self._podcast.pub_date,
-                self._podcast.update_interval,
+                self._podcast.frequency,
             ),
         )
         return False
