@@ -7,7 +7,7 @@ from typing import Final
 
 import numpy
 
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
 
 from radiofeed.feedparser.models import Feed
@@ -18,7 +18,7 @@ MIN_UPDATE_INTERVAL: Final = timedelta(hours=3)
 MAX_UPDATE_INTERVAL: Final = timedelta(days=30)
 
 
-def get_scheduled_podcasts_for_update() -> models.QuerySet[Podcast]:
+def get_scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     """
     Returns podcasts scheduled for feed updates:
 
