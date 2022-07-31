@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Final
 
 import numpy
