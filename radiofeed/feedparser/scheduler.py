@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Final
 
 import numpy
@@ -50,42 +50,34 @@ def schedule(feed: Feed) -> timedelta:
     # find the mean distance between episodes
 
     try:
-        interval = _within_bounds(
-            timedelta(
-                seconds=float(
-                    numpy.mean(
-                        [
-                            (a - b).total_seconds()
-                            for a, b in itertools.pairwise(
-                                item.pub_date for item in feed.items
-                            )
-                        ]
-                    )
+        interval = timedelta(
+            seconds=float(
+                numpy.mean(
+                    [
+                        (a - b).total_seconds()
+                        for a, b in itertools.pairwise(
+                            item.pub_date for item in feed.items
+                        )
+                    ]
                 )
             )
         )
     except ValueError:
         interval = DEFAULT_UPDATE_INTERVAL
 
-    # automatically increment while less than current time
-
-    now = timezone.now()
-
-    while now > feed.pub_date + interval and MAX_UPDATE_INTERVAL > interval:
-        interval = reschedule(interval)
-
-    return interval
+    return reschedule(feed.pub_date, interval)
 
 
-def reschedule(interval: timedelta, increment: float = 0.1) -> timedelta:
+def reschedule(
+    pub_date: datetime | None, interval: timedelta, increment: float = 0.1
+) -> timedelta:
     """Increments update interval"""
 
-    current_interval = interval.total_seconds()
+    now = timezone.now()
+    pub_date = pub_date or now
 
-    return _within_bounds(
-        timedelta(seconds=current_interval + (current_interval * increment))
-    )
+    while now > pub_date + interval and MAX_UPDATE_INTERVAL > interval:
+        seconds = interval.total_seconds()
+        interval = timedelta(seconds=seconds + (seconds * increment))
 
-
-def _within_bounds(interval: timedelta) -> timedelta:
     return max(min(interval, MAX_UPDATE_INTERVAL), MIN_UPDATE_INTERVAL)

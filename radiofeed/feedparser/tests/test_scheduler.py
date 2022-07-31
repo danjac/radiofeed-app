@@ -44,11 +44,21 @@ class TestScheduledPodcastsForUpdate:
 
 
 class TestReschedule:
-    def test_schedule(self):
-        assert scheduler.reschedule(timedelta(days=10)).days == 11
+    def test_reschedule_no_change(self):
+        assert scheduler.reschedule(timezone.now(), timedelta(days=10)).days == 10
+
+    def test_increment(self):
+        assert scheduler.reschedule(
+            timezone.now() - timedelta(days=1), timedelta(hours=24)
+        ).total_seconds() / 3600 == pytest.approx(26.4)
 
     def test_max_value(self):
-        assert scheduler.reschedule(timedelta(days=30)).days == 30
+        assert (
+            scheduler.reschedule(
+                timezone.now() - timedelta(days=33), timedelta(days=30)
+            ).days
+            == 30
+        )
 
 
 class TestSchedule:
