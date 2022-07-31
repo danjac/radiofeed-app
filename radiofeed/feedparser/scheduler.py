@@ -71,7 +71,7 @@ def schedule(feed: Feed) -> timedelta:
 def reschedule(
     pub_date: datetime | None, interval: timedelta, increment: float = 0.1
 ) -> timedelta:
-    """Increments update interval"""
+    """Increments update interval."""
 
     now = timezone.now()
     pub_date = pub_date or now
