@@ -85,8 +85,7 @@ class FeedParser:
         # Check if there is another active feed with the same URL/content
         if (
             Podcast.objects.exclude(pk=self._podcast.id).filter(
-                Q(content_hash=content_hash) | Q(rss=response.url),
-                active=True,
+                Q(content_hash=content_hash) | Q(rss=response.url)
             )
         ).exists():
             raise DuplicateFeed(response=response)
