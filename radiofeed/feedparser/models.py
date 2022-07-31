@@ -131,7 +131,7 @@ class Feed:
         validator=validators.required,
     )
 
-    pub_date: datetime | None = attrs.field()
+    pub_date: datetime = attrs.field()
 
     @pub_date.default
     def _default_pub_date(self) -> datetime:

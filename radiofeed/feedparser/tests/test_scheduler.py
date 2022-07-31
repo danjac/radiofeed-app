@@ -22,7 +22,7 @@ class TestGetScheduledPodcastsForUpdate:
             (True, timedelta(days=3), timedelta(days=3), timedelta(hours=24), True),
             (False, timedelta(days=3), timedelta(days=3), timedelta(hours=24), False),
             (True, timedelta(hours=3), timedelta(hours=3), timedelta(hours=24), False),
-            (True, timedelta(days=15), timedelta(days=90), timedelta(days=30), False),
+            (True, timedelta(days=15), timedelta(days=15), timedelta(days=30), False),
             (True, timedelta(days=30), timedelta(days=90), timedelta(days=30), True),
         ],
     )
@@ -74,7 +74,7 @@ class TestCalcUpdateInterval:
             ],
         )
 
-        assert scheduler.calc_update_interval(feed).days == 1
+        assert scheduler.calc_update_interval(feed).days == 3
 
     def test_calc_interval(self):
         now = timezone.now()
