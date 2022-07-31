@@ -20,39 +20,20 @@ MAX_UPDATE_INTERVAL: Final = timedelta(days=30)
 
 def get_scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     """
-    Returns podcasts scheduled for feed updates:
-
-    1. Any podcast with parsed or pub_date NULL (i.e. recently added)
-    2. Any podcast with scheduled date > 30 days and less than current time (scheduled date = pub_date + update_interval)
-    3. any podcast with parsed < current time - update_interval
-
-    Example 1: podcast with last pub date 3 days ago, last parsed 2 days ago, update interval 7 days.
-
-    Next scheduled update will be in 4 days.
-
-    Example 2: podcast with last pub date 90 days ago, update interval 30 days, last parsed 15 days ago.
-
-    Next scheduled update will be in 15 days.
-
-    Ordered by:
-        - number of subscribers
-        - promoted
-        - last parsed
-        - last pub date
-
+    Returns any active podcasts scheduled for feed updates.
     """
     now = timezone.now()
+    from_interval = now - F("update_interval")
 
     return (
         Podcast.objects.alias(subscribers=Count("subscription")).filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - F("update_interval"))
+            | Q(parsed__lt=from_interval)
             | Q(
-                parsed__lt=now - MIN_UPDATE_INTERVAL,
                 pub_date__range=(
                     now - MAX_UPDATE_INTERVAL,
-                    now - F("update_interval"),
+                    from_interval - MIN_UPDATE_INTERVAL,
                 ),
             ),
             active=True,
