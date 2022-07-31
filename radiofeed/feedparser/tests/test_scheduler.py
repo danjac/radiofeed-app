@@ -20,6 +20,7 @@ class TestGetScheduledPodcastsForUpdate:
             (True, None, None, timedelta(hours=24), True),
             (False, None, None, timedelta(hours=24), False),
             (True, timedelta(days=3), timedelta(days=3), timedelta(hours=24), True),
+            (True, timedelta(hours=2), timedelta(hours=3), timedelta(hours=3), False),
             (False, timedelta(days=3), timedelta(days=3), timedelta(hours=24), False),
             (True, timedelta(hours=3), timedelta(hours=3), timedelta(hours=24), False),
             (True, timedelta(days=15), timedelta(days=15), timedelta(days=30), False),
