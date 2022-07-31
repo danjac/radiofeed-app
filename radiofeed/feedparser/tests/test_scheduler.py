@@ -104,7 +104,7 @@ class TestCalcUpdateInterval:
 
         feed = Feed(**FeedFactory(), items=items)
 
-        assert scheduler.calc_update_interval(feed).days == pytest.approx(2)
+        assert scheduler.calc_update_interval(feed).days == pytest.approx(4)
 
     def test_min_interval(self):
         now = timezone.now()

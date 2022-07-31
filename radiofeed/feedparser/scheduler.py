@@ -79,16 +79,19 @@ def calc_update_interval(feed: Feed) -> timedelta:
     if now - MAX_UPDATE_INTERVAL > feed.pub_date:
         return MAX_UPDATE_INTERVAL
 
-    intervals = [
-        (a - b).total_seconds()
-        for a, b in itertools.pairwise([now] + [item.pub_date for item in feed.items])
-    ]
-
-    # find the mean and subtract standard deviation
-    # e.g. if mean is 3 days and stdev is 1 day result is 2 days
+    # find the mean distance between episodes
 
     return _update_interval_within_bounds(
-        timedelta(seconds=numpy.mean(intervals) - numpy.std(intervals))
+        timedelta(
+            seconds=numpy.mean(
+                [
+                    (a - b).total_seconds()
+                    for a, b in itertools.pairwise(
+                        [now] + [item.pub_date for item in feed.items]
+                    )
+                ]
+            )
+        )
     )
 
 
