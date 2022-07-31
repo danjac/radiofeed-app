@@ -77,7 +77,7 @@ def calc_update_interval(feed: Feed) -> timedelta:
     # find the mean distance between episodes
 
     try:
-        interval = _update_interval_within_bounds(
+        interval = _within_interval_bounds(
             timedelta(
                 seconds=float(
                     numpy.mean(
@@ -107,10 +107,10 @@ def increment_update_interval(interval: timedelta, increment: float = 0.1) -> ti
 
     current_interval = interval.total_seconds()
 
-    return _update_interval_within_bounds(
+    return _within_interval_bounds(
         timedelta(seconds=current_interval + (current_interval * increment))
     )
 
 
-def _update_interval_within_bounds(interval: timedelta) -> timedelta:
+def _within_interval_bounds(interval: timedelta) -> timedelta:
     return max(min(interval, MAX_UPDATE_INTERVAL), MIN_UPDATE_INTERVAL)
