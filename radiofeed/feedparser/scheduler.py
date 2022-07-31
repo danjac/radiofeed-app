@@ -49,8 +49,6 @@ def get_scheduled_podcasts_for_update() -> QuerySet[Podcast]:
 def calc_update_interval(feed: Feed) -> timedelta:
     """Returns mean interval of episodes in feed."""
 
-    now = timezone.now()
-
     # find the mean distance between episodes
 
     try:
@@ -72,6 +70,8 @@ def calc_update_interval(feed: Feed) -> timedelta:
         interval = DEFAULT_UPDATE_INTERVAL
 
     # automatically increment while less than current time
+
+    now = timezone.now()
 
     while now > feed.pub_date + interval and MAX_UPDATE_INTERVAL > interval:
         interval = increment_update_interval(interval)
