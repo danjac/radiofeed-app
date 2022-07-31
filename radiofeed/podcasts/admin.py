@@ -206,7 +206,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
-        "update_interval",
     )
 
     list_editable = (
