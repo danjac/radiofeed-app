@@ -18,7 +18,7 @@ MIN_UPDATE_INTERVAL: Final = timedelta(hours=3)
 MAX_UPDATE_INTERVAL: Final = timedelta(days=30)
 
 
-def get_scheduled_podcasts_for_update() -> QuerySet[Podcast]:
+def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     """
     Returns any active podcasts scheduled for feed updates.
     """
@@ -31,10 +31,8 @@ def get_scheduled_podcasts_for_update() -> QuerySet[Podcast]:
             | Q(pub_date__isnull=True)
             | Q(parsed__lt=from_interval)
             | Q(
-                pub_date__range=(
-                    now - MAX_UPDATE_INTERVAL,
-                    from_interval - MIN_UPDATE_INTERVAL,
-                ),
+                pub_date__range=(now - MAX_UPDATE_INTERVAL, from_interval),
+                parsed__lt=now - MIN_UPDATE_INTERVAL,
             ),
             active=True,
         )
@@ -46,13 +44,13 @@ def get_scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     )
 
 
-def calc_update_interval(feed: Feed) -> timedelta:
+def schedule(feed: Feed) -> timedelta:
     """Returns mean interval of episodes in feed."""
 
     # find the mean distance between episodes
 
     try:
-        interval = _update_interval_within_bounds(
+        interval = _within_bounds(
             timedelta(
                 seconds=float(
                     numpy.mean(
@@ -74,20 +72,20 @@ def calc_update_interval(feed: Feed) -> timedelta:
     now = timezone.now()
 
     while now > feed.pub_date + interval and MAX_UPDATE_INTERVAL > interval:
-        interval = increment_update_interval(interval)
+        interval = reschedule(interval)
 
     return interval
 
 
-def increment_update_interval(interval: timedelta, increment: float = 0.1) -> timedelta:
+def reschedule(interval: timedelta, increment: float = 0.1) -> timedelta:
     """Increments update interval"""
 
     current_interval = interval.total_seconds()
 
-    return _update_interval_within_bounds(
+    return _within_bounds(
         timedelta(seconds=current_interval + (current_interval * increment))
     )
 
 
-def _update_interval_within_bounds(interval: timedelta) -> timedelta:
+def _within_bounds(interval: timedelta) -> timedelta:
     return max(min(interval, MAX_UPDATE_INTERVAL), MIN_UPDATE_INTERVAL)

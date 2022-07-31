@@ -27,9 +27,7 @@ class Command(BaseCommand):
         """Command handler implmentation."""
         parse_feed.map(
             itertools.islice(
-                scheduler.get_scheduled_podcasts_for_update()
-                .values_list("pk")
-                .distinct(),
+                scheduler.scheduled_podcasts_for_update().values_list("pk").distinct(),
                 options["limit"],
             )
         )

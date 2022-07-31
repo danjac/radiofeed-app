@@ -12,7 +12,7 @@ from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.factories import PodcastFactory
 
 
-class TestGetScheduledPodcastsForUpdate:
+class TestScheduledPodcastsForUpdate:
     @pytest.mark.parametrize(
         "active,parsed,pub_date,update_interval,exists",
         [
@@ -34,7 +34,7 @@ class TestGetScheduledPodcastsForUpdate:
             update_interval=update_interval,
         )
 
-        assert scheduler.get_scheduled_podcasts_for_update().exists() == exists, (
+        assert scheduler.scheduled_podcasts_for_update().exists() == exists, (
             active,
             parsed,
             pub_date,
@@ -43,15 +43,15 @@ class TestGetScheduledPodcastsForUpdate:
         )
 
 
-class TestIncrementUpdateInterval:
-    def test_increment(self):
-        assert scheduler.increment_update_interval(timedelta(days=10)).days == 11
+class TestReschedule:
+    def test_schedule(self):
+        assert scheduler.reschedule(timedelta(days=10)).days == 11
 
     def test_max_value(self):
-        assert scheduler.increment_update_interval(timedelta(days=30)).days == 30
+        assert scheduler.reschedule(timedelta(days=30)).days == 30
 
 
-class TestCalcUpdateInterval:
+class TestSchedule:
     def test_single_date(self):
         feed = Feed(
             **FeedFactory(),
@@ -64,7 +64,7 @@ class TestCalcUpdateInterval:
             ],
         )
 
-        assert scheduler.calc_update_interval(feed).days == 3
+        assert scheduler.schedule(feed).days == 3
 
     def test_single_date_gt_max(self):
         feed = Feed(
@@ -78,9 +78,9 @@ class TestCalcUpdateInterval:
             ],
         )
 
-        assert scheduler.calc_update_interval(feed).days == 30
+        assert scheduler.schedule(feed).days == 30
 
-    def test_calc_interval(self):
+    def test_varied(self):
 
         items = []
         last = timezone.now()
@@ -93,7 +93,7 @@ class TestCalcUpdateInterval:
 
         feed = Feed(**FeedFactory(), items=items)
 
-        assert scheduler.calc_update_interval(feed).days == pytest.approx(4)
+        assert scheduler.schedule(feed).days == pytest.approx(4)
 
     def test_min_interval(self):
         now = timezone.now()
@@ -111,9 +111,7 @@ class TestCalcUpdateInterval:
             ],
         )
 
-        assert (
-            scheduler.calc_update_interval(feed).total_seconds() / 3600
-        ) == pytest.approx(3)
+        assert (scheduler.schedule(feed).total_seconds() / 3600) == pytest.approx(3)
 
     def test_max_interval(self):
         now = timezone.now()
@@ -129,4 +127,4 @@ class TestCalcUpdateInterval:
             ],
         )
 
-        assert scheduler.calc_update_interval(feed).days == 30
+        assert scheduler.schedule(feed).days == 30
