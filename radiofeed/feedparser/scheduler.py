@@ -76,18 +76,23 @@ def calc_update_interval(feed: Feed) -> timedelta:
 
     # find the mean distance between episodes
 
-    interval = _update_interval_within_bounds(
-        timedelta(
-            seconds=numpy.mean(
-                [
-                    (a - b).total_seconds()
-                    for a, b in itertools.pairwise(
-                        [now] + [item.pub_date for item in feed.items]
+    try:
+        interval = _update_interval_within_bounds(
+            timedelta(
+                seconds=float(
+                    numpy.mean(
+                        [
+                            (a - b).total_seconds()
+                            for a, b in itertools.pairwise(
+                                item.pub_date for item in feed.items
+                            )
+                        ]
                     )
-                ]
+                )
             )
         )
-    )
+    except ValueError:
+        interval = DEFAULT_UPDATE_INTERVAL
 
     # automatically increment while less than current time
 
