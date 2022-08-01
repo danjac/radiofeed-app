@@ -39,13 +39,22 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     )
 
 
-def schedule(feed: Feed, limit: int = 200, num_simulations: int = 1000) -> timedelta:
-    """Returns mean frequency of episodes in feed."""
+def schedule(
+    feed: Feed, limit: int = 200, num_reps: int = 500, num_simulations: int = 1000
+) -> timedelta:
+    """Estimates frequency of episodes in feed."""
+
+    # get intervals between most recent episodes
+    #
 
     intervals = [
         (a - b).total_seconds()
-        for a, b in itertools.pairwise(item.pub_date for item in feed.items[:limit])
+        for a, b in itertools.pairwise(
+            sorted([item.pub_date for item in feed.items], reverse=True)[:limit]
+        )
     ]
+
+    # run Monte Carlo simulation
 
     try:
         frequency = timedelta(
@@ -60,6 +69,8 @@ def schedule(feed: Feed, limit: int = 200, num_simulations: int = 1000) -> timed
 
     except ValueError:
         frequency = Podcast.DEFAULT_FREQUENCY
+
+    # adjust until next scheduled update > current time
 
     return reschedule(feed.pub_date, frequency)
 
