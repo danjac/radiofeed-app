@@ -39,24 +39,25 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     )
 
 
-def schedule(feed: Feed) -> timedelta:
+def schedule(feed: Feed, limit: int = 200, num_simulations: int = 1000) -> timedelta:
     """Returns mean frequency of episodes in feed."""
 
-    # find the mean distance between episodes
+    intervals = [
+        (a - b).total_seconds()
+        for a, b in itertools.pairwise(item.pub_date for item in feed.items[:limit])
+    ]
 
     try:
         frequency = timedelta(
             seconds=float(
                 numpy.mean(
-                    [
-                        (a - b).total_seconds()
-                        for a, b in itertools.pairwise(
-                            item.pub_date for item in feed.items
-                        )
-                    ]
+                    numpy.random.normal(
+                        numpy.mean(intervals), numpy.std(intervals), num_simulations
+                    )
                 )
             )
         )
+
     except ValueError:
         frequency = Podcast.DEFAULT_FREQUENCY
 
