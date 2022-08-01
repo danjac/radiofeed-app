@@ -23,14 +23,15 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     Returns any active podcasts scheduled for feed updates.
     """
     now = timezone.now()
+    since = now - F("frequency")
 
     return (
         Podcast.objects.alias(subscribers=Count("subscription")).filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - F("frequency"))
+            | Q(parsed__lt=since)
             | Q(
-                pub_date__range=(now - MAX_FREQUENCY, now - F("frequency")),
+                pub_date__range=(now - MAX_FREQUENCY, since),
                 parsed__lt=now - MIN_FREQUENCY,
             ),
             active=True,
