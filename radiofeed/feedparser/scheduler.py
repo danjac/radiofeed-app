@@ -57,7 +57,7 @@ def schedule(feed: Feed) -> timedelta:
         )
     ]
 
-    # run Monte Carlo simulation
+    # run Monte Carlo simulation to generate spread of estimates and pick the mean of all results
 
     try:
         frequency = timedelta(
