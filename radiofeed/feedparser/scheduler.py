@@ -43,7 +43,6 @@ def schedule(feed: Feed) -> timedelta:
     """Estimates frequency of episodes in feed."""
 
     # get intervals between most recent episodes (max 90 days)
-    #
 
     since = timezone.now() - timedelta(days=90)
 
