@@ -68,8 +68,10 @@ def reschedule(
 ) -> timedelta:
     """Increments update frequency."""
 
+    if pub_date is None:
+        return Podcast.DEFAULT_FREQUENCY
+
     now = timezone.now()
-    pub_date = pub_date or now
 
     while now > pub_date + frequency and Podcast.MAX_FREQUENCY > frequency:
         seconds = frequency.total_seconds()

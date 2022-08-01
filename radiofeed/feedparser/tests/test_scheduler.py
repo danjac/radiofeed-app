@@ -44,6 +44,9 @@ class TestScheduledPodcastsForUpdate:
 
 
 class TestReschedule:
+    def test_pub_date_none(self):
+        assert scheduler.reschedule(None, timedelta(hours=24)).days == 1
+
     def test_reschedule_no_change(self):
         assert scheduler.reschedule(timezone.now(), timedelta(days=10)).days == 10
 
