@@ -62,7 +62,7 @@ def schedule(feed: Feed) -> timedelta:
 
     d = numpy.abs(intervals - numpy.median(intervals))
     mdev = numpy.median(d)
-    s = d / mdev if mdev else 0.0
+    s = d / mdev if mdev else 1.0
 
     try:
         frequency = timedelta(seconds=numpy.median(intervals[s < 2.0]))
