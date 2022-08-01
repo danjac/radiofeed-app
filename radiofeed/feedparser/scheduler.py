@@ -3,7 +3,6 @@ from __future__ import annotations
 import itertools
 
 from datetime import datetime, timedelta
-from typing import Final
 
 import numpy
 
@@ -12,10 +11,6 @@ from django.utils import timezone
 
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
-
-DEFAULT_FREQUENCY: Final = timedelta(hours=24)
-MIN_FREQUENCY: Final = timedelta(hours=3)
-MAX_FREQUENCY: Final = timedelta(days=30)
 
 
 def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
@@ -31,8 +26,8 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
             | Q(pub_date__isnull=True)
             | Q(parsed__lt=since)
             | Q(
-                pub_date__range=(now - MAX_FREQUENCY, since),
-                parsed__lt=now - MIN_FREQUENCY,
+                pub_date__range=(now - Podcast.MAX_FREQUENCY, since),
+                parsed__lt=now - Podcast.MIN_FREQUENCY,
             ),
             active=True,
         )
@@ -63,7 +58,7 @@ def schedule(feed: Feed) -> timedelta:
             )
         )
     except ValueError:
-        frequency = DEFAULT_FREQUENCY
+        frequency = Podcast.DEFAULT_FREQUENCY
 
     return reschedule(feed.pub_date, frequency)
 
@@ -76,8 +71,8 @@ def reschedule(
     now = timezone.now()
     pub_date = pub_date or now
 
-    while now > pub_date + frequency and MAX_FREQUENCY > frequency:
+    while now > pub_date + frequency and Podcast.MAX_FREQUENCY > frequency:
         seconds = frequency.total_seconds()
         frequency = timedelta(seconds=seconds + (seconds * increment))
 
-    return max(min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
+    return max(min(frequency, Podcast.MAX_FREQUENCY), Podcast.MIN_FREQUENCY)
