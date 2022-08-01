@@ -39,18 +39,21 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     )
 
 
-def schedule(
-    feed: Feed, limit: int = 200, num_reps: int = 500, num_simulations: int = 1000
-) -> timedelta:
+def schedule(feed: Feed) -> timedelta:
     """Estimates frequency of episodes in feed."""
 
-    # get intervals between most recent episodes
+    # get intervals between most recent episodes (max 90 days)
     #
+
+    since = timezone.now() - timedelta(days=90)
 
     intervals = [
         (a - b).total_seconds()
         for a, b in itertools.pairwise(
-            sorted([item.pub_date for item in feed.items], reverse=True)[:limit]
+            sorted(
+                [item.pub_date for item in feed.items if item.pub_date > since],
+                reverse=True,
+            )
         )
     ]
 
@@ -61,7 +64,9 @@ def schedule(
             seconds=float(
                 numpy.mean(
                     numpy.random.normal(
-                        numpy.mean(intervals), numpy.std(intervals), num_simulations
+                        numpy.mean(intervals),
+                        numpy.std(intervals),
+                        1000,
                     )
                 )
             )
