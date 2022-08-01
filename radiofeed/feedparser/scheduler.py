@@ -57,17 +57,18 @@ def schedule(feed: Feed) -> timedelta:
         )
     ]
 
-    # run Monte Carlo simulation to generate spread of estimates and pick the mean of all results
+    # run Monte Carlo simulation to generate spread of estimates
+
+    numpy.random.seed(42)
 
     try:
+
         frequency = timedelta(
-            seconds=float(
-                numpy.mean(
-                    numpy.random.normal(
-                        numpy.mean(intervals),
-                        numpy.std(intervals),
-                        1000,
-                    )
+            seconds=numpy.mean(
+                numpy.random.normal(
+                    numpy.mean(intervals),
+                    numpy.std(intervals),
+                    1000,
                 )
             )
         )
