@@ -46,32 +46,26 @@ def schedule(feed: Feed) -> timedelta:
 
     since = timezone.now() - timedelta(days=90)
 
-    intervals = [
-        (a - b).total_seconds()
-        for a, b in itertools.pairwise(
-            sorted(
-                [item.pub_date for item in feed.items if item.pub_date > since],
-                reverse=True,
-            )
-        )
-    ]
-
-    # run Monte Carlo simulation to generate spread of estimates
-
-    numpy.random.seed(42)
-
-    try:
-
-        frequency = timedelta(
-            seconds=numpy.mean(
-                numpy.random.normal(
-                    numpy.mean(intervals),
-                    numpy.std(intervals),
-                    1000,
+    intervals = numpy.array(
+        [
+            (a - b).total_seconds()
+            for a, b in itertools.pairwise(
+                sorted(
+                    [item.pub_date for item in feed.items if item.pub_date > since],
+                    reverse=True,
                 )
             )
-        )
+        ]
+    )
 
+    # find median, removing outliers
+
+    d = numpy.abs(intervals - numpy.median(intervals))
+    mdev = numpy.median(d)
+    s = d / mdev if mdev else 0.0
+
+    try:
+        frequency = timedelta(seconds=numpy.median(intervals[s < 2.0]))
     except ValueError:
         frequency = Podcast.DEFAULT_FREQUENCY
 
