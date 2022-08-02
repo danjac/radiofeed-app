@@ -63,12 +63,14 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
 
 
 def _calc_frequency(feed: Feed) -> timedelta:
-    if timezone.now() > feed.pub_date + Podcast.MAX_FREQUENCY:
+    now = timezone.now()
+
+    if now > feed.pub_date + Podcast.MAX_FREQUENCY:
         return Podcast.MAX_FREQUENCY
 
     # get intervals between most recent episodes (max 90 days)
 
-    since = timezone.now() - timedelta(days=90)
+    since = now - timedelta(days=90)
 
     if intervals := [
         (a - b).total_seconds()
