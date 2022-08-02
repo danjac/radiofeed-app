@@ -4,10 +4,11 @@ import itertools
 
 from datetime import datetime, timedelta
 
-import numpy
+import pandas
 
 from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
+from scipy.stats import zscore
 
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
@@ -42,32 +43,36 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
 def schedule(feed: Feed) -> timedelta:
     """Estimates frequency of episodes in feed."""
 
+    # if > 30 days ago just assume the max value
+
+    if timezone.now() > feed.pub_date + Podcast.MAX_FREQUENCY:
+        return Podcast.MAX_FREQUENCY
+
+    frequency = Podcast.DEFAULT_FREQUENCY
+
     # get intervals between most recent episodes (max 90 days)
 
     since = timezone.now() - timedelta(days=90)
 
-    intervals = numpy.array(
-        [
-            (a - b).total_seconds()
-            for a, b in itertools.pairwise(
-                sorted(
-                    [item.pub_date for item in feed.items if item.pub_date > since],
-                    reverse=True,
-                )
+    if intervals := [
+        (a - b).total_seconds()
+        for a, b in itertools.pairwise(
+            sorted(
+                [item.pub_date for item in feed.items if item.pub_date > since],
+                reverse=True,
             )
-        ]
-    )
+        )
+    ]:
 
-    # find median, removing outliers
+        # remove any outliers and find median
+        #
+        df = pandas.DataFrame(intervals, columns=["intervals"])
+        df["zscore"] = zscore(df["intervals"])
+        df["outlier"] = df["zscore"].apply(
+            lambda score: score <= 0.96 and score >= 1.96
+        )
 
-    d = numpy.abs(intervals - numpy.median(intervals))
-    mdev = numpy.median(d)
-    s = d / mdev if mdev else 1.0
-
-    try:
-        frequency = timedelta(seconds=numpy.median(intervals[s < 2.0]))
-    except ValueError:
-        frequency = Podcast.DEFAULT_FREQUENCY
+        frequency = timedelta(seconds=df[~df["outlier"]]["intervals"].median())
 
     # adjust until next scheduled update > current time
 

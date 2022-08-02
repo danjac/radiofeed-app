@@ -77,7 +77,7 @@ class TestSchedule:
             ],
         )
 
-        assert scheduler.schedule(feed).days == 3
+        assert scheduler.schedule(feed).days == 1
 
     def test_single_date_gt_max(self):
         feed = Feed(
@@ -93,7 +93,22 @@ class TestSchedule:
 
         assert scheduler.schedule(feed).days == 30
 
-    def test_varied_dates(self):
+    def test_no_outliers(self):
+
+        items = []
+        last = timezone.now()
+
+        for day in [7] * 12:
+
+            pub_date = last - timedelta(days=day)
+            items.append(Item(**ItemFactory(pub_date=pub_date)))
+            last = pub_date
+
+        feed = Feed(**FeedFactory(), items=items)
+
+        assert scheduler.schedule(feed).days == pytest.approx(7)
+
+    def test_variation(self):
 
         items = []
         last = timezone.now()
