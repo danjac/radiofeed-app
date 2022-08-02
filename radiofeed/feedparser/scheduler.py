@@ -40,40 +40,7 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
 def schedule(feed: Feed) -> timedelta:
     """Estimates frequency of episodes in feed."""
 
-    # if > 30 days ago just assume the max value
-
-    if timezone.now() > feed.pub_date + Podcast.MAX_FREQUENCY:
-        return Podcast.MAX_FREQUENCY
-
-    frequency = Podcast.DEFAULT_FREQUENCY
-
-    # get intervals between most recent episodes (max 90 days)
-
-    since = timezone.now() - timedelta(days=90)
-
-    if intervals := [
-        (a - b).total_seconds()
-        for a, b in itertools.pairwise(
-            sorted(
-                [item.pub_date for item in feed.items if item.pub_date > since],
-                reverse=True,
-            )
-        )
-    ]:
-
-        # remove any outliers and find median
-
-        df = pandas.DataFrame(intervals, columns=["intervals"])
-        df["zscore"] = zscore(df["intervals"])
-        df["outlier"] = df["zscore"].apply(
-            lambda score: score <= 0.96 and score >= 1.96
-        )
-
-        frequency = timedelta(seconds=df[~df["outlier"]]["intervals"].median())
-
-    # adjust until next scheduled update > current time
-
-    return reschedule(feed.pub_date, frequency)
+    return reschedule(feed.pub_date, _calc_frequency(feed))
 
 
 def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
@@ -93,3 +60,33 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     # ensure result falls within bounds
 
     return max(min(frequency, Podcast.MAX_FREQUENCY), Podcast.MIN_FREQUENCY)
+
+
+def _calc_frequency(feed: Feed) -> timedelta:
+    if timezone.now() > feed.pub_date + Podcast.MAX_FREQUENCY:
+        return Podcast.MAX_FREQUENCY
+
+    # get intervals between most recent episodes (max 90 days)
+
+    since = timezone.now() - timedelta(days=90)
+
+    if intervals := [
+        (a - b).total_seconds()
+        for a, b in itertools.pairwise(
+            sorted(
+                [item.pub_date for item in feed.items if item.pub_date > since],
+                reverse=True,
+            )
+        )
+    ]:
+
+        return timedelta(seconds=_calc_median_interval(intervals))
+
+    return Podcast.DEFAULT_FREQUENCY
+
+
+def _calc_median_interval(intervals: list[float]) -> float:
+    df = pandas.DataFrame(intervals, columns=["intervals"])
+    df["zscore"] = zscore(df["intervals"])
+    df["outlier"] = df["zscore"].apply(lambda score: score <= 0.96 and score >= 1.96)
+    return df[~df["outlier"]]["intervals"].median()

@@ -209,7 +209,7 @@ class FeedParser:
             **fields,
         )
 
-    def _extract_text(self, feed) -> str:
+    def _extract_text(self, feed: Feed) -> str:
         text = " ".join(
             value
             for value in [
