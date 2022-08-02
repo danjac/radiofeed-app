@@ -88,6 +88,7 @@ def _calc_frequency(feed: Feed) -> timedelta:
 
 
 def _calc_median_interval(intervals: list[float]) -> float:
+    # remove any outliers and calculate median interval
     df = pandas.DataFrame(intervals, columns=["intervals"])
     df["zscore"] = zscore(df["intervals"])
     df["outlier"] = df["zscore"].apply(lambda score: score <= 0.96 and score >= 1.96)
