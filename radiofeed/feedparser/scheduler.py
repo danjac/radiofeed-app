@@ -26,10 +26,7 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
             | Q(parsed__lt=since)
-            | Q(
-                pub_date__range=(now - Podcast.MAX_FREQUENCY, since),
-                parsed__lt=now - Podcast.MIN_FREQUENCY,
-            ),
+            | Q(pub_date__range=(now - Podcast.MAX_FREQUENCY, since)),
             active=True,
         )
     ).order_by(
