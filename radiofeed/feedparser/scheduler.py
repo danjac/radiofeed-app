@@ -65,7 +65,7 @@ def schedule(feed: Feed) -> timedelta:
     ]:
 
         # remove any outliers and find median
-        #
+
         df = pandas.DataFrame(intervals, columns=["intervals"])
         df["zscore"] = zscore(df["intervals"])
         df["outlier"] = df["zscore"].apply(
@@ -79,18 +79,20 @@ def schedule(feed: Feed) -> timedelta:
     return reschedule(feed.pub_date, frequency)
 
 
-def reschedule(
-    pub_date: datetime | None, frequency: timedelta, increment: float = 0.1
-) -> timedelta:
-    """Increments update frequency."""
+def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
+    """Increments update frequency until next scheduled date > current time."""
 
     if pub_date is None:
         return Podcast.DEFAULT_FREQUENCY
+
+    # increment by 10% until last pub date + freq > current time
 
     now = timezone.now()
 
     while now > pub_date + frequency and Podcast.MAX_FREQUENCY > frequency:
         seconds = frequency.total_seconds()
-        frequency = timedelta(seconds=seconds + (seconds * increment))
+        frequency = timedelta(seconds=seconds + (seconds * 0.1))
+
+    # ensure result falls within bounds
 
     return max(min(frequency, Podcast.MAX_FREQUENCY), Podcast.MIN_FREQUENCY)
