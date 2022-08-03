@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from django_rq import job
+from huey.contrib.djhuey import db_task
 
 from radiofeed.podcasts import emails
 from radiofeed.users.models import User
 
 
-@job("emails")
+@db_task()
 def send_recommendations_email(user_id: int) -> None:
     """Sends recommendation email to user.
 

@@ -236,8 +236,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> None:
         """Runs feed parser on all podcasts in selection."""
-        for podcast_id in queryset.values_list("pk", flat=True):
-            parse_feed.delay(podcast_id)
+        parse_feed.map(queryset.values_list("pk"))
 
         self.message_user(
             request,
@@ -247,7 +246,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        parse_feed.delay(obj.id)
+        parse_feed(obj.id)
         self.message_user(request, _("Podcast has been queued for update"))
 
     def get_ordering(self, request: HttpRequest) -> list[str]:

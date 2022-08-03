@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from debug_toolbar.settings import PANELS_DEFAULTS
 from split_settings.tools import include
 
 from radiofeed.settings.base import ADMIN_SITE_HEADER, INSTALLED_APPS, MIDDLEWARE
@@ -23,7 +22,3 @@ MIDDLEWARE += [
 ]
 
 INTERNAL_IPS = ["127.0.0.1"]
-
-DEBUG_TOOLBAR_PANELS = PANELS_DEFAULTS + [
-    "cachalot.panels.CachalotPanel",
-]

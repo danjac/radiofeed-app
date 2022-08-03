@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from split_settings.tools import include
 
-from radiofeed.settings.base import ALLOWED_HOSTS, RQ_QUEUES, TEMPLATES
+from radiofeed.settings.base import ALLOWED_HOSTS, HUEY, TEMPLATES
 
 include("base.py")
 
@@ -19,6 +19,4 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 # django-coverage-plugin
 TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore
 
-for queue in RQ_QUEUES.values():
-    del queue["USE_REDIS_CACHE"]
-    queue["ASYNC"] = False  # type: ignore
+HUEY["immediate"] = True  # type: ignore

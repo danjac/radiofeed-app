@@ -19,10 +19,10 @@ class TestRecommender:
 
     def test_send_emails(self, db, user, mocker):
         patched = mocker.patch(
-            "radiofeed.podcasts.tasks.send_recommendations_email.delay"
+            "radiofeed.podcasts.tasks.send_recommendations_email.map"
         )
         call_command("recommender", email=True)
-        patched.assert_called_with(user.id)
+        patched.assert_called()
 
 
 class TestItunesCrawler:

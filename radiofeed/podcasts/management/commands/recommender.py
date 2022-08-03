@@ -26,11 +26,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Command handler implementation."""
         if options["email"]:
-            for user_id in User.objects.email_notification_recipients().values_list(
-                "pk",
-                flat=True,
-            ):
-                send_recommendations_email.delay(user_id)
+            send_recommendations_email.map(
+                User.objects.email_notification_recipients().values_list("pk")
+            )
             return
 
         recommender.recommend()

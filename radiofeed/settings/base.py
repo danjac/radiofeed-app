@@ -82,11 +82,10 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.twitter",
-    "cachalot",
+    "cacheops",
     "django_extensions",
     "django_htmx",
     "django_object_actions",
-    "django_rq",
     "fast_update",
     "health_check",
     "health_check.cache",
@@ -94,6 +93,7 @@ INSTALLED_APPS = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "health_check.db",
+    "huey.contrib.djhuey",
     "modeltranslation",
     "widget_tweaks",
     "radiofeed.episodes",
@@ -219,12 +219,6 @@ TEMPLATES = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "rq_console": {
-            "format": "%(asctime)s %(message)s",
-            "datefmt": "%H:%M:%S",
-        },
-    },
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
         "null": {"level": "DEBUG", "class": "logging.NullHandler"},
@@ -247,30 +241,29 @@ LOGGING = {
             "level": "CRITICAL",
             "propagate": False,
         },
-        "rq_console": {
-            "level": "DEBUG",
-            "class": "rq.utils.ColorizingStreamHandler",
-            "formatter": "rq_console",
-            "exclude": ["%(asctime)s"],
-        },
     },
 }
 
-# RQ
-# https://pypi.org/project/django-rq/
+# django-cacheops
+# https://github.com/Suor/django-cacheops
 
-RQ_QUEUES = {
-    "emails": {
-        "USE_REDIS_CACHE": "default",
+CACHEOPS_REDIS = REDIS_URL
+CACHEOPS_DEGRADE_ON_FAILURE = True
+
+# Huey
+# https://huey.readthedocs.io/en/latest/django.html
+
+HUEY = {
+    "blocking": False,
+    "immediate": False,
+    "store_none": True,
+    "consumer": {
+        "periodic": False,
     },
-    "feeds": {
-        "USE_REDIS_CACHE": "default",
+    "connection": {
+        "url": REDIS_URL,
     },
 }
-
-RQ_SHOW_ADMIN_LINK = True
-
-
 # Model translations
 # https://django-modeltranslation.readthedocs.io/en/latest/installation.html#configuration
 #
@@ -282,7 +275,7 @@ MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
 
 DEFAULT_PAGE_SIZE = 30
 
-DEFAULT_CACHE_TIMEOUT = CACHALOT_TIMEOUT = 3600  # 1 hour
+DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
 ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from django_rq import job
+from huey.contrib.djhuey import db_task
 
 from radiofeed.feedparser.feed_parser import FeedParser
 from radiofeed.podcasts.models import Podcast
 
 
-@job("feeds")
+@db_task()
 def parse_feed(podcast_id: int) -> None:
     """Handles single podcast feed update.
 
