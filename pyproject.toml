@@ -45,10 +45,11 @@ scipy = "^1.8.0"
 sentry-sdk = "^1.5.12"
 whitenoise = "^6.1.0"
 django-fast-update = "^0.2.0"
-huey = "^2.4.3"
 attrs = "^21.4.0"
 django-rich-logging = "^0.1.1"
 django-modeltranslation = "^0.18.2"
+django-rq = "^2.5.1"
+rq = "^1.11.0"
 
 [tool.poetry.dev-dependencies]
 Faker = "^13.11.0"

@@ -38,6 +38,7 @@ urlpatterns = [
     ),
     path("account/", include("allauth.urls")),
     path("ht/", include("health_check.urls")),
+    path(f"{settings.ADMIN_URL}rq/", include("django_rq.urls")),
     path(f"{settings.ADMIN_URL}pg-metrics/", include("postgres_metrics.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]

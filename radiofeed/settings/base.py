@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_htmx",
     "django_object_actions",
+    "django_rq",
     "fast_update",
     "health_check",
     "health_check.cache",
@@ -93,7 +94,6 @@ INSTALLED_APPS = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "health_check.db",
-    "huey.contrib.djhuey",
     "modeltranslation",
     "widget_tweaks",
     "radiofeed.episodes",
@@ -219,13 +219,15 @@ TEMPLATES = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "rq_console": {
+            "format": "%(asctime)s %(message)s",
+            "datefmt": "%H:%M:%S",
+        },
+    },
     "handlers": {
         "console": {"class": "logging.StreamHandler"},
         "null": {"level": "DEBUG", "class": "logging.NullHandler"},
-        "django_rich_logging": {
-            "class": "django_rich_logging.logging.DjangoRequestHandler",
-            "level": "INFO",
-        },
     },
     "loggers": {
         "root": {
@@ -233,7 +235,7 @@ LOGGING = {
             "level": "INFO",
         },
         "django.server": {
-            "handlers": ["django_rich_logging"],
+            "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
         },
@@ -245,23 +247,29 @@ LOGGING = {
             "level": "CRITICAL",
             "propagate": False,
         },
+        "rq_console": {
+            "level": "DEBUG",
+            "class": "rq.utils.ColorizingStreamHandler",
+            "formatter": "rq_console",
+            "exclude": ["%(asctime)s"],
+        },
     },
 }
 
-# Huey
-# https://huey.readthedocs.io/en/latest/django.html
+# RQ
+# https://pypi.org/project/django-rq/
 
-HUEY = {
-    "blocking": False,
-    "immediate": False,
-    "store_none": True,
-    "consumer": {
-        "periodic": False,
+RQ_QUEUES = {
+    "emails": {
+        "USE_REDIS_CACHE": "default",
     },
-    "connection": {
-        "url": REDIS_URL,
+    "feeds": {
+        "USE_REDIS_CACHE": "default",
     },
 }
+
+RQ_SHOW_ADMIN_LINK = True
+
 
 # Model translations
 # https://django-modeltranslation.readthedocs.io/en/latest/installation.html#configuration

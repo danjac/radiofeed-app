@@ -25,9 +25,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         """Command handler implmentation."""
-        parse_feed.map(
-            itertools.islice(
-                scheduler.scheduled_podcasts_for_update().values_list("pk").distinct(),
-                options["limit"],
-            )
-        )
+        for podcast_id in itertools.islice(
+            scheduler.scheduled_podcasts_for_update()
+            .values_list("pk", flat=True)
+            .distinct(),
+            options["limit"],
+        ):
+            parse_feed.delay(podcast_id)
