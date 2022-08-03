@@ -51,7 +51,7 @@ def schedule(feed: Feed) -> timedelta:
         timedelta(seconds=_calc_median_interval(intervals))
         if (intervals := _calc_intervals(feed, now - timedelta(days=90)))
         else Podcast.DEFAULT_FREQUENCY
-    ) or Podcast.MIN_FREQUENCY
+    )
 
     # increment until pub date + freq > current time
 
@@ -67,6 +67,10 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     # increment by 10% until last pub date + freq > current time
 
     now = timezone.now()
+
+    # ensure we don't try to increment zero frequency
+
+    frequency = frequency or Podcast.MIN_FREQUENCY
 
     while now > pub_date + frequency and Podcast.MAX_FREQUENCY > frequency:
         seconds = frequency.total_seconds()
