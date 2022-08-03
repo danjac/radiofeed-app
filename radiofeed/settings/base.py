@@ -33,6 +33,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
+DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
+
 CACHES = {
     "default": {
         **env.cache("REDIS_URL"),
@@ -250,6 +252,15 @@ LOGGING = {
 CACHEOPS_REDIS = REDIS_URL
 CACHEOPS_DEGRADE_ON_FAILURE = True
 
+CACHEOPS_DEFAULTS = {"ops": "all", "timeout": DEFAULT_CACHE_TIMEOUT}
+
+CACHEOPS = {
+    "auth.*": CACHEOPS_DEFAULTS,
+    "episodes.*": CACHEOPS_DEFAULTS,
+    "podcasts.*": CACHEOPS_DEFAULTS,
+    "users.*": CACHEOPS_DEFAULTS,
+}
+
 # Huey
 # https://huey.readthedocs.io/en/latest/django.html
 
@@ -275,7 +286,6 @@ MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
 
 DEFAULT_PAGE_SIZE = 30
 
-DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
 
 ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
