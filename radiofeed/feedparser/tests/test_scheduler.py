@@ -92,6 +92,16 @@ class TestSchedule:
 
         assert scheduler.schedule(feed).days == 30
 
+    def test_median_empty(self):
+
+        pub_date = timezone.now() - timedelta(days=3)
+
+        items = [Item(**ItemFactory(pub_date=pub_date)) for _ in range(12)]
+
+        feed = Feed(**FeedFactory(), items=items)
+
+        assert scheduler.schedule(feed).days == 3
+
     def test_no_outliers(self):
 
         items = []

@@ -45,6 +45,7 @@ def schedule(feed: Feed) -> timedelta:
         return Podcast.MAX_FREQUENCY
 
     # calculate median interval based on intervals between recent episodes
+    #
 
     frequency = (
         timedelta(seconds=_calc_median_interval(intervals))
@@ -90,8 +91,13 @@ def _calc_intervals(feed: Feed, since: datetime) -> list[float]:
 
 def _calc_median_interval(intervals: list[float]) -> float:
     # remove any outliers and zeros and calculate median interval
-    df = pandas.DataFrame(intervals, columns=["intervals"])
-    df = df[df["intervals"] != 0]
-    df["zscore"] = zscore(df["intervals"])
-    df["outlier"] = df["zscore"].apply(lambda score: score <= 0.96 and score >= 1.96)
-    return df[~df["outlier"]]["intervals"].median()
+    try:
+        df = pandas.DataFrame(intervals, columns=["intervals"])
+        df = df[df["intervals"] != 0]
+        df["zscore"] = zscore(df["intervals"])
+        df["outlier"] = df["zscore"].apply(
+            lambda score: score <= 0.96 and score >= 1.96
+        )
+        return df[~df["outlier"]]["intervals"].median()
+    except KeyError:
+        return 0
