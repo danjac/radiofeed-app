@@ -15,5 +15,5 @@ def parse_feed(podcast_id: int) -> None:
     Raises:
         PodcastDoesNotExist: if no podcast found
     """
-    logging.debug("Parsing feed for %s", podcast_id)
+    logging.info("Parsing feed for %s", podcast_id)
     FeedParser(Podcast.objects.get(pk=podcast_id)).parse()
