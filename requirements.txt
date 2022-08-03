@@ -37,7 +37,7 @@ django-rich==1.4.0; python_version >= "3.7"
 django-rq==2.5.1
 django-split-settings==1.1.0; python_version >= "3.6" and python_version < "4.0"
 django-widget-tweaks==1.4.12; python_version >= "3.7"
-django==4.0.6; python_version >= "3.8"
+django==4.0.7; python_version >= "3.8"
 executing==0.9.1; python_version >= "3.8"
 gunicorn==20.1.0; python_version >= "3.5"
 hiredis==2.0.0; python_version >= "3.6"
