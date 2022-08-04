@@ -71,8 +71,7 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     now = timezone.now()
 
     while now > pub_date + frequency and Podcast.MAX_FREQUENCY > frequency:
-        seconds = frequency.total_seconds()
-        frequency = timedelta(seconds=seconds + (seconds * 0.1))
+        frequency += frequency * 0.1
 
     # ensure result falls within bounds
 
