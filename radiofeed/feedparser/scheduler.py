@@ -15,9 +15,8 @@ from radiofeed.podcasts.models import Podcast
 
 
 def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
-    """
-    Returns any active podcasts scheduled for feed updates.
-    """
+    """Returns any active podcasts scheduled for feed updates."""
+
     now = timezone.now()
     since = now - F("frequency")
 
@@ -40,6 +39,8 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
 def schedule(feed: Feed) -> timedelta:
     """Estimates frequency of episodes in feed."""
     now = timezone.now()
+
+    # pub date > 30 days, will always be the max value
 
     if now > feed.pub_date + Podcast.MAX_FREQUENCY:
         return Podcast.MAX_FREQUENCY
