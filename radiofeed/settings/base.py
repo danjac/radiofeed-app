@@ -84,7 +84,6 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.twitter",
-    "cacheops",
     "django_extensions",
     "django_htmx",
     "django_object_actions",
@@ -244,21 +243,6 @@ LOGGING = {
             "propagate": False,
         },
     },
-}
-
-# django-cacheops
-# https://github.com/Suor/django-cacheops
-
-CACHEOPS_REDIS = REDIS_URL
-CACHEOPS_DEGRADE_ON_FAILURE = True
-
-CACHEOPS_DEFAULTS = {"ops": "all", "timeout": DEFAULT_CACHE_TIMEOUT}
-
-CACHEOPS = {
-    "auth.*": CACHEOPS_DEFAULTS,
-    "episodes.*": CACHEOPS_DEFAULTS,
-    "podcasts.*": CACHEOPS_DEFAULTS,
-    "users.*": CACHEOPS_DEFAULTS,
 }
 
 # Huey
