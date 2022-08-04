@@ -7,7 +7,7 @@ x-logging: &default-logging
 
 services:
     postgres:
-        image: postgres:14.1
+        image: postgres:14.4
         environment:
             - POSTGRES_PASSWORD=password
         volumes:
