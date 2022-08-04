@@ -223,7 +223,7 @@ class FeedParser:
         )
         return " ".join(tokenize(self._podcast.language, text))
 
-    def _episode_updates(self, feed: Feed, batch_size: int = 100) -> None:
+    def _episode_updates(self, feed: Feed) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
 
         # remove any episodes that may have been deleted on the podcast
@@ -235,8 +235,8 @@ class FeedParser:
 
         # update existing content
 
-        for batch in batcher(self._episodes_for_update(feed, guids), batch_size):
-            Episode.fast_update_objects.fast_update(
+        for batch in batcher(self._episodes_for_update(feed, guids), 1000):
+            Episode.fast_update_objects.copy_update(
                 batch,
                 fields=[
                     "cover_url",
@@ -257,7 +257,7 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in batcher(self._episodes_for_insert(feed, guids), batch_size):
+        for batch in batcher(self._episodes_for_insert(feed, guids), 100):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _episodes_for_insert(
