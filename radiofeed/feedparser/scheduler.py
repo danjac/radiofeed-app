@@ -45,7 +45,6 @@ def schedule(feed: Feed) -> timedelta:
         return Podcast.MAX_FREQUENCY
 
     # calculate median interval based on intervals between recent episodes
-    #
 
     frequency = (
         timedelta(seconds=_calc_median_interval(intervals))
@@ -64,13 +63,11 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     if pub_date is None:
         return Podcast.DEFAULT_FREQUENCY
 
-    # increment by 10% until last pub date + freq > current time
-
-    now = timezone.now()
-
     # ensure we don't try to increment zero frequency
 
     frequency = frequency or Podcast.MIN_FREQUENCY
+
+    now = timezone.now()
 
     while now > pub_date + frequency and Podcast.MAX_FREQUENCY > frequency:
         seconds = frequency.total_seconds()
@@ -82,6 +79,7 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
 
 
 def _calc_intervals(feed: Feed, since: datetime) -> list[float]:
+    # get intervals in seconds between all pub dates in feed
     return [
         (a - b).total_seconds()
         for a, b in itertools.pairwise(
