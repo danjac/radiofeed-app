@@ -56,12 +56,10 @@ Finally, run migrations:
 python manage.py migrate
 ```
 
-You can also install default iTunes categories and approx 1000+ sample podcasts from fixtures:
+You can also install default iTunes categories from fixtures:
 
 ```bash
-python manage.py loaddata podcasts \
-    radiofeed/podcasts/fixtures/categories.json.gz \
-    radiofeed/podcasts/fixtures/podcasts.json.gz
+python manage.py loaddata podcasts radiofeed/podcasts/fixtures/categories.json.gz
 ```
 
 This should provide some useful data to get started with.
