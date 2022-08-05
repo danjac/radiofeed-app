@@ -1,5 +1,5 @@
 {% extends "podcasts/detail_base.html" %}
-{% load i18n %}
+{% load cache i18n %}
 
 {% block title %}{{ block.super }} | {% translate "About" %}{% endblock %}
 
@@ -78,21 +78,22 @@
                 </a>
             </div>
 
-            {% with categories=podcast.categories.all %}
-                {% if categories %}
-                    <div class="max-w-prose flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
-                        {% for category in categories %}
-                            <a class="inline-flex items-center link"
-                                title="{{ category.name }} {% translate "Podcasts" %}"
-                                href="{{ category.get_absolute_url }}">
-                                {% icon "tag" css_class="mr-2" %}
-                                {{ category.name }}
-                            </a>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-            {% endwith %}
+            {% cache 600 podcast-categories podcast.id %}
+                {% with categories=podcast.categories.all %}
+                    {% if categories %}
+                        <div class="max-w-prose flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
+                            {% for category in categories %}
+                                <a class="inline-flex items-center link"
+                                    title="{{ category.name }} {% translate "Podcasts" %}"
+                                    href="{{ category.get_absolute_url }}">
+                                    {% icon "tag" css_class="mr-2" %}
+                                    {{ category.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endcache %}
             {% markdown podcast.description %}
         </article>
     {% endwith %}

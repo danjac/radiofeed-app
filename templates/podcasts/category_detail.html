@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load cache i18n %}
 
 {% block title %} | {% translate "Categories" %}| {{ category.name }} {% translate "Podcasts" %}{% endblock %}
 
@@ -35,5 +35,9 @@
         {% endif %}
     {% endwith %}
 
-    {% include pagination_template %}
+    {% get_current_language as language_code %}
+    {% cache 600 category-podcasts request.get_full_path language_code %}
+        {% include pagination_template %}
+    {% endcache %}
+
 {% endblock content %}

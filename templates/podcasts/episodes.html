@@ -1,5 +1,5 @@
 {% extends "podcasts/detail_base.html" %}
-{% load i18n %}
+{% load cache i18n %}
 
 {% block title %}{{ block.super }} | {% translate "Episodes" %} {% endblock %}
 
@@ -29,5 +29,8 @@
 
         </div>
     {% endif %}
-    {% include pagination_template %}
+    {% get_current_language as language_code %}
+    {% cache 600 podcast-episodes request.get_full_path language_code %}
+        {% include pagination_template %}
+    {% endcache %}
 {% endblock %}
