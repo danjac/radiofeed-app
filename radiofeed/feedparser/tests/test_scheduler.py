@@ -20,11 +20,11 @@ class TestGetNextScheduledUpdate:
             (None, None, timedelta(hours=24), 1),
             (timedelta(days=3), None, timedelta(hours=24), 1),
             (None, timedelta(days=3), timedelta(hours=24), 1),
-            (timedelta(days=3), timedelta(days=4), timedelta(days=1),1),
+            (timedelta(days=3), timedelta(days=4), timedelta(days=1), 1),
             (timedelta(days=3), timedelta(days=4), timedelta(days=7), 24 * 3),
             (timedelta(days=4), timedelta(days=3), timedelta(days=7), 24 * 3),
             (timedelta(days=4), timedelta(days=60), timedelta(days=7), 24 * 3),
-            (timedelta(days=4), timedelta(days=3), timedelta(days=30), 24 * 34),
+            (timedelta(days=4), timedelta(days=3), timedelta(days=30), 24 * 26),
         ],
     )
     def test_get_scheduled(self, parsed, pub_date, frequency, diff):
