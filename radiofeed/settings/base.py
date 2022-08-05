@@ -33,7 +33,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-DEFAULT_CACHE_TIMEOUT = 3600  # 1 hour
+DEFAULT_CACHE_TIMEOUT = 5 * 60 * 60
 
 CACHES = {
     "default": {
@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.twitter",
+    "cacheops",
     "django_extensions",
     "django_htmx",
     "django_object_actions",
@@ -253,9 +254,21 @@ HUEY = {
         "url": REDIS_URL,
     },
 }
+
+# https://github.com/Suor/django-cacheops
+
+CACHEOPS_REDIS = REDIS_URL
+CACHEOPS_DEFAULTS = {"timeout": DEFAULT_CACHE_TIMEOUT}
+CACHEOPS_DEGRADE_ON_FAILURE = True
+
+CACHEOPS = {
+    "podcasts.*": {"ops": "all"},
+    "episodes.*": {"ops": "all"},
+    "users.*": {"ops": "all"},
+}
+
 # Model translations
 # https://django-modeltranslation.readthedocs.io/en/latest/installation.html#configuration
-#
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
