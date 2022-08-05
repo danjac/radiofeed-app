@@ -33,7 +33,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-DEFAULT_CACHE_TIMEOUT = 5 * 60 * 60
+DEFAULT_CACHE_TIMEOUT = 5 * 60
 
 CACHES = {
     "default": {
