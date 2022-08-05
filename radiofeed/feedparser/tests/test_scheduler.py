@@ -24,6 +24,7 @@ class TestGetNextScheduledUpdate:
             (timedelta(days=3), timedelta(days=4), timedelta(days=7), 24 * 3),
             (timedelta(days=4), timedelta(days=3), timedelta(days=7), 24 * 3),
             (timedelta(days=4), timedelta(days=60), timedelta(days=7), 24 * 3),
+            (timedelta(days=4), timedelta(days=3), timedelta(days=30), 24 * 34),
         ],
     )
     def test_get_scheduled(self, parsed, pub_date, frequency, diff):
