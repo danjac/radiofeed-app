@@ -14,6 +14,23 @@ from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
 
+def get_next_scheduled_update(podcast: Podcast) -> datetime:
+    """Return estimated next scheduled update time."""
+
+    now = timezone.now()
+
+    from_parsed = podcast.parsed + podcast.frequency if podcast.parsed else None
+    from_pub_date = podcast.pub_date + podcast.frequency if podcast.pub_date else None
+
+    if from_parsed is None or from_pub_date is None or now > from_parsed:
+        return now
+
+    if from_pub_date > now - Podcast.MAX_FREQUENCY:
+        return now if now > from_pub_date else min(from_parsed, from_pub_date)
+
+    return from_parsed
+
+
 def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns any active podcasts scheduled for feed updates."""
 

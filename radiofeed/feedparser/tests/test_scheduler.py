@@ -10,6 +10,33 @@ from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.factories import FeedFactory, ItemFactory
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.podcasts.models import Podcast
+
+
+class TestGetNextScheduledUpdate:
+    @pytest.mark.parametrize(
+        "parsed,pub_date,frequency,diff",
+        [
+            (None, None, timedelta(hours=24), 1),
+            (timedelta(days=3), None, timedelta(hours=24), 1),
+            (None, timedelta(days=3), timedelta(hours=24), 1),
+            (timedelta(days=3), timedelta(days=4), timedelta(days=1),1),
+            (timedelta(days=3), timedelta(days=4), timedelta(days=7), 24 * 3),
+            (timedelta(days=4), timedelta(days=3), timedelta(days=7), 24 * 3),
+            (timedelta(days=4), timedelta(days=60), timedelta(days=7), 24 * 3),
+        ],
+    )
+    def test_get_scheduled(self, parsed, pub_date, frequency, diff):
+        now = timezone.now()
+        podcast = Podcast(
+            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
+            frequency=frequency,
+        )
+
+        assert (
+            scheduler.get_next_scheduled_update(podcast) - now
+        ).total_seconds() / 3600 <= diff, (parsed, pub_date, frequency, diff)
 
 
 class TestScheduledPodcastsForUpdate:

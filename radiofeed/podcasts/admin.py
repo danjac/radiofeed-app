@@ -5,9 +5,11 @@ import http
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
-from django.utils.translation import gettext as _
+from django.template.defaultfilters import timeuntil
+from django.utils.translation import gettext_lazy as _
 from django_object_actions import DjangoObjectActions
 
+from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.tasks import parse_feed
 from radiofeed.podcasts.models import Category, Podcast
 
@@ -221,6 +223,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "parsed",
         "pub_date",
         "frequency",
+        "next_scheduled_update",
         "modified",
         "etag",
         "http_status",
@@ -248,6 +251,10 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         """Runs feed parser on single podcast."""
         parse_feed(obj.id)
         self.message_user(request, _("Podcast has been queued for update"))
+
+    @admin.display(description=_("Next Scheduled Update"))
+    def next_scheduled_update(self, obj: Podcast) -> str:
+        return timeuntil(scheduler.get_next_scheduled_update(obj))
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns default ordering."""
