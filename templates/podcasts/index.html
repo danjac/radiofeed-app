@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load cache i18n %}
 
 {% block title %} | {% translate "Podcasts" %}{% if has_subscriptions %} | {% if promoted %} {% translate "Promotions" %}{% else %}{% translate "Subscriptions" %}{% endif %}{% endif %}{% endblock %}
 
