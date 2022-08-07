@@ -8,7 +8,7 @@ import pandas
 
 from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
-from sklearn.linear_model import LinearRegression
+from scipy.stats import zscore
 
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
@@ -68,7 +68,7 @@ def schedule(feed: Feed) -> timedelta:
     # calculate mean interval based on intervals between recent episodes
 
     frequency = (
-        timedelta(seconds=_predict_next_interval(intervals))
+        timedelta(seconds=_calc_mean_interval(intervals))
         if (intervals := _calc_intervals(feed, now - timedelta(days=90)))
         else Podcast.DEFAULT_FREQUENCY
     )
@@ -111,10 +111,15 @@ def _calc_intervals(feed: Feed, since: datetime) -> list[float]:
     ]
 
 
-def _predict_next_interval(intervals: list[float]) -> float:
-    df = pandas.DataFrame(intervals, columns=["intervals"])
-    x = df.index.values.reshape(-1, 1)
-    y = df["intervals"].values.reshape(-1, 1)
-    lr = LinearRegression()
-    lr.fit(x, y)
-    return lr.predict(x).flatten()[0]
+def _calc_mean_interval(intervals: list[float]) -> float:
+    # remove any outliers and zeros and calculate mean interval
+    try:
+        df = pandas.DataFrame(intervals, columns=["intervals"])
+        df = df[df["intervals"] != 0]
+        df["zscore"] = zscore(df["intervals"])
+        df["outlier"] = df["zscore"].apply(
+            lambda score: score <= 0.96 and score >= 1.96
+        )
+        return df[~df["outlier"]]["intervals"].mean()
+    except KeyError:
+        return 0
