@@ -66,19 +66,26 @@ def schedule(feed: Feed) -> timedelta:
 
     since = now - timedelta(days=90)
 
-    intervals = [
-        (a - b).total_seconds()
-        for a, b in itertools.pairwise(
-            sorted(
-                [item.pub_date for item in feed.items if item.pub_date > since],
-                reverse=True,
+    try:
+        frequency = timedelta(
+            seconds=min(
+                [
+                    (a - b).total_seconds()
+                    for a, b in itertools.pairwise(
+                        sorted(
+                            [
+                                item.pub_date
+                                for item in feed.items
+                                if item.pub_date > since
+                            ],
+                            reverse=True,
+                        )
+                    )
+                ]
             )
         )
-    ]
-
-    frequency = (
-        timedelta(seconds=min(intervals)) if intervals else Podcast.DEFAULT_FREQUENCY
-    )
+    except ValueError:
+        frequency = Podcast.DEFAULT_FREQUENCY
 
     # increment until pub date + freq > current time
 
