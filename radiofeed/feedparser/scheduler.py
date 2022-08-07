@@ -64,10 +64,20 @@ def schedule(feed: Feed) -> timedelta:
 
     # calculate min interval based on intervals between recent episodes
 
+    since = now - timedelta(days=90)
+
+    intervals = [
+        (a - b).total_seconds()
+        for a, b in itertools.pairwise(
+            sorted(
+                [item.pub_date for item in feed.items if item.pub_date > since],
+                reverse=True,
+            )
+        )
+    ]
+
     frequency = (
-        timedelta(seconds=min(intervals))
-        if (intervals := _calc_intervals(feed, now - timedelta(days=90)))
-        else Podcast.DEFAULT_FREQUENCY
+        timedelta(seconds=min(intervals)) if intervals else Podcast.DEFAULT_FREQUENCY
     )
 
     # increment until pub date + freq > current time
@@ -93,16 +103,3 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     # ensure result falls within bounds
 
     return max(min(frequency, Podcast.MAX_FREQUENCY), Podcast.MIN_FREQUENCY)
-
-
-def _calc_intervals(feed: Feed, since: datetime) -> list[float]:
-    # get intervals in seconds between all pub dates in feed
-    return [
-        (a - b).total_seconds()
-        for a, b in itertools.pairwise(
-            sorted(
-                [item.pub_date for item in feed.items if item.pub_date > since],
-                reverse=True,
-            )
-        )
-    ]
