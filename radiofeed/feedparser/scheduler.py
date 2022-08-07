@@ -4,11 +4,8 @@ import itertools
 
 from datetime import datetime, timedelta
 
-import pandas
-
 from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
-from scipy.stats import zscore
 
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
@@ -65,10 +62,10 @@ def schedule(feed: Feed) -> timedelta:
     if now > feed.pub_date + Podcast.MAX_FREQUENCY:
         return Podcast.MAX_FREQUENCY
 
-    # calculate mean interval based on intervals between recent episodes
+    # calculate min interval based on intervals between recent episodes
 
     frequency = (
-        timedelta(seconds=_calc_mean_interval(intervals))
+        timedelta(seconds=min(intervals))
         if (intervals := _calc_intervals(feed, now - timedelta(days=90)))
         else Podcast.DEFAULT_FREQUENCY
     )
@@ -109,17 +106,3 @@ def _calc_intervals(feed: Feed, since: datetime) -> list[float]:
             )
         )
     ]
-
-
-def _calc_mean_interval(intervals: list[float]) -> float:
-    # remove any outliers and zeros and calculate mean interval
-    try:
-        df = pandas.DataFrame(intervals, columns=["intervals"])
-        df = df[df["intervals"] != 0]
-        df["zscore"] = zscore(df["intervals"])
-        df["outlier"] = df["zscore"].apply(
-            lambda score: score <= 0.96 and score >= 1.96
-        )
-        return df[~df["outlier"]]["intervals"].mean()
-    except KeyError:
-        return 0
