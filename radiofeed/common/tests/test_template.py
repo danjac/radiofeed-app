@@ -296,7 +296,7 @@ class TestPaginationLinks:
             ),
         }
         rendered = tmpl.render(ctx, request=req)
-        assert rendered.count("No more pages") == 2
+        assert rendered.count("No More Pages") == 2
 
     def test_has_previous(self, req, tmpl):
         ctx = {
@@ -305,7 +305,7 @@ class TestPaginationLinks:
             ),
         }
         rendered = tmpl.render(ctx, request=req)
-        assert rendered.count("No more pages") == 2
+        assert rendered.count("No More Pages") == 2
 
     def test_has_next_and_previous(self, req, tmpl):
         ctx = {
