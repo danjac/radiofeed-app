@@ -160,6 +160,21 @@ class TestSchedule:
 
         assert scheduler.schedule(feed).days == pytest.approx(4)
 
+    def test_regular_pattern(self):
+
+        items = []
+        last = timezone.now()
+
+        for day in [3, 4] * 12:
+
+            pub_date = last - timedelta(days=day)
+            items.append(Item(**ItemFactory(pub_date=pub_date)))
+            last = pub_date
+
+        feed = Feed(**FeedFactory(), items=items)
+
+        assert scheduler.schedule(feed).days == pytest.approx(3)
+
     def test_min_frequency(self):
         now = timezone.now()
         feed = Feed(
