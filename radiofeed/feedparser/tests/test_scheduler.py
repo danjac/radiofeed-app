@@ -80,7 +80,7 @@ class TestReschedule:
     def test_increment(self):
         assert scheduler.reschedule(
             timezone.now() - timedelta(days=1), timedelta(hours=24)
-        ).total_seconds() / 3600 == pytest.approx(26.4)
+        ).total_seconds() / 3600 == pytest.approx(25.2)
 
     def test_max_value(self):
         assert (
