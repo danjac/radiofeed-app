@@ -1593,7 +1593,7 @@ python-versions = "*"
 
 [[package]]
 name = "werkzeug"
-version = "2.2.1"
+version = "2.2.2"
 description = "The comprehensive WSGI web application library."
 category = "main"
 optional = false
