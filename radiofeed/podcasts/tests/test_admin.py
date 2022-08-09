@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import http
 
-from datetime import timedelta
 from unittest import mock
 
 import pytest
 
 from django.contrib.admin.sites import AdminSite
-from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
     ActiveFilter,
@@ -81,13 +79,6 @@ class TestPodcastAdmin:
         req.GET = {"q": "test"}
         ordering = podcast_admin.get_ordering(req)
         assert ordering == []
-
-    def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
-        mocker.patch(
-            "radiofeed.feedparser.scheduler.get_next_scheduled_update",
-            return_value=timezone.now() + timedelta(days=3),
-        )
-        assert podcast_admin.next_scheduled_update(podcast) == "2\xa0days, 23\xa0hours"
 
     def test_parse_podcast_feeds(self, mocker, podcast, podcast_admin, req):
         mock_feed_update = mocker.patch("radiofeed.podcasts.admin.parse_feed.map")
