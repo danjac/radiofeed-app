@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.response import SimpleTemplateResponse
 from django.utils import timezone
@@ -35,7 +35,7 @@ def user_preferences(
         with override(user.language):
             messages.success(request, _("Your preferences have been saved"))
 
-        return HttpResponseClientRedirect(request.path)
+        return HttpResponseClientRedirect(request.htmx.current_url)
 
     return render(
         request,
