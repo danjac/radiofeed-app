@@ -29,6 +29,7 @@ class TestGetNextScheduledUpdate:
     )
     def test_get_scheduled(self, parsed, pub_date, frequency, diff):
         now = timezone.now()
+
         podcast = Podcast(
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,
@@ -46,6 +47,7 @@ class TestScheduledPodcastsForUpdate:
         [
             (True, None, None, timedelta(hours=24), True),
             (False, None, None, timedelta(hours=24), False),
+            (True, timedelta(hours=1), timedelta(days=3), timedelta(hours=24), False),
             (True, timedelta(days=3), timedelta(days=3), timedelta(hours=24), True),
             (False, timedelta(days=3), timedelta(days=3), timedelta(hours=24), False),
             (True, timedelta(hours=3), timedelta(hours=3), timedelta(hours=24), False),

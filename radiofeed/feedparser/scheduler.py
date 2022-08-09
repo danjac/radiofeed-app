@@ -22,10 +22,11 @@ def get_next_scheduled_update(podcast: Podcast) -> datetime:
     if from_parsed is None or from_pub_date is None:
         return now
 
-    scheduled = (
+    scheduled = max(
         min(from_parsed, from_pub_date)
         if Podcast.MAX_FREQUENCY > podcast.frequency
-        else from_parsed
+        else from_parsed,
+        now - Podcast.MIN_FREQUENCY,
     )
 
     return max(now, scheduled)
@@ -35,6 +36,7 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns any active podcasts scheduled for feed updates."""
 
     now = timezone.now()
+
     since = now - F("frequency")
 
     return (
@@ -42,7 +44,10 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
             | Q(parsed__lt=since)
-            | Q(pub_date__range=(now - Podcast.MAX_FREQUENCY, since)),
+            | Q(
+                pub_date__range=(now - Podcast.MAX_FREQUENCY, since),
+                parsed__lt=now - Podcast.MIN_FREQUENCY,
+            ),
             active=True,
         )
     ).order_by(
