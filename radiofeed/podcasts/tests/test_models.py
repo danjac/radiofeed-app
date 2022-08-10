@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
@@ -18,15 +17,15 @@ from radiofeed.users.factories import UserFactory
 
 
 class TestSubscriptionManager:
-    def test_anonymous(self, db, anonymous_user):
-        assert Subscription.objects.podcast_ids(anonymous_user) == set()
+    def test_podcast_primary_keys_anonymous(self, db, anonymous_user):
+        assert Subscription.objects.podcast_primary_keys(anonymous_user) == set()
 
-    def test_none(self, user):
-        assert Subscription.objects.podcast_ids(user) == set()
+    def test_podcast_primary_keys_none(self, user):
+        assert Subscription.objects.podcast_primary_keys(user) == set()
 
-    def test_subscribed(self, db):
+    def test_podcast_primary_keys_subscribed(self, db):
         subscription = SubscriptionFactory()
-        assert Subscription.objects.podcast_ids(subscription.subscriber) == {
+        assert Subscription.objects.podcast_primary_keys(subscription.subscriber) == {
             subscription.podcast_id
         }
 

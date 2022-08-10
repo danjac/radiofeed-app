@@ -264,7 +264,7 @@ class Podcast(models.Model):
 
 
 class SubscriptionQuerySet(models.QuerySet):
-    def podcast_ids(self, user: User | AnonymousUser) -> set[int]:
+    def podcast_primary_keys(self, user: User | AnonymousUser) -> set[int]:
         """
         Returns:
             set of podcast PKs subscribed to by the user. Empty if no subscriptions or user is anonymous.
