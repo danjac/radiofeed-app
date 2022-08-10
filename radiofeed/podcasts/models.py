@@ -263,24 +263,6 @@ class Podcast(models.Model):
         return f"subscribe-actions-{self.id}"
 
 
-class SubscriptionQuerySet(models.QuerySet):
-    def podcast_primary_keys(self, user: User | AnonymousUser) -> set[int]:
-        """
-        Returns:
-            set of podcast PKs subscribed to by the user. Empty if no subscriptions or user is anonymous.
-        """
-
-        return (
-            set(
-                Subscription.objects.filter(subscriber=user).values_list(
-                    "podcast", flat=True
-                )
-            )
-            if user.is_authenticated
-            else set()
-        )
-
-
 class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""
 
@@ -291,8 +273,6 @@ class Subscription(TimeStampedModel):
     podcast: Podcast = models.ForeignKey(
         "podcasts.Podcast", on_delete=models.CASCADE, verbose_name=_("Podcast")
     )
-
-    objects: models.Manager["Subscription"] = SubscriptionQuerySet.as_manager()
 
     class Meta:
         constraints = [
