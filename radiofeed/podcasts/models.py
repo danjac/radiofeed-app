@@ -79,7 +79,7 @@ class Podcast(models.Model):
 
     DEFAULT_FREQUENCY: Final = timedelta(hours=24)
     MIN_FREQUENCY: Final = timedelta(hours=3)
-    MAX_FREQUENCY: Final = timedelta(days=30)
+    MAX_FREQUENCY: Final = timedelta(days=14)
 
     class ParseResult(models.TextChoices):
         """Result of feed parser process."""

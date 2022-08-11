@@ -60,7 +60,7 @@ class TestReschedule:
             scheduler.reschedule(
                 timezone.now() - timedelta(days=33), timedelta(days=30)
             ).days
-            == 30
+            == 14
         )
 
 
@@ -91,7 +91,7 @@ class TestSchedule:
             ],
         )
 
-        assert scheduler.schedule(feed).days == 30
+        assert scheduler.schedule(feed).days == 14
 
     def test_median_empty(self):
 
@@ -180,4 +180,4 @@ class TestSchedule:
             ],
         )
 
-        assert scheduler.schedule(feed).days == 30
+        assert scheduler.schedule(feed).days == 14
