@@ -25,7 +25,7 @@ class TestScheduledPodcastsForUpdate:
                 timedelta(hours=24),
                 False,
             ),
-            (True, timedelta(hours=1), timedelta(days=3), timedelta(hours=24), True),
+            (True, timedelta(hours=3), timedelta(days=3), timedelta(hours=24), True),
             (True, timedelta(days=3), timedelta(days=3), timedelta(hours=24), True),
             (False, timedelta(days=3), timedelta(days=3), timedelta(hours=24), False),
             (True, timedelta(hours=3), timedelta(hours=3), timedelta(hours=24), False),
@@ -171,7 +171,7 @@ class TestSchedule:
             ],
         )
 
-        assert (scheduler.schedule(feed).total_seconds() / 3600) == pytest.approx(1)
+        assert (scheduler.schedule(feed).total_seconds() / 3600) == pytest.approx(3)
 
     def test_max_frequency(self):
         now = timezone.now()
