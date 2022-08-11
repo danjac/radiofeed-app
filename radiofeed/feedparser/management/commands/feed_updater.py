@@ -11,7 +11,6 @@ from radiofeed.feedparser.tasks import parse_feed
 
 
 class Command(BaseCommand):
-    """Django management command."""
 
     help = """
     Parses RSS feeds of all scheduled podcasts
@@ -24,7 +23,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options) -> None:
-        """Command handler implmentation."""
+        """Command handler implementation."""
         parse_feed.map(
             itertools.islice(
                 scheduler.scheduled_podcasts_for_update()
