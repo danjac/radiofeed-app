@@ -3,7 +3,6 @@ from __future__ import annotations
 import decimal
 
 from datetime import datetime, timedelta
-from typing import Final
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -77,10 +76,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
-    DEFAULT_FREQUENCY: Final = timedelta(hours=24)
-    MIN_FREQUENCY: Final = timedelta(hours=3)
-    MAX_FREQUENCY: Final = timedelta(days=14)
-
     class ParseResult(models.TextChoices):
         """Result of feed parser process."""
 
@@ -112,7 +107,7 @@ class Podcast(models.Model):
     )
 
     frequency: timedelta = models.DurationField(
-        default=DEFAULT_FREQUENCY,
+        default=timedelta(hours=24),
         verbose_name=_("RSS Update Frequency"),
     )
 

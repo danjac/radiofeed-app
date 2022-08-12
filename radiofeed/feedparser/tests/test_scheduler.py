@@ -29,7 +29,7 @@ class TestScheduledPodcastsForUpdate:
             (True, timedelta(days=3), timedelta(days=3), timedelta(hours=24), True),
             (False, timedelta(days=3), timedelta(days=3), timedelta(hours=24), False),
             (True, timedelta(hours=3), timedelta(hours=3), timedelta(hours=24), False),
-            (True, timedelta(days=15), timedelta(days=15), timedelta(days=30), False),
+            (True, timedelta(days=15), timedelta(days=15), timedelta(days=30), True),
             (True, timedelta(days=30), timedelta(days=90), timedelta(days=30), True),
         ],
     )
@@ -62,14 +62,6 @@ class TestReschedule:
             timezone.now() - timedelta(days=1), timedelta(hours=24)
         ).total_seconds() / 3600 == pytest.approx(25.2)
 
-    def test_max_value(self):
-        assert (
-            scheduler.reschedule(
-                timezone.now() - timedelta(days=33), timedelta(days=30)
-            ).days
-            == 14
-        )
-
 
 class TestSchedule:
     def test_single_date(self):
@@ -86,7 +78,7 @@ class TestSchedule:
 
         assert scheduler.schedule(feed).days == 3
 
-    def test_single_date_gt_max(self):
+    def test_single_date_rescheduled(self):
         feed = Feed(
             **FeedFactory(),
             items=[
@@ -98,7 +90,7 @@ class TestSchedule:
             ],
         )
 
-        assert scheduler.schedule(feed).days == 14
+        assert scheduler.schedule(feed).days == 33
 
     def test_median_empty(self):
 
@@ -173,7 +165,7 @@ class TestSchedule:
 
         assert (scheduler.schedule(feed).total_seconds() / 3600) == pytest.approx(3)
 
-    def test_max_frequency(self):
+    def test_rescheduled(self):
         now = timezone.now()
         feed = Feed(
             **FeedFactory(),
@@ -187,4 +179,4 @@ class TestSchedule:
             ],
         )
 
-        assert scheduler.schedule(feed).days == 14
+        assert scheduler.schedule(feed).days == 34

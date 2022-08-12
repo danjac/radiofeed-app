@@ -3,6 +3,7 @@ from __future__ import annotations
 import itertools
 
 from datetime import datetime, timedelta
+from typing import Final
 
 from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
@@ -10,22 +11,23 @@ from django.utils import timezone
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
+_default_frequency: Final = timedelta(hours=24)
+_min_frequency: Final = timedelta(hours=3)
+
 
 def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns any active podcasts scheduled for feed updates."""
 
     now = timezone.now()
 
-    since = now - F("frequency")
-
     return (
         Podcast.objects.alias(subscribers=Count("subscription")).filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
-            | Q(parsed__lt=since)
+            | Q(parsed__lt=now - timedelta(days=15))
             | Q(
-                pub_date__range=(now - Podcast.MAX_FREQUENCY, since),
-                parsed__lt=now - Podcast.MIN_FREQUENCY,
+                pub_date__lt=now - F("frequency"),
+                parsed__lt=now - _min_frequency,
             ),
             active=True,
         )
@@ -39,12 +41,6 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
 
 def schedule(feed: Feed) -> timedelta:
     """Estimates frequency of episodes in feed."""
-    now = timezone.now()
-
-    # pub date > 30 days, will always be the max value
-
-    if now > feed.pub_date + Podcast.MAX_FREQUENCY:
-        return Podcast.MAX_FREQUENCY
 
     # calculate min interval based on intervals between recent episodes
 
@@ -61,7 +57,7 @@ def schedule(feed: Feed) -> timedelta:
             ]
         )
     except ValueError:
-        frequency = Podcast.DEFAULT_FREQUENCY
+        frequency = _default_frequency
 
     # increment until pub date + freq > current time
 
@@ -72,17 +68,17 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     """Increments update frequency until next scheduled date > current time."""
 
     if pub_date is None:
-        return Podcast.DEFAULT_FREQUENCY
+        return _default_frequency
 
     # ensure we don't try to increment zero frequency
 
-    frequency = frequency or Podcast.MIN_FREQUENCY
+    frequency = frequency or _min_frequency
 
     now = timezone.now()
 
-    while now > pub_date + frequency and Podcast.MAX_FREQUENCY > frequency:
+    while now > pub_date + frequency:
         frequency += frequency * 0.05
 
     # ensure result falls within bounds
 
-    return max(min(frequency, Podcast.MAX_FREQUENCY), Podcast.MIN_FREQUENCY)
+    return max(frequency, _min_frequency)
