@@ -17,12 +17,12 @@ class TestNextScheduledUpdate:
     def test_pub_date_none(self):
         now = timezone.now()
         podcast = Podcast(parsed=now - timedelta(hours=3), pub_date=None)
-        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+        assert (scheduler.next_scheduled_update(podcast) - now).total_seconds() < 10
 
     def test_parsed_none(self):
         now = timezone.now()
         podcast = Podcast(pub_date=now - timedelta(hours=3), parsed=None)
-        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+        assert (scheduler.next_scheduled_update(podcast) - now).total_seconds() < 10
 
     def test_parsed_gt_max(self):
 
@@ -32,7 +32,7 @@ class TestNextScheduledUpdate:
             parsed=now - timedelta(days=3),
             frequency=timedelta(days=30),
         )
-        assert (scheduler.get_next_scheduled_update(podcast) - now).days == 12
+        assert (scheduler.next_scheduled_update(podcast) - now).days == 12
 
     def test_parsed_lt_now(self):
         now = timezone.now()
@@ -41,7 +41,7 @@ class TestNextScheduledUpdate:
             parsed=now - timedelta(days=16),
             frequency=timedelta(days=30),
         )
-        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+        assert (scheduler.next_scheduled_update(podcast) - now).total_seconds() < 10
 
     def test_pub_date_lt_now(self):
         now = timezone.now()
@@ -50,7 +50,7 @@ class TestNextScheduledUpdate:
             parsed=now - timedelta(days=3),
             frequency=timedelta(days=30),
         )
-        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+        assert (scheduler.next_scheduled_update(podcast) - now).total_seconds() < 10
 
     def test_pub_date_in_future(self):
 
@@ -60,7 +60,7 @@ class TestNextScheduledUpdate:
             parsed=now - timedelta(hours=12),
             frequency=timedelta(days=7),
         )
-        assert (scheduler.get_next_scheduled_update(podcast) - now).days == 2
+        assert (scheduler.next_scheduled_update(podcast) - now).days == 2
 
     def test_pub_date_lt_min(self):
 
@@ -71,7 +71,7 @@ class TestNextScheduledUpdate:
             frequency=timedelta(hours=3),
         )
         assert (
-            scheduler.get_next_scheduled_update(podcast) - now
+            scheduler.next_scheduled_update(podcast) - now
         ).total_seconds() / 3600 == pytest.approx(2)
 
 

@@ -15,7 +15,7 @@ _default_frequency: Final = timedelta(hours=24)
 _min_frequency: Final = timedelta(hours=3)
 
 
-def get_next_scheduled_update(podcast: Podcast) -> datetime:
+def next_scheduled_update(podcast: Podcast) -> datetime:
     """Returns estimated next update."""
 
     now = timezone.now()
