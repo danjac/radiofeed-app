@@ -13,6 +13,7 @@ from radiofeed.podcasts.models import Podcast
 
 _default_frequency: Final = timedelta(hours=24)
 _min_frequency: Final = timedelta(hours=3)
+_max_frequency: Final = timedelta(days=15)
 
 
 def next_scheduled_update(podcast: Podcast) -> datetime:
@@ -23,7 +24,7 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     if podcast.pub_date is None or podcast.parsed is None:
         return now
 
-    from_parsed = podcast.parsed + timedelta(days=15)
+    from_parsed = podcast.parsed + _max_frequency
 
     print(
         "from parsed",
@@ -61,7 +62,7 @@ def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
         Podcast.objects.alias(subscribers=Count("subscription")).filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - timedelta(days=15))
+            | Q(parsed__lt=now - _max_frequency)
             | Q(
                 pub_date__lt=now - F("frequency"),
                 parsed__lt=now - _min_frequency,
