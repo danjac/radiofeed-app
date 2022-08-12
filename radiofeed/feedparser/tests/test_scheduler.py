@@ -10,6 +10,69 @@ from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.factories import FeedFactory, ItemFactory
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.podcasts.models import Podcast
+
+
+class TestNextScheduledUpdate:
+    def test_pub_date_none(self):
+        now = timezone.now()
+        podcast = Podcast(parsed=now - timedelta(hours=3), pub_date=None)
+        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+
+    def test_parsed_none(self):
+        now = timezone.now()
+        podcast = Podcast(pub_date=now - timedelta(hours=3), parsed=None)
+        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+
+    def test_parsed_gt_max(self):
+
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(days=5),
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(days=30),
+        )
+        assert (scheduler.get_next_scheduled_update(podcast) - now).days == 12
+
+    def test_parsed_lt_now(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(days=5),
+            parsed=now - timedelta(days=16),
+            frequency=timedelta(days=30),
+        )
+        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+
+    def test_pub_date_lt_now(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(days=33),
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(days=30),
+        )
+        assert (scheduler.get_next_scheduled_update(podcast) - now).total_seconds() < 10
+
+    def test_pub_date_in_future(self):
+
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(days=5),
+            parsed=now - timedelta(hours=12),
+            frequency=timedelta(days=7),
+        )
+        assert (scheduler.get_next_scheduled_update(podcast) - now).days == 2
+
+    def test_pub_date_lt_min(self):
+
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(hours=3),
+            parsed=now - timedelta(hours=1),
+            frequency=timedelta(hours=3),
+        )
+        assert (
+            scheduler.get_next_scheduled_update(podcast) - now
+        ).total_seconds() / 3600 == pytest.approx(2)
 
 
 class TestScheduledPodcastsForUpdate:

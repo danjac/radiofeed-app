@@ -15,6 +15,43 @@ _default_frequency: Final = timedelta(hours=24)
 _min_frequency: Final = timedelta(hours=3)
 
 
+def get_next_scheduled_update(podcast: Podcast) -> datetime:
+    """Returns estimated next update."""
+
+    now = timezone.now()
+
+    if podcast.pub_date is None or podcast.parsed is None:
+        return now
+
+    from_parsed = podcast.parsed + timedelta(days=15)
+
+    print(
+        "from parsed",
+        podcast.parsed,
+        from_parsed,
+        (from_parsed - now).days,
+        now > from_parsed,
+    )
+
+    from_pub_date = max(
+        podcast.pub_date + podcast.frequency,
+        podcast.parsed + _min_frequency,
+    )
+
+    print(
+        "from pub date",
+        podcast.pub_date,
+        from_pub_date,
+        (from_pub_date - now).days,
+        now > from_pub_date,
+    )
+
+    if now > from_parsed or now > from_pub_date:
+        return now
+
+    return min(from_parsed, from_pub_date)
+
+
 def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns any active podcasts scheduled for feed updates."""
 
