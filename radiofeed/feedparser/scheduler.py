@@ -48,15 +48,13 @@ def schedule(feed: Feed) -> timedelta:
 
     # calculate min interval based on intervals between recent episodes
 
-    since = now - Podcast.MAX_FREQUENCY
-
     try:
         frequency = min(
             [
                 (a - b)
                 for a, b in itertools.pairwise(
                     sorted(
-                        [item.pub_date for item in feed.items if item.pub_date > since],
+                        [item.pub_date for item in feed.items],
                         reverse=True,
                     )
                 )
