@@ -37,7 +37,7 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     return min(from_parsed, from_pub_date)
 
 
-def scheduled_podcasts_for_update() -> QuerySet[Podcast]:
+def scheduled_for_update() -> QuerySet[Podcast]:
     """Returns any active podcasts scheduled for feed updates."""
 
     now = timezone.now()
