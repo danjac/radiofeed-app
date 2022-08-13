@@ -18,7 +18,11 @@ class TestRecommender:
         patched.assert_called()
 
     def test_send_emails(self, db, user, mocker):
-        mocker.patch("multiprocessing.cpu_count", return_value=1)
+        def _patched(_self, fn, values, *args, **kwargs):
+            for value in values:
+                fn(value)
+
+        mocker.patch("multiprocessing.pool.ThreadPool.map", _patched)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
         call_command("recommender", email=True)
         patched.assert_called_with(user)
