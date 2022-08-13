@@ -11,9 +11,9 @@ from django.utils import timezone
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
-_default_frequency: Final = timedelta(hours=24)
-_min_frequency: Final = timedelta(hours=3)
-_max_frequency: Final = timedelta(days=15)
+_DEFAULT_FREQUENCY: Final = timedelta(hours=24)
+_MIN_FREQUENCY: Final = timedelta(hours=3)
+_MAX_FREQUENCY: Final = timedelta(days=15)
 
 
 def next_scheduled_update(podcast: Podcast) -> datetime:
@@ -24,11 +24,11 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     if podcast.pub_date is None or podcast.parsed is None:
         return now
 
-    from_parsed = podcast.parsed + _max_frequency
+    from_parsed = podcast.parsed + _MAX_FREQUENCY
 
     from_pub_date = max(
         podcast.pub_date + podcast.frequency,
-        podcast.parsed + _min_frequency,
+        podcast.parsed + _MIN_FREQUENCY,
     )
 
     if now > from_parsed or now > from_pub_date:
@@ -46,10 +46,10 @@ def scheduled_for_update() -> QuerySet[Podcast]:
         Podcast.objects.alias(subscribers=Count("subscription")).filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - _max_frequency)
+            | Q(parsed__lt=now - _MAX_FREQUENCY)
             | Q(
                 pub_date__lt=now - F("frequency"),
-                parsed__lt=now - _min_frequency,
+                parsed__lt=now - _MIN_FREQUENCY,
             ),
             active=True,
         )
@@ -79,7 +79,7 @@ def schedule(feed: Feed) -> timedelta:
             ]
         )
     except ValueError:
-        frequency = _default_frequency
+        frequency = _DEFAULT_FREQUENCY
 
     # increment until pub date + freq > current time
 
@@ -90,11 +90,11 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     """Increments update frequency until next scheduled date > current time."""
 
     if pub_date is None:
-        return _default_frequency
+        return _DEFAULT_FREQUENCY
 
     # ensure we don't try to increment zero frequency
 
-    frequency = frequency or _min_frequency
+    frequency = frequency or _MIN_FREQUENCY
 
     now = timezone.now()
 
@@ -103,4 +103,4 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
 
     # ensure result falls within bounds
 
-    return max(frequency, _min_frequency)
+    return max(frequency, _MIN_FREQUENCY)
