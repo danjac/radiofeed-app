@@ -75,7 +75,7 @@ class TestNextScheduledUpdate:
         ).total_seconds() / 3600 == pytest.approx(2)
 
 
-class TestScheduledPodcastsForUpdate:
+class TestScheduledForUpdate:
     @pytest.mark.parametrize(
         "active,parsed,pub_date,frequency,exists",
         [
@@ -104,7 +104,7 @@ class TestScheduledPodcastsForUpdate:
             frequency=frequency,
         )
 
-        assert scheduler.scheduled_podcasts_for_update().exists() == exists, (
+        assert scheduler.scheduled_for_update().exists() == exists, (
             active,
             parsed,
             pub_date,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import http
 
-from django.contrib import admin, messages
+from django.contrib import admin
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.feedparser import scheduler
-from radiofeed.feedparser.tasks import parse_feed
+from radiofeed.feedparser.feed_parser import FeedParser
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -235,21 +235,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     change_actions = ("parse_podcast_feed",)
 
-    def parse_podcast_feeds(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> None:
-        """Runs feed parser on all podcasts in selection."""
-        parse_feed.map(queryset.values_list("pk"))
-
-        self.message_user(
-            request,
-            _("Podcast(s) queued for update"),
-            messages.SUCCESS,
-        )
-
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        parse_feed(obj.id)
+        FeedParser(obj).parse()
         self.message_user(request, _("Podcast has been queued for update"))
 
     @admin.display(description=_("Estimated Next Update"))

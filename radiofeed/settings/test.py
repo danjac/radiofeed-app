@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from split_settings.tools import include
 
-from radiofeed.settings.base import ALLOWED_HOSTS, HUEY, TEMPLATES
+from radiofeed.settings.base import ALLOWED_HOSTS, TEMPLATES
 
 include("base.py")
 
@@ -20,4 +20,3 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 # django-coverage-plugin
 TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore
 
-HUEY["immediate"] = True  # type: ignore

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import multiprocessing
+
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import recommender
@@ -30,6 +32,11 @@ class Command(BaseCommand):
         else:
             recommender.recommend()
 
-    def send_recommendations_emails(self):
-        for user in User.objects.email_notification_recipients():
-            send_recommendations_email(user)
+    def _send_recommendations_emails(self):
+        with multiprocessing.pool.ThreadPool(
+            processes=multiprocessing.cpu_count()
+        ) as pool:
+            pool.map(
+                send_recommendations_email,
+                User.objects.email_notification_recipients(),
+            )

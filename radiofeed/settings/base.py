@@ -89,7 +89,6 @@ INSTALLED_APPS = [
     "django_htmx",
     "django_object_actions",
     "fast_update",
-    "huey.contrib.djhuey",
     "modeltranslation",
     "widget_tweaks",
     "radiofeed.episodes",
@@ -237,21 +236,6 @@ LOGGING = {
             "level": "CRITICAL",
             "propagate": False,
         },
-    },
-}
-
-# Huey
-# https://huey.readthedocs.io/en/latest/django.html
-
-HUEY = {
-    "blocking": False,
-    "immediate": False,
-    "store_none": True,
-    "consumer": {
-        "periodic": False,
-    },
-    "connection": {
-        "url": REDIS_URL,
     },
 }
 
