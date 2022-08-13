@@ -24,14 +24,16 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     if podcast.pub_date is None or podcast.parsed is None:
         return now
 
-    from_parsed = podcast.parsed + _MAX_FREQUENCY
-
-    from_pub_date = max(
-        podcast.pub_date + podcast.frequency,
-        podcast.parsed + _MIN_FREQUENCY,
+    return max(
+        min(
+            podcast.parsed + _MAX_FREQUENCY,
+            max(
+                podcast.pub_date + podcast.frequency,
+                podcast.parsed + _MIN_FREQUENCY,
+            ),
+        ),
+        now,
     )
-
-    return max(min(from_parsed, from_pub_date), now)
 
 
 def scheduled_for_update() -> QuerySet[Podcast]:
