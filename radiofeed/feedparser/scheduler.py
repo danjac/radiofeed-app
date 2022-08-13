@@ -31,10 +31,7 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
         podcast.parsed + _MIN_FREQUENCY,
     )
 
-    if now > from_parsed or now > from_pub_date:
-        return now
-
-    return min(from_parsed, from_pub_date)
+    return max(min(from_parsed, from_pub_date), now)
 
 
 def scheduled_for_update() -> QuerySet[Podcast]:
