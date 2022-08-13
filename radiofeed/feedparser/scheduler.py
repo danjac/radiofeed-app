@@ -26,25 +26,9 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
 
     from_parsed = podcast.parsed + _max_frequency
 
-    print(
-        "from parsed",
-        podcast.parsed,
-        from_parsed,
-        (from_parsed - now).days,
-        now > from_parsed,
-    )
-
     from_pub_date = max(
         podcast.pub_date + podcast.frequency,
         podcast.parsed + _min_frequency,
-    )
-
-    print(
-        "from pub date",
-        podcast.pub_date,
-        from_pub_date,
-        (from_pub_date - now).days,
-        now > from_pub_date,
     )
 
     if now > from_parsed or now > from_pub_date:
