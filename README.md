@@ -64,7 +64,6 @@ python manage.py loaddata podcasts radiofeed/podcasts/fixtures/categories.json.g
 
 This should provide some useful data to get started with.
 
-
 ### Frontend setup
 
 To install frontend dependencies just run `npm ci`.
@@ -77,12 +76,10 @@ The easiest way to spin up your local development environment is using [Honcho](
 honcho -f Procfile.local start
 ```
 
-
 This will start up:
 
 * Django development server
-* Background workers
-* `tailwindcss` and `webpack` for building frontend assets on the fly
+* `tailwindcss` and `esbuild` for building frontend assets on the fly
 
 Honcho should be installed in your virtualenv.
 
