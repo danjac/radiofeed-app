@@ -74,6 +74,7 @@ pytest-icdiff = "^0.5"
 django-coverage-plugin = "^2.0.3"
 coverage-badge = "^1.1.0"
 flake8-print = "^5.0.0"
+rich = "^12.5.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
