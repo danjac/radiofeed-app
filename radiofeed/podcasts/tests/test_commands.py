@@ -4,6 +4,7 @@ from django.core.management import call_command
 
 from radiofeed.podcasts.factories import RecommendationFactory
 from radiofeed.podcasts.itunes import Feed
+from radiofeed.users.factories import UserFactory
 
 
 class TestRecommender:
@@ -17,7 +18,8 @@ class TestRecommender:
         call_command("recommender")
         patched.assert_called()
 
-    def test_send_emails(self, db, user, mocker):
+    def test_send_emails(self, db, mocker):
+        user = UserFactory(send_email_notifications=True)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
         call_command("recommender", email=True)
         patched.assert_called_with(user)
