@@ -26,30 +26,31 @@ def send_recommendations_email(
     Returns:
         `True` user has been sent recommendations email
     """
-    podcast_ids = (
-        set(
-            Bookmark.objects.filter(user=user)
-            .select_related("episode__podcast")
-            .values_list("episode__podcast", flat=True)
-        )
-        | set(
-            AudioLog.objects.filter(user=user)
-            .select_related("episode__podcast")
-            .values_list("episode__podcast", flat=True)
-        )
-        | set(
-            Subscription.objects.filter(subscriber=user).values_list(
-                "podcast", flat=True
+    if not (
+        podcast_ids := (
+            set(
+                Bookmark.objects.filter(user=user)
+                .select_related("episode__podcast")
+                .values_list("episode__podcast", flat=True)
+            )
+            | set(
+                AudioLog.objects.filter(user=user)
+                .select_related("episode__podcast")
+                .values_list("episode__podcast", flat=True)
+            )
+            | set(
+                Subscription.objects.filter(subscriber=user).values_list(
+                    "podcast", flat=True
+                )
             )
         )
-    )
+        | set(user.recommended_podcasts.values_list("pk", flat=True))
+    ):
+        return False
 
     recommended_ids = (
         Recommendation.objects.filter(podcast__pk__in=podcast_ids)
-        .exclude(
-            recommended__pk__in=podcast_ids
-            | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
-        )
+        .exclude(recommended__pk__in=podcast_ids)
         .values_list("recommended", flat=True)
     )
 

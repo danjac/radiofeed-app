@@ -26,3 +26,12 @@ class TestRecommendations:
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [user.email]
         assert user.recommended_podcasts.count() == 3
+
+    def test_already_recommended(self, user, mailoutbox):
+
+        subscribed = SubscriptionFactory(subscriber=user).podcast
+        recommended = RecommendationFactory(podcast=subscribed).podcast
+        user.recommended_podcasts.add(recommended)
+
+        assert not emails.send_recommendations_email(user)
+        assert len(mailoutbox) == 0
