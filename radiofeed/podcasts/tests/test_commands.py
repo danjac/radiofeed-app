@@ -19,10 +19,10 @@ class TestRecommender:
         patched.assert_called()
 
     def test_send_emails(self, db, mocker):
-        user = UserFactory(send_email_notifications=True)
+        UserFactory(send_email_notifications=True, is_active=True)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
         call_command("recommender", email=True)
-        patched.assert_called_with(user)
+        patched.assert_called()
 
 
 class TestItunesCrawler:
