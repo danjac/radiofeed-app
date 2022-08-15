@@ -162,6 +162,27 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
+class QueuedFilter(admin.SimpleListFilter):
+    """Filters podcasts promoted status."""
+
+    title = _("Queued")
+    parameter_name = "queued"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", _("Queued")),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
+
+
 class SubscribedFilter(admin.SimpleListFilter):
     """Filters podcasts based on subscription status."""
 
@@ -197,6 +218,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         ActiveFilter,
         PubDateFilter,
         PromotedFilter,
+        QueuedFilter,
         SubscribedFilter,
         ParseResultFilter,
         HttpStatusFilter,
@@ -208,6 +230,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
+        "queued",
     )
 
     list_editable = (
