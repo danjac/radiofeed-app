@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import itertools
-import multiprocessing
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
-from typing import Final
+from typing import Final, Iterator
 
 from django.db.models import Count, F, Q
 from django.utils import timezone
@@ -38,7 +38,7 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     )
 
 
-def schedule_for_update(limit: int) -> list:
+def schedule_for_update(limit: int) -> Iterator[bool]:
 
     now = timezone.now()
 
@@ -55,8 +55,8 @@ def schedule_for_update(limit: int) -> list:
 
     qs.filter(queued__isnull=True).update(queued=now)
 
-    with multiprocessing.pool.ThreadPool(processes=multiprocessing.cpu_count()) as pool:
-        return pool.map(
+    with ThreadPoolExecutor() as executor:
+        return executor.map(
             parse_feed,
             itertools.islice(
                 qs.alias(subscribers=Count("subscription")).order_by(
