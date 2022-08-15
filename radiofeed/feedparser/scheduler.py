@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import itertools
+import logging
+import multiprocessing
 
 from datetime import datetime, timedelta
 from typing import Final
 
-from django.db.models import Count, F, Q, QuerySet
+from django.db.models import Count, F, Q
 from django.utils import timezone
 
+from radiofeed.feedparser.feed_parser import FeedParser
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
@@ -36,8 +39,7 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     )
 
 
-def scheduled_for_update() -> QuerySet[Podcast]:
-    """Returns any active podcasts scheduled for feed updates."""
+def schedule_for_update(limit: int) -> list:
 
     now = timezone.now()
 
@@ -54,13 +56,20 @@ def scheduled_for_update() -> QuerySet[Podcast]:
 
     qs.filter(queued__isnull=True).update(queued=timezone.now())
 
-    return qs.alias(subscribers=Count("subscription")).order_by(
-        F("subscribers").desc(),
-        F("promoted").desc(),
-        F("queued").asc(),
-        F("parsed").asc(nulls_first=True),
-        F("pub_date").desc(nulls_first=True),
-    )
+    with multiprocessing.pool.ThreadPool(processes=multiprocessing.cpu_count()) as pool:
+        return pool.map(
+            _parse_feed,
+            itertools.islice(
+                qs.alias(subscribers=Count("subscription")).order_by(
+                    F("subscribers").desc(),
+                    F("promoted").desc(),
+                    F("queued").asc(),
+                    F("parsed").asc(nulls_first=True),
+                    F("pub_date").desc(nulls_first=True),
+                ),
+                limit,
+            ),
+        )
 
 
 def schedule(feed: Feed) -> timedelta:
@@ -106,3 +115,10 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     # ensure result falls within bounds
 
     return max(frequency, _MIN_FREQUENCY)
+
+
+def _parse_feed(podcast: Podcast) -> None:
+    try:
+        FeedParser(podcast).parse()
+    except Exception as e:
+        logging.exception(e)

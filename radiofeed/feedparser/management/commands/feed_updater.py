@@ -1,15 +1,10 @@
 from __future__ import annotations
 
-import itertools
-import logging
-import multiprocessing
-
 from argparse import ArgumentParser
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.feedparser import feed_parser, scheduler
-from radiofeed.podcasts.models import Podcast
+from radiofeed.feedparser import scheduler
 
 
 class Command(BaseCommand):
@@ -29,21 +24,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         """Command handler implementation."""
-        podcasts = scheduler.scheduled_for_update()
-
-        with multiprocessing.pool.ThreadPool(
-            processes=multiprocessing.cpu_count()
-        ) as pool:
-            pool.map(
-                self.parse_feed,
-                itertools.islice(
-                    podcasts,
-                    options["limit"],
-                ),
-            )
-
-    def parse_feed(self, podcast: Podcast) -> None:
-        try:
-            feed_parser.FeedParser(podcast).parse()
-        except Exception as e:
-            logging.exception(e)
+        scheduler.schedule_for_update(options["limit"])
