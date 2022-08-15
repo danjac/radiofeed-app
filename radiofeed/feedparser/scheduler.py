@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import itertools
-import logging
 import multiprocessing
 
 from datetime import datetime, timedelta
@@ -10,7 +9,7 @@ from typing import Final
 from django.db.models import Count, F, Q
 from django.utils import timezone
 
-from radiofeed.feedparser.feed_parser import FeedParser
+from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
@@ -58,7 +57,7 @@ def schedule_for_update(limit: int) -> list:
 
     with multiprocessing.pool.ThreadPool(processes=multiprocessing.cpu_count()) as pool:
         return pool.map(
-            _parse_feed,
+            parse_feed,
             itertools.islice(
                 qs.alias(subscribers=Count("subscription")).order_by(
                     F("subscribers").desc(),
@@ -115,10 +114,3 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     # ensure result falls within bounds
 
     return max(frequency, _MIN_FREQUENCY)
-
-
-def _parse_feed(podcast: Podcast) -> None:
-    try:
-        FeedParser(podcast).parse()
-    except Exception as e:
-        logging.exception(e)

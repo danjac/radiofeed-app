@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.feedparser import scheduler
-from radiofeed.feedparser.feed_parser import FeedParser
+from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -261,8 +261,8 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        FeedParser(obj).parse()
-        self.message_user(request, _("Podcast has been queued for update"))
+        parse_feed(obj)
+        self.message_user(request, _("Podcast has been updated"))
 
     @admin.display(description=_("Estimated Next Update"))
     def next_scheduled_update(self, obj: Podcast):

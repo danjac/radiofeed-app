@@ -56,12 +56,6 @@ class TestCategoryAdmin:
 
 
 class TestPodcastAdmin:
-    @pytest.fixture
-    def mock_feed_parser(self, mocker):
-        return mocker.patch(
-            "radiofeed.podcasts.management.commands.feed_update.feed_parser"
-        )
-
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = podcast_admin.get_search_results(
@@ -84,9 +78,9 @@ class TestPodcastAdmin:
         assert ordering == []
 
     def test_parse_podcast_feed(self, mocker, podcast, podcast_admin, req):
-        mock_feed_update = mocker.patch("radiofeed.podcasts.admin.FeedParser.parse")
+        patched = mocker.patch("radiofeed.podcasts.admin.parse_feed")
         podcast_admin.parse_podcast_feed(req, podcast)
-        mock_feed_update.assert_called()
+        patched.assert_called()
 
     def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
         mocker.patch(

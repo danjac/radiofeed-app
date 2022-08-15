@@ -98,7 +98,7 @@ class TestScheduleForUpdate:
     )
     def test_schedule(self, db, mocker, active, parsed, pub_date, frequency, exists):
 
-        mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
+        mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
 
         PodcastFactory(
             active=active,
@@ -116,17 +116,6 @@ class TestScheduleForUpdate:
             frequency,
             exists,
         )
-
-    def test_schedule_exception(self, db, mocker):
-
-        mocker.patch(
-            "radiofeed.feedparser.feed_parser.FeedParser.parse",
-            side_effect=ValueError(),
-        )
-
-        PodcastFactory(parsed=None)
-
-        scheduler.schedule_for_update(360)
 
 
 class TestReschedule:

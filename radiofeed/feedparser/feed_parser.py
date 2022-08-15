@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import http
+import logging
 
 from typing import Iterator
 
@@ -23,6 +24,15 @@ from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
+
+
+def parse_feed(podcast: Podcast) -> bool:
+    """Parse podcast RSS feed."""
+    try:
+        return FeedParser(podcast).parse()
+    except Exception as e:
+        logging.exception(e)
+        return False
 
 
 class FeedParser:
