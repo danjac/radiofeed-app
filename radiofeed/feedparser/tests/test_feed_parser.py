@@ -86,7 +86,8 @@ class TestFeedParser:
             side_effect=ValueError(),
         )
 
-        assert not parse_feed(podcast)
+        with pytest.raises(ValueError):
+            assert not parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -99,7 +100,8 @@ class TestFeedParser:
             side_effect=ValueError(),
         )
 
-        assert not parse_feed(podcast)
+        with pytest.raises(ValueError):
+            assert not parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
