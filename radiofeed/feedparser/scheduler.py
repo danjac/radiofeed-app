@@ -54,7 +54,7 @@ def schedule_for_update(limit: int) -> list:
         active=True,
     )
 
-    qs.filter(queued__isnull=True).update(queued=timezone.now())
+    qs.filter(queued__isnull=True).update(queued=now)
 
     with multiprocessing.pool.ThreadPool(processes=multiprocessing.cpu_count()) as pool:
         return pool.map(
