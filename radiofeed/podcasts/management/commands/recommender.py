@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.podcasts import recommender
-from radiofeed.podcasts.emails import send_recommendations_email
+from radiofeed.podcasts import emails, recommender
 from radiofeed.users.models import User
 
 
@@ -28,7 +27,7 @@ class Command(BaseCommand):
         if options["email"]:
 
             for user in User.objects.email_notification_recipients():
-                send_recommendations_email(user)
+                emails.send_recommendations_email(user)
 
         else:
             recommender.recommend()
