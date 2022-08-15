@@ -191,7 +191,7 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
         assert response.context["episode"] == episode
-        assertContains(response, "No more episodes")
+        assertContains(response, "No More Episodes")
 
 
 class TestStartPlayer:

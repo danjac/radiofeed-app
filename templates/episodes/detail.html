@@ -84,6 +84,10 @@
 
     {% with podcast=episode.podcast %}
 
+        {% translate "Next" as t_next %}
+        {% translate "Previous" as t_previous %}
+        {% translate "No More Episodes" as t_no_more_episodes %}
+
         <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
             role="navigation"
             aria-label="{% translate "Pagination" %}">
@@ -92,25 +96,25 @@
                     href="{{ previous_episode.get_absolute_url }}"
                     aria-label="{{ previous_episode.cleaned_title }}"
                     title="{{ previous_episode.cleaned_title }}">
-                    {% translate "Previous" %}
+                    {{ t_previous }}
                 </a>
 
             {% else %}
                 <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                    title="No more episodes"
-                    aria-label="{% translate "No more episodes" %}">{% translate "Previous" %}</span>
+                    title="{{ t_no_more_episodes }}"
+                    aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
             {% endif %}
             {% if next_episode %}
                 <a class="link"
                     href="{{ next_episode.get_absolute_url }}"
                     aria-label="{{ next_episode.cleaned_title }}"
                     title="{{ next_episode.cleaned_title }}">
-                    {% translate "Next" %}
+                    {{ t_next }}
                 </a>
             {% else %}
                 <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                    title="No more episodes"
-                    aria-label="{% translate "No more episodes" %}">{% translate "Next" %}</span>
+                    title="{{ t_no_more_episodes }}"
+                    aria-label="{{ t_no_more_episodes }}">{{ t_next }}</span>
             {% endif %}
         </nav>
 
