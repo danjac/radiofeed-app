@@ -29,13 +29,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         """Command handler implementation."""
+        podcasts = scheduler.scheduled_for_update()
+
         with multiprocessing.pool.ThreadPool(
             processes=multiprocessing.cpu_count()
         ) as pool:
             pool.map(
                 self.parse_feed,
                 itertools.islice(
-                    scheduler.scheduled_for_update(),
+                    podcasts,
                     options["limit"],
                 ),
             )

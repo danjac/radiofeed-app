@@ -106,6 +106,10 @@ class Podcast(models.Model):
         null=True, blank=True, verbose_name=_("Last RSS Feed Check")
     )
 
+    queued: datetime | None = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Queued for Update")
+    )
+
     frequency: timedelta = models.DurationField(
         default=timedelta(hours=24),
         verbose_name=_("RSS Update Frequency"),

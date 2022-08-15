@@ -41,20 +41,23 @@ def scheduled_for_update() -> QuerySet[Podcast]:
 
     now = timezone.now()
 
-    return (
-        Podcast.objects.alias(subscribers=Count("subscription")).filter(
-            Q(parsed__isnull=True)
-            | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - _MAX_FREQUENCY)
-            | Q(
-                pub_date__lt=now - F("frequency"),
-                parsed__lt=now - _MIN_FREQUENCY,
-            ),
-            active=True,
-        )
-    ).order_by(
+    qs = Podcast.objects.filter(
+        Q(parsed__isnull=True)
+        | Q(pub_date__isnull=True)
+        | Q(parsed__lt=now - _MAX_FREQUENCY)
+        | Q(
+            pub_date__lt=now - F("frequency"),
+            parsed__lt=now - _MIN_FREQUENCY,
+        ),
+        active=True,
+    )
+
+    qs.filter(queued__isnull=True).update(queued=timezone.now())
+
+    return qs.alias(subscribers=Count("subscription")).order_by(
         F("subscribers").desc(),
         F("promoted").desc(),
+        F("queued").asc(),
         F("parsed").asc(nulls_first=True),
         F("pub_date").desc(nulls_first=True),
     )

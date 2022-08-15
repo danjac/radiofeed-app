@@ -204,6 +204,7 @@ class FeedParser:
     def _save_podcast(self, **fields) -> None:
         now = timezone.now()
         Podcast.objects.filter(pk=self._podcast.id).update(
+            queued=None,
             updated=now,
             parsed=now,
             **fields,
