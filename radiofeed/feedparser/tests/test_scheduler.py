@@ -98,7 +98,7 @@ class TestScheduleForUpdate:
     )
     def test_schedule(self, db, mocker, active, parsed, pub_date, frequency, exists):
 
-        mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
+        patched = mocker.patch("radiofeed.feedparser.scheduler.parse_feed")
 
         PodcastFactory(
             active=active,
@@ -109,13 +109,10 @@ class TestScheduleForUpdate:
 
         scheduler.schedule_for_update(360)
 
-        assert Podcast.objects.filter(queued__isnull=False).exists() == exists, (
-            active,
-            parsed,
-            pub_date,
-            frequency,
-            exists,
-        )
+        if exists:
+            patched.assert_called()
+        else:
+            patched.assert_not_called()
 
 
 class TestReschedule:

@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import Final, Iterator
 
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
 
 from radiofeed.feedparser.feed_parser import parse_feed
@@ -38,11 +38,10 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     )
 
 
-def schedule_for_update(limit: int) -> Iterator[bool]:
-
+def scheduled_for_update() -> QuerySet[Podcast]:
     now = timezone.now()
 
-    qs = Podcast.objects.filter(
+    return Podcast.objects.filter(
         Q(parsed__isnull=True)
         | Q(pub_date__isnull=True)
         | Q(parsed__lt=now - _MAX_FREQUENCY)
@@ -53,16 +52,18 @@ def schedule_for_update(limit: int) -> Iterator[bool]:
         active=True,
     )
 
-    qs.filter(queued__isnull=True).update(queued=now)
+
+def schedule_for_update(limit: int) -> Iterator[bool]:
 
     with ThreadPoolExecutor() as executor:
         return executor.map(
             parse_feed,
             itertools.islice(
-                qs.alias(subscribers=Count("subscription")).order_by(
+                scheduled_for_update()
+                .alias(subscribers=Count("subscription"))
+                .order_by(
                     F("subscribers").desc(),
                     F("promoted").desc(),
-                    F("queued").asc(),
                     F("parsed").asc(nulls_first=True),
                     F("pub_date").desc(nulls_first=True),
                 ),
