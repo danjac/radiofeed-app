@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import itertools
 
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
-from typing import Final, Iterator
+from typing import Final
 
 from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
 
-from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
@@ -41,35 +39,25 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
 def scheduled_for_update() -> QuerySet[Podcast]:
     now = timezone.now()
 
-    return Podcast.objects.filter(
-        Q(parsed__isnull=True)
-        | Q(pub_date__isnull=True)
-        | Q(parsed__lt=now - _MAX_FREQUENCY)
-        | Q(
-            pub_date__lt=now - F("frequency"),
-            parsed__lt=now - _MIN_FREQUENCY,
-        ),
-        active=True,
-    )
-
-
-def schedule_for_update(limit: int) -> Iterator[bool]:
-
-    with ThreadPoolExecutor() as executor:
-        return executor.map(
-            parse_feed,
-            itertools.islice(
-                scheduled_for_update()
-                .alias(subscribers=Count("subscription"))
-                .order_by(
-                    F("subscribers").desc(),
-                    F("promoted").desc(),
-                    F("parsed").asc(nulls_first=True),
-                    F("pub_date").desc(nulls_first=True),
-                ),
-                limit,
+    return (
+        Podcast.objects.alias(subscribers=Count("subscription"))
+        .filter(
+            Q(parsed__isnull=True)
+            | Q(pub_date__isnull=True)
+            | Q(parsed__lt=now - _MAX_FREQUENCY)
+            | Q(
+                pub_date__lt=now - F("frequency"),
+                parsed__lt=now - _MIN_FREQUENCY,
             ),
+            active=True,
         )
+        .order_by(
+            F("subscribers").desc(),
+            F("promoted").desc(),
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+        )
+    )
 
 
 def schedule(feed: Feed) -> timedelta:

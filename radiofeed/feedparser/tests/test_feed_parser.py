@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import datetime
 import http
 import pathlib
+
+from datetime import datetime
 
 import pytest
 import requests
@@ -111,7 +112,7 @@ class TestFeedParser:
 
         # set date to before latest
         podcast = PodcastFactory(
-            pub_date=datetime.datetime(year=2020, month=3, day=1), num_retries=3
+            pub_date=datetime(year=2020, month=3, day=1), num_retries=3
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000

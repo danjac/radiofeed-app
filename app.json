@@ -11,7 +11,7 @@
     },
     "cron": [
         {
-            "command": "python manage.py feed_updater",
+            "command": "python manage.py feed_parser",
             "schedule": "*/6 * * * *"
         },
         {

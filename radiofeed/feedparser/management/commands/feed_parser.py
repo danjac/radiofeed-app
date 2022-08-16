@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import itertools
+
 from argparse import ArgumentParser
+from concurrent.futures import ThreadPoolExecutor
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.feedparser import scheduler
+from radiofeed.feedparser import feed_parser, scheduler
 
 
 class Command(BaseCommand):
@@ -24,4 +27,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         """Command handler implementation."""
-        scheduler.schedule_for_update(options["limit"])
+        with ThreadPoolExecutor() as executor:
+            executor.map(
+                feed_parser.parse_feed,
+                itertools.islice(
+                    scheduler.scheduled_for_update(),
+                    options["limit"],
+                ),
+            )

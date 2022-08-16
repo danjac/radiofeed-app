@@ -75,7 +75,7 @@ class TestNextScheduledUpdate:
         ).total_seconds() / 3600 == pytest.approx(2)
 
 
-class TestScheduleForUpdate:
+class TestScheduledForUpdate:
     @pytest.mark.parametrize(
         "active,parsed,pub_date,frequency,exists",
         [
@@ -98,8 +98,6 @@ class TestScheduleForUpdate:
     )
     def test_schedule(self, db, mocker, active, parsed, pub_date, frequency, exists):
 
-        patched = mocker.patch("radiofeed.feedparser.scheduler.parse_feed")
-
         PodcastFactory(
             active=active,
             parsed=timezone.now() - parsed if parsed else None,
@@ -107,12 +105,7 @@ class TestScheduleForUpdate:
             frequency=frequency,
         )
 
-        scheduler.schedule_for_update(360)
-
-        if exists:
-            patched.assert_called()
-        else:
-            patched.assert_not_called()
+        assert scheduler.scheduled_for_update().exists() == exists
 
 
 class TestReschedule:
