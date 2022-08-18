@@ -13,7 +13,7 @@
         "@tailwindcss/forms": "^0.5.2",
         "@tailwindcss/line-clamp": "^0.4.0",
         "@tailwindcss/typography": "^0.5.4",
-        "esbuild": "^0.15.2",
+        "esbuild": "^0.15.5",
         "eslint": "^8.22.0",
         "eslint-plugin-prettier": "^4.2.1",
         "prettier": "2.7.1",
