@@ -83,40 +83,42 @@
     <h1 class="font-bold mb-6 text-lg md:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
 
     {% with podcast=episode.podcast %}
+        {% if next_episode or previous_episode %}
 
-        {% translate "Next" as t_next %}
-        {% translate "Previous" as t_previous %}
-        {% translate "No More Episodes" as t_no_more_episodes %}
+            {% translate "Next" as t_next %}
+            {% translate "Previous" as t_previous %}
+            {% translate "No More Episodes" as t_no_more_episodes %}
 
-        <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
-            role="navigation"
-            aria-label="{% translate "Pagination" %}">
-            {% if previous_episode %}
-                <a class="link"
-                    href="{{ previous_episode.get_absolute_url }}"
-                    aria-label="{{ previous_episode.cleaned_title }}"
-                    title="{{ previous_episode.cleaned_title }}">
-                    {{ t_previous }}
-                </a>
+            <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
+                role="navigation"
+                aria-label="{% translate "Pagination" %}">
+                {% if previous_episode %}
+                    <a class="link"
+                        href="{{ previous_episode.get_absolute_url }}"
+                        aria-label="{{ previous_episode.cleaned_title }}"
+                        title="{{ previous_episode.cleaned_title }}">
+                        {{ t_previous }}
+                    </a>
 
-            {% else %}
-                <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                    title="{{ t_no_more_episodes }}"
-                    aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
-            {% endif %}
-            {% if next_episode %}
-                <a class="link"
-                    href="{{ next_episode.get_absolute_url }}"
-                    aria-label="{{ next_episode.cleaned_title }}"
-                    title="{{ next_episode.cleaned_title }}">
-                    {{ t_next }}
-                </a>
-            {% else %}
-                <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                    title="{{ t_no_more_episodes }}"
-                    aria-label="{{ t_no_more_episodes }}">{{ t_next }}</span>
-            {% endif %}
-        </nav>
+                {% else %}
+                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                        title="{{ t_no_more_episodes }}"
+                        aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
+                {% endif %}
+                {% if next_episode %}
+                    <a class="link"
+                        href="{{ next_episode.get_absolute_url }}"
+                        aria-label="{{ next_episode.cleaned_title }}"
+                        title="{{ next_episode.cleaned_title }}">
+                        {{ t_next }}
+                    </a>
+                {% else %}
+                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                        title="{{ t_no_more_episodes }}"
+                        aria-label="{{ t_no_more_episodes }}">{{ t_next }}</span>
+                {% endif %}
+            </nav>
+        {% endif %}
 
         <article class="space-y-3">
             <h2 class="md:text-lg">
