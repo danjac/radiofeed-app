@@ -6,7 +6,7 @@ import factory
 import pytest
 
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertNotContains
 
 from radiofeed.common.asserts import (
     assert_bad_request,
@@ -188,6 +188,34 @@ class TestEpisodeDetail:
         auth_user,
         episode,
     ):
+        response = client.get(episode.get_absolute_url())
+        assert_ok(response)
+        assert response.context["episode"] == episode
+        assertNotContains(response, "No More Episodes")
+
+    def test_no_next_episode(
+        self,
+        client,
+        auth_user,
+        episode,
+    ):
+        EpisodeFactory(
+            podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=30)
+        )
+        response = client.get(episode.get_absolute_url())
+        assert_ok(response)
+        assert response.context["episode"] == episode
+        assertContains(response, "No More Episodes")
+
+    def test_no_previous_episode(
+        self,
+        client,
+        auth_user,
+        episode,
+    ):
+        EpisodeFactory(
+            podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=30)
+        )
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
         assert response.context["episode"] == episode
