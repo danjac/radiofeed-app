@@ -1,83 +1,81 @@
 {% load cache i18n %}
-{% cache 3600 request.user.username %}
-    {% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
-        <nav class="pl-3 xl:pl-0 text-base md:text-lg lg:text-xl xl:pt-12">
-            <ul class="space-y-3 sm:space-y-0 xl:space-y-6 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
-                <li>
-                    <a href="{% url 'podcasts:index' %}"
-                        accesskey="p"
-                        class="{{ SIDEBAR_CSS }}">
-                        {% icon "rss" css_class=ICON_CSS %}
-                        {% translate "Podcasts" %}
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'episodes:index' %}"
-                        accesskey="n"
-                        class="{{ SIDEBAR_CSS }}">
-                        {% icon "satellite-dish" css_class=ICON_CSS %}
-                        {% translate "New Releases" %}
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'podcasts:category_list' %}"
-                        accesskey="c"
-                        class="{{ SIDEBAR_CSS }}">
-                        {% icon "tag" css_class=ICON_CSS %}
-                        {% translate "Categories" %}
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'episodes:bookmarks' %}"
-                        accesskey="b"
-                        class="{{ SIDEBAR_CSS }}">
-                        {% icon "star" css_class=ICON_CSS %}
-                        {% translate "Bookmarks" %}
-                    </a>
-                </li>
+{% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
+    <nav class="pl-3 xl:pl-0 text-base md:text-lg lg:text-xl xl:pt-12">
+        <ul class="space-y-3 sm:space-y-0 xl:space-y-6 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
+            <li>
+                <a href="{% url 'podcasts:index' %}"
+                    accesskey="p"
+                    class="{{ SIDEBAR_CSS }}">
+                    {% icon "rss" css_class=ICON_CSS %}
+                    {% translate "Podcasts" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'episodes:index' %}"
+                    accesskey="n"
+                    class="{{ SIDEBAR_CSS }}">
+                    {% icon "satellite-dish" css_class=ICON_CSS %}
+                    {% translate "New Releases" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'podcasts:category_list' %}"
+                    accesskey="c"
+                    class="{{ SIDEBAR_CSS }}">
+                    {% icon "tag" css_class=ICON_CSS %}
+                    {% translate "Categories" %}
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'episodes:bookmarks' %}"
+                    accesskey="b"
+                    class="{{ SIDEBAR_CSS }}">
+                    {% icon "star" css_class=ICON_CSS %}
+                    {% translate "Bookmarks" %}
+                </a>
+            </li>
 
-                <li>
-                    <a href="{% url 'episodes:history' %}"
-                        accesskey="h"
+            <li>
+                <a href="{% url 'episodes:history' %}"
+                    accesskey="h"
+                    class="{{ SIDEBAR_CSS }}">
+                    {% icon "history" css_class=ICON_CSS %}
+                    {% translate "History" %}
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'users:preferences' %}"
+                    accesskey="s"
+                    class="{{ SIDEBAR_CSS }}">
+                    {% icon "cog" css_class=ICON_CSS %}
+                    {% translate "Settings" %}
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'about' %}"
+                    accesskey="a"
+                    class="{{ SIDEBAR_CSS }}">
+                    {% icon "info-circle" css_class=ICON_CSS %}
+                    {% translate "About" %}
+                </a>
+            </li>
+
+            <li>
+                <form class="inline-block"
+                    hx-disable="true"
+                    action="{% url 'account_logout' %}"
+                    method="post">
+                    {% csrf_token %}
+                    <button accesskey="l"
                         class="{{ SIDEBAR_CSS }}">
-                        {% icon "history" css_class=ICON_CSS %}
-                        {% translate "History" %}
-                    </a>
-                </li>
+                        {% icon "sign-out" css_class=ICON_CSS %}
+                        {% translate "Logout" %}
+                    </button>
+                </form>
+            </li>
 
-                <li>
-                    <a href="{% url 'users:preferences' %}"
-                        accesskey="s"
-                        class="{{ SIDEBAR_CSS }}">
-                        {% icon "cog" css_class=ICON_CSS %}
-                        {% translate "Settings" %}
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'about' %}"
-                        accesskey="a"
-                        class="{{ SIDEBAR_CSS }}">
-                        {% icon "info-circle" css_class=ICON_CSS %}
-                        {% translate "About" %}
-                    </a>
-                </li>
-
-                <li>
-                    <form class="inline-block"
-                        hx-disable="true"
-                        action="{% url 'account_logout' %}"
-                        method="post">
-                        {% csrf_token %}
-                        <button accesskey="l"
-                            class="{{ SIDEBAR_CSS }}">
-                            {% icon "sign-out" css_class=ICON_CSS %}
-                            {% translate "Logout" %}
-                        </button>
-                    </form>
-                </li>
-
-            </ul>
-        </nav>
-    {% endwith %}
-{% endcache %}
+        </ul>
+    </nav>
+{% endwith %}
