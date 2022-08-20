@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
 
 from radiofeed.decorators import ajax_login_required
-from radiofeed.http import HttpResponseConflict
+from radiofeed.response import HttpResponseConflict
 from radiofeed.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes, recommender
