@@ -3,17 +3,12 @@
 <img class="
     object-cover
     bg-transparent
-    {% if css_class %}
-        {{ css_class }}
-    {% else %}
-        h-{{ size }}
-        w-{{ size }}
-    {% endif %}
     {% if url %}
         hover:grayscale
         hover:opacity-75
         cursor-pointer
-    {% endif %}"
+    {% endif %}
+    {{ css_class }}"
     alt="{{ alt }}"
     title="{{ alt }}"
     aria-hidden="true"
