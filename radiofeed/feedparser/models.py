@@ -7,7 +7,7 @@ import attrs
 
 from django.utils import timezone
 
-from radiofeed.common.utils.dates import parse_date
+from radiofeed.common.dates import parse_date
 from radiofeed.feedparser import converters, validators
 
 

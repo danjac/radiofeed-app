@@ -21,7 +21,7 @@ from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
 from radiofeed.common.db import FastCountMixin, SearchMixin
-from radiofeed.common.utils.html import strip_html
+from radiofeed.common.html import strip_html
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
 

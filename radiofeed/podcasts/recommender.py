@@ -15,8 +15,8 @@ from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from radiofeed.common.utils.iterators import batcher
-from radiofeed.common.utils.text import NLTK_LANGUAGES, get_stopwords
+from radiofeed.common.batcher import batcher
+from radiofeed.common.text import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 DEFAULT_TIME_PERIOD: Final = timedelta(days=90)

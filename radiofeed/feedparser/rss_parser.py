@@ -4,7 +4,7 @@ from typing import Iterator
 
 import lxml.etree
 
-from radiofeed.common.utils.xml import parse_xml, xpath_finder
+from radiofeed.common.xml import parse_xml, xpath_finder
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
 

@@ -19,7 +19,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
-from radiofeed.common.utils.html import markup
+from radiofeed.common.html import markup
 
 register = template.Library()
 
