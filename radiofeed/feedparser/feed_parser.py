@@ -14,7 +14,7 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.crypto import make_content_hash
+from radiofeed.feedparser.hasher import hash
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.batcher import batcher
 from radiofeed.tokenizer import tokenize
@@ -82,7 +82,7 @@ class FeedParser:
         # but not in all cases, so we should also check the content body.
         if (
             response.status_code == http.HTTPStatus.NOT_MODIFIED
-            or (content_hash := make_content_hash(response.content))
+            or (content_hash := hash(response.content))
             == self._podcast.content_hash
         ):
             raise NotModified(response=response)

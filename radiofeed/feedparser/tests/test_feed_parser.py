@@ -10,7 +10,7 @@ import requests
 
 from django.utils import timezone
 
-from radiofeed.crypto import make_content_hash
+from radiofeed.feedparser.hasher import hash
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
@@ -276,7 +276,7 @@ class TestFeedParser:
     def test_parse_same_content(self, db, mocker, categories):
 
         content = self.get_rss_content()
-        podcast = PodcastFactory(content_hash=make_content_hash(content))
+        podcast = PodcastFactory(content_hash=hash(content))
 
         mocker.patch(
             self.mock_http_get,
@@ -302,7 +302,7 @@ class TestFeedParser:
 
         content = self.get_rss_content()
 
-        PodcastFactory(content_hash=make_content_hash(content))
+        PodcastFactory(content_hash=hash(content))
 
         mocker.patch(
             self.mock_http_get,
