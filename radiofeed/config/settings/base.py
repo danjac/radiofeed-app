@@ -190,7 +190,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "radiofeed" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "debug": DEBUG,
