@@ -6,7 +6,10 @@
     {% translate "Previous" as t_previous %}
     {% translate "No More Pages" as t_no_more_pages %}
 
-    <nav class="flex items-center justify-between"
+    <nav class="
+        flex
+        items-center
+        justify-between"
         role="navigation"
         aria-label="{{ t_pagination }}"
         hx-target="#{{ pagination_target }}">
@@ -21,7 +24,10 @@
                 </a>
             {% endwith %}
         {% else %}
-            <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+            <span class="
+                text-gray-600
+                dark:text-gray-300
+                cursor-not-allowed"
                 title="{{ t_no_more_pages }}"
                 aria-label="{{ t_no_more_pages }}">
                 {{ t_previous }}
@@ -38,7 +44,10 @@
                 </a>
             {% endwith %}
         {% else %}
-            <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+            <span class="
+                text-gray-600
+                dark:text-gray-300
+                cursor-not-allowed"
                 title="{{ t_no_more_pages }}"
                 aria-label="{{ t_no_more_pages }}">
                 {{ t_next }}

@@ -98,7 +98,16 @@ __________             .___.__        _____                 .___
         {% endblock content_metadata %}
         </head>
 
-        <body class="container-xl mx-auto antialiased font-sans dark:bg-zinc-900 dark:text-white text-sm md:text-base scroll-smooth"
+        <body class="
+              container-xl
+              mx-auto
+              antialiased
+              font-sans
+              dark:bg-zinc-900
+              dark:text-white
+              text-sm
+              md:text-base
+              scroll-smooth"
             hx-boost="true"
             hx-target="#content"
             hx-swap="outerHTML show:window:top"
@@ -119,7 +128,15 @@ __________             .___.__        _____                 .___
                         {% endif %}
     {% endif %}
 
-    <main class="w-full xl:block md:mx-auto xl:w-4/5"
+    <main class="
+        w-full
+        xl:block
+        md:mx-auto
+        xl:w-4/5
+        opacity-100
+        transition-opacity
+        duration-300
+        htmx-swapping:opacity-25"
         id="content"
         hx-history-elt>
         {% block content %}{% endblock %}

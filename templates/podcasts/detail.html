@@ -5,10 +5,17 @@
 
 {% block podcast_content %}
     {% with link=podcast.link|normalize_url funding_url=podcast.funding_url|normalize_url %}
-        <article class="space-y-3 border-t dark:border-gray-500 pt-3">
+        <article class="
+            space-y-3
+            border-t
+            dark:border-gray-500
+            pt-3">
 
             {% if podcast.owner %}
-                <h2 class="font-semibold flex-wrap md:text-lg">
+                <h2 class="
+                    font-semibold
+                    flex-wrap
+                    md:text-lg">
                     {% if link %}
                         <a href="{{ link }}"
                             target="_blank"
@@ -23,7 +30,11 @@
                 </h2>
             {% endif %}
 
-            <div class="flex items-center space-x-3 sm:space-x-6">
+            <div class="
+                flex
+                items-center
+                space-x-3
+                sm:space-x-6">
 
                 {% with COVER_IMAGE_CSS="h-28 w-28 md:h-36 md:w-36" %}
                     <div class="{{ COVER_IMAGE_CSS}}">
@@ -31,7 +42,12 @@
                     </div>
                 {% endwith %}
 
-                <div class="flex flex-col place-content-between h-24 md:h-28 xl:32">
+                <div class="
+                    flex
+                    flex-col
+                    place-content-between
+                    h-24
+                    md:h-28">
                     {% include "podcasts/actions/subscribe.html" %}
                     <nav class="flex items-center space-x-3">
                         {% if link and link != podcast.rss %}
@@ -81,7 +97,14 @@
             {% cache 600 podcast-categories podcast.id %}
                 {% with categories=podcast.categories.all %}
                     {% if categories %}
-                        <div class="max-w-prose flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
+                        <div class="
+                            flex
+                            flex-wrap
+                            items-center
+                            max-w-prose
+                            space-x-2
+                            sm:space-x-3
+                            leading-loose">
                             {% for category in categories %}
                                 <a class="inline-flex items-center link"
                                     title="{{ category.name }} {% translate "Podcasts" %}"

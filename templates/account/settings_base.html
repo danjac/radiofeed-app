@@ -5,50 +5,66 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-        <h1 class="font-bold break-words mb-6 max-w-max text-lg md:text-xl xl:text-2xl">
+        <h1 class="
+            font-bold
+            break-words
+            mb-6
+            max-w-max
+            text-lg
+            md:text-xl
+            xl:text-2xl">
             {% blocktranslate with username=user.username %}Settings for {{ username }}{% endblocktranslate %}
         </h1>
-        <div id="settings-content">
-            <nav class="mb-3 border-b dark:border-gray-500">
-                <ul class="flex items-center overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none space-x-6 pb-3">
-                    {% active_link 'users:preferences' as link %}
-                    <li>
-                        <a class="link{% if link.exact %} active{% endif %}"
-                            href="{{ link.url }}">{% translate "Preferences" %}</a>
-                    </li>
-                    {% active_link 'users:import_export_podcast_feeds' as link %}
-                    <li>
-                        <a class="link{% if link.exact %} active{% endif %}"
-                            href="{{ link.url }}">{% translate "Import/Export Feeds" %}</a>
-                    </li>
-                    {% active_link 'users:stats' as link %}
-                    <li>
-                        <a class="link{% if link.exact %} active{% endif %}"
-                            href="{{ link.url }}">{% translate "Statistics" %}</a>
-                    </li>
-                    {% active_link 'account_email' as link %}
-                    <li>
-                        <a class="link{% if link.exact %} active{% endif %}"
-                            href="{{ link.url }}">{% translate "Email Addresses" %}</a>
-                    </li>
-                    {% active_link 'account_change_password' as link %}
-                    <li>
-                        <a class="link{% if link.exact %} active{% endif %}"
-                            href="{{ link.url }}">{% translate "Change Password" %}</a>
-                    </li>
-                    {% active_link 'socialaccount_connections' as link %}
-                    <li>
-                        <a class="link{% if link.exact %} active{% endif %}"
-                            href="{{ link.url }}">{% translate "Social Logins" %}</a>
-                    </li>
-                    {% active_link 'users:delete_account' as link %}
-                    <li>
-                        <a class="link{% if link.exact %} active{% endif %}"
-                            href="{{ link.url }}">{% translate "Delete Account" %}</a>
-                    </li>
-                </ul>
-            </nav>
+        <nav class="
+            mb-3
+            border-b
+            dark:border-gray-500">
+            <ul class="
+                flex
+                items-center
+                overflow-x-auto
+                md:overflow-none
+                whitespace-nowrap
+                md:whitespace-none
+                space-x-6
+                pb-3">
+                {% active_link 'users:preferences' as link %}
+                <li>
+                    <a class="link{% if link.exact %} active{% endif %}"
+                        href="{{ link.url }}">{% translate "Preferences" %}</a>
+                </li>
+                {% active_link 'users:import_export_podcast_feeds' as link %}
+                <li>
+                    <a class="link{% if link.exact %} active{% endif %}"
+                        href="{{ link.url }}">{% translate "Import/Export Feeds" %}</a>
+                </li>
+                {% active_link 'users:stats' as link %}
+                <li>
+                    <a class="link{% if link.exact %} active{% endif %}"
+                        href="{{ link.url }}">{% translate "Statistics" %}</a>
+                </li>
+                {% active_link 'account_email' as link %}
+                <li>
+                    <a class="link{% if link.exact %} active{% endif %}"
+                        href="{{ link.url }}">{% translate "Email Addresses" %}</a>
+                </li>
+                {% active_link 'account_change_password' as link %}
+                <li>
+                    <a class="link{% if link.exact %} active{% endif %}"
+                        href="{{ link.url }}">{% translate "Change Password" %}</a>
+                </li>
+                {% active_link 'socialaccount_connections' as link %}
+                <li>
+                    <a class="link{% if link.exact %} active{% endif %}"
+                        href="{{ link.url }}">{% translate "Social Logins" %}</a>
+                </li>
+                {% active_link 'users:delete_account' as link %}
+                <li>
+                    <a class="link{% if link.exact %} active{% endif %}"
+                        href="{{ link.url }}">{% translate "Delete Account" %}</a>
+                </li>
+            </ul>
+        </nav>
     {% endif %}
     {% block settings_content %}{% endblock %}
-    </div>
 {% endblock content %}
