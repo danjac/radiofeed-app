@@ -223,20 +223,20 @@ class TestShareButtons:
 
 
 class TestMarkdown:
-    def test_value_none(self):
-        return markdown(None) == {"content": ""}
-
-    def test_value_empty(self):
-        return markdown("  ") == {"content": ""}
-
-    def test_markdown(self):
-        return markdown("*test*") == {"content": "<b>test</b>"}
-
-    def test_html(self):
-        return markdown("<p>test</p>") == {"content": "<p>test</p>"}
-
-    def test_unsafe(self):
-        return markdown("<script>test</script>") == {"content": "test"}
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (None, ""),
+            ("", ""),
+            ("   ", ""),
+            ("*test*", "<b>test</b>"),
+            ("<p>test</p>", "<p>test</p>"),
+            ("<p>test</p>   ", "<p>test</p>"),
+            ("<script>test</script>", "test"),
+        ],
+    )
+    def test_markdown(self, value, expected):
+        return markdown(value) == {"content": expected}
 
 
 class TestNormalizeUrl:
