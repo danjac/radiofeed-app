@@ -124,6 +124,7 @@ omit=[
     "**/factories.py",
     "*/migrations/*",
     "*/config/*",
+    "*/nltk/*",
     "*/tests/*",
 ]
 
