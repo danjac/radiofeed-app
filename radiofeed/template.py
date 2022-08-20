@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import math
+import re
 
 from urllib import parse
 
@@ -18,10 +19,14 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
+from markdown import markdown as _markdown
 
-from radiofeed import markup
+from radiofeed import cleaners
 
 register = template.Library()
+
+
+_HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -131,7 +136,11 @@ def signup_url(url: str) -> str:
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders markdown content."""
-    return {"content": mark_safe(markup.markdown(value))}  # nosec
+
+    if content := cleaners.strip_whitespace(value):
+        content = content if _HTML_RE.match(content) else _markdown(content)
+
+    return {"content": mark_safe(content)}  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)

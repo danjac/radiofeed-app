@@ -235,6 +235,9 @@ class TestMarkdown:
     def test_html(self):
         return markdown("<p>test</p>") == {"content": "<p>test</p>"}
 
+    def test_unsafe(self):
+        return markdown("<script>test</script>") == {"content": "test"}
+
 
 class TestNormalizeUrl:
     base_url = "www.newstatesman.com/podcast"

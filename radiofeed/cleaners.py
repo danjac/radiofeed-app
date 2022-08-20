@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import html
-import re
 
 from typing import Final
 
 import bleach
 
 from django.template.defaultfilters import striptags
-from markdown import markdown as _markdown
 
 _ALLOWED_TAGS: Final = [
     "a",
@@ -60,8 +58,6 @@ _ALLOWED_ATTRS: Final = {
     "img": ["src", "alt", "height", "width", "loading"],
 }
 
-_HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
-
 
 def clean(value: str) -> str:
     """Runs Bleach through value and scrubs any unwanted HTML tags and attributes."""
@@ -88,18 +84,6 @@ def strip_whitespace(value: str | None) -> str:
 def strip_html(value: str | None) -> str:
     """Scrubs all HTML tags and entities from text."""
     return html.unescape(striptags(strip_whitespace(value)))
-
-
-def as_html(value: str) -> str:
-    """Checks if content contains any HTML tags. If not, will try and parse Markdown from text."""
-    return value if _HTML_RE.match(value) else _markdown(value)
-
-
-def markdown(value: str | None) -> str:
-    """Parses Markdown and/or html and returns cleaned result."""
-    if value := strip_whitespace(value):
-        return html.unescape(clean(as_html(value)))
-    return ""
 
 
 def _linkify_callback(attrs: dict, new: bool = False) -> dict:
