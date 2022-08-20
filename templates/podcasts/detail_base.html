@@ -77,7 +77,15 @@
 {% endblock content_metadata %}
 
 {% block content %}
-    <h1 class="font-bold text-lg md:text-xl xl:text-2xl mb-6 text-center sm:text-left">{{ podcast.cleaned_title }}</h1>
+    <h1 class="
+        mb-6
+        font-bold
+        text-lg
+        md:text-xl
+        xl:text-2xl
+        text-center
+        sm:text-left
+    ">{{ podcast.cleaned_title }}</h1>
     <div id="podcast-content">
         {% if num_episodes or has_similar %}
 
@@ -85,7 +93,13 @@
             {% translate "Episodes" as t_episodes %}
             {% translate "Similar" as t_similar %}
 
-            <nav class="flex items-center mb-3 justify-center sm:justify-start">
+            <nav class="
+                flex
+                items-center
+                mb-3
+                justify-center
+                sm:justify-start
+            ">
                 <ul class="flex items-center space-x-6">
 
                     {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
