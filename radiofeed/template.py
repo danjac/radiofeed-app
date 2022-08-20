@@ -138,7 +138,10 @@ def markdown(value: str | None) -> dict:
     """Renders markdown content."""
 
     if content := cleaners.strip_whitespace(value):
-        content = content if _HTML_RE.match(content) else _markdown(content)
+
+        content = cleaners.clean(
+            content if _HTML_RE.match(content) else _markdown(content)
+        )
 
     return {"content": mark_safe(content)}  # nosec
 
