@@ -11,7 +11,7 @@ module.exports = {
     },
     content: [
         "./radiofeed/templates/**/*.html",
-        "./static/js/**/*.js",
+        "./radiofeed/static/js/**/*.js",
         "./tailwind-safelist.txt",
     ],
     keyframes: true,

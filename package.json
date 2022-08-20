@@ -1,8 +1,8 @@
 {
     "private": true,
     "scripts": {
-        "watch:css": "tailwindcss -i ./static/css/app.css -o ./static/css/bundle.css --minify --watch --verbose",
-        "watch:js": "esbuild ./static/js/app.js --bundle --watch --minify --sourcemap --outfile=./static/js/bundle.js"
+        "watch:css": "tailwindcss -i ./radiofeed/static/css/app.css -o ./radiofeed/static/css/bundle.css --minify --watch --verbose",
+        "watch:js": "esbuild ./radiofeed/static/js/app.js --bundle --watch --minify --sourcemap --outfile=./radiofeed/static/js/bundle.js"
     },
     "dependencies": {
         "alpinejs": "^3.10.3",

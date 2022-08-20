@@ -185,7 +185,7 @@ USE_TZ = True
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 STATIC_URL = env("STATIC_URL", default="/static/")
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "radiofeed" / "static"]
 
 TEMPLATES = [
     {
