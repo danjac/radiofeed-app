@@ -7,23 +7,57 @@
 {% translate "Toggle Menu" as t_toggle_menu %}
 
 {% with site_name=request.site.name %}
-    <header class="bg-black text-white sticky top-0 w-full z-20 shadow"
+    <header class="
+        bg-black
+        text-white
+        sticky top-0
+        w-full
+        z-20
+        shadow"
         x-data="{sidebar: false}"
         @htmx:before-request.window="sidebar=false">
-        <nav class="flex items-center justify-between p-2">
+        <nav class="
+            flex
+            items-center
+            justify-between
+            p-2">
 
-            <div class="flex items-center flex-shrink-0 space-x-3">
-                <a class="font-bold text-lg md:text-xl xl:text-2xl hover:text-blue-300 inline-flex items-center"
+            <div class="
+                flex
+                items-center
+                flex-shrink-0
+                space-x-3">
+                <a class="
+                    inline-flex
+                    items-center
+                    font-bold
+                    text-lg md:text-xl
+                    xl:text-2xl
+                    hover:text-blue-300"
                     href="{{ home_url }}"
                     title="{{ site_name }}: {% translate "Home Page" %}">
-                    <img src="{% static 'img/wave.png' %}" class="h-6 w-6 lg:h-8 lg:w-8 mr-2" title="{{ site_name }}" aria-hidden="true">
+                    <img
+                        src="{% static 'img/wave.png' %}"
+                        class="
+                            h-6
+                            w-6
+                            lg:h-8
+                            lg:w-8
+                            mr-2
+                        "
+                        title="{{ site_name }}"
+                        aria-hidden="true">
                     {{ site_name }}
                 </a>
             </div>
 
             <form action="{{ search_url }}"
                 method="get"
-                class="relative bg-transparent hidden sm:block"
+                class="
+                    relative
+                    bg-transparent
+                    hidden
+                    sm:block"
                 x-data="{search: ''}"
                 @submit="$refs.search.blur();"
                 @htmx:before-request.window="search=''">
@@ -36,12 +70,35 @@
                     autocomplete="off"
                     aria-label="{{ t_search }}"
                     placeholder="{{ t_search }}"
-                    class="px-4 py-1 w-64 md:w-72 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900  text-sm md:text-base">
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+                    class="
+                        px-4
+                        py-1
+                        w-64
+                        md:w-72
+                        focus:outline-none
+                        rounded
+                        focus:ring
+                        placeholder-opacity-100
+                        text-gray-900
+                        dark:text-white
+                        dark:bg-gray-900
+                        text-sm
+                        md:text-base">
+                <div class="
+                    absolute
+                    flex
+                    items-center
+                    inset-y-0
+                    right-0
+                    pr-2">
 
                     <button type="submit"
                         title="{{ t_search }}}"
-                        class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                        class="
+                            focus:outline-none
+                            focus:shadow-outline
+                            text-gray-900
+                            dark:text-gray-100">
                         {% icon "search" title=t_search %}
                     </button>
                 </div>
@@ -86,7 +143,16 @@
                 {% endif %}
             </ul>
         </nav>
-        <div class="xl:hidden absolute py-6 bg-white dark:bg-black top-15 left-0 w-full shadow-xl z-50"
+        <div class="
+            xl:hidden
+            absolute
+            py-6 bg-white
+            dark:bg-black
+            top-15
+            left-0
+            w-full
+            shadow-xl
+            z-50"
             x-cloak
             x-show.transition="sidebar"
             x-transition:enter="transition ease-out duration-100"
@@ -110,11 +176,33 @@
                         autocomplete="off"
                         aria-label="{{ t_search }}"
                         placeholder="{{ t_search }}"
-                        class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm">
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+                        class="
+                            w-64
+                            px-4
+                            py-1
+                            focus:outline-none
+                            focus:ring rounded
+                            text-sm
+                            placeholder-opacity-100
+                            text-gray-900
+                            dark:bg-gray-900
+                            dark:text-white
+                        ">
+                    <div class="
+                        flex
+                        items-center
+                        absolute
+                        inset-y-0
+                        right-0
+                        pr-2">
                         <button type="submit"
                             title="{{ t_search }}"
-                            class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                            class="
+                                focus:outline-none
+                                focus:shadow-outline
+                                text-gray-900
+                                dark:text-gray-100
+                            ">
                             {% icon "search" title=t_search %}
                         </button>
                     </div>
