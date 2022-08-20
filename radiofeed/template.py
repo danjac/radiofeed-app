@@ -19,7 +19,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
-from radiofeed.html import markup
+from radiofeed import markup
 
 register = template.Library()
 
@@ -131,7 +131,7 @@ def signup_url(url: str) -> str:
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders markdown content."""
-    return {"content": mark_safe(markup(value))}  # nosec
+    return {"content": mark_safe(markup.markdown(value))}  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)

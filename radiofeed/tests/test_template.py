@@ -222,7 +222,7 @@ class TestShareButtons:
         )
 
 
-class TestMarkup:
+class TestMarkdown:
     def test_value_none(self):
         return markdown(None) == {"content": ""}
 

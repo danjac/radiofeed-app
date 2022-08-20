@@ -2,23 +2,23 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed import html
+from radiofeed import markup
 
 
 class TestClean:
     def test_if_safe(self):
         text = "<p>testing with paras</p>"
-        assert html.clean(text) == text
+        assert markup.clean(text) == text
 
     def test_has_link_link(self):
         text = '<a href="http://reddit.com">Reddit</a>'
-        clean = html.clean(text)
+        clean = markup.clean(text)
         assert 'target="_blank"' in clean
         assert 'rel="noopener noreferrer nofollow"' in clean
 
     def test_unsafe(self):
         text = "<script>alert('xss ahoy!')</script>"
-        assert html.clean(text) == "alert('xss ahoy!')"
+        assert markup.clean(text) == "alert('xss ahoy!')"
 
 
 class TestStripHtml:
@@ -32,10 +32,10 @@ class TestStripHtml:
         ],
     )
     def test_strip_html(self, value, expected):
-        return html.strip_html(value) == expected
+        return markup.strip_html(value) == expected
 
 
-class TestMarkup:
+class TestMarkdown:
     @pytest.mark.parametrize(
         "value,expected",
         [
@@ -47,4 +47,4 @@ class TestMarkup:
         ],
     )
     def test_markup(self, value, expected):
-        return html.markup(value) == expected
+        return markup.markdown(value) == expected

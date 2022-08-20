@@ -6,9 +6,9 @@ import re
 from typing import Final
 
 import bleach
-import markdown
 
 from django.template.defaultfilters import striptags
+from markdown import markdown as _markdown
 
 _ALLOWED_TAGS: Final = [
     "a",
@@ -92,10 +92,10 @@ def strip_html(value: str | None) -> str:
 
 def as_html(value: str) -> str:
     """Checks if content contains any HTML tags. If not, will try and parse Markdown from text."""
-    return value if _HTML_RE.match(value) else markdown.markdown(value)
+    return value if _HTML_RE.match(value) else _markdown(value)
 
 
-def markup(value: str | None) -> str:
+def markdown(value: str | None) -> str:
     """Parses Markdown and/or html and returns cleaned result."""
     if value := strip_whitespace(value):
         return html.unescape(clean(as_html(value)))
