@@ -10,9 +10,8 @@ module.exports = {
         purgeLayersByDefault: true,
     },
     content: [
-        "./radiofeed/static/**/*.css",
-        "./radiofeed/static/**/*.js",
-        "./radiofeed/templates/**/*.html",
+        "./templates/**/*.html",
+        "./static/js/**/*.js",
         "./tailwind-safelist.txt",
     ],
     keyframes: true,
