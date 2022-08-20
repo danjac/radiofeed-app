@@ -13,21 +13,29 @@
         </div>
     </div>
 
-    <ul class="space-y-3 dark:divide-gray-500 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 md:grid-cols-3
-    {% endif %}">
-        {% for category in categories %}
-            <li class="pt-3">
-                <h2>
-                    <a href="{{ category.get_absolute_url }}"
-                        class="font-semibold md:text-lg link">
-                        {{ category.name }}
-                    </a>
-                </h2>
-            </li>
-        {% empty %}
-            <li>
-                {% include "includes/empty.html" %}
-            </li>
-        {% endfor %}
-    </ul>
+    {% if categories %}
+        <ul class="space-y-3 dark:divide-gray-500 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 md:grid-cols-3
+        {% endif %}">
+            {% for category in categories %}
+                <li class="pt-3">
+                    <h2>
+                        <a href="{{ category.get_absolute_url }}"
+                            class="font-semibold md:text-lg link">
+                            {{ category.name }}
+                        </a>
+                    </h2>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center sm:text-left">
+            {% if request.search %}
+                {% blocktranslate with search=request.search.value %}
+                    No results found for <span class="font-bold">{{ search }}</span>.
+                {% endblocktranslate %}
+            {% else %}
+                {% translate "Nothing to see here." %}
+            {% endif %}
+        </p>
+    {% endif %}
 {% endblock %}
