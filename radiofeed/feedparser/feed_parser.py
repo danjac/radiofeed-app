@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed.crypto import make_content_hash
-from radiofeed.dates import parse_date
+from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.batcher import batcher
 from radiofeed.text import tokenize
 from radiofeed.episodes.models import Episode

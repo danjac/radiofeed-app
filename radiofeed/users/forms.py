@@ -9,7 +9,7 @@ import lxml
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from radiofeed.xml import parse_xml, xpath_finder
+from radiofeed.feedparser.xml_parser import parse_xml, xpath_finder
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
