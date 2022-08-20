@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.common.crypto import make_content_hash
+from radiofeed.crypto import make_content_hash
 
 
 class TestMakeContentHash:

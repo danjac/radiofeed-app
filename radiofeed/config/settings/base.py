@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 
 from radiofeed import __version__
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[3]
 
 env = environ.Env()
 
@@ -65,7 +65,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-ROOT_URLCONF = "radiofeed.urls"
+ROOT_URLCONF = "radiofeed.config.urls"
 
 INSTALLED_APPS = [
     "postgres_metrics.apps.PostgresMetrics",
@@ -104,8 +104,8 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "radiofeed.common.middleware.CacheControlMiddleware",
-    "radiofeed.common.middleware.SearchMiddleware",
+    "radiofeed.middleware.CacheControlMiddleware",
+    "radiofeed.middleware.SearchMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -205,7 +205,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "builtins": [
-                "radiofeed.common.template",
+                "radiofeed.template",
             ],
         },
     }

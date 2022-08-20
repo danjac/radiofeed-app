@@ -13,8 +13,8 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
-from radiofeed.common.batcher import batcher
-from radiofeed.common.xml import parse_xml
+from radiofeed.batcher import batcher
+from radiofeed.xml import parse_xml
 from radiofeed.podcasts.models import Podcast
 
 _BATCH_SIZE: Final = 100

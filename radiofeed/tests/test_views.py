@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.urls import reverse
 
-from radiofeed.common.asserts import assert_ok
+from radiofeed.asserts import assert_ok
 
 
 class TestFavicon:

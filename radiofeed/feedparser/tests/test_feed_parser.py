@@ -10,8 +10,8 @@ import requests
 
 from django.utils import timezone
 
-from radiofeed.common.crypto import make_content_hash
-from radiofeed.common.dates import parse_date
+from radiofeed.crypto import make_content_hash
+from radiofeed.dates import parse_date
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.feed_parser import FeedParser, parse_feed

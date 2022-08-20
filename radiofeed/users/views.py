@@ -13,7 +13,7 @@ from django.utils.translation import ngettext, override
 from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseClientRedirect
 
-from radiofeed.common.decorators import require_form_methods
+from radiofeed.decorators import require_form_methods
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm

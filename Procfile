@@ -1,2 +1,2 @@
 release: ./release.sh
-web: gunicorn radiofeed.wsgi -w 8
+web: gunicorn radiofeed.config.wsgi -w 8

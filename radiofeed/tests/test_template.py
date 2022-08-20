@@ -8,7 +8,7 @@ from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.urls import reverse
 
-from radiofeed.common.template import (
+from radiofeed.template import (
     absolute_uri,
     active_link,
     format_duration,

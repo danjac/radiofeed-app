@@ -54,7 +54,7 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
-    reltuple_count = "radiofeed.common.db.get_reltuple_count"
+    reltuple_count = "radiofeed.db.get_reltuple_count"
 
     def test_search(self, db):
         PodcastFactory(title="testing")

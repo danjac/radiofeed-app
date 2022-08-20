@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 
-from radiofeed.common.middleware import BaseMiddleware
+from radiofeed.middleware import BaseMiddleware
 
 
 class LanguageMiddleware(BaseMiddleware):

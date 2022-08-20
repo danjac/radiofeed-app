@@ -4,7 +4,7 @@ import datetime
 
 from zoneinfo import ZoneInfo
 
-from radiofeed.common.dates import parse_date
+from radiofeed.dates import parse_date
 
 UTC = ZoneInfo(key="UTC")
 

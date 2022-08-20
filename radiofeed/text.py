@@ -14,7 +14,7 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
-from radiofeed.common.html import strip_html
+from radiofeed.html import strip_html
 
 NLTK_LANGUAGES: Final = {
     "ar": "arabic",

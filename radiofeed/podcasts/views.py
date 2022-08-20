@@ -11,9 +11,9 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
 
-from radiofeed.common.decorators import ajax_login_required
-from radiofeed.common.http import HttpResponseConflict
-from radiofeed.common.pagination import render_pagination_response
+from radiofeed.decorators import ajax_login_required
+from radiofeed.http import HttpResponseConflict
+from radiofeed.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes, recommender
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription

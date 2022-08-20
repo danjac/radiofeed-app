@@ -18,12 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: radiofeed/common/template.py:97
+#: radiofeed/template.py:97
 #, python-brace-format
 msgid "{total_hours}h"
 msgstr "{total_hours}t"
 
-#: radiofeed/common/template.py:100
+#: radiofeed/template.py:100
 #, python-brace-format
 msgid "{total_minutes}min"
 msgstr ""

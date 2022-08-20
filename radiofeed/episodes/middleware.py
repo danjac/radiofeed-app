@@ -5,7 +5,7 @@ from typing import cast
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
-from radiofeed.common.middleware import BaseMiddleware
+from radiofeed.middleware import BaseMiddleware
 
 
 class Player:

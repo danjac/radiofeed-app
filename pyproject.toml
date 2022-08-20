@@ -123,9 +123,8 @@ source=["radiofeed", "templates"]
 omit=[
     "**/factories.py",
     "*/migrations/*",
+    "*/config/*",
     "*/tests/*",
-    "*/settings/*",
-    "*/wsgi.py",
 ]
 
 plugins = [
@@ -136,7 +135,7 @@ plugins = [
 template_extensions = ["html"]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.settings.test"
+DJANGO_SETTINGS_MODULE="radiofeed.config.settings.test"
 addopts="-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --flake8 --cov --no-cov-on-fail --cov-fail-under=100"
 testpaths="radiofeed"
 

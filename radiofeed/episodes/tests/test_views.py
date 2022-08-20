@@ -8,7 +8,7 @@ import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertNotContains
 
-from radiofeed.common.asserts import (
+from radiofeed.asserts import (
     assert_bad_request,
     assert_conflict,
     assert_no_content,

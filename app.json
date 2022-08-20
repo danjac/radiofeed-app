@@ -2,7 +2,7 @@
     "name": "Radiofeed Dokku deployment",
     "addons": ["dokku-letsencrypt", "dokku-redis", "dokku-postgres"],
     "env": {
-        "DJANGO_SETTINGS_MODULE": "radiofeed.settings.production"
+        "DJANGO_SETTINGS_MODULE": "radiofeed.config.settings.production"
     },
     "formation": {
         "web": {

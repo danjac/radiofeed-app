@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.common.asserts import assert_ok
+from radiofeed.asserts import assert_ok
 from radiofeed.episodes.factories import (
     AudioLogFactory,
     BookmarkFactory,
