@@ -229,6 +229,7 @@ class TestMarkdown:
             (None, ""),
             ("", ""),
             ("   ", ""),
+            ("test", "test"),
             ("*test*", "<b>test</b>"),
             ("<p>test</p>", "<p>test</p>"),
             ("<p>test</p>   ", "<p>test</p>"),
