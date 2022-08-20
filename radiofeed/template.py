@@ -135,9 +135,11 @@ def signup_url(url: str) -> str:
 
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
-    """Renders markdown content."""
+    """Renders Markdown or HTML content."""
 
     if content := cleaners.strip_whitespace(value):
+
+        # if content already HTML, just return as-is, otherwise parse Markdown
 
         content = cleaners.clean(
             content if _HTML_RE.match(content) else _markdown(content)
