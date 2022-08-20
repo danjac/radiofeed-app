@@ -17,7 +17,7 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.crypto import make_content_hash
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.batcher import batcher
-from radiofeed.text import tokenize
+from radiofeed.tokenizer import tokenize
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError

@@ -16,7 +16,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed.batcher import batcher
-from radiofeed.text import NLTK_LANGUAGES, get_stopwords
+from radiofeed.tokenizer import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 DEFAULT_TIME_PERIOD: Final = timedelta(days=90)

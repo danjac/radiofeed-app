@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.text import clean_text, get_stopwords, tokenize
+from radiofeed.tokenizer import clean_text, get_stopwords, tokenize
 
 
 class TestStopwords:
@@ -24,7 +24,7 @@ class TestTokenize:
 
     def test_extract_attribute_error(self, mocker):
         mocker.patch(
-            "radiofeed.text._lemmatizer.lemmatize",
+            "radiofeed.tokenizer._lemmatizer.lemmatize",
             side_effect=AttributeError,
         )
         assert tokenize("en", "the cat sits on the mat") == []
