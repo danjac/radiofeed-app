@@ -1,7 +1,24 @@
 {% load cache i18n %}
 <footer class="relative pt-20">
-    <div class="space-y-1 bg-black text-white p-1 w-full text-xs md:text-sm absolute bottom-0">
-        <div class="flex items-center flex-wrap justify-center space-x-3 font-semibold">
+    <div class="
+        absolute
+        bottom-0
+        p-1
+        space-y-1
+        w-full
+        bg-black
+        text-white
+        text-xs
+        md:text-sm
+    ">
+        <div class="
+            flex
+            items-center
+            flex-wrap
+            justify-center
+            space-x-3
+            font-semibold
+        ">
             <div>
                 <a class="text-gray-100 hover:text-blue-300"
                     href="mailto:{% get_contact_email %}">
@@ -26,7 +43,13 @@
             </div>
 
         </div>
-        <div class="flex items-center flex-wrap justify-center space-x-3">
+        <div class="
+            flex
+            items-center
+            flex-wrap
+            justify-center
+            space-x-3
+        ">
             <p class="text-center font-semibold">
                 {% blocktranslate with site_name=request.site.name %}
                     Podcast audio recordings, show notes and artwork are the property of the individual owners
