@@ -36,7 +36,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 def favicon(request: HttpRequest) -> FileResponse:
     """Generates favicon file."""
     return FileResponse(
-        (settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb")
+        (settings.BASE_DIR / "radiofeed" / "static" / "img" / "wave-ico.png").open("rb")
     )
 
 
