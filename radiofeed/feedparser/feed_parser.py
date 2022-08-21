@@ -82,8 +82,7 @@ class FeedParser:
         # but not in all cases, so we should also check the content body.
         if (
             response.status_code == http.HTTPStatus.NOT_MODIFIED
-            or (content_hash := hash(response.content))
-            == self._podcast.content_hash
+            or (content_hash := hash(response.content)) == self._podcast.content_hash
         ):
             raise NotModified(response=response)
 

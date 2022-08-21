@@ -10,13 +10,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('podcasts', '0003_alter_podcast_http_status_alter_podcast_num_retries'),
+        ("podcasts", "0003_alter_podcast_http_status_alter_podcast_num_retries"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='podcast',
-            name='frequency',
-            field=models.DurationField(default=datetime.timedelta(days=1), verbose_name='RSS Update Frequency'),
+            model_name="podcast",
+            name="frequency",
+            field=models.DurationField(
+                default=datetime.timedelta(days=1), verbose_name="RSS Update Frequency"
+            ),
         ),
     ]
