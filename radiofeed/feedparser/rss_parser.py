@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Iterator
 
-import lxml.etree
+import lxml.etree  # nosec
 
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item

@@ -4,7 +4,7 @@ import itertools
 
 from typing import Iterator
 
-import lxml
+import lxml  # nosec
 
 from django import forms
 from django.utils.translation import gettext_lazy as _

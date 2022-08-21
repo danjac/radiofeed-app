@@ -53,6 +53,10 @@ jobs:
               if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
               run: poetry install --no-interaction --no-root
 
+            - name: Bandit
+              run: |
+                  python -m bandit -r radiofeed -x="**/tests/**.*
+
             - name: Check Django templates
               run: |
                   source .venv/bin/activate

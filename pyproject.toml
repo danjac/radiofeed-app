@@ -75,6 +75,7 @@ django-coverage-plugin = "^2.0.3"
 coverage-badge = "^1.1.0"
 flake8-print = "^5.0.0"
 rich = "^12.5.1"
+bandit = "^1.7.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -99,6 +100,7 @@ ignore = [
     "D409",
     "D413",
 ]
+
 
 [tool.isort]
 default_section="THIRDPARTY"
