@@ -1,4 +1,5 @@
-<div class="fixed inset-x-0 z-50 w-64 mx-auto top-10 md:top-auto md:bottom-10 md:w-80" id="messages"
+<div class="fixed inset-x-0 z-50 w-64 mx-auto top-10 md:top-auto md:bottom-10 md:w-80"
+    id="messages"
     x-data="{messages: []}"
     {% if messages %}
         x-init="{# fmt:off #}
@@ -16,7 +17,8 @@
     {% endif %}>
     <div class="space-y-3">
         <template x-for="message in messages">
-            <div class="flex flex-wrap items-center justify-center p-2 text-center text-white rounded shadow-xl" :class="{# fmt:off #}{
+            <div class="flex flex-wrap items-center justify-center p-2 text-center text-white rounded shadow-xl"
+                :class="{# fmt:off #}{
                      debug: 'bg-gray-600',
                      error: 'bg-red-600',
                      info: 'bg-blue-600',
