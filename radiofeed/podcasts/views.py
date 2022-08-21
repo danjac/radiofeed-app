@@ -12,11 +12,11 @@ from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
 
 from radiofeed.decorators import ajax_login_required
-from radiofeed.response import HttpResponseConflict
-from radiofeed.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts import itunes, recommender
+from radiofeed.pagination import render_pagination_response
+from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
+from radiofeed.response import HttpResponseConflict
 
 
 @require_safe
@@ -128,7 +128,7 @@ def similar(
     request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
-    limit: int = recommender.DEFAULT_NUM_MATCHES,
+    limit: int = 12,
 ) -> HttpResponse:
     """List similar podcasts based on recommendations.
 

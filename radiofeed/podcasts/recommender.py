@@ -4,7 +4,7 @@ import collections
 import operator
 
 from datetime import timedelta
-from typing import Final, Iterator
+from typing import Iterator
 
 import numpy
 import pandas
@@ -16,26 +16,17 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed.batcher import batcher
-from radiofeed.tokenizer import NLTK_LANGUAGES, get_stopwords
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-
-DEFAULT_TIME_PERIOD: Final = timedelta(days=90)
-DEFAULT_NUM_MATCHES: Final = 12
+from radiofeed.tokenizer import NLTK_LANGUAGES, get_stopwords
 
 
-def recommend(
-    since: timedelta = DEFAULT_TIME_PERIOD, num_matches: int = DEFAULT_NUM_MATCHES
-) -> None:
+def recommend() -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by language and category.
 
     Any existing recommendations are first deleted.
-
-    Args:
-        since: include podcasts last published since this period.
-        num_matches: total number of recommendations to create for each podcast
     """
     podcasts = (
-        Podcast.objects.filter(pub_date__gt=timezone.now() - since)
+        Podcast.objects.filter(pub_date__gt=timezone.now() - timedelta(days=90))
         .filter(language__in=NLTK_LANGUAGES)
         .exclude(extracted_text="")
     )
@@ -48,21 +39,17 @@ def recommend(
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
 
-        Recommender(language, num_matches).recommend(podcasts, categories)
+        Recommender(language).recommend(podcasts, categories)
 
 
 class Recommender:
-    """Creates recommendations for given language, based around text content and common categories.
+    """Creates recommendations for given language, based around text content and common categories."""
 
-    Args:
-        language: two-character language code e.g. "en"
-        num_matches: number of recommendations to create
-    """
+    _num_matches: int = 12
 
-    def __init__(self, language: str, num_matches: int):
+    def __init__(self, language: str):
 
         self._language = language
-        self._num_matches = num_matches
 
         self._vectorizer = TfidfVectorizer(
             stop_words=get_stopwords(self._language),
