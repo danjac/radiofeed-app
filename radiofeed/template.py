@@ -218,8 +218,7 @@ def _build_absolute_uri(
         return request.build_absolute_uri(url)
 
     # in case we don't have a request, e.g. in email job
-    domain = Site.objects.get_current().domain
     protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
-    base_url = f"{protocol}://{domain}"
+    base_url = f"{protocol}://{Site.objects.get_current().domain}"
 
     return parse.urljoin(base_url, url) if url else base_url
