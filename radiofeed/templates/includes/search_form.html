@@ -3,9 +3,9 @@
 {% translate "Clear Search" as t_clear_search %}
 <form action="{{ search_url|default:request.path }}"
     method="get"
+    class="relative bg-transparent"
     x-data="{search: '{{ request.search.value|default:''|escapejs }}'}"
-    hx-push-url="true"
-    class="relative bg-transparent {{ css_class|default:'' }}">
+    hx-push-url="true">
 
     <input type="search"
         x-model="search"
