@@ -269,3 +269,5 @@ USER_AGENT = env(
 )
 
 CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
+
+DEBUG_ERROR_PAGES = False

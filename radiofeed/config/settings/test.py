@@ -19,3 +19,5 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 # django-coverage-plugin
 TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore
+
+DEBUG_ERROR_PAGES = True
