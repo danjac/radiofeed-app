@@ -55,6 +55,7 @@ jobs:
 
             - name: Security checks
               run: |
+                  source .venv/bin/activate
                   python -m bandit -r radiofeed -x="**/tests/**.*"
 
             - name: Check Django templates
