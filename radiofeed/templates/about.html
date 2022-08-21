@@ -6,14 +6,30 @@
 {% block content %}
     {% with site_name=request.site.name %}
 
-        <h1 class="flex flex-wrap mb-6 text-lg font-bold md:text-xl xl:text-2xl border-b dark:border-gray-500 pb-3">
+        <h1 class="
+            flex
+            flex-wrap
+            mb-6
+            pb-3
+            border-b
+            dark:border-gray-500
+            text-lg
+            md:text-xl
+            xl:text-2xl
+            font-bold
+        ">
             {% blocktranslate %}
                 About {{ site_name }}
             {% endblocktranslate %}
         </h1>
 
-        <div class="prose dark:prose-invert prose-sm md:prose-base break-words">
-
+        <div class="
+            prose
+            dark:prose-invert
+            prose-sm
+            md:prose-base
+            break-words
+        ">
 
             <h3>{% translate "About Us" %}</h3>
 
