@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import http
 
 from typing import Iterator
@@ -19,7 +20,6 @@ from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError
-from radiofeed.feedparser.hasher import hash
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.tokenizer import tokenize
@@ -28,6 +28,11 @@ from radiofeed.tokenizer import tokenize
 def parse_feed(podcast: Podcast) -> bool:
     """Parse podcast RSS feed."""
     return FeedParser(podcast).parse()
+
+
+def make_content_hash(content: bytes) -> str:
+    """Hashes RSS content."""
+    return hashlib.sha256(content).hexdigest()
 
 
 class FeedParser:
@@ -82,7 +87,8 @@ class FeedParser:
         # but not in all cases, so we should also check the content body.
         if (
             response.status_code == http.HTTPStatus.NOT_MODIFIED
-            or (content_hash := hash(response.content)) == self._podcast.content_hash
+            or (content_hash := make_content_hash(response.content))
+            == self._podcast.content_hash
         ):
             raise NotModified(response=response)
 

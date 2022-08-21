@@ -68,7 +68,7 @@ def pagination_url(
 
 @register.simple_tag
 def get_contact_email() -> str:
-    """Returns CONTACT_EMAIL setting"""
+    """Returns CONTACT_EMAIL setting."""
     return settings.CONTACT_EMAIL
 
 
@@ -136,14 +136,13 @@ def signup_url(url: str) -> str:
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
-
     if value := cleaners.strip_whitespace(value):
 
         return {
-            "content": mark_safe(
+            "content": mark_safe(  # nosec
                 cleaners.clean(value if _HTML_RE.match(value) else _markdown(value))
             )
-        }  # nosec
+        }
 
     return {}
 
