@@ -36,28 +36,11 @@
                     @error.prevent="error">
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
-                <div class="
-                    fixed
-                    bottom-0
-                    z-10
-                    w-full
-                    p-2
-                    space-y-1
-                    sm:space-y-0
-                    bg-black
-                    text-white
-                    font-semibold
-                    transform
-                    ease-in-out
-                    duration-1000
-                    translate-y-0
-                    opacity-100
-                    htmx-added:opacity-0
-                    htmx-added:translate-y-24">
 
+                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-1 sm:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                     <div class="sm:hidden">
 
-                        <a class="w-84 truncate block text-center"
+                        <a class="block text-center truncate w-84"
                             :class="{'hover:text-blue-500': isPlaying, 'animate-pulse text-gray-300': !isPlaying}"
                             href="{{ episode_url }}"
                             hx-swap="outerHTML show:window:top"
@@ -76,13 +59,13 @@
                             ></span>
                         </div>
 
-                        <div class="text-xs text-center animate-pulse text-gray-300"
+                        <div class="text-xs text-center text-gray-300 animate-pulse"
                             x-cloak
                             x-show="!isError && !isLoaded">
                             {{ t_loading }}
                         </div>
 
-                        <div class="text-xs text-center animate-pulse text-gray-300"
+                        <div class="text-xs text-center text-gray-300 animate-pulse"
                             x-cloak
                             x-show="isError">
                             {{ t_error }}
@@ -98,9 +81,9 @@
                             </div>
                         {% endwith %}
 
-                        <div class="w-full flex flex-col place-content-between h-16 md:h-20">
+                        <div class="flex flex-col w-full h-16 place-content-between md:h-20">
 
-                            <div class="flex justify-between items-center pt-2 sm:pt-0">
+                            <div class="flex items-center justify-between pt-2 sm:pt-0">
 
                                 <div class="flex items-center">
                                     {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" %}
@@ -137,13 +120,13 @@
 
                                 <div class="hidden sm:block">
                                     <div>
-                                        <a class="truncate text-center block sm:w-80 md:w-96 md:w-auto md:max-w-xl xl:max-w-3xl"
+                                        <a class="block text-center truncate sm:w-80 md:w-96 md:w-auto md:max-w-xl xl:max-w-3xl"
                                             :class="{'hover:text-blue-500': isPlaying, 'animate-pulse text-gray-300': !isPlaying}"
                                             href="{{ episode_url }}"
                                             hx-swap="outerHTML show:window:top morpdom"
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                     </div>
-                                    <div class="text-xs md:text-sm text-center"
+                                    <div class="text-xs text-center md:text-sm"
                                         x-cloak
                                         x-show="!isError && isLoaded"
                                         :class="{'animate-pulse text-gray-300': !isPlaying}">
@@ -155,13 +138,13 @@
                                         ></span>
                                     </div>
 
-                                    <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
+                                    <div class="text-xs text-center text-gray-300 md:text-sm animate-pulse"
                                         x-cloak
                                         x-show="!isError && !isLoaded">
                                         {{ t_loading }}
                                     </div>
 
-                                    <div class="text-xs md:text-sm text-center animate-pulse text-gray-300"
+                                    <div class="text-xs text-center text-gray-300 md:text-sm animate-pulse"
                                         x-cloak
                                         x-show="isError">
                                         {{ t_error }}
@@ -209,12 +192,12 @@
 
                                         </div>
 
-                                        <div class="flex items-center space-x-2 mr-2 md:mr-3">
+                                        <div class="flex items-center mr-2 space-x-2 md:mr-3">
                                             <button :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 @click="decrementRate"
                                                 title="{% translate "Decrease Playback Rate" %}">-</button>
-                                            <div class="mr-1 md:mr-2 tracking-tight player--interactive"
+                                            <div class="mr-1 tracking-tight md:mr-2 player--interactive"
                                                 title="Playback Rate">
                                                 x<span x-text="rate.toFixed(1)"></span>
                                             </div>
@@ -250,7 +233,7 @@
                                             'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer':isPlaying,
                                             'bg-gray-800 dark:bg-gray-600 cursor-not-allowed': !isPlaying
                                         }{# fmt:on #}"
-                                    class="h-2 mx-auto rounded-full w-full flex items-center focus:outline-none">
+                                    class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none">
                             </div>
                         </div>
                     </div>

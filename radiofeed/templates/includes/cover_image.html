@@ -1,14 +1,6 @@
 {% load static %}
 {% static 'img/podcast-icon.webp' as placeholder %}
-<img class="
-    object-cover
-    bg-transparent
-    {% if url %}
-        cursor-pointer
-        hover:grayscale
-        hover:opacity-75
-    {% endif %}
-    {{ css_class|default:'' }}"
+<img class="object-cover bg-transparent{% if url %} cursor-pointer hover:grayscale hover:opacity-75{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
     alt="{{ alt }}"
     title="{{ alt }}"
     aria-hidden="true"

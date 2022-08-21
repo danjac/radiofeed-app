@@ -1,41 +1,14 @@
 {% load i18n %}
 {% if not accept_cookies %}
-    <div class="
-        fixed
-        bottom-0
-        w-full
-        flex
-        justify-center
-        z-50
-        py-3
-        text-white
-        bg-gray-800
-        opacity-90
-    "
+    <div class="fixed bottom-0 w-full flex justify-center z-50 py-3 text-white bg-gray-800 opacity-90"
         id="accept-cookies">
         <div class="px-2">
             <div class="md:flex items-center">
-                <p class="
-                    mb-3
-                    md:mb-0
-                    md:mr-4
-                    text-center
-                    md:text-start
-                ">
+                <p class="mb-3 md:mb-0 md:mr-4 text-center md:text-start">
                     {% translate "This site uses cookies to ensure you get the best experience." %}
                 </p>
                 <div class="text-center md:text-start">
-                    <button class="
-                        px-4
-                        p-1
-                        border
-                        border-white
-                        w-full
-                        sm:w-auto
-                        bg-blue-800
-                        hover:bg-blue-600
-                        text-white
-                    "
+                    <button class="px-4 p-1 border border-white w-full sm:w-auto bg-blue-800 hover:bg-blue-600 text-white"
                         hx-post="{% url 'accept_cookies' %}"
                         hx-target="#accept-cookies"
                         hx-push-url="false"

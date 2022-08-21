@@ -1,15 +1,4 @@
-<div class="
-    fixed
-    z-50
-    top-10
-    md:top-auto
-    md:bottom-10
-    inset-x-0
-    mx-auto
-    w-64
-    md:w-80
-"
-    id="messages"
+<div class="fixed inset-x-0 z-50 w-64 mx-auto top-10 md:top-auto md:bottom-10 md:w-80" id="messages"
     x-data="{messages: []}"
     {% if messages %}
         x-init="{# fmt:off #}
@@ -27,18 +16,7 @@
     {% endif %}>
     <div class="space-y-3">
         <template x-for="message in messages">
-            <div class="
-                flex
-                items-center
-                justify-center
-                text-center
-                flex-wrap
-                rounded
-                p-2
-                shadow-xl
-                text-white
-            "
-                :class="{# fmt:off #}{
+            <div class="flex flex-wrap items-center justify-center p-2 text-center text-white rounded shadow-xl" :class="{# fmt:off #}{
                      debug: 'bg-gray-600',
                      error: 'bg-red-600',
                      info: 'bg-blue-600',
@@ -48,15 +26,15 @@
                 x-data="{show: true}"
                 x-show="show"
                 x-init="setTimeout(() => show = false, 1500)"
-                    x-transition:enter="transition ease-in duration-200"
-                    x-transition:enter-start="transform opacity-0"
-                    x-transition:enter-end="transform opacity-100"
-                    x-transition:leave="transition ease-out duration-500"
-                    x-transition:leave-start="transform opacity-100"
-                    x-transition:leave-end="transform opacity-0">
-                    <div class="mx-auto font-semibold flex flex-wrap"
-                        x-text="message.message"></div>
-                </div>
-            </template>
-        </div>
+                x-transition:enter="transition ease-in duration-200"
+                x-transition:enter-start="transform opacity-0"
+                x-transition:enter-end="transform opacity-100"
+                x-transition:leave="transition ease-out duration-500"
+                x-transition:leave-start="transform opacity-100"
+                x-transition:leave-end="transform opacity-0">
+                <div class="flex flex-wrap mx-auto font-semibold"
+                    x-text="message.message"></div>
+            </div>
+        </template>
     </div>
+</div>

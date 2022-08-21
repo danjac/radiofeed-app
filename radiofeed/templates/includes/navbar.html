@@ -7,45 +7,19 @@
 {% translate "Toggle Menu" as t_toggle_menu %}
 
 {% with site_name=request.site.name %}
-    <header class="
-        bg-black
-        text-white
-        sticky top-0
-        w-full
-        z-20
-        shadow"
+    <header class="bg-black text-white sticky top-0 w-full z-20 shadow"
         x-data="{sidebar: false}"
         @htmx:before-request.window="sidebar=false">
-        <nav class="
-            flex
-            items-center
-            justify-between
-            p-2">
 
-            <div class="
-                flex
-                items-center
-                flex-shrink-0
-                space-x-3">
-                <a class="
-                    inline-flex
-                    items-center
-                    font-bold
-                    text-lg md:text-xl
-                    xl:text-2xl
-                    hover:text-blue-300"
+        <nav class="flex items-center justify-between p-2">
+
+            <div class="flex items-center flex-shrink-0 space-x-3">
+                <a class="inline-flex items-center font-bold text-lg md:text-xl xl:text-2xl hover:text-blue-300"
                     href="{{ home_url }}"
                     title="{{ site_name }}: {% translate "Home Page" %}">
                     <img
                         src="{% static 'img/wave.png' %}"
-                        class="
-                            h-6
-                            w-6
-                            lg:h-8
-                            lg:w-8
-                            mr-2
-                        "
-                        title="{{ site_name }}"
+                        class="h-6 w-6 lg:h-8 lg:w-8 mr-2" title="{{ site_name }}"
                         aria-hidden="true">
                     {{ site_name }}
                 </a>
@@ -53,14 +27,11 @@
 
             <form action="{{ search_url }}"
                 method="get"
-                class="
-                    relative
-                    bg-transparent
-                    hidden
-                    sm:block"
+                class="relative bg-transparent hidden sm:block"
                 x-data="{search: ''}"
                 @submit="$refs.search.blur();"
                 @htmx:before-request.window="search=''">
+
                 <input type="search"
                     x-ref="search"
                     x-model="search"
@@ -70,38 +41,16 @@
                     autocomplete="off"
                     aria-label="{{ t_search }}"
                     placeholder="{{ t_search }}"
-                    class="
-                        px-4
-                        py-1
-                        w-64
-                        md:w-72
-                        focus:outline-none
-                        rounded
-                        focus:ring
-                        placeholder-opacity-100
-                        text-gray-900
-                        dark:text-white
-                        dark:bg-gray-900
-                        text-sm
-                        md:text-base">
-                <div class="
-                    absolute
-                    flex
-                    items-center
-                    inset-y-0
-                    right-0
-                    pr-2">
+                    class="px-4 py-1 w-64 md:w-72 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm md:text-base">
 
+                <div class="absolute flex items-center inset-y-0 right-0 pr-2">
                     <button type="submit"
-                        title="{{ t_search }}}"
-                        class="
-                            focus:outline-none
-                            focus:shadow-outline
-                            text-gray-900
-                            dark:text-gray-100">
+                        title="{{ t_search }}"
+                        class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
                         {% icon "search" title=t_search %}
                     </button>
                 </div>
+
             </form>
 
             <ul class="flex items-center space-x-3">
@@ -143,16 +92,7 @@
                 {% endif %}
             </ul>
         </nav>
-        <div class="
-            xl:hidden
-            absolute
-            py-6 bg-white
-            dark:bg-black
-            top-15
-            left-0
-            w-full
-            shadow-xl
-            z-50"
+        <div class="xl:hidden absolute py-6 bg-white dark:bg-black top-15 left-0 w-full shadow-xl z-50"
             x-cloak
             x-show.transition="sidebar"
             x-transition:enter="transition ease-out duration-100"
@@ -161,6 +101,7 @@
             x-transition:leave="transition ease-in duration-75"
             x-transition:leave-start="transform opacity-100 scale-100"
             x-transition:leave-end="transform opacity-0 scale-95">
+
             <div class="flex justify-center sm:justify-start sm:hidden mb-6"
                 @click.away="sidebar=false">
 
@@ -176,38 +117,18 @@
                         autocomplete="off"
                         aria-label="{{ t_search }}"
                         placeholder="{{ t_search }}"
-                        class="
-                            w-64
-                            px-4
-                            py-1
-                            focus:outline-none
-                            focus:ring rounded
-                            text-sm
-                            placeholder-opacity-100
-                            text-gray-900
-                            dark:bg-gray-900
-                            dark:text-white
-                        ">
-                    <div class="
-                        flex
-                        items-center
-                        absolute
-                        inset-y-0
-                        right-0
-                        pr-2">
+                        class="w-64 px-4 py-1 focus:outline-none focus:ring rounded text-sm placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white">
+
+                    <div class="flex items-center absolute inset-y-0 right-0 pr-2">
                         <button type="submit"
                             title="{{ t_search }}"
-                            class="
-                                focus:outline-none
-                                focus:shadow-outline
-                                text-gray-900
-                                dark:text-gray-100
-                            ">
+                            class=" focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
                             {% icon "search" title=t_search %}
                         </button>
                     </div>
                 </form>
             </div>
+
             {% if user.is_authenticated %}
                 {% include "includes/sidebar.html" %}
             {% endif %}

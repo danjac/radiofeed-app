@@ -2,41 +2,15 @@
 {% load i18n %}
 
 {% block content %}
-    <h1 class="
-        flex
-        items-center
-        justify-center
-        sm:justify-start
-        mb-3
-        text-lg
-        md:text-xl
-        xl:text-2xl
-        font-bold
-    ">
+    <h1 class="flex items-center justify-center sm:justify-start mb-3 text-lg md:text-xl xl:text-2xl font-bold">
         {% blocktranslate with site_name=request.site.name %}
             Search {{ site_name }}
         {% endblocktranslate %}
     </h1>
 
     <div id="search-results">
-        <nav class="
-            mb-3
-            sm:flex
-            justify-between
-        ">
-            <ul class="
-                flex
-                items-center
-                mb-3
-                sm:mb-0
-                space-x-6
-                justify-center
-                sm:justify-start
-                overflow-x-auto
-                md:overflow-none
-                whitespace-nowrap
-                md:whitespace-none
-            ">
+        <nav class="mb-3 sm:flex justify-between">
+            <ul class="flex items-center mb-3 sm:mb-0 space-x-6 justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none">
                 {% with search_qs="?"|add:request.search.qs %}
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
@@ -58,12 +32,7 @@
                     </li>
                 {% endwith %}
             </ul>
-            <div class="
-                flex
-                items-center
-                justify-center
-                sm:justify-end
-            ">
+            <div class="flex items-center justify-center sm:justify-end">
                 {% include "includes/search_form.html" with placeholder=_("Search...") %}
             </div>
         </nav>

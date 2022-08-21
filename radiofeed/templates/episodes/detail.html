@@ -80,12 +80,9 @@
 {% endblock content_metadata %}
 
 {% block content %}
-    <h1 class="
-        font-bold
-        mb-6
-        text-lg
-        md:text-xl
-        xl:text-2xl">{{ episode.cleaned_title }}</h1>
+    <h1 class="font-bold mb-6 text-lg md:text-xl xl:text-2xl">
+        {{ episode.cleaned_title }}
+    </h1>
 
     {% with podcast=episode.podcast %}
         {% if next_episode or previous_episode %}
@@ -94,13 +91,7 @@
             {% translate "Previous" as t_previous %}
             {% translate "No More Episodes" as t_no_more_episodes %}
 
-            <nav class="
-                flex
-                justify-between
-                mb-3
-                border-b
-                dark:border-gray-500
-                pb-3"
+            <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
                 role="navigation"
                 aria-label="{% translate "Pagination" %}">
                 {% if previous_episode %}
@@ -112,10 +103,7 @@
                     </a>
 
                 {% else %}
-                    <span class="
-                        text-gray-600
-                        dark:text-gray-300
-                        cursor-not-allowed"
+                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
                         title="{{ t_no_more_episodes }}"
                         aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
                 {% endif %}
@@ -127,10 +115,7 @@
                         {{ t_next }}
                     </a>
                 {% else %}
-                    <span class="
-                        text-gray-600
-                        dark:text-gray-300
-                        cursor-not-allowed"
+                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
                         title="{{ t_no_more_episodes }}"
                         aria-label="{{ t_no_more_episodes }}">{{ t_next }}</span>
                 {% endif %}
@@ -148,23 +133,13 @@
 
             {% with metadata=episode.get_episode_metadata %}
                 {% if metadata %}
-                    <div class="
-                        flex
-                        items-center
-                        space-x-3
-                        font-semibold
-                        text-gray-800
-                        dark:text-gray-300">
+                    <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
                         {{ metadata }}
                     </div>
                 {% endif %}
             {% endwith %}
 
-            <div class="
-                flex
-                items-center
-                space-x-3
-                sm:space-x-6">
+            <div class="flex items-center space-x-3 sm:space-x-6">
                 {% with COVER_IMAGE_CSS="h-28 w-28 md:h-36 md:w-36" %}
                     <div class="{{ COVER_IMAGE_CSS}}">
                         {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class=COVER_IMAGE_CSS|add:" border dark:border-gray-500" url=podcast.get_absolute_url %}
@@ -172,20 +147,11 @@
                 {% endwith %}
 
 
-                <div class="
-                    flex
-                    flex-col
-                    place-content-between
-                    h-24
-                    md:h-28">
+                <div class="flex flex-col place-content-between h-24 md:h-28">
 
                     {% include "episodes/actions/player.html" %}
 
-                    <div class="
-                        flex
-                        items-center
-                        space-x-3
-                        md:space-x-6">
+                    <div class="flex items-center space-x-3 md:space-x-6">
                         <a download
                             title="Download {{ episode.get_media_url_ext|upper }} File"
                             href="{{ episode.media_url }}"
@@ -210,26 +176,12 @@
 
             {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
                 {% if file_size or link or explicit %}
-                    <div class="
-                        flex
-                        items-center
-                        flex-wrap
-                        font-semibold
-                        text-gray-800
-                        dark:text-gray-300
-                        space-x-2
-                        sm:space-x-3">
+                    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
 
                         {% if explicit %}
                             <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
-                                class="
-                                    flex
-                                    items-center
-                                    text-red-600
-                                    dark:text-red-500
-                                    space-x-2">
-                                {% icon "warning" %}
-                                <span class="inline-block">{% translate "Explicit" %}</span>
+                                class="flex items-center text-red-600 dark:text-red-500 space-x-2">
+                                {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
                             </div>
                         {% endif %}
 
