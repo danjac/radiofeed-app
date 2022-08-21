@@ -45,11 +45,11 @@ class FeedParser:
 
     _max_retries: int = 3
 
+    _feed_attrs = attrs.fields(Feed)
+    _item_attrs = attrs.fields(Item)
+
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
-
-        self._feed_attrs = attrs.fields(Feed)
-        self._item_attrs = attrs.fields(Item)
 
     @transaction.atomic
     def parse(self) -> bool:
