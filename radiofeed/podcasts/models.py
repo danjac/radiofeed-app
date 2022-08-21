@@ -17,8 +17,8 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 
-from radiofeed.db import FastCountMixin, SearchMixin
 from radiofeed.cleaners import strip_html
+from radiofeed.db import FastCountMixin, SearchMixin
 from radiofeed.users.models import User
 
 

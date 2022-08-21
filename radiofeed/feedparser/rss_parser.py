@@ -4,9 +4,9 @@ from typing import Iterator
 
 import lxml.etree
 
-from radiofeed.feedparser.xml_parser import parse_xml, xpath_finder
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
+from radiofeed.feedparser.xml_parser import parse_xml, xpath_finder
 
 
 def parse_rss(content: bytes) -> Feed:
