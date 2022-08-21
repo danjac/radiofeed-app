@@ -137,15 +137,13 @@ def signup_url(url: str) -> str:
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
 
-    if content := cleaners.strip_whitespace(value):
+    value = value or ""
 
-        # if content already HTML, just return as-is, otherwise parse Markdown
-
-        content = cleaners.clean(
-            content if _HTML_RE.match(content) else _markdown(content)
+    return {
+        "content": mark_safe(
+            cleaners.clean(value if _HTML_RE.match(value) else _markdown(value))
         )
-
-    return {"content": mark_safe(content)}  # nosec
+    }  # nosec
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)

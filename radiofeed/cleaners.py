@@ -59,12 +59,12 @@ _ALLOWED_ATTRS: Final = {
 }
 
 
-def clean(value: str) -> str:
+def clean(value: str | None) -> str:
     """Runs Bleach through value and scrubs any unwanted HTML tags and attributes."""
     return (
         bleach.linkify(
             bleach.clean(
-                value,
+                strip_whitespace(value),
                 attributes=_ALLOWED_ATTRS,
                 tags=_ALLOWED_TAGS,
                 strip=True,
