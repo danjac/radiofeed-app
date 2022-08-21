@@ -119,13 +119,13 @@ Parse podcast RSS feeds:
 Generate similar recommendations for each podcast:
 
 ```bash
-15 6 * * * python manage.py recommendations
+15 6 * * * python manage.py recommender
 ```
 
 Send podcast recommendations to users:
 
 ```bash
-15 9 * * 1 python manage.py recommendations --email
+15 9 * * 1 python manage.py recommender --email
 ```
 
 An `app.json` configuration with these cron schedules is included for Dokku deployment.
