@@ -8,7 +8,7 @@
         hover:opacity-75
         cursor-pointer
     {% endif %}
-    {{ css_class }}"
+    {{ css_class|default:'' }}"
     alt="{{ alt }}"
     title="{{ alt }}"
     aria-hidden="true"
