@@ -64,7 +64,7 @@ def clean(value: str | None) -> str:
     return (
         bleach.linkify(
             bleach.clean(
-                strip_whitespace(value),
+                value,
                 attributes=_ALLOWED_ATTRS,
                 tags=_ALLOWED_TAGS,
                 strip=True,

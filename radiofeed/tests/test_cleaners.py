@@ -6,6 +6,9 @@ from radiofeed import cleaners
 
 
 class TestClean:
+    def test_if_none(self):
+        assert cleaners.clean(None) == ""
+
     def test_if_safe(self):
         text = "<p>testing with paras</p>"
         assert cleaners.clean(text) == text
