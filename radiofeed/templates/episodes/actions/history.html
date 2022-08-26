@@ -5,6 +5,7 @@
         id="{{ target }}"
         hx-target="this"
         hx-swap="outerHTML"
+        hx-disinherit="hx-indicator"
         {% if hx_oob %}hx-swap-oob="true"
         {% endif %}>
         {% if listened and not is_playing %}

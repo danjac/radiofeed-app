@@ -2,13 +2,14 @@
 {% if user.is_authenticated %}
     <div{% if hx_oob %} hx-swap-oob="true"
     {% endif %}
+        hx-push-url="false"
+        hx-target="#player"
+        hx-swap="innerHTML"
+        hx-disinherit="hx-indicator"
         id="{{ episode.get_player_target }}">
         {% if is_playing %}
             <button class="inline-flex items-center btn btn-secondary"
                 hx-post="{% url 'episodes:close_player' %}"
-                hx-push-url="false"
-                hx-target="#player"
-                hx-swap="innerHTML"
                 title="{% translate "Close Player" %}">
                 {% icon "stop-circle" "regular" css_class="mr-2" %}
                 {% translate "Close" %}
@@ -16,9 +17,6 @@
         {% else %}
             <button class="inline-flex items-center btn btn-default"
                 hx-post="{% url 'episodes:start_player' episode.id %}"
-                hx-push-url="false"
-                hx-target="#player"
-                hx-swap="innerHTML"
                 title="{% translate "Open Episode in Player" %}">
                 {% icon "play-circle" "regular" css_class="mr-2" %}
                 {% translate "Play" %}
