@@ -9,11 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.asserts import assert_ok
-from radiofeed.episodes.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
-    EpisodeFactory,
-)
+from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.models import Subscription
 from radiofeed.users.models import User
@@ -45,18 +41,23 @@ class TestUserPreferences:
 
 
 class TestUserStats:
-    def test_stats(self, client, auth_user, podcast):
+    def test_stats(self, client, auth_user):
 
-        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
-        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
-        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
+        SubscriptionFactory(subscriber=auth_user)
         AudioLogFactory(user=auth_user)
         BookmarkFactory(user=auth_user)
 
         response = client.get(reverse("users:stats"))
         assert_ok(response)
-        assert response.context["stats"]["subscribed"] == 1
-        assert response.context["stats"]["listened"] == 3
+
+    def test_stats_plural(self, client, auth_user):
+
+        AudioLogFactory.create_batch(3, user=auth_user)
+        BookmarkFactory.create_batch(3, user=auth_user)
+        SubscriptionFactory.create_batch(3, subscriber=auth_user)
+
+        response = client.get(reverse("users:stats"))
+        assert_ok(response)
 
 
 class TestImportExportPodcastFeeds:

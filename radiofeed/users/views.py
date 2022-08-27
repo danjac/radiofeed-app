@@ -123,17 +123,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @login_required
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return render(
-        request,
-        "account/stats.html",
-        {
-            "stats": {
-                "bookmarks": request.user.bookmarks.count(),
-                "listened": request.user.audio_logs.count(),
-                "subscribed": request.user.subscriptions.count(),
-            },
-        },
-    )
+    return render(request, "account/stats.html")
 
 
 @require_form_methods
