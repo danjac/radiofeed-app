@@ -64,16 +64,15 @@ def schedule(feed: Feed) -> timedelta:
     """Estimates frequency of episodes in feed, based on the minimum of time intervals between individual episodes."""
     try:
         frequency = min(
-            [
-                (a - b)
-                for a, b in itertools.pairwise(
-                    sorted(
-                        [item.pub_date for item in feed.items],
-                        reverse=True,
-                    )
+            a - b
+            for a, b in itertools.pairwise(
+                sorted(
+                    [item.pub_date for item in feed.items],
+                    reverse=True,
                 )
-            ]
+            )
         )
+
     except ValueError:
         frequency = _DEFAULT_FREQUENCY
 
