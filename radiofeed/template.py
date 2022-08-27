@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import dataclasses
 import math
-import re
 
 from urllib import parse
 
@@ -17,16 +16,11 @@ from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
-from markdown import markdown as _markdown
 
-from radiofeed import cleaners
+from radiofeed import markup
 
 register = template.Library()
-
-
-_HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -121,30 +115,10 @@ def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> Acti
     return ActiveLink(url)
 
 
-@register.filter
-def login_url(url: str) -> str:
-    """Returns login URL with redirect parameter back to this url."""
-    return _auth_redirect_url(url, reverse("account_login"))
-
-
-@register.filter
-def signup_url(url: str) -> str:
-    """Returns signup URL with redirect parameter back to this url."""
-    return _auth_redirect_url(url, reverse("account_signup"))
-
-
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
-    if value := cleaners.strip_whitespace(value):
-
-        return {
-            "content": mark_safe(  # nosec
-                cleaners.clean(value if _HTML_RE.match(value) else _markdown(value))
-            )
-        }
-
-    return {}
+    return {"content": markup.markdown(value)}
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
@@ -200,6 +174,18 @@ def normalize_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
+
+
+@register.filter
+def login_url(url: str) -> str:
+    """Returns login URL with redirect parameter back to this url."""
+    return _auth_redirect_url(url, reverse("account_login"))
+
+
+@register.filter
+def signup_url(url: str) -> str:
+    """Returns signup URL with redirect parameter back to this url."""
+    return _auth_redirect_url(url, reverse("account_signup"))
 
 
 def _auth_redirect_url(url: str, redirect_url) -> str:
