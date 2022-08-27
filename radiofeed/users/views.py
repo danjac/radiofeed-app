@@ -14,8 +14,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.decorators import require_form_methods
-from radiofeed.episodes.models import AudioLog, Bookmark
-from radiofeed.podcasts.models import Podcast, Subscription
+from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -124,18 +123,14 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @login_required
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    logs = AudioLog.objects.filter(user=request.user)
-
     return render(
         request,
         "account/stats.html",
         {
             "stats": {
-                "listened": logs.count(),
-                "subscribed": Subscription.objects.filter(
-                    subscriber=request.user
-                ).count(),
-                "bookmarks": Bookmark.objects.filter(user=request.user).count(),
+                "bookmarks": request.user.bookmarks.count(),
+                "listened": request.user.audio_logs.count(),
+                "subscribed": request.user.subscriptions.count(),
             },
         },
     )
