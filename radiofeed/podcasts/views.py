@@ -172,7 +172,7 @@ def episodes(
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
-    episodes = podcast.episodes.select_related("podcast")
+    episodes = _get_episodes(podcast).select_related("podcast")
 
     ordering = request.GET.get("ordering", "desc")
 
@@ -291,6 +291,10 @@ def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
+def _get_episodes(podcast: Podcast) -> QuerySet[Episode]:
+    return Episode.objects.filter(podcast=podcast)
+
+
 def _get_podcast_or_404(podcast_id: int) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id)
 
@@ -300,7 +304,7 @@ def _podcast_detail_context(
 ) -> dict:
     return {
         "podcast": podcast,
-        "num_episodes": podcast.episodes.count(),
+        "num_episodes": _get_episodes(podcast).count(),
         "has_similar": podcast.recommendations.exists(),
     } | (extra_context or {})
 
