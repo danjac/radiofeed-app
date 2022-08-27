@@ -100,18 +100,18 @@ def import_podcast_feeds(
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing feeds from user's subscriptions."""
-    podcasts = (
-        Podcast.objects.filter(
-            subscriptions__subscriber=request.user,
-        )
-        .distinct()
-        .order_by("title")
-        .iterator()
-    )
-
     return SimpleTemplateResponse(
         "account/podcasts.opml",
-        {"podcasts": podcasts},
+        {
+            "podcasts": (
+                Podcast.objects.filter(
+                    subscriptions__subscriber=request.user,
+                )
+                .distinct()
+                .order_by("title")
+                .iterator()
+            )
+        },
         content_type="text/x-opml",
         headers={
             "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
