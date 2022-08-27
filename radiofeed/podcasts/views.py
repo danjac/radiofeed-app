@@ -26,11 +26,7 @@ def index(request: HttpRequest) -> HttpResponse:
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
     """
     subscribed = (
-        set(
-            Subscription.objects.filter(subscriber=request.user).values_list(
-                "podcast", flat=True
-            )
-        )
+        set(request.user.subscriptions.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else set()
     )

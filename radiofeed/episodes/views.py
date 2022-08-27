@@ -14,22 +14,17 @@ from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
 
 from radiofeed.decorators import ajax_login_required
-from radiofeed.episodes.models import AudioLog, Bookmark, Episode
+from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
-from radiofeed.podcasts.models import Podcast, Subscription
+from radiofeed.podcasts.models import Podcast
 from radiofeed.response import HttpResponseConflict, HttpResponseNoContent
 
 
 @require_safe
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
-
     subscribed = (
-        set(
-            Subscription.objects.filter(subscriber=request.user).values_list(
-                "podcast", flat=True
-            )
-        )
+        set(request.user.subscriptions.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else set()
     )
@@ -64,7 +59,6 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_safe
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
-
     return (
         render_pagination_response(
             request,
@@ -85,11 +79,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
-    """Renders episode detail.
-
-    Raises:
-        Http404: episode not found
-    """
+    """Renders episode detail."""
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
@@ -111,18 +101,13 @@ def episode_detail(
 @require_POST
 @ajax_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
-    """Starts player. Creates new audio log if necessary and adds episode to player session tracker.
-
-    Raises:
-        Http404: episode not found
-    """
+    """Starts player. Creates new audio log if necessary and adds episode to player session tracker."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"), pk=episode_id
     )
 
-    log, _ = AudioLog.objects.update_or_create(
+    log, _ = request.user.audio_logs.update_or_create(
         episode=episode,
-        user=request.user,
         defaults={
             "listened": timezone.now(),
         },
@@ -142,11 +127,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    """Closes player. Removes episode to player session tracker.
-
-    Raises:
-        Http404: episode not found
-    """
+    """Closes player. Removes episode to player session tracker."""
     if episode_id := request.player.pop():
 
         episode = get_object_or_404(
@@ -178,7 +159,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     if episode_id := request.player.get():
         try:
 
-            AudioLog.objects.filter(episode=episode_id, user=request.user).update(
+            request.user.audio_logs.filter(episode=episode_id).update(
                 current_time=int(request.POST["current_time"]),
                 listened=timezone.now(),
             )
@@ -193,10 +174,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @login_required
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-
-    logs = AudioLog.objects.filter(user=request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    logs = request.user.audio_logs.select_related("episode", "episode__podcast")
 
     ordering = request.GET.get("ordering", "desc")
 
@@ -217,15 +195,11 @@ def history(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
-    """Removes audio log from user history and returns HTMX snippet.
-
-    Raises:
-        Http404 if episode not found
-    """
+    """Removes audio log from user history and returns HTMX snippet."""
     episode = get_object_or_404(Episode, pk=episode_id)
 
     if not request.player.has(episode.id):
-        AudioLog.objects.filter(user=request.user, episode=episode).delete()
+        request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
     return render(
@@ -239,10 +213,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @login_required
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
 
     ordering = request.GET.get("ordering", "desc")
 
@@ -263,15 +234,11 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
-    """Add episode to bookmarks.
-
-    Raises:
-        Http404: episode not found
-    """
+    """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
 
     try:
-        Bookmark.objects.create(episode=episode, user=request.user)
+        request.user.bookmarks.create(episode=episode)
     except IntegrityError:
         return HttpResponseConflict()
 
@@ -282,14 +249,9 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
-    """Remove episode from bookmarks.
-
-    Raises:
-        Http404: episode not found
-    """
+    """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
-
-    Bookmark.objects.filter(user=request.user, episode=episode).delete()
+    request.user.bookmarks.filter(episode=episode).delete()
 
     messages.info(request, _("Removed from Bookmarks"))
     return _render_bookmark_action(request, episode, False)
