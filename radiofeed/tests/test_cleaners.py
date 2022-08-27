@@ -5,6 +5,24 @@ import pytest
 from radiofeed import cleaners
 
 
+class TestMarkup:
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (None, ""),
+            ("", ""),
+            ("   ", ""),
+            ("test", "test"),
+            ("*test*", "<b>test</b>"),
+            ("<p>test</p>", "<p>test</p>"),
+            ("<p>test</p>   ", "<p>test</p>"),
+            ("<script>test</script>", "test"),
+        ],
+    )
+    def test_markup(self, value, expected):
+        return cleaners.markup(value) == expected
+
+
 class TestClean:
     def test_if_none(self):
         assert cleaners.clean(None) == ""
@@ -14,14 +32,15 @@ class TestClean:
         assert cleaners.clean(text) == text
 
     def test_has_link_link(self):
-        text = '<a href="http://reddit.com">Reddit</a>'
-        clean = cleaners.clean(text)
-        assert 'target="_blank"' in clean
-        assert 'rel="noopener noreferrer nofollow"' in clean
+        cleaned = cleaners.clean('<a href="http://reddit.com">Reddit</a>')
+        assert 'target="_blank"' in cleaned
+        assert 'rel="noopener noreferrer nofollow"' in cleaned
 
     def test_unsafe(self):
-        text = "<script>alert('xss ahoy!')</script>"
-        assert cleaners.clean(text) == "alert('xss ahoy!')"
+        assert (
+            cleaners.clean("<script>alert('xss ahoy!')</script>")
+            == "alert('xss ahoy!')"
+        )
 
 
 class TestStripHtml:

@@ -18,7 +18,7 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from radiofeed import markup
+from radiofeed import cleaners
 
 register = template.Library()
 
@@ -118,7 +118,7 @@ def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> Acti
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
-    return {"content": markup.markdown(value)}
+    return {"content": cleaners.markup(value)}
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)
@@ -205,5 +205,4 @@ def _build_absolute_uri(
     # in case we don't have a request, e.g. in email job
     protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
     base_url = f"{protocol}://{Site.objects.get_current().domain}"
-
     return parse.urljoin(base_url, url) if url else base_url
