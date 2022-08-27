@@ -15,9 +15,8 @@ from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from radiofeed.batcher import batcher
+from radiofeed import batcher, tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.tokenizer import NLTK_LANGUAGES, get_stopwords
 
 
 def recommend() -> None:
@@ -27,7 +26,7 @@ def recommend() -> None:
     """
     podcasts = (
         Podcast.objects.filter(pub_date__gt=timezone.now() - timedelta(days=90))
-        .filter(language__in=NLTK_LANGUAGES)
+        .filter(language__in=tokenizer.NLTK_LANGUAGES)
         .exclude(extracted_text="")
     )
 
@@ -52,7 +51,7 @@ class Recommender:
         self._language = language
 
         self._vectorizer = TfidfVectorizer(
-            stop_words=get_stopwords(self._language),
+            stop_words=tokenizer.get_stopwords(self._language),
             max_features=3000,
             ngram_range=(1, 2),
         )
@@ -61,7 +60,7 @@ class Recommender:
         self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
     ) -> None:
         """Creates recommendation instances."""
-        for batch in batcher(
+        for batch in batcher.batcher(
             self._build_matches_dict(podcasts, categories).items(), 1000
         ):
 

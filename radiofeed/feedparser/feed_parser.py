@@ -15,14 +15,13 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.batcher import batcher
+from radiofeed import batcher, tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.tokenizer import tokenize
 
 
 def parse_feed(podcast: Podcast) -> bool:
@@ -231,7 +230,7 @@ class FeedParser:
             + [item.title for item in feed.items][:6]
             if value
         )
-        return " ".join(tokenize(self._podcast.language, text))
+        return " ".join(tokenizer.tokenize(self._podcast.language, text))
 
     def _episode_updates(self, feed: Feed) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
@@ -245,7 +244,7 @@ class FeedParser:
 
         # update existing content
 
-        for batch in batcher(self._episodes_for_update(feed, guids), 1000):
+        for batch in batcher.batcher(self._episodes_for_update(feed, guids), 1000):
             Episode.fast_update_objects.copy_update(
                 batch,
                 fields=[
@@ -267,7 +266,7 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in batcher(self._episodes_for_insert(feed, guids), 100):
+        for batch in batcher.batcher(self._episodes_for_insert(feed, guids), 100):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _episodes_for_insert(

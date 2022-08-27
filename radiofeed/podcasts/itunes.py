@@ -13,7 +13,7 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
-from radiofeed.batcher import batcher
+from radiofeed import batcher
 from radiofeed.feedparser.xml_parser import parse_xml
 from radiofeed.podcasts.models import Podcast
 
@@ -97,7 +97,7 @@ class Crawler:
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the database."""
         for url in self._parse_genre_urls():
-            for batch in batcher(self._parse_podcast_ids(url), _BATCH_SIZE):
+            for batch in batcher.batcher(self._parse_podcast_ids(url), _BATCH_SIZE):
                 yield from _parse_feeds(
                     _get_response(
                         "https://itunes.apple.com/lookup",
@@ -148,7 +148,7 @@ class Crawler:
 
 
 def _parse_feeds(json_data: dict) -> Iterator[Feed]:
-    for batch in batcher(_build_feeds_from_json(json_data), _BATCH_SIZE):
+    for batch in batcher.batcher(_build_feeds_from_json(json_data), _BATCH_SIZE):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
