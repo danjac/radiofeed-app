@@ -25,14 +25,12 @@
     </div>
 {% else %}
     <div>
-
-        <a class="btn btn-default inline-flex items-center justify-center"
+        <a class="inline-flex items-center btn btn-default"
             href="{{ episode.get_absolute_url|login_url }}"
-            hx-disable="true"
-            title="{% translate "You must sign up or log in to play this episode" %}">
+            title="{% translate "You must sign up or log in to play this episode" %}"
+            hx-disable="true">
             {% icon "play-circle" "regular" css_class="mr-2" %}
             {% translate "Play" %}
         </a>
-
     </div>
 {% endif %}

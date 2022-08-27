@@ -1,6 +1,6 @@
 {% load i18n %}
-{% with target=podcast.get_subscribe_target %}
-    {% if user.is_authenticated %}
+{% if user.is_authenticated %}
+    {% with target=podcast.get_subscribe_target %}
         <div id="{{ target }}"
             hx-target="this"
             hx-push-url="false"
@@ -22,18 +22,18 @@
                 </button>
             {% endif %}
         </div>
-    {% else %}
-        <div class="flex items-center">
-            <a class="btn btn-default inline-flex items-center"
-                href="{{ podcast.get_absolute_url|login_url }}"
-                hx-disable="true"
-                title="{% translate "Log in or sign up to subscribe to this podcast" %}">
-                {% icon "eye" css_class="mr-2" %}
-                {% translate "Subscribe" %}
-            </a>
-        </div>
-    {% endif %}
-    {% if request.htmx.target == target %}
-        {% include "includes/messages.html" with hx_oob=True %}
-    {% endif %}
-{% endwith %}
+        {% if request.htmx.target == target %}
+            {% include "includes/messages.html" with hx_oob=True %}
+        {% endif %}
+    {% endwith %}
+{% else %}
+    <div class="flex items-center">
+        <a class="btn btn-default inline-flex items-center"
+            href="{{ podcast.get_absolute_url|login_url }}"
+            hx-disable="true"
+            title="{% translate "Log in or sign up to subscribe to this podcast" %}">
+            {% icon "eye" css_class="mr-2" %}
+            {% translate "Subscribe" %}
+        </a>
+    </div>
+{% endif %}
