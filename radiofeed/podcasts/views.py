@@ -15,7 +15,7 @@ from radiofeed.decorators import ajax_login_required
 from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
+from radiofeed.podcasts.models import Category, Podcast, Subscription
 from radiofeed.response import HttpResponseConflict
 
 
@@ -134,9 +134,10 @@ def similar(
             podcast,
             {
                 "recommendations": (
-                    Recommendation.objects.filter(podcast=podcast)
-                    .select_related("recommended")
-                    .order_by("-similarity", "-frequency")
+                    podcast.recommendations.select_related("recommended").order_by(
+                        "-similarity",
+                        "-frequency",
+                    )
                 )[:limit]
             },
         ),
@@ -299,8 +300,8 @@ def _podcast_detail_context(
 ) -> dict:
     return {
         "podcast": podcast,
-        "num_episodes": podcast.episodes.filter(podcast=podcast).count(),
-        "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
+        "num_episodes": podcast.episodes.count(),
+        "has_similar": podcast.recommendations.exists(),
     } | (extra_context or {})
 
 

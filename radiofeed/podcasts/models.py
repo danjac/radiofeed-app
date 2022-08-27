@@ -305,15 +305,15 @@ class Recommendation(models.Model):
 
     podcast: Podcast = models.ForeignKey(
         "podcasts.Podcast",
-        related_name="+",
         on_delete=models.CASCADE,
+        related_name="recommendations",
         verbose_name=_("Podcast"),
     )
 
     recommended: Podcast = models.ForeignKey(
         "podcasts.Podcast",
-        related_name="+",
         on_delete=models.CASCADE,
+        related_name="similar",
         verbose_name=_("Similar Podcast"),
     )
 
