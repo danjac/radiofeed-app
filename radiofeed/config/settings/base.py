@@ -259,8 +259,6 @@ MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
 
 # Project specific
 
-DEFAULT_PAGE_SIZE = 30
-
 ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 USER_AGENT = env(

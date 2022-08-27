@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
@@ -14,8 +13,8 @@ def render_pagination_response(
     pagination_template_name: str,
     extra_context: dict | None = None,
     target: str = "object-list",
-    page_size: int = settings.DEFAULT_PAGE_SIZE,
     param: str = "page",
+    page_size: int = 30,
     **pagination_kwargs,
 ) -> HttpResponse:
     """Creates a TemplateResponse for a paginated QuerySet or list.
