@@ -81,52 +81,54 @@
         {{ podcast.cleaned_title }}
     </h1>
     <div id="podcast-content">
-        {% if num_episodes or has_similar %}
+        {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
+            {% if num_episodes or has_similar %}
 
-            {% translate "About" as t_about %}
-            {% translate "Episodes" as t_episodes %}
-            {% translate "Similar" as t_similar %}
+                {% translate "About" as t_about %}
+                {% translate "Episodes" as t_episodes %}
+                {% translate "Similar" as t_similar %}
 
-            <nav class="flex items-center mb-3 justify-center sm:justify-start">
+                <nav class="flex items-center mb-3 justify-center sm:justify-start">
 
-                <ul class="flex items-center space-x-6">
+                    <ul class="flex items-center space-x-6">
 
-                    {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
-                        {% active_link podcast.get_detail_url as link %}
-                        <li>
-                            <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                                href="{{ link.url }}"
-                                title="{{ podcast.cleaned_title }} | {{ t_about }}">
-                                {{ t_about }}
-                            </a>
-                        </li>
-
-                        {% if num_episodes %}
-                            {% active_link podcast.get_episodes_url as link %}
+                        {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
+                            {% active_link podcast.get_detail_url as link %}
                             <li>
                                 <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                                     href="{{ link.url }}"
-                                    title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
-                                    {{ t_episodes }} ({{ num_episodes }})
+                                    title="{{ podcast.cleaned_title }} | {{ t_about }}">
+                                    {{ t_about }}
                                 </a>
                             </li>
-                        {% endif %}
 
-                        {% if has_similar %}
-                            {% active_link podcast.get_similar_url as link %}
-                            <li>
-                                <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                                    href="{{ link.url }}"
-                                    title="{{ podcast.cleaned_title }} | {{ t_similar }}">
-                                    {{ t_similar }}
-                                </a>
-                            </li>
-                        {% endif %}
+                            {% if num_episodes %}
+                                {% active_link podcast.get_episodes_url as link %}
+                                <li>
+                                    <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
+                                        href="{{ link.url }}"
+                                        title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
+                                        {{ t_episodes }} ({{ num_episodes }})
+                                    </a>
+                                </li>
+                            {% endif %}
 
-                    {% endwith %}
-                </ul>
-            </nav>
-        {% endif %}
+                            {% if has_similar %}
+                                {% active_link podcast.get_similar_url as link %}
+                                <li>
+                                    <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
+                                        href="{{ link.url }}"
+                                        title="{{ podcast.cleaned_title }} | {{ t_similar }}">
+                                        {{ t_similar }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                        {% endwith %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% endwith %}
         {% block podcast_content %}{% endblock %}
     </div>
 {% endblock %}

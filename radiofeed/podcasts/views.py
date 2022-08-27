@@ -114,6 +114,51 @@ def latest_episode(
 
 
 @require_safe
+def podcast_detail(
+    request: HttpRequest, podcast_id: int, slug: str | None = None
+) -> HttpResponse:
+    """Render details for a single podcast."""
+    podcast = _get_podcast_or_404(podcast_id)
+
+    return render(
+        request,
+        "podcasts/detail.html",
+        {
+            "podcast": podcast,
+            "is_subscribed": podcast.is_subscribed(request.user),
+        },
+    )
+
+
+@require_safe
+def episodes(
+    request: HttpRequest,
+    podcast_id: int,
+    slug: str | None = None,
+) -> HttpResponse:
+    """Render episodes for a single podcast."""
+    podcast = _get_podcast_or_404(podcast_id)
+    ordering = request.GET.get("ordering", "desc")
+    episodes = podcast.episodes.select_related("podcast")
+
+    return render_pagination_response(
+        request,
+        (
+            episodes.search(request.search.value).order_by("-rank", "-pub_date")
+            if request.search
+            else episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
+        ),
+        "podcasts/episodes.html",
+        "episodes/pagination/episodes.html",
+        extra_context={
+            "podcast": podcast,
+            "is_podcast_detail": True,
+            "ordering": ordering,
+        },
+    )
+
+
+@require_safe
 def similar(
     request: HttpRequest,
     podcast_id: int,
@@ -126,70 +171,15 @@ def similar(
     return render(
         request,
         "podcasts/similar.html",
-        _podcast_detail_context(
-            podcast,
-            {
-                "recommendations": (
-                    podcast.recommendations.select_related("recommended").order_by(
-                        "-similarity",
-                        "-frequency",
-                    )
-                )[:limit]
-            },
-        ),
-    )
-
-
-@require_safe
-def podcast_detail(
-    request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
-    """Render details for a single podcast."""
-    podcast = _get_podcast_or_404(podcast_id)
-
-    return render(
-        request,
-        "podcasts/detail.html",
-        _podcast_detail_context(
-            podcast,
-            {
-                "is_subscribed": podcast.is_subscribed(request.user),
-            },
-        ),
-    )
-
-
-@require_safe
-def episodes(
-    request: HttpRequest,
-    podcast_id: int,
-    slug: str | None = None,
-    target: str = "object-list",
-) -> HttpResponse:
-    """Render episodes for a single podcast."""
-    podcast = _get_podcast_or_404(podcast_id)
-    episodes = podcast.episodes.select_related("podcast")
-
-    ordering = request.GET.get("ordering", "desc")
-
-    extra_context = {
-        "is_podcast_detail": True,
-        "ordering": ordering,
-    }
-
-    return render_pagination_response(
-        request,
-        (
-            episodes.search(request.search.value).order_by("-rank", "-pub_date")
-            if request.search
-            else episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
-        ),
-        "podcasts/episodes.html",
-        "episodes/pagination/episodes.html",
-        target=target,
-        extra_context=extra_context
-        if request.htmx.target == target
-        else _podcast_detail_context(podcast, extra_context),
+        {
+            "podcast": podcast,
+            "recommendations": (
+                podcast.recommendations.select_related("recommended").order_by(
+                    "-similarity",
+                    "-frequency",
+                )
+            )[:limit],
+        },
     )
 
 
@@ -289,16 +279,6 @@ def _get_podcasts() -> QuerySet[Podcast]:
 
 def _get_podcast_or_404(podcast_id: int) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id)
-
-
-def _podcast_detail_context(
-    podcast: Podcast, extra_context: dict | None = None
-) -> dict:
-    return {
-        "podcast": podcast,
-        "num_episodes": podcast.episodes.count(),
-        "has_similar": podcast.recommendations.exists(),
-    } | (extra_context or {})
 
 
 def _render_subscribe_action(
