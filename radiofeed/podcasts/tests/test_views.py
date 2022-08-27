@@ -269,7 +269,7 @@ class TestCategoryList:
     def test_matching_podcasts(self, db, client):
         for _ in range(3):
             category = CategoryFactory()
-            category.podcast_set.add(PodcastFactory())
+            category.podcasts.add(PodcastFactory())
 
         response = client.get(self.url)
         assert_ok(response)
@@ -286,7 +286,7 @@ class TestCategoryList:
         CategoryFactory.create_batch(3)
 
         category = CategoryFactory(name="testing")
-        category.podcast_set.add(PodcastFactory())
+        category.podcasts.add(PodcastFactory())
 
         response = client.get(self.url, {"q": "testing"})
         assert_ok(response)

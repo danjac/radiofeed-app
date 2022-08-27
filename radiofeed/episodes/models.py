@@ -76,7 +76,10 @@ class Episode(models.Model):
     """Individual podcast episode."""
 
     podcast: Podcast = models.ForeignKey(
-        "podcasts.Podcast", on_delete=models.CASCADE, verbose_name=_("Podcast")
+        "podcasts.Podcast",
+        on_delete=models.CASCADE,
+        related_name="episodes",
+        verbose_name=_("Podcast"),
     )
 
     guid: str = models.TextField(verbose_name=_("RSS Feed GUID"))
@@ -297,12 +300,14 @@ class Bookmark(TimeStampedModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        related_name="bookmarks",
         verbose_name=_("User"),
     )
 
     episode = models.ForeignKey(
         "episodes.Episode",
         on_delete=models.CASCADE,
+        related_name="bookmarks",
         verbose_name=_("User"),
     )
 
@@ -334,10 +339,16 @@ class AudioLog(TimeStampedModel):
     """Record of user listening history."""
 
     user: User = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("User")
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_("User"),
+        related_name="audio_logs",
     )
     episode: Episode = models.ForeignKey(
-        "episodes.Episode", on_delete=models.CASCADE, verbose_name=_("Episode")
+        "episodes.Episode",
+        on_delete=models.CASCADE,
+        verbose_name=_("Episode"),
+        related_name="audio_logs",
     )
 
     listened: datetime = models.DateTimeField(verbose_name=_("Last Listened At"))

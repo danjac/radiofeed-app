@@ -25,7 +25,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
     """
-
     subscribed = (
         set(
             Subscription.objects.filter(subscriber=request.user).values_list(
@@ -57,7 +56,6 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_safe
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
-
     return (
         render_pagination_response(
             request,
@@ -108,11 +106,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
-    """Redirects to the latest episode for a given podcast.
-
-    Raises:
-        Http404: podcast not found
-    """
+    """Redirects to the latest episode for a given podcast."""
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
         .order_by("-pub_date")
@@ -130,11 +124,7 @@ def similar(
     slug: str | None = None,
     limit: int = 12,
 ) -> HttpResponse:
-    """List similar podcasts based on recommendations.
-
-    Raises:
-        Http404: podcast not found
-    """
+    """List similar podcasts based on recommendations."""
     podcast = _get_podcast_or_404(podcast_id)
 
     return render(
@@ -157,11 +147,7 @@ def similar(
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
-    """Render details for a single podcast.
-
-    Raises:
-        Http404: podcast not found
-    """
+    """Render details for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
 
     return render(
@@ -183,14 +169,9 @@ def episodes(
     slug: str | None = None,
     target: str = "object-list",
 ) -> HttpResponse:
-    """Render episodes for a single podcast.
-
-    Raises:
-        Http404: podcast not found
-    """
-
+    """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
-    episodes = Episode.objects.filter(podcast=podcast).select_related("podcast")
+    episodes = podcast.episodes.select_related("podcast")
 
     ordering = request.GET.get("ordering", "desc")
 
@@ -318,8 +299,8 @@ def _podcast_detail_context(
 ) -> dict:
     return {
         "podcast": podcast,
+        "num_episodes": podcast.episodes.filter(podcast=podcast).count(),
         "has_similar": Recommendation.objects.filter(podcast=podcast).exists(),
-        "num_episodes": Episode.objects.filter(podcast=podcast).count(),
     } | (extra_context or {})
 
 

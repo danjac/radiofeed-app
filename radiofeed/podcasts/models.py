@@ -184,7 +184,10 @@ class Podcast(models.Model):
     )
 
     categories: models.QuerySet[Category] = models.ManyToManyField(
-        "podcasts.Category", blank=True, verbose_name=_("iTunes Categories")
+        "podcasts.Category",
+        blank=True,
+        verbose_name=_("iTunes Categories"),
+        related_name="podcasts",
     )
 
     recipients: models.QuerySet[User] = models.ManyToManyField(
@@ -262,11 +265,17 @@ class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""
 
     subscriber: User = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Subscriber")
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_("Subscriber"),
+        related_name="subscriptions",
     )
 
     podcast: Podcast = models.ForeignKey(
-        "podcasts.Podcast", on_delete=models.CASCADE, verbose_name=_("Podcast")
+        "podcasts.Podcast",
+        on_delete=models.CASCADE,
+        verbose_name=_("Podcast"),
+        related_name="subscriptions",
     )
 
     class Meta:

@@ -28,7 +28,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Category]:
         """Returns queryset with number of podcasts."""
-        return super().get_queryset(request).annotate(num_podcasts=Count("podcast"))
+        return super().get_queryset(request).annotate(num_podcasts=Count("podcasts"))
 
     def num_podcasts(self, obj: Category) -> int:
         """Returns number of podcasts in this category."""
@@ -179,7 +179,7 @@ class SubscribedFilter(admin.SimpleListFilter):
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
         return (
-            queryset.annotate(subscribers=Count("subscription")).filter(
+            queryset.annotate(subscribers=Count("subscriptions")).filter(
                 subscribers__gt=0
             )
             if self.value() == "yes"
@@ -242,6 +242,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     @admin.display(description=_("Estimated Next Update"))
     def next_scheduled_update(self, obj: Podcast):
+        """Return estimated next update time."""
         return timeuntil(scheduler.next_scheduled_update(obj))
 
     def get_ordering(self, request: HttpRequest) -> list[str]:

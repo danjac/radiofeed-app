@@ -18,7 +18,6 @@ _MAX_FREQUENCY: Final = timedelta(days=15)
 
 def next_scheduled_update(podcast: Podcast) -> datetime:
     """Returns estimated next update."""
-
     now = timezone.now()
 
     if podcast.pub_date is None or podcast.parsed is None:
@@ -37,10 +36,11 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
 
 
 def scheduled_for_update() -> QuerySet[Podcast]:
+    """Returns podcasts scheduled for feed update."""
     now = timezone.now()
 
     return (
-        Podcast.objects.alias(subscribers=Count("subscription"))
+        Podcast.objects.alias(subscribers=Count("subscriptions"))
         .filter(
             Q(parsed__isnull=True)
             | Q(pub_date__isnull=True)
@@ -61,10 +61,7 @@ def scheduled_for_update() -> QuerySet[Podcast]:
 
 
 def schedule(feed: Feed) -> timedelta:
-    """Estimates frequency of episodes in feed."""
-
-    # calculate min interval based on intervals between recent episodes
-
+    """Estimates frequency of episodes in feed, based on the minimum of time intervals between individual episodes."""
     try:
         frequency = min(
             [
@@ -87,7 +84,6 @@ def schedule(feed: Feed) -> timedelta:
 
 def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     """Increments update frequency until next scheduled date > current time."""
-
     if pub_date is None:
         return _DEFAULT_FREQUENCY
 

@@ -48,7 +48,7 @@ def req(rf):
 
 class TestCategoryAdmin:
     def test_get_queryset(self, req, category_admin, podcasts, category):
-        category.podcast_set.set(podcasts)
+        category.podcasts.set(podcasts)
         qs = category_admin.get_queryset(req)
         assert qs.count() == 1
         assert category_admin.num_podcasts(qs.first()) == 3
