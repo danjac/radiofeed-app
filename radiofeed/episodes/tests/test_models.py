@@ -16,66 +16,6 @@ from radiofeed.podcasts.models import Podcast
 
 
 class TestEpisodeManager:
-    def test_get_next_episode_if_none(self, episode):
-
-        assert Episode.objects.get_next_episode(episode) is None
-
-    def test_get_previous_episode_if_none(self, episode):
-
-        assert Episode.objects.get_previous_episode(episode) is None
-
-    def test_get_next_episode(self, episode):
-
-        next_episode = EpisodeFactory(
-            podcast=episode.podcast,
-            pub_date=episode.pub_date + datetime.timedelta(days=2),
-        )
-
-        assert Episode.objects.get_next_episode(episode) == next_episode
-
-    def test_get_next_episode_not_same_podcast(self, episode):
-
-        EpisodeFactory(
-            pub_date=episode.pub_date + datetime.timedelta(days=2),
-        )
-
-        assert Episode.objects.get_next_episode(episode) is None
-
-    def test_get_next_episode_before_current(self, episode):
-
-        EpisodeFactory(
-            podcast=episode.podcast,
-            pub_date=episode.pub_date - datetime.timedelta(days=2),
-        )
-
-        assert Episode.objects.get_next_episode(episode) is None
-
-    def test_get_previous_episode(self, episode):
-
-        previous_episode = EpisodeFactory(
-            podcast=episode.podcast,
-            pub_date=episode.pub_date - datetime.timedelta(days=2),
-        )
-
-        assert Episode.objects.get_previous_episode(episode) == previous_episode
-
-    def test_get_previous_not_same_podcast(self, episode):
-
-        EpisodeFactory(
-            pub_date=episode.pub_date + datetime.timedelta(days=2),
-        )
-
-        assert Episode.objects.get_previous_episode(episode) is None
-
-    def test_get_previous_episode_after_current(self, episode):
-
-        EpisodeFactory(
-            podcast=episode.podcast,
-            pub_date=episode.pub_date + datetime.timedelta(days=2),
-        )
-
-        assert Episode.objects.get_previous_episode(episode) is None
-
     def test_with_current_time_if_anonymous(self, db, anonymous_user):
         EpisodeFactory()
         episode = Episode.objects.with_current_time(anonymous_user).first()
@@ -104,6 +44,48 @@ class TestEpisodeManager:
 
 class TestEpisodeModel:
     link = "https://example.com"
+
+    def test_get_next_episode_if_none(self, episode):
+
+        assert episode.get_next_episode() is None
+
+    def test_get_previous_episode_if_none(self, episode):
+
+        assert episode.get_previous_episode() is None
+
+    def test_get_next_episode_not_same_podcast(self, episode):
+
+        EpisodeFactory(
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+
+        assert episode.get_next_episode() is None
+
+    def test_get_previous_episode_not_same_podcast(self, episode):
+
+        EpisodeFactory(
+            pub_date=episode.pub_date - datetime.timedelta(days=2),
+        )
+
+        assert episode.get_previous_episode() is None
+
+    def test_get_next_episode(self, episode):
+
+        next_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+
+        assert episode.get_next_episode() == next_episode
+
+    def test_get_previous_episode(self, episode):
+
+        previous_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - datetime.timedelta(days=2),
+        )
+
+        assert episode.get_previous_episode() == previous_episode
 
     def test_get_link_if_episode(self):
         assert Episode(link=self.link).get_link() == self.link

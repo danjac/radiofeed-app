@@ -92,8 +92,6 @@ def episode_detail(
             "episode": episode,
             "is_playing": request.player.has(episode.id),
             "is_bookmarked": episode.is_bookmarked(request.user),
-            "next_episode": Episode.objects.get_next_episode(episode),
-            "previous_episode": Episode.objects.get_previous_episode(episode),
         },
     )
 

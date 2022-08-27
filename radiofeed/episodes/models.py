@@ -47,30 +47,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("listened")),
         )
 
-    def get_next_episode(self, episode: Episode) -> Episode | None:
-        """Returns following episode in same podcast as this episode, if any."""
-        return (
-            self.filter(
-                podcast=episode.podcast_id,
-                pub_date__gt=episode.pub_date,
-            )
-            .exclude(pk=episode.id)
-            .order_by("pub_date")
-            .first()
-        )
-
-    def get_previous_episode(self, episode: Episode) -> Episode | None:
-        """Returns previous episode in same podcast as this episode, if any."""
-        return (
-            self.filter(
-                podcast=episode.podcast_id,
-                pub_date__lt=episode.pub_date,
-            )
-            .exclude(pk=episode.id)
-            .order_by("-pub_date")
-            .first()
-        )
-
 
 class Episode(models.Model):
     """Individual podcast episode."""
@@ -163,6 +139,20 @@ class Episode(models.Model):
     def get_absolute_url(self) -> str:
         """URL of episode detail page."""
         return reverse("episodes:episode_detail", args=[self.pk, self.slug])
+
+    def get_next_episode(self) -> Episode | None:
+        """Returns the next episode in this podcast."""
+        try:
+            return self.get_next_by_pub_date(podcast=self.podcast)
+        except self.DoesNotExist:
+            return None
+
+    def get_previous_episode(self) -> Episode | None:
+        """Returns the previous episode in this podcast."""
+        try:
+            return self.get_previous_by_pub_date(podcast=self.podcast)
+        except self.DoesNotExist:
+            return None
 
     @property
     def slug(self) -> str:

@@ -84,7 +84,7 @@
         {{ episode.cleaned_title }}
     </h1>
 
-    {% with podcast=episode.podcast %}
+    {% with podcast=episode.podcast next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
         {% if next_episode or previous_episode %}
 
             {% translate "Next" as t_next %}
