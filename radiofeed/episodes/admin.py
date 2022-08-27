@@ -5,11 +5,12 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
+from radiofeed.admin import FastCountAdminMixin
 from radiofeed.episodes.models import Episode
 
 
 @admin.register(Episode)
-class EpisodeAdmin(admin.ModelAdmin):
+class EpisodeAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Django admin for Episode model."""
 
     list_display = ("episode_title", "podcast_title", "pub_date")
@@ -31,7 +32,7 @@ class EpisodeAdmin(admin.ModelAdmin):
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str
-    ) -> QuerySet:
+    ) -> QuerySet[Episode]:
         """Search episodes."""
         return (
             (queryset.search(search_term).order_by("-rank", "-pub_date"), False)

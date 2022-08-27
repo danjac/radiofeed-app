@@ -4,6 +4,20 @@ from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils.functional import cached_property
+
+from radiofeed.db import FastCounter
+
+
+class FastCountPaginator(Paginator):
+    """Paginator that uses `FastCountMixin` queryset for `count()`."""
+
+    object_list: FastCounter
+
+    @cached_property
+    def count(self) -> int:
+        """Should return optimized count."""
+        return self.object_list.fast_count()
 
 
 def render_pagination_response(

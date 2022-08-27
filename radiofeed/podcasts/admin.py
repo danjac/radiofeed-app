@@ -9,6 +9,7 @@ from django.template.defaultfilters import timeuntil
 from django.utils.translation import gettext_lazy as _
 from django_object_actions import DjangoObjectActions
 
+from radiofeed.admin import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.podcasts.models import Category, Podcast
@@ -188,7 +189,7 @@ class SubscribedFilter(admin.SimpleListFilter):
 
 
 @admin.register(Podcast)
-class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
+class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     """Podcast model admin."""
 
     date_hierarchy = "pub_date"

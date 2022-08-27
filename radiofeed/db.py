@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import operator
 
-from typing import TYPE_CHECKING, Iterable, TypeAlias, TypeVar
+from typing import TYPE_CHECKING, Iterable, Protocol, TypeAlias, TypeVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
@@ -17,7 +17,15 @@ else:
     _QuerySet = object
 
 
-class FastCountMixin(_QuerySet):
+class FastCounter(Protocol):
+    """Protocol for QuerySet subclasses or mixins implementing `fast_count()`."""
+
+    def fast_count(self) -> int:
+        """Should return an optimized COUNT query."""
+        ...  # pragma: no cover
+
+
+class FastCountMixin(FastCounter, _QuerySet):
     """Provides faster alternative to COUNT for very large tables, using PostgreSQL retuple SELECT.
 
     Attributes:
@@ -26,7 +34,7 @@ class FastCountMixin(_QuerySet):
 
     fast_count_row_limit: int = 1000
 
-    def count(self: _QuerySet) -> int:
+    def fast_count(self: _QuerySet) -> int:
         """Does optimized COUNT.
 
         If query contains WHERE, DISTINCT or GROUP BY, or number of rows under `fast_count_row_limit`, returns standard SELECT COUNT.

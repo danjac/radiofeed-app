@@ -40,7 +40,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 listened=models.Value(None, output_field=models.DateTimeField()),
             )
 
-        logs = AudioLog.objects.filter(user=user, episode=models.OuterRef("pk"))
+        logs = user.audio_logs.filter(episode=models.OuterRef("pk"))
 
         return self.annotate(
             current_time=models.Subquery(logs.values("current_time")),

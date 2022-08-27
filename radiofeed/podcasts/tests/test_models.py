@@ -54,8 +54,6 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
-    reltuple_count = "radiofeed.db.get_reltuple_count"
-
     def test_search(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
@@ -63,19 +61,6 @@ class TestPodcastManager:
     def test_search_if_empty(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("").count() == 0
-
-    def test_count_if_gt_1000(self, db, mocker):
-        mocker.patch(self.reltuple_count, return_value=2000)
-        assert Podcast.objects.count() == 2000
-
-    def test_count_if_lt_1000(self, db, mocker, podcast):
-        mocker.patch(self.reltuple_count, return_value=100)
-        assert Podcast.objects.count() == 1
-
-    def test_count_if_filter(self, db, mocker):
-        mocker.patch(self.reltuple_count, return_value=2000)
-        PodcastFactory(title="test")
-        assert Podcast.objects.filter(title="test").count() == 1
 
 
 class TestPodcastModel:

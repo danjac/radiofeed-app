@@ -55,6 +55,10 @@ class TestCategoryAdmin:
 
 
 class TestPodcastAdmin:
+    def test_get_queryset(self, podcasts, podcast_admin, req):
+        qs = podcast_admin.get_queryset(req)
+        assert qs.count() == 3
+
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = podcast_admin.get_search_results(
