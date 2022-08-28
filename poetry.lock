@@ -316,15 +316,18 @@ dev = ["flake8", "sphinx", "sphinx-rtd-theme", "tox", "twine", "wheel"]
 postal = ["cryptography"]
 
 [[package]]
-name = "django-cachalot"
-version = "2.5.2"
-description = "Caches your Django ORM queries and automatically invalidates them."
+name = "django-cacheops"
+version = "6.1"
+description = "A slick ORM cache with automatic granular event-driven invalidation for Django."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.5"
 
 [package.dependencies]
-Django = ">=2.2,<4.2"
+django = ">=2.1"
+funcy = ">=1.8,<2.0"
+redis = ">=3.0.0"
+six = ">=1.4.0"
 
 [[package]]
 name = "django-coverage-plugin"
@@ -652,6 +655,14 @@ python-versions = ">=3.7"
 [package.dependencies]
 flake8 = ">=3.0"
 pycodestyle = "*"
+
+[[package]]
+name = "funcy"
+version = "1.17"
+description = "A fancy and practical functional tools"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "gitdb"
@@ -1756,7 +1767,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "5bcdd3847c9cbe160ca34a66afa915e7a2381e52017ac77d34af122b37f07c9c"
+content-hash = "ba6772addf3237707516bb8bb60a35db6d5e56d6c4351119f7c1fff919485a54"
 
 [metadata.files]
 appnope = []
@@ -1786,7 +1797,7 @@ dj-database-url = []
 django = []
 django-allauth = []
 django-anymail = []
-django-cachalot = []
+django-cacheops = []
 django-coverage-plugin = []
 django-debug-toolbar = []
 django-environ = []
@@ -1815,6 +1826,7 @@ flake8-comprehensions = []
 flake8-debugger = []
 flake8-deprecated = []
 flake8-print = []
+funcy = []
 gitdb = []
 gitpython = []
 gprof2dot = []
