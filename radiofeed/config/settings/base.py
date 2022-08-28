@@ -84,7 +84,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.twitter",
-    "cacheops",
+    "cachalot",
     "django_extensions",
     "django_htmx",
     "django_object_actions",
@@ -237,18 +237,6 @@ LOGGING = {
             "propagate": False,
         },
     },
-}
-
-# https://github.com/Suor/django-cacheops
-
-CACHEOPS_REDIS = REDIS_URL
-CACHEOPS_DEFAULTS = {"timeout": DEFAULT_CACHE_TIMEOUT}
-CACHEOPS_DEGRADE_ON_FAILURE = True
-
-CACHEOPS = {
-    "podcasts.*": {"ops": "all"},
-    "episodes.*": {"ops": "all"},
-    "users.*": {"ops": "all"},
 }
 
 # Model translations
