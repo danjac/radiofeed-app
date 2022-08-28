@@ -13,7 +13,6 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 ALLOWED_HOSTS += [".example.com"]
 
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-CACHEOPS_ENABLED = False
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
