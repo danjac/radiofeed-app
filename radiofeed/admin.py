@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
+from radiofeed.db import FastCounter
 from radiofeed.pagination import FastCountPaginator
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -19,7 +20,7 @@ class FastCountAdminMixin(_ModelAdmin):
 
     paginator = FastCountPaginator
 
-    def get_queryset(self, request: HttpRequest) -> QuerySet:
+    def get_queryset(self, request: HttpRequest) -> QuerySet[FastCounter]:
         """Monkeypatches `count()` to use fast counter."""
         qs = super().get_queryset(request)
         qs.count = qs.fast_count
