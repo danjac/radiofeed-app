@@ -2,6 +2,9 @@
 {% load i18n %}
 {% block title %}{% translate "Error: 405 Method Not Allowed" %}{% endblock %}
 {% block content %}
+    <h1 class="mb-6 font-bold text-lg md:text-xl xl:text-2xl">
+        {% translate "405: Method Not Allowed" %}
+    </h1>
     <p>
         {% translate "Sorry, you cannot perform this action. You may have disabled JavaScript on your browser or are using an older browser that does not support this action." %}
     </p>

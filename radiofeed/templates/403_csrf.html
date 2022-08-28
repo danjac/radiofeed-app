@@ -1,7 +1,10 @@
 {% extends "403.html" %}
 {% load i18n %}
 {% block content %}
-    <p class="mb-3">
+    <h1 class="mb-6 font-bold text-lg md:text-xl xl:text-2xl">
+        {% translate "400: Bad Request" %}
+    </h1>
+    <p class="mb-6">
         {% translate "Sorry, there's been a problem posting your form. Please reload this page and try again." %}
     </p>
     <p>
