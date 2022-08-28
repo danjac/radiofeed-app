@@ -246,9 +246,12 @@ CACHEOPS_DEFAULTS = {"timeout": DEFAULT_CACHE_TIMEOUT}
 CACHEOPS_DEGRADE_ON_FAILURE = True
 
 CACHEOPS = {
-    "podcasts.*": {"ops": "all"},
-    "episodes.*": {"ops": "all"},
-    "users.*": {"ops": "all"},
+    f"{app}.*": {"ops": "all"}
+    for app in (
+        "episodes",
+        "podcasts",
+        "users",
+    )
 }
 
 # Model translations
