@@ -110,7 +110,8 @@
                                             class="{{ BUTTON_CSS }}"
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-target="#player"
-                                            hx-swap="innerHTML">
+                                            hx-swap="innerHTML"
+                                            hx-disinherit="hx-indicator">
                                             {% icon "stop-circle" "regular" size="xl" title=t_close_player %}
                                         </button>
 
