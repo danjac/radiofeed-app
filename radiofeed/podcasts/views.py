@@ -212,9 +212,6 @@ def category_detail(
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
-
-    Raises:
-        Http404: category not found
     """
     category = get_object_or_404(Category, pk=category_id)
     podcasts = _get_podcasts().filter(categories=category).distinct()
@@ -242,9 +239,6 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     Returns:
         returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise returns the subscribe action as HTMX snippet.
-
-    Raises:
-        Http404: podcast not found
     """
     podcast = _get_podcast_or_404(podcast_id)
 
@@ -260,11 +254,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Unsubscribe user from a podcast.
-
-    Raises:
-        Http404: podcast not found
-    """
+    """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id)
 
     Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
