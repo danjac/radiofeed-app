@@ -7,20 +7,13 @@ from django_htmx.middleware import HtmxDetails
 from pytest_django.asserts import assertTemplateUsed
 
 from radiofeed.asserts import assert_ok
-from radiofeed.pagination import FastCountPaginator, render_pagination_response
+from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts.factories import PodcastFactory
-from radiofeed.podcasts.models import Podcast
 
 
 @pytest.fixture
 def podcasts(db):
     return PodcastFactory.create_batch(30)
-
-
-class TestFastCountPaginator:
-    def test_with_fast_count(self, podcasts):
-        paginator = FastCountPaginator(Podcast.objects.all(), 10)
-        assert paginator.count == 30
 
 
 class TestRenderPaginationResponse:
