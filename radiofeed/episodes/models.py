@@ -21,12 +21,13 @@ from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
 from radiofeed.cleaners import strip_html
-from radiofeed.db import FastCountMixin, SearchMixin
+from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.podcasts.models import Podcast
+from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
-class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
+class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Episode model."""
 
     def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet[Episode]:
@@ -275,7 +276,7 @@ class Episode(models.Model):
         return f"history-actions-{self.id}"
 
 
-class BookmarkQuerySet(SearchMixin, models.QuerySet):
+class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Bookmark model."""
 
     search_vectors = [
@@ -316,7 +317,7 @@ class Bookmark(TimeStampedModel):
         ]
 
 
-class AudioLogQuerySet(SearchMixin, models.QuerySet):
+class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for AudioLog."""
 
     search_vectors = [

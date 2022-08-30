@@ -4,7 +4,7 @@ from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.podcasts.models import Podcast
 
 
-class TestFastCountMixin:
+class TestFastCountQuerySetMixin:
 
     reltuple_count = "radiofeed.db.get_reltuple_count"
 

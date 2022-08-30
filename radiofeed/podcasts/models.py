@@ -18,7 +18,8 @@ from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 
 from radiofeed.cleaners import strip_html
-from radiofeed.db import FastCountMixin, SearchMixin
+from radiofeed.fast_count import FastCountQuerySetMixin
+from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
@@ -67,7 +68,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
 
-class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
+class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
     ...
