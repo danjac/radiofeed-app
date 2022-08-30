@@ -21,6 +21,19 @@ repos:
           - id: black
             args: [--target-version, "py310", --line-length, "88"]
             language_version: python3.10
+    - repo: https://github.com/PyCQA/autoflake
+      rev: v1.5.2
+      hooks:
+          - id: autoflake
+            args:
+                [
+                    -r,
+                    --in-place,
+                    --remove-unused-variables,
+                    --remove-all-unused-imports,
+                    --ignore-init-module-imports,
+                    "radiofeed",
+                ]
     - repo: https://gitlab.com/pycqa/flake8
       rev: 3.9.2
       hooks:
