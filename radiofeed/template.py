@@ -11,9 +11,8 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.http import HttpRequest
 from django.shortcuts import resolve_url
-from django.template.context import RequestContext
+from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -68,20 +67,21 @@ def get_contact_email() -> str:
 
 @register.simple_tag(takes_context=True)
 def absolute_uri(
-    context: RequestContext,
+    context: Context,
     url: str | None = None,
     *args,
     **kwargs,
 ) -> str:
-    """Generate absolute URI based on server environment or current Site.
+    """Generate absolute URI based on server environment or current Site."""
+    url = resolve_url(url, *args, **kwargs) if url else None
 
-    Args:
-        context: template context
-        url: relative URL name or path
-    """
-    return _build_absolute_uri(
-        resolve_url(url, *args, **kwargs) if url else None, context.get("request")
-    )
+    if request := context.get("request", None):
+        return request.build_absolute_uri(url)
+
+    # in case we don't have a request, e.g. in email job
+    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+    base_url = f"{protocol}://{Site.objects.get_current().domain}"
+    return parse.urljoin(base_url, url) if url else base_url
 
 
 @register.filter
@@ -194,15 +194,3 @@ def _auth_redirect_url(url: str, redirect_url) -> str:
         if url.startswith("/account/")
         else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
     )
-
-
-def _build_absolute_uri(
-    url: str | None = None, request: HttpRequest | None = None
-) -> str:
-    if request:
-        return request.build_absolute_uri(url)
-
-    # in case we don't have a request, e.g. in email job
-    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
-    base_url = f"{protocol}://{Site.objects.get_current().domain}"
-    return parse.urljoin(base_url, url) if url else base_url

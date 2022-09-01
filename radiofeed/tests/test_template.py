@@ -23,7 +23,6 @@ from radiofeed.template import (
 
 EXAMPLE_HTTPS_URL = "https://example.com"
 EXAMPLE_HTTP_URL = "http://example.com"
-TESTSERVER_URL = "http://testserver"
 
 
 @pytest.fixture
@@ -73,50 +72,47 @@ class TestAbsoluteUri:
     DETAIL_URL = "/podcasts/12345/test/"
 
     def test_has_request_no_url(self, db, rf):
-        url = absolute_uri({"request": rf.get("/")})
-        assert url == f"{TESTSERVER_URL}/"
+        url = absolute_uri(RequestContext(rf.get("/")))
+        assert url == EXAMPLE_HTTP_URL
 
     def test_has_request_no_url_https(self, db, rf, settings):
         settings.SECURE_SSL_REDIRECT = True
-        url = absolute_uri({"request": rf.get("/")})
-        assert url == f"{TESTSERVER_URL}/"
+        url = absolute_uri(RequestContext(rf.get("/")))
+        assert url == EXAMPLE_HTTPS_URL
 
     def test_has_request_static_url(self, db, rf):
-        url = absolute_uri({"request": rf.get("/")}, self.SEARCH_URL)
-        assert url == TESTSERVER_URL + self.SEARCH_URL
+        url = absolute_uri(RequestContext(rf.get("/")), self.SEARCH_URL)
+        assert url == EXAMPLE_HTTP_URL + self.SEARCH_URL
 
     def test_has_request_resolved_url(self, db, rf):
         url = absolute_uri(
-            {"request": rf.get("/")},
+            RequestContext(rf.get("/")),
             "podcasts:podcast_detail",
             podcast_id=12345,
             slug="test",
         )
-        assert url == TESTSERVER_URL + self.DETAIL_URL
+        assert url == EXAMPLE_HTTP_URL + self.DETAIL_URL
 
     def test_has_request_from_model(self, rf, podcast):
-        url = absolute_uri(
-            {"request": rf.get("/")},
-            podcast,
-        )
-        assert url == TESTSERVER_URL + podcast.get_absolute_url()
+        url = absolute_uri(RequestContext(rf.get("/")), podcast)
+        assert url == EXAMPLE_HTTP_URL + podcast.get_absolute_url()
 
     def test_not_has_request_no_url(self, db):
-        url = absolute_uri({})
+        url = absolute_uri(RequestContext(request=None))
         assert url == EXAMPLE_HTTP_URL
 
     def test_not_has_request_no_url_https(self, db, settings):
         settings.SECURE_SSL_REDIRECT = True
-        url = absolute_uri({})
+        url = absolute_uri(RequestContext(request=None))
         assert url == EXAMPLE_HTTPS_URL
 
     def test_not_has_request_static_url(self, db):
-        url = absolute_uri({}, self.SEARCH_URL)
+        url = absolute_uri(RequestContext(request=None), self.SEARCH_URL)
         assert url == EXAMPLE_HTTP_URL + self.SEARCH_URL
 
     def test_not_has_request_resolved_url(self, db):
         url = absolute_uri(
-            {},
+            RequestContext(request=None),
             "podcasts:podcast_detail",
             podcast_id=12345,
             slug="test",
@@ -124,7 +120,7 @@ class TestAbsoluteUri:
         assert url == EXAMPLE_HTTP_URL + self.DETAIL_URL
 
     def test_not_has_request_model(self, podcast):
-        url = absolute_uri({}, podcast)
+        url = absolute_uri(RequestContext(request=None), podcast)
         assert url == EXAMPLE_HTTP_URL + podcast.get_absolute_url()
 
 
