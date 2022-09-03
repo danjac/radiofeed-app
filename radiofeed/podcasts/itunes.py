@@ -13,7 +13,7 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
-from radiofeed import batcher
+from radiofeed.common import batcher
 from radiofeed.feedparser.xml_parser import parse_xml
 from radiofeed.podcasts.models import Podcast
 

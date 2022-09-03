@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.template import normalize_url
+from radiofeed.common.template import normalize_url
 
 
 def language(value: str) -> str:

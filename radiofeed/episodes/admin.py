@@ -5,8 +5,8 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
+from radiofeed.common.fast_count import FastCountAdminMixin
 from radiofeed.episodes.models import Episode
-from radiofeed.fast_count import FastCountAdminMixin
 
 
 @admin.register(Episode)

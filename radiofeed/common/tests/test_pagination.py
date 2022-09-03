@@ -6,8 +6,8 @@ from django.http import Http404
 from django_htmx.middleware import HtmxDetails
 from pytest_django.asserts import assertTemplateUsed
 
-from radiofeed.asserts import assert_ok
-from radiofeed.pagination import render_pagination_response
+from radiofeed.common.asserts import assert_ok
+from radiofeed.common.pagination import render_pagination_response
 from radiofeed.podcasts.factories import PodcastFactory
 
 

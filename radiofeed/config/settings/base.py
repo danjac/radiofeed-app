@@ -104,8 +104,8 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "radiofeed.middleware.CacheControlMiddleware",
-    "radiofeed.middleware.SearchMiddleware",
+    "radiofeed.common.middleware.CacheControlMiddleware",
+    "radiofeed.common.middleware.SearchMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -205,7 +205,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "builtins": [
-                "radiofeed.template",
+                "radiofeed.common.template",
             ],
         },
     }

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.batcher import batcher
+from radiofeed.common.batcher import batcher
 
 
 class TestBatcher:

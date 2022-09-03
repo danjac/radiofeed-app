@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed import cleaners
+from radiofeed.common import cleaners
 
 
 class TestMarkup:

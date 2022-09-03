@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.tokenizer import clean_text, get_stopwords, tokenize
+from radiofeed.common.tokenizer import clean_text, get_stopwords, tokenize
 
 
 class TestStopwords:

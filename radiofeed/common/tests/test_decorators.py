@@ -5,8 +5,8 @@ import pytest
 from django.http import HttpResponse
 from django.urls import reverse
 
-from radiofeed.asserts import assert_ok, assert_unauthorized
-from radiofeed.decorators import ajax_login_required
+from radiofeed.common.asserts import assert_ok, assert_unauthorized
+from radiofeed.common.decorators import ajax_login_required
 
 
 class TestAjaxLoginRequired:

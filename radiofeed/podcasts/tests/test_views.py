@@ -6,7 +6,7 @@ import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
 
-from radiofeed.asserts import assert_conflict, assert_not_found, assert_ok
+from radiofeed.common.asserts import assert_conflict, assert_not_found, assert_ok
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.factories import (

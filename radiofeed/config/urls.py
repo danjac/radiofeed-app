@@ -6,7 +6,7 @@ from django.contrib.sitemaps import views as sitemaps_views
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
 
-from radiofeed import views
+from radiofeed.common import views
 from radiofeed.episodes.sitemaps import EpisodeSitemap
 from radiofeed.podcasts.sitemaps import CategorySitemap, PodcastSitemap
 

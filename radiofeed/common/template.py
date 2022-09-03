@@ -17,7 +17,7 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from radiofeed import cleaners
+from radiofeed.common import cleaners
 
 register = template.Library()
 

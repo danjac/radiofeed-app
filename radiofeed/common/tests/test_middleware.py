@@ -4,7 +4,7 @@ import pytest
 
 from django_htmx.middleware import HtmxMiddleware
 
-from radiofeed.middleware import CacheControlMiddleware, SearchMiddleware
+from radiofeed.common.middleware import CacheControlMiddleware, SearchMiddleware
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.asserts import assert_ok
+from radiofeed.common.asserts import assert_ok
 from radiofeed.episodes.factories import EpisodeFactory
 
 

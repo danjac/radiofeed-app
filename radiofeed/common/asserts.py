@@ -7,6 +7,7 @@ from django.http import HttpResponse
 
 
 def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
+    """Assert response status matches."""
     assert response.status_code == status, response.content  # nosec
 
 
