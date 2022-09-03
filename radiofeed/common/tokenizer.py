@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import datetime
+import pathlib
 import re
 
 from datetime import date, timedelta
 from functools import lru_cache
 from typing import Final, Iterator
 
-from django.conf import settings
 from django.utils import timezone, translation
 from django.utils.formats import date_format
 from nltk.corpus import stopwords
@@ -50,7 +50,7 @@ _CORPORATE_STOPWORDS: Final = [
     "itunes",
 ]
 
-_STOPWORDS_DIR = settings.BASE_DIR / "radiofeed" / "nltk" / "stopwords"
+_STOPWORDS_DIR = pathlib.Path(__file__).parent / "nltk" / "stopwords"
 
 _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
