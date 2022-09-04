@@ -339,8 +339,9 @@ class TestSubscribe:
             podcast=podcast, subscriber=auth_user
         ).exists()
 
-    @pytest.mark.django_db(transaction=True)
-    def test_already_subscribed(self, client, podcast, auth_user, url):
+    def test_already_subscribed(
+        self, transactional_db, client, podcast, auth_user, url
+    ):
 
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.post(
