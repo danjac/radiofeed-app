@@ -49,4 +49,4 @@ class TestErrorPages:
         assert_ok(client.get(reverse("error:server_error")))
 
     def test_csrf(self, db, client):
-        assert_ok(client.get(reverse("error:csrf")))
+        assert_ok(client.get(reverse("error:csrf_error")))
