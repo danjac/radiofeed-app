@@ -402,8 +402,7 @@ class TestAddBookmark:
         assert_ok(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db(transaction=True)
-    def test_already_bookmark(self, client, auth_user, episode):
+    def test_already_bookmark(self, transactional_db, client, auth_user, episode):
         BookmarkFactory(episode=episode, user=auth_user)
         response = client.post(
             reverse("episodes:add_bookmark", args=[episode.id]),
