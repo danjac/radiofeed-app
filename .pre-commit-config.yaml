@@ -16,13 +16,13 @@ repos:
             additional_dependencies: ["toml"]
             args: [--settings-path, "pyproject.toml"]
     - repo: https://github.com/ambv/black
-      rev: 22.6.0
+      rev: 22.8.0
       hooks:
           - id: black
             args: [--target-version, "py310", --line-length, "88"]
             language_version: python3.10
     - repo: https://github.com/PyCQA/autoflake
-      rev: v1.5.2
+      rev: v1.5.3
       hooks:
           - id: autoflake
             args:

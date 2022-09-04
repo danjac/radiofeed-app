@@ -80,7 +80,7 @@ six==1.16.0; python_version >= "3.8" and python_full_version < "3.0.0" or python
 sqlparse==0.4.2; python_version >= "3.8"
 stack-data==0.5.0; python_version >= "3.8"
 threadpoolctl==3.1.0; python_version >= "3.8"
-tqdm==4.64.0; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.7"
+tqdm==4.64.1; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.7"
 traitlets==5.3.0; python_version >= "3.8"
 tzdata==2022.2; sys_platform == "win32" and python_version >= "3.8"
 urllib3==1.26.12; python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "4" or python_full_version >= "3.6.0" and python_version < "4" and python_version >= "3.7"
