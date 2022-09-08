@@ -27,7 +27,7 @@ class ActiveLink:
     """Active link info returned from `active_link` filters."""
 
     url: str
-    css: str = "link"
+    css: str
 
 
 _validate_url = URLValidator(["http", "https"])
@@ -99,7 +99,7 @@ def active_link(
     context: RequestContext,
     url_name: str,
     css="link",
-    active_css="link active",
+    active_css="active",
     *args,
     **kwargs,
 ) -> ActiveLink:
@@ -107,9 +107,9 @@ def active_link(
     url = resolve_url(url_name, *args, **kwargs)
 
     if context.request.path == url:
-        return ActiveLink(url, css=active_css)
+        css = css + " " + active_css
 
-    return ActiveLink(url, css=css)
+    return ActiveLink(url, css)
 
 
 @register.inclusion_tag("includes/markdown.html")
