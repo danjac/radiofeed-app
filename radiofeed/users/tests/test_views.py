@@ -85,7 +85,7 @@ class TestImportPodcastFeeds:
             client.post(
                 self.url,
                 data={"opml": upload_file},
-                HTTP_HX_TARGET="opml-import-form",
+                HTTP_HX_TARGET="import-feeds-form",
                 HTTP_HX_REQUEST="true",
             )
         )

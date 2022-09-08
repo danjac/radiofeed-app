@@ -20,9 +20,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 @require_form_methods
 @login_required
-def user_preferences(
-    request: HttpRequest, target: str = "preferences-form"
-) -> HttpResponse:
+def user_preferences(request: HttpRequest) -> HttpResponse:
     """Handle user preferences."""
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
@@ -36,16 +34,7 @@ def user_preferences(
 
         return HttpResponseClientRedirect(request.htmx.current_url)
 
-    return render(
-        request,
-        "account/forms/preferences.html"
-        if request.htmx.target == target
-        else "account/preferences.html",
-        {
-            "form": form,
-            "target": target,
-        },
-    )
+    return render(request, "account/preferences.html", {"form": form})
 
 
 @require_safe
@@ -64,9 +53,7 @@ def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @login_required
-def import_podcast_feeds(
-    request: HttpRequest, target: str = "opml-import-form"
-) -> HttpResponse:
+def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
@@ -84,16 +71,7 @@ def import_podcast_feeds(
         else:
             messages.info(request, _("No new podcasts found in uploaded file"))
 
-    return render(
-        request,
-        "account/forms/import_podcast_feeds.html"
-        if request.htmx.target == target
-        else "account/import_export_podcast_feeds.html",
-        {
-            "form": form,
-            "target": target,
-        },
-    )
+    return render(request, "account/import_export_podcast_feeds.html", {"form": form})
 
 
 @require_POST

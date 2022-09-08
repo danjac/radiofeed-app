@@ -4,5 +4,23 @@
 {% block title %}{{ block.super }} | {% translate "Preferences" %}{% endblock %}
 
 {% block settings_content %}
-    {% include "account/forms/preferences.html" %}
+    <form method="post"
+        action="{{ request.path }}"
+        class="space-y-3"
+        novalidate
+        id="preferences-form"
+        hx-target="this"
+        hx-select="#preferences-form"
+        hx-swap="outerHTML"
+        hx-post="{{ request.path }}">
+
+        {% csrf_token %}
+        {{ form }}
+        <div>
+            <button class="inline-flex items-center btn btn-default">
+                {% icon "check" css_class="mr-2" %}
+                {% translate "Save Changes" %}
+            </button>
+        </div>
+    </form>
 {% endblock %}
