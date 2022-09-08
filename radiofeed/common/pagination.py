@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+from typing import Iterable
+
 from django.core.paginator import InvalidPage, Paginator
-from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 
 
 def render_pagination_response(
     request: HttpRequest,
-    object_list: QuerySet,
+    object_list: Iterable,
     template_name: str,
     pagination_template_name: str,
     extra_context: dict | None = None,
@@ -17,51 +18,17 @@ def render_pagination_response(
     page_size: int = 30,
     **pagination_kwargs,
 ) -> HttpResponse:
-    """Creates a TemplateResponse for a paginated QuerySet or list.
-
-    If the request has the HX-Request header and matching HTMX target,
-    will select the pagination template instead
-    of the default template. The pagination template should be included
-    in the default template and ensure the correct hx-target is also included.
-
-    The following items are added to the template context:
-
-    **page_obj**: Page instance
-    **pagination_template**: pagination template name
-    **pagination_target**: HTMX target
-
-    Example:
-
-    default template:
-
-    .. code-block:: html
-
-        {% include pagination_template %}
-
-    pagination template:
-
-    .. code-block:: html
-
-        <div id="{{ pagination_target }}">
-
-            {% include "includes/pagination_links.html" %}
-
-            {% for podcast in page_obj.object_list %}
-                {% include "podcasts/podcast.html" %}
-            {% empty %}
-                {% include "includes/empty.html" %}
-            {% endfor %}
-
-            {% include "includes/pagination_links.html" %}
-        </div>
+    """Renders paginated response.
 
     Raises:
         Http404: invalid page
     """
     try:
-        page_obj = Paginator(object_list, page_size, **pagination_kwargs).page(
-            request.GET.get(param, 1)
-        )
+        page_obj = Paginator(
+            object_list,
+            page_size,
+            **pagination_kwargs,
+        ).page(request.GET.get(param, 1))
     except InvalidPage:
         raise Http404()
 
@@ -74,6 +41,6 @@ def render_pagination_response(
             "page_obj": page_obj,
             "pagination_target": target,
             "pagination_template": pagination_template_name,
-        }
-        | (extra_context or {}),
+            **(extra_context or {}),
+        },
     )
