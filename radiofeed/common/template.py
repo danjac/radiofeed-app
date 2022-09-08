@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import dataclasses
+import collections
 import math
 
 from urllib import parse
@@ -21,13 +21,7 @@ from radiofeed.common import cleaners
 
 register = template.Library()
 
-
-@dataclasses.dataclass(frozen=True)
-class ActiveLink:
-    """Active link info returned from `active_link` filters."""
-
-    url: str
-    css: str
+ActiveLink = collections.namedtuple("ActiveLink", ["url", "css"])
 
 
 _validate_url = URLValidator(["http", "https"])
