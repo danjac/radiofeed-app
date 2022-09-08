@@ -14,19 +14,19 @@
                 {% with search_qs="?"|add:request.search.qs %}
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
-                        <a class="link{% if link.match %} active{% endif %}"
+                        <a class="{{ link.css }}"
                             title="{% translate "Search Podcasts" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "Podcasts" %}</a>
                     </li>
                     {% active_link 'episodes:search_episodes' as link %}
                     <li>
-                        <a class="link{% if link.match %} active{% endif %}"
+                        <a class="{{ link.css }}"
                             title="{% translate "Search Episodes" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "Episodes" %}</a>
                     </li>
                     {% active_link 'podcasts:search_itunes' as link %}
                     <li>
-                        <a class="link{% if link.match %} active{% endif %}"
+                        <a class="{{ link.css }}"
                             title="{% translate "Search iTunes" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>
                     </li>

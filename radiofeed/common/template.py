@@ -24,17 +24,10 @@ register = template.Library()
 
 @dataclasses.dataclass(frozen=True)
 class ActiveLink:
-    """Active link info returned from `active_link` filters.
-
-    Attributes:
-        url: resolved URL
-        match: if the URL starts with the resolved URL
-        exact: if the URL is an exact path match
-    """
+    """Active link info returned from `active_link` filters."""
 
     url: str
-    match: bool = False
-    exact: bool = False
+    css: str = "link"
 
 
 _validate_url = URLValidator(["http", "https"])
@@ -102,17 +95,21 @@ def format_duration(total_seconds: int | None) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(
+    context: RequestContext,
+    url_name: str,
+    css="link",
+    active_css="link active",
+    *args,
+    **kwargs,
+) -> ActiveLink:
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
 
     if context.request.path == url:
-        return ActiveLink(url, match=True, exact=True)
+        return ActiveLink(url, css=active_css)
 
-    if context.request.path.startswith(url):
-        return ActiveLink(url, match=True)
-
-    return ActiveLink(url)
+    return ActiveLink(url, css=css)
 
 
 @register.inclusion_tag("includes/markdown.html")

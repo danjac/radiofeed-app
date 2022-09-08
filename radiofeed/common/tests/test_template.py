@@ -178,16 +178,14 @@ class TestActiveLink:
         req = rf.get(url)
         route = active_link(RequestContext(req), self.episodes_url)
         assert route.url == reverse(self.episodes_url)
-        assert not route.match
-        assert not route.exact
+        assert route.css == "link"
 
-    def test_active_link_exact_match(self, rf):
+    def test_active_link_match(self, rf):
         url = reverse(self.episodes_url)
         req = rf.get(url)
         route = active_link(RequestContext(req), self.episodes_url)
         assert route.url == reverse(self.episodes_url)
-        assert route.match
-        assert route.exact
+        assert route.css == "link active"
 
 
 class TestShareButtons:
