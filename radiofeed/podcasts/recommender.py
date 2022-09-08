@@ -23,6 +23,8 @@ def recommend() -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by language and category.
 
     Any existing recommendations are first deleted.
+
+    Only podcasts matching certain languages and updated within the past 90 days are included.
     """
     podcasts = (
         Podcast.objects.filter(pub_date__gt=timezone.now() - timedelta(days=90))
