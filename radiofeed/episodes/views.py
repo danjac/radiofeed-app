@@ -37,14 +37,11 @@ def index(request: HttpRequest) -> HttpResponse:
         .distinct()
     )
 
-    if promoted:
-        episodes = episodes.filter(podcast__promoted=True)
-    else:
-        episodes = episodes.filter(podcast__pk__in=subscribed)
-
     return render_pagination_response(
         request,
-        episodes,
+        episodes.filter(podcast__promoted=True)
+        if promoted
+        else episodes.filter(podcast__pk__in=subscribed),
         "episodes/index.html",
         "episodes/pagination/episodes.html",
         {
