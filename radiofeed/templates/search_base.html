@@ -3,9 +3,7 @@
 
 {% block content %}
     <h1 class="flex items-center justify-center sm:justify-start mb-3 text-lg md:text-xl xl:text-2xl font-bold">
-        {% blocktranslate with site_name=request.site.name %}
-            Search {{ site_name }}
-        {% endblocktranslate %}
+        {% blocktranslate with site_name=request.site.name %}Search {{ site_name }}{% endblocktranslate %}
     </h1>
 
     <div id="search-results">
@@ -36,7 +34,6 @@
                 {% include "includes/search_form.html" with placeholder=_("Search...") %}
             </div>
         </nav>
-
         {% block search_content %}{% endblock %}
     </div>
 
