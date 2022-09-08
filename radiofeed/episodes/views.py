@@ -17,7 +17,6 @@ from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.pagination import render_pagination_response
 from radiofeed.common.response import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts.models import Podcast
 
 
 @require_safe
@@ -31,21 +30,21 @@ def index(request: HttpRequest) -> HttpResponse:
 
     promoted = "promoted" in request.GET or not subscribed
 
+    episodes = (
+        Episode.objects.filter(pub_date__gt=timezone.now() - timedelta(days=14))
+        .select_related("podcast")
+        .order_by("-pub_date", "-id")
+        .distinct()
+    )
+
+    if promoted:
+        episodes = episodes.filter(podcast__promoted=True)
+    else:
+        episodes = episodes.filter(podcast__pk__in=subscribed)
+
     return render_pagination_response(
         request,
-        (
-            Episode.objects.filter(pub_date__gt=timezone.now() - timedelta(days=14))
-            .select_related("podcast")
-            .filter(
-                podcast__in=set(
-                    Podcast.objects.filter(promoted=True).values_list("pk", flat=True)
-                )
-                if promoted
-                else subscribed
-            )
-            .order_by("-pub_date", "-id")
-            .distinct()
-        ),
+        episodes,
         "episodes/index.html",
         "episodes/pagination/episodes.html",
         {
