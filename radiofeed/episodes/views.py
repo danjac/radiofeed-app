@@ -34,7 +34,6 @@ def index(request: HttpRequest) -> HttpResponse:
         Episode.objects.filter(pub_date__gt=timezone.now() - timedelta(days=14))
         .select_related("podcast")
         .order_by("-pub_date", "-id")
-        .distinct()
     )
 
     return render_pagination_response(
