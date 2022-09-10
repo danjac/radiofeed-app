@@ -1,9 +1,8 @@
 {% load cache i18n %}
 {% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
     <nav class="pl-3 xl:pl-0 text-base md:text-lg lg:text-xl xl:pt-12"
-        x-data="{active: null}"
-        x-init="active=location.pathname;"
-        @htmx:after-request.window="active=new URL($event.detail.xhr.responseURL).pathname;">
+        x-data="{active: location.pathname}"
+        @htmx:after-request.window="active=new URL($event.detail.xhr.responseURL).pathname; console.log($event.detail)">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-6 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
             <li>
                 {% url 'podcasts:index' as podcasts_url %}
