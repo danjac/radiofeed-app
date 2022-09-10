@@ -8,23 +8,29 @@
 
     <div id="search-results">
         <nav class="mb-3 sm:flex justify-between">
-            <ul class="flex items-center mb-3 sm:mb-0 space-x-6 justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none">
+            <ul class="flex items-center mb-3 sm:mb-0 space-x-6 justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none" role="tablist">
                 {% with search_qs="?"|add:request.search.qs %}
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
                         <a class="{{ link.css }}"
+                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            tabindex="{{ link.active|yesno:"0,-1" }}"
                             title="{% translate "Search Podcasts" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "Podcasts" %}</a>
                     </li>
                     {% active_link 'episodes:search_episodes' as link %}
                     <li>
                         <a class="{{ link.css }}"
+                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            tabindex="{{ link.active|yesno:"0,-1" }}"
                             title="{% translate "Search Episodes" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "Episodes" %}</a>
                     </li>
                     {% active_link 'podcasts:search_itunes' as link %}
                     <li>
                         <a class="{{ link.css }}"
+                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            tabindex="{{ link.active|yesno:"0,-1" }}"
                             title="{% translate "Search iTunes" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>
                     </li>

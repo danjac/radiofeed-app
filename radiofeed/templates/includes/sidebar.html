@@ -10,7 +10,8 @@
                 <a href="{{ podcasts_url }}"
                     accesskey="p"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: active === '{{ podcasts_url }}'}">
+                    :class="{active: active === '{{ podcasts_url }}'}"
+                    :aria-current="active === '{{ podcasts_url }}' ? 'page': ''">
                     {% icon "rss" css_class=ICON_CSS %}
                     {% translate "Podcasts" %}
                 </a>
@@ -20,7 +21,8 @@
                 <a href="{{ episodes_url }}"
                     accesskey="n"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: active === '{{ episodes_url }}'}">
+                    :class="{active: active === '{{ episodes_url }}'}"
+                    :aria-current="active === '{{ episodes_url }}' ? 'page': ''">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
                     {% translate "New Releases" %}
                 </a>
@@ -30,7 +32,8 @@
                 <a href="{{ categories_url }}"
                     accesskey="c"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: active === '{{ categories_url }}'}">
+                    :class="{active: active === '{{ categories_url }}'}"
+                    :aria-current="active === '{{ categories_url }}' ? 'page': ''">
                     {% icon "tag" css_class=ICON_CSS %}
                     {% translate "Categories" %}
                 </a>
@@ -40,7 +43,8 @@
                 <a href="{{ bookmarks_url }}"
                     accesskey="b"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: active === '{{ bookmarks_url }}'}">
+                    :class="{active: active === '{{ bookmarks_url }}'}"
+                    :aria-current="active === '{{ bookmarks_url }}' ? 'page': ''">
                     {% icon "star" css_class=ICON_CSS %}
                     {% translate "Bookmarks" %}
                 </a>
@@ -51,7 +55,8 @@
                 <a href="{{ history_url }}"
                     accesskey="h"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: active === '{{ history_url }}'}">
+                    :class="{active: active === '{{ history_url }}'}"
+                    :aria-current="active === '{{ history_url }}' ? 'page': ''">
                     {% icon "history" css_class=ICON_CSS %}
                     {% translate "History" %}
                 </a>
@@ -61,7 +66,8 @@
                 <a href="{% url 'users:preferences' %}"
                     accesskey="s"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: active.startsWith('/account/')}">
+                    :class="{active: active.startsWith('/account/')}"
+                    :aria-current="active.startsWith('/account/') ? 'page': ''">
                     {% icon "cog" css_class=ICON_CSS %}
                     {% translate "Settings" %}
                 </a>
@@ -72,7 +78,8 @@
                 <a href="{{ about_url }}"
                     accesskey="a"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: active === '{{ about_url }}'}">
+                    :class="{active: active === '{{ about_url }}'}"
+                    :aria-current="active === '{{ about_url }}' ? 'page': ''">
                     {% icon "info-circle" css_class=ICON_CSS %}
                     {% translate "About" %}
                 </a>

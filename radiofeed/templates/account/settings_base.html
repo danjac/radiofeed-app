@@ -8,40 +8,54 @@
         <h1 class="mb-6 max-w-max text-lg md:text-xl xl:text-2xl break-words font-bold"> {% blocktranslate with username=user.username %}Settings for {{ username }}{% endblocktranslate %}
         </h1>
         <nav class="mb-3 border-b dark:border-gray-500">
-            <ul class="flex items-center space-x-6 pb-3 overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none">
+            <ul class="flex items-center space-x-6 pb-3 overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none" role="tablist">
                 {% active_link 'users:preferences' as link %}
                 <li>
                     <a class="{{ link.css }}"
+                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                        tabindex="{{ link.active|yesno:"0,-1" }}"
                         href="{{ link.url }}">{% translate "Preferences" %}</a>
                 </li>
                 {% active_link 'users:import_export_podcast_feeds' as link %}
                 <li>
                     <a class="{{ link.css }}"
+                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                        tabindex="{{ link.active|yesno:"0,-1" }}"
                         href="{{ link.url }}">{% translate "Import/Export Feeds" %}</a>
                 </li>
                 {% active_link 'users:stats' as link %}
                 <li>
                     <a class="{{ link.css }}"
+                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                        tabindex="{{ link.active|yesno:"0,-1" }}"
                         href="{{ link.url }}">{% translate "Statistics" %}</a>
                 </li>
                 {% active_link 'account_email' as link %}
                 <li>
                     <a class="{{ link.css }}"
+                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                        tabindex="{{ link.active|yesno:"0,-1" }}"
                         href="{{ link.url }}">{% translate "Email Addresses" %}</a>
                 </li>
                 {% active_link 'account_change_password' as link %}
                 <li>
                     <a class="{{ link.css }}"
+                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                        tabindex="{{ link.active|yesno:"0,-1" }}"
                         href="{{ link.url }}">{% translate "Change Password" %}</a>
                 </li>
                 {% active_link 'socialaccount_connections' as link %}
                 <li>
                     <a class="{{ link.css }}"
+                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                        tabindex="{{ link.active|yesno:"0,-1" }}"
                         href="{{ link.url }}">{% translate "Social Logins" %}</a>
                 </li>
                 {% active_link 'users:delete_account' as link %}
                 <li>
                     <a class="{{ link.css }}"
+                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                        tabindex="{{ link.active|yesno:"0,-1" }}"
                         href="{{ link.url }}">{% translate "Delete Account" %}</a>
                 </li>
             </ul>

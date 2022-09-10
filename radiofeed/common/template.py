@@ -21,7 +21,7 @@ from radiofeed.common import cleaners
 
 register = template.Library()
 
-ActiveLink = collections.namedtuple("ActiveLink", ["url", "css"])
+ActiveLink = collections.namedtuple("ActiveLink", ["url", "css", "active"])
 
 
 _validate_url = URLValidator(["http", "https"])
@@ -100,10 +100,11 @@ def active_link(
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
 
-    if context.request.path == url:
-        css = css + " " + active_css
-
-    return ActiveLink(url, css)
+    return (
+        ActiveLink(url, css + " " + active_css, True)
+        if context.request.path == url
+        else ActiveLink(url, css, False)
+    )
 
 
 @register.inclusion_tag("includes/markdown.html")

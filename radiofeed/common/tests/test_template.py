@@ -176,16 +176,18 @@ class TestActiveLink:
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
-        route = active_link(RequestContext(req), self.episodes_url)
-        assert route.url == reverse(self.episodes_url)
-        assert route.css == "link"
+        link = active_link(RequestContext(req), self.episodes_url)
+        assert link.url == reverse(self.episodes_url)
+        assert link.css == "link"
+        assert not link.active
 
     def test_active_link_match(self, rf):
         url = reverse(self.episodes_url)
         req = rf.get(url)
-        route = active_link(RequestContext(req), self.episodes_url)
-        assert route.url == reverse(self.episodes_url)
-        assert route.css == "link active"
+        link = active_link(RequestContext(req), self.episodes_url)
+        assert link.url == reverse(self.episodes_url)
+        assert link.css == "link active"
+        assert link.active
 
 
 class TestShareButtons:
