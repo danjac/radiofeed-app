@@ -1,25 +1,19 @@
 <article class="flex items-center border dark:border-gray-500 space-x-3" role="listitem">
 
-    {% block cover_image_tag %}
-        {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
-            <div class="{{ css_class }}">
-                {% block cover_image %}{% endblock %}
-            </div>
-        {% endwith %}
-    {% endblock cover_image_tag %}
+    {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
+        <div class="{{ css_class }}">
+            {% block cover_image %}{% endblock %}
+        </div>
+    {% endwith %}
 
     <div class="flex flex-col place-content-between h-14 md:h-16">
-        {% block card_title_tag %}
-            <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2">
-                {% block card_title %}{% endblock %}
-            </h2>
-        {% endblock card_title_tag %}
+        <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2">
+            {% block card_title %}{% endblock %}
+        </h2>
 
-        {% block card_subtitle_tag %}
-            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
-                {% block card_subtitle %}{% endblock %}
-            </h3>
-        {% endblock card_subtitle_tag %}
+        <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
+            {% block card_subtitle %}{% endblock %}
+        </h3>
     </div>
 
 </article>
