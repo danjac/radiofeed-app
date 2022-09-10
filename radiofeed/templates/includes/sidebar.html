@@ -1,44 +1,57 @@
 {% load cache i18n %}
 {% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
-    <nav class="pl-3 xl:pl-0 text-base md:text-lg lg:text-xl xl:pt-12">
+    <nav class="pl-3 xl:pl-0 text-base md:text-lg lg:text-xl xl:pt-12"
+        x-data="{active: null}"
+        x-init="active=location.pathname;"
+        @htmx:after-request.window="active=new URL($event.detail.xhr.responseURL).pathname;">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-6 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
             <li>
-                <a href="{% url 'podcasts:index' %}"
+                {% url 'podcasts:index' as podcasts_url %}
+                <a href="{{ podcasts_url }}"
                     accesskey="p"
-                    class="{{ SIDEBAR_CSS }}">
+                    class="{{ SIDEBAR_CSS }}"
+                    :class="{active: active === '{{ podcasts_url }}'}">
                     {% icon "rss" css_class=ICON_CSS %}
                     {% translate "Podcasts" %}
                 </a>
             </li>
             <li>
-                <a href="{% url 'episodes:index' %}"
+                {% url 'episodes:index' as episodes_url %}
+                <a href="{{ episodes_url }}"
                     accesskey="n"
-                    class="{{ SIDEBAR_CSS }}">
+                    class="{{ SIDEBAR_CSS }}"
+                    :class="{active: active === '{{ episodes_url }}'}">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
                     {% translate "New Releases" %}
                 </a>
             </li>
             <li>
-                <a href="{% url 'podcasts:category_list' %}"
+                {% url 'podcasts:category_list' as categories_url %}
+                <a href="{{ categories_url }}"
                     accesskey="c"
-                    class="{{ SIDEBAR_CSS }}">
+                    class="{{ SIDEBAR_CSS }}"
+                    :class="{active: active === '{{ categories_url }}'}">
                     {% icon "tag" css_class=ICON_CSS %}
                     {% translate "Categories" %}
                 </a>
             </li>
             <li>
-                <a href="{% url 'episodes:bookmarks' %}"
+                {% url 'episodes:bookmarks' as bookmarks_url %}
+                <a href="{{ bookmarks_url }}"
                     accesskey="b"
-                    class="{{ SIDEBAR_CSS }}">
+                    class="{{ SIDEBAR_CSS }}"
+                    :class="{active: active === '{{ bookmarks_url }}'}">
                     {% icon "star" css_class=ICON_CSS %}
                     {% translate "Bookmarks" %}
                 </a>
             </li>
 
             <li>
-                <a href="{% url 'episodes:history' %}"
+                {% url 'episodes:history' as history_url %}
+                <a href="{{ history_url }}"
                     accesskey="h"
-                    class="{{ SIDEBAR_CSS }}">
+                    class="{{ SIDEBAR_CSS }}"
+                    :class="{active: active === '{{ history_url }}'}">
                     {% icon "history" css_class=ICON_CSS %}
                     {% translate "History" %}
                 </a>
@@ -47,16 +60,19 @@
             <li>
                 <a href="{% url 'users:preferences' %}"
                     accesskey="s"
-                    class="{{ SIDEBAR_CSS }}">
+                    class="{{ SIDEBAR_CSS }}"
+                    :class="{active: active.startsWith('/account/')}">
                     {% icon "cog" css_class=ICON_CSS %}
                     {% translate "Settings" %}
                 </a>
             </li>
 
             <li>
-                <a href="{% url 'about' %}"
+                {% url 'about' as about_url %}
+                <a href="{{ about_url }}"
                     accesskey="a"
-                    class="{{ SIDEBAR_CSS }}">
+                    class="{{ SIDEBAR_CSS }}"
+                    :class="{active: active === '{{ about_url }}'}">
                     {% icon "info-circle" css_class=ICON_CSS %}
                     {% translate "About" %}
                 </a>
