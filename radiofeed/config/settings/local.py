@@ -14,12 +14,18 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "debug_toolbar",
     "silk",
+    "django_browser_reload",
 ] + INSTALLED_APPS
 
+# gzip middleware incompatible with browser reload
+MIDDLEWARE.remove("django.middleware.gzip.GZipMiddleware")
+
 MIDDLEWARE += [
-    "silk.middleware.SilkyMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "silk.middleware.SilkyMiddleware",
 ]
+
 
 INTERNAL_IPS = ["127.0.0.1"]
 
