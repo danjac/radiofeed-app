@@ -156,7 +156,6 @@
                                 </div>
 
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-
                                     <div class="flex items-center sm:hidden space-x-3">
 
                                         <button title="{{ t_skip_back }}"
@@ -201,6 +200,7 @@
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="decrementRate"
                                                 title="{% translate "Decrease Playback Rate" %}">-</button>
+
                                             <div class="mr-1 tracking-tight md:mr-2 player--interactive"
                                                 title="Playback Rate">
                                                 x<span x-text="rate.toFixed(1)"></span>
