@@ -9,8 +9,9 @@
                 <a href="{{ podcasts_url }}"
                     accesskey="p"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: current === '{{ podcasts_url }}'}"
-                    :aria-current="current === '{{ podcasts_url }}' && 'page'">
+                    x-data="{get isCurrent() { return current === '{{ podcasts_url }}'}}"
+                    :class="isCurrent && 'active'"
+                    :aria-current="isCurrent && 'page'">
                     {% icon "rss" css_class=ICON_CSS %}
                     {% translate "Podcasts" %}
                 </a>
@@ -20,8 +21,9 @@
                 <a href="{{ episodes_url }}"
                     accesskey="n"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: current === '{{ episodes_url }}'}"
-                    :aria-current="current === '{{ episodes_url }}' && 'page'">
+                    x-data="{get isCurrent() { return current === '{{ episodes_url }}'}}"
+                    :class="isCurrent && 'active'"
+                    :aria-current="isCurrent && 'page'">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
                     {% translate "New Releases" %}
                 </a>
@@ -31,8 +33,9 @@
                 <a href="{{ categories_url }}"
                     accesskey="c"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: current === '{{ categories_url }}'}"
-                    :aria-current="current === '{{ categories_url }}' && 'page'">
+                    x-data="{get isCurrent() { return current === '{{ categories_url }}'}}"
+                    :class="isCurrent && 'active'"
+                    :aria-current="isCurrent && 'page'">
                     {% icon "tag" css_class=ICON_CSS %}
                     {% translate "Categories" %}
                 </a>
@@ -42,8 +45,9 @@
                 <a href="{{ bookmarks_url }}"
                     accesskey="b"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: current === '{{ bookmarks_url }}'}"
-                    :aria-current="current === '{{ bookmarks_url }}' && 'page'">
+                    x-data="{get isCurrent() { return current === '{{ bookmarks_url }}'}}"
+                    :class="isCurrent && 'active'"
+                    :aria-current="isCurrent && 'page'">
                     {% icon "star" css_class=ICON_CSS %}
                     {% translate "Bookmarks" %}
                 </a>
@@ -54,8 +58,9 @@
                 <a href="{{ history_url }}"
                     accesskey="h"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: current === '{{ history_url }}'}"
-                    :aria-current="current === '{{ history_url }}' && 'page'">
+                    x-data="{get isCurrent() { return current === '{{ history_url }}'}}"
+                    :class="isCurrent && 'active'"
+                    :aria-current="isCurrent && 'page'">
                     {% icon "history" css_class=ICON_CSS %}
                     {% translate "History" %}
                 </a>
@@ -65,8 +70,9 @@
                 <a href="{% url 'users:preferences' %}"
                     accesskey="s"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: current.startsWith('/account/')}"
-                    :aria-current="current.startsWith('/account/') && 'page'">
+                    x-data="{get isCurrent() { return current.startsWith('/account/')}}"
+                    :class="isCurrent && 'active'"
+                    :aria-current="isCurrent && 'page'">
                     {% icon "cog" css_class=ICON_CSS %}
                     {% translate "Settings" %}
                 </a>
@@ -77,8 +83,9 @@
                 <a href="{{ about_url }}"
                     accesskey="a"
                     class="{{ SIDEBAR_CSS }}"
-                    :class="{active: current === '{{ about_url }}'}"
-                    :aria-current="current === '{{ about_url }}' && 'page'">
+                    x-data="{get isCurrent() { return current === '{{ about_url }}'}}"
+                    :class="isCurrent && 'active'"
+                    :aria-current="isCurrent && 'page'">
                     {% icon "info-circle" css_class=ICON_CSS %}
                     {% translate "About" %}
                 </a>
