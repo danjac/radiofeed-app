@@ -14,37 +14,28 @@
 
             <meta name="og:type" content="website" />
             <meta name="og:title" content="{{ episode_title }}" />
+            <meta name="og:url" content="{% absolute_uri episode %}" />
+
             {% if episode_description %}
-                <meta name="og:description"
-                    content="{{ episode_description }}" />
+                <meta name="og:description" content="{{ episode_description }}" />
             {% endif %}
-            <meta name="og:url"
-                content="{% absolute_uri episode %}" />
 
             {% if cover_url %}
-                <meta name="og:image"
-                    content="{{ cover_url }}" />
-                <meta name="og:image:alt"
-                    content="{{ episode_title }}" />
-                <meta name="og:image:height"
-                    content="200" />
-                <meta name="og:image:width"
-                    content="200" />
+                <meta name="og:image" content="{{ cover_url }}" />
+                <meta name="og:image:alt" content="{{ episode_title }}" />
+                <meta name="og:image:height" content="200" />
+                <meta name="og:image:width" content="200" />
             {% endif %}
 
-            <meta name="twitter:card"
-                content="{{ cover_url|yesno:'summary_large_image,summary' }}">
+            <meta name="twitter:card" content="{{ cover_url|yesno:'summary_large_image,summary' }}">
+            <meta name="twitter:title" content="{{ episode_title }}">
 
             {% if cover_url %}
-                <meta name="twitter:image"
-                    content="{{ cover_url }}">
+                <meta name="twitter:image" content="{{ cover_url }}">
             {% endif %}
 
-            <meta name="twitter:title"
-                content="{{ episode_title }}">
             {% if episode_description %}
-                <meta name="twitter:description"
-                    content="{{ episode_description }}">
+                <meta name="twitter:description" content="{{ episode_description }}">
             {% endif %}
             <script type="application/ld+json">
                 {
