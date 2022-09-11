@@ -11,6 +11,7 @@ from radiofeed.feedparser import feed_parser, scheduler
 
 
 class Command(BaseCommand):
+    """Parses RSS feeds."""
 
     help = """
     Parses RSS feeds of all scheduled podcasts.

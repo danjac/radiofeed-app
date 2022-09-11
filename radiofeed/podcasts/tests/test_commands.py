@@ -7,7 +7,7 @@ from radiofeed.podcasts.itunes import Feed
 from radiofeed.users.factories import UserFactory
 
 
-class TestRecommender:
+class TestCreateRecommendations:
     def test_create_recommendations(self, db, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",
@@ -15,17 +15,19 @@ class TestRecommender:
                 ("en", RecommendationFactory.create_batch(3)),
             ],
         )
-        call_command("recommender")
+        call_command("create_recommendations")
         patched.assert_called()
 
+
+class TestSendRecommendationsEmails:
     def test_send_emails(self, db, mocker):
         UserFactory(send_email_notifications=True, is_active=True)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
-        call_command("recommender", email=True)
+        call_command("send_recommendations_emails")
         patched.assert_called()
 
 
-class TestItunesCrawler:
+class TestCrawlItunes:
     def test_command(self, mocker, podcast):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.crawl",
@@ -43,5 +45,5 @@ class TestItunesCrawler:
                 ),
             ],
         )
-        call_command("itunes_crawler")
+        call_command("crawl_itunes")
         patched.assert_called()
