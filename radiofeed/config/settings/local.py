@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "silk",
     "django_browser_reload",
+    "django_watchfiles",
 ] + INSTALLED_APPS
 
 # gzip middleware incompatible with browser reload
