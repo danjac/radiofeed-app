@@ -41,7 +41,7 @@
                     <div class="sm:hidden">
 
                         <a class="block text-center truncate w-84"
-                            :class="{'hover:text-blue-500': isPlaying, 'animate-pulse text-gray-300': !isPlaying}"
+                            :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                             href="{{ episode_url }}"
                             hx-swap="outerHTML show:window:top"
                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
@@ -50,7 +50,7 @@
                         <div class="text-xs text-center"
                             x-cloak
                             x-show="!isError && isLoaded"
-                            :class="{'animate-pulse text-gray-300': !isPlaying}">
+                            :class="isPlaying || 'animate-pulse text-gray-300'">
                             <span x-text="counters.current"
                                 title="{{ t_current_time }}"
                             ></span> /
@@ -93,7 +93,7 @@
                                             x-show="!isPaused"
                                             class="{{ BUTTON_CSS }} mr-3"
                                             :disabled="!isLoaded"
-                                            :class="{'text-gray-300 cursor-events-none': !isLoaded}">
+                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
                                             {% icon "pause-circle" "regular" size="2xl" title=t_pause %}
                                         </button>
 
@@ -101,7 +101,7 @@
                                             @click="togglePlayPause"
                                             x-show="isPaused"
                                             class="{{ BUTTON_CSS }} mr-3"
-                                            :class="{'text-gray-300 cursor-events-none': !isLoaded}">
+                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
                                             {% icon "play-circle" "regular" size="2xl" title=t_play %}
                                         </button>
 
@@ -120,17 +120,19 @@
                                 </div>
 
                                 <div class="hidden sm:block">
+
                                     <div>
                                         <a class="block text-center truncate sm:w-80 md:w-96 md:w-auto md:max-w-xl xl:max-w-3xl"
-                                            :class="{'hover:text-blue-500': isPlaying, 'animate-pulse text-gray-300': !isPlaying}"
+                                            :class="isPlaying ? 'hover:text-blue-500': 'animate-pulse text-gray-300'"
                                             href="{{ episode_url }}"
                                             hx-swap="outerHTML show:window:top morpdom"
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                     </div>
+
                                     <div class="text-xs text-center md:text-sm"
                                         x-cloak
                                         x-show="!isError && isLoaded"
-                                        :class="{'animate-pulse text-gray-300': !isPlaying}">
+                                        :class="isPlaying || 'animate-pulse text-gray-300'">
                                         <span x-text="counters.current"
                                             title="{{ t_current_time }}"
                                         ></span> /
@@ -159,14 +161,14 @@
 
                                         <button title="{{ t_skip_back }}"
                                             @click="skipBack"
-                                            :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
+                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                             class="{{ BUTTON_CSS }} inline-block">
                                             {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
                                         </button>
 
                                         <button title="{{ t_skip_forward }}"
                                             @click="skipForward"
-                                            :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
+                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                             class="{{ BUTTON_CSS }} inline-block">
                                             {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                         </button>
@@ -179,14 +181,14 @@
 
                                             <button title="{{ t_skip_back }}"
                                                 @click="skipBack"
-                                                :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
                                                 {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
                                             </button>
 
                                             <button title="{{ t_skip_forward }}"
                                                 @click="skipForward"
-                                                :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 class="{{ BUTTON_CSS }} hidden sm:inline-block">
                                                 {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                             </button>
@@ -194,8 +196,9 @@
                                         </div>
 
                                         <div class="flex items-center mr-2 space-x-2 md:mr-3">
-                                            <button :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
-                                                class="{{ BUTTON_CSS }} inline-block"
+
+                                            <button class="{{ BUTTON_CSS }} inline-block"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="decrementRate"
                                                 title="{% translate "Decrease Playback Rate" %}">-</button>
                                             <div class="mr-1 tracking-tight md:mr-2 player--interactive"
@@ -204,11 +207,13 @@
                                             </div>
 
                                             <button class="{{ BUTTON_CSS }} inline-block"
-                                                :class="{'{{ INACTIVE_CSS }}': !isPlaying}"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="incrementRate"
                                                 title="{% translate "Increase Playback Rate" %}">+</button>
                                         </div>
+
                                         <div class="flex items-center">
+
                                             <button title="{{ t_reload_player }}"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 accesskey="r"
@@ -223,18 +228,15 @@
                             </div>
                             <div class="w-full h-3">
                                 <input type="range"
+                                    aria-label="Progress"
+                                    class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none"
                                     x-ref="range"
                                     x-model="runtime"
+                                    @change="skip"
+                                    min="0"
                                     :max="duration"
                                     :disabled="isPaused || !isLoaded"
-                                    @change="skip"
-                                    aria-label="Progress"
-                                    min="0"
-                                    :class="{# fmt:off #}{
-                                            'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer':isPlaying,
-                                            'bg-gray-800 dark:bg-gray-600 cursor-not-allowed': !isPlaying
-                                        }{# fmt:on #}"
-                                    class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none">
+                                    :class="isPlaying ? 'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer': 'bg-gray-800 dark:bg-gray-600 cursor-not-allowed'">
                             </div>
                         </div>
                     </div>
