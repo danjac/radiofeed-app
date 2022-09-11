@@ -7,48 +7,34 @@
     {% with podcast_title=podcast.cleaned_title|escapejs podcast_description=podcast.cleaned_description|truncatechars:200|escapejs cover_url=podcast.cover_url %}
 
         {% if podcast_description %}
-            <meta name="description"
-                content="{{ podcast_description }}" />
+            <meta name="description" content="{{ podcast_description }}" />
         {% endif %}
         {% if podcast.keywords %}
-            <meta name="keywords"
-                content="{{ podcast.keywords|escapejs }}" />
+            <meta name="keywords" content="{{ podcast.keywords|escapejs }}" />
         {% endif %}
 
-        <meta name="og:type"
-            content="website" />
-        <meta name="og:title"
-            content="{{ podcast_title }}" />
+        <meta name="og:type" content="website" />
+        <meta name="og:title" content="{{ podcast_title }}" />
         {% if podcast_description %}
-            <meta name="og:description"
-                content="{{ podcast_description }}" />
+            <meta name="og:description" content="{{ podcast_description }}" />
         {% endif %}
-        <meta name="og:url"
-            content="{% absolute_uri podcast %}" />
+        <meta name="og:url" content="{% absolute_uri podcast %}" />
 
         {% if cover_url %}
-            <meta name="og:image"
-                content="{{ cover_url }}" />
-            <meta name="og:image:alt"
-                content="{{ podcast_title }}" />
-            <meta name="og:image:height"
-                content="200" />
-            <meta name="og:image:width"
-                content="200" />
+            <meta name="og:image" content="{{ cover_url }}" />
+            <meta name="og:image:alt" content="{{ podcast_title }}" />
+            <meta name="og:image:height" content="200" />
+            <meta name="og:image:width" content="200" />
         {% endif %}
 
-        <meta name="twitter:card"
-            content="{{ cover_url|yesno:'summary_large_image,summary' }}">
+        <meta name="twitter:card" content="{{ cover_url|yesno:'summary_large_image,summary' }}">
         {% if cover_url %}
-            <meta name="twitter:image"
-                content="{{ cover_url }}">
+            <meta name="twitter:image" content="{{ cover_url }}">
         {% endif %}
 
-        <meta name="twitter:title"
-            content="{{ podcast_title }}">
+        <meta name="twitter:title" content="{{ podcast_title }}">
         {% if podcast_description %}
-            <meta name="twitter:description"
-                content="{{ podcast_description }}">
+            <meta name="twitter:description" content="{{ podcast_description }}">
         {% endif %}
 
         <script type="application/ld+json">

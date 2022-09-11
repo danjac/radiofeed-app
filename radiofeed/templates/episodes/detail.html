@@ -6,18 +6,14 @@
     {% with podcast=episode.podcast %}
         {% with episode_title=episode.cleaned_title|escapejs episode_description=episode.cleaned_description|default:podcast.cleaned_description|truncatechars:200|escapejs cover_url=episode.get_cover_url %}
             {% if episode_description %}
-                <meta name="description"
-                    content="{{ episode_description }}" />
+                <meta name="description" content="{{ episode_description }}" />
             {% endif %}
             {% if podcast.keywords %}
-                <meta name="keywords"
-                    content="{{ podcast.keywords|escapejs }}" />
+                <meta name="keywords" content="{{ podcast.keywords|escapejs }}" />
             {% endif %}
 
-            <meta name="og:type"
-                content="website" />
-            <meta name="og:title"
-                content="{{ episode_title }}" />
+            <meta name="og:type" content="website" />
+            <meta name="og:title" content="{{ episode_title }}" />
             {% if episode_description %}
                 <meta name="og:description"
                     content="{{ episode_description }}" />
