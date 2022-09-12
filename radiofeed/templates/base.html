@@ -16,15 +16,11 @@ __________             .___.__        _____                 .___
             <head>
     {% endif %}
 
-    {% block title_tag %}
-        <title>
-            {{ request.site.name }}{% block title %}{% endblock %}
-        </title>
-    {% endblock title_tag %}
+    <title>
+        {{ request.site.name }}{% block title %}{% endblock %}
+    </title>
 
-    {% if request.htmx %}
-        {% include "includes/signup_cta.html" with hx_oob=True %}
-    {% else %}
+    {% if not request.htmx %}
         <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
         <link rel="apple-touch-icon image_src" href="{% static 'img/apple-touch-icon.png' %}">
         <link rel="stylesheet" text="text/css" href="{% static 'css/fontawesome.min.css' %}">
@@ -83,18 +79,17 @@ __________             .___.__        _____                 .___
                 <div class="flex-grow">
                     {% include "includes/navbar.html" %}
                     {% include "includes/messages.html" %}
-                    <div id="layout"
-                        class="flex relative p-2 pt-6 mx-auto min-h-screen xl:w-11/12">
+                    <div class="flex relative p-2 pt-6 mx-auto min-h-screen xl:w-11/12">
                         {% if user.is_authenticated %}
                             <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-24">
                                 {% include "includes/sidebar.html" %}
                             </aside>
                         {% endif %}
+    {% else %}
+        {% include "includes/signup_cta.html" with hx_oob=True %}
     {% endif %}
 
-    <main class="w-full xl:block md:mx-auto xl:w-4/5"
-        id="content"
-        hx-history-elt>
+    <main class="w-full xl:block md:mx-auto xl:w-4/5" id="content" hx-history-elt>
         {% block content %}{% endblock %}
     </main>
 
