@@ -5,14 +5,6 @@
     {% if not request.htmx %}
         <!DOCTYPE html>
         <html lang="en">
-            <!--
-__________             .___.__        _____                 .___
-\______   \_____     __| _/|__| _____/ ____\____   ____   __| _/
- |       _/\__  \   / __ | |  |/  _ \   __\/ __ \_/ __ \ / __ |
- |    |   \ / __ \_/ /_/ | |  (  <_> )  | \  ___/\  ___// /_/ |
- |____|_  /(____  /\____ | |__|\____/|__|  \___  >\___  >____ |
-        \/      \/      \/                     \/     \/     \/
-    -->
             <head>
     {% endif %}
 
@@ -27,7 +19,6 @@ __________             .___.__        _____                 .___
         <link rel="stylesheet" text="text/css" href="{% static 'css/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
 
         <meta charset="UTF-8">
-
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="copyright" content="Dan Jacob {% now "Y" %}">
