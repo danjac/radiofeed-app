@@ -629,7 +629,7 @@ pyflakes = ">=2.4.0,<2.5.0"
 
 [[package]]
 name = "flake8-bugbear"
-version = "22.8.23"
+version = "22.9.11"
 description = "A plugin for flake8 finding likely bugs and design problems in your program. Contains warnings that don't belong in pyflakes and pycodestyle."
 category = "dev"
 optional = false
@@ -1431,7 +1431,7 @@ ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"
 
 [[package]]
 name = "regex"
-version = "2022.8.17"
+version = "2022.9.11"
 description = "Alternative regular expression module, to replace re."
 category = "main"
 optional = false
@@ -1609,11 +1609,14 @@ pbr = ">=2.0.0,<2.1.0 || >2.1.0"
 
 [[package]]
 name = "termcolor"
-version = "1.1.0"
-description = "ANSII Color formatting for output in terminal."
+version = "2.0.1"
+description = "ANSI color formatting for output in terminal"
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
+
+[package.extras]
+tests = ["pytest-cov", "pytest"]
 
 [[package]]
 name = "threadpoolctl"
@@ -1658,7 +1661,7 @@ telegram = ["requests"]
 
 [[package]]
 name = "traitlets"
-version = "5.3.0"
+version = "5.4.0"
 description = ""
 category = "main"
 optional = false
@@ -1741,7 +1744,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "watchfiles"
-version = "0.16.1"
+version = "0.17.0"
 description = "Simple, modern and high performance file watching and code reload in python."
 category = "dev"
 optional = false
