@@ -78,7 +78,7 @@ This will start up:
 * Django development server
 * `tailwindcss` and `esbuild` for building frontend assets on the fly
 
-Honcho should be installed in your virtualenv.
+Honcho is installed in your local development environment.
 
 Tests can be run with `pytest`:
 
