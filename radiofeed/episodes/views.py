@@ -85,7 +85,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_playing": request.player.has(episode.id),
+            "is_playing": episode.id in request.player,
             "is_bookmarked": episode.is_bookmarked(request.user),
         },
     )
@@ -191,7 +191,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     episode = get_object_or_404(Episode, pk=episode_id)
 
-    if not request.player.has(episode.id):
+    if episode.id not in request.player:
         request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
