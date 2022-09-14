@@ -36,9 +36,7 @@ class TestPlayer:
 
     def test_has_false(self, player):
         assert self.episode_id not in player
-        assert not player.has(self.episode_id)
 
     def test_has_true(self, player):
         player.set(self.episode_id)
         assert self.episode_id in player
-        assert player.has(self.episode_id)
