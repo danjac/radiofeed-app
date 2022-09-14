@@ -75,16 +75,19 @@ class SearchQuerySetMixin(_QuerySet):
         query = SearchQuery(force_str(search_term), search_type=self.search_type)
 
         return self.annotate(**dict(self._search_ranks(query))).filter(
-            functools.reduce(operator.or_, self._search_filters(query))
+            functools.reduce(
+                operator.or_,
+                self._search_filters(query),
+            )
         )
 
     def _search_filters(self, query: SearchQuery) -> Iterable[Q]:
-
-        if self.search_vectors:
-            for field, _ in self.search_vectors:
-                yield Q(**{field: query})
-        else:
+        if not self.search_vectors:
             yield Q(**{self.search_vector_field: query})
+            return
+
+        for field, _ in self.search_vectors:
+            yield Q(**{field: query})
 
     def _search_ranks(self, query: SearchQuery) -> Iterable[tuple[str, SearchRank]]:
         if not self.search_vectors:
