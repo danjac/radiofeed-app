@@ -19,8 +19,8 @@ from radiofeed.episodes.factories import (
     BookmarkFactory,
     EpisodeFactory,
 )
-from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.models import AudioLog, Bookmark
+from radiofeed.episodes.player import Player
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 
 episodes_url = reverse_lazy("episodes:index")

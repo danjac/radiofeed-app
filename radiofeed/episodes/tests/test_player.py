@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.episodes.middleware import Player
+from radiofeed.episodes.player import Player
 
 
 class TestPlayer:
