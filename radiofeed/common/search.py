@@ -4,16 +4,50 @@ import functools
 import operator
 
 from typing import TYPE_CHECKING, Iterable, TypeAlias, TypeVar
+from urllib.parse import urlencode
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Model, Q, QuerySet
+from django.http import HttpRequest
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 
 if TYPE_CHECKING:  # pragma: no cover
     _T = TypeVar("_T", bound=Model)
     _QuerySet: TypeAlias = QuerySet[_T]
 else:
     _QuerySet = object
+
+
+class Search:
+    """Encapsulates generic search query in a request.
+
+    Attributes:
+        param: query string parameter
+    """
+
+    param: str = "q"
+
+    def __init__(self, request: HttpRequest):
+        self._request = request
+
+    def __str__(self) -> str:
+        """Returns search query value."""
+        return self.value
+
+    def __bool__(self) -> bool:
+        """Returns `True` if search in query and has a non-empty value."""
+        return bool(self.value)
+
+    @cached_property
+    def value(self) -> str:
+        """Returns the search query value, if any."""
+        return force_str(self._request.GET.get(self.param, "")).strip()
+
+    @cached_property
+    def qs(self) -> str:
+        """Returns encoded query string value, if any."""
+        return urlencode({self.param: self.value}) if self.value else ""
 
 
 class SearchQuerySetMixin(_QuerySet):

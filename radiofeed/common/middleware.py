@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from typing import Callable, cast
-from urllib.parse import urlencode
 
 from django.http import HttpRequest, HttpResponse
-from django.utils.encoding import force_str
-from django.utils.functional import SimpleLazyObject, cached_property
+from django.utils.functional import SimpleLazyObject
+
+from radiofeed.common.search import Search
 
 
 class BaseMiddleware:
@@ -13,37 +13,6 @@ class BaseMiddleware:
 
     def __init__(self, get_response: Callable):
         self.get_response = get_response
-
-
-class Search:
-    """Encapsulates generic search query.
-
-    Attributes:
-        param: query string parameter
-    """
-
-    param: str = "q"
-
-    def __init__(self, request: HttpRequest):
-        self._request = request
-
-    def __str__(self) -> str:
-        """Returns search query value."""
-        return self.value
-
-    def __bool__(self) -> bool:
-        """Returns `True` if search in query and has a non-empty value."""
-        return bool(self.value)
-
-    @cached_property
-    def value(self) -> str:
-        """Returns the search query value, if any."""
-        return force_str(self._request.GET.get(self.param, "")).strip()
-
-    @cached_property
-    def qs(self) -> str:
-        """Returns encoded query string value, if any."""
-        return urlencode({self.param: self.value}) if self.value else ""
 
 
 class SearchMiddleware(BaseMiddleware):
