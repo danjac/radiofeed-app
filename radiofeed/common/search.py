@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import operator
 
-from typing import TYPE_CHECKING, Iterable, TypeAlias, TypeVar
+from typing import TYPE_CHECKING, TypeAlias, TypeVar
 from urllib.parse import urlencode
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -74,31 +74,26 @@ class SearchQuerySetMixin(_QuerySet):
 
         query = SearchQuery(force_str(search_term), search_type=self.search_type)
 
-        return self.annotate(**dict(self._search_ranks(query))).filter(
-            functools.reduce(
-                operator.or_,
-                self._search_filters(query),
+        filters: list[Q] = []
+        ranks: dict[str, SearchRank] = {}
+
+        if self.search_vectors:
+            combined: list[F] = []
+
+            for field, rank in self.search_vectors:
+
+                ranks[rank] = SearchRank(F(field), query=query)
+                combined.append(F(rank))
+
+                filters.append(Q(**{field: query}))
+
+            ranks[self.search_rank] = functools.reduce(operator.add, combined)
+
+        else:
+            ranks[self.search_rank] = SearchRank(
+                F(self.search_vector_field), query=query
             )
-        )
 
-    def _search_filters(self, query: SearchQuery) -> Iterable[Q]:
-        if not self.search_vectors:
-            yield Q(**{self.search_vector_field: query})
-            return
+            filters.append(Q(**{self.search_vector_field: query}))
 
-        for field, _ in self.search_vectors:
-            yield Q(**{field: query})
-
-    def _search_ranks(self, query: SearchQuery) -> Iterable[tuple[str, SearchRank]]:
-        if not self.search_vectors:
-            yield self.search_rank, SearchRank(F(self.search_vector_field), query=query)
-            return
-
-        combined: list[F] = []
-
-        for field, rank in self.search_vectors:
-            yield rank, SearchRank(F(field), query=query)
-
-            combined.append(F(rank))
-
-        yield self.search_rank, functools.reduce(operator.add, combined)
+        return self.annotate(**ranks).filter(functools.reduce(operator.or_, filters))
