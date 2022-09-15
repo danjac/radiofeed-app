@@ -73,7 +73,7 @@ class FastCountAdminMixin(_ModelAdmin):
 
     paginator = FastCountPaginator
 
-    def get_queryset(self, request: HttpRequest) -> QuerySet[FastCounter]:
+    def get_queryset(self, request: HttpRequest) -> FastCounter:
         """Monkeypatches `count()` to use fast counter."""
         qs = super().get_queryset(request)
         qs.count = qs.fast_count
