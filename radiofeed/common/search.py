@@ -74,26 +74,18 @@ class SearchQuerySetMixin(_QuerySet):
 
         query = SearchQuery(force_str(search_term), search_type=self.search_type)
 
-        filters: list[Q] = []
-        ranks: dict[str, SearchRank] = {}
+        ranks = {
+            rank: SearchRank(F(field), query=query)
+            for field, rank in self.search_vectors
+        } or {
+            self.search_rank: SearchRank(F(self.search_vector_field), query=query),
+        }
 
-        if self.search_vectors:
-            combined: list[F] = []
-
-            for field, rank in self.search_vectors:
-
-                ranks[rank] = SearchRank(F(field), query=query)
-                combined.append(F(rank))
-
-                filters.append(Q(**{field: query}))
-
+        if combined := [F(rank) for _, rank in self.search_vectors]:
             ranks[self.search_rank] = functools.reduce(operator.add, combined)
 
-        else:
-            ranks[self.search_rank] = SearchRank(
-                F(self.search_vector_field), query=query
-            )
-
-            filters.append(Q(**{self.search_vector_field: query}))
+        filters = [Q(**{field: query}) for field, _ in self.search_vectors] or [
+            Q(**{self.search_vector_field: query})
+        ]
 
         return self.annotate(**ranks).filter(functools.reduce(operator.or_, filters))
