@@ -1,21 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, TypeAlias, TypeVar
+from typing import Protocol
 
-from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connections
-from django.db.models import Model, QuerySet
 from django.http import HttpRequest
 from django.utils.functional import cached_property
 
-if TYPE_CHECKING:  # pragma: no cover
-    _T = TypeVar("_T", bound=Model)
-    _QuerySet: TypeAlias = QuerySet[_T]
-    _ModelAdmin: TypeAlias = admin.ModelAdmin
-else:
-    _ModelAdmin = object
-    _QuerySet = object
+from radiofeed.common.types import T_ModelAdmin, T_QuerySet
 
 
 class FastCounter(Protocol):
@@ -26,7 +18,7 @@ class FastCounter(Protocol):
         ...  # pragma: no cover
 
 
-class FastCountQuerySetMixin(FastCounter, _QuerySet):
+class FastCountQuerySetMixin(FastCounter, T_QuerySet):
     """Provides faster alternative to COUNT for very large tables, using PostgreSQL retuple SELECT.
 
     Attributes:
@@ -35,7 +27,7 @@ class FastCountQuerySetMixin(FastCounter, _QuerySet):
 
     fast_count_row_limit: int = 1000
 
-    def fast_count(self: _QuerySet) -> int:
+    def fast_count(self: T_QuerySet) -> int:
         """Does optimized COUNT.
 
         If query contains WHERE, DISTINCT or GROUP BY, or number of rows under `fast_count_row_limit`, returns standard SELECT COUNT.
@@ -68,7 +60,7 @@ class FastCountPaginator(Paginator):
         return self.object_list.fast_count()
 
 
-class FastCountAdminMixin(_ModelAdmin):
+class FastCountAdminMixin(T_ModelAdmin):
     """Implements fast count. Use with queryset implementing FastCounter."""
 
     paginator = FastCountPaginator

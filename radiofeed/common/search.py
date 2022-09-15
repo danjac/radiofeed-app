@@ -3,20 +3,15 @@ from __future__ import annotations
 import functools
 import operator
 
-from typing import TYPE_CHECKING, TypeAlias, TypeVar
 from urllib.parse import urlencode
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, Model, Q, QuerySet
+from django.db.models import F, Q
 from django.http import HttpRequest
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 
-if TYPE_CHECKING:  # pragma: no cover
-    _T = TypeVar("_T", bound=Model)
-    _QuerySet: TypeAlias = QuerySet[_T]
-else:
-    _QuerySet = object
+from radiofeed.common.types import T_QuerySet
 
 
 class Search:
@@ -50,7 +45,7 @@ class Search:
         return urlencode({self.param: self.value}) if self.value else ""
 
 
-class SearchQuerySetMixin(_QuerySet):
+class SearchQuerySetMixin(T_QuerySet):
     """Provides standard search interface for models supporting search vector and ranking.
 
     Adds a `search` method to automatically resolve simple PostgreSQL search vector queries.
@@ -67,7 +62,7 @@ class SearchQuerySetMixin(_QuerySet):
     search_rank: str = "rank"
     search_type: str = "websearch"
 
-    def search(self: _QuerySet, search_term: str) -> _QuerySet:
+    def search(self: T_QuerySet, search_term: str) -> T_QuerySet:
         """Returns result of search."""
         if not search_term:
             return self.none()
