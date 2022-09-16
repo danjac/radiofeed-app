@@ -15,5 +15,5 @@ class TestSearch:
         req = rf.get("/")
         search = Search(req)
         assert not search
-        assert str(search) == ""
+        assert not str(search)
         assert search.qs == ""

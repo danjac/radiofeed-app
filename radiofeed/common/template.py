@@ -101,7 +101,7 @@ def active_link(
     url = resolve_url(url_name, *args, **kwargs)
 
     return (
-        ActiveLink(url, css + " " + active_css, True)
+        ActiveLink(url, f"{css} {active_css}", True)
         if context.request.path == url
         else ActiveLink(url, css, False)
     )
