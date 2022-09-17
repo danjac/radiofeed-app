@@ -170,22 +170,19 @@ class FeedParser:
         active: bool = True
 
         match exc:
-            case NotModified():
-                parse_result = Podcast.ParseResult.NOT_MODIFIED
-                num_retries = 0
             case DuplicateFeed():
                 active = False
                 parse_result = Podcast.ParseResult.DUPLICATE_FEED
-            case RssParserError():
-                parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
-                num_retries += 1
-            case requests.RequestException():
-                parse_result = (
-                    Podcast.ParseResult.COMPLETE
-                    if http_status == http.HTTPStatus.GONE
-                    else Podcast.ParseResult.HTTP_ERROR
-                )
 
+            case NotModified():
+                num_retries = 0
+                parse_result = Podcast.ParseResult.NOT_MODIFIED
+
+            case RssParserError():
+                num_retries += 1
+                parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
+
+            case requests.RequestException():
                 active = http_status not in (
                     http.HTTPStatus.FORBIDDEN,
                     http.HTTPStatus.NOT_FOUND,
@@ -194,6 +191,12 @@ class FeedParser:
                 )
 
                 num_retries += 1
+
+                parse_result = (
+                    Podcast.ParseResult.COMPLETE
+                    if http_status == http.HTTPStatus.GONE
+                    else Podcast.ParseResult.HTTP_ERROR
+                )
 
             case _:
                 raise
