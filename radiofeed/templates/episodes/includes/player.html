@@ -235,7 +235,7 @@
                                     @change="skip"
                                     min="0"
                                     :max="duration"
-                                    :disabled="isPaused || !isLoaded"
+                                    :disabled="!isPlaying"
                                     :class="isPlaying ? 'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer': 'bg-gray-800 dark:bg-gray-600 cursor-not-allowed'">
                             </div>
                         </div>
