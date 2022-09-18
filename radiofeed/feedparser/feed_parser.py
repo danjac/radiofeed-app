@@ -45,7 +45,7 @@ class Result:
 
     def __str__(self):
         """Returns parse result string."""
-        return self.result.value
+        return self.result
 
     def __bool__(self):
         """Returns True if no parse exception."""
