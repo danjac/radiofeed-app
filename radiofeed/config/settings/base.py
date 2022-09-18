@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 from radiofeed import __version__
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[3]
+PACKAGE_DIR = BASE_DIR / "radiofeed"
 
 env = environ.Env()
 
@@ -172,7 +173,7 @@ LANGUAGES = [
 LANGUAGE_COOKIE_DOMAIN = env("LANGUAGE_COOKIE_DOMAIN", default=None)
 LANGUAGE_COOKIE_SAMESITE = "Lax"
 
-LOCALE_PATHS = [BASE_DIR / "radiofeed" / "i18n"]
+LOCALE_PATHS = [PACKAGE_DIR / "i18n"]
 
 TIME_ZONE = "UTC"
 
@@ -185,12 +186,12 @@ USE_TZ = True
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 STATIC_URL = env("STATIC_URL", default="/static/")
-STATICFILES_DIRS = [BASE_DIR / "radiofeed" / "static"]
+STATICFILES_DIRS = [PACKAGE_DIR / "static"]
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "radiofeed" / "templates"],
+        "DIRS": [PACKAGE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "debug": DEBUG,

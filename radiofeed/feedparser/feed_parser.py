@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import http
+import logging
 
 from typing import Iterator
 
@@ -26,6 +27,7 @@ from radiofeed.podcasts.models import Category, Podcast
 
 def parse_feed(podcast: Podcast) -> bool:
     """Parse podcast RSS feed."""
+    logging.debug("Parse feed for %s", podcast)
     return FeedParser(podcast).parse()
 
 
