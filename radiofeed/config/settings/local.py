@@ -8,6 +8,7 @@ include("base.py")
 
 DEBUG = True
 
+
 ADMIN_SITE_HEADER += " [LOCAL]"
 
 INSTALLED_APPS = [

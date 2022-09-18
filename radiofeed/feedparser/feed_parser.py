@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import http
-import logging
 
 from typing import Iterator
 
@@ -25,15 +25,31 @@ from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 
 
-def parse_feed(podcast: Podcast) -> bool:
-    """Parse podcast RSS feed."""
-    logging.debug("Parse feed for %s", podcast)
+def parse_feed(podcast: Podcast) -> Result:
+    """Parses podcast RSS feed."""
     return FeedParser(podcast).parse()
 
 
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
     return hashlib.sha256(content).hexdigest()
+
+
+@dataclasses.dataclass(frozen=True)
+class Result:
+    """Result of parse feed."""
+
+    podcast: Podcast
+    result: Podcast.ParseResult
+    exception: Exception | None = None
+
+    def __str__(self):
+        """Returns parse result string."""
+        return self.result.value
+
+    def __bool__(self):
+        """Returns True if no parse exception."""
+        return self.exception is None
 
 
 class FeedParser:
@@ -58,15 +74,12 @@ class FeedParser:
         self._podcast = podcast
 
     @transaction.atomic
-    def parse(self) -> bool:
+    def parse(self) -> Result:
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
 
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
-
-        Returns:
-            True if podcast has been successfully updated.
         """
         try:
             return self._handle_success(*self._parse_rss())
@@ -120,7 +133,7 @@ class FeedParser:
         response: requests.Response,
         feed: Feed,
         content_hash: str,
-    ) -> bool:
+    ) -> Result:
 
         if feed.complete:
             active = False
@@ -136,8 +149,8 @@ class FeedParser:
         )
 
         self._save_podcast(
-            active=active,
             parse_result=parse_result,
+            active=active,
             num_retries=0,
             content_hash=content_hash,
             rss=response.url,
@@ -160,9 +173,9 @@ class FeedParser:
         self._podcast.categories.set(categories)
         self._episode_updates(feed)
 
-        return True
+        return Result(podcast=self._podcast, result=parse_result)  # type: ignore
 
-    def _handle_failure(self, exc: Exception) -> bool:
+    def _handle_failure(self, exc: Exception) -> Result:
         try:
             http_status = exc.response.status_code  # type: ignore
         except AttributeError:
@@ -204,16 +217,17 @@ class FeedParser:
                 raise
 
         self._save_podcast(
+            parse_result=parse_result,
             active=active and num_retries < self._max_retries,
             http_status=http_status,
-            parse_result=parse_result,
             num_retries=num_retries,
             frequency=scheduler.reschedule(
                 self._podcast.pub_date,
                 self._podcast.frequency,
             ),
         )
-        return False
+
+        return Result(podcast=self._podcast, result=parse_result, exception=exc)  # type: ignore
 
     def _save_podcast(self, **fields) -> None:
         now = timezone.now()
