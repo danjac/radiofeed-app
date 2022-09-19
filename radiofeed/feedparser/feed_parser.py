@@ -40,14 +40,14 @@ class Result:
     """Result of parse feed."""
 
     podcast: Podcast
-    result: Podcast.ParseResult
+    result: str
     exception: Exception | None = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns parse result string."""
         return self.result
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Returns True if no parse exception."""
         return self.exception is None
 
