@@ -40,12 +40,12 @@ class Result:
     """Result of parse feed."""
 
     podcast: Podcast
-    result: str
+    result: tuple[str, str]
     exception: Exception | None = None
 
     def __str__(self) -> str:
         """Returns parse result string."""
-        return self.result
+        return str(self.result)
 
     def __bool__(self) -> bool:
         """Returns True if no parse exception."""
@@ -135,12 +135,11 @@ class FeedParser:
         content_hash: str,
     ) -> Result:
 
-        if feed.complete:
-            active = False
-            parse_result = Podcast.ParseResult.COMPLETE
-        else:
-            active = True
-            parse_result = Podcast.ParseResult.SUCCESS
+        parse_result, active = (
+            (Podcast.ParseResult.COMPLETE, False)
+            if feed.complete
+            else (Podcast.ParseResult.SUCCESS, True)
+        )
 
         category_names = {c.casefold() for c in feed.categories}
 
@@ -148,8 +147,8 @@ class FeedParser:
             lowercase_name__in=category_names
         )
 
-        self._save_podcast(
-            parse_result=parse_result,
+        result = self._handle_result(
+            parse_result,
             active=active,
             num_retries=0,
             content_hash=content_hash,
@@ -173,7 +172,7 @@ class FeedParser:
         self._podcast.categories.set(categories)
         self._episode_updates(feed)
 
-        return Result(podcast=self._podcast, result=parse_result)  # type: ignore
+        return result
 
     def _handle_failure(self, exc: Exception) -> Result:
         try:
@@ -216,8 +215,9 @@ class FeedParser:
             case _:
                 raise
 
-        self._save_podcast(
-            parse_result=parse_result,
+        return self._handle_result(
+            parse_result,
+            exception=exc,
             active=active and num_retries < self._max_retries,
             http_status=http_status,
             num_retries=num_retries,
@@ -227,15 +227,22 @@ class FeedParser:
             ),
         )
 
-        return Result(podcast=self._podcast, result=parse_result, exception=exc)  # type: ignore
-
-    def _save_podcast(self, **fields) -> None:
+    def _handle_result(
+        self,
+        parse_result: tuple[str, str],
+        exception: Exception | None = None,
+        **fields,
+    ) -> Result:
         now = timezone.now()
+
         Podcast.objects.filter(pk=self._podcast.id).update(
+            parse_result=parse_result,
             updated=now,
             parsed=now,
             **fields,
         )
+
+        return Result(podcast=self._podcast, result=parse_result, exception=exception)
 
     def _extract_text(self, feed: Feed) -> str:
         text = " ".join(
