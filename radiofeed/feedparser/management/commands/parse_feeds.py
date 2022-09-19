@@ -42,4 +42,4 @@ class Command(BaseCommand):
         self.stdout.write(f"Parsing feed {podcast}...")
         result = feed_parser.parse_feed(podcast)
         style = self.style.SUCCESS if result else self.style.NOTICE
-        self.stdout.write(style(f"Parsing for {podcast} complete: {result}"))
+        self.stdout.write(style(f"Parsing done for {podcast}: {result}"))
