@@ -179,7 +179,7 @@ class TestEpisodeDetail:
 
         assert response.context["episode"] == episode
 
-        assertContains(response, "Remove from History")
+        assertContains(response, "Remove episode from your History")
         assertContains(response, "Listened")
 
     def test_no_prev_next_episde(

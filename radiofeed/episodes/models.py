@@ -268,7 +268,7 @@ class Episode(models.Model):
 
     def get_history_target(self) -> str:
         """Listening history episode detail HTMX target."""
-        return f"history-actions-{self.id}"
+        return f"episode-timestamps-{self.id}"
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):

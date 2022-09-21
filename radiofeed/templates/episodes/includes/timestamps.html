@@ -1,11 +1,8 @@
 {% load i18n %}
 {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
-    <div class="space-y-3 sm:space-y-0 sm:space-x-3 sm:flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300"
-        id="episode-timestamps-{{ episode.id }}"
-        {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+    <div class="space-y-3 sm:space-y-0 sm:space-x-3 sm:flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300">
 
         {% translate "Release Date" as t_release_date %}
-        {% translate "Listened" as t_listened %}
         {% translate "Duration" as t_duration %}
 
         <div class="space-x-2 flex items-center flex-wrap">
@@ -20,11 +17,5 @@
                 </div>
             {% endif %}
         </div>
-        {% if listened %}
-            <div class="space-x-2 flex items-center flex-wrap">
-                <span>{{ t_listened }}</span>
-                {% include "includes/date.html" with value=listened title=t_listened %}
-            </div>
-        {% endif %}
     </div>
 {% endwith %}

@@ -134,7 +134,7 @@
                 {% endwith %}
 
 
-                <div class="flex flex-col place-content-between h-24 md:h-28">
+                <div class="flex flex-col place-content-between h-24 md:h-32">
 
                     {% include "episodes/actions/player.html" %}
 
@@ -142,16 +142,15 @@
 
                         {% if user.is_authenticated %}
                             {% include "episodes/actions/bookmark.html" %}
-                            {% include "episodes/actions/history.html" with listened=episode.listened %}
+
+                        {% else %}
+                            <a download
+                                title="{% translate "Download audio file to your device" %}"
+                                href="{{ episode.media_url }}"
+                                class="link">
+                                {% translate "Download" %}
+                            </a>
                         {% endif %}
-
-                        <a download
-                            title="{% translate "Download audio file to your device" %}"
-                            href="{{ episode.media_url }}"
-                            class="link">
-                            {% translate "Download" %}
-                        </a>
-
                     </div>
 
                     {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
@@ -176,12 +175,21 @@
                             </div>
                         {% endif %}
 
+                        {% if user.is_authenticated %}
+                            <a download
+                                title="{% translate "Download audio file to your device" %}"
+                                href="{{ episode.media_url }}"
+                                class="link inline-block">
+                                {% translate "Download" %}
+                            </a>
+                        {% endif %}
+
                         {% if link %}
                             <a href="{{ link }}"
                                 target="_blank"
                                 rel="noopener"
                                 class="link">
-                                {% translate "Website" %}
+                                {% translate "Link" %}
                             </a>
                         {% endif %}
 
@@ -189,7 +197,8 @@
                 {% endif %}
             {% endwith %}
 
-            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time listened=episode.listened %}
+            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time %}
+            {% include "episodes/includes/history.html" with listened=episode.listened %}
 
             {% markdown episode.description %}
 
