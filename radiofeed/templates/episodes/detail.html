@@ -162,7 +162,7 @@
                 {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
                 {% with duration=episode.duration_in_seconds %}
                     {% if duration %}
-                        <span title="{{ t_duration}}">{{ duration|format_duration }}</span>
+                        <span title="{% translate "Duration" %}">{{ duration|format_duration }}</span>
                     {% endif %}
                 {% endwith %}
             </div>
@@ -198,7 +198,8 @@
                             <a href="{{ link }}"
                                 target="_blank"
                                 rel="noopener"
-                                class="link">
+                                class="link"
+                                title="{% translate "Link to Website" %}">
                                 {% translate "Link" %}
                             </a>
                         {% endif %}
