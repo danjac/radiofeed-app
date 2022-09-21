@@ -158,7 +158,14 @@
                 </div>
             </div>
 
-            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time %}
+            <div class="font-semibold text-gray-600 dark:text-gray-300 space-x-3">
+                {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
+                {% with duration=episode.duration_in_seconds %}
+                    {% if duration %}
+                        <span title="{{ t_duration}}">{{ duration|format_duration }}</span>
+                    {% endif %}
+                {% endwith %}
+            </div>
 
             {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
                 {% if file_size or link or explicit %}
@@ -200,7 +207,7 @@
                 {% endif %}
             {% endwith %}
 
-            {% include "episodes/includes/history.html" with listened=episode.listened %}
+            {% include "episodes/includes/history.html" with listened=episode.listened current_time=episode.current_time %}
 
             {% markdown episode.description %}
 
