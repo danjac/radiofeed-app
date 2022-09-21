@@ -5,21 +5,20 @@
         hx-disinherit="hx-indicator"
         {% if hx_oob %}hx-swap-oob="true"{% endif %}>
         {% if listened %}
-            <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-3">
-                {% translate "Listened" as t_listened %}
-
+            <div class="sm:space-x-3 space-y-2 sm:space-y-0 sm:flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300">
                 <div class="flex items-center space-x-2">
+                    {% translate "Listened" as t_listened %}
                     <span>{{ t_listened }}</span>
                     {% include "includes/date.html" with value=listened title=t_listened %}
+                    {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
+                        {% if duration and current_time and current_time > 60 and current_time < duration %}
+                            <span>
+                                {{ current_time|format_duration }}
+                            </span>
+                        {% endif %}
+                    {% endwith %}
                 </div>
 
-                {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
-                    {% if duration and current_time and current_time > 60 and current_time < duration %}
-                        <div>
-                            {{ current_time|format_duration }}
-                        </div>
-                    {% endif %}
-                {% endwith %}
 
                 {% if not is_playing %}
                     <button class="inline-flex items-center text-xs btn btn-danger md:text-sm"
@@ -29,7 +28,7 @@
                         hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
                         hx-swap="outerHTML">
                         {% icon "trash" css_class="mr-2" %}
-                        {% translate "Remove" %}
+                        {% translate "Remove from History" %}
                     </button>
                 {% endif %}
             </div>
