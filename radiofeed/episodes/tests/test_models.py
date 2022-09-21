@@ -124,15 +124,6 @@ class TestEpisodeModel:
     def test_slug_if_title_empty(self):
         assert Episode().slug == "no-title"
 
-    def test_get_media_url_ext(self):
-
-        assert (
-            Episode(
-                media_url="https://thegrognardfiles.com/wp-content/uploads/2021/08/Episode-50-Part-1-Fighting-Fantasy-with-Ian-Livingstone-27_08_2021-23.58.mp3"
-            ).get_media_url_ext()
-            == "mp3"
-        )
-
     def test_duration_in_seconds_hours_minutes_seconds(self):
         assert Episode(duration="2:30:40").duration_in_seconds == 9040
 

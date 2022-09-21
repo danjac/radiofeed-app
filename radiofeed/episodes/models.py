@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import mimetypes
-import pathlib
 
 from datetime import datetime
 from urllib.parse import urlparse
@@ -234,10 +233,6 @@ class Episode(models.Model):
                 if info
             ]
         )
-
-    def get_media_url_ext(self) -> str:
-        """Returns the path extension of the media URL, e.g. "mpeg"."""
-        return pathlib.Path(self.media_url).suffix[1:]
 
     def get_media_metadata(self) -> dict:
         """Returns media session metadata for integration with client device.

@@ -138,22 +138,20 @@
 
                     {% include "episodes/actions/player.html" %}
 
-                    <div class="flex items-center space-x-3 md:space-x-6">
-                        <a download
-                            title="Download {{ episode.get_media_url_ext|upper }} File"
-                            href="{{ episode.media_url }}"
-                            class="link">
-                            {% if user.is_anonymous %}
-                                {% translate "Download" %}
-                            {% else %}
-                                {% icon "download" size="lg" title=_("Download") %}
-                            {% endif %}
-                        </a>
+                    <div class="flex items-center space-x-3">
 
                         {% if user.is_authenticated %}
                             {% include "episodes/actions/bookmark.html" %}
                             {% include "episodes/actions/history.html" with listened=episode.listened %}
                         {% endif %}
+
+                        <a download
+                            title="{% translate "Download audio file to your device" %}"
+                            href="{{ episode.media_url }}"
+                            class="link">
+                            {% translate "Download" %}
+                        </a>
+
                     </div>
 
                     {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
