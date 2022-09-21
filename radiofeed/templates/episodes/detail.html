@@ -158,9 +158,12 @@
                 </div>
             </div>
 
+            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time %}
+
             {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
                 {% if file_size or link or explicit %}
                     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
+
 
                         {% if explicit %}
                             <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
@@ -197,7 +200,6 @@
                 {% endif %}
             {% endwith %}
 
-            {% include "episodes/includes/timestamps.html" with current_time=episode.current_time %}
             {% include "episodes/includes/history.html" with listened=episode.listened %}
 
             {% markdown episode.description %}
