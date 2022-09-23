@@ -17,7 +17,7 @@
             </button>
         {% else %}
             <button title="{{ t_add_bookmark }}"
-                class="btn btn-default inline-flex items-center"
+                class="btn btn-secondary inline-flex items-center"
                 hx-post="{% url 'episodes:add_bookmark' episode.id %}">
                 {% icon "star" "regular" css_class="mr-2" %}
                 {% translate "Bookmark" %}
