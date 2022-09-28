@@ -22,7 +22,7 @@ repos:
             args: [--target-version, "py310", --line-length, "88"]
             language_version: python3.10
     - repo: https://github.com/PyCQA/autoflake
-      rev: v1.5.3
+      rev: v1.6.1
       hooks:
           - id: autoflake
             args:
