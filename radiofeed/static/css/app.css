@@ -68,33 +68,43 @@ input[type="search"]::-webkit-search-results-decoration {
         outline-offset: 2px;
     }
 
-    .btn-default {
+    .btn-primary {
         color: theme("colors.white");
         background-color: theme("colors.blue.800");
         border: solid theme("borderWidth.DEFAULT") theme("colors.blue.800");
     }
 
-    .btn-default:hover {
+    .btn-primary:hover {
         background-color: theme("colors.blue.600");
     }
 
-    .btn-secondary {
+    .btn-default {
+        color: theme("colors.white");
+        background-color: theme("colors.purple.800");
+        border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
+    }
+
+    .btn-default:hover {
+        background-color: theme("colors.purple.600");
+    }
+
+    .btn-outline {
         color: theme("colors.blue.800");
         border: solid theme("borderWidth.DEFAULT") theme("colors.blue.800");
     }
 
-    .btn-secondary:hover {
+    .btn-outline:hover {
         color: theme("colors.blue.600");
         background-color: theme("colors.gray.100");
         border-color: theme("colors.blue.800");
     }
 
     @media (prefers-color-scheme: dark) {
-        .btn-secondary {
+        .btn-outline {
             color: theme("colors.white");
             border-color: theme("colors.gray.500");
         }
-        .btn-secondary:hover {
+        .btn-outline:hover {
             color: theme("colors.blue.400");
             background-color: theme("colors.gray.800");
             border-color: theme("colors.blue.300");

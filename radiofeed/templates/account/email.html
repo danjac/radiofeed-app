@@ -38,16 +38,9 @@
                     </div>
                 {% endfor %}
                 <div class="flex items-center space-x-2 md:space-x-3">
-                    <button class="inline-flex items-center btn btn-secondary"
-                        name="action_send"
-                        value="1">
-                        {% icon "envelope" css_class="mr-2" %}
-                        {% translate "Re-Verify" %}
-                    </button>
-
 
                     {% if num_addresses > 1 %}
-                        <button class="inline-flex items-center btn btn-default"
+                        <button class="inline-flex items-center btn btn-primary"
                             name="action_primary"
                             value="1">
                             {% icon "hand-point-up" css_class="mr-2" %}
@@ -60,6 +53,14 @@
                             {% translate "Remove" %}
                         </button>
                     {% endif %}
+
+                    <button class="inline-flex items-center btn btn-default"
+                        name="action_send"
+                        value="1">
+                        {% icon "envelope" css_class="mr-2" %}
+                        {% translate "Re-Verify" %}
+                    </button>
+
                 </div>
             </form>
 
@@ -85,7 +86,7 @@
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center">
-                <button class="inline-flex items-center btn btn-default"
+                <button class="inline-flex items-center btn btn-primary"
                     name="action_add"
                     value="true">
                     {% icon "plus" css_class="mr-2" %}
