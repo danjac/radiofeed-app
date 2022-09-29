@@ -23,7 +23,6 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Handle user preferences."""
     form = UserPreferencesForm(request.POST or None, instance=request.user)
-    original_language = request.user.language
 
     if request.method == "POST" and form.is_valid():
 
@@ -32,9 +31,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         with override(user.language):
             messages.success(request, _("Your preferences have been saved"))
 
-        # do redirect to refresh UI if language changed
-        if user.language != original_language:
-            return HttpResponseClientRedirect(request.htmx.current_url)
+        return HttpResponseClientRedirect(request.htmx.current_url)
 
     return render(request, "account/preferences.html", {"form": form})
 
