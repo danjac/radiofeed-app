@@ -5,7 +5,7 @@ import pytest
 from django.http import HttpResponse
 from django.urls import reverse
 
-from radiofeed.common.asserts import assert_ok, assert_unauthorized
+from radiofeed.common.asserts import assert_hx_redirect, assert_ok, assert_unauthorized
 from radiofeed.common.decorators import ajax_login_required
 
 
@@ -18,9 +18,7 @@ class TestAjaxLoginRequired:
         req = rf.get("/", HTTP_HX_REQUEST="true")
         req.user = anonymous_user
         req.htmx = True
-        resp = ajax_view(req)
-        assert_ok(resp)
-        assert resp.headers["HX-Redirect"] == f"{reverse('account_login')}?next=/"
+        assert_hx_redirect(ajax_view(req), f"{reverse('account_login')}?next=/")
 
     def test_anonymous_plain_ajax(self, rf, anonymous_user, ajax_view):
         req = rf.get("/")

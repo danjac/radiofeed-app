@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.common.asserts import assert_ok
+from radiofeed.common.asserts import assert_hx_redirect, assert_ok
 from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.podcasts.models import Subscription
@@ -53,8 +53,7 @@ class TestUserPreferences:
             HTTP_HX_CURRENT_URL=self.url,
         )
 
-        assert_ok(response)
-        assert response["HX-Redirect"] == self.url
+        assert_hx_redirect(response, self.url)
 
         auth_user.refresh_from_db()
         assert auth_user.language == "fi"
