@@ -31,13 +31,33 @@ class TestUserPreferences:
             },
             HTTP_HX_TARGET="preferences-form",
             HTTP_HX_REQUEST="true",
+            HTTP_HX_CURRENT_URL=self.url,
         )
 
         assert_ok(response)
+        assert "HX-Redirect" not in self.url
 
         auth_user.refresh_from_db()
 
         assert not auth_user.send_email_notifications
+
+    def test_change_language(self, client, auth_user):
+        response = client.post(
+            self.url,
+            {
+                "send_email_notifications": True,
+                "language": "fi",
+            },
+            HTTP_HX_TARGET="preferences-form",
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_CURRENT_URL=self.url,
+        )
+
+        assert_ok(response)
+        assert response["HX-Redirect"] == self.url
+
+        auth_user.refresh_from_db()
+        assert auth_user.language == "fi"
 
 
 class TestUserStats:
