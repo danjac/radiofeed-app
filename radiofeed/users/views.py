@@ -32,7 +32,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         with override(user.language):
             messages.success(request, _("Your preferences have been saved"))
 
-        # override message with new language settings and do full redirect
+        # do redirect to refresh UI if language changed
         if user.language != original_language:
             return HttpResponseClientRedirect(request.htmx.current_url)
 
