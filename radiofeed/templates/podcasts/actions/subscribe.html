@@ -7,7 +7,7 @@
             hx-swap="outerHTML"
             hx-disinherit="hx-indicator">
             {% if is_subscribed %}
-                <button class="btn btn-outline inline-flex items-center"
+                <button class="btn btn-primary btn-outline inline-flex items-center"
                     title="{% translate "Unsubscribe from this Podcast" %}"
                     hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
                     {% icon "eye-slash" css_class="mr-2" %}

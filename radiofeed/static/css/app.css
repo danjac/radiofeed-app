@@ -89,25 +89,46 @@ input[type="search"]::-webkit-search-results-decoration {
     }
 
     .btn-outline {
+        background-color: inherit;
+    }
+
+    .btn-primary.btn-outline {
         color: theme("colors.blue.800");
         border: solid theme("borderWidth.DEFAULT") theme("colors.blue.800");
     }
 
-    .btn-outline:hover {
+    .btn-primary.btn-outline:hover {
         color: theme("colors.blue.600");
         background-color: theme("colors.gray.100");
         border-color: theme("colors.blue.800");
     }
 
+    .btn-default.btn-outline {
+        color: theme("colors.purple.800");
+        border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
+    }
+
+    .btn-default.btn-outline:hover {
+        color: theme("colors.purple.600");
+        background-color: theme("colors.gray.100");
+        border-color: theme("colors.purple.800");
+    }
+
     @media (prefers-color-scheme: dark) {
-        .btn-outline {
+        .btn-primary.btn-outline,
+        .btn-default.btn-outline {
             color: theme("colors.white");
             border-color: theme("colors.gray.500");
         }
-        .btn-outline:hover {
+        .btn-primary.btn-outline:hover {
             color: theme("colors.blue.400");
             background-color: theme("colors.gray.800");
             border-color: theme("colors.blue.300");
+        }
+        .btn-default.btn-outline:hover {
+            color: theme("colors.purple.400");
+            background-color: theme("colors.gray.800");
+            border-color: theme("colors.purple.300");
         }
     }
 

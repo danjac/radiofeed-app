@@ -10,7 +10,7 @@
         hx-disinherit="hx-indicator">
         {% if is_bookmarked %}
             <button title="{{ t_remove_bookmark }}"
-                class="btn btn-outline inline-flex items-center"
+                class="btn btn-default btn-outline inline-flex items-center"
                 hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
                 {% icon "star" css_class="mr-2" %}
                 {% translate "Bookmark" %}
