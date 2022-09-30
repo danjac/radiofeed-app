@@ -17,7 +17,7 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from radiofeed.common import cleaners
+from radiofeed.common import markup
 
 register = template.Library()
 
@@ -110,7 +110,7 @@ def active_link(
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
-    return {"content": cleaners.markup(value)}
+    return {"content": markup.markup(value)}
 
 
 @register.inclusion_tag("includes/share_buttons.html", takes_context=True)

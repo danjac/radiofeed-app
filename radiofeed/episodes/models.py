@@ -19,8 +19,8 @@ from django.utils.translation import gettext as _
 from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
-from radiofeed.common.cleaners import strip_html
 from radiofeed.common.fast_count import FastCountQuerySetMixin
+from radiofeed.common.markup import strip_html
 from radiofeed.common.search import SearchQuerySetMixin
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
