@@ -1,10 +1,30 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Final, Iterable
 
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
+
+_DEFAULT_PAGINATION_PARAM: Final = "p"
+
+
+def pagination_url(
+    request: HttpRequest, page_number: int, param: str = _DEFAULT_PAGINATION_PARAM
+) -> str:
+    """Inserts the "page" query string parameter with the provided page number into the template.
+
+    Preserves the original request path and any other query string parameters.
+
+    Given the above and a URL of "/search?q=test" the result would
+    be something like: "/search?q=test&page=3"
+
+    Returns:
+        updated URL path with new page
+    """
+    params = request.GET.copy()
+    params[param] = page_number
+    return f"{request.path}?{params.urlencode()}"
 
 
 def render_pagination_response(
@@ -14,7 +34,7 @@ def render_pagination_response(
     pagination_template_name: str,
     extra_context: dict | None = None,
     target: str = "object-list",
-    param: str = "page",
+    param: str = _DEFAULT_PAGINATION_PARAM,
     page_size: int = 30,
     **pagination_kwargs,
 ) -> HttpResponse:

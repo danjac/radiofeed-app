@@ -260,7 +260,7 @@ class TestPaginationUrl:
         url = pagination_url(RequestContext(req), 5)
         assert url.startswith("/search/?")
         assert "q=test" in url
-        assert "page=5" in url
+        assert "p=5" in url
 
 
 class TestNavbar:

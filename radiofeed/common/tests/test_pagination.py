@@ -7,13 +7,23 @@ from django_htmx.middleware import HtmxDetails
 from pytest_django.asserts import assertTemplateUsed
 
 from radiofeed.common.asserts import assert_ok
-from radiofeed.common.pagination import render_pagination_response
+from radiofeed.common.pagination import pagination_url, render_pagination_response
 from radiofeed.podcasts.factories import PodcastFactory
 
 
 @pytest.fixture
 def podcasts(db):
     return PodcastFactory.create_batch(30)
+
+
+class TestPaginationUrl:
+    def test_append_page_number_to_querystring(self, rf):
+
+        req = rf.get("/search/", {"q": "test"})
+        url = pagination_url(req, 5)
+        assert url.startswith("/search/?")
+        assert "q=test" in url
+        assert "p=5" in url
 
 
 class TestRenderPaginationResponse:
@@ -61,7 +71,7 @@ class TestRenderPaginationResponse:
     def test_invalid_page(self, rf, podcasts):
         with pytest.raises(Http404):
             render_pagination_response(
-                rf.get("/", {"page": "fubar"}),
+                rf.get("/", {"p": "fubar"}),
                 podcasts,
                 self.base_template,
                 self.pagination_template,
