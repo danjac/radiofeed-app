@@ -28,27 +28,27 @@ class Sorter:
         return self._request.GET.get(self._param, self._default)
 
     @cached_property
-    def is_asc(self):
+    def is_asc(self) -> bool:
         """Returns True if sort ascending."""
         return self.value == self._asc
 
     @cached_property
-    def is_desc(self):
+    def is_desc(self) -> bool:
         """Returns True if sort descending."""
         return self.value == self._desc
 
     @cached_property
-    def asc_url(self):
+    def asc_url(self) -> str:
         """Returns url with ascending param."""
         return self._make_url(self._asc)
 
     @cached_property
-    def desc_url(self):
+    def desc_url(self) -> str:
         """Returns url with descending param."""
         return self._make_url(self._desc)
 
     @cached_property
-    def url(self):
+    def url(self) -> str:
         """Returns ascending url if current url descending and vice versa."""
         return self.desc_url if self.is_asc else self.asc_url
 
@@ -58,5 +58,5 @@ class Sorter:
             *["-" + field if self.is_desc else field for field in fields]
         )
 
-    def _make_url(self, ordering: str):
+    def _make_url(self, ordering: str) -> str:
         return f"{self._request.path}?{urlencode({self._param: ordering})}"
