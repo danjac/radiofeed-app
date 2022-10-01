@@ -243,7 +243,7 @@ class TestPodcastEpisodes:
 
         response = client.get(
             self.url(podcast),
-            {"ordering": "asc"},
+            {"o": "asc"},
         )
         assert_ok(response)
 

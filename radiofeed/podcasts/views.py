@@ -138,7 +138,7 @@ def episodes(
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
-    ordering = request.GET.get("ordering", "desc")
+    ordering = request.GET.get("o", "desc")
     episodes = podcast.episodes.select_related("podcast")
 
     return render_pagination_response(

@@ -360,7 +360,7 @@ class TestBookmarks:
     def test_ascending(self, client, auth_user):
         BookmarkFactory.create_batch(33, user=auth_user)
 
-        response = client.get(self.url, {"ordering": "asc"})
+        response = client.get(self.url, {"o": "asc"})
 
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
@@ -442,7 +442,7 @@ class TestHistory:
     def test_ascending(self, client, auth_user):
         AudioLogFactory.create_batch(33, user=auth_user)
 
-        response = client.get(self.url, {"ordering": "asc"})
+        response = client.get(self.url, {"o": "asc"})
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 30
