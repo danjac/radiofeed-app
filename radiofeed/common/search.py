@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 import operator
 
+from typing import Protocol
 from urllib.parse import urlencode
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -12,6 +13,14 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 
 from radiofeed.common.types import T_QuerySet
+
+
+class Searchable(Protocol):
+    """Protocol for `search()` method."""
+
+    def search(self: T_QuerySet, search_term: str) -> T_QuerySet:  # pragma: no cover
+        """Signature of search method."""
+        ...
 
 
 class Search:
@@ -44,8 +53,12 @@ class Search:
         """Returns encoded query string value, if any."""
         return urlencode({self.param: self.value}) if self.value else ""
 
+    def filter(self, queryset: Searchable) -> T_QuerySet:
+        """Does search on queryset."""
+        return queryset.search(self.value)
 
-class SearchQuerySetMixin(T_QuerySet):
+
+class SearchQuerySetMixin(Searchable, T_QuerySet):
     """Provides standard search interface for models supporting search vector and ranking.
 
     Adds a `search` method to automatically resolve simple PostgreSQL search vector queries.

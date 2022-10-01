@@ -57,9 +57,9 @@ class Sorter:
         """Returns ascending url if current url descending and vice versa."""
         return self.desc_url if self.is_asc else self.asc_url
 
-    def order_by(self, qs: QuerySet, *fields: str) -> QuerySet:
+    def order_by(self, queryset: QuerySet, *fields: str) -> QuerySet:
         """Orders queryset by fields."""
-        return qs.order_by(
+        return queryset.order_by(
             *["-" + field if self.is_desc else field for field in fields]
         )
 

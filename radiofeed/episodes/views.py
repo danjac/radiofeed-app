@@ -58,9 +58,9 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         render_pagination_response(
             request,
             (
-                Episode.objects.select_related("podcast")
-                .search(request.search.value)
-                .order_by("-rank", "-pub_date")
+                request.search.filter(
+                    Episode.objects.select_related("podcast")
+                ).order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
             "episodes/pagination/episodes.html",
@@ -171,7 +171,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
     return render_pagination_response(
         request,
-        logs.search(request.search.value).order_by("-rank", "-listened")
+        request.search.filter(logs).order_by("-rank", "-listened")
         if request.search
         else request.sorter.order_by(logs, "listened"),
         "episodes/history.html",
@@ -202,7 +202,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
     return render_pagination_response(
         request,
-        bookmarks.search(request.search.value).order_by("-rank", "-created")
+        request.search.filter(bookmarks).order_by("-rank", "-created")
         if request.search
         else request.sorter.order_by(bookmarks, "created"),
         "episodes/bookmarks.html",
