@@ -15,8 +15,8 @@ class Sorter:
 
     def __init__(self, request: HttpRequest, param: str = "o", default: str = "desc"):
         self._request = request
-        self.param = param
-        self.default = default
+        self._param = param
+        self._default = default
 
     def __str__(self) -> str:
         """Returns search query value."""
@@ -25,7 +25,7 @@ class Sorter:
     @cached_property
     def value(self) -> str:
         """Returns the search query value, if any."""
-        return self._request.GET.get(self.param, self.default)
+        return self._request.GET.get(self._param, self._default)
 
     @cached_property
     def is_asc(self):
@@ -59,4 +59,4 @@ class Sorter:
         )
 
     def _make_url(self, ordering: str):
-        return f"{self._request.path}?{urlencode({self.param: ordering})}"
+        return f"{self._request.path}?{urlencode({self._param: ordering})}"
