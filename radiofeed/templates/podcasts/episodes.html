@@ -3,23 +3,18 @@
 
 {% block title %}{{ block.super }} | {% translate "Episodes" %} {% endblock %}
 
-
 {% block podcast_content %}
-
     {% if request.search or page_obj.has_other_pages %}
         <div class="sm:flex items-center mb-3 justify-between border-t dark:border-gray-500 pt-3">
 
             <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
                 {% if request.search %}
                     <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                        title="Search Episodes"
                         class="link">{% translate "Search All Podcasts" %}</a>
-                {% elif ordering == "asc" %}
-                    <a href="{{ request.path|add:'?o=desc' }}"
-                        class="link">{% translate "Newest First" %}</a>
                 {% else %}
-                    <a href="{{ request.path|add:'?o=asc' }}"
-                        class="link">{% translate "Oldest First" %}</a>
+                    <a href="{{ request.sorter.url }}" class="link">
+                        {% if request.sorter.is_asc %}{% translate "Newest First" %}{% else %}{% translate "Oldest First" %}{% endif %}
+                    </a>
                 {% endif %}
             </nav>
 

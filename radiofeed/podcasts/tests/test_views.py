@@ -248,7 +248,6 @@ class TestPodcastEpisodes:
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 30
-        assert response.context["ordering"] == "asc"
 
     def test_search(self, client, podcast, faker):
         EpisodeFactory.create_batch(3, podcast=podcast)

@@ -6,6 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
 from radiofeed.common.search import Search
+from radiofeed.common.sorter import Sorter
 
 
 class BaseMiddleware:
@@ -21,6 +22,15 @@ class SearchMiddleware(BaseMiddleware):
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Adds Search instance to request."""
         request.search = cast(Search, SimpleLazyObject(lambda: Search(request)))
+        return self.get_response(request)
+
+
+class SorterMiddleware(BaseMiddleware):
+    """Adds Sorter instance to the request as `request.sorter`."""
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Adds Sorter instance to request."""
+        request.sorter = cast(Sorter, SimpleLazyObject(lambda: Sorter(request)))
         return self.get_response(request)
 
 

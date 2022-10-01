@@ -138,7 +138,6 @@ def episodes(
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
-    ordering = request.GET.get("o", "desc")
     episodes = podcast.episodes.select_related("podcast")
 
     return render_pagination_response(
@@ -146,14 +145,13 @@ def episodes(
         (
             episodes.search(request.search.value).order_by("-rank", "-pub_date")
             if request.search
-            else episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
+            else request.sorter.order_by(episodes, "pub_date")
         ),
         "podcasts/episodes.html",
         "episodes/pagination/episodes.html",
         extra_context={
             "podcast": podcast,
             "is_podcast_detail": True,
-            "ordering": ordering,
         },
     )
 

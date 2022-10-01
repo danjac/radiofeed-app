@@ -107,6 +107,7 @@ MIDDLEWARE = [
     "django_htmx.middleware.HtmxMiddleware",
     "radiofeed.common.middleware.CacheControlMiddleware",
     "radiofeed.common.middleware.SearchMiddleware",
+    "radiofeed.common.middleware.SorterMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
