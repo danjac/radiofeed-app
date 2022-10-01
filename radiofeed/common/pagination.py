@@ -12,12 +12,12 @@ _DEFAULT_PAGINATION_PARAM: Final = "p"
 def pagination_url(
     request: HttpRequest, page_number: int, param: str = _DEFAULT_PAGINATION_PARAM
 ) -> str:
-    """Inserts the "page" query string parameter with the provided page number into the template.
+    """Inserts the page query string parameter with the provided page number into the template.
 
     Preserves the original request path and any other query string parameters.
 
     Given the above and a URL of "/search?q=test" the result would
-    be something like: "/search?q=test&page=3"
+    be something like: "/search?q=test&p=3"
 
     Returns:
         updated URL path with new page
