@@ -12,7 +12,7 @@
                     <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                         class="link">{% translate "Search All Podcasts" %}</a>
                 {% else %}
-                    <a href="{{ request.sorter.url }}" class="link">
+                    <a href="{{ request.sorter.reorder_url }}" class="link">
                         {% if request.sorter.is_asc %}{% translate "Newest First" %}{% else %}{% translate "Oldest First" %}{% endif %}
                     </a>
                 {% endif %}
