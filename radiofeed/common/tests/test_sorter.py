@@ -42,15 +42,15 @@ class TestSorter:
         sorter = Sorter(req)
         assert str(sorter) == "desc"
 
-    def test_reorder_url_if_asc(self, rf):
+    def test_qs_if_asc(self, rf):
         req = rf.get("/", {"o": "asc"})
         sorter = Sorter(req)
-        assert sorter.reorder_url == "/?o=desc"
+        assert sorter.qs == "o=desc"
 
-    def test_reoder_url_if_desc(self, rf):
+    def test_qs_if_desc(self, rf):
         req = rf.get("/", {"o": "desc"})
         sorter = Sorter(req)
-        assert sorter.reorder_url == "/?o=asc"
+        assert sorter.qs == "o=asc"
 
     def test_order_by_asc(self, rf, db, podcasts):
         req = rf.get("/", {"o": "asc"})

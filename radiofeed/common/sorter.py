@@ -38,10 +38,9 @@ class Sorter:
         return self.value == self._desc
 
     @cached_property
-    def reorder_url(self) -> str:
+    def qs(self) -> str:
         """Returns ascending url if current url descending and vice versa."""
-        ordering = self._desc if self.is_asc else self._asc
-        return f"{self._request.path}?{urlencode({self._param: ordering})}"
+        return urlencode({self._param: self._desc if self.is_asc else self._asc})
 
     def order_by(self, queryset: QuerySet, *fields: str) -> QuerySet:
         """Orders queryset by fields."""
