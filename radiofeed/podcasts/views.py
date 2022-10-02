@@ -56,7 +56,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         render_pagination_response(
             request,
             (
-                request.search.filter(_get_podcasts()).order_by(
+                request.search.filter_queryset(_get_podcasts()).order_by(
                     "-rank",
                     "-pub_date",
                 )
@@ -141,7 +141,7 @@ def episodes(
     return render_pagination_response(
         request,
         (
-            request.search.filter(episodes).order_by("-rank", "-pub_date")
+            request.search.filter_queryset(episodes).order_by("-rank", "-pub_date")
             if request.search
             else request.sorter.order_by(episodes, "pub_date")
         ),
@@ -194,7 +194,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
         request,
         "podcasts/categories.html",
         {
-            "categories": request.search.filter(categories)
+            "categories": request.search.filter_queryset(categories)
             if request.search
             else categories
         },
@@ -215,7 +215,7 @@ def category_detail(
     return render_pagination_response(
         request,
         (
-            request.search.filter(podcasts).order_by(
+            request.search.filter_queryset(podcasts).order_by(
                 "-rank",
                 "-pub_date",
             )

@@ -53,7 +53,7 @@ class Search:
         """Returns encoded query string value, if any."""
         return urlencode({self.param: self.value}) if self.value else ""
 
-    def filter(self, queryset: Searchable) -> T_QuerySet:
+    def filter_queryset(self, queryset: Searchable) -> T_QuerySet:
         """Does search on queryset."""
         return queryset.search(self.value)
 

@@ -20,8 +20,8 @@ class TestSearch:
         assert not str(search)
         assert search.qs == ""
 
-    def test_filter(self, rf, db):
+    def test_filter_queryset(self, rf, db):
         podcast = PodcastFactory(title="testing")
         req = rf.get("/", {"q": "testing"})
         search = Search(req)
-        assert search.filter(Podcast.objects.all()).first() == podcast
+        assert search.filter_queryset(Podcast.objects.all()).first() == podcast
