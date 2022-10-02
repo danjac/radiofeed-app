@@ -44,23 +44,22 @@ def render_pagination_response(
         Http404: invalid page
     """
     try:
-        page_obj = Paginator(
-            object_list,
-            page_size,
-            **pagination_kwargs,
-        ).page(request.GET.get(param, 1))
+
+        return render(
+            request,
+            pagination_template_name
+            if request.htmx and request.htmx.target == target
+            else template_name,
+            {
+                "page_obj": Paginator(
+                    object_list,
+                    page_size,
+                    **pagination_kwargs,
+                ).page(request.GET.get(param, 1)),
+                "pagination_target": target,
+                "pagination_template": pagination_template_name,
+                **(extra_context or {}),
+            },
+        )
     except InvalidPage:
         raise Http404()
-
-    return render(
-        request,
-        pagination_template_name
-        if request.htmx and request.htmx.target == target
-        else template_name,
-        {
-            "page_obj": page_obj,
-            "pagination_target": target,
-            "pagination_template": pagination_template_name,
-            **(extra_context or {}),
-        },
-    )

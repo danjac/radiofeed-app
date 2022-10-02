@@ -69,9 +69,11 @@ class TestRenderPaginationResponse:
         assert_ok(resp)
 
     def test_invalid_page(self, rf, podcasts):
+        req = rf.get("/", {"p": "fubar"})
+        req.htmx = HtmxDetails(req)
         with pytest.raises(Http404):
             render_pagination_response(
-                rf.get("/", {"p": "fubar"}),
+                req,
                 podcasts,
                 self.base_template,
                 self.pagination_template,
