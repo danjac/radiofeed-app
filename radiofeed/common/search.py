@@ -19,7 +19,7 @@ from radiofeed.common.types import T_QuerySet
 class Searchable(Protocol):
     """Protocol for `search()` method."""
 
-    def search(self: T_QuerySet, search_term: str) -> T_QuerySet:  # pragma: no cover
+    def search(self, search_term: str) -> T_QuerySet:  # pragma: no cover
         """Signature of search method."""
         ...
 
