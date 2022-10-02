@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import functools
 import operator
 
@@ -23,12 +24,12 @@ class Searchable(Protocol):
         ...
 
 
+@dataclasses.dataclass(frozen=True)
 class Search:
     """Encapsulates generic search query in a request."""
 
-    def __init__(self, request: HttpRequest, param: str = "q"):
-        self._request = request
-        self._param = param
+    request: HttpRequest
+    param: str = "q"
 
     def __str__(self) -> str:
         """Returns search query value."""
@@ -41,12 +42,12 @@ class Search:
     @cached_property
     def value(self) -> str:
         """Returns the search query value, if any."""
-        return force_str(self._request.GET.get(self._param, "")).strip()
+        return force_str(self.request.GET.get(self.param, "")).strip()
 
     @cached_property
     def qs(self) -> str:
         """Returns encoded query string value, if any."""
-        return urlencode({self._param: self.value}) if self.value else ""
+        return urlencode({self.param: self.value}) if self.value else ""
 
     def filter_queryset(self, queryset: Searchable) -> T_QuerySet:
         """Does search on queryset."""
