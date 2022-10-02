@@ -24,16 +24,11 @@ class Searchable(Protocol):
 
 
 class Search:
-    """Encapsulates generic search query in a request.
+    """Encapsulates generic search query in a request."""
 
-    Attributes:
-        param: query string parameter
-    """
-
-    param: str = "q"
-
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request: HttpRequest, param: str = "q"):
         self._request = request
+        self._param = param
 
     def __str__(self) -> str:
         """Returns search query value."""
@@ -46,12 +41,12 @@ class Search:
     @cached_property
     def value(self) -> str:
         """Returns the search query value, if any."""
-        return force_str(self._request.GET.get(self.param, "")).strip()
+        return force_str(self._request.GET.get(self._param, "")).strip()
 
     @cached_property
     def qs(self) -> str:
         """Returns encoded query string value, if any."""
-        return urlencode({self.param: self.value}) if self.value else ""
+        return urlencode({self._param: self.value}) if self.value else ""
 
     def filter_queryset(self, queryset: Searchable) -> T_QuerySet:
         """Does search on queryset."""
