@@ -19,7 +19,7 @@ class Sorter:
         self._default = default
 
     def __str__(self) -> str:
-        """Returns search query value."""
+        """Returns ordering value."""
         return self.value
 
     @cached_property
