@@ -54,7 +54,7 @@ class Search:
         return queryset.search(self.value)
 
 
-class SearchQuerySetMixin(Searchable, T_QuerySet):
+class SearchQuerySetMixin(T_QuerySet):
     """Provides standard search interface for models supporting search vector and ranking.
 
     Adds a `search` method to automatically resolve simple PostgreSQL search vector queries.
