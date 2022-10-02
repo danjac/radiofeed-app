@@ -42,16 +42,6 @@ class TestSorter:
         sorter = Sorter(req)
         assert str(sorter) == "desc"
 
-    def test_asc_url(self, rf):
-        req = rf.get("/")
-        sorter = Sorter(req)
-        assert sorter.asc_url == "/?o=asc"
-
-    def test_desc_url(self, rf):
-        req = rf.get("/")
-        sorter = Sorter(req)
-        assert sorter.desc_url == "/?o=desc"
-
     def test_url_if_asc(self, rf):
         req = rf.get("/", {"o": "asc"})
         sorter = Sorter(req)
