@@ -74,7 +74,7 @@ class SearchQuerySetMixin(T_QuerySet):
     def search(self: T_QuerySet, search_term: str) -> T_QuerySet:
         """Returns result of search."""
         if not search_term:
-            return self
+            return self.none()
 
         query = SearchQuery(force_str(search_term), search_type=self.search_type)
 
