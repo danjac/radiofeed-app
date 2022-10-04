@@ -78,9 +78,8 @@ class SearchQuerySetMixin(T_QuerySet):
 
         query = SearchQuery(force_str(search_term), search_type=self.search_type)
 
-        if self.search_vectors:
-
-            return self.annotate(
+        return (
+            self.annotate(
                 **{
                     **{
                         rank: SearchRank(F(field), query=query)
@@ -97,12 +96,13 @@ class SearchQuerySetMixin(T_QuerySet):
                     [Q(**{field: query}) for field, _ in self.search_vectors],
                 )
             )
-
-        return self.annotate(
-            **{
-                self.search_rank: SearchRank(
-                    F(self.search_vector_field),
-                    query=query,
-                ),
-            }
-        ).filter(**{self.search_vector_field: query})
+            if self.search_vectors
+            else self.annotate(
+                **{
+                    self.search_rank: SearchRank(
+                        F(self.search_vector_field),
+                        query=query,
+                    ),
+                }
+            ).filter(**{self.search_vector_field: query})
+        )
