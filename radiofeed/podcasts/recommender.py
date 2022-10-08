@@ -87,14 +87,14 @@ class Recommender:
 
         for category in categories:
             for podcast_id, recommended_id, similarity in self._find_similarities(
-                category, podcasts
+                podcasts, category
             ):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
     def _find_similarities(
-        self, category: Category, podcasts: QuerySet[Podcast]
+        self, podcasts: QuerySet[Podcast], category: Category
     ) -> Iterator[tuple[int, int, float]]:
 
         df = pandas.DataFrame(
