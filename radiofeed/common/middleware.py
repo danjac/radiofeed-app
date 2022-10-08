@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, cast
+from typing import Callable
 
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
@@ -21,7 +21,7 @@ class SearchMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Adds Search instance to request."""
-        request.search = cast(Search, SimpleLazyObject(lambda: Search(request)))
+        request.search = SimpleLazyObject(lambda: Search(request))
         return self.get_response(request)
 
 
@@ -30,7 +30,7 @@ class SorterMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Adds Sorter instance to request."""
-        request.sorter = cast(Sorter, SimpleLazyObject(lambda: Sorter(request)))
+        request.sorter = SimpleLazyObject(lambda: Sorter(request))
         return self.get_response(request)
 
 
