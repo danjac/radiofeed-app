@@ -5,7 +5,7 @@
         "watch:js": "esbuild ./radiofeed/static/js/app.js --bundle --watch --minify --sourcemap --outfile=./radiofeed/static/js/bundle.js"
     },
     "dependencies": {
-        "alpinejs": "^3.10.3",
+        "alpinejs": "^3.10.4",
         "htmx.org": "^1.8.0"
     },
     "devDependencies": {
@@ -14,7 +14,7 @@
         "@tailwindcss/line-clamp": "^0.4.2",
         "@tailwindcss/typography": "^0.5.7",
         "esbuild": "^0.15.10",
-        "eslint": "^8.24.0",
+        "eslint": "^8.25.0",
         "eslint-plugin-prettier": "^4.2.1",
         "prettier": "2.7.1",
         "tailwindcss": "^3.1.8"
