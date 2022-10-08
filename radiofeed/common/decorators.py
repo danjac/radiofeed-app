@@ -16,6 +16,21 @@ from radiofeed.common.response import HttpResponseUnauthorized
 require_form_methods = require_http_methods(["GET", "POST"])
 
 
+def middleware(
+    middleware_fn: Callable[[HttpRequest, Callable], HttpResponse]
+) -> Callable:
+    """Create a middleware callable."""
+
+    @functools.wraps(callable)
+    def _wrapper(get_response: Callable):
+        def _middleware(request: HttpRequest) -> HttpResponse:
+            return middleware_fn(request, get_response)
+
+        return _middleware
+
+    return _wrapper
+
+
 def ajax_login_required(view: Callable) -> Callable:
     """Login required decorator for HTMX and AJAX views.
 
@@ -25,7 +40,7 @@ def ajax_login_required(view: Callable) -> Callable:
     """
 
     @functools.wraps(view)
-    def wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+    def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
@@ -38,4 +53,4 @@ def ajax_login_required(view: Callable) -> Callable:
             )
         return HttpResponseUnauthorized()
 
-    return wrapper
+    return _wrapper

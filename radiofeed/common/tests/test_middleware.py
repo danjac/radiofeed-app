@@ -5,9 +5,9 @@ import pytest
 from django_htmx.middleware import HtmxMiddleware
 
 from radiofeed.common.middleware import (
-    CacheControlMiddleware,
-    SearchMiddleware,
-    SorterMiddleware,
+    cache_control_middleware,
+    search_middleware,
+    sorter_middleware,
 )
 
 
@@ -29,7 +29,7 @@ def htmx_req(rf):
 class TestCacheControlMiddleware:
     @pytest.fixture
     def cache_mw(self, get_response):
-        return CacheControlMiddleware(get_response)
+        return cache_control_middleware(get_response)
 
     def test_is_htmx_request(self, htmx_req, htmx_mw, cache_mw):
         htmx_mw(htmx_req)
@@ -45,7 +45,7 @@ class TestCacheControlMiddleware:
 class TestSorterMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return SorterMiddleware(get_response)
+        return sorter_middleware(get_response)
 
     def test_sorter(self, rf, mw):
         req = rf.get("/")
@@ -56,7 +56,7 @@ class TestSorterMiddleware:
 class TestSearchMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return SearchMiddleware(get_response)
+        return search_middleware(get_response)
 
     def test_search(self, rf, mw):
         req = rf.get("/", {"q": "testing"})
