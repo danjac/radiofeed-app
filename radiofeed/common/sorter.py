@@ -42,7 +42,7 @@ class Sorter:
 
     @cached_property
     def qs(self) -> str:
-        """Returns ascending url if current url descending and vice versa."""
+        """Returns ascending query string parameter/value if current url descending and vice versa."""
         return urlencode({self.param: self.desc if self.is_asc else self.asc})
 
     def order_by(self, queryset: QuerySet, *fields: str) -> QuerySet:
