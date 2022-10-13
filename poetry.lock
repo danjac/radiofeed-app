@@ -220,7 +220,7 @@ coverage = "*"
 
 [[package]]
 name = "cryptography"
-version = "38.0.1"
+version = "38.0.2"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 category = "main"
 optional = false
@@ -432,7 +432,7 @@ Django = ">=2.0.1"
 
 [[package]]
 name = "django-modeltranslation"
-version = "0.18.4"
+version = "0.18.5"
 description = "Translates Django models using a registration approach."
 category = "main"
 optional = false
@@ -712,7 +712,7 @@ smmap = ">=3.0.1,<6"
 
 [[package]]
 name = "gitpython"
-version = "3.1.28"
+version = "3.1.29"
 description = "GitPython is a python library used to interact with Git repositories"
 category = "dev"
 optional = false
@@ -934,11 +934,11 @@ python-versions = "*"
 
 [[package]]
 name = "mypy"
-version = "0.961"
+version = "0.982"
 description = "Optional static typing for Python"
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 mypy-extensions = ">=0.4.3"
@@ -982,7 +982,7 @@ twitter = ["twython"]
 
 [[package]]
 name = "numpy"
-version = "1.23.3"
+version = "1.23.4"
 description = "NumPy is the fundamental package for array computing with Python."
 category = "main"
 optional = false
@@ -1738,7 +1738,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "tzdata"
-version = "2022.4"
+version = "2022.5"
 description = "Provider of IANA time zone data"
 category = "main"
 optional = false
@@ -1832,7 +1832,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "d873f3487ba46e084b1a4f4c58064007ed8208a67a5323ffb4ddcb540a22bb3c"
+content-hash = "60e17757476c3632a2a048a1dd0dc442b9bddfaf862ca6c960411cd0565c32e8"
 
 [metadata.files]
 anyio = []

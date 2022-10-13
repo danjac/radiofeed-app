@@ -6,7 +6,7 @@
     },
     "dependencies": {
         "alpinejs": "^3.10.4",
-        "htmx.org": "^1.8.0"
+        "htmx.org": "^1.8.2"
     },
     "devDependencies": {
         "@babel/eslint-parser": "^7.19.1",
