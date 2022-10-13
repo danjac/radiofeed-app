@@ -22,9 +22,9 @@ def pagination_url(
     Returns:
         updated URL path with new page
     """
-    params = request.GET.copy()
-    params[param] = page_number
-    return f"{request.path}?{params.urlencode()}"
+    qs = request.GET.copy()
+    qs.update({param: page_number})
+    return f"{request.path}?{qs.urlencode()}"
 
 
 def render_pagination_response(
