@@ -1,24 +1,23 @@
 from __future__ import annotations
 
-from typing import Callable
-
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
 from radiofeed.common.decorators import middleware
 from radiofeed.common.search import Search
 from radiofeed.common.sorter import Sorter
+from radiofeed.common.types import GetResponse
 
 
 @middleware
-def search_middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
+def search_middleware(request: HttpRequest, get_response: GetResponse) -> HttpResponse:
     """Adds Search instance to request."""
     request.search = SimpleLazyObject(lambda: Search(request))
     return get_response(request)
 
 
 @middleware
-def sorter_middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
+def sorter_middleware(request: HttpRequest, get_response: GetResponse) -> HttpResponse:
     """Adds Sorter instance to request."""
     request.sorter = SimpleLazyObject(lambda: Sorter(request))
     return get_response(request)
@@ -26,7 +25,7 @@ def sorter_middleware(request: HttpRequest, get_response: Callable) -> HttpRespo
 
 @middleware
 def cache_control_middleware(
-    request: HttpRequest, get_response: Callable
+    request: HttpRequest, get_response: GetResponse
 ) -> HttpResponse:
     """Workaround for https://github.com/bigskysoftware/htmx/issues/497.
 
