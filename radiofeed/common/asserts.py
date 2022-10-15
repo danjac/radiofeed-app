@@ -16,23 +16,21 @@ def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
     assert response.status_code == status, response.content  # nosec
 
 
-assert_ok = functools.partial(assert_status, status=http.HTTPStatus.OK)
-
-
-assert_bad_request = functools.partial(
-    assert_status, status=http.HTTPStatus.BAD_REQUEST
-)
-
-
-assert_conflict = functools.partial(assert_status, status=http.HTTPStatus.CONFLICT)
-
-
-assert_no_content = functools.partial(assert_status, status=http.HTTPStatus.NO_CONTENT)
-
-
-assert_not_found = functools.partial(assert_status, status=http.HTTPStatus.NOT_FOUND)
-
-
-assert_unauthorized = functools.partial(
-    assert_status, status=http.HTTPStatus.UNAUTHORIZED
+(
+    assert_ok,
+    assert_bad_request,
+    assert_conflict,
+    assert_no_content,
+    assert_not_found,
+    assert_unauthorized,
+) = (
+    functools.partial(assert_status, status=status)
+    for status in (
+        http.HTTPStatus.OK,
+        http.HTTPStatus.BAD_REQUEST,
+        http.HTTPStatus.CONFLICT,
+        http.HTTPStatus.NO_CONTENT,
+        http.HTTPStatus.NOT_FOUND,
+        http.HTTPStatus.UNAUTHORIZED,
+    )
 )
