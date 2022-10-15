@@ -1,9 +1,9 @@
-{% extends "includes/list_item.html" %}
+{% extends "includes/card.html" %}
 {% load i18n %}
 
-{% block cover_image %}
+{% block card_image %}
     {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
-{% endblock cover_image %}
+{% endblock card_image %}
 
 {% block card_title %}
     <a href="{{ podcast.get_absolute_url }}"

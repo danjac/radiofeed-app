@@ -1,9 +1,9 @@
-{% extends "includes/list_item.html" %}
+{% extends "includes/card.html" %}
 {% load i18n %}
 
-{% block cover_image %}
+{% block card_image %}
     {% include "includes/cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
-{% endblock cover_image %}
+{% endblock card_image %}
 
 {% block card_title %}
     <a title="{{ feed.title }}"
