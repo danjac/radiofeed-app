@@ -15,7 +15,6 @@
     {% if not request.htmx %}
         <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
         <link rel="apple-touch-icon image_src" href="{% static 'img/apple-touch-icon.png' %}">
-        <link rel="stylesheet" text="text/css" href="{% static 'css/fontawesome.min.css' %}">
         <link rel="stylesheet" text="text/css" href="{% static 'css/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
 
         <meta charset="UTF-8">
