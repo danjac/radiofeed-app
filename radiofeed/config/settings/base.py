@@ -8,9 +8,8 @@ import environ
 
 from django.urls import reverse_lazy
 
-from radiofeed import __version__
-
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[3]
+
 PACKAGE_DIR = BASE_DIR / "radiofeed"
 
 env = environ.Env()
@@ -262,11 +261,6 @@ MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
 # Project specific
 
 ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
-
-USER_AGENT = env(
-    "USER_AGENT",
-    default=f"radiofeed/{__version__} +https://github.com/danjac/radiofeed-app/",
-)
 
 CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
 

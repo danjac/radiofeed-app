@@ -9,8 +9,8 @@ from typing import Final, Iterator
 from urllib.parse import urlparse
 
 import requests
+import user_agent
 
-from django.conf import settings
 from django.core.cache import cache
 
 from radiofeed.common import batcher
@@ -180,7 +180,7 @@ def _get_response(url: str, data: dict | None = None) -> requests.Response:
         response = requests.get(
             url,
             data,
-            headers={"User-Agent": settings.USER_AGENT},
+            headers={"User-Agent": user_agent.generate_user_agent()},
             timeout=10,
             allow_redirects=True,
         )

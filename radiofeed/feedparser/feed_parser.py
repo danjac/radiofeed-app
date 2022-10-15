@@ -8,8 +8,8 @@ from typing import Iterator
 
 import attrs
 import requests
+import user_agent
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -119,7 +119,7 @@ class FeedParser:
     def _get_feed_headers(self) -> dict:
         headers = {
             "Accept": ",".join(self._accept_header),
-            "User-Agent": settings.USER_AGENT,
+            "User-Agent": user_agent.generate_user_agent(),
         }
 
         if self._podcast.etag:
