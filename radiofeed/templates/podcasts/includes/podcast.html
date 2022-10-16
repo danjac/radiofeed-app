@@ -1,6 +1,7 @@
 {% extends "includes/card.html" %}
 {% load i18n %}
 
+
 {% block card_image %}
     {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
 {% endblock card_image %}
@@ -14,9 +15,10 @@
 {% endblock card_title %}
 
 {% block card_subtitle %}
+    {% translate "Latest Episode" as t_latest_episode %}
     <a href="{{ podcast.get_latest_episode_url }}"
-        title="{% translate "Latest Episode" %}"
+        title="{{ t_latest_episode }}"
         class="link font-semibold text-gray-600 dark:text-gray-300">
-        {% include "includes/date.html" with value=podcast.pub_date title=_("Latest Episode") %}
+        {% include "includes/date.html" with value=podcast.pub_date title=t_latest_episode %}
     </a>
 {% endblock card_subtitle %}
