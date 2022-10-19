@@ -86,16 +86,20 @@ class Recommender:
         matches = collections.defaultdict(list)
 
         for category in categories:
-            for podcast_id, recommended_id, similarity in self._find_similarities(
-                podcasts, category
-            ):
+            for (
+                podcast_id,
+                recommended_id,
+                similarity,
+            ) in self._match_podcasts_in_category(podcasts, category):
                 matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
-    def _find_similarities(
+    def _match_podcasts_in_category(
         self, podcasts: QuerySet[Podcast], category: Category
     ) -> Iterator[tuple[int, int, float]]:
+
+        # build a data model of podcasts with same language and category
 
         df = pandas.DataFrame(
             podcasts.filter(
@@ -118,22 +122,24 @@ class Recommender:
         except ValueError:  # pragma: no cover
             return
 
+        # find matching similar pairs
+        #
         for index in df.index:
             try:
-                podcast_id, recommended = self._find_similarity(
+                podcast_id, recommended = self._find_similar_pairs(
                     df,
                     similar=cosine_sim[index],
                     current_id=df.loc[index, "id"],
                 )
 
                 for recommended_id, similarity in recommended:
-                    if (similarity := round(similarity, 2)) > 0:
+                    if similarity > 0:
                         yield podcast_id, recommended_id, similarity
 
             except IndexError:  # pragma: no cover
                 continue
 
-    def _find_similarity(
+    def _find_similar_pairs(
         self, df: pandas.DataFrame, similar: list[float], current_id: int
     ) -> tuple[int, Iterator[tuple[int, float]]]:
 
@@ -146,7 +152,7 @@ class Recommender:
         return (
             current_id,
             (
-                (df.loc[row, "id"], similarity)
+                (df.loc[row, "id"], round(similarity, 2))
                 for row, similarity in sorted_similar
                 if df.loc[row, "id"] != current_id
             ),
