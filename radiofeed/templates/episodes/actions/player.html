@@ -5,7 +5,7 @@
         hx-push-url="false"
         hx-target="#player"
         hx-swap="innerHTML"
-        hx-disinherit="hx-indicator"
+        hx-indicator="none"
         id="{{ episode.get_player_target }}">
         {% if is_playing %}
             <button class="inline-flex items-center btn btn-primary btn-outline"
