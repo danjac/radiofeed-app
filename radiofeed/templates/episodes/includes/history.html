@@ -2,7 +2,10 @@
 {% with target=episode.get_history_target %}
     <div id="{{ target }}"
         hx-target="this"
-        hx-disinherit="hx-indicator"
+        hx-swap="outerHTML"
+        hx-indicator="none"
+        hx-push-url="false"
+        hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}"
         {% if hx_oob %}hx-swap-oob="true"{% endif %}>
         {% if listened %}
             <div class="space-x-3 flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300">
@@ -24,10 +27,7 @@
                 {% if not is_playing %}
                     <button class="inline-flex items-center text-xs btn btn-danger md:text-sm"
                         title="{% translate "Remove episode from your History" %}"
-                        hx-push-url="false"
-                        hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}"
-                        hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
-                        hx-swap="outerHTML">
+                        hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
                         {% icon "trash" css_class="mr-2" %}
                         {% translate "Remove" %}
                     </button>
