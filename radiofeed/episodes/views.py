@@ -42,7 +42,7 @@ def index(request: HttpRequest) -> HttpResponse:
         if promoted
         else episodes.filter(podcast__pk__in=subscribed),
         "episodes/index.html",
-        "episodes/pagination/episodes.html",
+        "episodes/includes/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -63,7 +63,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
                 ).order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
-            "episodes/pagination/episodes.html",
+            "episodes/includes/episodes.html",
         )
         if request.search
         else redirect("episodes:index")
@@ -175,7 +175,7 @@ def history(request: HttpRequest) -> HttpResponse:
         if request.search
         else request.sorter.order_by(logs, "listened"),
         "episodes/history.html",
-        "episodes/pagination/history.html",
+        "episodes/includes/audio_logs.html",
     )
 
 
@@ -189,7 +189,11 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
-    return render(request, "episodes/includes/history.html", {"episode": episode})
+    return render(
+        request,
+        "episodes/includes/history.html",
+        {"episode": episode},
+    )
 
 
 @require_safe
@@ -206,7 +210,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         if request.search
         else request.sorter.order_by(bookmarks, "created"),
         "episodes/bookmarks.html",
-        "episodes/pagination/bookmarks.html",
+        "episodes/includes/bookmarks.html",
         {"ordering": ordering},
     )
 
@@ -263,7 +267,7 @@ def _render_bookmark_action(
 ) -> HttpResponse:
     return render(
         request,
-        "episodes/actions/bookmark.html",
+        "episodes/includes/bookmark.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,

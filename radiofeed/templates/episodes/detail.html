@@ -136,12 +136,12 @@
 
                 <div class="flex flex-col place-content-between h-24 md:h-32">
 
-                    {% include "episodes/actions/player.html" %}
+                    {% include "episodes/includes/player_buttons.html" %}
 
                     <div class="flex items-center space-x-3">
 
                         {% if user.is_authenticated %}
-                            {% include "episodes/actions/bookmark.html" %}
+                            {% include "episodes/includes/bookmark.html" %}
 
                         {% else %}
                             {% include "episodes/includes/download.html" %}
