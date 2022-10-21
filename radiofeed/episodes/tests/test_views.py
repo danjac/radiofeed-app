@@ -116,13 +116,15 @@ class TestSearchEpisodes:
     def test_search(self, db, client, faker):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
-        response = client.get(
-            self.url,
-            {"q": episode.title},
-        )
+        response = client.get(self.url, {"q": episode.title})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
+
+    def test_search_no_results(self, db, client, faker):
+        response = client.get(self.url, {"q": "zzzz"})
+        assert_ok(response)
+        assert len(response.context["page_obj"].object_list) == 0
 
 
 class TestEpisodeDetail:

@@ -99,25 +99,23 @@ class TestLatestEpisode:
 
 
 class TestSearchPodcasts:
+    url = reverse_lazy("podcasts:search_podcasts")
+
     def test_search_empty(self, client, db):
-        assert (
-            client.get(
-                reverse("podcasts:search_podcasts"),
-                {"q": ""},
-            ).url
-            == podcasts_url
-        )
+        assert client.get(self.url, {"q": ""}).url == podcasts_url
 
     def test_search(self, client, db, faker):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(
-            reverse("podcasts:search_podcasts"),
-            {"q": podcast.title},
-        )
+        response = client.get(self.url, {"q": podcast.title})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
+
+    def test_search_no_results(self, client, db, faker):
+        response = client.get(self.url, {"q": "zzzz"})
+        assert_ok(response)
+        assert len(response.context["page_obj"].object_list) == 0
 
 
 class TestSearchITunes:
