@@ -1024,26 +1024,26 @@ msgstr "Poista Kirjanmerkkeistä"
 msgid "Bookmark"
 msgstr "Kirjanmerkki"
 
-#: radiofeed/templates/episodes/actions/player.html:13
-#: radiofeed/templates/episodes/includes/player.html:10
+#: radiofeed/templates/episodes/actions/audio_player.html:13
+#: radiofeed/templates/episodes/includes/audio_player.html:10
 msgid "Close Player"
 msgstr "Sulje Soitin"
 
-#: radiofeed/templates/episodes/actions/player.html:15
+#: radiofeed/templates/episodes/actions/audio_player.html:15
 msgid "Close"
 msgstr "Sulje"
 
-#: radiofeed/templates/episodes/actions/player.html:20
+#: radiofeed/templates/episodes/actions/audio_player.html:20
 msgid "Open Episode in Player"
 msgstr "Avaa Jakso Soitimella"
 
-#: radiofeed/templates/episodes/actions/player.html:22
-#: radiofeed/templates/episodes/actions/player.html:33
-#: radiofeed/templates/episodes/includes/player.html:8
+#: radiofeed/templates/episodes/actions/audio_player.html:22
+#: radiofeed/templates/episodes/actions/audio_player.html:33
+#: radiofeed/templates/episodes/includes/audio_player.html:8
 msgid "Play"
 msgstr "Soita"
 
-#: radiofeed/templates/episodes/actions/player.html:30
+#: radiofeed/templates/episodes/actions/audio_player.html:30
 msgid "You must sign up or log in to play this episode"
 msgstr ""
 "Sinun täytyy rekisteröityä tai kirjautua sisään soittaaksesi tätä jaksoa"
@@ -1154,43 +1154,43 @@ msgstr "Poistettu Historiasta"
 msgid "Are you sure you want to remove this episode from your History?"
 msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
 
-#: radiofeed/templates/episodes/includes/player.html:4
+#: radiofeed/templates/episodes/includes/audio_player.html:4
 msgid "Current Time"
 msgstr "Aika"
 
-#: radiofeed/templates/episodes/includes/player.html:5
+#: radiofeed/templates/episodes/includes/audio_player.html:5
 msgid "Time Remaining"
 msgstr "Jäljellä"
 
-#: radiofeed/templates/episodes/includes/player.html:6
+#: radiofeed/templates/episodes/includes/audio_player.html:6
 msgid "Loading..."
 msgstr "Latautuu..."
 
-#: radiofeed/templates/episodes/includes/player.html:7
+#: radiofeed/templates/episodes/includes/audio_player.html:7
 msgid "Error"
 msgstr "Virhe"
 
-#: radiofeed/templates/episodes/includes/player.html:9
+#: radiofeed/templates/episodes/includes/audio_player.html:9
 msgid "Pause"
 msgstr "Paussi"
 
-#: radiofeed/templates/episodes/includes/player.html:11
+#: radiofeed/templates/episodes/includes/audio_player.html:11
 msgid "Skip Back 10 Seconds"
 msgstr "Taaksepäin 10 Sekuntia"
 
-#: radiofeed/templates/episodes/includes/player.html:12
+#: radiofeed/templates/episodes/includes/audio_player.html:12
 msgid "Skip Forward 10 Seconds"
 msgstr "Eteenpäin 10 Sekuntia"
 
-#: radiofeed/templates/episodes/includes/player.html:13
+#: radiofeed/templates/episodes/includes/audio_player.html:13
 msgid "Reload Player"
 msgstr "Lataa Soitin Uudestaan"
 
-#: radiofeed/templates/episodes/includes/player.html:202
+#: radiofeed/templates/episodes/includes/audio_player.html:202
 msgid "Decrease Playback Rate"
 msgstr "Vähennä Toistonopeus"
 
-#: radiofeed/templates/episodes/includes/player.html:212
+#: radiofeed/templates/episodes/includes/audio_player.html:212
 msgid "Increase Playback Rate"
 msgstr "Lisää Toistonopeus"
 
