@@ -95,11 +95,7 @@
                         aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
                 {% endif %}
                 {% if next_episode %}
-                    <a class="link"
-                        href="{{ next_episode.get_absolute_url }}"
-                        aria-label="{{ next_episode.cleaned_title }}"
-                        title="{{ next_episode.cleaned_title }}">
-                        {{ t_next }}
+                    {{ t_next }}
                     </a>
                 {% else %}
                     <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
@@ -144,12 +140,7 @@
                             {% include "episodes/actions/bookmark.html" %}
 
                         {% else %}
-                            <a download
-                                title="{% translate "Download audio file to your device" %}"
-                                href="{{ episode.media_url }}"
-                                class="link">
-                                {% translate "Download" %}
-                            </a>
+                            {% include "episodes/includes/download.html" %}
                         {% endif %}
                     </div>
 
@@ -171,7 +162,6 @@
                 {% if file_size or link or explicit %}
                     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
 
-
                         {% if explicit %}
                             <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
                                 class="flex items-center text-red-600 dark:text-red-500 space-x-2">
@@ -186,12 +176,7 @@
                         {% endif %}
 
                         {% if user.is_authenticated %}
-                            <a download
-                                title="{% translate "Download audio file to your device" %}"
-                                href="{{ episode.media_url }}"
-                                class="link inline-block">
-                                {% translate "Download" %}
-                            </a>
+                            {% include "episodes/includes/download.html" %}
                         {% endif %}
 
                         {% if link %}
