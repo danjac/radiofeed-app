@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
+from render_block import render_block_to_string
 
 from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.pagination import render_pagination_response
@@ -40,7 +41,6 @@ def index(request: HttpRequest) -> HttpResponse:
         if promoted
         else podcasts.filter(pk__in=subscribed),
         "podcasts/index.html",
-        "podcasts/includes/podcasts.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -62,7 +62,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 )
             ),
             "podcasts/search.html",
-            "podcasts/includes/podcasts.html",
         )
         if request.search
         else redirect(settings.HOME_URL)
@@ -146,7 +145,6 @@ def episodes(
             else request.sorter.order_by(episodes, "pub_date")
         ),
         "podcasts/episodes.html",
-        "episodes/includes/episodes.html",
         extra_context={
             "podcast": podcast,
             "is_podcast_detail": True,
@@ -223,7 +221,6 @@ def category_detail(
             else podcasts.order_by("-pub_date")
         ),
         "podcasts/category_detail.html",
-        "podcasts/includes/podcasts.html",
         {"category": category},
     )
 
@@ -270,11 +267,14 @@ def _get_podcast_or_404(podcast_id: int) -> Podcast:
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    return render(
-        request,
-        "podcasts/includes/subscribe.html",
-        {
-            "podcast": podcast,
-            "is_subscribed": is_subscribed,
-        },
+    return HttpResponse(
+        render_block_to_string(
+            "podcasts/detail.html",
+            "subscribe",
+            {
+                "podcast": podcast,
+                "is_subscribed": is_subscribed,
+            },
+            request,
+        )
     )

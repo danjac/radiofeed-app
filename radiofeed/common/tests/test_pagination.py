@@ -4,7 +4,7 @@ import pytest
 
 from django.http import Http404
 from django_htmx.middleware import HtmxDetails
-from pytest_django.asserts import assertTemplateUsed
+from pytest_django.asserts import assertTemplateNotUsed, assertTemplateUsed
 
 from radiofeed.common.asserts import assert_ok
 from radiofeed.common.pagination import pagination_url, render_pagination_response
@@ -28,7 +28,6 @@ class TestPaginationUrl:
 
 class TestRenderPaginationResponse:
     base_template = "podcasts/index.html"
-    pagination_template = "podcasts/includes/podcasts.html"
 
     def test_render(self, rf, podcasts):
         req = rf.get("/")
@@ -38,7 +37,6 @@ class TestRenderPaginationResponse:
                 req,
                 podcasts,
                 self.base_template,
-                self.pagination_template,
             )
 
         assert_ok(resp)
@@ -51,7 +49,6 @@ class TestRenderPaginationResponse:
                 req,
                 podcasts,
                 self.base_template,
-                self.pagination_template,
             )
 
         assert_ok(resp)
@@ -59,12 +56,11 @@ class TestRenderPaginationResponse:
     def test_render_htmx_pagination_target(self, rf, podcasts):
         req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="object-list")
         req.htmx = HtmxDetails(req)
-        with assertTemplateUsed(self.pagination_template):
+        with assertTemplateNotUsed(self.base_template):
             resp = render_pagination_response(
                 req,
                 podcasts,
                 self.base_template,
-                self.pagination_template,
             )
         assert_ok(resp)
 
@@ -76,6 +72,5 @@ class TestRenderPaginationResponse:
                 req,
                 podcasts,
                 self.base_template,
-                self.pagination_template,
                 page_size=10,
             )

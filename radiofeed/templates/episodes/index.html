@@ -41,13 +41,16 @@
         </div>
     {% endif %}
 
-    {% if promoted %}
-        {% get_current_language as language_code %}
-        {% cache 600 promoted-episodes request.get_full_path language_code %}
-            {% include pagination_template %}
-        {% endcache %}
-    {% else %}
-        {% include pagination_template %}
-    {% endif %}
+    {% block pagination %}
+        <section role="list" class="space-y-3" id="{{ pagination_target }}">
+            {% include "includes/pagination_links.html" %}
+            {% for episode in page_obj.object_list %}
+                {% include "episodes/includes/episode.html" %}
+            {% empty %}
+                {% include "includes/empty.html" %}
+            {% endfor %}
+            {% include "includes/pagination_links.html" %}
+        </section>
+    {% endblock pagination %}
 
 {% endblock content %}

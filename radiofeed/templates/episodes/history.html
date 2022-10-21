@@ -27,5 +27,15 @@
             </div>
         </div>
     {% endif %}
-    {% include pagination_template %}
+    {% block pagination %}
+        <section role="list" class="space-y-3" id="{{ pagination_target }}">
+            {% include "includes/pagination_links.html" %}
+            {% for log in page_obj.object_list %}
+                {% include "episodes/includes/episode.html" with episode=log.episode %}
+            {% empty %}
+                {% include "includes/empty.html" %}
+            {% endfor %}
+            {% include "includes/pagination_links.html" %}
+        </section>
+    {% endblock pagination %}
 {% endblock content %}

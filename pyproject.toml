@@ -47,6 +47,7 @@ django-modeltranslation = "^0.18.2"
 Django = "^4.1"
 django-cacheops = "^6.1"
 user-agent = "^0.1.10"
+django-render-block = "^0.9.2"
 
 [tool.poetry.dev-dependencies]
 Faker = "^13.11.0"

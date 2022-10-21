@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
+from render_block import render_block_to_string
 
 from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.pagination import render_pagination_response
@@ -42,7 +43,6 @@ def index(request: HttpRequest) -> HttpResponse:
         if promoted
         else episodes.filter(podcast__pk__in=subscribed),
         "episodes/index.html",
-        "episodes/includes/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -63,7 +63,6 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
                 ).order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
-            "episodes/includes/episodes.html",
         )
         if request.search
         else redirect("episodes:index")
@@ -175,7 +174,6 @@ def history(request: HttpRequest) -> HttpResponse:
         if request.search
         else request.sorter.order_by(logs, "listened"),
         "episodes/history.html",
-        "episodes/includes/audio_logs.html",
     )
 
 
@@ -210,7 +208,6 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         if request.search
         else request.sorter.order_by(bookmarks, "created"),
         "episodes/bookmarks.html",
-        "episodes/includes/bookmarks.html",
         {"ordering": ordering},
     )
 
@@ -265,11 +262,14 @@ def _render_audio_player(
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
-    return render(
-        request,
-        "episodes/includes/bookmark.html",
-        {
-            "episode": episode,
-            "is_bookmarked": is_bookmarked,
-        },
+    return HttpResponse(
+        render_block_to_string(
+            "episodes/detail.html",
+            "bookmark",
+            {
+                "episode": episode,
+                "is_bookmarked": is_bookmarked,
+            },
+            request,
+        )
     )

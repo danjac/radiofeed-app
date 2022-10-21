@@ -500,6 +500,20 @@ redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
+name = "django-render-block"
+version = "0.9.2"
+description = "Render a particular block from a template to a string."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+django = ">=2.2"
+
+[package.extras]
+dev = ["Jinja2 (>=2.8)"]
+
+[[package]]
 name = "django-rich"
 version = "1.4.0"
 description = "Extensions for using Rich with Django."
@@ -1835,7 +1849,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "bd5fdcca154658f2926f9fecd828beac66cfe658d5259a981cd885d6784a1f6d"
+content-hash = "6f5c407a0359532917e7d590a7381817314e2768497ea32a95dbf1d228b04e74"
 
 [metadata.files]
 anyio = []
@@ -1880,6 +1894,7 @@ django-permissions-policy = []
 django-postgres-metrics = []
 django-ratelimit = []
 django-redis = []
+django-render-block = []
 django-rich = []
 django-silk = []
 django-split-settings = []

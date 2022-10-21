@@ -50,6 +50,12 @@ class TestNewEpisodes:
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
 
+    def test_no_episodes(self, client, db):
+        response = client.get(episodes_url)
+        assert_ok(response)
+
+        assert len(response.context["page_obj"].object_list) == 0
+
     def test_not_subscribed(self, client, db, auth_user):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)

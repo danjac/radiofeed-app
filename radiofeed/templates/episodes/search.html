@@ -4,8 +4,16 @@
 {% block title %} | {% translate "Search" %} | {% translate "Episodes" %} {% endblock %}
 
 {% block search_content %}
-    {% get_current_language as language_code %}
-    {% cache 600 episodes-search request.get_full_path language_code %}
-        {% include pagination_template %}
-    {% endcache %}
+    {% block pagination %}
+        {% get_current_language as language_code %}
+        {% cache 600 podcasts-search request.get_full_path language_code %}
+            <section role="list" class="space-y-3" id="{{ pagination_target }}">
+                {% include "includes/pagination_links.html" %}
+                {% for episode in page_obj.object_list %}
+                    {% include "episodes/includes/episode.html" %}
+                {% endfor %}
+                {% include "includes/pagination_links.html" %}
+            </section>
+        {% endcache %}
+    {% endblock pagination %}
 {% endblock %}

@@ -238,6 +238,13 @@ class TestPodcastEpisodes:
 
         assert len(response.context["page_obj"].object_list) == 30
 
+    def test_no_episodes(self, client, podcast):
+
+        response = client.get(self.url(podcast))
+        assert_ok(response)
+
+        assert len(response.context["page_obj"].object_list) == 0
+
     def test_ascending(self, client, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
 
@@ -320,6 +327,12 @@ class TestCategoryDetail:
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 1
+
+    def test_no_podcasts(self, client, category):
+        response = client.get(category.get_absolute_url())
+        assert_ok(response)
+
+        assert len(response.context["page_obj"].object_list) == 0
 
 
 class TestSubscribe:

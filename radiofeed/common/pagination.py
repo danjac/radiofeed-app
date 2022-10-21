@@ -5,6 +5,7 @@ from typing import Final, Iterable
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
+from render_block import render_block_to_string
 
 _DEFAULT_PAGINATION_PARAM: Final = "p"
 
@@ -31,9 +32,9 @@ def render_pagination_response(
     request: HttpRequest,
     object_list: Iterable,
     template_name: str,
-    pagination_template_name: str,
     extra_context: dict | None = None,
     target: str = "object-list",
+    pagination_block: str = "pagination",
     param: str = _DEFAULT_PAGINATION_PARAM,
     page_size: int = 30,
     **pagination_kwargs,
@@ -44,22 +45,21 @@ def render_pagination_response(
         Http404: invalid page
     """
     try:
-
-        return render(
-            request,
-            pagination_template_name
-            if request.htmx and request.htmx.target == target
-            else template_name,
-            {
-                "page_obj": Paginator(
-                    object_list,
-                    page_size,
-                    **pagination_kwargs,
-                ).page(request.GET.get(param, 1)),
-                "pagination_target": target,
-                "pagination_template": pagination_template_name,
-                **(extra_context or {}),
-            },
+        page = Paginator(object_list, page_size, **pagination_kwargs).page(
+            request.GET.get(param, 1)
         )
     except InvalidPage:
         raise Http404()
+
+    context = {
+        "page_obj": page,
+        "pagination_target": target,
+        **(extra_context or {}),
+    }
+
+    if request.htmx and request.htmx.target == target:
+        return HttpResponse(
+            render_block_to_string(template_name, pagination_block, context, request)
+        )
+
+    return render(request, template_name, context)
