@@ -245,7 +245,7 @@
         {% endwith %}
     {% endif %}
     {% if request.htmx.target == "player" %}
-        {% include "episodes/includes/play.html" with hx_oob=True %}
+        {% include "episodes/includes/audio_controls.html" with hx_oob=True %}
         {% include "episodes/includes/history.html" with hx_oob=True %}
     {% endif %}
 {% endif %}
