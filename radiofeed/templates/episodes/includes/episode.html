@@ -1,34 +1,37 @@
-{% extends "includes/card.html" %}
 {% load i18n %}
+{% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
+    <article class="flex items-center border dark:border-gray-500 space-x-3" role="listitem">
 
-{% block card_image %}
-    {% if is_podcast_detail %}
-        {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url %}
-    {% else %}
-        {% with podcast=episode.podcast %}
-            {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
+        {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
+            <div class="{{ css_class }}">
+                {% if is_podcast_detail %}
+                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode_url %}
+                {% else %}
+                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
+                {% endif %}
+            </div>
         {% endwith %}
-    {% endif %}
-{% endblock card_image %}
 
-{% block card_title %}
-    <a href="{{ episode.get_absolute_url }}"
-        class="link"
-        title="{{ episode.cleaned_title }}">
-        {{ episode.cleaned_title|truncatechars:180 }}
-    </a>
-{% endblock card_title %}
+        <div class="flex flex-col place-content-between h-14 md:h-16">
+            <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2">
+                <a href="{{ episode_url }}"
+                    class="link"
+                    title="{{ episode.cleaned_title }}">
+                    {{ episode.cleaned_title|truncatechars:180 }}
+                </a>
+            </h2>
 
-{% block card_subtitle %}
-    {% if is_podcast_detail %}
-        {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
-    {% else %}
-        {% with podcast=episode.podcast %}
-            <a href="{{ podcast.get_episodes_url }}"
-                class="link text-gray-600 dark:text-gray-300"
-                title="{{ podcast.cleaned_title }}">
-                {{ podcast.cleaned_title }}
-            </a>
-        {% endwith %}
-    {% endif %}
-{% endblock card_subtitle %}
+            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
+                {% if is_podcast_detail %}
+                    {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
+                {% else %}
+                    <a href="{{ podcast.get_episodes_url }}"
+                        class="link text-gray-600 dark:text-gray-300"
+                        title="{{ podcast.cleaned_title }}">
+                        {{ podcast.cleaned_title }}
+                    </a>
+                {% endif %}
+            </h3>
+        </div>
+    </article>
+{% endwith %}

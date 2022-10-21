@@ -1,22 +1,29 @@
-{% extends "includes/card.html" %}
 {% load i18n %}
+<article class="flex items-center border dark:border-gray-500 space-x-3" role="listitem">
 
-{% block card_image %}
-    {% include "includes/cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
-{% endblock card_image %}
+    {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
+        <div class="{{ css_class }}">
+            {% include "includes/cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
+        </div>
+    {% endwith %}
 
-{% block card_title %}
-    <a title="{{ feed.title }}"
-        class="link font-bold"
-        rel="noopener"
-        target="_blank"
-        href="{{ feed.url }}">
-        {{ feed.title|truncatechars:180 }}
-    </a>
-{% endblock card_title %}
+    <div class="flex flex-col place-content-between h-14 md:h-16">
+        <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2">
+            <a title="{{ feed.title }}"
+                class="link font-bold"
+                rel="noopener"
+                target="_blank"
+                href="{{ feed.url }}">
+                {{ feed.title|truncatechars:180 }}
+            </a>
 
-{% block card_subtitle %}
-    <span class="animate-pulse">
-        {% translate "Adding podcast to database..." %}
-    </span>
-{% endblock card_subtitle %}
+        </h2>
+
+        <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
+            <span class="animate-pulse">
+                {% translate "Adding podcast to database..." %}
+            </span>
+        </h3>
+    </div>
+
+</article>
