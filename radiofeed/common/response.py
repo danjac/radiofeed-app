@@ -1,23 +1,23 @@
 from __future__ import annotations
 
-import http
-
-from django.http import HttpResponse
-
-
-class HttpResponseConflict(HttpResponse):
-    """HTTP CONFLICT response."""
-
-    status_code: int = http.HTTPStatus.CONFLICT
+from django.http import HttpRequest, HttpResponse
+from render_block import render_block_to_string
 
 
-class HttpResponseNoContent(HttpResponse):
-    """HTTP NO CONTENT response."""
-
-    status_code: int = http.HTTPStatus.NO_CONTENT
-
-
-class HttpResponseUnauthorized(HttpResponse):
-    """HTTP UNAUTHORIZED response."""
-
-    status_code: int = http.HTTPStatus.UNAUTHORIZED
+def render_block_to_response(
+    request: HttpRequest,
+    template_name: str,
+    block_name: str,
+    context: dict | None = None,
+    **response_kwargs,
+):
+    """Render template block into HTTP response."""
+    return HttpResponse(
+        render_block_to_string(
+            template_name,
+            block_name,
+            context or {},
+            request,
+        ),
+        **response_kwargs,
+    )

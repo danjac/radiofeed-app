@@ -12,11 +12,11 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
-from render_block import render_block_to_string
 
 from radiofeed.common.decorators import ajax_login_required
+from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.common.pagination import render_pagination_response
-from radiofeed.common.response import HttpResponseConflict, HttpResponseNoContent
+from radiofeed.common.response import render_block_to_response
 from radiofeed.episodes.models import Episode
 
 
@@ -262,14 +262,12 @@ def _render_audio_player(
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
-    return HttpResponse(
-        render_block_to_string(
-            "episodes/detail.html",
-            "bookmark",
-            {
-                "episode": episode,
-                "is_bookmarked": is_bookmarked,
-            },
-            request,
-        )
+    return render_block_to_response(
+        request,
+        "episodes/detail.html",
+        "bookmark",
+        {
+            "episode": episode,
+            "is_bookmarked": is_bookmarked,
+        },
     )

@@ -5,7 +5,8 @@ from typing import Final, Iterable
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
-from render_block import render_block_to_string
+
+from radiofeed.common.response import render_block_to_response
 
 _DEFAULT_PAGINATION_PARAM: Final = "p"
 
@@ -51,15 +52,11 @@ def render_pagination_response(
     except InvalidPage:
         raise Http404()
 
-    context = {
-        "page_obj": page,
-        "pagination_target": target,
-        **(extra_context or {}),
-    }
+    context = {"page_obj": page, "pagination_target": target, **(extra_context or {})}
 
     if request.htmx and request.htmx.target == target:
-        return HttpResponse(
-            render_block_to_string(template_name, pagination_block, context, request)
+        return render_block_to_response(
+            request, template_name, pagination_block, context
         )
 
     return render(request, template_name, context)

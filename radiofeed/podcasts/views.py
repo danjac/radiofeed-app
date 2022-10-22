@@ -10,11 +10,11 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
-from render_block import render_block_to_string
 
 from radiofeed.common.decorators import ajax_login_required
+from radiofeed.common.http import HttpResponseConflict
 from radiofeed.common.pagination import render_pagination_response
-from radiofeed.common.response import HttpResponseConflict
+from radiofeed.common.response import render_block_to_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Subscription
@@ -267,14 +267,12 @@ def _get_podcast_or_404(podcast_id: int) -> Podcast:
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    return HttpResponse(
-        render_block_to_string(
-            "podcasts/detail.html",
-            "subscribe",
-            {
-                "podcast": podcast,
-                "is_subscribed": is_subscribed,
-            },
-            request,
-        )
+    return render_block_to_response(
+        request,
+        "podcasts/detail.html",
+        "subscribe",
+        {
+            "podcast": podcast,
+            "is_subscribed": is_subscribed,
+        },
     )
