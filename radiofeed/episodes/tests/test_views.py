@@ -372,7 +372,6 @@ class TestBookmarks:
 
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
-        assert response.context["ordering"] == "asc"
 
     def test_empty(self, client, auth_user):
 

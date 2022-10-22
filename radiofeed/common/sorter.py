@@ -4,7 +4,6 @@ import dataclasses
 
 from urllib.parse import urlencode
 
-from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.functional import cached_property
 
@@ -44,9 +43,3 @@ class Sorter:
     def qs(self) -> str:
         """Returns ascending query string parameter/value if current url descending and vice versa."""
         return urlencode({self.param: self.desc if self.is_asc else self.asc})
-
-    def order_by(self, queryset: QuerySet, *fields: str) -> QuerySet:
-        """Orders queryset by fields."""
-        return queryset.order_by(
-            *["-" + field if self.is_desc else field for field in fields]
-        )

@@ -4,7 +4,6 @@ import dataclasses
 import functools
 import operator
 
-from typing import Protocol
 from urllib.parse import urlencode
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -14,14 +13,6 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 
 from radiofeed.common.types import T_QuerySet
-
-
-class Searchable(Protocol):
-    """Protocol for `search()` method."""
-
-    def search(self, search_term: str) -> T_QuerySet:  # pragma: no cover
-        """Signature of search method."""
-        ...
 
 
 @dataclasses.dataclass(frozen=True)
@@ -48,10 +39,6 @@ class Search:
     def qs(self) -> str:
         """Returns encoded query string value, if any."""
         return urlencode({self.param: self.value}) if self.value else ""
-
-    def filter_queryset(self, queryset: Searchable) -> T_QuerySet:
-        """Does search on queryset."""
-        return queryset.search(self.value)
 
 
 class SearchQuerySetMixin(T_QuerySet):

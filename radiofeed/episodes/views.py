@@ -57,11 +57,9 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     return (
         render_pagination_response(
             request,
-            (
-                request.search.filter_queryset(
-                    Episode.objects.select_related("podcast")
-                ).order_by("-rank", "-pub_date")
-            ),
+            Episode.objects.select_related("podcast")
+            .search(request.search)
+            .order_by("-rank", "-pub_date"),
             "episodes/search.html",
         )
         if request.search
@@ -168,13 +166,12 @@ def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
     logs = request.user.audio_logs.select_related("episode", "episode__podcast")
 
-    return render_pagination_response(
-        request,
-        request.search.filter_queryset(logs).order_by("-rank", "-listened")
-        if request.search
-        else request.sorter.order_by(logs, "listened"),
-        "episodes/history.html",
-    )
+    if request.search:
+        logs = logs.search(request.search).order_by("-rank", "-listened")
+    else:
+        logs = logs.order_by("-listened" if request.sorter.is_desc else "listened")
+
+    return render_pagination_response(request, logs, "episodes/history.html")
 
 
 @require_POST
@@ -187,11 +184,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
-    return render(
-        request,
-        "episodes/includes/history.html",
-        {"episode": episode},
-    )
+    return render(request, "episodes/includes/history.html", {"episode": episode})
 
 
 @require_safe
@@ -200,16 +193,14 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
 
-    ordering = request.GET.get("o", "desc")
+    if request.search:
+        bookmarks = bookmarks.search(request.search).order_by("-rank", "-created")
+    else:
+        bookmarks = bookmarks.order_by(
+            "-created" if request.sorter.is_desc else "created"
+        )
 
-    return render_pagination_response(
-        request,
-        request.search.filter_queryset(bookmarks).order_by("-rank", "-created")
-        if request.search
-        else request.sorter.order_by(bookmarks, "created"),
-        "episodes/bookmarks.html",
-        {"ordering": ordering},
-    )
+    return render_pagination_response(request, bookmarks, "episodes/bookmarks.html")
 
 
 @require_POST
