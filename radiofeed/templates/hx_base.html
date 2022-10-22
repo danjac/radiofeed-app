@@ -1,0 +1,10 @@
+{% spaceless %}
+
+    <title>
+        {{ request.site.name }}{% block title %}{% endblock %}
+    </title>
+
+    {% include "includes/signup_cta.html" with hx_oob=True %}
+
+    {% block content %}{% endblock %}
+{% endspaceless %}
