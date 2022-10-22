@@ -49,11 +49,4 @@ def render_pagination_response(
     except InvalidPage:
         raise Http404()
 
-    return render(
-        request,
-        template_name,
-        {
-            "page_obj": page,
-            **(extra_context or {}),
-        },
-    )
+    return render(request, template_name, {"page_obj": page, **(extra_context or {})})
