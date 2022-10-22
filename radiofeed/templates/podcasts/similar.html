@@ -5,10 +5,10 @@
 
 {% block podcast_content %}
 
-    <section class="space-y-3">
+    <div class="space-y-3">
         {% for recommendation in recommendations %}
             {% include "podcasts/includes/podcast.html" with podcast=recommendation.recommended %}
         {% endfor %}
-    </section>
+    </div>
 
 {% endblock podcast_content %}

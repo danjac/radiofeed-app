@@ -1,6 +1,6 @@
 {% load i18n %}
 {% with podcast_url=podcast.get_absolute_url %}
-    <article class="flex items-center border dark:border-gray-500 space-x-3" role="listitem">
+    <div class="flex items-center border dark:border-gray-500 space-x-3" role="listitem">
 
         {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
             <div class="{{ css_class }}">
@@ -26,5 +26,5 @@
                 </a>
             </h3>
         </div>
-    </article>
+    </div>
 {% endwith %}
