@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.contrib.sites.models import Site
 from django.template import loader
 
 from radiofeed.podcasts import emails
@@ -12,11 +11,15 @@ from radiofeed.podcasts.factories import (
 
 
 class TestRecommendations:
-    def test_template(self, user):
+    def test_template(self, user, site):
         podcasts = PodcastFactory.create_batch(3)
         content = loader.render_to_string(
             "podcasts/emails/recommendations.html",
-            {"user": user, "podcasts": podcasts, "site": Site.objects.get_current()},
+            {
+                "user": user,
+                "podcasts": podcasts,
+                "site": site,
+            },
         )
         assert user.username in content
 

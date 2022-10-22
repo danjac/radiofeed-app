@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.http import HttpResponse
 from faker import Faker
@@ -38,6 +39,11 @@ def get_response():
 @pytest.fixture
 def user(db):
     return UserFactory()
+
+
+@pytest.fixture
+def site(db):
+    return Site.objects.get_current()
 
 
 @pytest.fixture
