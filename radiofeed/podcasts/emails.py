@@ -1,27 +1,27 @@
 from __future__ import annotations
 
-from django.utils.translation import gettext as _
+from django.conf import settings
+from django.contrib.sites.models import Site
+from django.core.mail import send_mail
 from django.utils.translation import override
+from render_block import render_block_to_string
 
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
-from radiofeed.users.emails import send_user_notification_email
 from radiofeed.users.models import User
 
 
 def send_recommendations_email(
-    user: User, min_podcasts: int = 2, max_podcasts: int = 3
+    user: User,
+    min_podcasts: int = 2,
+    max_podcasts: int = 3,
+    template_name="podcasts/emails/recommendations.html",
 ) -> bool:
     """Sends email to user with a list of recommended podcasts.
 
     Recommendaitons based on their subscriptions and listening history.
 
     Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
-
-    Args:
-        user: authenticated user
-        min_podcasts: minimum number of podcasts: if less than this amount then no email is sent
-        max_podcasts: maximum number of podcasts to include in email
 
     Returns:
         `True` user has been sent recommendations email
@@ -61,18 +61,18 @@ def send_recommendations_email(
 
     user.recommended_podcasts.add(*podcasts)
 
+    site = Site.objects.get_current()
+
+    context = {"recipient": user, "site": site, "podcasts": podcasts}
+
     with override(user.language):
 
-        send_user_notification_email(
-            user,
-            _("Hi {username}, here are some new podcasts you might like!").format(
-                username=user.username
-            ),
-            "podcasts/emails/recommendations.txt",
-            "podcasts/emails/recommendations.html",
-            {
-                "podcasts": podcasts,
-            },
+        send_mail(
+            render_block_to_string(template_name, "subject", context),
+            render_block_to_string(template_name, "text", context),
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            html_message=render_block_to_string(template_name, "html", context),
         )
 
     return True
