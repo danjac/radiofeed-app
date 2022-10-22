@@ -14,7 +14,6 @@ from ratelimit.decorators import ratelimit
 from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.http import HttpResponseConflict
 from radiofeed.common.pagination import render_pagination_response
-from radiofeed.common.response import render_block_to_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Subscription
@@ -272,10 +271,9 @@ def _get_podcast_or_404(podcast_id: int) -> Podcast:
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    return render_block_to_response(
+    return render(
         request,
-        "podcasts/detail.html",
-        "subscribe",
+        "podcasts/includes/subscribe.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,

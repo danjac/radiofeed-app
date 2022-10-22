@@ -3,8 +3,9 @@ from __future__ import annotations
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
+from django.template import loader
+from django.utils.translation import gettext as _
 from django.utils.translation import override
-from render_block import render_block_to_string
 
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
@@ -12,10 +13,7 @@ from radiofeed.users.models import User
 
 
 def send_recommendations_email(
-    user: User,
-    min_podcasts: int = 2,
-    max_podcasts: int = 3,
-    template_name="podcasts/emails/recommendations.html",
+    user: User, min_podcasts: int = 2, max_podcasts: int = 3
 ) -> bool:
     """Sends email to user with a list of recommended podcasts.
 
@@ -68,11 +66,13 @@ def send_recommendations_email(
     with override(user.language):
 
         send_mail(
-            render_block_to_string(template_name, "subject", context),
-            render_block_to_string(template_name, "text", context),
+            _("Hi {} here are some new podcasts you might like!".format(user.username)),
+            loader.render_to_string("podcasts/emails/recommendations.txt", context),
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
-            html_message=render_block_to_string(template_name, "html", context),
+            html_message=loader.render_to_string(
+                "podcasts/emails/recommendations.html", context
+            ),
         )
 
     return True

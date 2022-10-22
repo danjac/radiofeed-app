@@ -1,32 +1,5 @@
 {% load i18n %}
 
-{% block subject %}{% blocktranslate with username=user.username %}Hi {{ username }} here are some new podcasts you might like!{% endblocktranslate %}{% endblock %}
-
-{% block text %}
-
-    {% translate "Here are some podcasts you might find interesting:" %}
-
-    {% for podcast in podcasts %}
-
-        {{ podcast.cleaned_title }}
-
-        {{ podcast.cleaned_description|truncatewords:60 }}
-
-        {% absolute_uri podcast %}
-
-    {% endfor %}
-
-    {% absolute_uri 'users:preferences' as preferences_url %}
-
-    {% blocktranslate %}
-        If you do not want to receive any more notifications, just uncheck the "Send email notifications"
-        option on your Settings page:
-
-        {{ preferences_url }}
-    {% endblocktranslate %}
-
-{% endblock text %}
-
 {% block html %}
     <!DOCTYPE html>
     <html lang="en">

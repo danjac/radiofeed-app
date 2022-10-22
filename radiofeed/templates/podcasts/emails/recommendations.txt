@@ -1,0 +1,22 @@
+{% load i18n %}
+
+{% translate "Here are some podcasts you might find interesting:" %}
+
+{% for podcast in podcasts %}
+
+    {{ podcast.cleaned_title }}
+
+    {{ podcast.cleaned_description|truncatewords:60 }}
+
+    {% absolute_uri podcast %}
+
+{% endfor %}
+
+{% absolute_uri 'users:preferences' as preferences_url %}
+
+{% blocktranslate %}
+    If you do not want to receive any more notifications, just uncheck the "Send email notifications"
+    option on your Settings page:
+
+    {{ preferences_url }}
+{% endblocktranslate %}

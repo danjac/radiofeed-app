@@ -16,7 +16,6 @@ from ratelimit.decorators import ratelimit
 from radiofeed.common.decorators import ajax_login_required
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.common.pagination import render_pagination_response
-from radiofeed.common.response import render_block_to_response
 from radiofeed.episodes.models import Episode
 
 
@@ -253,10 +252,9 @@ def _render_audio_player(
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
-    return render_block_to_response(
+    return render(
         request,
-        "episodes/detail.html",
-        "bookmark",
+        "episodes/includes/bookmark.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,

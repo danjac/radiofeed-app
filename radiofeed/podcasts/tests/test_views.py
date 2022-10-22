@@ -31,15 +31,13 @@ class TestPodcasts:
         assert not response.context["has_subscriptions"]
 
     def test_htmx(self, client, db):
-
         PodcastFactory.create_batch(3, promoted=True)
-        response = client.get(
-            podcasts_url,
-            HTTP_HX_TARGET="layout",
-            HTTP_HX_REQUEST="true",
-        )
+        response = client.get(podcasts_url, HTTP_HX_REQUEST="true")
         assert_ok(response)
+
         assert len(response.context["page_obj"].object_list) == 3
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
 
     def test_empty(self, client, db):
         response = client.get(podcasts_url)
@@ -48,6 +46,10 @@ class TestPodcasts:
         assert len(response.context["page_obj"].object_list) == 0
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
+
+    def test_invalid_page(self, client, db):
+        response = client.get(podcasts_url, {"p": "xyz"})
+        assert_not_found(response)
 
     def test_user_is_subscribed_promoted(self, client, auth_user):
         """If user is not subscribed any podcasts, just show general feed"""

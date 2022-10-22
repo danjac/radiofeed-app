@@ -35,19 +35,17 @@
         {% endif %}
     {% endwith %}
 
-    {% block pagination %}
-        {% get_current_language as language_code %}
-        {% cache 600 category-podcasts request.get_full_path language_code %}
-            <section role="list" class="space-y-3" id="{{ pagination_target }}">
-                {% include "includes/pagination_links.html" %}
-                {% for podcast in page_obj.object_list %}
-                    {% include "podcasts/includes/podcast.html" %}
-                {% empty %}
-                    {% include "includes/empty.html" %}
-                {% endfor %}
-                {% include "includes/pagination_links.html" %}
-            </section>
-        {% endcache %}
-    {% endblock pagination %}
+    {% get_current_language as language_code %}
+    {% cache 600 category-podcasts request.get_full_path language_code %}
+        <section role="list" class="space-y-3">
+            {% include "includes/pagination_links.html" %}
+            {% for podcast in page_obj.object_list %}
+                {% include "podcasts/includes/podcast.html" %}
+            {% empty %}
+                {% include "includes/empty.html" %}
+            {% endfor %}
+            {% include "includes/pagination_links.html" %}
+        </section>
+    {% endcache %}
 
 {% endblock content %}

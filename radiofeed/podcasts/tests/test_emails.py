@@ -1,28 +1,10 @@
 from __future__ import annotations
 
-from django.template import loader
-
 from radiofeed.podcasts import emails
-from radiofeed.podcasts.factories import (
-    PodcastFactory,
-    RecommendationFactory,
-    SubscriptionFactory,
-)
+from radiofeed.podcasts.factories import RecommendationFactory, SubscriptionFactory
 
 
 class TestRecommendations:
-    def test_template(self, user, site):
-        podcasts = PodcastFactory.create_batch(3)
-        content = loader.render_to_string(
-            "podcasts/emails/recommendations.html",
-            {
-                "user": user,
-                "podcasts": podcasts,
-                "site": site,
-            },
-        )
-        assert user.username in content
-
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
 

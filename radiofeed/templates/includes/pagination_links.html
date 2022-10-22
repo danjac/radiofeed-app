@@ -6,9 +6,7 @@
     {% translate "Previous" as t_previous %}
     {% translate "No More Pages" as t_no_more_pages %}
 
-    <nav role="navigation"
-        aria-label="{{ t_pagination }}"
-        hx-target="#{{ pagination_target }}">
+    <nav role="navigation" aria-label="{{ t_pagination }}">
         <ul class="flex items-center justify-between">
             <li>
                 {% if page_obj.has_previous %}
