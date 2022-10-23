@@ -197,15 +197,10 @@ def category_list(request: HttpRequest) -> HttpResponse:
         .order_by("name")
     )
 
-    return render(
-        request,
-        "podcasts/categories.html",
-        {
-            "categories": categories.search(request.search)
-            if request.search
-            else categories
-        },
-    )
+    if request.search:
+        categories = categories.search(request.search)
+
+    return render(request, "podcasts/categories.html", {"categories": categories})
 
 
 @require_safe
