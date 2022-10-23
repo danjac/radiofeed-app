@@ -36,11 +36,14 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date", "-id")
     )
 
+    if promoted:
+        episodes = episodes.filter(podcast__promoted=True)
+    else:
+        episodes = episodes.filter(podcast__pk__in=subscribed)
+
     return render_pagination_response(
         request,
-        episodes.filter(podcast__promoted=True)
-        if promoted
-        else episodes.filter(podcast__pk__in=subscribed),
+        episodes,
         "episodes/index.html",
         {
             "promoted": promoted,
@@ -53,17 +56,19 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_safe
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
-    return (
-        render_pagination_response(
-            request,
+    if request.search:
+        episodes = (
             Episode.objects.select_related("podcast")
             .search(request.search)
-            .order_by("-rank", "-pub_date"),
+            .order_by("-rank", "-pub_date")
+        )
+        return render_pagination_response(
+            request,
+            episodes,
             "episodes/search.html",
         )
-        if request.search
-        else redirect("episodes:index")
-    )
+
+    return redirect("episodes:index")
 
 
 @require_safe

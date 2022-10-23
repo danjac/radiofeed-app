@@ -34,11 +34,14 @@ def index(request: HttpRequest) -> HttpResponse:
     promoted = "promoted" in request.GET or not subscribed
     podcasts = _get_podcasts().order_by("-pub_date")
 
+    if promoted:
+        podcasts = podcasts.filter(promoted=True)
+    else:
+        podcasts = podcasts.filter(pk__in=subscribed)
+
     return render_pagination_response(
         request,
-        podcasts.filter(promoted=True)
-        if promoted
-        else podcasts.filter(pk__in=subscribed),
+        podcasts,
         "podcasts/index.html",
         {
             "promoted": promoted,
@@ -51,22 +54,24 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_safe
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
-    return (
-        render_pagination_response(
+    if request.search:
+
+        podcasts = (
+            _get_podcasts()
+            .search(request.search)
+            .order_by(
+                "-rank",
+                "-pub_date",
+            )
+        )
+
+        return render_pagination_response(
             request,
-            (
-                _get_podcasts()
-                .search(request.search)
-                .order_by(
-                    "-rank",
-                    "-pub_date",
-                )
-            ),
+            podcasts,
             "podcasts/search.html",
         )
-        if request.search
-        else redirect(settings.HOME_URL)
-    )
+
+    return redirect(settings.HOME_URL)
 
 
 @ratelimit(key="ip", rate="20/m")
@@ -166,17 +171,17 @@ def similar(
     """List similar podcasts based on recommendations."""
     podcast = _get_podcast_or_404(podcast_id)
 
+    recommendations = podcast.recommendations.select_related("recommended").order_by(
+        "-similarity",
+        "-frequency",
+    )[:limit]
+
     return render(
         request,
         "podcasts/similar.html",
         {
             "podcast": podcast,
-            "recommendations": (
-                podcast.recommendations.select_related("recommended").order_by(
-                    "-similarity",
-                    "-frequency",
-                )
-            )[:limit],
+            "recommendations": recommendations,
         },
     )
 
@@ -214,16 +219,17 @@ def category_detail(
     category = get_object_or_404(Category, pk=category_id)
     podcasts = _get_podcasts().filter(categories=category).distinct()
 
+    if request.search:
+        podcasts = podcasts.search(request.search).order_by(
+            "-rank",
+            "-pub_date",
+        )
+    else:
+        podcasts = podcasts.order_by("-pub_date")
+
     return render_pagination_response(
         request,
-        (
-            podcasts.search(request.search).order_by(
-                "-rank",
-                "-pub_date",
-            )
-            if request.search
-            else podcasts.order_by("-pub_date")
-        ),
+        podcasts,
         "podcasts/category_detail.html",
         {"category": category},
     )
