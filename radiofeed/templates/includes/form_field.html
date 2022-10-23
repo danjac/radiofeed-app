@@ -3,7 +3,7 @@
 {% if field.is_hidden %}
     {{ field }}
 {% else %}
-    <div class="space-y-3" id="fieldset-{{ field.id_for_label }}">
+    <div class="space-y-3">
         {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" LABEL_CSS_CLASS=label_css_class|default:"flex items-center w-full font-semibold" widget_type=field|widget_type %}
             {% if widget_type == "checkboxinput" %}
                 {% with css_class=css_class|default:'mr-3 dark:bg-gray-900' %}
