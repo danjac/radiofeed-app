@@ -48,7 +48,7 @@ class TestPodcasts:
         assert not response.context["has_subscriptions"]
 
     def test_invalid_page(self, client, db):
-        response = client.get(podcasts_url, {"p": "xyz"})
+        response = client.get(podcasts_url, {"page": "xyz"})
         assert_not_found(response)
 
     def test_user_is_subscribed_promoted(self, client, auth_user):
@@ -104,25 +104,25 @@ class TestSearchPodcasts:
     url = reverse_lazy("podcasts:search_podcasts")
 
     def test_search_empty(self, client, db):
-        assert client.get(self.url, {"q": ""}).url == podcasts_url
+        assert client.get(self.url, {"query": ""}).url == podcasts_url
 
     def test_search(self, client, db, faker):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(self.url, {"q": podcast.title})
+        response = client.get(self.url, {"query": podcast.title})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
 
     def test_search_no_results(self, client, db, faker):
-        response = client.get(self.url, {"q": "zzzz"})
+        response = client.get(self.url, {"query": "zzzz"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
 
 
 class TestSearchITunes:
     def test_empty(self, client, db):
-        response = client.get(reverse("podcasts:search_itunes"), {"q": ""})
+        response = client.get(reverse("podcasts:search_itunes"), {"query": ""})
         assert response.url == reverse("podcasts:index")
 
     def test_search(self, client, podcast, mocker):
@@ -145,7 +145,7 @@ class TestSearchITunes:
             "radiofeed.podcasts.itunes.search_cached", return_value=feeds
         )
 
-        response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
         assert_ok(response)
 
         assert response.context["feeds"] == feeds
@@ -157,7 +157,7 @@ class TestSearchITunes:
             side_effect=itunes.ItunesException,
         )
 
-        response = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
         assert_ok(response)
 
         assert response.context["feeds"] == []
@@ -250,7 +250,7 @@ class TestPodcastEpisodes:
 
         response = client.get(
             self.url(podcast),
-            {"o": "asc"},
+            {"order": "asc"},
         )
         assert_ok(response)
 
@@ -263,7 +263,7 @@ class TestPodcastEpisodes:
 
         response = client.get(
             self.url(podcast),
-            {"q": episode.title},
+            {"query": episode.title},
         )
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
@@ -294,7 +294,7 @@ class TestCategoryList:
         category = CategoryFactory(name="testing")
         category.podcasts.add(PodcastFactory())
 
-        response = client.get(self.url, {"q": "testing"})
+        response = client.get(self.url, {"query": "testing"})
         assert_ok(response)
         assert len(response.context["categories"]) == 1
 
@@ -304,7 +304,7 @@ class TestCategoryList:
 
         CategoryFactory(name="testing")
 
-        response = client.get(self.url, {"q": "testing"})
+        response = client.get(self.url, {"query": "testing"})
         assert_ok(response)
         assert len(response.context["categories"]) == 0
 
@@ -323,7 +323,7 @@ class TestCategoryDetail:
         )
         podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
-        response = client.get(category.get_absolute_url(), {"q": podcast.title})
+        response = client.get(category.get_absolute_url(), {"query": podcast.title})
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 1

@@ -6,7 +6,7 @@ from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 
-_DEFAULT_PAGINATION_PARAM: Final = "p"
+_DEFAULT_PAGINATION_PARAM: Final = "page"
 
 
 def pagination_url(

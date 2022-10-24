@@ -256,11 +256,11 @@ class TestNormalizeUrl:
 class TestPaginationUrl:
     def test_append_page_number_to_querystring(self, rf):
 
-        req = rf.get("/search/", {"q": "test"})
+        req = rf.get("/search/", {"query": "test"})
         url = pagination_url(RequestContext(req), 5)
         assert url.startswith("/search/?")
-        assert "q=test" in url
-        assert "p=5" in url
+        assert "query=test" in url
+        assert "page=5" in url
 
 
 class TestNavbar:

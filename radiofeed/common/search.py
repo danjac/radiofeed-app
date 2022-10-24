@@ -20,7 +20,7 @@ class Search:
     """Encapsulates generic search query in a request."""
 
     request: HttpRequest
-    param: str = "q"
+    param: str = "query"
 
     def __str__(self) -> str:
         """Returns search query value."""

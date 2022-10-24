@@ -17,7 +17,7 @@ class Sorter:
     asc: str = "asc"
     desc: str = "desc"
 
-    param: str = "o"
+    param: str = "order"
     default: str = "desc"
 
     def __str__(self) -> str:

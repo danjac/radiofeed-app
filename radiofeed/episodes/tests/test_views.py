@@ -107,22 +107,22 @@ class TestSearchEpisodes:
     url = reverse_lazy("episodes:search_episodes")
 
     def test_no_results(self, db, client):
-        response = client.get(self.url, {"q": "test"})
+        response = client.get(self.url, {"query": "test"})
         assert_ok(response)
 
     def test_search_empty(self, db, client):
-        assert client.get(self.url, {"q": ""}).url == episodes_url
+        assert client.get(self.url, {"query": ""}).url == episodes_url
 
     def test_search(self, db, client, faker):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
-        response = client.get(self.url, {"q": episode.title})
+        response = client.get(self.url, {"query": episode.title})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
 
     def test_search_no_results(self, db, client, faker):
-        response = client.get(self.url, {"q": "zzzz"})
+        response = client.get(self.url, {"query": "zzzz"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
 
@@ -368,7 +368,7 @@ class TestBookmarks:
     def test_ascending(self, client, auth_user):
         BookmarkFactory.create_batch(33, user=auth_user)
 
-        response = client.get(self.url, {"o": "asc"})
+        response = client.get(self.url, {"order": "asc"})
 
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
@@ -392,7 +392,7 @@ class TestBookmarks:
 
         BookmarkFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
 
-        response = client.get(self.url, {"q": "testing"})
+        response = client.get(self.url, {"query": "testing"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
 
@@ -449,7 +449,7 @@ class TestHistory:
     def test_ascending(self, client, auth_user):
         AudioLogFactory.create_batch(33, user=auth_user)
 
-        response = client.get(self.url, {"o": "asc"})
+        response = client.get(self.url, {"order": "asc"})
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 30
@@ -465,7 +465,7 @@ class TestHistory:
             )
 
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
-        response = client.get(self.url, {"q": "testing"})
+        response = client.get(self.url, {"query": "testing"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
 
