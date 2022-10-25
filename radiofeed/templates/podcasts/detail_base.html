@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load cache i18n %}
 
 {% block title %} | {{ podcast.cleaned_title }}{% endblock %}
 
@@ -67,58 +67,61 @@
         {{ podcast.cleaned_title }}
     </h1>
     <div id="podcast-content">
-        {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
-            {% if num_episodes or has_similar %}
 
-                {% translate "About" as t_about %}
-                {% translate "Episodes" as t_episodes %}
-                {% translate "Similar" as t_similar %}
+        {% cache 600 podcast-detail-header request.get_full_path language_code %}
+            {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
+                {% if num_episodes or has_similar %}
 
-                <nav class="flex items-center mb-3 justify-center sm:justify-start">
+                    {% translate "About" as t_about %}
+                    {% translate "Episodes" as t_episodes %}
+                    {% translate "Similar" as t_similar %}
 
-                    <ul class="flex items-center space-x-6" role="tablist">
+                    <nav class="flex items-center mb-3 justify-center sm:justify-start">
 
-                        {% active_link podcast.get_detail_url as link %}
-                        <li>
-                            <a class="{{ link.css }}"
-                                href="{{ link.url }}"
-                                role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
-                                tabindex="{{ link.active|yesno:"0,-1" }}"
-                                title="{{ podcast.cleaned_title }} | {{ t_about }}">
-                                {{ t_about }}
-                            </a>
-                        </li>
+                        <ul class="flex items-center space-x-6" role="tablist">
 
-                        {% if num_episodes %}
-                            {% active_link podcast.get_episodes_url as link %}
+                            {% active_link podcast.get_detail_url as link %}
                             <li>
                                 <a class="{{ link.css }}"
                                     href="{{ link.url }}"
                                     role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
                                     tabindex="{{ link.active|yesno:"0,-1" }}"
-                                    title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
-                                    {{ t_episodes }} ({{ num_episodes }})
+                                    title="{{ podcast.cleaned_title }} | {{ t_about }}">
+                                    {{ t_about }}
                                 </a>
                             </li>
-                        {% endif %}
 
-                        {% if has_similar %}
-                            {% active_link podcast.get_similar_url as link %}
-                            <li>
-                                <a class="{{ link.css }}"
-                                    href="{{ link.url }}"
-                                    role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
-                                    tabindex="{{ link.active|yesno:"0,-1" }}"
-                                    title="{{ podcast.cleaned_title }} | {{ t_similar }}">
-                                    {{ t_similar }}
-                                </a>
-                            </li>
-                        {% endif %}
+                            {% if num_episodes %}
+                                {% active_link podcast.get_episodes_url as link %}
+                                <li>
+                                    <a class="{{ link.css }}"
+                                        href="{{ link.url }}"
+                                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                                        tabindex="{{ link.active|yesno:"0,-1" }}"
+                                        title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
+                                        {{ t_episodes }} ({{ num_episodes }})
+                                    </a>
+                                </li>
+                            {% endif %}
 
-                    </ul>
-                </nav>
-            {% endif %}
-        {% endwith %}
+                            {% if has_similar %}
+                                {% active_link podcast.get_similar_url as link %}
+                                <li>
+                                    <a class="{{ link.css }}"
+                                        href="{{ link.url }}"
+                                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                                        tabindex="{{ link.active|yesno:"0,-1" }}"
+                                        title="{{ podcast.cleaned_title }} | {{ t_similar }}">
+                                        {{ t_similar }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% endwith %}
+        {% endcache %}
         {% block podcast_content %}{% endblock %}
     </div>
 {% endblock %}
