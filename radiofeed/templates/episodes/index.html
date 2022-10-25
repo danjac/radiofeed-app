@@ -11,19 +11,12 @@
     {% translate "Subscriptions" as t_subscriptions %}
     {% translate "Find an episode..." as t_find_episode %}
 
-    <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
-        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-            {% translate "New Releases" %}
-            {% if has_subscriptions %}: {% if promoted %}{{ t_promotions }}{% else %}{{ t_subscriptions }}{% endif %}{% endif %}
-        </h1>
-        {% if not has_subscriptions %}
-            <div class="flex items-center justify-center sm:justify-end space-x-3">
-                {% include "includes/search_form.html" with placeholder=t_find_episode %}
-            </div>
-        {% endif %}
-    </div>
-
     {% if has_subscriptions %}
+
+        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">
+            {% translate "New Releases" %}: {% if promoted %}{{ t_promotions }}{% else %}{{ t_subscriptions }}{% endif %}
+        </h1>
+
         <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3">
             <div class="flex items-center justify-center sm:justify-start">
                 {% if promoted %}
@@ -39,6 +32,18 @@
                 {% include "includes/search_form.html" with placeholder=t_find_episode %}
             </div>
         </div>
+
+    {% else %}
+
+        <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
+            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+                {% translate "New Releases" %}
+            </h1>
+            <div class="flex items-center justify-center sm:justify-end space-x-3">
+                {% include "includes/search_form.html" with placeholder=t_find_episode %}
+            </div>
+        </div>
+
     {% endif %}
 
     <div role="list" class="space-y-3">
