@@ -5,7 +5,7 @@
         "watch:js": "esbuild ./radiofeed/static/js/app.js --bundle --watch --minify --sourcemap --outfile=./radiofeed/static/js/bundle.js"
     },
     "dependencies": {
-        "alpinejs": "^3.10.4",
+        "alpinejs": "^3.10.5",
         "htmx.org": "^1.8.2"
     },
     "devDependencies": {
