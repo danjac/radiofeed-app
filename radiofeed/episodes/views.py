@@ -57,14 +57,13 @@ def index(request: HttpRequest) -> HttpResponse:
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
-        episodes = (
-            Episode.objects.select_related("podcast")
-            .search(request.search)
-            .order_by("-rank", "-pub_date")
-        )
         return render_pagination_response(
             request,
-            episodes,
+            (
+                Episode.objects.select_related("podcast")
+                .search(request.search)
+                .order_by("-rank", "-pub_date")
+            ),
             "episodes/search.html",
         )
 

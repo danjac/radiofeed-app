@@ -56,18 +56,16 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
 
-        podcasts = (
-            _get_podcasts()
-            .search(request.search)
-            .order_by(
-                "-rank",
-                "-pub_date",
-            )
-        )
-
         return render_pagination_response(
             request,
-            podcasts,
+            (
+                _get_podcasts()
+                .search(request.search)
+                .order_by(
+                    "-rank",
+                    "-pub_date",
+                )
+            ),
             "podcasts/search.html",
         )
 
