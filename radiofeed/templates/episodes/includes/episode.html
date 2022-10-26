@@ -3,7 +3,7 @@
 
     <div class="flex items-center space-x-3 py-2" role="listitem">
 
-        {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
+        {% with css_class="h-16 w-16" %}
             <div class="{{ css_class }}">
                 {% if is_podcast_detail %}
                     {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode_url %}

@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="flex items-center space-x-3 py-2" role="listitem">
 
-    {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
+    {% with css_class="h-16 w-16" %}
         <div class="{{ css_class }}">
             {% include "includes/cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
         </div>

@@ -2,7 +2,7 @@
 {% with podcast_url=podcast.get_absolute_url %}
     <div class="flex items-center space-x-3 py-2" role="listitem">
 
-        {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
+        {% with css_class="h-16 w-16" %}
             <div class="{{ css_class }}">
                 {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast_url %}
             </div>
