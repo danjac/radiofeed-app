@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="flex items-center border dark:border-gray-500 space-x-3" role="listitem">
+<div class="flex items-center space-x-3 py-3" role="listitem">
 
     {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
         <div class="{{ css_class }}">
@@ -7,8 +7,8 @@
         </div>
     {% endwith %}
 
-    <div class="flex flex-col place-content-between h-14 md:h-16">
-        <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2">
+    <div class="flex flex-col place-content-between h-14 md:h-16 lg:h-20">
+        <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2 md:text-lg">
             <a title="{{ feed.title }}"
                 class="link font-bold"
                 rel="noopener"
@@ -19,7 +19,7 @@
 
         </h2>
 
-        <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
+        <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm lg:text-base">
             <span class="animate-pulse">
                 {% translate "Adding podcast to database..." %}
             </span>

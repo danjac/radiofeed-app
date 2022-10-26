@@ -5,7 +5,7 @@
 
 {% block podcast_content %}
 
-    <div class="space-y-3">
+    <div role="list" class="grid grid-cols-1 dark:divide-gray-500 divide-y divide-solid">
         {% for recommendation in recommendations %}
             {% include "podcasts/includes/podcast.html" with podcast=recommendation.recommended %}
         {% endfor %}

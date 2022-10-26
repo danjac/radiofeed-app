@@ -6,7 +6,7 @@
 {% block search_content %}
     {% get_current_language as language_code %}
     {% cache 600 podcasts-search request.get_full_path language_code %}
-        <div role="list" class="space-y-3">
+        <div role="list" class="grid grid-cols-1 dark:divide-gray-500 divide-y divide-solid">
             {% include "includes/pagination_links.html" %}
             {% for podcast in page_obj.object_list %}
                 {% include "podcasts/includes/podcast.html" %}

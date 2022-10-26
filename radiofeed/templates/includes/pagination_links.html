@@ -7,7 +7,7 @@
     {% translate "No More Pages" as t_no_more_pages %}
 
     <nav role="navigation" aria-label="{{ t_pagination }}">
-        <ul class="flex items-center justify-between">
+        <ul class="flex items-center justify-between py-3">
             <li>
                 {% if page_obj.has_previous %}
                     {% with page_number=page_obj.previous_page_number %}
