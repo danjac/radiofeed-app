@@ -136,8 +136,19 @@
 
                 <div class="flex flex-col place-content-between h-24 md:h-32">
 
-                    {% include "episodes/includes/audio_controls.html" %}
-
+                    {% if user.is_authenticated %}
+                        {% include "episodes/includes/audio_controls.html" %}
+                    {% else %}
+                        <div>
+                            <a class="inline-flex items-center btn btn-primary"
+                                href="{{ episode.get_absolute_url|login_url }}"
+                                title="{% translate "You must sign up or log in to play this episode" %}"
+                                hx-disable="true">
+                                {% icon "play-circle" "regular" css_class="mr-2" %}
+                                {% translate "Play" %}
+                            </a>
+                        </div>
+                    {% endif %}
                     <div class="flex items-center space-x-3">
 
                         {% if user.is_authenticated %}

@@ -35,7 +35,7 @@
                         {% include "podcasts/includes/subscribe.html" %}
                     {% else %}
                         <div class="flex items-center">
-                            <a class="btn btn-primary inline-flex items-center lg:text-lg"
+                            <a class="btn btn-primary inline-flex items-center"
                                 href="{{ podcast.get_absolute_url|login_url }}"
                                 hx-disable="true"
                                 title="{% translate "Log in or sign up to subscribe to this podcast" %}">

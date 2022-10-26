@@ -119,10 +119,10 @@
 
                                 </div>
 
-                                <div class="hidden sm:block">
+                                <div class="hidden sm:block space-y-2">
 
                                     <div>
-                                        <a class="block text-center truncate sm:w-80 md:w-96 md:w-auto md:max-w-xl xl:max-w-4xl lg:text-lg"
+                                        <a class="block text-center truncate sm:w-80 md:w-96 md:w-auto md:max-w-xl xl:max-w-3xl"
                                             :class="isPlaying ? 'hover:text-blue-500': 'animate-pulse text-gray-300'"
                                             href="{{ episode_url }}"
                                             hx-swap="innerHTML show:window:top"
@@ -174,7 +174,7 @@
 
                                     </div>
 
-                                    <div class="flex items-center space-x-2 md:space-x-3">
+                                    <div class="flex items-center space-x-3">
 
                                         <div class="flex items-center space-x-3">
 
@@ -194,14 +194,14 @@
 
                                         </div>
 
-                                        <div class="flex items-center mr-2 space-x-2 md:mr-3">
+                                        <div class="flex items-center space-x-3">
 
                                             <button class="{{ BUTTON_CSS }} inline-block"
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="decrementRate"
                                                 title="{% translate "Decrease Playback Rate" %}">-</button>
 
-                                            <div class="mr-1 tracking-tight md:mr-2 player--interactive"
+                                            <div class="tracking-tight player--interactive"
                                                 title="Playback Rate">
                                                 x<span x-text="rate.toFixed(1)"></span>
                                             </div>

@@ -25,7 +25,7 @@
                 {% endwith %}
 
                 {% if not is_playing %}
-                    <button class="inline-flex items-center btn btn-danger text-xs md:text-sm lg:text-base"
+                    <button class="inline-flex items-center btn btn-danger text-xs md:text-sm"
                         title="{% translate "Remove episode from your History" %}"
                         hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
                         {% icon "trash" css_class="mr-2" %}
