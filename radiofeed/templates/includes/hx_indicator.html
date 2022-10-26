@@ -3,10 +3,11 @@
     x-data="{width: 0}"
     x-init="{# fmt:off #}
     setInterval(() => {
-        if ($el.classList.contains('htmx-request') && width < 12) {
+        if ($el.classList.contains('htmx-request')) {
             width = width + (Math.random() / 100) + 1;
+            width = width > 150 ? -30 : width;
         } else {
             width = 0;
         }
-        $el.style.width = width > 0 ? `${10 + (width * 90)}%` : '0px';
+        $el.style.width = width > 0 ? `${width}%` : '0px';
     }, 36);"{# fmt:on #}></div>
