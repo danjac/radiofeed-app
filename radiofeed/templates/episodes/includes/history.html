@@ -3,7 +3,7 @@
     <div id="{{ target }}"
         hx-target="this"
         hx-swap="outerHTML"
-        hx-indicator="none"
+        hx-disinherit="hx-indicator"
         hx-push-url="false"
         hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}"
         {% if hx_oob %}hx-swap-oob="true"{% endif %}>

@@ -7,7 +7,7 @@
         hx-push-url="false"
         hx-target="this"
         hx-swap="outerHTML"
-        hx-indicator="none">
+        hx-disinherit="hx-indicator">
         {% if is_bookmarked %}
             <button title="{{ t_remove_bookmark }}"
                 class="inline-flex items-center btn btn-default btn-outline"

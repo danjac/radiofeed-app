@@ -4,7 +4,7 @@
         hx-target="this"
         hx-push-url="false"
         hx-swap="outerHTML"
-        hx-indicator="none">
+        hx-disinherit="hx-indicator">
         {% if is_subscribed %}
             <button class="inline-flex items-center btn btn-primary btn-outline"
                 title="{% translate "Unsubscribe from this Podcast" %}"
