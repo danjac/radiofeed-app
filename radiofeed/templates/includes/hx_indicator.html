@@ -6,11 +6,11 @@
 
         if ($el.classList.contains('htmx-request')) {
             width = width + (Math.random() / 100) + 1;
-            width = width > 150 ? -30 : width;
+            width = width > 100 ? 0 : width;
         } else {
             width = 0;
         }
 
         $el.style.width = width > 0 ? `${width}%` : '0px';
 
-    }, 12);"{# fmt:on #}></div>
+    }, 36);"{# fmt:on #}></div>
