@@ -8,14 +8,14 @@
         hx-disinherit="hx-indicator"
         id="{{ episode.get_player_target }}">
         {% if is_playing %}
-            <button class="inline-flex items-center btn btn-primary btn-outline"
+            <button class="inline-flex items-center btn btn-primary btn-outline lg:text-lg"
                 hx-post="{% url 'episodes:close_player' %}"
                 title="{% translate "Close Player" %}">
                 {% icon "stop-circle" "regular" css_class="mr-2" %}
                 {% translate "Close" %}
             </button>
         {% else %}
-            <button class="inline-flex items-center btn btn-primary"
+            <button class="inline-flex items-center btn btn-primary lg:text-lg"
                 hx-post="{% url 'episodes:start_player' episode.id %}"
                 title="{% translate "Open Episode in Player" %}">
                 {% icon "play-circle" "regular" css_class="mr-2" %}
@@ -25,7 +25,7 @@
     </div>
 {% else %}
     <div>
-        <a class="inline-flex items-center btn btn-primary"
+        <a class="inline-flex items-center btn btn-primary lg:text-lg"
             href="{{ episode.get_absolute_url|login_url }}"
             title="{% translate "You must sign up or log in to play this episode" %}"
             hx-disable="true">
