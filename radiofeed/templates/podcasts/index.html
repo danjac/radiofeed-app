@@ -33,7 +33,7 @@
         </div>
     {% endif %}
 
-    <div role="list" class="grid grid-cols-1 dark:divide-gray-500 divide-y divide-solid">
+    <div role="list" class="dark:divide-gray-500 divide-y divide-solid">
         {% include "includes/pagination_links.html" %}
         {% for podcast in page_obj.object_list %}
             {% include "podcasts/includes/podcast.html" %}
