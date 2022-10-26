@@ -6,20 +6,10 @@
 {% block content %}
 
     {% with search_placeholder=_("Search: ")|add:category.name %}
-
-        <div class="sm:flex items-center justify-between mb-3 space-y-3 sm:space-y-0">
-            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+        {% if request.search %}
+            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">
                 {% blocktranslate with category_name=category.name %}{{ category_name }} Podcasts{% endblocktranslate %}
             </h1>
-            {% if not request.search %}
-                <div class="flex items-center justify-center sm:justify-end">
-                    {% include "includes/search_form.html" with placeholder=search_placeholder %}
-                </div>
-            {% endif %}
-        </div>
-
-
-        {% if request.search %}
             <div class="mb-3 sm:flex items-center justify-center sm:justify-between">
 
                 <div class="mb-3 sm:mb-0 flex items-center justify-center sm:justify-start">
@@ -32,7 +22,18 @@
                     {% include "includes/search_form.html" with placeholder=search_placeholder %}
                 </div>
             </div>
+
+        {% else %}
+            <div class="sm:flex items-center justify-between mb-3 space-y-3 sm:space-y-0">
+                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+                    {% blocktranslate with category_name=category.name %}{{ category_name }} Podcasts{% endblocktranslate %}
+                </h1>
+                <div class="flex items-center justify-center sm:justify-end">
+                    {% include "includes/search_form.html" with placeholder=search_placeholder %}
+                </div>
+            </div>
         {% endif %}
+
     {% endwith %}
 
     {% get_current_language as language_code %}

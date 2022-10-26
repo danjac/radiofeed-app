@@ -7,7 +7,7 @@
     {% with link=podcast.link|normalize_url funding_url=podcast.funding_url|normalize_url %}
         <article class="space-y-3 border-t dark:border-gray-500 pt-3">
             {% if podcast.owner %}
-                <h2 class="font-semibold flex-wrap md:text-lg">
+                <h2 class="font-semibold flex-wrap text-lg md:text-xl">
                     {% if link %}
                         <a href="{{ link }}"
                             target="_blank"
