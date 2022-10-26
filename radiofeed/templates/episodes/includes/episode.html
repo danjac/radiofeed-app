@@ -1,7 +1,7 @@
 {% load i18n %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 
-    <div class="flex items-center space-x-3 py-3" role="listitem">
+    <div class="flex items-center space-x-3 py-2" role="listitem">
 
         {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
             <div class="{{ css_class }}">
@@ -13,8 +13,8 @@
             </div>
         {% endwith %}
 
-        <div class="flex flex-col place-content-between h-14 md:h-16 lg:h-20">
-            <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2 md:text-lg">
+        <div class="flex flex-col place-content-between h-14 md:h-16">
+            <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2">
                 <a href="{{ episode_url }}"
                     class="link"
                     title="{{ episode.cleaned_title }}">
@@ -22,7 +22,7 @@
                 </a>
             </h2>
 
-            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm lg:text-base">
+            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
                 {% if is_podcast_detail %}
                     {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
                 {% else %}

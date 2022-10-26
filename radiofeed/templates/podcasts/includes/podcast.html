@@ -1,6 +1,6 @@
 {% load i18n %}
 {% with podcast_url=podcast.get_absolute_url %}
-    <div class="flex items-center space-x-3 py-3" role="listitem">
+    <div class="flex items-center space-x-3 py-2" role="listitem">
 
         {% with css_class="h-16 w-16 md:h-20 md:w-20" %}
             <div class="{{ css_class }}">
@@ -8,8 +8,8 @@
             </div>
         {% endwith %}
 
-        <div class="flex flex-col place-content-between h-14 md:h-16 lg:h-20">
-            <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2 md:text-lg">
+        <div class="flex flex-col place-content-between h-14 md:h-16">
+            <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2">
                 <a href="{{ podcast_url }}"
                     class="link"
                     title="{{ podcast.cleaned_title }}">
@@ -17,7 +17,7 @@
                 </a>
             </h2>
 
-            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm lg:text-base">
+            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
                 {% translate "Latest Episode" as t_latest_episode %}
                 <a href="{{ podcast.get_latest_episode_url }}"
                     title="{{ t_latest_episode }}"
