@@ -4,12 +4,11 @@
 {% block title %} | {% translate "Categories" %} | {{ category.name }} {% translate "Podcasts" %}{% endblock %}
 
 {% block content %}
-
-    {% blocktranslate with category_name=category.name asvar t_category_name %}{{ category_name }} Podcasts{% endblocktranslate %}
     {% with search_placeholder=_("Search: ")|add:category.name %}
+        {% translate "Podcasts" as t_podcasts %}
         {% if request.search %}
             <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">
-                {{ t_category_name }}
+                {{ category.name }} {{ t_podcasts }}
             </h1>
             <div class="mb-3 sm:flex items-center justify-center sm:justify-between">
 
@@ -26,7 +25,7 @@
         {% else %}
             <div class="sm:flex items-center justify-between mb-3 space-y-3 sm:space-y-0">
                 <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-                    {{ t_category_name }}
+                    {{ category.name }} {{ t_podcasts }}
                 </h1>
                 <div class="flex items-center justify-center sm:justify-end">
                     {% include "includes/search_form.html" with placeholder=search_placeholder %}
