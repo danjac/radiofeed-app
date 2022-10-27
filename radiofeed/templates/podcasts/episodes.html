@@ -5,7 +5,7 @@
 
 {% block podcast_content %}
     {% if request.search or page_obj.has_other_pages %}
-        <div class="sm:flex items-center mb-3 justify-between">
+        <div class="sm:flex items-center justify-between mb-3 pb-3 border-b dark:border-gray-500">
 
             <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
                 {% if request.search %}

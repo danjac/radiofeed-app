@@ -4,35 +4,37 @@
 {% block title %} | {% translate "Categories" %} | {{ category.name }} {% translate "Podcasts" %}{% endblock %}
 
 {% block content %}
-    {% with search_placeholder=_("Search: ")|add:category.name %}
-        {% translate "Podcasts" as t_podcasts %}
-        {% if request.search %}
-            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">
-                {{ category.name }} {{ t_podcasts }}
-            </h1>
-            <div class="mb-3 sm:flex items-center justify-center sm:justify-between">
-
-                <div class="mb-3 sm:mb-0 flex items-center justify-center sm:justify-start">
-                    <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
-                        title="Search Podcasts"
-                        class="link">{% translate "Search All Categories" %}</a>
-                </div>
-
-                <div class="flex items-center justify-center sm:justify-end">
-                    {% include "includes/search_form.html" with placeholder=search_placeholder %}
-                </div>
-            </div>
-        {% else %}
-            <div class="sm:flex items-center justify-between mb-3 space-y-3 sm:space-y-0">
-                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+    <header class="mb-3 pb-3 border-b dark:border-gray-500">
+        {% with search_placeholder=_("Search: ")|add:category.name %}
+            {% translate "Podcasts" as t_podcasts %}
+            {% if request.search %}
+                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">
                     {{ category.name }} {{ t_podcasts }}
                 </h1>
-                <div class="flex items-center justify-center sm:justify-end">
-                    {% include "includes/search_form.html" with placeholder=search_placeholder %}
+                <div class="mb-3 sm:flex items-center justify-center sm:justify-between">
+
+                    <div class="mb-3 sm:mb-0 flex items-center justify-center sm:justify-start">
+                        <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
+                            title="Search Podcasts"
+                            class="link">{% translate "Search All Categories" %}</a>
+                    </div>
+
+                    <div class="flex items-center justify-center sm:justify-end">
+                        {% include "includes/search_form.html" with placeholder=search_placeholder %}
+                    </div>
                 </div>
-            </div>
-        {% endif %}
-    {% endwith %}
+            {% else %}
+                <div class="sm:flex items-center justify-between space-y-3 sm:space-y-0">
+                    <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+                        {{ category.name }} {{ t_podcasts }}
+                    </h1>
+                    <div class="flex items-center justify-center sm:justify-end">
+                        {% include "includes/search_form.html" with placeholder=search_placeholder %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+    </header>
 
     {% get_current_language as language_code %}
     {% cache 600 category-podcasts request.get_full_path language_code %}

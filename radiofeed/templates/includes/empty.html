@@ -1,5 +1,5 @@
 {% load i18n %}
-<p class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
+<p class="text-center sm:text-left">
     {% if request.search %}
         {% blocktranslate with search=request.search.value %}
             No results found for <span class="font-bold">{{ search }}</span>.

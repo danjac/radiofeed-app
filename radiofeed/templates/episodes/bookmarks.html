@@ -4,27 +4,29 @@
 {% block title %} | {% translate "Bookmarks" %}{% endblock %}
 
 {% block content %}
-    <h1 class="mb-3 flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl font-bold">
-        {% translate "Bookmarks" %}
-    </h1>
-    {% if request.search or page_obj.has_other_pages %}
-        <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
-            <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
-                {% if request.search %}
-                    <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                        class="link">{% translate "Search All Podcasts" %}</a>
-                {% else %}
-                    <a href="{{ request.path }}?{{ request.sorter.qs }}" class="link">
-                        {% if request.sorter.is_asc %}{% translate "Newest First" %}{% else %}{% translate "Oldest First" %}{% endif %}
-                    </a>
-                {% endif %}
-            </nav>
+    <header class="mb-3 pb-3 border-b dark:border-gray-500 space-y-3">
+        <h1 class="flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl font-bold">
+            {% translate "Bookmarks" %}
+        </h1>
+        {% if request.search or page_obj.has_other_pages %}
+            <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
+                <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
+                    {% if request.search %}
+                        <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
+                            class="link">{% translate "Search All Podcasts" %}</a>
+                    {% else %}
+                        <a href="{{ request.path }}?{{ request.sorter.qs }}" class="link">
+                            {% if request.sorter.is_asc %}{% translate "Newest First" %}{% else %}{% translate "Oldest First" %}{% endif %}
+                        </a>
+                    {% endif %}
+                </nav>
 
-            <div class="flex items-center justify-center sm:justify-end">
-                {% include "includes/search_form.html" with placeholder=_("Search: Bookmarks") %}
+                <div class="flex items-center justify-center sm:justify-end">
+                    {% include "includes/search_form.html" with placeholder=_("Search: Bookmarks") %}
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
+    </header>
     <div role="list" class="dark:divide-gray-500 divide-y divide-solid">
         {% include "includes/pagination_links.html" %}
         {% for bookmark in page_obj.object_list %}

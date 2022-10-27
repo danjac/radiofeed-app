@@ -2,43 +2,46 @@
 {% load i18n %}
 
 {% block content %}
-    <h1 class="flex items-center justify-center sm:justify-start mb-3 text-lg md:text-xl xl:text-2xl font-bold">
-        {% blocktranslate with site_name=request.site.name %}Search {{ site_name }}{% endblocktranslate %}
-    </h1>
 
-    <nav class="sm:flex justify-between mb-3">
-        <ul class="flex items-center mb-3 sm:mb-0 space-x-6 justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none" role="tablist">
-            {% with search_qs="?"|add:request.search.qs %}
-                {% active_link 'podcasts:search_podcasts' as link %}
-                <li>
-                    <a class="{{ link.css }}"
-                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
-                        tabindex="{{ link.active|yesno:"0,-1" }}"
-                        title="{% translate "Search Podcasts" %}"
-                        href="{{ link.url|add:search_qs }}">{% translate "Podcasts" %}</a>
-                </li>
-                {% active_link 'episodes:search_episodes' as link %}
-                <li>
-                    <a class="{{ link.css }}"
-                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
-                        tabindex="{{ link.active|yesno:"0,-1" }}"
-                        title="{% translate "Search Episodes" %}"
-                        href="{{ link.url|add:search_qs }}">{% translate "Episodes" %}</a>
-                </li>
-                {% active_link 'podcasts:search_itunes' as link %}
-                <li>
-                    <a class="{{ link.css }}"
-                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
-                        tabindex="{{ link.active|yesno:"0,-1" }}"
-                        title="{% translate "Search iTunes" %}"
-                        href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>
-                </li>
-            {% endwith %}
-        </ul>
-        <div class="flex items-center justify-center sm:justify-end">
-            {% include "includes/search_form.html" with placeholder=_("Search...") %}
-        </div>
-    </nav>
+    <header class="mb-3 pb-3 border-b dark:border-gray-500 space-y-3">
+        <h1 class="flex items-center justify-center sm:justify-start mb-3 text-lg md:text-xl xl:text-2xl font-bold">
+            {% blocktranslate with site_name=request.site.name %}Search {{ site_name }}{% endblocktranslate %}
+        </h1>
+
+        <nav class="sm:flex justify-between">
+            <ul class="flex items-center mb-3 sm:mb-0 space-x-6 justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none" role="tablist">
+                {% with search_qs="?"|add:request.search.qs %}
+                    {% active_link 'podcasts:search_podcasts' as link %}
+                    <li>
+                        <a class="{{ link.css }}"
+                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            title="{% translate "Search Podcasts" %}"
+                            href="{{ link.url|add:search_qs }}">{% translate "Podcasts" %}</a>
+                    </li>
+                    {% active_link 'episodes:search_episodes' as link %}
+                    <li>
+                        <a class="{{ link.css }}"
+                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            title="{% translate "Search Episodes" %}"
+                            href="{{ link.url|add:search_qs }}">{% translate "Episodes" %}</a>
+                    </li>
+                    {% active_link 'podcasts:search_itunes' as link %}
+                    <li>
+                        <a class="{{ link.css }}"
+                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            title="{% translate "Search iTunes" %}"
+                            href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>
+                    </li>
+                {% endwith %}
+            </ul>
+            <div class="flex items-center justify-center sm:justify-end">
+                {% include "includes/search_form.html" with placeholder=_("Search...") %}
+            </div>
+        </nav>
+    </header>
     {% block search_content %}{% endblock %}
 
 {% endblock content %}
