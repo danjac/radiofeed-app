@@ -129,7 +129,7 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% with COVER_IMAGE_CSS="h-28 w-28 md:h-40 md:w-40" %}
                     <div class="{{ COVER_IMAGE_CSS}}">
-                        {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class=COVER_IMAGE_CSS|add:" border dark:border-gray-500" url=podcast.get_absolute_url %}
+                        {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title css_class=COVER_IMAGE_CSS|add:" border dark:border-gray-500" url=podcast.get_absolute_url %}
                     </div>
                 {% endwith %}
 
