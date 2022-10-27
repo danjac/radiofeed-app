@@ -4,11 +4,10 @@
 {% block title %} | {% translate "History" %}{% endblock %}
 
 {% block content %}
-    {% translate "History" as t_history %}
+    <h1 class="flex justify-center sm:justify-start mb-3 text-lg md:text-xl xl:text-2xl font-bold">
+        {% translate "History" %}
+    </h1>
     {% if request.search or page_obj.has_other_pages %}
-        <h1 class="flex justify-center sm:justify-start mb-3 text-lg md:text-xl xl:text-2xl font-bold">
-            {{ t_history }}
-        </h1>
         <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
 
             <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
@@ -27,10 +26,6 @@
                 {% include "includes/search_form.html" with placeholder=_("Search: History") %}
             </div>
         </div>
-    {% else %}
-        <h1 class="flex justify-center sm:justify-start text-lg md:text-xl xl:text-2xl font-bold border-b pb-3 dark:border-gray-500">
-            {{ t_history }}
-        </h1>
     {% endif %}
 
     <div role="list" class="dark:divide-gray-500 divide-y divide-solid">

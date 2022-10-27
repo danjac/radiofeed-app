@@ -13,7 +13,7 @@
 
         {% url 'podcasts:index' as index_url %}
 
-        <div class="sm:flex justify-between {% if page_obj.has_other_pages %}mb-3{% else %}border-b dark:border-gray-500 pb-3{% endif %}">
+        <div class="sm:flex justify-between mb-3">
             <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left mb-3 sm:mb-0">
                 {{ t_podcasts }}: {% if promoted %}{{ t_promotions }}{% else %}{{ t_subscriptions }}{% endif %}
             </h1>
@@ -31,7 +31,6 @@
                 {% endif %}
             </div>
         </div>
-
     {% endif %}
 
     <div role="list" class="dark:divide-gray-500 divide-y divide-solid">

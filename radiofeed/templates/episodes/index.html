@@ -7,7 +7,6 @@
 
     {% url 'episodes:index' as index_url %}
 
-    {% translate "New Releases" as t_new_releases %}
     {% translate "Promotions" as t_promotions %}
     {% translate "Subscriptions" as t_subscriptions %}
     {% translate "Find an episode..." as t_find_episode %}
@@ -15,7 +14,7 @@
     {% if has_subscriptions %}
 
         <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">
-            {{ t_new_releases }}: {% if promoted %}{{ t_promotions }}{% else %}{{ t_subscriptions }}{% endif %}
+            {% translate "New Releases" %}: {% if promoted %}{{ t_promotions }}{% else %}{{ t_subscriptions }}{% endif %}
         </h1>
 
         <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3">
@@ -38,7 +37,7 @@
 
         <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
             <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-                {{ t_new_releases }}
+                {% translate "New Releases" %}
             </h1>
             <div class="flex items-center justify-center sm:justify-end space-x-3">
                 {% include "includes/search_form.html" with placeholder=t_find_episode %}
