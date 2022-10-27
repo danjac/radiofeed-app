@@ -22,20 +22,16 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @login_required
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
-    if request.method == "POST":
+    form = UserPreferencesForm(request.POST, instance=request.user)
 
-        form = UserPreferencesForm(request.POST, instance=request.user)
+    if request.method == "POST" and form.is_valid():
 
-        if form.is_valid():
+        user = form.save()
 
-            user = form.save()
+        with override(user.language):
+            messages.success(request, _("Your preferences have been saved"))
 
-            with override(user.language):
-                messages.success(request, _("Your preferences have been saved"))
-
-            return HttpResponseClientRedirect(request.htmx.current_url)
-    else:
-        form = UserPreferencesForm(instance=request.user)
+        return HttpResponseClientRedirect(request.htmx.current_url)
 
     return render(request, "account/preferences.html", {"form": form})
 
