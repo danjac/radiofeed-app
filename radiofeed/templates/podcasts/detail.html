@@ -23,8 +23,8 @@
             {% endif %}
 
             <div class="flex items-center space-x-3 sm:space-x-6">
-                {% with COVER_IMAGE_CSS="h-32 w-32 md:h-40 md:w-40" %}
-                    <div class="{{ COVER_IMAGE_CSS}}">
+                {% with css_class="h-32 w-32 md:h-40 md:w-40" %}
+                    <div class="{{ css_class }}">
                         {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
                     </div>
                 {% endwith %}
