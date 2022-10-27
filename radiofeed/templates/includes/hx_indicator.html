@@ -3,8 +3,9 @@
     x-data="{width: 0}"
     x-init="{# fmt:off #}
     setInterval(() => {
-        if ($el.classList.contains('htmx-request') && width < 12) {
+        if ($el.classList.contains('htmx-request')) {
             width = width + (Math.random() / 100) + 1;
+            width = width > 12 ? width = -12 : width;
         } else {
             width = 0;
         }
