@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load cache i18n %}
 
 {% block title %} | {% translate "Podcasts" %}{% if has_subscriptions %} | {% if promoted %} {% translate "Promotions" %}{% else %}{% translate "Subscriptions" %}{% endif %}{% endif %}{% endblock %}
 
@@ -34,20 +34,46 @@
                 </div>
             </div>
         {% else %}
-            <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left">
-                {{ t_podcasts }}
-            </h1>
+            {% if request.user.is_anonymous %}
+                {% with site_name=request.site.name %}
+                    <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left">
+                        Welcome to {{ site_name }}!
+                    </h1>
+                    <p>
+                        {% blocktranslate %}
+                            <strong>{{ site_name }}</strong> is a <strong>free</strong> web app for discovering and listening to your favorite podcast feeds.
+                        {% endblocktranslate %}
+                    </p>
+                {% endwith %}
+            {% else %}
+                <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left">
+                    {{ t_podcasts }}
+                </h1>
+            {% endif %}
         {% endif %}
     </header>
-
-    <div role="list" class="dark:divide-gray-500 divide-y divide-solid">
-        {% include "includes/pagination_links.html" %}
-        {% for podcast in page_obj.object_list %}
-            {% include "podcasts/includes/podcast.html" %}
-        {% empty %}
-            {% include "includes/empty.html" %}
-        {% endfor %}
-        {% include "includes/pagination_links.html" %}
-    </div>
+    {% if request.user.is_authenticated %}
+        <div role="list" class="dark:divide-gray-500 divide-y divide-solid">
+            {% include "includes/pagination_links.html" %}
+            {% for podcast in page_obj.object_list %}
+                {% include "podcasts/includes/podcast.html" %}
+            {% empty %}
+                {% include "includes/empty.html" %}
+            {% endfor %}
+            {% include "includes/pagination_links.html" %}
+        </div>
+    {% else %}
+        <div role="list" class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
+            {% cache 600 podcasts-promoted-anonymous %}
+                {% for podcast in page_obj %}
+                    {% with css_class="h-32 w-32 md:h-40 md:w-40" %}
+                        <div class="{{ css_class }}">
+                            {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url %}
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+            {% endcache %}
+        </div>
+    {% endif %}
 
 {% endblock content %}
