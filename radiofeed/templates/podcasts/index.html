@@ -63,10 +63,10 @@
             {% include "includes/pagination_links.html" %}
         </div>
     {% else %}
-        <div role="list" class="flex flex-wrap gap-1 md:gap-2 lg:gap-3 justify-between">
+        <div role="list" class="flex flex-wrap gap-1 md:gap-2 justify-between">
             {% cache 600 podcasts-promoted-anonymous %}
                 {% for podcast in page_obj %}
-                    {% with css_class="h-28 w-28 sm:h-36 sm:w-36 lg:h-40 lg:w-40" %}
+                    {% with css_class="h-28 w-28 sm:h-36 sm:w-36 lg:h-40 lg:w-40 xl:h-56 xl:w-56" %}
                         <div class="{{ css_class }}">
                             {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url %}
                         </div>
