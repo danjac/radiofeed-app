@@ -20,14 +20,10 @@ from radiofeed.episodes.models import Episode
 
 
 @require_safe
+@login_required
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
-    subscribed = (
-        set(request.user.subscriptions.values_list("podcast", flat=True))
-        if request.user.is_authenticated
-        else set()
-    )
-
+    subscribed = set(request.user.subscriptions.values_list("podcast", flat=True))
     promoted = "promoted" in request.GET or not subscribed
 
     episodes = (
@@ -54,6 +50,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@login_required
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
@@ -71,6 +68,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@login_required
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:

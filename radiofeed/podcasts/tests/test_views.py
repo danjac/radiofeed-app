@@ -39,7 +39,7 @@ class TestPodcasts:
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
 
-    def test_empty(self, client, db):
+    def test_empty(self, client, auth_user):
         response = client.get(podcasts_url)
         assert_ok(response)
 
@@ -47,7 +47,7 @@ class TestPodcasts:
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
 
-    def test_invalid_page(self, client, db):
+    def test_invalid_page(self, client, auth_user):
         response = client.get(podcasts_url, {"page": "xyz"})
         assert_not_found(response)
 
@@ -90,10 +90,10 @@ class TestPodcasts:
 
 
 class TestLatestEpisode:
-    def test_no_episode(self, client, podcast):
+    def test_no_episode(self, client, auth_user, podcast):
         assert_not_found(client.get(podcast.get_latest_episode_url()))
 
-    def test_ok(self, client, episode):
+    def test_ok(self, client, auth_user, episode):
         assert (
             client.get(episode.podcast.get_latest_episode_url()).url
             == episode.get_absolute_url()
@@ -103,10 +103,10 @@ class TestLatestEpisode:
 class TestSearchPodcasts:
     url = reverse_lazy("podcasts:search_podcasts")
 
-    def test_search_empty(self, client, db):
+    def test_search_empty(self, client, auth_user):
         assert client.get(self.url, {"query": ""}).url == podcasts_url
 
-    def test_search(self, client, db, faker):
+    def test_search(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"query": podcast.title})
@@ -114,18 +114,18 @@ class TestSearchPodcasts:
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
 
-    def test_search_no_results(self, client, db, faker):
+    def test_search_no_results(self, client, auth_user, faker):
         response = client.get(self.url, {"query": "zzzz"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
 
 
-class TestSearchITunes:
-    def test_empty(self, client, db):
+class TestSearchItunes:
+    def test_empty(self, client, auth_user):
         response = client.get(reverse("podcasts:search_itunes"), {"query": ""})
         assert response.url == reverse("podcasts:index")
 
-    def test_search(self, client, podcast, mocker):
+    def test_search(self, client, auth_user, podcast, mocker):
         feeds = [
             itunes.Feed(
                 url="https://example.com/id123456",
@@ -151,7 +151,7 @@ class TestSearchITunes:
         assert response.context["feeds"] == feeds
         mock_search.assert_called()
 
-    def test_search_exception(self, client, db, mocker):
+    def test_search_exception(self, client, auth_user, mocker):
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search_cached",
             side_effect=itunes.ItunesException,
@@ -166,7 +166,7 @@ class TestSearchITunes:
 
 
 class TestPodcastSimilar:
-    def test_get(self, client, db, podcast):
+    def test_get(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
         response = client.get(
@@ -190,15 +190,7 @@ class TestPodcastDetail:
         podcast.categories.set(CategoryFactory.create_batch(3))
         return podcast
 
-    def test_get_podcast_anonymous(self, client, podcast):
-        podcast.categories.set(CategoryFactory.create_batch(3))
-        response = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
-        )
-        assert_ok(response)
-        assert response.context["podcast"] == podcast
-
-    def test_get_podcast_no_link(self, client, db):
+    def test_get_podcast_no_link(self, client, auth_user):
         podcast = PodcastFactory(link=None, owner=factory.Faker("name"))
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
@@ -230,7 +222,7 @@ class TestPodcastEpisodes:
             args=[podcast.id, podcast.slug],
         )
 
-    def test_get_episodes(self, client, podcast):
+    def test_get_episodes(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(self.url(podcast))
@@ -238,14 +230,14 @@ class TestPodcastEpisodes:
 
         assert len(response.context["page_obj"].object_list) == 30
 
-    def test_no_episodes(self, client, podcast):
+    def test_no_episodes(self, client, auth_user, podcast):
 
         response = client.get(self.url(podcast))
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 0
 
-    def test_ascending(self, client, podcast):
+    def test_ascending(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(
@@ -256,7 +248,7 @@ class TestPodcastEpisodes:
 
         assert len(response.context["page_obj"].object_list) == 30
 
-    def test_search(self, client, podcast, faker):
+    def test_search(self, client, auth_user, podcast, faker):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
         episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
@@ -272,7 +264,7 @@ class TestPodcastEpisodes:
 class TestCategoryList:
     url = reverse_lazy("podcasts:category_list")
 
-    def test_matching_podcasts(self, db, client):
+    def test_matching_podcasts(self, client, auth_user):
         for _ in range(3):
             category = CategoryFactory()
             category.podcasts.add(PodcastFactory())
@@ -281,13 +273,17 @@ class TestCategoryList:
         assert_ok(response)
         assert len(response.context["categories"]) == 3
 
-    def test_no_matching_podcasts(self, db, client):
+    def test_no_matching_podcasts(
+        self,
+        client,
+        auth_user,
+    ):
         CategoryFactory.create_batch(3)
         response = client.get(self.url)
         assert_ok(response)
         assert len(response.context["categories"]) == 0
 
-    def test_search(self, client, category, faker):
+    def test_search(self, client, auth_user, category, faker):
 
         CategoryFactory.create_batch(3)
 
@@ -298,7 +294,7 @@ class TestCategoryList:
         assert_ok(response)
         assert len(response.context["categories"]) == 1
 
-    def test_search_no_matching_podcasts(self, client, category, faker):
+    def test_search_no_matching_podcasts(self, client, auth_user, category, faker):
 
         CategoryFactory.create_batch(3)
 
@@ -310,13 +306,13 @@ class TestCategoryList:
 
 
 class TestCategoryDetail:
-    def test_get(self, client, category):
+    def test_get(self, client, auth_user, category):
         PodcastFactory.create_batch(12, categories=[category])
         response = client.get(category.get_absolute_url())
         assert_ok(response)
         assert response.context["category"] == category
 
-    def test_search(self, client, category, faker):
+    def test_search(self, client, auth_user, category, faker):
 
         PodcastFactory.create_batch(
             12, title="zzzz", keywords="zzzz", categories=[category]
@@ -328,7 +324,7 @@ class TestCategoryDetail:
 
         assert len(response.context["page_obj"].object_list) == 1
 
-    def test_no_podcasts(self, client, category):
+    def test_no_podcasts(self, client, auth_user, category):
         response = client.get(category.get_absolute_url())
         assert_ok(response)
 

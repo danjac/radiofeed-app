@@ -39,24 +39,13 @@ def is_player_episode(client, episode):
 
 
 class TestNewEpisodes:
-    def test_anonymous_user(self, client, db):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
-        EpisodeFactory.create_batch(3)
-        response = client.get(episodes_url)
-        assert_ok(response)
-
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["promoted"]
-        assert not response.context["has_subscriptions"]
-
-    def test_no_episodes(self, client, db):
+    def test_no_episodes(self, client, auth_user):
         response = client.get(episodes_url)
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 0
 
-    def test_not_subscribed(self, client, db, auth_user):
+    def test_not_subscribed(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
@@ -106,14 +95,14 @@ class TestNewEpisodes:
 class TestSearchEpisodes:
     url = reverse_lazy("episodes:search_episodes")
 
-    def test_no_results(self, db, client):
+    def test_no_results(self, auth_user, client):
         response = client.get(self.url, {"query": "test"})
         assert_ok(response)
 
-    def test_search_empty(self, db, client):
+    def test_search_empty(self, auth_user, client):
         assert client.get(self.url, {"query": ""}).url == episodes_url
 
-    def test_search(self, db, client, faker):
+    def test_search(self, auth_user, client, faker):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(self.url, {"query": episode.title})
@@ -121,7 +110,7 @@ class TestSearchEpisodes:
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
 
-    def test_search_no_results(self, db, client, faker):
+    def test_search_no_results(self, auth_user, client, faker):
         response = client.get(self.url, {"query": "zzzz"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
@@ -144,21 +133,16 @@ class TestEpisodeDetail:
         )
 
     @pytest.fixture
-    def prev_episode(self, episode):
+    def prev_episode(self, auth_user, episode):
         return EpisodeFactory(
             podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7)
         )
 
     @pytest.fixture
-    def next_episode(self, episode):
+    def next_episode(self, auth_user, episode):
         return EpisodeFactory(
             podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7)
         )
-
-    def test_anonymous(self, client, episode, prev_episode, next_episode):
-        response = client.get(episode.get_absolute_url())
-        assert_ok(response)
-        assert response.context["episode"] == episode
 
     def test_authenticated(
         self,

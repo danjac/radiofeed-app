@@ -135,26 +135,11 @@
 
                 <div class="flex flex-col place-content-between h-28 md:h-32">
 
-                    {% if user.is_authenticated %}
-                        {% include "episodes/includes/audio_controls.html" %}
-                    {% else %}
-                        <div>
-                            <a class="inline-flex items-center btn btn-primary"
-                                href="{{ episode.get_absolute_url|login_url }}"
-                                title="{% translate "You must sign up or log in to play this episode" %}"
-                                hx-disable="true">
-                                {% icon "play-circle" "regular" css_class="mr-2" %}
-                                {% translate "Play" %}
-                            </a>
-                        </div>
-                    {% endif %}
+                    {% include "episodes/includes/audio_controls.html" %}
+
                     <div class="flex items-center space-x-3">
 
-                        {% if user.is_authenticated %}
-                            {% include "episodes/includes/bookmark.html" %}
-                        {% else %}
-                            {% include "episodes/includes/download.html" %}
-                        {% endif %}
+                        {% include "episodes/includes/bookmark.html" %}
                     </div>
 
                     {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
@@ -188,9 +173,12 @@
                             </div>
                         {% endif %}
 
-                        {% if user.is_authenticated %}
-                            {% include "episodes/includes/download.html" %}
-                        {% endif %}
+                        <a download
+                            title="{% translate "Download audio file to your device" %}"
+                            href="{{ episode.media_url }}"
+                            class="link">
+                            {% translate "Download" %}
+                        </a>
 
                         {% if link %}
                             <a href="{{ link }}"

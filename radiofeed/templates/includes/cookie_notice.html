@@ -12,7 +12,8 @@
                         hx-post="{% url 'accept_cookies' %}"
                         hx-target="#accept-cookies"
                         hx-push-url="false"
-                        hx-swap="outerHTML">
+                        hx-swap="outerHTML"
+                        hx-disinherit="hx-indicator">
                         {% translate "Got it!" %}
                     </button>
                 </div>

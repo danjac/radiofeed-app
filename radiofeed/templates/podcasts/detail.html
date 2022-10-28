@@ -31,19 +31,8 @@
 
                 <div class="flex flex-col place-content-between h-28 md:h-32">
 
-                    {% if user.is_authenticated %}
-                        {% include "podcasts/includes/subscribe.html" %}
-                    {% else %}
-                        <div class="flex items-center">
-                            <a class="btn btn-primary inline-flex items-center"
-                                href="{{ podcast.get_absolute_url|login_url }}"
-                                hx-disable="true"
-                                title="{% translate "Log in or sign up to subscribe to this podcast" %}">
-                                {% icon "eye" css_class="mr-2" %}
-                                {% translate "Subscribe" %}
-                            </a>
-                        </div>
-                    {% endif %}
+                    {% include "podcasts/includes/subscribe.html" %}
+
                     <nav class="flex items-center space-x-3">
                         {% if link and link != podcast.rss %}
                             <div>

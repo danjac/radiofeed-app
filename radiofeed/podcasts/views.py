@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
@@ -52,6 +53,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@login_required
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -73,6 +75,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 
 @ratelimit(key="ip", rate="20/m")
+@login_required
 @require_safe
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
@@ -100,6 +103,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@login_required
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -115,6 +119,7 @@ def latest_episode(
 
 
 @require_safe
+@login_required
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -132,6 +137,7 @@ def podcast_detail(
 
 
 @require_safe
+@login_required
 def episodes(
     request: HttpRequest,
     podcast_id: int,
@@ -160,6 +166,7 @@ def episodes(
 
 
 @require_safe
+@login_required
 def similar(
     request: HttpRequest,
     podcast_id: int,
@@ -185,6 +192,7 @@ def similar(
 
 
 @require_safe
+@login_required
 def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
@@ -202,6 +210,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@login_required
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> HttpResponse:
