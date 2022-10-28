@@ -8,11 +8,6 @@ from radiofeed.episodes.templatetags.audio_player import audio_player
 
 
 class TestAudioPlayer:
-    def test_is_anonymous(self, rf, anonymous_user):
-        req = rf.get("/")
-        req.user = anonymous_user
-        assert audio_player(RequestContext(req)) == {}
-
     def test_is_empty(self, rf, user):
         req = rf.get("/")
         req.user = user

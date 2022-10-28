@@ -7,14 +7,12 @@ from urllib import parse
 
 from django import template
 from django.conf import settings
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
-from django.template.defaultfilters import stringfilter, urlencode
-from django.urls import reverse
+from django.template.defaultfilters import stringfilter
 from django.utils.translation import gettext as _
 
 from radiofeed.common import markup, pagination
@@ -162,23 +160,3 @@ def normalize_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
-
-
-@register.filter
-def login_url(url: str) -> str:
-    """Returns login URL with redirect parameter back to this url."""
-    return _auth_redirect_url(url, reverse("account_login"))
-
-
-@register.filter
-def signup_url(url: str) -> str:
-    """Returns signup URL with redirect parameter back to this url."""
-    return _auth_redirect_url(url, reverse("account_signup"))
-
-
-def _auth_redirect_url(url: str, redirect_url) -> str:
-    return (
-        redirect_url
-        if url.startswith("/account/")
-        else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
-    )

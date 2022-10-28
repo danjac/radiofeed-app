@@ -13,12 +13,10 @@ from radiofeed.common.template import (
     active_link,
     format_duration,
     icon,
-    login_url,
     markdown,
     normalize_url,
     pagination_url,
     share_buttons,
-    signup_url,
 )
 
 EXAMPLE_HTTPS_URL = "https://example.com"
@@ -138,36 +136,6 @@ class TestFormatDuration:
     )
     def test_format_duration(self, duration, expected):
         assert format_duration(duration) == expected
-
-
-class TestLoginUrl:
-    def test_login_url(self):
-        url = "/podcasts/1234/test/"
-        assert login_url(url) == "/account/login/?next=/podcasts/1234/test/"
-
-    def test_login_url_with_query_string(self):
-        url = "/podcasts/1234/test/?ok=true"
-        assert login_url(url) == "/account/login/?next=/podcasts/1234/test/%3Fok%3Dtrue"
-
-    def test_login_url_to_same_path(self):
-        url = "/account/login/"
-        assert login_url(url) == url
-
-
-class TestSignupUrl:
-    def test_signup_url(self):
-        url = "/podcasts/12345/test/"
-        assert signup_url(url) == "/account/signup/?next=/podcasts/12345/test/"
-
-    def test_signup_url_with_query_string(self):
-        url = "/podcasts/1234/test/?ok=true"
-        assert (
-            signup_url(url) == "/account/signup/?next=/podcasts/1234/test/%3Fok%3Dtrue"
-        )
-
-    def test_signup_url_to_same_path(self):
-        url = "/account/signup/"
-        assert signup_url(url) == url
 
 
 class TestActiveLink:
