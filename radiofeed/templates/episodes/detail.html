@@ -67,137 +67,140 @@
 {% endblock content_metadata %}
 
 {% block content %}
-    <h1 class="font-bold mb-6 text-lg md:text-xl xl:text-2xl">
-        {{ episode.cleaned_title }}
-    </h1>
+    <header class="mb-3 border-b dark:border-gray-500 pb-3 space-y-6">
 
-    {% with podcast=episode.podcast next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
-        {% if next_episode or previous_episode %}
+        <h1 class="font-bold text-lg md:text-xl xl:text-2xl">
+            {{ episode.cleaned_title }}
+        </h1>
 
-            {% translate "Next" as t_next %}
-            {% translate "Previous" as t_previous %}
-            {% translate "No More Episodes" as t_no_more_episodes %}
+        {% with podcast=episode.podcast next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
+            {% if next_episode or previous_episode %}
 
-            <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
-                role="navigation"
-                aria-label="{% translate "Pagination" %}">
-                {% if previous_episode %}
-                    <a class="link"
-                        href="{{ previous_episode.get_absolute_url }}"
-                        aria-label="{{ previous_episode.cleaned_title }}"
-                        title="{{ previous_episode.cleaned_title }}">
-                        {{ t_previous }}
-                    </a>
+                {% translate "Next" as t_next %}
+                {% translate "Previous" as t_previous %}
+                {% translate "No More Episodes" as t_no_more_episodes %}
 
-                {% else %}
-                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                        title="{{ t_no_more_episodes }}"
-                        aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
-                {% endif %}
-                {% if next_episode %}
-                    <a class="link"
-                        href="{{ next_episode.get_absolute_url }}"
-                        aria-label="{{ next_episode.cleaned_title }}"
-                        title="{{ next_episode.cleaned_title }}">
-                        {{ t_next }}
-                    </a>
-                {% else %}
-                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                        title="{{ t_no_more_episodes }}"
-                        aria-label="{{ t_no_more_episodes }}">{{ t_next }}</span>
-                {% endif %}
-            </nav>
-        {% endif %}
-
-        <article class="space-y-3">
-            <h2 class="text-base md:text-lg xl:text-xl">
-                <a href="{{ podcast.get_episodes_url }}"
-                    title="{% blocktranslate with podcast=podcast.cleaned_title %}See All Episodes for {{ podcast }}{% endblocktranslate %}"
-                    class="link">
-                    {{ podcast.cleaned_title }}
-                </a>
-            </h2>
-
-            {% with metadata=episode.get_episode_metadata %}
-                {% if metadata %}
-                    <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
-                        {{ metadata }}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <div class="flex items-center space-x-3 sm:space-x-6">
-                {% with css_class="h-32 w-32 md:h-40 md:w-40" %}
-                    <div class="{{ css_class }}">
-                        {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url %}
-                    </div>
-                {% endwith %}
-
-                <div class="flex flex-col place-content-between h-28 md:h-32">
-
-                    {% include "episodes/includes/audio_controls.html" %}
-
-                    <div class="flex items-center space-x-3">
-
-                        {% include "episodes/includes/bookmark.html" %}
-                    </div>
-
-                    {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
-
-                </div>
-            </div>
-
-            <div class="font-semibold text-gray-600 dark:text-gray-300 space-x-3">
-                {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
-                {% with duration=episode.duration_in_seconds %}
-                    {% if duration %}
-                        <span title="{% translate "Duration" %}">{{ duration|format_duration }}</span>
-                    {% endif %}
-                {% endwith %}
-            </div>
-
-            {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
-                {% if file_size or link or explicit %}
-                    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
-
-                        {% if explicit %}
-                            <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
-                                class="flex items-center text-red-600 dark:text-red-500 space-x-2">
-                                {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
-                            </div>
-                        {% endif %}
-
-                        {% if file_size %}
-                            <div title="Size">
-                                {{ file_size }}
-                            </div>
-                        {% endif %}
-
-                        <a download
-                            title="{% translate "Download audio file to your device" %}"
-                            href="{{ episode.media_url }}"
-                            class="link">
-                            {% translate "Download" %}
+                <nav class="flex justify-between"
+                    role="navigation"
+                    aria-label="{% translate "Pagination" %}">
+                    {% if previous_episode %}
+                        <a class="link"
+                            href="{{ previous_episode.get_absolute_url }}"
+                            aria-label="{{ previous_episode.cleaned_title }}"
+                            title="{{ previous_episode.cleaned_title }}">
+                            {{ t_previous }}
                         </a>
 
-                        {% if link %}
-                            <a href="{{ link }}"
-                                target="_blank"
-                                rel="noopener"
-                                class="link"
-                                title="{% translate "Link to Website" %}">
-                                {% translate "Link" %}
-                            </a>
-                        {% endif %}
+                    {% else %}
+                        <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                            title="{{ t_no_more_episodes }}"
+                            aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
+                    {% endif %}
+                    {% if next_episode %}
+                        <a class="link"
+                            href="{{ next_episode.get_absolute_url }}"
+                            aria-label="{{ next_episode.cleaned_title }}"
+                            title="{{ next_episode.cleaned_title }}">
+                            {{ t_next }}
+                        </a>
+                    {% else %}
+                        <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                            title="{{ t_no_more_episodes }}"
+                            aria-label="{{ t_no_more_episodes }}">{{ t_next }}</span>
+                    {% endif %}
+                </nav>
+            {% endif %}
+            </header>
+
+            <article class="space-y-3">
+                <h2 class="text-base md:text-lg xl:text-xl">
+                    <a href="{{ podcast.get_episodes_url }}"
+                        title="{% blocktranslate with podcast=podcast.cleaned_title %}See All Episodes for {{ podcast }}{% endblocktranslate %}"
+                        class="link">
+                        {{ podcast.cleaned_title }}
+                    </a>
+                </h2>
+
+                {% with metadata=episode.get_episode_metadata %}
+                    {% if metadata %}
+                        <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
+                            {{ metadata }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="flex items-center space-x-3 sm:space-x-6">
+                    {% with css_class="h-32 w-32 md:h-40 md:w-40" %}
+                        <div class="{{ css_class }}">
+                            {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url %}
+                        </div>
+                    {% endwith %}
+
+                    <div class="flex flex-col place-content-between h-28 md:h-32">
+
+                        {% include "episodes/includes/audio_controls.html" %}
+
+                        <div class="flex items-center space-x-3">
+
+                            {% include "episodes/includes/bookmark.html" %}
+                        </div>
+
+                        {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
 
                     </div>
-                {% endif %}
-            {% endwith %}
+                </div>
 
-            {% include "episodes/includes/history.html" with listened=episode.listened current_time=episode.current_time %}
+                <div class="font-semibold text-gray-600 dark:text-gray-300 space-x-3">
+                    {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
+                    {% with duration=episode.duration_in_seconds %}
+                        {% if duration %}
+                            <span title="{% translate "Duration" %}">{{ duration|format_duration }}</span>
+                        {% endif %}
+                    {% endwith %}
+                </div>
 
-            {% markdown episode.description %}
+                {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
+                    {% if file_size or link or explicit %}
+                        <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
 
-        </article>
-    {% endwith %}
+                            {% if explicit %}
+                                <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
+                                    class="flex items-center text-red-600 dark:text-red-500 space-x-2">
+                                    {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
+                                </div>
+                            {% endif %}
+
+                            {% if file_size %}
+                                <div title="Size">
+                                    {{ file_size }}
+                                </div>
+                            {% endif %}
+
+                            <a download
+                                title="{% translate "Download audio file to your device" %}"
+                                href="{{ episode.media_url }}"
+                                class="link">
+                                {% translate "Download" %}
+                            </a>
+
+                            {% if link %}
+                                <a href="{{ link }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="link"
+                                    title="{% translate "Link to Website" %}">
+                                    {% translate "Link" %}
+                                </a>
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                {% include "episodes/includes/history.html" with listened=episode.listened current_time=episode.current_time %}
+
+                {% markdown episode.description %}
+
+            </article>
+        {% endwith %}
 {% endblock %}
