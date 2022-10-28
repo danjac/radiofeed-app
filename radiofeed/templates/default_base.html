@@ -5,7 +5,6 @@
     <!DOCTYPE html>
     <html lang="en">
         <head>
-
             <title>
                 {{ request.site.name }}{% block title %}{% endblock %}
             </title>
@@ -21,37 +20,8 @@
             <meta name="htmx-config" content='{"historyCacheSize": 0, "refreshOnHistoryMiss": false}'>
             <meta name="Cache-Control" content="no-cache">
             <meta name="robots" content="index,follow">
-
-            {% block content_metadata %}
-                {% with site_name=request.site.name site_description="Podcast aggregator site" %}
-                    {% absolute_uri as site_uri %}
-
-                    <meta name="description" content="{{ site_description }}" />
-                    <meta name="keywords" content="podcasts, rss, feeds" />
-                    <meta name="og:type" content="website" />
-                    <meta name="og:title" content="{{ site_name }}" />
-                    <meta name="og:description" content="{{ site_description }}" />
-                    <meta name="og:url" content="{{ site_uri }}" />
-                    <meta name="twitter:description" content="{{ site_description }}">
-                    <meta name="twitter:title" content="{{ site_name }}">
-
-                    <script type="application/ld+json">
-                        {
-                            "@context": "https://schema.org",
-                            "@type": "WebSite",
-                            "url": "{{ site_uri }}",
-                            "potentialAction": {
-                                "@type": "SearchAction",
-                                "target": {
-                                    "@type": "EntryPoint",
-                                    "urlTemplate": "{% absolute_uri 'podcasts:search_podcasts' %}?{{ request.search.param }}={search_term_string}"
-                                },
-                                "query-input": "required name=search_term_string"
-                            }
-                        }
-                    </script>
-                {% endwith %}
-            {% endblock content_metadata %}
+            <meta name="description" content="Podcast aggregator site" />
+            <meta name="keywords" content="podcasts, rss, feeds" />
         </head>
 
         <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth md:text-base"
