@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    {% if user.is_anonymous %}
+        <div class="flex items-center justify-center">
+            <div>
+    {% endif %}
+    {% block account_content %}{% endblock %}
+    {% if user.is_anonymous %}
+        </div>
+        </div>
+    {% endif %}
+{% endblock content %}

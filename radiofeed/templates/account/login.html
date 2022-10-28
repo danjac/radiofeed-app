@@ -1,42 +1,46 @@
-{% extends "base.html" %}
+{% extends "account/base.html" %}
 {% load i18n account %}
 
 {% block content %}
+    <div class="flex items-center justify-center">
+        <div>
 
-    <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-6">
-        {% translate "Sign In" %}
-    </h1>
-
-    <p class="mb-3">
-        {% blocktranslate %}
-            If you have not created an account yet, then please
-            <a class="underline hover:text-blue-500"
-                href="{{ signup_url }}">sign up</a> first.
-        {% endblocktranslate %}
-    </p>
-
-    <form method="post"
-        action="{{ request.path }}"
-        class="space-y-3"
-        hx-disable="true"
-        novalidate>
-        {% csrf_token %}
-        {% if redirect_field_value %}
-            <input type="hidden"
-                name="{{ redirect_field_name }}"
-                value="{{ redirect_field_value }}" />
-        {% endif %}
-        {{ form }}
-        <div class="flex items-center">
-            <a class="link mr-3 md:mr-6"
-                title="{% translate "Recover Your Password" %}"
-                href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
-            <button class="inline-flex items-center btn btn-primary">
-                {% icon "sign-in" css_class="mr-2" %}
+            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-6">
                 {% translate "Sign In" %}
-            </button>
-        </div>
-    </form>
+            </h1>
 
-    {% include "account/includes/social_logins.html" %}
+            <p class="mb-3">
+                {% blocktranslate %}
+                    If you have not created an account yet, then please
+                    <a class="underline hover:text-blue-500"
+                        href="{{ signup_url }}">sign up</a> first.
+                {% endblocktranslate %}
+            </p>
+
+            <form method="post"
+                action="{{ request.path }}"
+                class="space-y-3"
+                hx-disable="true"
+                novalidate>
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                        name="{{ redirect_field_name }}"
+                        value="{{ redirect_field_value }}" />
+                {% endif %}
+                {{ form }}
+                <div class="flex items-center">
+                    <a class="link mr-3 md:mr-6"
+                        title="{% translate "Recover Your Password" %}"
+                        href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
+                    <button class="inline-flex items-center btn btn-primary">
+                        {% icon "sign-in" css_class="mr-2" %}
+                        {% translate "Sign In" %}
+                    </button>
+                </div>
+            </form>
+
+            {% include "account/includes/social_logins.html" %}
+        </div>
+    </div>
 {% endblock %}

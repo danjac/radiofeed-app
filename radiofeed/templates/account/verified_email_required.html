@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "account/base.html" %}
 {% load i18n %}
 
 
 {% block title %} | {% translate "Verify Your E-mail Address" %}{% endblock %}
 
-{% block content %}
+{% block account_content %}
     <h1 class="text-lg md:text-xl xl:text-2xl mb-3 font-bold">{% translate "Verify Your E-mail Address" %}</h1>
 
     {% url 'account_email' as email_url %}
@@ -31,4 +31,4 @@
     </p>
 
 
-{% endblock %}
+{% endblock account_content %}
