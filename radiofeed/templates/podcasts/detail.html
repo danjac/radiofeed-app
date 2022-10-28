@@ -56,7 +56,16 @@
                         {% endif %}
 
                     </nav>
-                    {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
+                    <div class="flex flex-wrap">
+                        <a href="{{ podcast.get_latest_episode_url }}"
+                            class="link"
+                            title="Latest Episode">
+                            {% translate "Latest episode" %}
+                            {% include "includes/date.html" with value=podcast.pub_date %}
+                        </a>
+                    </div>
+
+
                 </div>
             </div>
             {% if funding_url %}
@@ -68,15 +77,6 @@
                     </a>
                 </div>
             {% endif %}
-
-            <div>
-                <a href="{{ podcast.get_latest_episode_url }}"
-                    class="link"
-                    title="Latest Episode">
-                    {% translate "Latest episode released" %}
-                    {% include "includes/date.html" with value=podcast.pub_date %}
-                </a>
-            </div>
 
             {% cache 600 podcast-categories podcast.id %}
                 {% with categories=podcast.categories.all %}

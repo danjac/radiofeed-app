@@ -16,7 +16,6 @@ from radiofeed.common.template import (
     markdown,
     normalize_url,
     pagination_url,
-    share_buttons,
 )
 
 EXAMPLE_HTTPS_URL = "https://example.com"
@@ -156,34 +155,6 @@ class TestActiveLink:
         assert link.url == reverse(self.episodes_url)
         assert link.css == "link active"
         assert link.active
-
-
-class TestShareButtons:
-    def test_share_buttons(self, rf):
-        url = "/podcasts/12344/test/"
-        share_urls = share_buttons(RequestContext(rf.get(url)), url, "Test Podcast")[
-            "share_urls"
-        ]
-
-        assert (
-            share_urls["email"]
-            == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/12344/test/"
-        )
-
-        assert (
-            share_urls["facebook"]
-            == "https://www.facebook.com/sharer/sharer.php?u=http%3A//testserver/podcasts/12344/test/"
-        )
-
-        assert (
-            share_urls["twitter"]
-            == "https://twitter.com/share?url=http%3A//testserver/podcasts/12344/test/&text=Test%20Podcast"
-        )
-
-        assert (
-            share_urls["linkedin"]
-            == "https://www.linkedin.com/sharing/share-offsite/?url=http%3A//testserver/podcasts/12344/test/"
-        )
 
 
 class TestMarkdown:

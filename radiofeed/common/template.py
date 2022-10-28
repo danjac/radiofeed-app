@@ -107,27 +107,6 @@ def markdown(value: str | None) -> dict:
     return {"content": markup.markup(value)}
 
 
-@register.inclusion_tag("includes/share_buttons.html", takes_context=True)
-def share_buttons(
-    context: RequestContext,
-    url: str,
-    subject: str,
-    extra_context: dict | None = None,
-) -> dict:
-    """Render set of share buttons for a page for email, Facebook, Twitter and Linkedin."""
-    url = parse.quote(context.request.build_absolute_uri(url))
-    subject = parse.quote(subject)
-
-    return {
-        "share_urls": {
-            "email": f"mailto:?subject={subject}&body={url}",
-            "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
-            "twitter": f"https://twitter.com/share?url={url}&text={subject}",
-            "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
-        },
-    } | (extra_context or {})
-
-
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
 def cookie_notice(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked "Accept Cookies" button."""

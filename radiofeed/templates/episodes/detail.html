@@ -2,70 +2,6 @@
 {% load i18n %}
 
 {% block title %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
-{% block content_metadata %}
-    {% with podcast=episode.podcast %}
-        {% with episode_title=episode.cleaned_title|escapejs episode_description=episode.cleaned_description|default:podcast.cleaned_description|truncatechars:200|escapejs cover_url=episode.get_cover_url %}
-            {% if episode_description %}
-                <meta name="description" content="{{ episode_description }}" />
-            {% endif %}
-            {% if podcast.keywords %}
-                <meta name="keywords" content="{{ podcast.keywords|escapejs }}" />
-            {% endif %}
-
-            <meta name="og:type" content="website" />
-            <meta name="og:title" content="{{ episode_title }}" />
-            <meta name="og:url" content="{% absolute_uri episode %}" />
-
-            {% if episode_description %}
-                <meta name="og:description" content="{{ episode_description }}" />
-            {% endif %}
-
-            {% if cover_url %}
-                <meta name="og:image" content="{{ cover_url }}" />
-                <meta name="og:image:alt" content="{{ episode_title }}" />
-                <meta name="og:image:height" content="200" />
-                <meta name="og:image:width" content="200" />
-            {% endif %}
-
-            <meta name="twitter:card" content="{{ cover_url|yesno:'summary_large_image,summary' }}">
-            <meta name="twitter:title" content="{{ episode_title }}">
-
-            {% if cover_url %}
-                <meta name="twitter:image" content="{{ cover_url }}">
-            {% endif %}
-
-            {% if episode_description %}
-                <meta name="twitter:description" content="{{ episode_description }}">
-            {% endif %}
-            <script type="application/ld+json">
-                {
-                    "@context": "https://schema.org",
-                    "@type": "NewsArticle",
-                    "mainEntityOfPage": {
-                        "@type": "WebPage",
-                        "@id": "{% absolute_uri podcast %}"
-                    },
-                    "url": "{% absolute_uri episode %}",
-                    "headline": "{{ episode_title }}",
-                    "description": "{{ episode_description }}",
-                    {% if cover_url %}
-                        "image": [
-                            "{{ cover_url }}"
-                        ],
-                    {% endif %}
-                    {% if podcast.owner %}
-                        "publisher": {
-                            "@type": "Organization",
-                            "name": "{{ podcast.owner|escapejs }}"
-                        }
-                    {% endif %}
-                }
-            </script>
-
-        {% endwith %}
-    {% endwith %}
-{% endblock content_metadata %}
-
 {% block content %}
     <header class="mb-3 border-b dark:border-gray-500 pb-3 space-y-6">
 
@@ -144,58 +80,63 @@
 
                             {% include "episodes/includes/bookmark.html" %}
                         </div>
+                        {% with file_size=episode.get_file_size link=episode.get_link %}
+                            {% if file_size or link %}
+                                <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
 
-                        {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
+                                    <a download
+                                        title="{% translate "Download audio file to your device" %}"
+                                        href="{{ episode.media_url }}"
+                                        class="link">
+                                        {% translate "Download" %}
+                                    </a>
+
+                                    {% if link %}
+                                        <a href="{{ link }}"
+                                            target="_blank"
+                                            rel="noopener"
+                                            class="link"
+                                            title="{% translate "Link to Website" %}">
+                                            {% translate "Website" %}
+                                        </a>
+                                    {% endif %}
+
+                                </div>
+                            {% endif %}
+                        {% endwith %}
 
                     </div>
                 </div>
 
-                <div class="font-semibold text-gray-600 dark:text-gray-300 space-x-3">
+                <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
+
                     {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
+
+                    {% with explicit=episode.is_explicit %}
+                        {% if explicit %}
+                            <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
+                                class="flex items-center text-red-600 dark:text-red-500 space-x-2">
+                                {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                    {% with file_size=episode.get_file_size %}
+                        {% if file_size %}
+                            <div title="Size">
+                                {{ file_size }}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
                     {% with duration=episode.duration_in_seconds %}
                         {% if duration %}
                             <span title="{% translate "Duration" %}">{{ duration|format_duration }}</span>
                         {% endif %}
                     {% endwith %}
+
                 </div>
 
-                {% with file_size=episode.get_file_size explicit=episode.is_explicit link=episode.get_link %}
-                    {% if file_size or link or explicit %}
-                        <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
-
-                            {% if explicit %}
-                                <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
-                                    class="flex items-center text-red-600 dark:text-red-500 space-x-2">
-                                    {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
-                                </div>
-                            {% endif %}
-
-                            {% if file_size %}
-                                <div title="Size">
-                                    {{ file_size }}
-                                </div>
-                            {% endif %}
-
-                            <a download
-                                title="{% translate "Download audio file to your device" %}"
-                                href="{{ episode.media_url }}"
-                                class="link">
-                                {% translate "Download" %}
-                            </a>
-
-                            {% if link %}
-                                <a href="{{ link }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="link"
-                                    title="{% translate "Link to Website" %}">
-                                    {% translate "Link" %}
-                                </a>
-                            {% endif %}
-
-                        </div>
-                    {% endif %}
-                {% endwith %}
 
                 {% include "episodes/includes/history.html" with listened=episode.listened current_time=episode.current_time %}
 
