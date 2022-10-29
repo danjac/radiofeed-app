@@ -10,7 +10,6 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, QueryDict
 from django.shortcuts import resolve_url
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -65,13 +64,10 @@ def require_auth(view: Callable) -> Callable:
 
 def _htmx_login_redirect(request: HttpRequest) -> HttpResponse:
 
-    if request.method in ("GET", "HEAD"):
+    if request.htmx.boosted:
         redirect_to = request.get_full_path()
-    elif request.htmx.current_url and url_has_allowed_host_and_scheme(
-        url=request.htmx.current_url,
-        allowed_hosts=[request.get_host()],
-        require_https=request.is_secure(),
-    ):
+
+    elif request.htmx.current_url:
         # strip domain from current url
         redirect_to = resolve_url(
             urlunparse(["", ""] + list(urlparse(request.htmx.current_url))[2:])

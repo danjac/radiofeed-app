@@ -19,9 +19,10 @@
         {% cache 600 podcasts-intro %}
             {% for podcast in podcasts %}
                 {% with css_class="h-28 w-28 sm:h-36 sm:w-36 lg:h-40 lg:w-40 xl:h-56 xl:w-56" %}
-                    <div class="{{ css_class }}">
-                        {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url %}
-                    </div>
+                    <a class="{{ css_class }}"
+                        href="{{ podcast.get_absolute_url }}">
+                        {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
+                    </a>
                 {% endwith %}
             {% endfor %}
         {% endcache %}
