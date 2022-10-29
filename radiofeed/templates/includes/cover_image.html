@@ -3,7 +3,7 @@
     {% static 'img/podcast-icon.webp' as placeholder %}
     {% if url %}<a href="{{ url }}" class="block {{ css_class }}" title="{{ alt }}">
     {% else %}<div class="{{ css_class }}" title="{{ alt }}">{% endif %}
-    <img class="border dark:border-gray-500 object-cover bg-transparent{% if url %} cursor-pointer hover:grayscale hover:opacity-75{% endif %}"
+    <img class="border dark:border-gray-500 object-cover bg-transparent{% if url %} cursor-pointer hover:grayscale hover:opacity-75{% endif %} {{ css_class }}"
         alt="{{ alt }}"
         aria-hidden="true"
         loading="lazy"
