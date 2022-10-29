@@ -22,13 +22,21 @@ class TestRequireAuth:
         assert view(req).url == f"{reverse('account_login')}?next=/new/"
 
     def test_anonymous_htmx(self, rf, anonymous_user, view):
-        req = rf.get("/new/", HTTP_HX_REQUEST="true", HTTP_HX_CURRENT_URL="/new/")
+        req = rf.get("/new/", HTTP_HX_REQUEST="true")
         req.user = anonymous_user
         req.htmx = HtmxDetails(req)
         assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/new/")
 
+    def test_anonymous_htmx_post(self, rf, anonymous_user, view):
+        req = rf.post(
+            "/subscribe/", HTTP_HX_REQUEST="true", HTTP_HX_CURRENT_URL="/history/"
+        )
+        req.user = anonymous_user
+        req.htmx = HtmxDetails(req)
+        assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/history/")
+
     def test_anonymous_htmx_default_redirect(self, rf, anonymous_user, view):
-        req = rf.get("/new/", HTTP_HX_REQUEST="true")
+        req = rf.post("/new/", HTTP_HX_REQUEST="true")
         req.user = anonymous_user
         req.htmx = HtmxDetails(req)
         assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/podcasts/")

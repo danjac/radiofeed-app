@@ -65,8 +65,9 @@ def require_auth(view: Callable) -> Callable:
 
 def _htmx_login_redirect(request: HttpRequest) -> HttpResponse:
 
-    # if HX-Current-Url is in header, redirect back to that url after login
-    if request.htmx.current_url and url_has_allowed_host_and_scheme(
+    if request.method in ("GET", "HEAD"):
+        redirect_to = request.get_full_path()
+    elif request.htmx.current_url and url_has_allowed_host_and_scheme(
         url=request.htmx.current_url,
         allowed_hosts=[request.get_host()],
         require_https=request.is_secure(),
