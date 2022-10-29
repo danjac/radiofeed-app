@@ -31,12 +31,7 @@ def middleware(
 
 
 def require_auth(view: Callable) -> Callable:
-    """Login required decorator also handling HTMX and AJAX views.
-
-    Use this decorator instead of @require_auth with views returning HTMX fragment and JSON responses.
-
-    Returns redirect to login page if HTMX request, otherwise returns HTTP UNAUTHORIZED.
-    """
+    """Login required decorator also handling HTMX and AJAX views."""
 
     @functools.wraps(view)
     def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
