@@ -89,6 +89,7 @@ def episode_detail(
 
 
 @require_POST
+@require_auth
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if necessary and adds episode to player session tracker."""
     episode = get_object_or_404(
