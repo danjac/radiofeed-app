@@ -1,7 +1,7 @@
 {% load i18n %}
 {% if user.is_anonymous %}
     {% with path=request.get_full_path %}
-        <div id="signup-cta" class="text-center p-3 bg-blue-700 text-white font-bold" hx-disable="true">
+        <div id="signup-cta" class="text-center p-3 bg-blue-700 text-white font-bold">
             {% url 'account_login' as login_url %}
             {% url 'account_signup' as signup_url %}
             {% blocktranslate with css_class="underline text-white hover:text-gray-300" %}
