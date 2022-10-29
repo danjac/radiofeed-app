@@ -1,29 +1,25 @@
-{% load static %}
-{% static 'img/podcast-icon.webp' as placeholder %}
-<img class="border dark:border-gray-500 object-cover bg-transparent{% if url %} cursor-pointer hover:grayscale hover:opacity-75{% endif %} {{ css_class }}"
-    alt="{{ alt }}"
-    title="{{ alt }}"
-    aria-hidden="true"
-    loading="lazy"
-    width="200"
-    height="200"
-    src="{{ placeholder }}"
-    {% if url %}
-        role="link"
-        hx-get="{{ url }}"
-        hx-push-url="true"
-        {% if hx_swap %}
-            hx-swap="{{ hx_swap }}"
-        {% endif %}
-    {% endif %}
-    {% if cover_url %}
-        x-data="{# fmt:off #}{
+{% spaceless %}
+    {% load static %}
+    {% static 'img/podcast-icon.webp' as placeholder %}
+    {% if url %}<a href="{{ url }}" class="block {{ css_class }}" title="{{ alt }}">
+    {% else %}<div class="{{ css_class }}" title="{{ alt }}">{% endif %}
+    <img class="border dark:border-gray-500 object-cover bg-transparent{% if url %} cursor-pointer hover:grayscale hover:opacity-75{% endif %} {{ css_class }}"
+        alt="{{ alt }}"
+        aria-hidden="true"
+        loading="lazy"
+        width="200"
+        height="200"
+        src="{{ placeholder }}"
+        {% if cover_url %}
+            x-data="{# fmt:off #}{
             isLoaded: false,
             src: '{{ cover_url|escapejs }}',
             placeholder: '{{ placeholder|escapejs }}',
         }{# fmt:on #}"
-        @load.once="isLoaded=true;"
-        @error.once="src=placeholder;isLoaded=true;"
-        :class="{'blur-sm': !isLoaded}"
-        :src="src"
-    {% endif %}>
+            @load.once="isLoaded=true;"
+            @error.once="src=placeholder;isLoaded=true;"
+            :class="{'blur-sm': !isLoaded}"
+            :src="src"
+        {% endif %}>
+    {% if url %}</a>{% else %}</div>{% endif %}
+{% endspaceless %}

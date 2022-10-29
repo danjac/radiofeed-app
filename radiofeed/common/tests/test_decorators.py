@@ -21,8 +21,8 @@ class TestRequireAuth:
         req.htmx = False
         assert view(req).url == f"{reverse('account_login')}?next=/new/"
 
-    def test_anonymous_htmx_content_target(self, rf, anonymous_user, view):
-        req = rf.get("/new/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="content")
+    def test_anonymous_htmx_boosted(self, rf, anonymous_user, view):
+        req = rf.get("/new/", HTTP_HX_REQUEST="true", HTTP_HX_BOOSTED="true")
         req.user = anonymous_user
         req.htmx = HtmxDetails(req)
         assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/new/")
