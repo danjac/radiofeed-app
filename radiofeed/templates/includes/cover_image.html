@@ -1,8 +1,7 @@
 {% spaceless %}
     {% load static %}
     {% static 'img/podcast-icon.webp' as placeholder %}
-    {% if url %}<a href="{{ url }}" class="block {{ css_class }}" title="{{ alt }}">
-    {% else %}<div class="{{ css_class }}" title="{{ alt }}">{% endif %}
+    {% if url %}<a href="{{ url }}" title="{{ alt }}">{% endif %}
     <img class="border dark:border-gray-500 object-cover bg-transparent{% if url %} cursor-pointer hover:grayscale hover:opacity-75{% endif %} {{ css_class }}"
         alt="{{ alt }}"
         aria-hidden="true"
@@ -21,5 +20,5 @@
             :class="{'blur-sm': !isLoaded}"
             :src="src"
         {% endif %}>
-    {% if url %}</a>{% else %}</div>{% endif %}
+    {% if url %}</a>{% endif %}
 {% endspaceless %}
