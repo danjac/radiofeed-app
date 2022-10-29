@@ -66,11 +66,12 @@ def require_auth(view: Callable) -> Callable:
 
 
 def _get_login_redirect_url(request: HttpRequest) -> str:
+    # non-HTMX or boosted requests: return request path
     if not request.htmx or request.htmx.boosted:
         return request.get_full_path()
 
+    # target is fragment: redirect to current browser url
     if request.htmx.current_url:
-        # target is fragment: redirect to current browser url
         return resolve_url(
             urlunparse(["", "", *list(urlparse(request.htmx.current_url))[2:]])
         )
