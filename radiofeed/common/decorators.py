@@ -71,6 +71,6 @@ def _get_login_redirect_url(request: HttpRequest) -> str:
 
     if request.htmx.current_url:
         return resolve_url(
-            urlunparse(["", ""] + list(urlparse(request.htmx.current_url))[2:])
+            urlunparse(["", "", *list(urlparse(request.htmx.current_url))[2:]])
         )
     return settings.LOGIN_REDIRECT_URL
