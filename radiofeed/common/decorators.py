@@ -5,7 +5,6 @@ import functools
 from typing import Callable
 from urllib.parse import urlparse, urlunparse
 
-from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
@@ -53,26 +52,23 @@ def require_auth(view: Callable) -> Callable:
         ):
             return HttpResponseUnauthorized()
 
-        response = redirect_to_login(
-            _get_login_redirect_url(request), redirect_field_name=REDIRECT_FIELD_NAME
-        )
-
         if request.htmx:
-            return HttpResponseClientRedirect(response.url)
+            login_redirect_url = (
+                resolve_url(
+                    urlunparse(["", "", *list(urlparse(request.htmx.current_url))[2:]])
+                )
+                if request.htmx.current_url
+                else request.get_full_path()
+            )
 
-        return response
+            return HttpResponseClientRedirect(
+                redirect_to_login(
+                    login_redirect_url, redirect_field_name=REDIRECT_FIELD_NAME
+                ).url
+            )
+
+        return redirect_to_login(
+            request.get_full_path(), redirect_field_name=REDIRECT_FIELD_NAME
+        )
 
     return _wrapper
-
-
-def _get_login_redirect_url(request: HttpRequest) -> str:
-    # non-HTMX or boosted requests: return request path
-    if not request.htmx or request.htmx.boosted:
-        return request.get_full_path()
-
-    # target is fragment: redirect to current browser url
-    if request.htmx.current_url:
-        return resolve_url(
-            urlunparse(["", "", *list(urlparse(request.htmx.current_url))[2:]])
-        )
-    return settings.LOGIN_REDIRECT_URL

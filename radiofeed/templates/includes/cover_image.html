@@ -1,7 +1,6 @@
 {% spaceless %}
     {% load static %}
     {% static 'img/podcast-icon.webp' as placeholder %}
-    {% if url %}<a href="{{ url }}" title="{{ alt }}">{% endif %}
     <img class="border dark:border-gray-500 object-cover bg-transparent{% if url %} cursor-pointer hover:grayscale hover:opacity-75{% endif %} {{ css_class }}"
         alt="{{ alt }}"
         aria-hidden="true"
@@ -9,6 +8,11 @@
         width="200"
         height="200"
         src="{{ placeholder }}"
+        {% if url %}
+            role="link"
+            hx-get="{{ url }}"
+            hx-push-url="true"
+        {% endif %}
         {% if cover_url %}
             x-data="{# fmt:off #}{
             isLoaded: false,
@@ -20,5 +24,4 @@
             :class="{'blur-sm': !isLoaded}"
             :src="src"
         {% endif %}>
-    {% if url %}</a>{% endif %}
 {% endspaceless %}

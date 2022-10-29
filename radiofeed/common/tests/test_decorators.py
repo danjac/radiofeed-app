@@ -21,13 +21,7 @@ class TestRequireAuth:
         req.htmx = False
         assert view(req).url == f"{reverse('account_login')}?next=/new/"
 
-    def test_anonymous_htmx_boosted(self, rf, anonymous_user, view):
-        req = rf.get("/new/", HTTP_HX_REQUEST="true", HTTP_HX_BOOSTED="true")
-        req.user = anonymous_user
-        req.htmx = HtmxDetails(req)
-        assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/new/")
-
-    def test_anonymous_htmx_post(self, rf, anonymous_user, view):
+    def test_anonymous_htmx_current_url(self, rf, anonymous_user, view):
         req = rf.post(
             "/subscribe/", HTTP_HX_REQUEST="true", HTTP_HX_CURRENT_URL="/history/"
         )
@@ -39,7 +33,7 @@ class TestRequireAuth:
         req = rf.post("/new/", HTTP_HX_REQUEST="true")
         req.user = anonymous_user
         req.htmx = HtmxDetails(req)
-        assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/podcasts/")
+        assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/new/")
 
     def test_anonymous_plain_ajax(self, rf, anonymous_user, view):
         req = rf.get("/", HTTP_X_REQUESTED_WITH="XMLHttpRequest")
