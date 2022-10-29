@@ -3,12 +3,10 @@ from __future__ import annotations
 import functools
 
 from typing import Callable
-from urllib.parse import urlparse, urlunparse
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import resolve_url
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -53,15 +51,9 @@ def require_auth(view: Callable) -> Callable:
             return HttpResponseUnauthorized()
 
         if request.htmx:
-            login_redirect_url = (
-                resolve_url(
-                    urlunparse(["", "", *list(urlparse(request.htmx.current_url))[2:]])
-                )
-                if request.htmx.current_url
-                else settings.LOGIN_REDIRECT_URL
+            return HttpResponseClientRedirect(
+                redirect_to_login(settings.LOGIN_REDIRECT_URL).url
             )
-
-            return HttpResponseClientRedirect(redirect_to_login(login_redirect_url).url)
 
         return redirect_to_login(request.get_full_path())
 
