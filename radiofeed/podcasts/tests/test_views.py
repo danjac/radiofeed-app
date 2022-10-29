@@ -4,9 +4,14 @@ import factory
 import pytest
 
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains, assertTemplateUsed
+from pytest_django.asserts import assertContains
 
-from radiofeed.common.asserts import assert_conflict, assert_not_found, assert_ok
+from radiofeed.common.asserts import (
+    assert_conflict,
+    assert_hx_redirect,
+    assert_not_found,
+    assert_ok,
+)
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.factories import (
@@ -17,18 +22,28 @@ from radiofeed.podcasts.factories import (
 )
 from radiofeed.podcasts.models import Subscription
 
+intro_url = reverse_lazy("podcasts:intro")
 podcasts_url = reverse_lazy("podcasts:index")
 
 
-class TestPodcasts:
+class TestIntro:
     def test_anonymous(self, client, db):
         PodcastFactory.create_batch(3, promoted=True)
-        response = client.get(podcasts_url)
+        response = client.get(intro_url)
         assert_ok(response)
 
-        assertTemplateUsed(response, "podcasts/intro.html")
         assert len(response.context["podcasts"]) == 3
 
+    def test_authenticated(self, client, auth_user):
+        response = client.get(intro_url)
+        assert response.url == podcasts_url
+
+    def test_authenticated_htmx(self, client, auth_user):
+        response = client.get(intro_url, HTTP_HX_REQUEST="true")
+        assert_hx_redirect(response, podcasts_url)
+
+
+class TestPodcasts:
     def test_htmx(self, client, auth_user):
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(podcasts_url, HTTP_HX_REQUEST="true")

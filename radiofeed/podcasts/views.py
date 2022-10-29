@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
+from django_htmx.http import HttpResponseClientRedirect
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import require_auth
@@ -20,19 +21,23 @@ from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
 @require_safe
+def intro(request: HttpRequest) -> HttpResponse:
+    """Render default site home page for anonymous users."""
+    if request.user.is_authenticated:
+        url = reverse("podcasts:index")
+        return HttpResponseClientRedirect(url) if request.htmx else redirect(url)
+
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:30]
+
+    return render(request, "podcasts/intro.html", {"podcasts": podcasts})
+
+
+@require_safe
+@require_auth
 def index(request: HttpRequest) -> HttpResponse:
-    """Render default podcast home page.
-
-    If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
-    """
+    """Render default podcast home page for authenticated users."""
     podcasts = _get_podcasts().order_by("-pub_date")
-
-    subscribed = (
-        set(request.user.subscriptions.values_list("podcast", flat=True))
-        if request.user.is_authenticated
-        else set()
-    )
-
+    subscribed = set(request.user.subscriptions.values_list("podcast", flat=True))
     promoted = "promoted" in request.GET or not subscribed
 
     if promoted:
@@ -40,19 +45,16 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.filter(pk__in=subscribed)
 
-    if request.user.is_authenticated:
-        return render_pagination_response(
-            request,
-            podcasts,
-            "podcasts/index.html",
-            {
-                "promoted": promoted,
-                "has_subscriptions": bool(subscribed),
-                "search_url": reverse("podcasts:search_podcasts"),
-            },
-        )
-
-    return render(request, "podcasts/intro.html", {"podcasts": podcasts[:30]})
+    return render_pagination_response(
+        request,
+        podcasts,
+        "podcasts/index.html",
+        {
+            "promoted": promoted,
+            "has_subscriptions": bool(subscribed),
+            "search_url": reverse("podcasts:search_podcasts"),
+        },
+    )
 
 
 @require_safe

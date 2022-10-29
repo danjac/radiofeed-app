@@ -31,7 +31,7 @@ class TestRequireAuth:
         req = rf.get("/new/", HTTP_HX_REQUEST="true")
         req.user = anonymous_user
         req.htmx = HtmxDetails(req)
-        assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/")
+        assert_hx_redirect(view(req), f"{reverse('account_login')}?next=/podcasts/")
 
     def test_anonymous_plain_ajax(self, rf, anonymous_user, view):
         req = rf.get("/", HTTP_X_REQUESTED_WITH="XMLHttpRequest")
