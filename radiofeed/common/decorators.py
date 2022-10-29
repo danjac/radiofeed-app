@@ -5,7 +5,6 @@ import functools
 from typing import Callable
 from urllib.parse import urlparse, urlunparse
 
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
@@ -61,14 +60,8 @@ def require_auth(view: Callable) -> Callable:
                 else request.get_full_path()
             )
 
-            return HttpResponseClientRedirect(
-                redirect_to_login(
-                    login_redirect_url, redirect_field_name=REDIRECT_FIELD_NAME
-                ).url
-            )
+            return HttpResponseClientRedirect(redirect_to_login(login_redirect_url).url)
 
-        return redirect_to_login(
-            request.get_full_path(), redirect_field_name=REDIRECT_FIELD_NAME
-        )
+        return redirect_to_login(request.get_full_path())
 
     return _wrapper
