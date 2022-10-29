@@ -3,11 +3,14 @@ from __future__ import annotations
 import functools
 
 from typing import Callable
+from urllib.parse import urlparse, urlunparse
 
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, QueryDict
+from django.shortcuts import resolve_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -46,14 +49,9 @@ def require_auth(view: Callable) -> Callable:
 
         # HTMX: redirect to the current url
         if request.htmx:
-            return HttpResponseClientRedirect(
-                redirect_to_login(
-                    request.htmx.current_url or settings.LOGIN_REDIRECT_URL,
-                    redirect_field_name=REDIRECT_FIELD_NAME,
-                ).url
-            )
+            return _htmx_login_redirect(request)
 
-        # plain non-HTMX AJAX: return a 403
+        # plain non-HTMX AJAX: return a 401
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return HttpResponseUnauthorized()
 
@@ -63,3 +61,28 @@ def require_auth(view: Callable) -> Callable:
         )
 
     return _wrapper
+
+
+def _htmx_login_redirect(request: HttpRequest) -> HttpResponse:
+
+    # if HX-Current-Url is in header, redirect back to that url after login
+    if request.htmx.current_url and url_has_allowed_host_and_scheme(
+        url=request.htmx.current_url,
+        allowed_hosts=[request.get_host()],
+        require_https=request.is_secure(),
+    ):
+        # strip domain from current url
+        redirect_to = urlunparse(
+            ["", ""] + list(urlparse(request.htmx.current_url))[2:]
+        )
+    else:
+        redirect_to = settings.LOGIN_REDIRECT_URL
+
+    resolved_url = resolve_url(settings.LOGIN_URL)
+    login_url_parts = list(urlparse(resolved_url))
+
+    qs = QueryDict(login_url_parts[4], mutable=True)
+    qs[REDIRECT_FIELD_NAME] = redirect_to
+    login_url_parts[4] = qs.urlencode(safe="/")
+
+    return HttpResponseClientRedirect(urlunparse(login_url_parts))

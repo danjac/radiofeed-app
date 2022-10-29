@@ -30,7 +30,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         with override(user.language):
             messages.success(request, _("Your preferences have been saved"))
 
-        return HttpResponseClientRedirect(request.htmx.current_url)
+        return HttpResponseClientRedirect(request.path)
 
     return render(request, "account/preferences.html", {"form": form})
 
