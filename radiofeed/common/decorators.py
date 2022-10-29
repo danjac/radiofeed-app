@@ -5,6 +5,7 @@ import functools
 from typing import Callable
 from urllib.parse import urlparse, urlunparse
 
+from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
@@ -57,7 +58,7 @@ def require_auth(view: Callable) -> Callable:
                     urlunparse(["", "", *list(urlparse(request.htmx.current_url))[2:]])
                 )
                 if request.htmx.current_url
-                else request.get_full_path()
+                else settings.LOGIN_REDIRECT_URL
             )
 
             return HttpResponseClientRedirect(redirect_to_login(login_redirect_url).url)
