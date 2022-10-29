@@ -1,21 +1,21 @@
 {% load i18n static %}
 
-{% url 'podcasts:index' as home_url %}
-{% url 'podcasts:search_podcasts' as search_url %}
-
-{% translate "Search" as t_search %}
-{% translate "Toggle Menu" as t_toggle_menu %}
 
 {% with site_name=request.site.name %}
     <header class="bg-black text-white sticky top-0 w-full z-20 shadow"
         x-data="{sidebar: false}"
         @htmx:before-request.window="sidebar=false">
 
+        {% translate "Search" as t_search %}
+        {% translate "Toggle Menu" as t_toggle_menu %}
+
+        {% url 'podcasts:search_podcasts' as search_url %}
+
         <nav class="flex items-center justify-between p-2">
 
             <div class="flex items-center flex-shrink-0 space-x-3">
                 <a class="inline-flex items-center font-bold text-lg md:text-xl xl:text-2xl"
-                    href="{{ home_url }}"
+                    href="{% if user.is_authenticated %}{% url 'podcasts:index' %}{% else %}{% url 'podcasts:intro' %}{% endif %}"
                     title="{{ site_name }}: {% translate "Home Page" %}">
                     <img src="{% static 'img/wave.png' %}"
                         class="h-6 w-6 lg:h-8 lg:w-8 mr-2" title="{{ site_name }}"

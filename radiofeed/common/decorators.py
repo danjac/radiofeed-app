@@ -72,8 +72,8 @@ def _htmx_login_redirect(request: HttpRequest) -> HttpResponse:
         require_https=request.is_secure(),
     ):
         # strip domain from current url
-        redirect_to = urlunparse(
-            ["", ""] + list(urlparse(request.htmx.current_url))[2:]
+        redirect_to = resolve_url(
+            urlunparse(["", ""] + list(urlparse(request.htmx.current_url))[2:])
         )
     else:
         redirect_to = settings.LOGIN_REDIRECT_URL
