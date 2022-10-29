@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
@@ -12,7 +11,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 from ratelimit.decorators import ratelimit
 
-from radiofeed.common.decorators import ajax_login_required
+from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict
 from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
@@ -57,7 +56,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@login_required
+@require_auth
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -79,7 +78,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 
 @ratelimit(key="ip", rate="20/m")
-@login_required
+@require_auth
 @require_safe
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
@@ -107,7 +106,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@login_required
+@require_auth
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -123,7 +122,7 @@ def latest_episode(
 
 
 @require_safe
-@login_required
+@require_auth
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -141,7 +140,7 @@ def podcast_detail(
 
 
 @require_safe
-@login_required
+@require_auth
 def episodes(
     request: HttpRequest,
     podcast_id: int,
@@ -170,7 +169,7 @@ def episodes(
 
 
 @require_safe
-@login_required
+@require_auth
 def similar(
     request: HttpRequest,
     podcast_id: int,
@@ -196,7 +195,7 @@ def similar(
 
 
 @require_safe
-@login_required
+@require_auth
 def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
@@ -214,7 +213,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@login_required
+@require_auth
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -242,7 +241,7 @@ def category_detail(
 
 
 @require_POST
-@ajax_login_required
+@require_auth
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast.
 
@@ -261,7 +260,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 @require_POST
-@ajax_login_required
+@require_auth
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id)

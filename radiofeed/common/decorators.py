@@ -31,10 +31,10 @@ def middleware(
     return _wrapper
 
 
-def ajax_login_required(view: Callable) -> Callable:
-    """Login required decorator for HTMX and AJAX views.
+def require_auth(view: Callable) -> Callable:
+    """Login required decorator also handling HTMX and AJAX views.
 
-    Use this decorator instead of @login_required with views returning HTMX fragment and JSON responses.
+    Use this decorator instead of @require_auth with views returning HTMX fragment and JSON responses.
 
     Returns redirect to login page if HTMX request, otherwise returns HTTP UNAUTHORIZED.
     """
@@ -44,13 +44,22 @@ def ajax_login_required(view: Callable) -> Callable:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
+        # HTMX: redirect to the current url
         if request.htmx:
             return HttpResponseClientRedirect(
                 redirect_to_login(
-                    settings.LOGIN_REDIRECT_URL,
+                    request.htmx.current_url or settings.LOGIN_REDIRECT_URL,
                     redirect_field_name=REDIRECT_FIELD_NAME,
                 ).url
             )
-        return HttpResponseUnauthorized()
+
+        # plain non-HTMX AJAX: return a 403
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return HttpResponseUnauthorized()
+
+        # default behaviour
+        return redirect_to_login(
+            request.get_full_path(), redirect_field_name=REDIRECT_FIELD_NAME
+        )
 
     return _wrapper
