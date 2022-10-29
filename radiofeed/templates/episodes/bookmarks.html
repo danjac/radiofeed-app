@@ -27,7 +27,7 @@
             </div>
         {% endif %}
     </header>
-    <div role="list" class="dark:divide-gray-500 divide-y divide-solid">
+    <div class="dark:divide-gray-500 divide-y divide-solid">
         {% include "includes/pagination_links.html" %}
         {% for bookmark in page_obj.object_list %}
             {% include "episodes/includes/episode.html" with episode=bookmark.episode %}
