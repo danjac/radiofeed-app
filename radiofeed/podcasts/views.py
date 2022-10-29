@@ -26,6 +26,8 @@ def index(request: HttpRequest) -> HttpResponse:
 
     If user is authenticated will show their subscriptions (if any); otherwise shows all promoted podcasts.
     """
+    podcasts = _get_podcasts().order_by("-pub_date")
+
     subscribed = (
         set(request.user.subscriptions.values_list("podcast", flat=True))
         if request.user.is_authenticated
@@ -33,23 +35,25 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
     promoted = "promoted" in request.GET or not subscribed
-    podcasts = _get_podcasts().order_by("-pub_date")
 
     if promoted:
         podcasts = podcasts.filter(promoted=True)
     else:
         podcasts = podcasts.filter(pk__in=subscribed)
 
-    return render_pagination_response(
-        request,
-        podcasts,
-        "podcasts/index.html",
-        {
-            "promoted": promoted,
-            "has_subscriptions": bool(subscribed),
-            "search_url": reverse("podcasts:search_podcasts"),
-        },
-    )
+    if request.user.is_authenticated:
+        return render_pagination_response(
+            request,
+            podcasts,
+            "podcasts/index.html",
+            {
+                "promoted": promoted,
+                "has_subscriptions": bool(subscribed),
+                "search_url": reverse("podcasts:search_podcasts"),
+            },
+        )
+
+    return render(request, "podcasts/intro.html", {"podcasts": podcasts[:30]})
 
 
 @require_safe

@@ -34,46 +34,19 @@
                 </div>
             </div>
         {% else %}
-            {% if request.user.is_anonymous %}
-                {% with site_name=request.site.name %}
-                    <h1 class="font-bold text-lg lg:text-xl xl:text-2xl text-center">
-                        Welcome to {{ site_name }}!
-                    </h1>
-                    <h2 class="font-semibold text-base lg:text-lg xl:text-xl text-center">
-                        {% blocktranslate %}
-                            <strong>{{ site_name }}</strong> is a <strong>free</strong> web app for discovering and listening to your favorite podcast feeds.
-                        {% endblocktranslate %}
-                    </h2>
-                {% endwith %}
-            {% else %}
-                <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left">
-                    {{ t_podcasts }}
-                </h1>
-            {% endif %}
+            <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left">
+                {{ t_podcasts }}
+            </h1>
         {% endif %}
     </header>
-    {% if request.user.is_authenticated %}
-        <div role="list" class="dark:divide-gray-500 divide-y divide-solid">
-            {% include "includes/pagination_links.html" %}
-            {% for podcast in page_obj.object_list %}
-                {% include "podcasts/includes/podcast.html" %}
-            {% empty %}
-                {% include "includes/empty.html" %}
-            {% endfor %}
-            {% include "includes/pagination_links.html" %}
-        </div>
-    {% else %}
-        <div role="list" class="flex flex-wrap gap-1 md:gap-2 justify-between">
-            {% cache 600 podcasts-promoted-anonymous %}
-                {% for podcast in page_obj %}
-                    {% with css_class="h-28 w-28 sm:h-36 sm:w-36 lg:h-40 lg:w-40 xl:h-56 xl:w-56" %}
-                        <div class="{{ css_class }}">
-                            {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url %}
-                        </div>
-                    {% endwith %}
-                {% endfor %}
-            {% endcache %}
-        </div>
-    {% endif %}
+    <div role="list" class="dark:divide-gray-500 divide-y divide-solid">
+        {% include "includes/pagination_links.html" %}
+        {% for podcast in page_obj.object_list %}
+            {% include "podcasts/includes/podcast.html" %}
+        {% empty %}
+            {% include "includes/empty.html" %}
+        {% endfor %}
+        {% include "includes/pagination_links.html" %}
+    </div>
 
 {% endblock content %}

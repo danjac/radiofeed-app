@@ -4,7 +4,7 @@ import factory
 import pytest
 
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from radiofeed.common.asserts import assert_conflict, assert_not_found, assert_ok
 from radiofeed.episodes.factories import EpisodeFactory
@@ -26,11 +26,10 @@ class TestPodcasts:
         response = client.get(podcasts_url)
         assert_ok(response)
 
-        assert len(response.context["page_obj"].object_list) == 3
-        assert response.context["promoted"]
-        assert not response.context["has_subscriptions"]
+        assertTemplateUsed(response, "podcasts/intro.html")
+        assert len(response.context["podcasts"]) == 3
 
-    def test_htmx(self, client, db):
+    def test_htmx(self, client, auth_user):
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(podcasts_url, HTTP_HX_REQUEST="true")
         assert_ok(response)
