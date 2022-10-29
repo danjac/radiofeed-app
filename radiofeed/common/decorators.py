@@ -42,18 +42,15 @@ def require_auth(view: Callable) -> Callable:
     def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
-        #
-        # plain non-HTMX AJAX: return a 401
-        if (
-            not request.htmx
-            and request.headers.get("x-requested-with") == "XMLHttpRequest"
-        ):
-            return HttpResponseUnauthorized()
 
         if request.htmx:
             return HttpResponseClientRedirect(
                 redirect_to_login(settings.LOGIN_REDIRECT_URL).url
             )
+
+        # plain non-HTMX AJAX: return a 401
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return HttpResponseUnauthorized()
 
         return redirect_to_login(request.get_full_path())
 
