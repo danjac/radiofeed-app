@@ -15,7 +15,14 @@
                 </a>
             </h2>
             <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
-                {% include "includes/date.html" with value=podcast.pub_date title=_("Latest Episode") %}
+                {% translate "Latest Episode" as t_latest_episode %}
+                {% if show_latest %}
+                    {% include "includes/date.html" with value=podcast.pub_date title=t_latest_episode %}
+                {% else %}
+                    <a class="link" href="{{ episode_url }}">
+                        {% include "includes/date.html" with value=podcast.pub_date title=t_latest_episode %}
+                    </a>
+                {% endif %}
             </h3>
         </div>
     </article>
