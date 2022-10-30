@@ -1,8 +1,8 @@
 {% load i18n %}
-{% with podcast_url=podcast.get_absolute_url episode_url=podcast.get_latest_episode_url %}
+{% with podcast_url=podcast.get_absolute_url %}
     <article class="flex items-center space-x-3 px-1 py-2 cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-800"
         role="link"
-        hx-get="{% if show_latest %}{{ episode_url }}{% else %}{{ podcast_url }}{% endif %}"
+        hx-get="{{ podcast_url }}"
         hx-push-url="true">
         <div>
             {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title css_class="h-16 w-16" url=podcast_url %}
@@ -10,19 +10,12 @@
         <div class="flex flex-col place-content-between h-14 md:h-16">
             <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-bold line-clamp-2"
                 title="{{ podcast.cleaned_title }}">
-                <a class="link" href="{% if show_latest %}{{ episode_url }}{% else %}{{ podcast_url }}{% endif %}">
+                <a class="link" href="{{ podcast_url }}">
                     {{ podcast.cleaned_title|truncatechars:180 }}
                 </a>
             </h2>
             <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
-                {% translate "Latest Episode" as t_latest_episode %}
-                {% if show_latest %}
-                    {% include "includes/date.html" with value=podcast.pub_date title=t_latest_episode %}
-                {% else %}
-                    <a class="link" href="{{ episode_url }}">
-                        {% include "includes/date.html" with value=podcast.pub_date title=t_latest_episode %}
-                    </a>
-                {% endif %}
+                {% include "includes/date.html" with value=podcast.pub_date title=_("Latest Episode") %}
             </h3>
         </div>
     </article>

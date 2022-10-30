@@ -6,7 +6,7 @@
                 {% if is_podcast_detail %}
                     {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title %}
                 {% else %}
-                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url %}
+                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
                 {% endif %}
             {% endwith %}
         </div>
@@ -20,16 +20,7 @@
             </h2>
 
             <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs md:text-sm">
-                {% if is_podcast_detail %}
-                    {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
-                {% else %}
-                    <a href="{{ podcast.get_episodes_url }}"
-                        class="link text-gray-600 dark:text-gray-300"
-                        title="{{ podcast.cleaned_title }}"
-                        hx-trigger="click consume">
-                        {{ podcast.cleaned_title }}
-                    </a>
-                {% endif %}
+                {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
             </h3>
         </div>
     </article>

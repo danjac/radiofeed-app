@@ -52,7 +52,6 @@ def index(request: HttpRequest) -> HttpResponse:
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
-            "show_latest": True,
         },
     )
 
