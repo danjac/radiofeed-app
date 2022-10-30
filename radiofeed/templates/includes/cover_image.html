@@ -3,6 +3,7 @@
     {% static 'img/podcast-icon.webp' as placeholder %}
     <img class="border dark:border-gray-500 object-cover bg-transparent hover:grayscale hover:opacity-75{% if url %} cursor-pointer{% endif %} {{ css_class }}"
         alt="{{ alt }}"
+        title="{{ alt }}"
         aria-hidden="true"
         loading="lazy"
         width="200"
