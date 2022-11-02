@@ -3,7 +3,7 @@
     <nav class="pl-3 xl:pl-0  xl:pt-12 text-base md:text-lg lg:text-xl"
         x-data="{current: location.pathname}"
         @htmx:after-request.window="current=new URL($event.detail.xhr.responseURL).pathname">
-        <ul class="space-y-3 sm:space-y-0 xl:space-y-6 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:flex xl:flex-col xl:justify-content-between">
+        <ul class="space-y-3 sm:space-y-0 xl:space-y-3 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:flex xl:flex-col xl:justify-content-between">
             <li>
                 {% url 'podcasts:index' as podcasts_url %}
                 <a href="{{ podcasts_url }}"
