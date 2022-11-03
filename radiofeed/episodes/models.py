@@ -55,56 +55,33 @@ class Episode(models.Model):
         "podcasts.Podcast",
         on_delete=models.CASCADE,
         related_name="episodes",
-        verbose_name=_("Podcast"),
     )
 
-    guid: str = models.TextField(verbose_name=_("RSS Feed GUID"))
+    guid: str = models.TextField()
 
-    pub_date: datetime = models.DateTimeField(verbose_name=_("Release Date"))
+    pub_date: datetime = models.DateTimeField()
 
-    title: str = models.TextField(blank=True, verbose_name=_("Episode Title"))
-    description: str = models.TextField(
-        blank=True, verbose_name=_("Episode Description")
-    )
-    keywords: str = models.TextField(blank=True, verbose_name=_("Episode Keywords"))
+    title: str = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    keywords: str = models.TextField(blank=True)
 
-    link: str | None = models.URLField(
-        max_length=2083, null=True, blank=True, verbose_name=_("Episode Website Page")
-    )
+    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    episode_type: str = models.CharField(
-        max_length=30, default="full", verbose_name=_("Episode Type")
-    )
-    episode: int | None = models.IntegerField(
-        null=True, blank=True, verbose_name=_("Season Episode Number")
-    )
-    season: int | None = models.IntegerField(
-        null=True, blank=True, verbose_name=_("Season")
-    )
+    episode_type: str = models.CharField(max_length=30, default="full")
+    episode: int | None = models.IntegerField(null=True, blank=True)
+    season: int | None = models.IntegerField(null=True, blank=True)
 
-    cover_url: str | None = models.URLField(
-        max_length=2083, null=True, blank=True, verbose_name=_("Cover Image")
-    )
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    media_url: str = models.URLField(
-        max_length=2083, verbose_name=_("Audio URL Source")
-    )
-    media_type: str = models.CharField(max_length=60, verbose_name=_("Audio MIME Type"))
+    media_url: str = models.URLField(max_length=2083)
+    media_type: str = models.CharField(max_length=60)
 
-    length: int | None = models.BigIntegerField(
-        null=True, blank=True, verbose_name=_("Duration (Seconds)")
-    )
-    duration: str = models.CharField(
-        max_length=30, blank=True, verbose_name=_("Duration (Text)")
-    )
+    length: int | None = models.BigIntegerField(null=True, blank=True)
+    duration: str = models.CharField(max_length=30, blank=True)
 
-    explicit: bool = models.BooleanField(
-        default=False, verbose_name=_("Contains Explicit or Adult Content")
-    )
+    explicit: bool = models.BooleanField(default=False)
 
-    search_vector: str | None = SearchVectorField(
-        null=True, editable=False, verbose_name=_("PostgreSQL Search Vector")
-    )
+    search_vector: str | None = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
     fast_update_objects: models.Manager = FastUpdateManager()
@@ -287,14 +264,12 @@ class Bookmark(TimeStampedModel):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="bookmarks",
-        verbose_name=_("User"),
     )
 
     episode = models.ForeignKey(
         "episodes.Episode",
         on_delete=models.CASCADE,
         related_name="bookmarks",
-        verbose_name=_("User"),
     )
 
     objects = BookmarkQuerySet.as_manager()
@@ -327,20 +302,16 @@ class AudioLog(TimeStampedModel):
     user: User = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        verbose_name=_("User"),
         related_name="audio_logs",
     )
     episode: Episode = models.ForeignKey(
         "episodes.Episode",
         on_delete=models.CASCADE,
-        verbose_name=_("Episode"),
         related_name="audio_logs",
     )
 
-    listened: datetime = models.DateTimeField(verbose_name=_("Last Listened At"))
-    current_time: int = models.IntegerField(
-        default=0, verbose_name=_("Timestamp Mark (Seconds)")
-    )
+    listened: datetime = models.DateTimeField()
+    current_time: int = models.IntegerField(default=0)
 
     objects: models.Manager["AudioLog"] = AudioLogQuerySet.as_manager()
 

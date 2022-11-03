@@ -36,16 +36,13 @@ class CategoryQuerySet(models.QuerySet):
 class Category(models.Model):
     """iTunes category."""
 
-    name: str = models.CharField(
-        max_length=100, unique=True, verbose_name=_("Category Name")
-    )
+    name: str = models.CharField(max_length=100, unique=True)
     parent: Category | None = models.ForeignKey(
         "self",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name="children",
-        verbose_name=_("Parent Category"),
     )
 
     objects: models.Manager["Category"] = CategoryQuerySet.as_manager()
@@ -87,107 +84,75 @@ class Podcast(models.Model):
         RSS_PARSER_ERROR = "rss_parser_error", _("RSS Parser Error")
         DUPLICATE_FEED = "duplicate_feed", _("Duplicate Feed")
 
-    rss: str = models.URLField(unique=True, max_length=500, verbose_name=_("RSS Feed"))
+    rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(
         default=True,
-        verbose_name=_("Active"),
         help_text=_(
             "Inactive podcasts will no longer be updated from their RSS feeds."
         ),
     )
 
-    etag: str = models.TextField(blank=True, verbose_name=_("HTTP Etag Header"))
-    title: str = models.TextField(verbose_name=_("Podcast Title"))
+    etag: str = models.TextField(blank=True)
+    title: str = models.TextField()
 
-    pub_date: datetime | None = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Latest Release Date")
-    )
+    pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    parsed: datetime | None = models.DateTimeField(
-        null=True, blank=True, verbose_name=_("Last RSS Feed Check")
-    )
+    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     frequency: timedelta = models.DurationField(
         default=timedelta(hours=24),
-        verbose_name=_("RSS Update Frequency"),
     )
 
     modified: datetime | None = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name=_("HTTP Modified Header"),
     )
 
     content_hash: str | None = models.CharField(
-        max_length=64, null=True, blank=True, verbose_name=_("Content Hash of RSS Feed")
+        max_length=64,
+        null=True,
+        blank=True,
     )
 
-    http_status: int | None = models.SmallIntegerField(
-        null=True, blank=True, verbose_name=_("HTTP Status")
-    )
+    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
     parse_result: str = models.CharField(
         max_length=30,
         null=True,
         blank=True,
         choices=ParseResult.choices,
-        verbose_name=_("Feed Update Result"),
     )
 
-    num_retries: int = models.PositiveSmallIntegerField(
-        default=0, verbose_name=_("RSS Feed Retry Count")
-    )
+    num_retries: int = models.PositiveSmallIntegerField(default=0)
 
-    cover_url: str | None = models.URLField(
-        max_length=2083, null=True, blank=True, verbose_name=_("Cover Image")
-    )
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    funding_url: str | None = models.URLField(
-        max_length=2083, null=True, blank=True, verbose_name=_("Funding Website URL")
-    )
-    funding_text: str = models.TextField(
-        blank=True, verbose_name=_("Funding Website Text")
-    )
+    funding_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    funding_text: str = models.TextField(blank=True)
 
     language: str = models.CharField(
         max_length=2,
         default="en",
         validators=[MinLengthValidator(2)],
-        verbose_name=_("Podcast Language"),
     )
 
-    description: str = models.TextField(
-        blank=True, verbose_name=_("Podcast Description")
-    )
-    link: str | None = models.URLField(
-        max_length=2083, null=True, blank=True, verbose_name=_("Website")
-    )
-    keywords: str = models.TextField(
-        blank=True, verbose_name=_("Non-iTunes Category Keywords")
-    )
-    extracted_text = models.TextField(
-        blank=True, verbose_name=_("Keywords Extracted from Podcast Content")
-    )
-    owner: str = models.TextField(blank=True, verbose_name=_("Podcast Owner(s)"))
+    description: str = models.TextField(blank=True)
+    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    keywords: str = models.TextField(blank=True)
+    extracted_text = models.TextField(blank=True)
+    owner: str = models.TextField(blank=True)
 
-    created: datetime = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Podcast Added to Database")
-    )
+    created: datetime = models.DateTimeField(auto_now_add=True)
     updated: datetime = models.DateTimeField(
         auto_now=True, verbose_name=_("Podcast Updated in Database")
     )
 
-    explicit: bool = models.BooleanField(
-        default=False, verbose_name=_("Podcast Contains Explicit or Adult Content")
-    )
-    promoted: bool = models.BooleanField(
-        default=False, verbose_name=_("Promoted to Home Page")
-    )
+    explicit: bool = models.BooleanField(default=False)
+    promoted: bool = models.BooleanField(default=False)
 
     categories: models.QuerySet[Category] = models.ManyToManyField(
         "podcasts.Category",
         blank=True,
-        verbose_name=_("iTunes Categories"),
         related_name="podcasts",
     )
 
@@ -195,12 +160,9 @@ class Podcast(models.Model):
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name="recommended_podcasts",
-        verbose_name=_("Recommended to Users"),
     )
 
-    search_vector: str | None = SearchVectorField(
-        null=True, editable=False, verbose_name=_("PostgreSQL Search Vector")
-    )
+    search_vector: str | None = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager["Podcast"] = PodcastQuerySet.as_manager()
 
@@ -268,14 +230,12 @@ class Subscription(TimeStampedModel):
     subscriber: User = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        verbose_name=_("Subscriber"),
         related_name="subscriptions",
     )
 
     podcast: Podcast = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
-        verbose_name=_("Podcast"),
         related_name="subscriptions",
     )
 
@@ -308,26 +268,21 @@ class Recommendation(models.Model):
         "podcasts.Podcast",
         on_delete=models.CASCADE,
         related_name="recommendations",
-        verbose_name=_("Podcast"),
     )
 
     recommended: Podcast = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
         related_name="similar",
-        verbose_name=_("Similar Podcast"),
     )
 
-    frequency: int = models.PositiveIntegerField(
-        default=0, verbose_name=_("Frequency Count")
-    )
+    frequency: int = models.PositiveIntegerField(default=0)
 
     similarity: decimal.Decimal | None = models.DecimalField(
         decimal_places=10,
         max_digits=100,
         null=True,
         blank=True,
-        verbose_name=_("Similarity Rating"),
     )
 
     objects: models.Manager["Recommendation"] = RecommendationQuerySet.as_manager()
