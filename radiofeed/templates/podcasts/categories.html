@@ -17,19 +17,13 @@
         <ul class="space-y-3 dark:divide-gray-500 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 md:grid-cols-3
         {% endif %}">
             {% for category in categories %}
-                {% with category_url=category.get_absolute_url %}
-                    <li class="pt-3 font-semibold md:text-lg link cursor-pointer"
-                        hx-get="{{ category_url }}"
-                        hx-push-url="true"
-                        role="link">
+                <li class="pt-3">
+                    <a href="{{ category.get_absolute_url }}" class="link font-semibold md:text-lg w-full">
                         <h2>
-                            <a href="{{ category_url }}"
-                                hx-trigger="click consume">
-                                {{ category.name }}
-                            </a>
+                            {{ category.name }}
                         </h2>
-                    </li>
-                {% endwith %}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     {% else %}
