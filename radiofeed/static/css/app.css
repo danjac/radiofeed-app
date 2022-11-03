@@ -122,11 +122,13 @@ input[type="search"]::-webkit-search-results-decoration {
             color: theme("colors.white");
             border-color: theme("colors.gray.500");
         }
+
         .btn-primary.btn-outline:hover {
             color: theme("colors.blue.400");
             background-color: theme("colors.gray.800");
             border-color: theme("colors.blue.300");
         }
+
         .btn-default.btn-outline:hover {
             color: theme("colors.purple.400");
             background-color: theme("colors.gray.800");
@@ -161,9 +163,11 @@ input[type="search"]::-webkit-search-results-decoration {
         :root {
             color-scheme: dark;
         }
+
         .link {
             color: theme("colors.gray.100");
         }
+
         .link.active,
         .link:active,
         .link:hover,
