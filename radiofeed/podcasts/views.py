@@ -21,13 +21,13 @@ from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
 @require_safe
-def intro(request: HttpRequest) -> HttpResponse:
+def intro(request: HttpRequest, limit: int = 30) -> HttpResponse:
     """Render default site home page for anonymous users."""
     if request.user.is_authenticated:
         url = reverse("podcasts:index")
         return HttpResponseClientRedirect(url) if request.htmx else redirect(url)
 
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:30]
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
 
     return render(request, "podcasts/intro.html", {"podcasts": podcasts})
 
