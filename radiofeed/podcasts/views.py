@@ -143,9 +143,7 @@ def podcast_detail(
 @require_safe
 @require_auth
 def episodes(
-    request: HttpRequest,
-    podcast_id: int,
-    slug: str | None = None,
+    request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
@@ -172,10 +170,7 @@ def episodes(
 @require_safe
 @require_auth
 def similar(
-    request: HttpRequest,
-    podcast_id: int,
-    slug: str | None = None,
-    limit: int = 12,
+    request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
     podcast = _get_podcast_or_404(podcast_id)
