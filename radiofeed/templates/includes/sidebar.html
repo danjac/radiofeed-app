@@ -3,37 +3,32 @@
     <nav class="pl-3 xl:pl-0 xl:pt-12 text-base md:text-lg lg:text-xl">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-3 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:flex xl:flex-col xl:justify-content-between">
             <li>
-                {% url 'podcasts:index' as podcasts_url %}
-                <a href="{{ podcasts_url }}" accesskey="p" class="{{ SIDEBAR_CSS }}">
+                <a href="{% url 'podcasts:index' %}" accesskey="p" class="{{ SIDEBAR_CSS }}">
                     {% icon "rss" css_class=ICON_CSS %}
                     {% translate "Podcasts" %}
                 </a>
             </li>
             <li>
-                {% url 'episodes:index' as episodes_url %}
-                <a href="{{ episodes_url }}" accesskey="n" class="{{ SIDEBAR_CSS }}">
+                <a href="{% url 'episodes:index' %}" accesskey="n" class="{{ SIDEBAR_CSS }}">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
                     {% translate "New Releases" %}
                 </a>
             </li>
             <li>
-                {% url 'podcasts:category_list' as categories_url %}
-                <a href="{{ categories_url }}" accesskey="c" class="{{ SIDEBAR_CSS }}">
+                <a href="{% url 'podcasts:category_list' %}" accesskey="c" class="{{ SIDEBAR_CSS }}">
                     {% icon "tag" css_class=ICON_CSS %}
                     {% translate "Categories" %}
                 </a>
             </li>
             <li>
-                {% url 'episodes:bookmarks' as bookmarks_url %}
-                <a href="{{ bookmarks_url }}" accesskey="b" class="{{ SIDEBAR_CSS }}">
+                <a href="{% url 'episodes:bookmarks' %}" accesskey="b" class="{{ SIDEBAR_CSS }}">
                     {% icon "star" css_class=ICON_CSS %}
                     {% translate "Bookmarks" %}
                 </a>
             </li>
 
             <li>
-                {% url 'episodes:history' as history_url %}
-                <a href="{{ history_url }}" accesskey="h" class="{{ SIDEBAR_CSS }}">
+                <a href="{% url 'episodes:history' %}" accesskey="h" class="{{ SIDEBAR_CSS }}">
                     {% icon "history" css_class=ICON_CSS %}
                     {% translate "History" %}
                 </a>
@@ -47,8 +42,7 @@
             </li>
 
             <li>
-                {% url 'about' as about_url %}
-                <a href="{{ about_url }}" accesskey="a" class="{{ SIDEBAR_CSS }}">
+                <a href="{% url 'about' %}" accesskey="a" class="{{ SIDEBAR_CSS }}">
                     {% icon "info-circle" css_class=ICON_CSS %}
                     {% translate "About" %}
                 </a>
