@@ -1,6 +1,7 @@
 {% load i18n %}
 {% if episode %}
     {% if is_playing %}
+        {{ episode.get_media_metadata|json_script:"player-metadata" }}
         {% translate "Current Time" as t_current_time %}
         {% translate "Time Remaining" as t_time_remaining %}
         {% translate "Loading..." as t_loading %}
@@ -21,7 +22,6 @@
             ){# fmt:on #}"
                 @keydown.window="shortcuts"
                 class="pt-12 sm:pt-0 md:pt-6">
-                {{ episode.get_media_metadata|json_script:"player-metadata" }}
                 <audio x-ref="audio"
                     preload="metadata"
                     src="{{ media_url }}"
