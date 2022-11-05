@@ -132,24 +132,8 @@ An `app.json` configuration with these cron schedules is included for Dokku depl
 
 ### Updating dependencies
 
-To upgrade Python dependencies just use Poetry:
+For quick updates just run
 
 ```bash
-poetry update
+./upgrade.sh
 ```
-
-This will update `poetry.lock` which should be committed to the repo. Refer to Poetry docs for more details.
-
-If you are using Heroku, Dokku or similar for deployment you should also re-generate the `requirements.txt` file, as Heroku will automatically detect and reinstall any changes:
-
-```bash
-poetry export --without-hashes -o requirements.txt
-```
-
-You can update frontend dependencies as usual with `npm`:
-
-```bash
-npm update
-```
-
-Again, the updated `package-lock.json` file should be committed to the repo.
