@@ -17,8 +17,6 @@ from radiofeed.common import batcher
 from radiofeed.feedparser.xml_parser import parse_xml
 from radiofeed.podcasts.models import Podcast
 
-_BATCH_SIZE: Final = 100
-
 _ITUNES_PODCAST_ID_RE: Final = re.compile(r"id(?P<id>\d+)")
 
 _ITUNES_LOCATIONS: Final = (
@@ -97,7 +95,7 @@ class Crawler:
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the database."""
         for url in self._parse_genre_urls():
-            for batch in batcher.batcher(self._parse_podcast_ids(url), _BATCH_SIZE):
+            for batch in batcher.batcher(self._parse_podcast_ids(url), 100):
                 yield from _parse_feeds(
                     _get_response(
                         "https://itunes.apple.com/lookup",
@@ -148,7 +146,7 @@ class Crawler:
 
 
 def _parse_feeds(json_data: dict) -> Iterator[Feed]:
-    for batch in batcher.batcher(_build_feeds_from_json(json_data), _BATCH_SIZE):
+    for batch in batcher.batcher(_build_feeds_from_json(json_data), 100):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
