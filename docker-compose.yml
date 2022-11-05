@@ -1,13 +1,14 @@
 version: '3.8'
 
-x-logging: &default-logging
+x-logging:
+    &default-logging
     options:
         max-size: '10k'
         max-file: '3'
 
 services:
     postgres:
-        image: postgres:14.5
+        image: postgres:15.0-bullseye
         environment:
             - POSTGRES_PASSWORD=password
         volumes:
@@ -16,21 +17,20 @@ services:
         stop_grace_period: '3s'
         logging: *default-logging
         healthcheck:
-            test: ['CMD', 'pg_isready', '-U', 'postgres']
+            test: [ 'CMD', 'pg_isready', '-U', 'postgres' ]
             interval: 1s
             timeout: 3s
             retries: 30
         ports:
             - '5432:5432'
 
-
     redis:
-        image: redis:7.0.4-bullseye
+        image: redis:7.0.5-bullseye
         mem_limit: 100m
         stop_grace_period: '3s'
         logging: *default-logging
         healthcheck:
-            test: ['CMD', 'redis-cli', 'ping']
+            test: [ 'CMD', 'redis-cli', 'ping' ]
             interval: 1s
             timeout: 3s
             retries: 30
