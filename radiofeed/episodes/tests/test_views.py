@@ -225,7 +225,7 @@ class TestStartPlayer:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET="player",
+                HTTP_HX_TARGET="audio-player",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -239,7 +239,7 @@ class TestStartPlayer:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET="player",
+                HTTP_HX_TARGET="audio-player",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -252,7 +252,7 @@ class TestStartPlayer:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET="player",
+                HTTP_HX_TARGET="audio-player",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -269,7 +269,7 @@ class TestClosePlayer:
     def test_player_empty(self, client, auth_user):
         response = client.post(
             self.url,
-            HTTP_HX_TARGET="player",
+            HTTP_HX_TARGET="audio-player",
             HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
