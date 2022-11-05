@@ -41,7 +41,7 @@
             </h1>
         {% endif %}
     </header>
-    <div class="dark:divide-gray-500 divide-y divide-solid" preload preload-images="true">
+    <div class="dark:divide-gray-500 divide-y divide-solid">
         {% include "includes/pagination_links.html" %}
         {% for podcast in page_obj.object_list %}
             {% include "podcasts/includes/podcast.html" %}
