@@ -1,5 +1,6 @@
 import Alpine from "alpinejs";
 import "htmx.org";
+import "./preload";
 import "./player";
 
 // set global Alpine instance
