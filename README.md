@@ -137,3 +137,5 @@ For quick updates just run
 ```bash
 ./upgrade.sh
 ```
+
+You can then run tests and commit any changes.

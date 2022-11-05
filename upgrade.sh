@@ -7,7 +7,8 @@ poetry update && poetry export --without-hashes -o requirements.txt
 
 # Frontend dependencies
 
-npm update
+npm run check-updates
+npm install
 
 # Pre-commit dependencies
 
