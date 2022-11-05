@@ -146,7 +146,7 @@ template_extensions = ["html"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.config.settings.test"
-addopts="-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --flake8 --cov --no-cov-on-fail --cov-fail-under=100"
+addopts="-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --flake8 -n auto --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing "
 testpaths="radiofeed"
 
 [tool.mypy]
