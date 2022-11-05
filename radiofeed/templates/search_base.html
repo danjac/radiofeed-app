@@ -14,7 +14,8 @@
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            role="tab"
+                            aria-selected="{{ link.active|yesno:"true,false" }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
                             title="{% translate "Search Podcasts" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "Podcasts" %}</a>
@@ -22,7 +23,8 @@
                     {% active_link 'episodes:search_episodes' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            role="tab"
+                            aria-selected="{{ link.active|yesno:"true,false" }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
                             title="{% translate "Search Episodes" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "Episodes" %}</a>
@@ -30,7 +32,8 @@
                     {% active_link 'podcasts:search_itunes' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                            role="tab"
+                            aria-selected="{{ link.active|yesno:"true,false" }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
                             title="{% translate "Search iTunes" %}"
                             href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>

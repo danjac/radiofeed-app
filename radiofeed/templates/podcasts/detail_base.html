@@ -27,7 +27,8 @@
                             <li>
                                 <a class="{{ link.css }}"
                                     href="{{ link.url }}"
-                                    role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                                    role="tab"
+                                    aria-selected="{{ link.active|yesno:"true,false" }}"
                                     tabindex="{{ link.active|yesno:"0,-1" }}"
                                     title="{{ podcast.cleaned_title }} | {{ t_about }}">
                                     {{ t_about }}
@@ -39,7 +40,8 @@
                                 <li>
                                     <a class="{{ link.css }}"
                                         href="{{ link.url }}"
-                                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                                        role="tab"
+                                        aria-selected="{{ link.active|yesno:"true,false" }}"
                                         tabindex="{{ link.active|yesno:"0,-1" }}"
                                         title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
                                         {{ t_episodes }} ({{ num_episodes }})
@@ -52,7 +54,8 @@
                                 <li>
                                     <a class="{{ link.css }}"
                                         href="{{ link.url }}"
-                                        role="tab" aria-selected="{{ link.active|yesno:"true,false" }}"
+                                        role="tab"
+                                        aria-selected="{{ link.active|yesno:"true,false" }}"
                                         tabindex="{{ link.active|yesno:"0,-1" }}"
                                         title="{{ podcast.cleaned_title }} | {{ t_similar }}">
                                         {{ t_similar }}
