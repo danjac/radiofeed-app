@@ -1,6 +1,11 @@
 {% load i18n %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-    <article class="group flex items-center space-x-3 py-2 cursor-pointer" role="link" hx-get="{{ episode_url }}" hx-push-url="true">
+    <article class="group flex items-center space-x-3 py-2 cursor-pointer"
+        role="link"
+        preload="mouseover"
+        preload-images="true"
+        hx-get="{{ episode_url }}"
+        hx-push-url="true">
         <div>
             {% with css_class="h-16 w-16 group-hover:grayscale" %}
                 {% if is_podcast_detail %}

@@ -50,7 +50,7 @@
         {% endif %}
     </header>
 
-    <div class="dark:divide-gray-500 divide-y divide-solid" preload="mouseover" preload-images="true">
+    <div class="dark:divide-gray-500 divide-y divide-solid">
         {% include "includes/pagination_links.html" %}
         {% for episode in page_obj.object_list %}
             {% include "episodes/includes/episode.html" %}
