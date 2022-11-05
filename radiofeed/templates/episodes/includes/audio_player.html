@@ -1,7 +1,6 @@
 {% load i18n %}
 {% if episode %}
     {% if is_playing %}
-        {{ episode.get_media_metadata|json_script:"player-metadata" }}
         {% translate "Current Time" as t_current_time %}
         {% translate "Time Remaining" as t_time_remaining %}
         {% translate "Loading..." as t_loading %}
@@ -22,6 +21,7 @@
             ){# fmt:on #}"
                 @keydown.window="shortcuts"
                 class="pt-12 sm:pt-0 md:pt-6">
+                {{ episode.get_media_metadata|json_script:"player-metadata" }}
                 <audio x-ref="audio"
                     preload="metadata"
                     src="{{ media_url }}"
@@ -109,7 +109,7 @@
                                             accesskey="x"
                                             class="{{ BUTTON_CSS }}"
                                             hx-post="{% url "episodes:close_player" %}"
-                                            hx-target="#player"
+                                            hx-target="#audio-player"
                                             hx-swap="innerHTML"
                                             hx-disinherit="hx-indicator">
                                             {% icon "stop-circle" "regular" size="xl" title=t_close_player %}
@@ -122,7 +122,7 @@
                                 <div class="hidden sm:block space-y-2">
 
                                     <div>
-                                        <a class="block text-center truncate sm:w-80 md:w-96 md:w-auto md:max-w-xl xl:max-w-3xl"
+                                        <a class="block text-center truncate sm:w-80 md:w-auto md:max-w-xl xl:max-w-3xl"
                                             :class="isPlaying ? 'hover:text-blue-500': 'animate-pulse text-gray-300'"
                                             href="{{ episode_url }}"
                                             hx-swap="innerHTML show:window:top"
@@ -244,7 +244,7 @@
             </div>
         {% endwith %}
     {% endif %}
-    {% if request.htmx.target == "player" %}
+    {% if request.htmx.target == "audio-player" %}
         {% include "episodes/includes/audio_controls.html" with hx_oob=True %}
         {% include "episodes/includes/history.html" with hx_oob=True %}
     {% endif %}
