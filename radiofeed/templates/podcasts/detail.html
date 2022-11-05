@@ -76,7 +76,7 @@
             {% cache 600 podcast-categories podcast.id %}
                 {% with categories=podcast.categories.all %}
                     {% if categories %}
-                        <div class="flex flex-wrap items-center max-w-prose space-x-2 sm:space-x-3 leading-loose" preload="mouseover" preload-images="true">
+                        <div class="flex flex-wrap items-center max-w-prose space-x-2 sm:space-x-3 leading-loose" preload preload-images="true">
                             {% for category in categories %}
                                 <a class="inline-flex items-center link"
                                     title="{{ category.name }} {% translate "Podcasts" %}"
