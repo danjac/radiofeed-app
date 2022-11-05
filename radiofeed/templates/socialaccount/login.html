@@ -5,12 +5,12 @@
     {% with provider_name=provider.name %}
         {% if process == "connect" %}
 
-            <h1 class="mb-3 font-bold text-lg md:text-xl xl:text-2xl">{% blocktrans %}Connect to {{ provider_name }}{% endblocktrans %}</h1>
+            <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">{% blocktrans %}Connect to {{ provider_name }}{% endblocktrans %}</h1>
             <p class="mb-3">{% blocktrans %}You are about to connect a new third party account from {{ provider_name }}.{% endblocktrans %}</p>
 
         {% else %}
 
-            <h1 class="mb-3 font-bold text-lg md:text-xl xl:text-2xl">{% blocktrans %}Sign In Via {{ provider_name }}{% endblocktrans %}</h1>
+            <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">{% blocktrans %}Sign In Via {{ provider_name }}{% endblocktrans %}</h1>
             <p class="mb-3">{% blocktrans %}You are about to sign in using a third party account from {{ provider_name }}.{% endblocktrans %}</p>
 
         {% endif %}

@@ -8,7 +8,7 @@
         {% with search_placeholder=_("Search: ")|add:category.name %}
             {% translate "Podcasts" as t_podcasts %}
             {% if request.search %}
-                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl mb-3">
+                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">
                     {{ category.name }} {{ t_podcasts }}
                 </h1>
                 <div class="mb-3 sm:flex items-center justify-center sm:justify-between">

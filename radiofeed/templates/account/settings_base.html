@@ -7,7 +7,7 @@
     {% if user.is_authenticated %}
 
         <header class="mb-3 pb-3 border-b dark:border-gray-500 space-y-6">
-            <h1 class="max-w-max text-lg md:text-xl xl:text-2xl break-words font-bold"> {% blocktranslate with username=user.username %}Settings for {{ username }}{% endblocktranslate %}
+            <h1 class="max-w-max text-lg lg:text-xl xl:text-2xl break-words font-bold"> {% blocktranslate with username=user.username %}Settings for {{ username }}{% endblocktranslate %}
             </h1>
             <nav>
                 <ul class="flex items-center space-x-6 overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none" role="tablist">
