@@ -39,10 +39,11 @@
                             href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>
                     </li>
                 {% endwith %}
+
+                <li class="flex items-center justify-center sm:justify-end">
+                    {% include "includes/search_form.html" with placeholder=_("Search...") %}
+                </li>
             </ul>
-            <div class="flex items-center justify-center sm:justify-end">
-                {% include "includes/search_form.html" with placeholder=_("Search...") %}
-            </div>
         </nav>
     </header>
     {% block search_content %}{% endblock %}
