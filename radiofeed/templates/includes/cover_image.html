@@ -14,6 +14,8 @@
             hx-get="{{ url }}"
             hx-push-url="true"
             hx-trigger="click consume"
+            preload="mouseover"
+            preload-images="true"
         {% endif %}
         {% if cover_url %}
             x-data="{# fmt:off #}{
