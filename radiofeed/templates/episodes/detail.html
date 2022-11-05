@@ -54,6 +54,8 @@
             <h2 class="text-base lg:text-lg">
                 <a href="{{ podcast.get_episodes_url }}"
                     title="{% blocktranslate with podcast=podcast.cleaned_title %}See All Episodes for {{ podcast }}{% endblocktranslate %}"
+                    preload
+                    preload-images="true"
                     class="link">
                     {{ podcast.cleaned_title }}
                 </a>
