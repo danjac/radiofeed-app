@@ -1,9 +1,6 @@
 {% load i18n %}
 {% with podcast_url=podcast.get_absolute_url %}
-    <article class="group flex items-center space-x-3 py-2 cursor-pointer"
-        role="link"
-        hx-get="{{ podcast_url }}"
-        hx-push-url="true">
+    <article class="group flex items-center space-x-3 py-2 cursor-pointer" role="link" hx-get="{{ podcast_url }}" hx-push-url="true">
         <div>
             {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title css_class="h-16 w-16 group-hover:grayscale" %}
         </div>
