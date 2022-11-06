@@ -1,21 +1,4 @@
 [[package]]
-name = "anyio"
-version = "3.6.2"
-description = "High level compatibility layer for multiple asynchronous event loop implementations"
-category = "dev"
-optional = false
-python-versions = ">=3.6.2"
-
-[package.dependencies]
-idna = ">=2.8"
-sniffio = ">=1.1"
-
-[package.extras]
-doc = ["packaging", "sphinx-rtd-theme", "sphinx-autodoc-typehints (>=1.2.0)"]
-test = ["coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "pytest (>=7.0)", "pytest-mock (>=3.6.1)", "trustme", "contextlib2", "uvloop (<0.15)", "mock (>=4)", "uvloop (>=0.15)"]
-trio = ["trio (>=0.16,<0.22)"]
-
-[[package]]
 name = "appnope"
 version = "0.1.3"
 description = "Disable App Nap on macOS >= 10.9"
@@ -69,18 +52,6 @@ dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", 
 docs = ["furo", "sphinx", "zope.interface", "sphinx-notfound-page"]
 tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "zope.interface", "cloudpickle"]
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "mypy", "pytest-mypy-plugins", "cloudpickle"]
-
-[[package]]
-name = "autopep8"
-version = "1.6.0"
-description = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-pycodestyle = ">=2.8.0"
-toml = "*"
 
 [[package]]
 name = "backcall"
@@ -186,7 +157,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7
 name = "commonmark"
 version = "0.9.1"
 description = "Python parser for the CommonMark Markdown spec"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -325,17 +296,6 @@ dev = ["flake8", "sphinx", "sphinx-rtd-theme", "tox", "twine", "wheel"]
 postal = ["cryptography"]
 
 [[package]]
-name = "django-browser-reload"
-version = "1.6.0"
-description = "Automatically reload your browser in development."
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-Django = ">=3.2"
-
-[[package]]
 name = "django-cacheops"
 version = "6.1"
 description = "A slick ORM cache with automatic granular event-driven invalidation for Django."
@@ -461,22 +421,6 @@ python-versions = ">=3.7"
 Django = ">=3.2"
 
 [[package]]
-name = "django-postgres-metrics"
-version = "0.13.1"
-description = "A Django app that exposes a bunch of PostgreSQL database metrics."
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-django-rich = ">=1.0"
-
-[package.extras]
-dev = ["pre-commit"]
-docs = ["django", "psycopg2", "sphinx-rtd-theme (>=1.0,<2.0)", "Sphinx (>=4.0,<5.0)"]
-test = ["coverage[toml] (>=5,<6)", "django", "psycopg2", "selenium (==3.141.0)"]
-
-[[package]]
 name = "django-ratelimit"
 version = "3.0.1"
 description = "Cache-based rate-limiting for Django."
@@ -500,53 +444,12 @@ redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
-name = "django-rich"
-version = "1.4.0"
-description = "Extensions for using Rich with Django."
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-Django = ">=3.2"
-rich = ">=10.0.0"
-
-[[package]]
-name = "django-silk"
-version = "5.0.2"
-description = "Silky smooth profiling for the Django Framework"
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-autopep8 = "*"
-Django = ">=3.2"
-gprof2dot = ">=2017.09.19"
-Jinja2 = "*"
-python-dateutil = "*"
-requests = "*"
-sqlparse = "*"
-
-[[package]]
 name = "django-split-settings"
 version = "1.2.0"
 description = "Organize Django settings into multiple files and directories. Easily override and modify settings. Use wildcards and optional settings files."
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
-
-[[package]]
-name = "django-watchfiles"
-version = "0.0.1"
-description = "Use watchfiles in Django’s autoreloader."
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-Django = ">=2.2"
-watchfiles = "*"
 
 [[package]]
 name = "django-widget-tweaks"
@@ -732,14 +635,6 @@ python-versions = ">=3.7"
 gitdb = ">=4.0.1,<5"
 
 [[package]]
-name = "gprof2dot"
-version = "2022.7.29"
-description = "Generate a dot graph from the output of several profilers."
-category = "dev"
-optional = false
-python-versions = ">=2.7"
-
-[[package]]
 name = "gunicorn"
 version = "20.1.0"
 description = "WSGI HTTP Server for UNIX"
@@ -864,20 +759,6 @@ parso = ">=0.8.0,<0.9.0"
 [package.extras]
 qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
 testing = ["Django (<3.1)", "colorama", "docopt", "pytest (<7.0.0)"]
-
-[[package]]
-name = "jinja2"
-version = "3.1.2"
-description = "A very fast and expressive template engine."
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-MarkupSafe = ">=2.0"
-
-[package.extras]
-i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "joblib"
@@ -1485,7 +1366,7 @@ rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 name = "rich"
 version = "12.6.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6.3,<4.0.0"
 
@@ -1581,14 +1462,6 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
-name = "sniffio"
-version = "1.3.0"
-description = "Sniff out which async library your code is running under"
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[[package]]
 name = "sqlparse"
 version = "0.4.3"
 description = "A non-validating SQL parser."
@@ -1641,14 +1514,6 @@ description = "threadpoolctl"
 category = "main"
 optional = false
 python-versions = ">=3.6"
-
-[[package]]
-name = "toml"
-version = "0.10.2"
-description = "Python Library for Tom's Obvious, Minimal Language"
-category = "dev"
-optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "tomli"
@@ -1771,17 +1636,6 @@ python-versions = "*"
 six = "*"
 
 [[package]]
-name = "watchfiles"
-version = "0.18.0"
-description = "Simple, modern and high performance file watching and code reload in python."
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-anyio = ">=3.0.0,<4"
-
-[[package]]
 name = "wcwidth"
 version = "0.2.5"
 description = "Measures the displayed width of unicode strings in a terminal"
@@ -1845,16 +1699,14 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.11"
-content-hash = "bd5fdcca154658f2926f9fecd828beac66cfe658d5259a981cd885d6784a1f6d"
+content-hash = "6603a1874e8f49a2cb6436b3ddeabe474bc3c021eb9db2c5b2e34ee00e604144"
 
 [metadata.files]
-anyio = []
 appnope = []
 asgiref = []
 asttokens = []
 async-timeout = []
 attrs = []
-autopep8 = []
 backcall = []
 bandit = []
 bleach = []
@@ -1875,7 +1727,6 @@ dj-database-url = []
 django = []
 django-allauth = []
 django-anymail = []
-django-browser-reload = []
 django-cacheops = []
 django-coverage-plugin = []
 django-debug-toolbar = []
@@ -1887,13 +1738,9 @@ django-model-utils = []
 django-modeltranslation = []
 django-object-actions = []
 django-permissions-policy = []
-django-postgres-metrics = []
 django-ratelimit = []
 django-redis = []
-django-rich = []
-django-silk = []
 django-split-settings = []
-django-watchfiles = []
 django-widget-tweaks = []
 exceptiongroup = []
 execnet = []
@@ -1910,7 +1757,6 @@ flake8-print = []
 funcy = []
 gitdb = []
 gitpython = []
-gprof2dot = []
 gunicorn = []
 hiredis = []
 honcho = []
@@ -1920,7 +1766,6 @@ importlib-metadata = []
 iniconfig = []
 ipython = []
 jedi = []
-jinja2 = []
 joblib = []
 lxml = []
 markdown = []
@@ -1977,13 +1822,11 @@ scipy = []
 sentry-sdk = []
 six = []
 smmap = []
-sniffio = []
 sqlparse = []
 stack-data = []
 stevedore = []
 termcolor = []
 threadpoolctl = []
-toml = []
 tomli = []
 tqdm = []
 traitlets = []
@@ -1996,7 +1839,6 @@ typing-extensions = []
 tzdata = []
 urllib3 = []
 user-agent = []
-watchfiles = []
 wcwidth = []
 webencodings = []
 werkzeug = []

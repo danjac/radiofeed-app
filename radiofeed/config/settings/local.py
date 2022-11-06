@@ -8,26 +8,11 @@ include("base.py")
 
 DEBUG = True
 
-
 ADMIN_SITE_HEADER += " [LOCAL]"
 
-INSTALLED_APPS = [
-    "whitenoise.runserver_nostatic",
-    "debug_toolbar",
-    "silk",
-    "django_browser_reload",
-    "django_watchfiles",
-] + INSTALLED_APPS
+INSTALLED_APPS = ["whitenoise.runserver_nostatic", "debug_toolbar"] + INSTALLED_APPS
 
-# gzip middleware incompatible with browser reload
-MIDDLEWARE.remove("django.middleware.gzip.GZipMiddleware")
-
-MIDDLEWARE += [
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "silk.middleware.SilkyMiddleware",
-]
-
+MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
