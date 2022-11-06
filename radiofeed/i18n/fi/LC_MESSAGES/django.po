@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30 19:53+0000\n"
+"POT-Creation-Date: 2022-11-06 20:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,144 +18,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: radiofeed/common/template.py:83
+#: radiofeed/common/template.py:77
 #, python-brace-format
 msgid "{total_hours}h"
 msgstr "{total_hours}t"
 
-#: radiofeed/common/template.py:86
+#: radiofeed/common/template.py:80
 #, python-brace-format
 msgid "{total_minutes}min"
 msgstr ""
 
-#: radiofeed/episodes/models.py:58 radiofeed/podcasts/models.py:278
-#: radiofeed/podcasts/models.py:311
-msgid "Podcast"
-msgstr ""
-
-#: radiofeed/episodes/models.py:61
-msgid "RSS Feed GUID"
-msgstr ""
-
-#: radiofeed/episodes/models.py:63 radiofeed/podcasts/admin.py:122
-#: radiofeed/templates/episodes/detail.html:162
-#: radiofeed/templates/episodes/includes/episode.html:24
-msgid "Release Date"
-msgstr "Päivämäärä"
-
-#: radiofeed/episodes/models.py:65
-#, fuzzy
-#| msgid "Episode {episode}"
-msgid "Episode Title"
-msgstr "Jakso {episode}"
-
-#: radiofeed/episodes/models.py:67
-#, fuzzy
-#| msgid "Episode {episode}"
-msgid "Episode Description"
-msgstr "Jakso {episode}"
-
-#: radiofeed/episodes/models.py:69
-#, fuzzy
-#| msgid "Episode {episode}"
-msgid "Episode Keywords"
-msgstr "Jakso {episode}"
-
-#: radiofeed/episodes/models.py:72
-msgid "Episode Website Page"
-msgstr "Jakson Kotisivu"
-
-#: radiofeed/episodes/models.py:76
-#, fuzzy
-#| msgid "Episodes"
-msgid "Episode Type"
-msgstr "Jaksot"
-
-#: radiofeed/episodes/models.py:79
-msgid "Season Episode Number"
-msgstr "Kauden Jaksonumero"
-
-#: radiofeed/episodes/models.py:82
-msgid "Season"
-msgstr "Kausi"
-
-#: radiofeed/episodes/models.py:86 radiofeed/podcasts/models.py:142
-msgid "Cover Image"
-msgstr "Kansikuva"
-
-#: radiofeed/episodes/models.py:90
-msgid "Audio URL Source"
-msgstr ""
-
-#: radiofeed/episodes/models.py:92
-msgid "Audio MIME Type"
-msgstr ""
-
-#: radiofeed/episodes/models.py:95
-#, fuzzy
-#| msgid "Duration"
-msgid "Duration (Seconds)"
-msgstr "Kesto"
-
-#: radiofeed/episodes/models.py:98
-#, fuzzy
-#| msgid "Duration"
-msgid "Duration (Text)"
-msgstr "Kesto"
-
-#: radiofeed/episodes/models.py:102
-msgid "Contains Explicit or Adult Content"
-msgstr ""
-
-#: radiofeed/episodes/models.py:106 radiofeed/podcasts/models.py:202
-msgid "PostgreSQL Search Vector"
-msgstr ""
-
-#: radiofeed/episodes/models.py:226
+#: radiofeed/episodes/models.py:203
 #, python-brace-format
 msgid "Episode {episode}"
 msgstr "Jakso {episode}"
 
-#: radiofeed/episodes/models.py:229
+#: radiofeed/episodes/models.py:206
 #, python-brace-format
 msgid "Season {season}"
 msgstr "Kausi {season}"
 
-#: radiofeed/episodes/models.py:290 radiofeed/episodes/models.py:297
-#: radiofeed/episodes/models.py:330
-msgid "User"
-msgstr "Käyttäjä"
-
-#: radiofeed/episodes/models.py:336
-#, fuzzy
-#| msgid "Episodes"
-msgid "Episode"
-msgstr "Jaksot"
-
-#: radiofeed/episodes/models.py:340
-#, fuzzy
-#| msgid "Listened"
-msgid "Last Listened At"
-msgstr "Kuunneltu"
-
-#: radiofeed/episodes/models.py:342
-msgid "Timestamp Mark (Seconds)"
-msgstr "Aikamerkki"
-
-#: radiofeed/episodes/views.py:196
+#: radiofeed/episodes/views.py:185
 msgid "Removed from History"
 msgstr "Poistettu Historiasta"
 
-#: radiofeed/episodes/views.py:234
+#: radiofeed/episodes/views.py:217
 msgid "Added to Bookmarks"
 msgstr "Lisätty Kirjanmerkkeihin"
 
-#: radiofeed/episodes/views.py:245
+#: radiofeed/episodes/views.py:228
 msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
 #: radiofeed/podcasts/admin.py:42 radiofeed/podcasts/admin.py:50
-#: radiofeed/podcasts/models.py:93
 msgid "Active"
 msgstr "Aktiivinen"
 
@@ -163,7 +58,7 @@ msgstr "Aktiivinen"
 msgid "Inactive"
 msgstr "Ei Aktiivinen"
 
-#: radiofeed/podcasts/admin.py:68 radiofeed/podcasts/models.py:134
+#: radiofeed/podcasts/admin.py:68
 msgid "Feed Update Result"
 msgstr "Jäsennystulos"
 
@@ -171,9 +66,14 @@ msgstr "Jäsennystulos"
 msgid "None"
 msgstr "Ei mitään"
 
-#: radiofeed/podcasts/admin.py:93 radiofeed/podcasts/models.py:126
+#: radiofeed/podcasts/admin.py:93
 msgid "HTTP Status"
 msgstr ""
+
+#: radiofeed/podcasts/admin.py:122 radiofeed/templates/episodes/detail.html:115
+#: radiofeed/templates/episodes/includes/episode.html:27
+msgid "Release Date"
+msgstr "Päivämäärä"
 
 #: radiofeed/podcasts/admin.py:130
 #, fuzzy
@@ -205,184 +105,53 @@ msgstr "Podcast päivystysjonossa"
 msgid "Estimated Next Update"
 msgstr ""
 
-#: radiofeed/podcasts/emails.py:68
-#, python-brace-format
-msgid "Hi {username}, here are some new podcasts you might like!"
+#: radiofeed/podcasts/emails.py:69
+#, fuzzy
+#| msgid "Hi {username}, here are some new podcasts you might like!"
+msgid "Hi {} here are some new podcasts you might like!"
 msgstr "Hei {username}, tässä on uusia podcasteja, joista saatat pitää!"
 
-#: radiofeed/podcasts/models.py:40
-#, fuzzy
-#| msgid "Categories"
-msgid "Category Name"
-msgstr "Kategoriat"
-
-#: radiofeed/podcasts/models.py:48
-msgid "Parent Category"
-msgstr "Ylikategoria"
-
-#: radiofeed/podcasts/models.py:83
+#: radiofeed/podcasts/models.py:80
 msgid "Success"
 msgstr "Menestys"
 
-#: radiofeed/podcasts/models.py:84
+#: radiofeed/podcasts/models.py:81
 msgid "Complete"
 msgstr "Valmis"
 
-#: radiofeed/podcasts/models.py:85
+#: radiofeed/podcasts/models.py:82
 msgid "Not Modified"
 msgstr "Ei muokkaattu"
 
-#: radiofeed/podcasts/models.py:86
+#: radiofeed/podcasts/models.py:83
 msgid "HTTP Error"
 msgstr "HTTP-Virhe"
 
-#: radiofeed/podcasts/models.py:87
+#: radiofeed/podcasts/models.py:84
 msgid "RSS Parser Error"
 msgstr "RSS-Jäsennysvirhe"
 
-#: radiofeed/podcasts/models.py:88
+#: radiofeed/podcasts/models.py:85
 msgid "Duplicate Feed"
 msgstr "Kaksoispodcast"
 
-#: radiofeed/podcasts/models.py:90
-msgid "RSS Feed"
-msgstr "RSS-Syöte"
-
-#: radiofeed/podcasts/models.py:95
+#: radiofeed/podcasts/models.py:91
 msgid "Inactive podcasts will no longer be updated from their RSS feeds."
 msgstr ""
 
-#: radiofeed/podcasts/models.py:99
-msgid "HTTP Etag Header"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:100
-#, fuzzy
-#| msgid "Podcasts"
-msgid "Podcast Title"
-msgstr "Podcastit"
-
-#: radiofeed/podcasts/models.py:103
-#, fuzzy
-#| msgid "Release Date"
-msgid "Latest Release Date"
-msgstr "Päivämäärä"
-
-#: radiofeed/podcasts/models.py:107
-msgid "Last RSS Feed Check"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:112
-msgid "RSS Update Frequency"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:118
-msgid "HTTP Modified Header"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:122
-msgid "Content Hash of RSS Feed"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:138
-msgid "RSS Feed Retry Count"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:146
-msgid "Funding Website URL"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:149
-msgid "Funding Website Text"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:156
-#, fuzzy
-#| msgid "Language"
-msgid "Podcast Language"
-msgstr "Kieli"
-
-#: radiofeed/podcasts/models.py:160
-msgid "Podcast Description"
-msgstr "Podcastin Kuvaus"
-
-#: radiofeed/podcasts/models.py:163 radiofeed/templates/podcasts/detail.html:40
-msgid "Website"
-msgstr "Kotisivu"
-
-#: radiofeed/podcasts/models.py:166
-msgid "Non-iTunes Category Keywords"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:169
-msgid "Keywords Extracted from Podcast Content"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:171
-#, fuzzy
-#| msgid "Podcasts"
-msgid "Podcast Owner(s)"
-msgstr "Podcastit"
-
-#: radiofeed/podcasts/models.py:174
-#, fuzzy
-#| msgid "Adding podcast to database..."
-msgid "Podcast Added to Database"
-msgstr "Lisätään podcastin tietokantaan..."
-
-#: radiofeed/podcasts/models.py:177
+#: radiofeed/podcasts/models.py:147
 msgid "Podcast Updated in Database"
 msgstr ""
 
-#: radiofeed/podcasts/models.py:181
-msgid "Podcast Contains Explicit or Adult Content"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:184
-#, fuzzy
-#| msgid "Home Page"
-msgid "Promoted to Home Page"
-msgstr "Kotisivu"
-
-#: radiofeed/podcasts/models.py:190
-#, fuzzy
-#| msgid "Categories"
-msgid "iTunes Categories"
-msgstr "Kategoriat"
-
-#: radiofeed/podcasts/models.py:198
-msgid "Recommended to Users"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:271
-#, fuzzy
-#| msgid "Subscribe"
-msgid "Subscriber"
-msgstr "Tilaa"
-
-#: radiofeed/podcasts/models.py:318
-#, fuzzy
-#| msgid "Search Podcasts"
-msgid "Similar Podcast"
-msgstr "Etsi Podcasteista"
-
-#: radiofeed/podcasts/models.py:322
-msgid "Frequency Count"
-msgstr ""
-
-#: radiofeed/podcasts/models.py:330
-msgid "Similarity Rating"
-msgstr ""
-
-#: radiofeed/podcasts/views.py:86
+#: radiofeed/podcasts/views.py:94
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
-#: radiofeed/podcasts/views.py:250
+#: radiofeed/podcasts/views.py:254
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:262
+#: radiofeed/podcasts/views.py:266
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
@@ -466,10 +235,10 @@ msgstr ""
 "ilmoitettuValitettavasti tapahtui odottamaton virhe. Palvelimen "
 "ylläpitäjille on jo ilmoitettu."
 
-#: radiofeed/templates/about.html:4 radiofeed/templates/includes/navbar.html:87
-#: radiofeed/templates/includes/sidebar.html:90
+#: radiofeed/templates/about.html:4 radiofeed/templates/includes/navbar.html:89
+#: radiofeed/templates/includes/sidebar.html:48
 #: radiofeed/templates/podcasts/detail.html:4
-#: radiofeed/templates/podcasts/detail_base.html:73
+#: radiofeed/templates/podcasts/detail_base.html:18
 msgid "About"
 msgstr "Tiedot"
 
@@ -561,13 +330,6 @@ msgid ""
 "                    </li>\n"
 "\n"
 "                    <li>\n"
-"                        Loader icon from <a target=\"_blank\"\n"
-"                            href=\"https://github.com/SamHerbert/SVG-"
-"Loaders\"\n"
-"                            rel=\"noopener\">Sam Herbert</a>\n"
-"                    </li>\n"
-"\n"
-"                    <li>\n"
 "                        Podcast icon made by <a\n"
 "                            href=\"https://www.flaticon.com/authors/"
 "freepik\"\n"
@@ -581,11 +343,11 @@ msgid ""
 "                "
 msgstr ""
 
-#: radiofeed/templates/about.html:87
+#: radiofeed/templates/about.html:81
 msgid "General Disclaimer"
 msgstr "Yleinen Vastuuvapauslauseke"
 
-#: radiofeed/templates/about.html:90
+#: radiofeed/templates/about.html:84
 #, python-format
 msgid ""
 "\n"
@@ -601,15 +363,15 @@ msgstr ""
 "iin tai tue sitä.Kaikki äänitiedostot toistetaan suoraan lähteestä.\n"
 "                "
 
-#: radiofeed/templates/about.html:96 radiofeed/templates/includes/footer.html:8
+#: radiofeed/templates/about.html:90 radiofeed/templates/includes/footer.html:8
 msgid "Contact Us"
 msgstr "Ota yhteyttä"
 
-#: radiofeed/templates/about.html:102
+#: radiofeed/templates/about.html:96
 msgid "Feedback"
 msgstr "Palauteet"
 
-#: radiofeed/templates/about.html:106
+#: radiofeed/templates/about.html:100
 msgid "Issues"
 msgstr "Ongelmat"
 
@@ -623,7 +385,7 @@ msgid "This account is inactive."
 msgstr "Tämä tili ei ole käytössä"
 
 #: radiofeed/templates/account/delete_account.html:4
-#: radiofeed/templates/account/settings_base.html:59
+#: radiofeed/templates/account/settings_base.html:61
 msgid "Delete Account"
 msgstr "Poista tili"
 
@@ -719,34 +481,6 @@ msgid ""
 "            "
 msgstr ""
 
-#: radiofeed/templates/account/emails/base.html:12
-#, python-format
-msgid ""
-"\n"
-"                Hi %(username)s, greetings from %(site_name)s!\n"
-"            "
-msgstr ""
-"\n"
-"                Hei %(username)s, terve sivustosta %(site_name)s!\n"
-"            "
-
-#: radiofeed/templates/account/emails/base.html:21
-#, python-format
-msgid ""
-"\n"
-"                If you do not want to receive any more notifications, just "
-"uncheck the \"Send email notifications\"\n"
-"                option\n"
-"                on your <a style=\"text-decoration: underline; color: #000;"
-"\" href=\"%(preferences_url)s\">Settings</a> page.\n"
-"            "
-msgstr ""
-"\n"
-"              Jos et halua saada enää ilmoituksia, paina \"Lähetä "
-"sähköpostiilmoituksia\"painike <a style=\"text-decoration: underline; color: "
-"#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
-"            "
-
 #: radiofeed/templates/account/import_export_podcast_feeds.html:4
 msgid "Export"
 msgstr "Vie"
@@ -773,27 +507,27 @@ msgstr "Lataa OPML"
 msgid "Login or Sign up with"
 msgstr "Kirjaudu tai rekisteröidy"
 
-#: radiofeed/templates/account/login.html:7
-#: radiofeed/templates/account/login.html:36
+#: radiofeed/templates/account/login.html:9
+#: radiofeed/templates/account/login.html:38
 #: radiofeed/templates/socialaccount/login.html:27
 msgid "Sign In"
 msgstr "Kirjaudu"
 
-#: radiofeed/templates/account/login.html:11
+#: radiofeed/templates/account/login.html:13
 #, python-format
 msgid ""
 "\n"
-"            If you have not created an account yet, then please\n"
-"            <a class=\"underline hover:text-blue-500\"\n"
-"                href=\"%(signup_url)s\">sign up</a> first.\n"
-"        "
+"                    If you have not created an account yet, then please\n"
+"                    <a class=\"underline hover:text-blue-500\"\n"
+"                        href=\"%(signup_url)s\">sign up</a> first.\n"
+"                "
 msgstr ""
 
-#: radiofeed/templates/account/login.html:32
+#: radiofeed/templates/account/login.html:34
 msgid "Recover Your Password"
 msgstr "Hae salasanasi"
 
-#: radiofeed/templates/account/login.html:33
+#: radiofeed/templates/account/login.html:35
 #: radiofeed/templates/account/password_change.html:16
 msgid "Forgot Password?"
 msgstr "Unohditko salasanasi?"
@@ -803,7 +537,7 @@ msgstr "Unohditko salasanasi?"
 #: radiofeed/templates/account/password_reset_from_key.html:4
 #: radiofeed/templates/account/password_reset_from_key_done.html:4
 #: radiofeed/templates/account/password_reset_from_key_done.html:7
-#: radiofeed/templates/account/settings_base.html:45
+#: radiofeed/templates/account/settings_base.html:47
 msgid "Change Password"
 msgstr "Vaihda Salasana"
 
@@ -847,7 +581,7 @@ msgid "Set Password"
 msgstr "Aseta Salasana"
 
 #: radiofeed/templates/account/preferences.html:4
-#: radiofeed/templates/account/settings_base.html:17
+#: radiofeed/templates/account/settings_base.html:19
 msgid "Preferences"
 msgstr "Asetukset"
 
@@ -856,30 +590,30 @@ msgid "Save Changes"
 msgstr "Tallenna Muutokset"
 
 #: radiofeed/templates/account/settings_base.html:4
-#: radiofeed/templates/includes/sidebar.html:77
+#: radiofeed/templates/includes/sidebar.html:41
 msgid "Settings"
 msgstr "Asetukset"
 
-#: radiofeed/templates/account/settings_base.html:8
-#: radiofeed/templates/includes/navbar.html:59
+#: radiofeed/templates/account/settings_base.html:10
+#: radiofeed/templates/includes/navbar.html:61
 #, python-format
 msgid "Settings for %(username)s"
 msgstr "Asetukset: %(username)s"
 
-#: radiofeed/templates/account/settings_base.html:24
+#: radiofeed/templates/account/settings_base.html:26
 msgid "Import/Export Feeds"
 msgstr "Syötteiden Tuonti/Vienti"
 
-#: radiofeed/templates/account/settings_base.html:31
+#: radiofeed/templates/account/settings_base.html:33
 #: radiofeed/templates/account/stats.html:4
 msgid "Statistics"
 msgstr "Tilastot"
 
-#: radiofeed/templates/account/settings_base.html:38
+#: radiofeed/templates/account/settings_base.html:40
 msgid "Email Addresses"
 msgstr "Sähköpostiosoitteet"
 
-#: radiofeed/templates/account/settings_base.html:52
+#: radiofeed/templates/account/settings_base.html:54
 #: radiofeed/templates/socialaccount/connections.html:4
 msgid "Social Logins"
 msgstr "Sotetilit"
@@ -937,13 +671,14 @@ msgstr[1] ""
 
 #: radiofeed/templates/account/stats.html:36
 #: radiofeed/templates/episodes/bookmarks.html:4
-#: radiofeed/templates/episodes/bookmarks.html:8
-#: radiofeed/templates/includes/sidebar.html:52
+#: radiofeed/templates/episodes/bookmarks.html:9
+#: radiofeed/templates/includes/sidebar.html:27
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
 #: radiofeed/templates/account/stats.html:40
 #: radiofeed/templates/account/stats.html:58
+#, python-format
 msgid ""
 "\n"
 "                                1 episode\n"
@@ -962,7 +697,7 @@ msgstr[1] ""
 "                        "
 
 #: radiofeed/templates/account/stats.html:54
-#: radiofeed/templates/episodes/includes/history.html:11
+#: radiofeed/templates/episodes/includes/history.html:14
 msgid "Listened"
 msgstr "Kuunneltu"
 
@@ -1011,58 +746,21 @@ msgid ""
 "        "
 msgstr ""
 
-#: radiofeed/templates/episodes/actions/bookmark.html:2
-msgid "Add to Bookmarks"
-msgstr "Lisää Kirjanmerkkeihin"
-
-#: radiofeed/templates/episodes/actions/bookmark.html:3
-msgid "Remove from Bookmarks"
-msgstr "Poista Kirjanmerkkeistä"
-
-#: radiofeed/templates/episodes/actions/bookmark.html:16
-#: radiofeed/templates/episodes/actions/bookmark.html:23
-msgid "Bookmark"
-msgstr "Kirjanmerkki"
-
-#: radiofeed/templates/episodes/actions/audio_player.html:13
-#: radiofeed/templates/episodes/includes/audio_player.html:10
-msgid "Close Player"
-msgstr "Sulje Soitin"
-
-#: radiofeed/templates/episodes/actions/audio_player.html:15
-msgid "Close"
-msgstr "Sulje"
-
-#: radiofeed/templates/episodes/actions/audio_player.html:20
-msgid "Open Episode in Player"
-msgstr "Avaa Jakso Soitimella"
-
-#: radiofeed/templates/episodes/actions/audio_player.html:22
-#: radiofeed/templates/episodes/actions/audio_player.html:33
-#: radiofeed/templates/episodes/includes/audio_player.html:8
-msgid "Play"
-msgstr "Soita"
-
-#: radiofeed/templates/episodes/actions/audio_player.html:30
-msgid "You must sign up or log in to play this episode"
-msgstr ""
-"Sinun täytyy rekisteröityä tai kirjautua sisään soittaaksesi tätä jaksoa"
-
-#: radiofeed/templates/episodes/bookmarks.html:15
-#: radiofeed/templates/episodes/history.html:17
-#: radiofeed/templates/podcasts/episodes.html:16
+#: radiofeed/templates/episodes/bookmarks.html:17
+#: radiofeed/templates/episodes/history.html:18
+#: radiofeed/templates/podcasts/episodes.html:13
 msgid "Search All Podcasts"
 msgstr "Hae kaikista podcasteista"
 
-#: radiofeed/templates/episodes/bookmarks.html:18
-#: radiofeed/templates/episodes/history.html:20
-#: radiofeed/templates/podcasts/episodes.html:19
+#: radiofeed/templates/episodes/bookmarks.html:20
+#: radiofeed/templates/episodes/history.html:21
+#: radiofeed/templates/podcasts/episodes.html:16
 msgid "Newest First"
 msgstr "Uusimmat"
 
-#: radiofeed/templates/episodes/bookmarks.html:21
-#: radiofeed/templates/episodes/history.html:23
-#: radiofeed/templates/podcasts/episodes.html:22
+#: radiofeed/templates/episodes/bookmarks.html:20
+#: radiofeed/templates/episodes/history.html:21
+#: radiofeed/templates/podcasts/episodes.html:16
 msgid "Oldest First"
 msgstr "Vanhemmat"
 
@@ -1070,89 +768,92 @@ msgstr "Vanhemmat"
 msgid "Search: Bookmarks"
 msgstr "Haku: Kirjanmerkit"
 
-#: radiofeed/templates/episodes/detail.html:77
+#: radiofeed/templates/episodes/detail.html:15
 #: radiofeed/templates/includes/pagination_links.html:5
 msgid "Next"
 msgstr "Seuraavat"
 
-#: radiofeed/templates/episodes/detail.html:78
+#: radiofeed/templates/episodes/detail.html:16
 #: radiofeed/templates/includes/pagination_links.html:6
 msgid "Previous"
 msgstr "Edelliset"
 
-#: radiofeed/templates/episodes/detail.html:79
+#: radiofeed/templates/episodes/detail.html:17
 #, fuzzy
 #| msgid "No more episodes"
 msgid "No More Episodes"
 msgstr "Ei enää jaksoja"
 
-#: radiofeed/templates/episodes/detail.html:83
+#: radiofeed/templates/episodes/detail.html:22
 #: radiofeed/templates/includes/pagination_links.html:4
 msgid "Pagination"
 msgstr "Sivunumerointi"
 
-#: radiofeed/templates/episodes/detail.html:115
+#: radiofeed/templates/episodes/detail.html:60
 #, python-format
 msgid "See All Episodes for %(podcast)s"
 msgstr "Katso Kaikki Jaksot Podcastissa %(podcast)s"
 
-#: radiofeed/templates/episodes/detail.html:148
-#: radiofeed/templates/episodes/detail.html:190
+#: radiofeed/templates/episodes/detail.html:90
 msgid "Download audio file to your device"
 msgstr ""
 
-#: radiofeed/templates/episodes/detail.html:151
-#: radiofeed/templates/episodes/detail.html:193
+#: radiofeed/templates/episodes/detail.html:93
 msgid "Download"
 msgstr "Lataa"
 
-#: radiofeed/templates/episodes/detail.html:165
-msgid "Duration"
-msgstr "Kesto"
-
-#: radiofeed/templates/episodes/detail.html:176
-msgid "May contain adult themes and language. Listener discretion advised."
-msgstr ""
-"Saattaa sisältää aikuisille suunnattuja teemoja ja kieltä. Kuuntelijan "
-"harkintavaltaa suositellaan."
-
-#: radiofeed/templates/episodes/detail.html:178
-msgid "Explicit"
-msgstr "Varoitus"
-
-#: radiofeed/templates/episodes/detail.html:202
+#: radiofeed/templates/episodes/detail.html:101
 #, fuzzy
 #| msgid "Website"
 msgid "Link to Website"
 msgstr "Kotisivuun"
 
-#: radiofeed/templates/episodes/detail.html:203
-msgid "Link"
-msgstr "Linkki"
+#: radiofeed/templates/episodes/detail.html:102
+#: radiofeed/templates/podcasts/detail.html:37
+msgid "Website"
+msgstr "Kotisivu"
+
+#: radiofeed/templates/episodes/detail.html:119
+msgid "May contain adult themes and language. Listener discretion advised."
+msgstr ""
+"Saattaa sisältää aikuisille suunnattuja teemoja ja kieltä. Kuuntelijan "
+"harkintavaltaa suositellaan."
+
+#: radiofeed/templates/episodes/detail.html:121
+msgid "Explicit"
+msgstr "Varoitus"
+
+#: radiofeed/templates/episodes/detail.html:136
+msgid "Duration"
+msgstr "Kesto"
 
 #: radiofeed/templates/episodes/history.html:4
-#: radiofeed/templates/episodes/history.html:8
-#: radiofeed/templates/includes/sidebar.html:65
+#: radiofeed/templates/episodes/history.html:9
+#: radiofeed/templates/includes/sidebar.html:34
 msgid "History"
 msgstr "Historia"
 
-#: radiofeed/templates/episodes/history.html:28
+#: radiofeed/templates/episodes/history.html:27
 msgid "Search: History"
 msgstr "Haku: Historia"
 
-#: radiofeed/templates/episodes/includes/history.html:18
-msgid "Timestamp"
-msgstr "Aikaleima"
+#: radiofeed/templates/episodes/includes/audio_controls.html:11
+#: radiofeed/templates/episodes/includes/audio_player.html:10
+msgid "Close Player"
+msgstr "Sulje Soitin"
 
-#: radiofeed/templates/episodes/includes/history.html:26
-#, fuzzy
-#| msgid "Removed from History"
-msgid "Remove episode from your History"
-msgstr "Poistettu Historiasta"
+#: radiofeed/templates/episodes/includes/audio_controls.html:13
+msgid "Close"
+msgstr "Sulje"
 
-#: radiofeed/templates/episodes/includes/history.html:28
-msgid "Are you sure you want to remove this episode from your History?"
-msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
+#: radiofeed/templates/episodes/includes/audio_controls.html:18
+msgid "Open Episode in Player"
+msgstr "Avaa Jakso Soitimella"
+
+#: radiofeed/templates/episodes/includes/audio_controls.html:20
+#: radiofeed/templates/episodes/includes/audio_player.html:8
+msgid "Play"
+msgstr "Soita"
 
 #: radiofeed/templates/episodes/includes/audio_player.html:4
 msgid "Current Time"
@@ -1194,32 +895,60 @@ msgstr "Vähennä Toistonopeus"
 msgid "Increase Playback Rate"
 msgstr "Lisää Toistonopeus"
 
+#: radiofeed/templates/episodes/includes/bookmark.html:2
+msgid "Add to Bookmarks"
+msgstr "Lisää Kirjanmerkkeihin"
+
+#: radiofeed/templates/episodes/includes/bookmark.html:3
+msgid "Remove from Bookmarks"
+msgstr "Poista Kirjanmerkkeistä"
+
+#: radiofeed/templates/episodes/includes/bookmark.html:16
+#: radiofeed/templates/episodes/includes/bookmark.html:23
+msgid "Bookmark"
+msgstr "Kirjanmerkki"
+
+#: radiofeed/templates/episodes/includes/history.html:8
+msgid "Are you sure you want to remove this episode from your History?"
+msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
+
+#: radiofeed/templates/episodes/includes/history.html:21
+msgid "Timestamp"
+msgstr "Aikaleima"
+
+#: radiofeed/templates/episodes/includes/history.html:29
+#, fuzzy
+#| msgid "Removed from History"
+msgid "Remove episode from your History"
+msgstr "Poistettu Historiasta"
+
 #: radiofeed/templates/episodes/index.html:4
-#: radiofeed/templates/episodes/index.html:16
-#: radiofeed/templates/includes/sidebar.html:28
+#: radiofeed/templates/episodes/index.html:18
+#: radiofeed/templates/episodes/index.html:43
+#: radiofeed/templates/includes/sidebar.html:15
 msgid "New Releases"
 msgstr "Uudet Jaksot"
 
 #: radiofeed/templates/episodes/index.html:4
-#: radiofeed/templates/episodes/index.html:10
+#: radiofeed/templates/episodes/index.html:11
 #: radiofeed/templates/podcasts/index.html:4
 #: radiofeed/templates/podcasts/index.html:9
 msgid "Promotions"
 msgstr "Ylennykset"
 
 #: radiofeed/templates/episodes/index.html:4
-#: radiofeed/templates/episodes/index.html:11
+#: radiofeed/templates/episodes/index.html:12
 #: radiofeed/templates/podcasts/index.html:4
 #: radiofeed/templates/podcasts/index.html:10
 msgid "Subscriptions"
 msgstr "Tilaukset"
 
-#: radiofeed/templates/episodes/index.html:12
+#: radiofeed/templates/episodes/index.html:13
 msgid "Find an episode..."
 msgstr "Haku: Jaksot"
 
 #: radiofeed/templates/episodes/search.html:4
-#: radiofeed/templates/includes/navbar.html:6
+#: radiofeed/templates/includes/navbar.html:9
 #: radiofeed/templates/includes/search_form.html:2
 #: radiofeed/templates/includes/search_form.html:15
 #: radiofeed/templates/podcasts/itunes_search.html:4
@@ -1228,9 +957,9 @@ msgid "Search"
 msgstr "Haku"
 
 #: radiofeed/templates/episodes/search.html:4
-#: radiofeed/templates/podcasts/detail_base.html:74
+#: radiofeed/templates/podcasts/detail_base.html:19
 #: radiofeed/templates/podcasts/episodes.html:4
-#: radiofeed/templates/search_base.html:27
+#: radiofeed/templates/search_base.html:30
 msgid "Episodes"
 msgstr "Jaksot"
 
@@ -1245,7 +974,7 @@ msgstr ""
 "Tämä sivusto käyttää evästeitä varmistaakseen, että saat parhaan "
 "käyttökokemuksen."
 
-#: radiofeed/templates/includes/cookie_notice.html:16
+#: radiofeed/templates/includes/cookie_notice.html:17
 msgid "Got it!"
 msgstr "Ymmärrään!"
 
@@ -1263,7 +992,7 @@ msgstr ""
 "        "
 
 #: radiofeed/templates/includes/empty.html:8
-#: radiofeed/templates/podcasts/categories.html:37
+#: radiofeed/templates/podcasts/categories.html:36
 msgid "Nothing to see here."
 msgstr "Ei tuloksia"
 
@@ -1291,11 +1020,11 @@ msgstr ""
 ", eivätkä ne ole sidoksissa tai tukemaan niitä %(site_name)s:in "
 "tukemia.                "
 
-#: radiofeed/templates/includes/navbar.html:7
+#: radiofeed/templates/includes/navbar.html:10
 msgid "Toggle Menu"
 msgstr "Vaihda Valikko"
 
-#: radiofeed/templates/includes/navbar.html:83
+#: radiofeed/templates/includes/navbar.html:85
 msgid "About this Site"
 msgstr "Tiedot Sivustosta"
 
@@ -1305,8 +1034,8 @@ msgstr "Tiedot Sivustosta"
 msgid "No More Pages"
 msgstr "Viimeinen Sivu"
 
-#: radiofeed/templates/includes/pagination_links.html:16
-#: radiofeed/templates/includes/pagination_links.html:35
+#: radiofeed/templates/includes/pagination_links.html:14
+#: radiofeed/templates/includes/pagination_links.html:33
 #, python-format
 msgid "Page %(page_number)s"
 msgstr "Sivu %(page_number)s"
@@ -1315,62 +1044,48 @@ msgstr "Sivu %(page_number)s"
 msgid "Clear Search"
 msgstr "Poita haku"
 
-#: radiofeed/templates/includes/share_buttons.html:2
-msgid "Share with Email"
-msgstr "Jaa Sähköpostilla"
-
-#: radiofeed/templates/includes/share_buttons.html:3
-msgid "Share on Facebook"
-msgstr "Jaa Facebookissa"
-
-#: radiofeed/templates/includes/share_buttons.html:4
-msgid "Share on Twitter"
-msgstr "Jaa Twitterissa"
-
-#: radiofeed/templates/includes/share_buttons.html:5
-msgid "Share on Linkedin"
-msgstr "Jaa Linkedinissa"
-
-#: radiofeed/templates/includes/share_buttons.html:6
-msgid "Copy link to Clipboard"
-msgstr "Kopioi linkki Leikepödälle"
-
-#: radiofeed/templates/includes/share_buttons.html:51
-msgid "Copied link to Clipboard"
-msgstr "Linkki kopioittu Leikepödälle"
-
-#: radiofeed/templates/includes/sidebar.html:16
+#: radiofeed/templates/includes/sidebar.html:9
 #: radiofeed/templates/podcasts/category_detail.html:4
-#: radiofeed/templates/podcasts/detail.html:85
+#: radiofeed/templates/podcasts/category_detail.html:9
+#: radiofeed/templates/podcasts/detail.html:82
 #: radiofeed/templates/podcasts/index.html:4
 #: radiofeed/templates/podcasts/index.html:8
 #: radiofeed/templates/podcasts/search.html:4
-#: radiofeed/templates/search_base.html:19
+#: radiofeed/templates/search_base.html:21
 msgid "Podcasts"
 msgstr "Podcastit"
 
-#: radiofeed/templates/includes/sidebar.html:40
+#: radiofeed/templates/includes/sidebar.html:21
 #: radiofeed/templates/podcasts/categories.html:4
 #: radiofeed/templates/podcasts/categories.html:9
 #: radiofeed/templates/podcasts/category_detail.html:4
 msgid "Categories"
 msgstr "Kategoriat"
 
-#: radiofeed/templates/includes/sidebar.html:103
+#: radiofeed/templates/includes/sidebar.html:61
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
-#: radiofeed/templates/includes/signup_cta.html:9
-#, python-format
+#: radiofeed/templates/includes/signup_cta.html:7
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                <a class=\"%(css_class)s\"\n"
+#| "                    hx-disable=\"true\"\n"
+#| "                    href=\"%(signup_url)s\">Sign up</a>\n"
+#| "                or\n"
+#| "                <a class=\"%(css_class)s\"\n"
+#| "                    hx-disable=\"true\"\n"
+#| "                    href=\"%(login_url)s\">log in</a>\n"
+#| "                to follow your favorite podcasts and listen to episodes!\n"
+#| "            "
 msgid ""
 "\n"
-"                <a class=\"%(css_class)s\"\n"
-"                    hx-disable=\"true\"\n"
-"                    href=\"%(signup_url)s\">Sign up</a>\n"
+"                <a class=\"%(css_class)s\" href=\"%(signup_url)s\">Sign up</"
+"a>\n"
 "                or\n"
-"                <a class=\"%(css_class)s\"\n"
-"                    hx-disable=\"true\"\n"
-"                    href=\"%(login_url)s\">log in</a>\n"
+"                <a class=\"%(css_class)s\" href=\"%(login_url)s\">log in</"
+"a>\n"
 "                to follow your favorite podcasts and listen to episodes!\n"
 "            "
 msgstr ""
@@ -1386,32 +1101,11 @@ msgstr ""
 "jaksoja!\n"
 "            "
 
-#: radiofeed/templates/podcasts/actions/subscribe.html:11
-msgid "Unsubscribe from this Podcast"
-msgstr "Lopeta podcastin tilaus"
-
-#: radiofeed/templates/podcasts/actions/subscribe.html:14
-msgid "Unsubscribe"
-msgstr "Lopeta tilaus"
-
-#: radiofeed/templates/podcasts/actions/subscribe.html:18
-msgid "Subscribe to this Podcast"
-msgstr "Tilaa Podcast"
-
-#: radiofeed/templates/podcasts/actions/subscribe.html:21
-#: radiofeed/templates/podcasts/actions/subscribe.html:36
-msgid "Subscribe"
-msgstr "Tilaa"
-
-#: radiofeed/templates/podcasts/actions/subscribe.html:34
-msgid "Log in or sign up to subscribe to this podcast"
-msgstr "Kirjaudu tai rekisteröidy tilataksesi tämän podcastin"
-
 #: radiofeed/templates/podcasts/categories.html:12
 msgid "Find a category..."
 msgstr "Haku: Kategoriat"
 
-#: radiofeed/templates/podcasts/categories.html:33
+#: radiofeed/templates/podcasts/categories.html:32
 #, fuzzy, python-format
 #| msgid ""
 #| "\n"
@@ -1433,73 +1127,163 @@ msgstr ""
 msgid "Search: "
 msgstr "Haku: "
 
-#: radiofeed/templates/podcasts/category_detail.html:12
-#, python-format
-msgid "%(category_name)s Podcasts"
-msgstr "Podcastit - %(category_name)s"
-
-#: radiofeed/templates/podcasts/category_detail.html:28
+#: radiofeed/templates/podcasts/category_detail.html:20
 msgid "Search All Categories"
 msgstr "Etsi Kaikista Kategoreista"
 
-#: radiofeed/templates/podcasts/detail.html:46
+#: radiofeed/templates/podcasts/detail.html:43
 msgid "RSS"
 msgstr ""
 
-#: radiofeed/templates/podcasts/detail.html:52
+#: radiofeed/templates/podcasts/detail.html:49
 msgid "Admin"
 msgstr "Hallinto"
 
-#: radiofeed/templates/podcasts/detail.html:74
-msgid "Latest episode released"
-msgstr "Viimeinen jakso julkaistu"
+#: radiofeed/templates/podcasts/detail.html:58
+msgid "Latest episode"
+msgstr "Viimeinen jakso"
 
-#: radiofeed/templates/podcasts/detail_base.html:75
+#: radiofeed/templates/podcasts/detail_base.html:20
 #: radiofeed/templates/podcasts/similar.html:4
 msgid "Similar"
 msgstr "Samanlaiset"
 
-#: radiofeed/templates/podcasts/emails/recommendations.html:4
-#: radiofeed/templates/podcasts/emails/recommendations.txt:4
+#: radiofeed/templates/podcasts/emails/recommendations.html:13
+#, python-format
+msgid ""
+"\n"
+"                Hi %(username)s, greetings from %(site_name)s!\n"
+"            "
+msgstr ""
+"\n"
+"                Hei %(username)s, terve sivustosta %(site_name)s!\n"
+"            "
+
+#: radiofeed/templates/podcasts/emails/recommendations.html:18
+#: radiofeed/templates/podcasts/emails/recommendations.txt:3
 msgid "Here are some podcasts you might find interesting:"
 msgstr "Tässä on joitain podcasteja, jotka saattavat olla kiinnostavia:"
 
-#: radiofeed/templates/podcasts/episodes.html:27
+#: radiofeed/templates/podcasts/emails/recommendations.html:34
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                If you do not want to receive any more notifications, "
+#| "just uncheck the \"Send email notifications\"\n"
+#| "                option\n"
+#| "                on your <a style=\"text-decoration: underline; color: "
+#| "#000;\" href=\"%(preferences_url)s\">Settings</a> page.\n"
+#| "            "
+msgid ""
+"\n"
+"                If you do not want to receive any more notifications, just "
+"uncheck the \"Send email notifications\"\n"
+"                option on your <a style=\"text-decoration: underline; color: "
+"#000;\" href=\"%(preferences_url)s\">Settings</a> page.\n"
+"            "
+msgstr ""
+"\n"
+"              Jos et halua saada enää ilmoituksia, paina \"Lähetä "
+"sähköpostiilmoituksia\"painike <a style=\"text-decoration: underline; color: "
+"#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
+"            "
+
+#: radiofeed/templates/podcasts/emails/recommendations.txt:17
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                If you do not want to receive any more notifications, "
+#| "just uncheck the \"Send email notifications\"\n"
+#| "                option\n"
+#| "                on your <a style=\"text-decoration: underline; color: "
+#| "#000;\" href=\"%(preferences_url)s\">Settings</a> page.\n"
+#| "            "
+msgid ""
+"\n"
+"    If you do not want to receive any more notifications, just uncheck the "
+"\"Send email notifications\"\n"
+"    option on your Settings page:\n"
+"\n"
+"    %(preferences_url)s\n"
+msgstr ""
+"\n"
+"              Jos et halua saada enää ilmoituksia, paina \"Lähetä "
+"sähköpostiilmoituksia\"painike <a style=\"text-decoration: underline; color: "
+"#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
+"            "
+
+#: radiofeed/templates/podcasts/episodes.html:22
 msgid "Search: Episodes"
 msgstr "Haku: Jaksot"
 
-#: radiofeed/templates/podcasts/includes/itunes_feed.html:19
+#: radiofeed/templates/podcasts/includes/itunes_feed.html:20
 msgid "Adding podcast to database..."
 msgstr "Lisätään podcastin tietokantaan..."
 
 #: radiofeed/templates/podcasts/includes/podcast.html:18
-#: radiofeed/templates/podcasts/includes/podcast.html:20
 msgid "Latest Episode"
 msgstr "Viimeinen Jakso"
 
-#: radiofeed/templates/search_base.html:6
+#: radiofeed/templates/podcasts/includes/subscribe.html:10
+msgid "Unsubscribe from this Podcast"
+msgstr "Lopeta podcastin tilaus"
+
+#: radiofeed/templates/podcasts/includes/subscribe.html:13
+msgid "Unsubscribe"
+msgstr "Lopeta tilaus"
+
+#: radiofeed/templates/podcasts/includes/subscribe.html:17
+msgid "Subscribe to this Podcast"
+msgstr "Tilaa Podcast"
+
+#: radiofeed/templates/podcasts/includes/subscribe.html:20
+msgid "Subscribe"
+msgstr "Tilaa"
+
+#: radiofeed/templates/podcasts/intro.html:12
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                    <strong>%(site_name)s</strong> is a <strong>free</"
+#| "strong> podcasting app for collecting your favorite shows and discovering "
+#| "new content.\n"
+#| "                "
+msgid ""
+"\n"
+"                    <strong>%(site_name)s</strong> is a <strong>free</"
+"strong> web app for discovering and listening to your favorite podcast "
+"feeds.\n"
+"                "
+msgstr ""
+"\n"
+"                    <strong>%(site_name)s</strong> on <strong>ilmainen</"
+"strong> on ilmainen podcast-sovellus suosikkiohjelmiesi keräämiseen ja uuden "
+"sisällön löytämiseen.\n"
+"                "
+
+#: radiofeed/templates/search_base.html:8
 #, fuzzy, python-format
 #| msgid "Search iTunes"
 msgid "Search %(site_name)s"
 msgstr "Etsi iTunesista"
 
-#: radiofeed/templates/search_base.html:18
+#: radiofeed/templates/search_base.html:20
 msgid "Search Podcasts"
 msgstr "Etsi Podcasteista"
 
-#: radiofeed/templates/search_base.html:26
+#: radiofeed/templates/search_base.html:29
 msgid "Search Episodes"
 msgstr "Haku: Jaksot"
 
-#: radiofeed/templates/search_base.html:34
+#: radiofeed/templates/search_base.html:38
 msgid "Search iTunes"
 msgstr "Etsi iTunesista"
 
-#: radiofeed/templates/search_base.html:35
+#: radiofeed/templates/search_base.html:39
 msgid "iTunes"
 msgstr ""
 
-#: radiofeed/templates/search_base.html:40
+#: radiofeed/templates/search_base.html:45
 msgid "Search..."
 msgstr "Haku"
 
@@ -1563,36 +1347,36 @@ msgid ""
 msgstr ""
 
 #: radiofeed/users/forms.py:28
-msgid "I'd like to receive notications of new content and recommendations."
-msgstr "Haluan ilmauksia uusista suosituksista"
-
-#: radiofeed/users/forms.py:37
-msgid "Select OPML file"
-msgstr "Valitse OPML-tiedosto"
-
-#: radiofeed/users/models.py:65
-msgid "Send email notifications"
-msgstr "Lähetä ilmauksia sähköpostilla"
-
-#: radiofeed/users/models.py:72
 msgid "Language"
 msgstr "Kieli"
 
-#: radiofeed/users/views.py:32
+#: radiofeed/users/forms.py:29
+msgid "Send email notifications"
+msgstr "Lähetä ilmoituksia sähköpostilla"
+
+#: radiofeed/users/forms.py:34
+msgid "I'd like to receive notications of new content and recommendations."
+msgstr "Haluan ilmauksia uusista suosituksista ja sisällöstä"
+
+#: radiofeed/users/forms.py:43
+msgid "Select OPML file"
+msgstr "Valitse OPML-tiedosto"
+
+#: radiofeed/users/views.py:31
 msgid "Your preferences have been saved"
 msgstr "Asetuksesi tallennettu"
 
-#: radiofeed/users/views.py:64
+#: radiofeed/users/views.py:63
 #, python-format
 msgid "%(count)d podcast feed added to your collection"
 msgid_plural "%(count)d podcast feeds added to your collection"
 msgstr[0] "%(count)d podcast lisätty kokoelmaasi"
 msgstr[1] "%(count)d podcastia lisätty kokoelmaasi"
 
-#: radiofeed/users/views.py:71
+#: radiofeed/users/views.py:70
 msgid "No new podcasts found in uploaded file"
 msgstr "Ei uusia podcasteja löydetty tiedostosta"
 
-#: radiofeed/users/views.py:117
+#: radiofeed/users/views.py:118
 msgid "Your account has been deleted"
 msgstr "Tilisi on poistettu"
