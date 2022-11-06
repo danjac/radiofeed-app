@@ -1,8 +1,10 @@
 {
     "private": true,
     "scripts": {
-        "watch:css": "tailwindcss -i ./radiofeed/static/css/app.css -o ./radiofeed/static/css/bundle.css --minify --watch --verbose",
-        "watch:js": "esbuild ./radiofeed/static/js/app.js --bundle --watch --minify --sourcemap --outfile=./radiofeed/static/js/bundle.js",
+        "build:css": "tailwindcss -i ./radiofeed/static/css/app.css -o ./radiofeed/static/css/bundle.css --minify --verbose",
+        "watch:css": "tailwindcss -i ./radiofeed/static/css/app.css -o ./radiofeed/static/css/bundle.css --minify --verbose --watch",
+        "build:js": "esbuild ./radiofeed/static/js/app.js --bundle --minify --sourcemap --outfile=./radiofeed/static/js/bundle.js",
+        "watch:js": "esbuild ./radiofeed/static/js/app.js --bundle --minify --sourcemap --outfile=./radiofeed/static/js/bundle.js --watch ",
         "check-updates": "ncu -u"
     },
     "dependencies": {
