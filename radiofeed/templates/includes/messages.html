@@ -18,6 +18,7 @@
     <div class="space-y-3">
         <template x-for="message in messages">
             <div class="flex flex-wrap items-center justify-center p-2 text-center text-white rounded shadow-xl"
+                role="alert"
                 :class="{# fmt:off #}{
                      debug: 'bg-gray-600',
                      error: 'bg-red-600',
