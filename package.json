@@ -17,7 +17,7 @@
         "esbuild": "^0.15.13",
         "eslint": "^8.27.0",
         "eslint-plugin-prettier": "^4.2.1",
-        "npm-check-updates": "^16.3.16",
+        "npm-check-updates": "^16.3.18",
         "prettier": "2.7.1",
         "tailwindcss": "^3.2.2"
     }

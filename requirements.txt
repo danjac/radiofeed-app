@@ -24,7 +24,7 @@ django-extensions==3.2.1; python_version >= "3.6"
 django-fast-update==0.2.1
 django-htmx==1.12.2; python_version >= "3.7"
 django-model-utils==4.2.0
-django-modeltranslation==0.18.6
+django-modeltranslation==0.18.7
 django-object-actions==4.0.0; python_version >= "3.7" and python_version < "4.0"
 django-permissions-policy==4.13.0; python_version >= "3.7"
 django-ratelimit==3.0.1; python_version >= "3.4"
@@ -78,6 +78,7 @@ stack-data==0.6.0; python_version >= "3.8"
 threadpoolctl==3.1.0; python_version >= "3.8"
 tqdm==4.64.1; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.7"
 traitlets==5.5.0; python_version >= "3.8"
+typing-extensions==4.4.0; python_version >= "3.7"
 tzdata==2022.6; sys_platform == "win32" and python_version >= "3.8"
 urllib3==1.26.12; python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "4" or python_full_version >= "3.6.0" and python_version < "4" and python_version >= "3.7"
 user-agent==0.1.10
