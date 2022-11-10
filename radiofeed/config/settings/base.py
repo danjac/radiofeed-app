@@ -82,7 +82,6 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.twitter",
     "cacheops",
     "django_extensions",
     "django_htmx",
