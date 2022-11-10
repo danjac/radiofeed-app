@@ -370,7 +370,7 @@ Django = ">=3.2,<4.2"
 
 [[package]]
 name = "django-htmx"
-version = "1.12.2"
+version = "1.13.0"
 description = "Extensions for using Django with htmx."
 category = "main"
 optional = false
@@ -1488,7 +1488,7 @@ tests = ["pytest", "typeguard", "pygments", "littleutils", "cython"]
 
 [[package]]
 name = "stevedore"
-version = "4.1.0"
+version = "4.1.1"
 description = "Manage dynamic plugins for Python applications"
 category = "dev"
 optional = false

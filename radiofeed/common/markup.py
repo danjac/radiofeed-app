@@ -9,7 +9,7 @@ import bleach
 import markdown
 
 from django.template.defaultfilters import striptags
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 _HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
@@ -82,7 +82,7 @@ def clean(value: str | None) -> str:
 
 
 def strip_whitespace(value: str | None) -> str:
-    """Removes all trailing whitespace. Any None value just returns an empty string."""
+    """Removes all trailing whitespace."""
     return (value or "").strip()
 
 
@@ -94,10 +94,8 @@ def strip_html(value: str | None) -> str:
 def markup(value: str | None) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := strip_whitespace(value):
-
-        return mark_safe(  # nosec
-            clean(value if _HTML_RE.match(value) else markdown.markdown(value))
-        )
+        content = value if _HTML_RE.match(value) else markdown.markdown(value)
+        return format_html(clean(content))
     return ""
 
 
