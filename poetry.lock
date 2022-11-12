@@ -1472,7 +1472,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "stack-data"
-version = "0.6.0"
+version = "0.6.1"
 description = "Extract data from python stack frames and tracebacks for informative displays"
 category = "main"
 optional = false
