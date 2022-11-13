@@ -65,7 +65,14 @@ def manifest(request: HttpRequest) -> HttpResponse:
             "scope": "/",
             "start_url": "/",
             "theme_color": "#ffffff",
-            "categories": ["podcasts"],
+            "categories": [
+                "books",
+                "education",
+                "entertainment",
+                "news",
+                "politics",
+                "sport",
+            ],
             "screenshots": [
                 static("img/desktop.png"),
                 static("img/mobile.png"),
