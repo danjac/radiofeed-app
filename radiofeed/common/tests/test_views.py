@@ -5,6 +5,11 @@ from django.urls import reverse
 from radiofeed.common.asserts import assert_ok
 
 
+class TestManifest:
+    def test_get(self, db, client):
+        assert_ok(client.get(reverse("manifest")))
+
+
 class TestFavicon:
     def test_get(self, db, client):
         assert_ok(client.get(reverse("favicon")))

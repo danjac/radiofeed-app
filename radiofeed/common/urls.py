@@ -13,6 +13,7 @@ urlpatterns = [
         kwargs={"template_name": "about.html"},
     ),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
+    path("manifest.json", views.manifest, name="manifest"),
     path("robots.txt", views.robots, name="robots"),
     path("favicon.ico", views.favicon, name="favicon"),
     path(".well-known/security.txt", views.security, name="security"),
