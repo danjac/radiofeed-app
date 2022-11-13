@@ -10,6 +10,11 @@ class TestManifest:
         assert_ok(client.get(reverse("manifest")))
 
 
+class TestServiceWorker:
+    def test_get(self, db, client):
+        assert_ok(client.get(reverse("service_worker")))
+
+
 class TestFavicon:
     def test_get(self, db, client):
         assert_ok(client.get(reverse("favicon")))

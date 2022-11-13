@@ -43,6 +43,14 @@ def favicon(request: HttpRequest) -> FileResponse:
 @require_safe
 @_cache_control
 @_cache_page
+def service_worker(request: HttpRequest) -> HttpResponse:
+    """PWA service worker."""
+    return render(request, "service_worker.js", content_type="application/javascript")
+
+
+@require_safe
+@_cache_control
+@_cache_page
 def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
     return JsonResponse(
