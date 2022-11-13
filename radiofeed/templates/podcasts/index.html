@@ -22,15 +22,19 @@
                 <nav class="flex items-center justify-center sm:justify-start">
                     <ul class="flex items-center">
                         {% if promoted %}
-                            <a href="{{ index_url }}"
-                                class="link">
-                                {{ t_subscriptions }}
-                            </a>
+                            <li>
+                                <a href="{{ index_url }}"
+                                    class="link">
+                                    {{ t_subscriptions }}
+                                </a>
+                            </li>
                         {% else %}
-                            <a href="{{ index_url }}?promoted=true"
-                                class="link">
-                                {{ t_promotions }}
-                            </a>
+                            <li>
+                                <a href="{{ index_url }}?promoted=true"
+                                    class="link">
+                                    {{ t_promotions }}
+                                </a>
+                            </li>
                         {% endif %}
                     </ul>
                 </nav>
