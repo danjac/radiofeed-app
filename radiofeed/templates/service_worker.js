@@ -7,7 +7,6 @@ importScripts(
 
 const CACHE = "pwabuilder-page";
 
-// TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
 const offlineFallbackPage = "{% static 'offline.html' %}";
 
 self.addEventListener("message", event => {
