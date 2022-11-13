@@ -78,6 +78,12 @@ def manifest(request: HttpRequest) -> HttpResponse:
                     "sizes": "512x512",
                 },
                 {
+                    "src": static("img/wave.png"),
+                    "type": "image/png",
+                    "purpose": "maskable",
+                    "sizes": "512x512",
+                },
+                {
                     "src": static("img/favicon.png"),
                     "type": "image/png",
                     "sizes": "512x512",
