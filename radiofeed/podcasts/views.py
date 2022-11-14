@@ -4,8 +4,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
@@ -25,11 +26,15 @@ def intro(request: HttpRequest, limit: int = 30) -> HttpResponse:
     """Render default site home page for anonymous users."""
     if request.user.is_authenticated:
         url = reverse("podcasts:index")
-        return HttpResponseClientRedirect(url) if request.htmx else redirect(url)
+        return (
+            HttpResponseClientRedirect(url)
+            if request.htmx
+            else HttpResponseRedirect(url)
+        )
 
     podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
 
-    return render(request, "podcasts/intro.html", {"podcasts": podcasts})
+    return TemplateResponse(request, "podcasts/intro.html", {"podcasts": podcasts})
 
 
 @require_safe
@@ -75,7 +80,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "podcasts/search.html",
         )
 
-    return redirect(settings.HOME_URL)
+    return HttpResponseRedirect(settings.HOME_URL)
 
 
 @ratelimit(key="ip", rate="20/m")
@@ -94,7 +99,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
                 request, _("Sorry, an error occurred trying to access iTunes.")
             )
 
-        return render(
+        return TemplateResponse(
             request,
             "podcasts/itunes_search.html",
             {
@@ -103,7 +108,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    return redirect(settings.HOME_URL)
+    return HttpResponseRedirect(settings.HOME_URL)
 
 
 @require_safe
@@ -119,7 +124,7 @@ def latest_episode(
     ) is None:
         raise Http404()
 
-    return redirect(episode)
+    return HttpResponseRedirect(episode.get_absolute_url())
 
 
 @require_safe
@@ -130,7 +135,7 @@ def podcast_detail(
     """Render details for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
@@ -180,7 +185,7 @@ def similar(
         "-frequency",
     )[:limit]
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/similar.html",
         {
@@ -205,7 +210,9 @@ def category_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         categories = categories.search(request.search)
 
-    return render(request, "podcasts/categories.html", {"categories": categories})
+    return TemplateResponse(
+        request, "podcasts/categories.html", {"categories": categories}
+    )
 
 
 @require_safe
@@ -278,7 +285,7 @@ def _get_podcast_or_404(podcast_id: int) -> Podcast:
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/includes/subscribe.html",
         {

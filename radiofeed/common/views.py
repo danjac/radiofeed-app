@@ -4,16 +4,22 @@ import datetime
 
 from django.conf import settings
 from django.http import FileResponse, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.templatetags.static import static
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 
-static_page = require_safe(render)
-
 _cache_control = cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 _cache_page = cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+
+
+@require_safe
+def static_page(
+    request: HttpRequest, template_name: str, extra_context: dict | None = None
+) -> HttpResponse:
+    """Renders simple static page."""
+    return TemplateResponse(request, template_name, extra_context)
 
 
 @require_POST
@@ -45,7 +51,11 @@ def favicon(request: HttpRequest) -> FileResponse:
 @_cache_page
 def service_worker(request: HttpRequest) -> HttpResponse:
     """PWA service worker."""
-    return render(request, "service_worker.js", content_type="application/javascript")
+    return TemplateResponse(
+        request,
+        "service_worker.js",
+        content_type="application/javascript",
+    )
 
 
 @require_safe
