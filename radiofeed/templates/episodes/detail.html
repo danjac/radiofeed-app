@@ -77,11 +77,8 @@
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
 
                     {% include "episodes/includes/audio_controls.html" %}
+                    {% include "episodes/includes/bookmark.html" %}
 
-                    <div class="flex items-center space-x-3">
-
-                        {% include "episodes/includes/bookmark.html" %}
-                    </div>
                     {% with file_size=episode.get_file_size link=episode.get_link %}
                         {% if file_size or link %}
                             <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
