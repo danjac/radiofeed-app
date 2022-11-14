@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 ),
             )
 
-    def _parse_feed(self, podcast: Podcast):
+    def _parse_feed(self, podcast: Podcast) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
         result = feed_parser.parse_feed(podcast)
         style = self.style.SUCCESS if result else self.style.NOTICE
