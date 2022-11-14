@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Final, Iterable
 
 from django.core.paginator import InvalidPage, Paginator
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest
 from django.template.response import TemplateResponse
 
 _DEFAULT_PAGINATION_PARAM: Final = "page"
@@ -35,7 +35,7 @@ def render_pagination_response(
     param: str = _DEFAULT_PAGINATION_PARAM,
     page_size: int = 30,
     **pagination_kwargs,
-) -> HttpResponse:
+) -> TemplateResponse:
     """Renders paginated response.
 
     Raises:
