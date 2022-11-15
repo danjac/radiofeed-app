@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import FileResponse, HttpRequest, HttpResponse, JsonResponse
 from django.template.response import TemplateResponse
 from django.templatetags.static import static
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
@@ -63,18 +64,27 @@ def service_worker(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
+    start_url = reverse("podcasts:landing_page")
+    theme_color = "#ffffff"
+
+    icon = {
+        "src": static("img/wave.png"),
+        "type": "image/png",
+        "sizes": "512x512",
+    }
+
     return JsonResponse(
         {
-            "background_color": "#ffffff",
+            "background_color": theme_color,
+            "theme_color": theme_color,
             "description": "Podcast aggregator site",
             "dir": "ltr",
             "display": "standalone",
             "name": "Radiofeed",
             "short_name": "Radiofeed",
             "orientation": "any",
-            "scope": "/",
-            "start_url": "/",
-            "theme_color": "#ffffff",
+            "scope": start_url,
+            "start_url": start_url,
             "categories": [
                 "books",
                 "education",
@@ -88,23 +98,9 @@ def manifest(request: HttpRequest) -> HttpResponse:
                 static("img/mobile.png"),
             ],
             "icons": [
-                {
-                    "src": static("img/wave.png"),
-                    "type": "image/png",
-                    "purpose": "any",
-                    "sizes": "512x512",
-                },
-                {
-                    "src": static("img/wave.png"),
-                    "type": "image/png",
-                    "purpose": "maskable",
-                    "sizes": "512x512",
-                },
-                {
-                    "src": static("img/favicon.png"),
-                    "type": "image/png",
-                    "sizes": "512x512",
-                },
+                icon,
+                {**icon, "purpose": "any"},
+                {**icon, "purpose": "maskable"},
             ],
             "shortcuts": [],
             "lang": "en",
