@@ -7,7 +7,7 @@
     {% with search_placeholder=_("Search: ")|add:category.name %}
         {% translate "Podcasts" as t_podcasts %}
         {% if request.search %}
-            <header class="space-y-3 pb-3 border-b dark:border-gray-500">
+            <header class="space-y-3 mb-3 pb-3 border-b dark:border-gray-500">
                 <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl">
                     {{ category.name }} {{ t_podcasts }}
                 </h1>
@@ -26,7 +26,7 @@
                 </nav>
             </header>
         {% else %}
-            <header class="sm:flex items-center justify-between space-y-3 sm:space-y-0 pb-3 border-b dark:border-gray-500">
+            <header class="sm:flex items-center justify-between space-y-3 sm:space-y-0 mb-3 pb-3 border-b dark:border-gray-500">
                 <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
                     {{ category.name }} {{ t_podcasts }}
                 </h1>

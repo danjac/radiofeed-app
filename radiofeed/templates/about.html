@@ -13,92 +13,101 @@
         </h1>
 
         <div class="prose dark:prose-invert prose-sm md:prose-base break-words">
+            <section>
+                <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "About Us" %}</h2>
 
-            <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "About Us" %}</h2>
+                <p>
+                    {% blocktranslate %}
+                        <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
+                    {% endblocktranslate %}
+                </p>
+            </section>
 
-            <p>
-                {% blocktranslate %}
-                    <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
-                {% endblocktranslate %}
-            </p>
+            <section>
+                <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "Technology" %}</h2>
 
-            <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "Technology" %}</h2>
+                <p>
+                    {% blocktranslate %}
+                        <strong>{{ site_name }}</strong> is an
+                        <a
+                            target="_blank"
+                            rel="noopener"
+                            href="https://github.com/danjac/radiofeed/">open source project</a>
+                        under the <a href="https://mit-license.org/"
+                            target="_blank"
+                            rel="noopener">MIT license</a>.
+                    {% endblocktranslate %}
+                </p>
 
-            <p>
-                {% blocktranslate %}
-                    <strong>{{ site_name }}</strong> is an
-                    <a
-                        target="_blank"
-                        rel="noopener"
-                        href="https://github.com/danjac/radiofeed/">open source project</a>
-                    under the <a href="https://mit-license.org/"
-                        target="_blank"
-                        rel="noopener">MIT license</a>.
-                {% endblocktranslate %}
-            </p>
-
-            <p>
-                {% blocktranslate %}
-                    Runs on <a href="https://www.djangoproject.com/"
-                        rel="noopener"
-                        target="_blank">Django</a> with the help of <a href="https://htmx.org"
+                <p>
+                    {% blocktranslate %}
+                        Runs on <a href="https://www.djangoproject.com/"
+                            rel="noopener"
+                            target="_blank">Django</a> with the help of <a href="https://htmx.org"
+                                rel="noopener"
+                                target="_blank"
+                            >
+                                HTMX</a>, <a href="https://alpinejs.dev/"
+                                    rel="noopener"
+                                    target="_blank">AlpineJS</a>
+                        and <a href="https://tailwindcss.com/"
                             rel="noopener"
                             target="_blank"
-                        >
-                            HTMX</a>, <a href="https://alpinejs.dev/"
+                        >Tailwind</a>.
+                    {% endblocktranslate %}
+                </p>
+            </section>
+
+            <section>
+                <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "Additional Credits" %}</h2>
+
+                <ul>
+                    {% blocktranslate %}
+                        <li>
+                            Icons from <a target="_blank"
+                                href="https://fontawesome.com"
+                                rel="noopener">Font Awesome</a>
+                        </li>
+
+                        <li>
+                            Podcast icon made by <a
+                                href="https://www.flaticon.com/authors/freepik"
                                 rel="noopener"
-                                target="_blank">AlpineJS</a>
-                    and <a href="https://tailwindcss.com/"
+                                title="Freepik">Freepik</a> from
+                            <a href="https://www.flaticon.com/"
+                                rel="noopener"
+                                title="Flaticon">www.flaticon.com
+                            </a>
+                        </li>
+                    {% endblocktranslate %}
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "General Disclaimer" %}</h2>
+
+                <p>
+                    {% blocktranslate %}
+                        All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
+                        nor endorsed by {{ site_name }}. All audio files are played directly from the source.
+                    {% endblocktranslate %}
+                </p>
+            </section>
+
+            <section>
+                <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "Contact Us" %}</h2>
+
+                <p class="flex items-center space-x-3">
+
+                    <a target="_blank"
                         rel="noopener"
-                        target="_blank"
-                    >Tailwind</a>.
-                {% endblocktranslate %}
-            </p>
+                        href="mailto:{% get_contact_email %}">{% translate "Feedback" %}</a>
 
-            <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "Additional Credits" %}</h2>
-
-            <ul>
-                {% blocktranslate %}
-                    <li>
-                        Icons from <a target="_blank"
-                            href="https://fontawesome.com"
-                            rel="noopener">Font Awesome</a>
-                    </li>
-
-                    <li>
-                        Podcast icon made by <a
-                            href="https://www.flaticon.com/authors/freepik"
-                            rel="noopener"
-                            title="Freepik">Freepik</a> from
-                        <a href="https://www.flaticon.com/"
-                            rel="noopener"
-                            title="Flaticon">www.flaticon.com
-                        </a>
-                    </li>
-                {% endblocktranslate %}
-            </ul>
-
-            <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "General Disclaimer" %}</h2>
-
-            <p>
-                {% blocktranslate %}
-                    All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
-                    nor endorsed by {{ site_name }}. All audio files are played directly from the source.
-                {% endblocktranslate %}
-            </p>
-
-            <h2 class="!text-base md:!text-lg xl:!text-xl">{% translate "Contact Us" %}</h2>
-
-            <p class="flex items-center space-x-3">
-
-                <a target="_blank"
-                    rel="noopener"
-                    href="mailto:{% get_contact_email %}">{% translate "Feedback" %}</a>
-
-                <a target="_blank"
-                    rel="noopener"
-                    href="https://github.com/danjac/radiofeed/issues">{% translate "Issues" %}</a>
-            </p>
+                    <a target="_blank"
+                        rel="noopener"
+                        href="https://github.com/danjac/radiofeed/issues">{% translate "Issues" %}</a>
+                </p>
+            </section>
         </div>
     {% endwith %}
 {% endblock content %}
