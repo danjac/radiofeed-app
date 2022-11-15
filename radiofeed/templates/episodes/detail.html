@@ -79,31 +79,27 @@
                     {% include "episodes/includes/audio_controls.html" %}
                     {% include "episodes/includes/bookmark.html" %}
 
-                    {% with file_size=episode.get_file_size link=episode.get_link %}
-                        {% if file_size or link %}
-                            <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
+                    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
 
-                                <a download
-                                    title="{% translate "Download audio file to your device" %}"
-                                    href="{{ episode.media_url }}"
-                                    class="link">
-                                    {% translate "Download" %}
+                        <a download
+                            title="{% translate "Download audio file to your device" %}"
+                            href="{{ episode.media_url }}"
+                            class="link">
+                            {% translate "Download" %}
+                        </a>
+
+                        {% with link=episode.get_link %}
+                            {% if link %}
+                                <a href="{{ link }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="link"
+                                    title="{% translate "Link to Website" %}">
+                                    {% translate "Website" %}
                                 </a>
-
-                                {% if link %}
-                                    <a href="{{ link }}"
-                                        target="_blank"
-                                        rel="noopener"
-                                        class="link"
-                                        title="{% translate "Link to Website" %}">
-                                        {% translate "Website" %}
-                                    </a>
-                                {% endif %}
-
-                            </div>
-                        {% endif %}
-                    {% endwith %}
-
+                            {% endif %}
+                        {% endwith %}
+                    </div>
                 </div>
             </div>
 
