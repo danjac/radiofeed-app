@@ -32,9 +32,15 @@ def intro(request: HttpRequest, limit: int = 30) -> HttpResponse:
             else HttpResponseRedirect(url)
         )
 
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
-
-    return TemplateResponse(request, "podcasts/intro.html", {"podcasts": podcasts})
+    return TemplateResponse(
+        request,
+        "podcasts/intro.html",
+        {
+            "podcasts": _get_podcasts()
+            .filter(promoted=True)
+            .order_by("-pub_date")[:limit]
+        },
+    )
 
 
 @require_safe
@@ -180,17 +186,14 @@ def similar(
     """List similar podcasts based on recommendations."""
     podcast = _get_podcast_or_404(podcast_id)
 
-    recommendations = podcast.recommendations.select_related("recommended").order_by(
-        "-similarity",
-        "-frequency",
-    )[:limit]
-
     return TemplateResponse(
         request,
         "podcasts/similar.html",
         {
             "podcast": podcast,
-            "recommendations": recommendations,
+            "recommendations": podcast.recommendations.select_related(
+                "recommended"
+            ).order_by("-similarity", "-frequency",)[:limit],
         },
     )
 
