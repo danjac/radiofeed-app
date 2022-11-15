@@ -19,8 +19,8 @@ repos:
       rev: 22.10.0
       hooks:
           - id: black
-            args: [--target-version, "py310", --line-length, "88"]
-            language_version: python3.10
+            args: [--target-version, "py311", --line-length, "88"]
+            language_version: python3.11
     - repo: https://github.com/PyCQA/autoflake
       rev: v1.7.7
       hooks:
@@ -34,7 +34,7 @@ repos:
                     --ignore-init-module-imports,
                     "radiofeed",
                 ]
-    - repo: https://gitlab.com/pycqa/flake8
+    - repo: https://github.com/pycqa/flake8
       rev: 3.9.2
       hooks:
           - id: flake8
