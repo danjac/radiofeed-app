@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
@@ -22,24 +21,22 @@ from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
 @require_safe
-def intro(request: HttpRequest, limit: int = 30) -> HttpResponse:
+def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
     """Render default site home page for anonymous users."""
     if request.user.is_authenticated:
+
         url = reverse("podcasts:index")
+
         return (
             HttpResponseClientRedirect(url)
             if request.htmx
             else HttpResponseRedirect(url)
         )
 
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
+
     return TemplateResponse(
-        request,
-        "podcasts/intro.html",
-        {
-            "podcasts": _get_podcasts()
-            .filter(promoted=True)
-            .order_by("-pub_date")[:limit]
-        },
+        request, "podcasts/landing_page.html", {"podcasts": podcasts}
     )
 
 
@@ -86,7 +83,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "podcasts/search.html",
         )
 
-    return HttpResponseRedirect(settings.HOME_URL)
+    return HttpResponseRedirect(reverse("podcasts:index"))
 
 
 @ratelimit(key="ip", rate="20/m")
@@ -114,7 +111,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    return HttpResponseRedirect(settings.HOME_URL)
+    return HttpResponseRedirect(reverse("podcasts:index"))
 
 
 @require_safe

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse, TemplateResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext, override
@@ -117,5 +117,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, _("Your account has been deleted"))
-        return HttpResponseRedirect(settings.HOME_URL)
+        return HttpResponseRedirect(reverse("podcasts:landing_page"))
     return TemplateResponse(request, "account/delete_account.html")

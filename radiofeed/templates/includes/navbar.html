@@ -15,7 +15,7 @@
 
             <div class="flex items-center flex-shrink-0 space-x-3">
                 <a class="inline-flex items-center font-bold text-lg md:text-xl xl:text-2xl"
-                    href="{% if user.is_authenticated %}{% url 'podcasts:index' %}{% else %}{% url 'podcasts:intro' %}{% endif %}"
+                    href="{% if user.is_authenticated %}{% url 'podcasts:index' %}{% else %}{% url 'podcasts:landing_page' %}{% endif %}"
                     title="{{ site_name }}: {% translate "Home Page" %}">
                     <img src="{% static 'img/wave.png' %}"
                         class="h-6 w-6 lg:h-8 lg:w-8 mr-2" title="{{ site_name }}"

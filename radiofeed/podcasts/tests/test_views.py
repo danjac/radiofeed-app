@@ -22,24 +22,25 @@ from radiofeed.podcasts.factories import (
 )
 from radiofeed.podcasts.models import Subscription
 
-intro_url = reverse_lazy("podcasts:intro")
 podcasts_url = reverse_lazy("podcasts:index")
 
 
-class TestIntro:
+class TestLandingPage:
+    url = reverse_lazy("podcasts:landing_page")
+
     def test_anonymous(self, client, db):
         PodcastFactory.create_batch(3, promoted=True)
-        response = client.get(intro_url)
+        response = client.get(self.url)
         assert_ok(response)
 
         assert len(response.context["podcasts"]) == 3
 
     def test_authenticated(self, client, auth_user):
-        response = client.get(intro_url)
+        response = client.get(self.url)
         assert response.url == podcasts_url
 
     def test_authenticated_htmx(self, client, auth_user):
-        response = client.get(intro_url, HTTP_HX_REQUEST="true")
+        response = client.get(self.url, HTTP_HX_REQUEST="true")
         assert_hx_redirect(response, podcasts_url)
 
 

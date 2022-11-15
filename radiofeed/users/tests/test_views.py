@@ -4,7 +4,6 @@ import pathlib
 
 import pytest
 
-from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
@@ -153,5 +152,5 @@ class TestDeleteAccount:
 
     def test_post_confirmed(self, client, auth_user):
         response = client.post(self.url, {"confirm-delete": True})
-        assert response.url == settings.HOME_URL
+        assert response.url == reverse("podcasts:landing_page")
         assert not User.objects.exists()

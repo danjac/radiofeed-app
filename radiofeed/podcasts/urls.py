@@ -8,7 +8,7 @@ app_name = "podcasts"
 
 
 urlpatterns = [
-    path("", views.intro, name="intro"),
+    path("", views.landing_page, name="landing_page"),
     path("podcasts/", views.index, name="index"),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
