@@ -63,6 +63,20 @@ input[type="search"]::-webkit-search-results-decoration {
         padding: theme("padding.1") theme("padding.2");
         border-radius: theme("borderRadius.DEFAULT");
         font-weight: theme("fontWeight.semibold");
+        font-size: theme("fontSize.xs");
+    }
+
+    .btn-lg {
+        font-size: theme("fontSize.sm");
+    }
+
+    @media screen(lg) {
+        .btn {
+            font-size: theme("fontSize.sm");
+        }
+        .btn-lg {
+            font-size: theme("fontSize.base");
+        }
     }
 
     .btn.focus {
@@ -116,6 +130,15 @@ input[type="search"]::-webkit-search-results-decoration {
         border-color: theme("colors.purple.800");
     }
 
+    .btn-danger {
+        color: theme("colors.white");
+        background-color: theme("colors.red.800");
+    }
+
+    .btn-danger:hover {
+        background-color: theme("colors.red.600");
+    }
+
     @media (prefers-color-scheme: dark) {
         .btn-primary.btn-outline,
         .btn-default.btn-outline {
@@ -134,15 +157,6 @@ input[type="search"]::-webkit-search-results-decoration {
             background-color: theme("colors.gray.800");
             border-color: theme("colors.purple.300");
         }
-    }
-
-    .btn-danger {
-        color: theme("colors.white");
-        background-color: theme("colors.red.800");
-    }
-
-    .btn-danger:hover {
-        background-color: theme("colors.red.600");
     }
 
     /* LINKS */
