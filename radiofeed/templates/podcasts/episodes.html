@@ -26,14 +26,6 @@
     {% endif %}
     {% get_current_language as language_code %}
     {% cache 600 podcast-episodes request.get_full_path language_code %}
-        <div class="dark:divide-gray-500 divide-y divide-solid">
-            {% include "includes/pagination_links.html" %}
-            {% for episode in page_obj.object_list %}
-                {% include "episodes/includes/episode.html" %}
-            {% empty %}
-                {% include "includes/empty.html" %}
-            {% endfor %}
-            {% include "includes/pagination_links.html" %}
-        </div>
+        {% include "episodes/includes/episodes.html" %}
     {% endcache %}
-{% endblock %}
+{% endblock podcast_content %}

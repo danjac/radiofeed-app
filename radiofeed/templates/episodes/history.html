@@ -30,14 +30,5 @@
             </nav>
         {% endif %}
     </header>
-
-    <div class="dark:divide-gray-500 divide-y divide-solid">
-        {% include "includes/pagination_links.html" %}
-        {% for log in page_obj.object_list %}
-            {% include "episodes/includes/episode.html" with episode=log.episode %}
-        {% empty %}
-            {% include "includes/empty.html" %}
-        {% endfor %}
-        {% include "includes/pagination_links.html" %}
-    </div>
+    {% include "episodes/includes/audio_logs.html" %}
 {% endblock content %}

@@ -45,14 +45,7 @@
             </h1>
         {% endif %}
     </header>
-    <div class="dark:divide-gray-500 divide-y divide-solid">
-        {% include "includes/pagination_links.html" %}
-        {% for podcast in page_obj.object_list %}
-            {% include "podcasts/includes/podcast.html" %}
-        {% empty %}
-            {% include "includes/empty.html" %}
-        {% endfor %}
-        {% include "includes/pagination_links.html" %}
-    </div>
+
+    {% include "podcasts/includes/podcasts.html" %}
 
 {% endblock content %}
