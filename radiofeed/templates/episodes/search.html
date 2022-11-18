@@ -6,6 +6,7 @@
 {% block search_content %}
     {% get_current_language as language_code %}
     {% cache 600 podcasts-search request.get_full_path language_code %}
-        {% include "episodes/includes/episodes.html" %}
+
+        {% include pagination_template %}
     {% endcache %}
 {% endblock search_content %}

@@ -31,9 +31,11 @@ def render_pagination_response(
     request: HttpRequest,
     object_list: Iterable,
     template_name: str,
+    pagination_template_name: str,
     extra_context: dict | None = None,
     param: str = _DEFAULT_PAGINATION_PARAM,
     page_size: int = 30,
+    pagination_target: str = "pagination",
     **pagination_kwargs,
 ) -> TemplateResponse:
     """Renders paginated response.
@@ -49,6 +51,17 @@ def render_pagination_response(
     except InvalidPage:
         raise Http404()
 
-    return TemplateResponse(
-        request, template_name, {"page_obj": page, **(extra_context or {})}
+    template_name = (
+        pagination_template_name
+        if request.htmx and request.htmx.target == pagination_target
+        else template_name
     )
+
+    context = {
+        "page_obj": page,
+        "pagination_template": pagination_template_name,
+        "pagination_target": pagination_target,
+        **(extra_context or {}),
+    }
+
+    return TemplateResponse(request, template_name, context)
