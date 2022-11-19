@@ -14,15 +14,14 @@
         {% translate "Increase Playback Rate" as t_increase_playback_rate %}
         {% translate "Reload Player" as t_reload_player %}
         {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
-            <div {# fmt:off #}
-            x-data="
+            <div x-data="
+                {# fmt:off #}
             player(
                 autoplay={{ start_player|yesno:'true,false' }},
                 currentTime={{ current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
-            )"
-            {# fmt:on #}
+            ){# fmt:on #}"
                 @keydown.window="shortcuts"
                 class="pt-12 sm:pt-0 md:pt-6">
                 {{ episode.get_media_metadata|json_script:"player-metadata" }}
