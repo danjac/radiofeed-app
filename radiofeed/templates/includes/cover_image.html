@@ -2,13 +2,23 @@
     {% load static %}
     {% static 'img/podcast-icon.webp' as placeholder %}
     <img class="object-cover bg-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
-         alt="{{ alt }}"
-         title="{{ alt }}"
-         aria-hidden="true"
-         loading="lazy"
-         width="200"
-         height="200"
-         src="{{ placeholder }}"
-         {% if url %} role="link" hx-get="{{ url }}" hx-push-url="true" hx-trigger="click consume"{% endif %}
-         {% if cover_url %} x-data="{# fmt:off #}{ isLoaded: false, src: '{{ cover_url|escapejs }}', placeholder: '{{ placeholder|escapejs }}', }{# fmt:on #}" @load.once="isLoaded=true;" @error.once="src=placeholder;isLoaded=true;" :class="{'blur-sm': !isLoaded}" :src="src" {% endif %}>
+        alt="{{ alt }}"
+        title="{{ alt }}"
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        width="200"
+        height="200"
+        src="{{ placeholder }}"
+        {% if url %} role="link" hx-get="{{ url }}" hx-push-url="true" hx-trigger="click consume"{% endif %}
+        {% if cover_url %}
+            x-data="{# fmt:off #}{
+            isLoaded: false, src: '{{ cover_url|escapejs }}',
+            placeholder: '{{ placeholder|escapejs }}'
+        }{# fmt:on #}"
+            @load.once="isLoaded=true;"
+            @error.once="src=placeholder;isLoaded=true;"
+            :class="{'blur-sm': !isLoaded}"
+            :src="src"
+        {% endif %}>
 {% endspaceless %}
