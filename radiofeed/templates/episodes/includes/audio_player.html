@@ -63,9 +63,7 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        {% with cover_url=podcast.cover_url %}
-                            {% include "includes/cover_image.html" with css_class="w-16 h-16 sm:h-20 sm:w-20" alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
-                        {% endwith %}
+                        {% include "includes/cover_image.html" with css_class="w-16 h-16 sm:h-20 sm:w-20" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
                         <div class="flex flex-col w-full h-16 lg:h-20 place-content-between">
                             <div class="flex items-center justify-between pt-2 sm:pt-0">
                                 <div class="flex items-center">
