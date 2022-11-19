@@ -2,8 +2,9 @@
      id="{{ pagination_target }}">
     {% include "includes/pagination_links.html" %}
     {% for object in page_obj.object_list %}
-        {% block pagination_item %}
-        {% endblock pagination_item %}
+        {# djlint:off #}
+        {% block pagination_item %}{% endblock pagination_item %}
+        {# djlint:on #}
     {% empty %}
         {% include "includes/empty.html" %}
     {% endfor %}
