@@ -15,7 +15,7 @@
         "@tailwindcss/line-clamp": "^0.4.2",
         "@tailwindcss/typography": "^0.5.8",
         "esbuild": "^0.15.14",
-        "eslint": "^8.27.0",
+        "eslint": "^8.28.0",
         "eslint-plugin-prettier": "^4.2.1",
         "npm-check-updates": "^16.4.1",
         "prettier": "2.7.1",
