@@ -9,7 +9,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import HttpResponseClientRedirect
 from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import require_auth
@@ -24,14 +23,7 @@ from radiofeed.podcasts.models import Category, Podcast, Subscription
 def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
     """Render default site home page for anonymous users."""
     if request.user.is_authenticated:
-
-        url = reverse("podcasts:index")
-
-        return (
-            HttpResponseClientRedirect(url)
-            if request.htmx
-            else HttpResponseRedirect(url)
-        )
+        return HttpResponseRedirect(reverse("podcasts:index"))
 
     podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
 
@@ -44,14 +36,16 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 @require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
-    podcasts = _get_podcasts().order_by("-pub_date")
     subscribed = set(request.user.subscriptions.values_list("podcast", flat=True))
     promoted = "promoted" in request.GET or not subscribed
 
-    if promoted:
-        podcasts = podcasts.filter(promoted=True)
-    else:
-        podcasts = podcasts.filter(pk__in=subscribed)
+    podcasts = _get_podcasts().order_by("-pub_date")
+
+    podcasts = (
+        podcasts.filter(promoted=True)
+        if promoted
+        else podcasts.filter(pk__in=subscribed)
+    )
 
     return render_pagination_response(
         request,

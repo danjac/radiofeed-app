@@ -6,12 +6,7 @@ import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
 
-from radiofeed.common.asserts import (
-    assert_conflict,
-    assert_hx_redirect,
-    assert_not_found,
-    assert_ok,
-)
+from radiofeed.common.asserts import assert_conflict, assert_not_found, assert_ok
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.factories import (
@@ -38,10 +33,6 @@ class TestLandingPage:
     def test_authenticated(self, client, auth_user):
         response = client.get(self.url)
         assert response.url == podcasts_url
-
-    def test_authenticated_htmx(self, client, auth_user):
-        response = client.get(self.url, HTTP_HX_REQUEST="true")
-        assert_hx_redirect(response, podcasts_url)
 
 
 class TestPodcasts:
