@@ -9,8 +9,7 @@
             message: '{{ message|escapejs }}',
             tags: '{{ message.tags|escapejs }}'
             });
-        {% endfor %}
-        "
+        {% endfor %}"
         {# fmt:on #}
     {% endif %}
     @add-message.window="messages.push($event.detail)"
