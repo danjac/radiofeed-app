@@ -73,8 +73,12 @@ repos:
           - id: prettier
             files: \.(|js|css)$
             exclude: bundle.js|bundle.js.map|bundle.css
+    - repo: https://github.com/rtts/djhtml
+      rev: v1.5.2
+      hooks:
+          - id: djhtml
     - repo: https://github.com/Riverside-Healthcare/djLint
       rev: v1.19.7
       hooks:
           - id: djlint-django
-            args: ["--reformat", "--lint"]
+            args: ["--lint"]

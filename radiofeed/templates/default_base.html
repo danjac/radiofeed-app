@@ -11,16 +11,16 @@
             <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}" />
             <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}" />
             <link rel="stylesheet"
-                  text="text/css"
-                  href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}"/>
+                text="text/css"
+                href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}"/>
             <link rel="manifest" href="{% url 'manifest' %}" />
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
             <meta name="viewport"
-                  content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+                content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
             <meta name="copyright" content="Dan Jacob {% now "Y" %}" />
             <meta name="htmx-config"
-                  content='{"historyCacheSize": 0, "refreshOnHistoryMiss": false}'/>
+                content='{"historyCacheSize": 0, "refreshOnHistoryMiss": false}'/>
             <meta name="Cache-Control" content="no-cache" />
             <meta name="robots" content="index,follow" />
             <meta name="description" content="Podcast aggregator site" />
@@ -28,11 +28,11 @@
             <meta name="theme-color" content="#041014" />
         </head>
         <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth lg:text-base"
-              hx-boost="true"
-              hx-target="#content"
-              hx-swap="innerHTML show:window:top"
-              hx-indicator="#loader"
-              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+            hx-boost="true"
+            hx-target="#content"
+            hx-swap="innerHTML show:window:top"
+            hx-indicator="#loader"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
             {% include "includes/hx_indicator.html" %}
             <div class="flex flex-col h-screen">
                 <div class="flex-grow">
@@ -45,11 +45,9 @@
                             </aside>
                         {% endif %}
                         <main class="w-full xl:block md:mx-auto xl:w-4/5"
-                              id="content"
-                              hx-history-elt>
-                            {# djlint:off #}
+                            id="content"
+                            hx-history-elt>
                             {% block content %}{% endblock content %}
-                            {# djlint:on #}
                         </main>
                     </div>
                 </div>
@@ -61,7 +59,7 @@
             </div>
             {% django_htmx_script %}
             <script defer
-                    src="{% static "js/bundle.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
+                src="{% static "js/bundle.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
             <script>
                 if (typeof navigator.serviceWorker !== 'undefined') {
                     navigator.serviceWorker.register('{% url "service_worker" %}')

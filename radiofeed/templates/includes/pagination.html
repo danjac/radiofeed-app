@@ -1,10 +1,8 @@
 <div class="dark:divide-gray-500 divide-y divide-solid"
-     id="{{ pagination_target }}">
+    id="{{ pagination_target }}">
     {% include "includes/pagination_links.html" %}
     {% for object in page_obj.object_list %}
-        {# djlint:off #}
         {% block pagination_item %}{% endblock pagination_item %}
-        {# djlint:on #}
     {% empty %}
         {% include "includes/empty.html" %}
     {% endfor %}

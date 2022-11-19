@@ -2,16 +2,16 @@
     id="messages"
     x-data="{messages: []}"
     {% if messages %}
-        {# djlint:off #}
+        {# fmt:off #}
         x-init="
-     {% for message in messages %}
-        messages.push({
+        {% for message in messages %}
+            messages.push({
             message: '{{ message|escapejs }}',
             tags: '{{ message.tags|escapejs }}'
-        });
+            });
         {% endfor %}
-    "
-        {# djlint:on #}
+        "
+        {# fmt:on #}
     {% endif %}
     @add-message.window="messages.push($event.detail)"
     {% if hx_oob %}hx-swap-oob="true"{% endif %}>
@@ -19,15 +19,15 @@
         <template x-for="message in messages">
             <div class="flex flex-wrap items-center justify-center p-2 text-center text-white rounded shadow-xl"
                 role="alert"
-                {# djlint:off #}
+                {# fmt:off #}
                 :class="{
-                     debug: 'bg-gray-600',
-                     error: 'bg-red-600',
-                     info: 'bg-blue-600',
-                     success: 'bg-green-600',
-                     warning: 'bg-violet-600',
-                     }[message.tags]"
-                {# djlint:on #}
+                debug: 'bg-gray-600',
+                error: 'bg-red-600',
+                info: 'bg-blue-600',
+                success: 'bg-green-600',
+                warning: 'bg-violet-600',
+                }[message.tags]"
+                {# fmt:on #}
                 x-data="{show: true}"
                 x-show="show"
                 x-init="setTimeout(() => show = false, 1500)"
