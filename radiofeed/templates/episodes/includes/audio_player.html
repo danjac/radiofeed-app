@@ -57,12 +57,10 @@
                         </div>
                         <div class="text-xs text-center text-gray-300 animate-pulse sm:hidden"
                             x-cloak
-                            x-show="!isError && !isLoaded">
-                            {{ t_loading }}
+                            x-show="isError || !isLoaded">
+                            <span x-show="!isLoaded && !isError">{{ t_loading }}</span>
+                            <span x-show="isError">{{ t_error }}</span>
                         </div>
-                        <div class="text-xs text-center text-gray-300 animate-pulse"
-                            x-cloak
-                            x-show="isError">{{ t_error }}</div>
                     </div>
                     <div class="flex items-center space-x-2">
                         {% with cover_url=podcast.cover_url %}
@@ -107,8 +105,9 @@
                                 </div>
                                 <div class="hidden text-sm text-center text-gray-300 sm:flex lg:hidden animate-pulse"
                                     x-cloak
-                                    x-show="!isError && !isLoaded">
-                                    {{ t_loading }}
+                                    x-show="isError || !isLoaded">
+                                    <span x-show="!isLoaded && !isError">{{ t_loading }}</span>
+                                    <span x-show="isError">{{ t_error }}</span>
                                 </div>
                                 <div class="hidden lg:block space-y-2">
                                     <div>
@@ -127,12 +126,10 @@
                                     </div>
                                     <div class="text-xs text-center text-gray-300 md:text-sm animate-pulse"
                                         x-cloak
-                                        x-show="!isError && !isLoaded">
-                                        {{ t_loading }}
+                                        x-show="isError || !isLoaded">
+                                        <span x-show="!isLoaded && !isError">{{ t_loading }}</span>
+                                        <span x-show="isError">{{ t_error }}</span>
                                     </div>
-                                    <div class="text-xs text-center text-gray-300 md:text-sm animate-pulse"
-                                        x-cloak
-                                        x-show="isError">{{ t_error }}</div>
                                 </div>
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                     <div class="flex items-center sm:hidden space-x-3">
