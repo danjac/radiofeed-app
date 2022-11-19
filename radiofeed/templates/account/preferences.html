@@ -1,19 +1,18 @@
 {% extends "account/settings_base.html" %}
 {% load i18n %}
-
-{% block title %}{{ block.super }} | {% translate "Preferences" %}{% endblock %}
-
+{% block title %}
+    {{ block.super }} | {% translate "Preferences" %}
+{% endblock title %}
 {% block settings_content %}
     <form method="post"
-        action="{{ request.path }}"
-        class="space-y-3"
-        novalidate
-        id="preferences-form"
-        hx-target="this"
-        hx-select="#preferences-form"
-        hx-swap="outerHTML"
-        hx-post="{{ request.path }}">
-
+          action="{{ request.path }}"
+          class="space-y-3"
+          novalidate
+          id="preferences-form"
+          hx-target="this"
+          hx-select="#preferences-form"
+          hx-swap="outerHTML"
+          hx-post="{{ request.path }}">
         {% csrf_token %}
         {{ form }}
         <div>
@@ -23,4 +22,4 @@
             </button>
         </div>
     </form>
-{% endblock %}
+{% endblock settings_content %}

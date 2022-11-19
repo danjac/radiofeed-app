@@ -1,28 +1,30 @@
 {% load i18n %}
 {% if page_obj.has_other_pages %}
-
     {% translate "Pagination" as t_pagination %}
     {% translate "Next" as t_next %}
     {% translate "Previous" as t_previous %}
     {% translate "No More Pages" as t_no_more_pages %}
-
-    <nav role="navigation" aria-label="{{ t_pagination }}" class="py-2" hx-swap="outerHTML show:window:top" hx-target="#{{ pagination_target }}">
+    <nav role="navigation"
+         aria-label="{{ t_pagination }}"
+         class="py-2"
+         hx-swap="outerHTML show:window:top"
+         hx-target="#{{ pagination_target }}">
         <ul class="flex items-center justify-between">
             <li>
                 {% if page_obj.has_previous %}
                     {% with page_number=page_obj.previous_page_number %}
                         {% blocktranslate asvar t_page_number %}Page {{ page_number }}{% endblocktranslate %}
                         <a class="link"
-                            href="{% pagination_url page_number %}"
-                            aria-label="{{ t_page_number }}"
-                            title="{{ t_page_number }}">
+                           href="{% pagination_url page_number %}"
+                           aria-label="{{ t_page_number }}"
+                           title="{{ t_page_number }}">
                             {{ t_previous }}
                         </a>
                     {% endwith %}
                 {% else %}
-                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                        title="{{ t_no_more_pages }}"
-                        aria-label="{{ t_no_more_pages }}">
+                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                          title="{{ t_no_more_pages }}"
+                          aria-label="{{ t_no_more_pages }}">
                         {{ t_previous }}
                     </span>
                 {% endif %}
@@ -32,18 +34,17 @@
                     {% with page_number=page_obj.next_page_number %}
                         {% blocktranslate asvar t_page_number %}Page {{ page_number }}{% endblocktranslate %}
                         <a class="link"
-                            href="{% pagination_url page_number %}"
-                            aria-label="{{ t_page_number }}"
-                            title="{{ t_page_number }}">
+                           href="{% pagination_url page_number %}"
+                           aria-label="{{ t_page_number }}"
+                           title="{{ t_page_number }}">
                             {{ t_next }}
                         </a>
                     {% endwith %}
                 {% else %}
-                    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                        title="{{ t_no_more_pages }}"
-                        aria-label="{{ t_no_more_pages }}">
+                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                          title="{{ t_no_more_pages }}"
+                          aria-label="{{ t_no_more_pages }}">
                         {{ t_next }}
-                    </a>
                     </span>
                 {% endif %}
             </li>

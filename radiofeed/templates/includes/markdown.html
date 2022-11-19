@@ -1,15 +1,7 @@
 {% if content %}
-    <div class="prose dark:prose-invert prose-sm lg:prose-base break-words" hx-disable="true"
-        x-init="{# fmt:off #}
-     $el.querySelectorAll('style').forEach(el => {
-        el.remove();
-     });
-     $el.querySelectorAll('p,div,li').forEach(el => {
-        if (!el.innerText.trim()) {
-            el.parentNode.removeChild(el);
-        }
-     });
-    {# fmt:on #}">
+    {# djlint:off #}
+    <div class="break-words prose dark:prose-invert prose-sm lg:prose-base" hx-disable="true" x-init="{# fmt:off #} $el.querySelectorAll('style').forEach(el => { el.remove(); }); $el.querySelectorAll('p,div,li').forEach(el => { if (!el.innerText.trim()) { el.parentNode.removeChild(el); } }); {# fmt:on #}">
         {{ content }}
     </div>
+    {# djlint:on #}
 {% endif %}

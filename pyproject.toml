@@ -174,3 +174,6 @@ reportOptionalMemberAccess = false
 [tool.bandit]
 exclude_dirs = ["**/tests/**.*"]
 skips = ["B410"]
+
+[tool.djlint]
+ignore = "H030,H031,H017,H021"

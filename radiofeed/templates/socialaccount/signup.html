@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% load i18n %}
-
-{% block title %} | {% translate "Signup" %}{% endblock %}
-
+{% block title %}
+    | {% translate "Signup" %}
+{% endblock title %}
 {% block content %}
     {% with provider_name=account.get_provider.name site_name=site.name %}
         <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">Sign Up</h1>
-
         <p class="mb-3">
             {% blocktranslate %}
                 You are about to
@@ -14,12 +13,11 @@
                 {{ site_name }}. As a final step, please complete the following form:
             {% endblocktranslate %}
         </p>
-
         <form method="post"
-            action="{{ request.path }}"
-            class="p-3 border dark:border-gray-500 w-full sm:w-3/4 md:w-1/2"
-            hx-disable="true"
-            novalidate>
+              action="{{ request.path }}"
+              class="p-3 border dark:border-gray-500 w-full sm:w-3/4 md:w-1/2"
+              hx-disable="true"
+              novalidate>
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center justify-end">
@@ -30,4 +28,4 @@
             </div>
         </form>
     {% endwith %}
-{% endblock %}
+{% endblock content %}

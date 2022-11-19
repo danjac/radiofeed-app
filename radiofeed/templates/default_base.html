@@ -1,37 +1,38 @@
 {% spaceless %}
-
     {% load static django_htmx audio_player %}
-
     <!DOCTYPE html>
     <html lang="en">
         <head>
             <title>
-                {{ request.site.name }}{% block title %}{% endblock title %}
+                {{ request.site.name }}
+                {% block title %}
+                {% endblock title %}
             </title>
-
             <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}" />
             <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}" />
-            <link rel="stylesheet" text="text/css" href="{% static 'css/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}" />
+            <link rel="stylesheet"
+                  text="text/css"
+                  href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}"/>
             <link rel="manifest" href="{% url 'manifest' %}" />
-
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+            <meta name="viewport"
+                  content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
             <meta name="copyright" content="Dan Jacob {% now "Y" %}" />
-            <meta name="htmx-config" content='{"historyCacheSize": 0, "refreshOnHistoryMiss": false}' />
+            <meta name="htmx-config"
+                  content='{"historyCacheSize": 0, "refreshOnHistoryMiss": false}'/>
             <meta name="Cache-Control" content="no-cache" />
             <meta name="robots" content="index,follow" />
             <meta name="description" content="Podcast aggregator site" />
             <meta name="keywords" content="podcasts, rss, feeds" />
             <meta name="theme-color" content="#041014" />
         </head>
-
         <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth lg:text-base"
-            hx-boost="true"
-            hx-target="#content"
-            hx-swap="innerHTML show:window:top"
-            hx-indicator="#loader"
-            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+              hx-boost="true"
+              hx-target="#content"
+              hx-swap="innerHTML show:window:top"
+              hx-indicator="#loader"
+              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
             {% include "includes/hx_indicator.html" %}
             <div class="flex flex-col h-screen">
                 <div class="flex-grow">
@@ -43,34 +44,28 @@
                                 {% include "includes/sidebar.html" %}
                             </aside>
                         {% endif %}
-                        <main class="w-full xl:block md:mx-auto xl:w-4/5" id="content" hx-history-elt>
-                            {% block content %}{% endblock content %}
+                        <main class="w-full xl:block md:mx-auto xl:w-4/5"
+                              id="content"
+                              hx-history-elt>
+                            {% block content %}
+                            {% endblock content %}
                         </main>
                     </div>
                 </div>
                 {% cookie_notice %}
-
                 {% if user.is_authenticated %}
-                    <div id="audio-player">
-                        {% audio_player %}
-                    </div>
+                    <div id="audio-player">{% audio_player %}</div>
                 {% endif %}
-
                 {% include "includes/footer.html" %}
             </div>
-
             {% django_htmx_script %}
-
-            <script defer src="{% static 'js/bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
-
+            <script defer
+                    src="{% static "js/bundle.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
             <script>
                 if (typeof navigator.serviceWorker !== 'undefined') {
                     navigator.serviceWorker.register('{% url "service_worker" %}')
                 }
             </script>
-
         </body>
-
     </html>
-
 {% endspaceless %}

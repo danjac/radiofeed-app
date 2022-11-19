@@ -1,72 +1,62 @@
 {% extends "base.html" %}
 {% load cache i18n %}
-
-{% block title %} | {{ podcast.cleaned_title }}{% endblock %}
-
+{% block title %}
+    | {{ podcast.cleaned_title }}
+{% endblock title %}
 {% block content %}
-
-    <header class="mb-3 pb-3 border-b dark:border-gray-500 space-y-6">
-
-        <h1 class="font-bold text-lg lg:text-xl xl:text-2xl text-center sm:text-left">
-            {{ podcast.cleaned_title }}
-        </h1>
-
+    <header class="pb-3 mb-3 border-b dark:border-gray-500 space-y-6">
+        <h1 class="text-lg font-bold text-center lg:text-xl xl:text-2xl sm:text-left">{{ podcast.cleaned_title }}</h1>
         {% cache 600 podcast-detail-header request.get_full_path language_code %}
-            {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
-                {% if num_episodes or has_similar %}
-
-                    {% translate "About" as t_about %}
-                    {% translate "Episodes" as t_episodes %}
-                    {% translate "Similar" as t_similar %}
-
-                    <nav class="flex items-center mb-3 justify-center sm:justify-start">
-
-                        <ul class="flex items-center space-x-6" role="tablist">
-
-                            {% active_link podcast.get_detail_url as link %}
+        {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
+            {% if num_episodes or has_similar %}
+                {% translate "About" as t_about %}
+                {% translate "Episodes" as t_episodes %}
+                {% translate "Similar" as t_similar %}
+                <nav class="flex items-center justify-center mb-3 sm:justify-start">
+                    <ul class="flex items-center space-x-6" role="tablist">
+                        {% active_link podcast.get_detail_url as link %}
+                        <li>
+                            <a class="{{ link.css }}"
+                               href="{{ link.url }}"
+                               role="tab"
+                               aria-selected="{{ link.active|yesno:"true,false" }}"
+                               tabindex="{{ link.active|yesno:"0,-1" }}"
+                               title="{{ podcast.cleaned_title }} | {{ t_about }}">
+                                {{ t_about }}
+                            </a>
+                        </li>
+                        {% if num_episodes %}
+                            {% active_link podcast.get_episodes_url as link %}
                             <li>
                                 <a class="{{ link.css }}"
-                                    href="{{ link.url }}"
-                                    role="tab"
-                                    aria-selected="{{ link.active|yesno:"true,false" }}"
-                                    tabindex="{{ link.active|yesno:"0,-1" }}"
-                                    title="{{ podcast.cleaned_title }} | {{ t_about }}">
-                                    {{ t_about }}
+                                   href="{{ link.url }}"
+                                   role="tab"
+                                   aria-selected="{{ link.active|yesno:"true,false" }}"
+                                   tabindex="{{ link.active|yesno:"0,-1" }}"
+                                   title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
+                                    {{ t_episodes }} ({{ num_episodes }})
                                 </a>
                             </li>
-
-                            {% if num_episodes %}
-                                {% active_link podcast.get_episodes_url as link %}
-                                <li>
-                                    <a class="{{ link.css }}"
-                                        href="{{ link.url }}"
-                                        role="tab"
-                                        aria-selected="{{ link.active|yesno:"true,false" }}"
-                                        tabindex="{{ link.active|yesno:"0,-1" }}"
-                                        title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
-                                        {{ t_episodes }} ({{ num_episodes }})
-                                    </a>
-                                </li>
-                            {% endif %}
-
-                            {% if has_similar %}
-                                {% active_link podcast.get_similar_url as link %}
-                                <li>
-                                    <a class="{{ link.css }}"
-                                        href="{{ link.url }}"
-                                        role="tab"
-                                        aria-selected="{{ link.active|yesno:"true,false" }}"
-                                        tabindex="{{ link.active|yesno:"0,-1" }}"
-                                        title="{{ podcast.cleaned_title }} | {{ t_similar }}">
-                                        {{ t_similar }}
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                {% endif %}
-            {% endwith %}
-        {% endcache %}
-    </header>
-    {% block podcast_content %}{% endblock %}
-{% endblock %}
+                        {% endif %}
+                        {% if has_similar %}
+                            {% active_link podcast.get_similar_url as link %}
+                            <li>
+                                <a class="{{ link.css }}"
+                                   href="{{ link.url }}"
+                                   role="tab"
+                                   aria-selected="{{ link.active|yesno:"true,false" }}"
+                                   tabindex="{{ link.active|yesno:"0,-1" }}"
+                                   title="{{ podcast.cleaned_title }} | {{ t_similar }}">
+                                    {{ t_similar }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% endwith %}
+    {% endcache %}
+</header>
+{% block podcast_content %}
+{% endblock podcast_content %}
+{% endblock content %}

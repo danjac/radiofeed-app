@@ -1,5 +1,4 @@
 {% load widget_tweaks %}
-
 {% if field.is_hidden %}
     {{ field }}
 {% else %}
@@ -13,10 +12,7 @@
                     </label>
                 {% endwith %}
             {% else %}
-                <label class="{{ LABEL_CSS_CLASS }}"
-                    for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                </label>
+                <label class="{{ LABEL_CSS_CLASS }}" for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {% if widget_type == "fileinput" %}
                     {% render_field field aria-label=field.label class="px-2 py-1 focus:outline-none focus:ring border dark:border-gray-500 rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm md:text-base" %}
                 {% else %}
@@ -25,10 +21,6 @@
             {% endif %}
         {% endwith %}
         {% include "includes/form_errors.html" with errors=field.errors %}
-        {% if field.help_text %}
-            <p class="text-gray-600 dark:text-gray-300">
-                {{ field.help_text }}
-            </p>
-        {% endif %}
+        {% if field.help_text %}<p class="text-gray-600 dark:text-gray-300">{{ field.help_text }}</p>{% endif %}
     </div>
 {% endif %}

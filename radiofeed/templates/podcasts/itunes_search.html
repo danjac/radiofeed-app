@@ -1,8 +1,8 @@
 {% extends "search_base.html" %}
 {% load i18n %}
-
-{% block title %} | {% translate "Search" %} | iTunes{% endblock %}
-
+{% block title %}
+    | {% translate "Search" %} | iTunes
+{% endblock title %}
 {% block search_content %}
     <div class="dark:divide-gray-500 divide-y divide-solid">
         {% for feed in feeds %}
@@ -15,4 +15,4 @@
             {% include "includes/empty.html" %}
         {% endfor %}
     </div>
-{% endblock %}
+{% endblock search_content %}

@@ -1,11 +1,9 @@
 {% extends "error_base.html" %}
 {% load i18n %}
-{% block title %}{% translate "Error: 403 Permission Denied" %}{% endblock %}
+{% block title %}
+    {% translate "Error: 403 Permission Denied" %}
+{% endblock title %}
 {% block content %}
-    <h1 class="mb-6 font-bold text-lg md:text-xl xl:text-2xl">
-        {% translate "403: Permission Denied" %}
-    </h1>
-    <p>
-        {% translate "Sorry, you do not have permission to view this page." %}
-    </p>
-{% endblock %}
+    <h1 class="mb-6 font-bold text-lg md:text-xl xl:text-2xl">{% translate "403: Permission Denied" %}</h1>
+    <p>{% translate "Sorry, you do not have permission to view this page." %}</p>
+{% endblock content %}

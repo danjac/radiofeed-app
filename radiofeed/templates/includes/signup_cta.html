@@ -1,15 +1,16 @@
 {% load i18n %}
 {% if user.is_anonymous %}
     {% with path=request.get_full_path %}
-        <div id="signup-cta" class="text-center p-3 bg-blue-700 text-white font-bold">
+        <div id="signup-cta"
+             class="text-center p-3 bg-blue-700 text-white font-bold">
             {% url 'account_login' as login_url %}
             {% url 'account_signup' as signup_url %}
             {% blocktranslate with css_class="underline text-white hover:text-gray-300" %}
-                <a class="{{ css_class }}" href="{{ signup_url }}">Sign up</a>
-                or
-                <a class="{{ css_class }}" href="{{ login_url }}">log in</a>
-                to follow your favorite podcasts and listen to episodes!
-            {% endblocktranslate %}
-        </div>
-    {% endwith %}
+            <a class="{{ css_class }}" href="{{ signup_url }}">Sign up</a>
+            or
+            <a class="{{ css_class }}" href="{{ login_url }}">log in</a>
+            to follow your favorite podcasts and listen to episodes!
+        {% endblocktranslate %}
+    </div>
+{% endwith %}
 {% endif %}
