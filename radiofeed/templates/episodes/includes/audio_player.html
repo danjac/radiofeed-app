@@ -66,7 +66,7 @@
                                         title="{{ t_current_time }}">
                                         00:00:00
                                     </div>
-                                    <div class="flex items-center justify-center space-x-3">
+                                    <div class="flex items-center justify-center space-x-3 lg:space-x-6">
                                         <button title="{{ t_play }}"
                                             @click="togglePlayPause"
                                             class="{{ BUTTON_CSS }}"
@@ -93,19 +93,20 @@
                                             @click="window.location.reload()">
                                             {% icon "arrows-rotate" size="lg" title=t_reload_player %}
                                         </button>
-
-                                        <button title="{{ t_skip_back }}"
-                                            @click="skipBack"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
-                                            class="{{ BUTTON_CSS }} inline-block">
-                                            {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
-                                        </button>
-                                        <button title="{{ t_skip_forward }}"
-                                            @click="skipForward"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
-                                            class="{{ BUTTON_CSS }} inline-block">
-                                            {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
-                                        </button>
+                                        <div class="flex items-center space-x-2">
+                                            <button title="{{ t_skip_back }}"
+                                                @click="skipBack"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
+                                                class="{{ BUTTON_CSS }} inline-block">
+                                                {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
+                                            </button>
+                                            <button title="{{ t_skip_forward }}"
+                                                @click="skipForward"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
+                                                class="{{ BUTTON_CSS }} inline-block">
+                                                {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
+                                            </button>
+                                        </div>
                                         <div class="flex items-center space-x-1">
                                             <button class="{{ BUTTON_CSS }}"
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'"
