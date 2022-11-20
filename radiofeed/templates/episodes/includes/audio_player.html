@@ -46,11 +46,6 @@
                             hx-swap="innerHTML show:window:top"
                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
                         </a>
-                        <div class="text-xs flex justify-between sm:hidden"
-                            :class="isPlaying || 'animate-pulse text-gray-300'">
-                            <div x-text="counters.current" title="{{ t_current_time }}">00:00:00</div>
-                            <div x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</div>
-                        </div>
                     </div>
                     <div class="flex items-center space-x-2">
                         {% include "includes/cover_image.html" with css_class="w-16 h-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
@@ -81,7 +76,7 @@
                                             {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                         </button>
                                     </div>
-                                    <div class="flex items-center pt-2 sm:pt-4 space-x-3">
+                                    <div class="flex items-center pt-2 sm:pt-6 lg:pt-4 space-x-3">
                                         {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" %}
                                             <button title="{{ t_pause }}"
                                                 @click="togglePlayPause"
@@ -137,7 +132,7 @@
                                     </div>
                                 {% endwith %}
                             </div>
-                            <div class="text-xs justify-between md:text-sm hidden sm:flex"
+                            <div class="flex text-xs justify-between md:text-sm"
                                 :class="isPlaying || 'animate-pulse text-gray-300'">
                                 <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
                                 <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
