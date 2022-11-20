@@ -77,38 +77,36 @@
                                         </button>
                                     </div>
                                     <div class="flex items-center pt-2 sm:pt-6 lg:pt-4 space-x-3">
-                                        {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" %}
-                                            <button title="{{ t_pause }}"
-                                                @click="togglePlayPause"
-                                                x-show="!isPaused"
-                                                class="{{ BUTTON_CSS }}"
-                                                :disabled="!isLoaded"
-                                                :class="isLoaded || 'text-gray-300 cursor-events-none'">
-                                                {% icon "pause-circle" "regular" size="2xl" title=t_pause %}
-                                            </button>
-                                            <button title="{{ t_play }}"
-                                                @click="togglePlayPause"
-                                                x-show="isPaused"
-                                                class="{{ BUTTON_CSS }}"
-                                                :class="isLoaded || 'text-gray-300 cursor-events-none'">
-                                                {% icon "play-circle" "regular" size="2xl" title=t_play %}
-                                            </button>
-                                            <button title="{{ t_close_player }}"
-                                                accesskey="x"
-                                                class="{{ BUTTON_CSS }}"
-                                                hx-post="{% url "episodes:close_player" %}"
-                                                hx-target="#audio-player"
-                                                hx-swap="innerHTML"
-                                                hx-disinherit="hx-indicator">
-                                                {% icon "stop-circle" "regular" size="xl" title=t_close_player %}
-                                            </button>
-                                            <button title="{{ t_reload_player }}"
-                                                class="{{ BUTTON_CSS }}"
-                                                accesskey="r"
-                                                @click="window.location.reload()">
-                                                {% icon "arrows-rotate" size="lg" title=t_reload_player %}
-                                            </button>
-                                        {% endwith %}
+                                        <button title="{{ t_pause }}"
+                                            @click="togglePlayPause"
+                                            x-show="!isPaused"
+                                            class="{{ BUTTON_CSS }}"
+                                            :disabled="!isLoaded"
+                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
+                                            {% icon "pause-circle" "regular" size="2xl" title=t_pause %}
+                                        </button>
+                                        <button title="{{ t_play }}"
+                                            @click="togglePlayPause"
+                                            x-show="isPaused"
+                                            class="{{ BUTTON_CSS }}"
+                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
+                                            {% icon "play-circle" "regular" size="2xl" title=t_play %}
+                                        </button>
+                                        <button title="{{ t_close_player }}"
+                                            accesskey="x"
+                                            class="{{ BUTTON_CSS }}"
+                                            hx-post="{% url "episodes:close_player" %}"
+                                            hx-target="#audio-player"
+                                            hx-swap="innerHTML"
+                                            hx-disinherit="hx-indicator">
+                                            {% icon "stop-circle" "regular" size="xl" title=t_close_player %}
+                                        </button>
+                                        <button title="{{ t_reload_player }}"
+                                            class="{{ BUTTON_CSS }}"
+                                            accesskey="r"
+                                            @click="window.location.reload()">
+                                            {% icon "arrows-rotate" size="lg" title=t_reload_player %}
+                                        </button>
                                     </div>
                                     <div class="flex items-center space-x-3 sm:space-x-6">
                                         <div class="flex items-center space-x-2">
