@@ -39,7 +39,7 @@
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
                 <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-1 lg:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                    <div class="lg:hidden">
+                    <div class="sm:hidden pb-2">
                         <a class="block text-center truncate w-84"
                             :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                             href="{{ episode_url }}"
@@ -50,19 +50,55 @@
                     <div class="flex items-center space-x-2">
                         {% include "includes/cover_image.html" with css_class="w-16 h-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
                         <div class="flex flex-col w-full h-16 sm:h-20 lg:h-24 place-content-between">
-
-                            <div class="hidden lg:flex justify-center items-center">
-                                <a
-                                    class="max-w-4xl xl:max-w-5xl truncate"
+                            <div class="hidden sm:flex justify-center items-center">
+                                <a class="max-w-4xl xl:max-w-5xl truncate"
                                     :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                                     href="{{ episode_url }}"
                                     hx-swap="innerHTML show:window:top"
                                     title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
                                 </a>
                             </div>
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-center sm:justify-between">
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                    <div class="flex items-center space-x-3">
+
+                                    <div class="hidden sm:block text-xs lg:text-sm"
+                                        :class="isPlaying || 'animate-pulse text-gray-300'"
+                                        x-text="counters.current"
+                                        title="{{ t_current_time }}">
+                                        00:00:00
+                                    </div>
+                                    <div class="flex items-center justify-center space-x-3">
+                                        <button title="{{ t_pause }}"
+                                            @click="togglePlayPause"
+                                            x-show="!isPaused"
+                                            class="{{ BUTTON_CSS }}"
+                                            :disabled="!isLoaded"
+                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
+                                            {% icon "pause-circle" "regular" size="xl" title=t_pause %}
+                                        </button>
+                                        <button title="{{ t_play }}"
+                                            @click="togglePlayPause"
+                                            x-show="isPaused"
+                                            class="{{ BUTTON_CSS }}"
+                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
+                                            {% icon "play-circle" "regular" size="xl" title=t_play %}
+                                        </button>
+                                        <button title="{{ t_close_player }}"
+                                            accesskey="x"
+                                            class="{{ BUTTON_CSS }}"
+                                            hx-post="{% url "episodes:close_player" %}"
+                                            hx-target="#audio-player"
+                                            hx-swap="innerHTML"
+                                            hx-disinherit="hx-indicator">
+                                            {% icon "stop-circle" "regular" size="lg" title=t_close_player %}
+                                        </button>
+                                        <button title="{{ t_reload_player }}"
+                                            class="{{ BUTTON_CSS }}"
+                                            accesskey="r"
+                                            @click="window.location.reload()">
+                                            {% icon "arrows-rotate" size="lg" title=t_reload_player %}
+                                        </button>
+
                                         <button title="{{ t_skip_back }}"
                                             @click="skipBack"
                                             :class="isPlaying || '{{ INACTIVE_CSS }}'"
@@ -75,42 +111,8 @@
                                             class="{{ BUTTON_CSS }} inline-block">
                                             {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                         </button>
-                                    </div>
-                                    <div class="flex items-center pt-2 sm:pt-6 lg:pt-4 space-x-3">
-                                        <button title="{{ t_pause }}"
-                                            @click="togglePlayPause"
-                                            x-show="!isPaused"
-                                            class="{{ BUTTON_CSS }}"
-                                            :disabled="!isLoaded"
-                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
-                                            {% icon "pause-circle" "regular" size="2xl" title=t_pause %}
-                                        </button>
-                                        <button title="{{ t_play }}"
-                                            @click="togglePlayPause"
-                                            x-show="isPaused"
-                                            class="{{ BUTTON_CSS }}"
-                                            :class="isLoaded || 'text-gray-300 cursor-events-none'">
-                                            {% icon "play-circle" "regular" size="2xl" title=t_play %}
-                                        </button>
-                                        <button title="{{ t_close_player }}"
-                                            accesskey="x"
-                                            class="{{ BUTTON_CSS }}"
-                                            hx-post="{% url "episodes:close_player" %}"
-                                            hx-target="#audio-player"
-                                            hx-swap="innerHTML"
-                                            hx-disinherit="hx-indicator">
-                                            {% icon "stop-circle" "regular" size="xl" title=t_close_player %}
-                                        </button>
-                                        <button title="{{ t_reload_player }}"
-                                            class="{{ BUTTON_CSS }}"
-                                            accesskey="r"
-                                            @click="window.location.reload()">
-                                            {% icon "arrows-rotate" size="lg" title=t_reload_player %}
-                                        </button>
-                                    </div>
-                                    <div class="flex items-center space-x-3 sm:space-x-6">
                                         <div class="flex items-center space-x-2">
-                                            <button class="{{ BUTTON_CSS }} inline-block"
+                                            <button class="{{ BUTTON_CSS }}"
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="decrementRate"
                                                 title="{{ t_decrease_playback_rate }}">
@@ -120,7 +122,7 @@
                                                 title="{{ t_playback_rate }}"
                                                 x-text="rate.toFixed(1)">
                                             </div>
-                                            <button class="{{ BUTTON_CSS }} inline-block"
+                                            <button class="{{ BUTTON_CSS }}"
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="incrementRate"
                                                 title="{{ t_increase_playback_rate }}">
@@ -128,9 +130,15 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <div class="hidden sm:block text-xs lg:text-sm"
+                                        :class="isPlaying || 'animate-pulse text-gray-300'"
+                                        x-text="counters.total"
+                                        title="{{ t_time_remaining }}">
+                                        00:00:00
+                                    </div>
                                 {% endwith %}
                             </div>
-                            <div class="flex text-xs justify-between md:text-sm pb-1"
+                            <div class="flex text-xs justify-between md:text-sm pb-1 sm:hidden"
                                 :class="isPlaying || 'animate-pulse text-gray-300'">
                                 <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
                                 <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
