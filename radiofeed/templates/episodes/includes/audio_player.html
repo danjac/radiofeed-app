@@ -111,14 +111,14 @@
                                             class="{{ BUTTON_CSS }} inline-block">
                                             {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                         </button>
-                                        <div class="flex items-center space-x-2">
+                                        <div class="flex items-center space-x-1">
                                             <button class="{{ BUTTON_CSS }}"
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="decrementRate"
                                                 title="{{ t_decrease_playback_rate }}">
                                                 {% icon "minus" "solid" title=t_decrease_playback_rate %}
                                             </button>
-                                            <div class="tracking-tight player--interactive"
+                                            <div class="tracking-tight player--interactive text-xs lg:text-sm"
                                                 title="{{ t_playback_rate }}"
                                                 x-text="rate.toFixed(1)">
                                             </div>
