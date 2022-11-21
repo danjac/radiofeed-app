@@ -39,7 +39,7 @@
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
                 <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-2 lg:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                    <a class="block truncate lg:hidden text-center sm:text-left tracking-tight leading-tight"
+                    <a class="block truncate lg:hidden tracking-tight leading-tight"
                         :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                         href="{{ episode_url }}"
                         hx-swap="innerHTML show:window:top"
