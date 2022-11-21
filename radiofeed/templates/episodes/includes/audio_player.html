@@ -38,7 +38,7 @@
                     @error.prevent="error">
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
-                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-3 sm:space-y-1 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-1 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                     <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
                         <div class="flex items-center space-x-3">
                             {% include "includes/cover_image.html" with css_class="w-8 w-8" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
