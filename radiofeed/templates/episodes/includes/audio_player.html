@@ -38,109 +38,101 @@
                     @error.prevent="error">
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
-                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-3 sm:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                    <div class="sm:hidden">
-                        <a class="block text-center truncate w-84"
-                            :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
-                            href="{{ episode_url }}"
-                            hx-swap="innerHTML show:window:top"
-                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
-                        </a>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        {% include "includes/cover_image.html" with css_class="w-[4.5rem] h-[4.5rem] sm:h-20 sm:w-20 lg:h-[5.5rem] lg:w-[5.5rem]" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
-                        <div class="flex flex-col w-full h-[4.5rem] sm:h-20 lg:h-[5.5rem] place-content-between">
-                            <div class="hidden sm:flex justify-center items-center">
-                                <a class="sm:max-w-lg lg:max-w-4xl xl:max-w-5xl truncate"
+                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-3 sm:space-y-1 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                    <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
+                        <div class="flex items-center space-x-3">
+                            {% include "includes/cover_image.html" with css_class="w-8 w-8" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
+                            <div class="flex items-center">
+                                <a class="w-80 lg:w-auto lg:max-w-3xl xl:max-w-5xl truncate"
                                     :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                                     href="{{ episode_url }}"
                                     hx-swap="innerHTML show:window:top"
                                     title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
                                 </a>
                             </div>
-                            {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                <div class="flex items-center justify-center space-x-6 pt-1 sm:pt-2">
-                                    <button title="{{ t_play }}"
-                                        @click="togglePlayPause"
-                                        class="{{ BUTTON_CSS }}"
-                                        :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                        <span x-show="isPaused">
-                                            {% icon "play-circle" "regular" size="xl" title=t_play %}
-                                        </span>
-                                        <span x-show="!isPaused">
-                                            {% icon "pause-circle" "regular" size="xl" title=t_pause %}
-                                        </span>
+                        </div>
+                        {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                            <div class="flex items-center space-x-6 justify-center sm:justify-end">
+                                <button title="{{ t_play }}"
+                                    @click="togglePlayPause"
+                                    class="{{ BUTTON_CSS }}"
+                                    :class="{'text-gray-300 cursor-events-none': !isLoaded}">
+                                    <span x-show="isPaused">
+                                        {% icon "play-circle" "regular" size="xl" title=t_play %}
+                                    </span>
+                                    <span x-show="!isPaused">
+                                        {% icon "pause-circle" "regular" size="xl" title=t_pause %}
+                                    </span>
+                                </button>
+                                <button title="{{ t_close_player }}"
+                                    accesskey="x"
+                                    class="{{ BUTTON_CSS }}"
+                                    hx-post="{% url "episodes:close_player" %}"
+                                    hx-target="#audio-player"
+                                    hx-swap="innerHTML"
+                                    hx-disinherit="hx-indicator">
+                                    {% icon "stop-circle" "regular" size="lg" title=t_close_player %}
+                                </button>
+                                <button title="{{ t_reload_player }}"
+                                    class="{{ BUTTON_CSS }}"
+                                    accesskey="r"
+                                    @click="window.location.reload()">
+                                    {% icon "arrows-rotate" size="lg" title=t_reload_player %}
+                                </button>
+                                <div class="flex items-center space-x-2">
+                                    <button title="{{ t_skip_back }}"
+                                        @click="skipBack"
+                                        :class="isPlaying || '{{ INACTIVE_CSS }}'"
+                                        class="{{ BUTTON_CSS }} inline-block">
+                                        {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
                                     </button>
-                                    <button title="{{ t_close_player }}"
-                                        accesskey="x"
-                                        class="{{ BUTTON_CSS }}"
-                                        hx-post="{% url "episodes:close_player" %}"
-                                        hx-target="#audio-player"
-                                        hx-swap="innerHTML"
-                                        hx-disinherit="hx-indicator">
-                                        {% icon "stop-circle" "regular" size="lg" title=t_close_player %}
+                                    <button title="{{ t_skip_forward }}"
+                                        @click="skipForward"
+                                        :class="isPlaying || '{{ INACTIVE_CSS }}'"
+                                        class="{{ BUTTON_CSS }} inline-block">
+                                        {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                     </button>
-                                    <button title="{{ t_reload_player }}"
-                                        class="{{ BUTTON_CSS }}"
-                                        accesskey="r"
-                                        @click="window.location.reload()">
-                                        {% icon "arrows-rotate" size="lg" title=t_reload_player %}
-                                    </button>
-                                    <div class="flex items-center space-x-2">
-                                        <button title="{{ t_skip_back }}"
-                                            @click="skipBack"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
-                                            class="{{ BUTTON_CSS }} inline-block">
-                                            {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
-                                        </button>
-                                        <button title="{{ t_skip_forward }}"
-                                            @click="skipForward"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
-                                            class="{{ BUTTON_CSS }} inline-block">
-                                            {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
-                                        </button>
-                                    </div>
-                                    <div class="flex items-center space-x-1">
-                                        <button class="{{ BUTTON_CSS }}"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
-                                            @click="decrementRate"
-                                            title="{{ t_decrease_playback_rate }}">
-                                            {% icon "minus" "solid" title=t_decrease_playback_rate %}
-                                        </button>
-                                        <div class="tracking-tight player--interactive text-xs lg:text-sm"
-                                            title="{{ t_playback_rate }}"
-                                            x-text="rate.toFixed(1)">
-                                        </div>
-                                        <button class="{{ BUTTON_CSS }}"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'"
-                                            @click="incrementRate"
-                                            title="{{ t_increase_playback_rate }}">
-                                            {% icon "plus" "solid" title=t_increase_playback_rate %}
-                                        </button>
-                                    </div>
                                 </div>
-                            {% endwith %}
-                            <div class="space-y-3 sm:space-y-1">
-
-                                <div class="flex text-xs justify-between lg:text-sm tracking-tight"
-                                    :class="isPlaying || 'animate-pulse text-gray-300'">
-                                    <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
-                                    <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
-                                </div>
-
-                                <div class="w-full">
-                                    <input type="range"
-                                        aria-label="Progress"
-                                        class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none"
-                                        x-ref="range"
-                                        x-model="runtime"
-                                        @change="skip"
-                                        min="0"
-                                        :max="duration"
-                                        :disabled="!isPlaying"
-                                        :class="isPlaying ? 'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer': 'bg-gray-800 dark:bg-gray-600 cursor-not-allowed'">
+                                <div class="flex items-center space-x-1">
+                                    <button class="{{ BUTTON_CSS }}"
+                                        :class="isPlaying || '{{ INACTIVE_CSS }}'"
+                                        @click="decrementRate"
+                                        title="{{ t_decrease_playback_rate }}">
+                                        {% icon "minus" "solid" title=t_decrease_playback_rate %}
+                                    </button>
+                                    <div class="tracking-tight player--interactive text-xs lg:text-sm"
+                                        title="{{ t_playback_rate }}"
+                                        x-text="rate.toFixed(1)">
+                                    </div>
+                                    <button class="{{ BUTTON_CSS }}"
+                                        :class="isPlaying || '{{ INACTIVE_CSS }}'"
+                                        @click="incrementRate"
+                                        title="{{ t_increase_playback_rate }}">
+                                        {% icon "plus" "solid" title=t_increase_playback_rate %}
+                                    </button>
                                 </div>
                             </div>
+                        {% endwith %}
+                    </div>
+                    <div class="space-y-2">
+
+                        <div class="flex text-xs justify-between lg:text-sm tracking-tight"
+                            :class="isPlaying || 'animate-pulse text-gray-300'">
+                            <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
+                            <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
+                        </div>
+
+                        <div class="w-full">
+                            <input type="range"
+                                aria-label="Progress"
+                                class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none"
+                                x-ref="range"
+                                x-model="runtime"
+                                @change="skip"
+                                min="0"
+                                :max="duration"
+                                :disabled="!isPlaying"
+                                :class="isPlaying ? 'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer': 'bg-gray-800 dark:bg-gray-600 cursor-not-allowed'">
                         </div>
                     </div>
                 </div>
