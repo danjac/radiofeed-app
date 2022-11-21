@@ -83,23 +83,22 @@
                                             @click="window.location.reload()">
                                             {% icon "arrows-rotate" size="lg" title=t_reload_player %}
                                         </button>
-                                        <div class="flex items-center space-x-2">
+                                        <div class="flex items-center space-x-2"
+                                            :class="isPlaying || '{{ INACTIVE_CSS }}'">
                                             <button title="{{ t_skip_back }}"
                                                 @click="skipBack"
-                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 class="{{ BUTTON_CSS }} inline-block">
                                                 {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
                                             </button>
                                             <button title="{{ t_skip_forward }}"
                                                 @click="skipForward"
-                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 class="{{ BUTTON_CSS }} inline-block">
                                                 {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
                                             </button>
                                         </div>
-                                        <div class="flex items-center space-x-1">
+                                        <div class="flex items-center space-x-1"
+                                            :class="isPlaying || '{{ INACTIVE_CSS }}'">
                                             <button class="{{ BUTTON_CSS }}"
-                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="decrementRate"
                                                 title="{{ t_decrease_playback_rate }}">
                                                 {% icon "minus" "solid" title=t_decrease_playback_rate %}
@@ -109,7 +108,6 @@
                                                 x-text="rate.toFixed(1)">
                                             </div>
                                             <button class="{{ BUTTON_CSS }}"
-                                                :class="isPlaying || '{{ INACTIVE_CSS }}'"
                                                 @click="incrementRate"
                                                 title="{{ t_increase_playback_rate }}">
                                                 {% icon "plus" "solid" title=t_increase_playback_rate %}
