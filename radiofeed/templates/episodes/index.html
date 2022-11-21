@@ -14,12 +14,13 @@
 {% block content %}
     <header class="mb-3 pb-3 border-b dark:border-gray-500">
         {% url 'episodes:index' as index_url %}
+        {% translate "New Releases" as t_new_releases %}
         {% translate "Promotions" as t_promotions %}
         {% translate "Subscriptions" as t_subscriptions %}
         {% translate "Find an episode..." as t_find_episode %}
         {% if has_subscriptions %}
             <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">
-                {% translate "New Releases" %}:
+                {{ t_new_releases }}:
                 {% if promoted %}
                     {{ t_promotions }}
                 {% else %}
@@ -43,7 +44,7 @@
         {% else %}
             <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
                 <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-                    {% translate "New Releases" %}
+                    {{ t_new_releases }}
                 </h1>
                 <div class="flex items-center justify-center sm:justify-end space-x-3">
                     {% include "includes/search_form.html" with placeholder=t_find_episode %}

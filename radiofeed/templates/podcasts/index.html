@@ -12,38 +12,46 @@
     {% endif %}
 {% endblock title %}
 {% block content %}
-    {% translate "Podcasts" as t_podcasts %}
-    {% translate "Promotions" as t_promotions %}
-    {% translate "Subscriptions" as t_subscriptions %}
     <header class="mb-3 pb-3 border-b dark:border-gray-500 space-y-3">
+        {% url 'podcasts:index' as index_url %}
+        {% translate "Podcasts" as t_podcasts %}
+        {% translate "Promotions" as t_promotions %}
+        {% translate "Subscriptions" as t_subscriptions %}
+        {% translate "Find podcast..." as t_find_podcast %}
         {% if has_subscriptions %}
-            {% url 'podcasts:index' as index_url %}
-            <div class="sm:flex justify-between">
-                <h1 class="font-bold text-lg lg:text-xl xl:text-2xl text-center sm:text-left mb-3 sm:mb-0">
-                    {{ t_podcasts }}:
-                    {% if promoted %}
-                        {{ t_promotions }}
-                    {% else %}
-                        {{ t_subscriptions }}
-                    {% endif %}
-                </h1>
-                <nav class="flex items-center justify-center sm:justify-start">
-                    <ul class="flex items-center">
+            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">
+                {{ t_podcasts }}:
+                {% if promoted %}
+                    {{ t_promotions }}
+                {% else %}
+                    {{ t_subscriptions }}
+                {% endif %}
+            </h1>
+            <nav>
+                <ul class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
+                    <li class="flex items-center justify-center sm:justify-start">
                         {% if promoted %}
-                            <li>
-                                <a href="{{ index_url }}" class="link">{{ t_subscriptions }}</a>
-                            </li>
+                            <a href="{{ index_url }}" class="link">{{ t_subscriptions }}</a>
                         {% else %}
-                            <li>
-                                <a href="{{ index_url }}?promoted=true" class="link">{{ t_promotions }}</a>
-                            </li>
+                            <a href="{{ index_url }}?promoted=true" class="link">{{ t_promotions }}</a>
                         {% endif %}
-                    </ul>
-                </nav>
-            </div>
+                    </li>
+                    <li class="flex items-center justify-center sm:justify-end space-x-3">
+                        {% include "includes/search_form.html" with placeholder=t_find_podcast %}
+                    </li>
+                </ul>
+            </nav>
         {% else %}
-            <h1 class="font-bold text-lg md:text-xl xl:text-2xl text-center sm:text-left">{{ t_podcasts }}</h1>
+            <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
+                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+                    {{ t_podcasts }}
+                </h1>
+                <div class="flex items-center justify-center sm:justify-end space-x-3">
+                    {% include "includes/search_form.html" with placeholder=t_find_podcast %}
+                </div>
+            </div>
         {% endif %}
+
     </header>
     {% include pagination_template %}
 {% endblock content %}

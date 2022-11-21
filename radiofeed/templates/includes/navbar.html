@@ -21,32 +21,6 @@
                     {{ site_name }}
                 </a>
             </div>
-            {% if user.is_authenticated %}
-                <form action="{{ search_url }}"
-                    method="get"
-                    class="relative hidden bg-transparent sm:block"
-                    x-data="{search: ''}"
-                    @submit="$refs.search.blur();"
-                    @htmx:before-request.window="search=''">
-                    <input type="search"
-                        x-ref="search"
-                        x-model="search"
-                        @click="$el.select()"
-                        name="{{ request.search.param }}"
-                        accesskey="k"
-                        autocomplete="off"
-                        aria-label="{{ t_search }}"
-                        placeholder="{{ t_search }}"
-                        class="w-64 px-4 py-1 text-sm text-gray-900 rounded md:w-72 focus:outline-none focus:ring placeholder-opacity-100 dark:text-white dark:bg-gray-900 md:text-base">
-                    <div class="absolute inset-y-0 right-0 flex items-center pr-2">
-                        <button type="submit"
-                            title="{{ t_search }}"
-                            class="text-gray-900 focus:outline-none focus:shadow-outline dark:text-gray-100">
-                            {% icon "search" title=t_search %}
-                        </button>
-                    </div>
-                </form>
-            {% endif %}
             <ul class="flex items-center space-x-3">
                 {% if user.is_authenticated %}
                     <li>
@@ -94,30 +68,6 @@
                 x-transition:leave="transition ease-in duration-75"
                 x-transition:leave-start="transform opacity-100 scale-100"
                 x-transition:leave-end="transform opacity-0 scale-95">
-                <div class="flex justify-center mb-6 sm:hidden"
-                    @click.away="sidebar=false">
-                    <form action="{{ search_url }}"
-                        method="get"
-                        class="relative bg-transparent"
-                        x-data="{search: ''}"
-                        @htmx:before-request.window="search=''">
-                        <input type="search"
-                            x-model="search"
-                            @click="$el.select()"
-                            name="{{ request.search.param }}"
-                            autocomplete="off"
-                            aria-label="{{ t_search }}"
-                            placeholder="{{ t_search }}"
-                            class="w-64 px-4 py-1 text-sm text-gray-900 rounded focus:outline-none focus:ring placeholder-opacity-100 dark:bg-gray-900 dark:text-white">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <button type="submit"
-                                title="{{ t_search }}"
-                                class="text-gray-900  focus:outline-none focus:shadow-outline dark:text-gray-100">
-                                {% icon "search" title=t_search %}
-                            </button>
-                        </div>
-                    </form>
-                </div>
                 {% include "includes/sidebar.html" %}
             </div>
         {% endif %}
