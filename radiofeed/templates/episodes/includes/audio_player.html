@@ -39,7 +39,7 @@
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
                 <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-1 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                    <a class="block truncate sm:hidden text-center"
+                    <a class="block truncate lg:hidden text-center sm:text-left tracking-tight leading-tight"
                         :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                         href="{{ episode_url }}"
                         hx-swap="innerHTML show:window:top"
@@ -49,7 +49,7 @@
                         {% include "includes/cover_image.html" with css_class="w-16 w-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
                         <div class="w-full h-16 flex flex-col place-content-between">
                             <div class="sm:flex items-center justify-between">
-                                <a class="hidden sm:block tracking-tight leading-tight w-80 lg:w-auto lg:max-w-xl xl:max-w-5xl font-bold truncate"
+                                <a class="hidden lg:block tracking-tight leading-tight max-w-2xl xl:max-w-5xl font-bold truncate"
                                     :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                                     href="{{ episode_url }}"
                                     hx-swap="innerHTML show:window:top"
