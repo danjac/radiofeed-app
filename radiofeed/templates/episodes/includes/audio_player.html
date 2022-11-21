@@ -51,7 +51,7 @@
                         {% include "includes/cover_image.html" with css_class="w-[4.5rem] h-[4.5rem] sm:h-20 sm:w-20 lg:h-[5.5rem] lg:w-[5.5rem]" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
                         <div class="flex flex-col w-full h-[4.5rem] sm:h-20 lg:h-[5.5rem] place-content-between">
                             <div class="hidden sm:flex justify-center items-center">
-                                <a class="sm:max-w-xl lg:max-w-4xl xl:max-w-5xl truncate"
+                                <a class="sm:max-w-lg lg:max-w-4xl xl:max-w-5xl truncate"
                                     :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
                                     href="{{ episode_url }}"
                                     hx-swap="innerHTML show:window:top"
