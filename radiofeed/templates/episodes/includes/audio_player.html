@@ -59,7 +59,7 @@
                                 </a>
                             </div>
                             {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                <div class="flex items-center justify-center space-x-6">
+                                <div class="flex items-center justify-center space-x-6 sm:pt-2">
                                     <button title="{{ t_play }}"
                                         @click="togglePlayPause"
                                         class="{{ BUTTON_CSS }}"
@@ -122,7 +122,7 @@
                             {% endwith %}
                             <div class="space-y-3 sm:space-y-1">
 
-                                <div class="flex text-xs justify-between md:text-sm tracking-tight"
+                                <div class="flex text-xs justify-between lg:text-sm tracking-tight"
                                     :class="isPlaying || 'animate-pulse text-gray-300'">
                                     <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
                                     <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
