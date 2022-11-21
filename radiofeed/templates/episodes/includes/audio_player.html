@@ -48,8 +48,8 @@
                         </a>
                     </div>
                     <div class="flex items-center space-x-2">
-                        {% include "includes/cover_image.html" with css_class="w-16 h-16 sm:h-20 sm:w-20 lg:h-[5.5rem] lg:w-[5.5rem]" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
-                        <div class="flex flex-col w-full h-16 sm:h-20 lg:h-[5.5rem] place-content-between">
+                        {% include "includes/cover_image.html" with css_class="w-[4.5rem] h-[4.5rem] sm:h-20 sm:w-20 lg:h-[5.5rem] lg:w-[5.5rem]" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
+                        <div class="flex flex-col w-full h-[4.5rem] sm:h-20 lg:h-[5.5rem] place-content-between">
                             <div class="hidden sm:flex justify-center items-center">
                                 <a class="sm:max-w-xl lg:max-w-4xl xl:max-w-5xl truncate"
                                     :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
@@ -60,7 +60,7 @@
                             </div>
                             <div class="flex items-center justify-center sm:justify-between">
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                    <div class="hidden sm:block text-xs lg:text-sm"
+                                    <div class="hidden sm:block text-xs lg:text-sm tracking-tight w-12"
                                         :class="isPlaying || 'animate-pulse text-gray-300'"
                                         x-text="counters.current"
                                         title="{{ t_current_time }}">
@@ -126,7 +126,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="hidden sm:block text-xs lg:text-sm"
+                                    <div class="hidden sm:block text-xs lg:text-sm tracking-tight"
                                         :class="isPlaying || 'animate-pulse text-gray-300'"
                                         x-text="counters.total"
                                         title="{{ t_time_remaining }}">
@@ -134,7 +134,7 @@
                                     </div>
                                 {% endwith %}
                             </div>
-                            <div class="flex text-xs justify-between md:text-sm pb-1 sm:hidden"
+                            <div class="flex text-xs justify-between md:text-sm pb-1 sm:hidden tracking-tight"
                                 :class="isPlaying || 'animate-pulse text-gray-300'">
                                 <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
                                 <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
