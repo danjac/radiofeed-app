@@ -4,8 +4,8 @@ on:
     workflow_dispatch:
 
 jobs:
-    runtests:
-        uses: ./.github/workflows/tests.yml
+    checks:
+        uses: ./.github/workflows/checks.yml
     deploy:
         needs: runtests
         runs-on: ubuntu-latest

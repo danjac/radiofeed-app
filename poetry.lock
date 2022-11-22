@@ -1143,18 +1143,6 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 testing = ["Django", "django-configurations (>=2.0)"]
 
 [[package]]
-name = "pytest-flake8"
-version = "1.1.1"
-description = "pytest plugin to check FLAKE8 requirements"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-flake8 = ">=4.0"
-pytest = ">=7.0"
-
-[[package]]
 name = "pytest-forked"
 version = "1.4.0"
 description = "run tests in isolated forked subprocesses"
@@ -1695,7 +1683,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.12"
-content-hash = "c440400b52d54f3bf12cd4c4e89e4980faa564f72d4faf57753d24c49500cf64"
+content-hash = "07b2a85298afbfc0de373f96cfafde1a7e209c507ad27c2882307a0c9b84dc48"
 
 [metadata.files]
 appnope = [
@@ -2574,10 +2562,6 @@ pytest-cov = [
 pytest-django = [
     {file = "pytest-django-4.5.2.tar.gz", hash = "sha256:d9076f759bb7c36939dbdd5ae6633c18edfc2902d1a69fdbefd2426b970ce6c2"},
     {file = "pytest_django-4.5.2-py3-none-any.whl", hash = "sha256:c60834861933773109334fe5a53e83d1ef4828f2203a1d6a0fa9972f4f75ab3e"},
-]
-pytest-flake8 = [
-    {file = "pytest-flake8-1.1.1.tar.gz", hash = "sha256:ba4f243de3cb4c2486ed9e70752c80dd4b636f7ccb27d4eba763c35ed0cd316e"},
-    {file = "pytest_flake8-1.1.1-py2.py3-none-any.whl", hash = "sha256:e0661a786f8cbf976c185f706fdaf5d6df0b1667c3bcff8e823ba263618627e7"},
 ]
 pytest-forked = [
     {file = "pytest-forked-1.4.0.tar.gz", hash = "sha256:8b67587c8f98cbbadfdd804539ed5455b6ed03802203485dd2f53c1422d7440e"},

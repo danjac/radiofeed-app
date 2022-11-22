@@ -53,6 +53,11 @@ jobs:
               if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
               run: poetry install --no-interaction --no-root
 
+            - name: Code quality checks
+              run: |
+                  source .venv/bin/activate
+                  python -m flake8 radiofeed
+
             - name: Security checks
               run: |
                   source .venv/bin/activate
