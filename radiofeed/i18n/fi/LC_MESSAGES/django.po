@@ -890,8 +890,8 @@ msgid "Reload Player"
 msgstr "Lataa Soitin Uudestaan"
 
 #: radiofeed/templates/episodes/includes/audio_progress.html:11
-msgid "Current progress. Slide to skip back and forward."
-msgstr ""
+msgid "Progress"
+msgstr "Edistymispalkki"
 
 #: radiofeed/templates/episodes/includes/bookmark.html:2
 msgid "Add to Bookmarks"
