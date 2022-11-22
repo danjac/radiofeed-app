@@ -22,7 +22,7 @@
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
             ){# fmt:on #}"
                 @keydown.window="shortcuts"
-                class="pt-12 sm:pt-0 md:pt-6">
+                class="h-28">
                 {{ episode.get_media_metadata|json_script:"player-metadata" }}
                 <audio x-ref="audio"
                     preload="metadata"

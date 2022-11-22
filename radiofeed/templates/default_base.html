@@ -50,12 +50,11 @@
                             {% block content %}{% endblock content %}
                         </main>
                     </div>
+                    {% cookie_notice %}
+                    {% if user.is_authenticated %}
+                        <div id="audio-player">{% audio_player %}</div>
+                    {% endif %}
                 </div>
-                {% cookie_notice %}
-                {% if user.is_authenticated %}
-                    <div id="audio-player">{% audio_player %}</div>
-                {% endif %}
-                {% include "includes/footer.html" %}
             </div>
             {% django_htmx_script %}
             <script defer
