@@ -38,24 +38,24 @@
                     @error.prevent="error">
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
-                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-2 lg:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-2 sm:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                     <div class="flex items-center space-x-3">
                         {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
-                        <div class="flex flex-col lg:flex-row place-content-between lg:items-center w-full h-16">
-                            <div class="lg:flex flex-col lg:h-16 place-content-between lg:w-3/4 lg:border-r border-gray-500 lg:pr-3">
-                                <a class="block font-bold leading-tight tracking-tight break-words max-w-lg lg:max-w-2xl xl:max-w-5xl line-clamp-2"
+                        <div class="flex flex-col sm:flex-row place-content-between sm:items-center w-full h-16">
+                            <div class="sm:flex flex-col sm:h-16 place-content-between sm:w-1/2 lg:w-3/4 sm:border-r border-gray-500 sm:pr-3">
+                                <a class="block font-bold leading-tight tracking-tight break-words max-w-lg lg:max-w-2xl xl:max-w-5xl sm:line-clamp-2"
                                     href="{{ episode_url }}"
                                     hx-swap="innerHTML show:window:top"
                                     title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                 </a>
 
-                                <a class="hidden lg:block font-bold leading-tight tracking-tight break-words max-w-2xl xl:max-w-5xl text-sm truncate"
+                                <a class="hidden sm:block font-bold leading-tight tracking-tight break-words max-w-lg lg:max-w-2xl xl:max-w-5xl text-xs lg:text-sm truncate"
                                     href="{{ podcast_url }}"
                                     hx-swap="innerHTML show:window:top"
                                     title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
                                 </a>
                             </div>
-                            <div class="lg:w-3/4 lg:pl-3">
+                            <div class="sm:w-1/2 lg:w-3/4 sm:pl-3 sm:space-y-2 lg:space-y-0">
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                     <div class="flex items-center lg:justify-center space-x-6">
                                         <button title="{{ t_play }}"
@@ -116,11 +116,11 @@
                                         </div>
                                     </div>
                                 {% endwith %}
-                                {% include "episodes/includes/audio_progress_bar.html" with css_class="hidden lg:block" %}
+                                {% include "episodes/includes/audio_progress_bar.html" with css_class="hidden sm:block" %}
                             </div>
                         </div>
                     </div>
-                    {% include "episodes/includes/audio_progress_bar.html" with css_class="lg:hidden" %}
+                    {% include "episodes/includes/audio_progress_bar.html" with css_class="sm:hidden" %}
                 </div>
             </div>
         {% endwith %}
