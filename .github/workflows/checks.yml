@@ -4,7 +4,7 @@ on:
     workflow_call:
 
 jobs:
-    tests:
+    checks:
         runs-on: ubuntu-latest
         env:
             DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
