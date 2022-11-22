@@ -12,7 +12,7 @@
         {% translate "Increase Playback Rate" as t_increase_playback_rate %}
         {% translate "Playback Rate" as t_playback_rate %}
         {% translate "Reload Player" as t_reload_player %}
-        {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
+        {% with podcast=episode.podcast episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url media_url=episode.media_url %}
             <div x-data="
                 {# fmt:off #}
             player(
@@ -38,25 +38,26 @@
                     @error.prevent="error">
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
-                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-2 sm:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                    <a class="block truncate sm:hidden tracking-tight leading-tight text-center"
-                        :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
-                        href="{{ episode_url }}"
-                        hx-swap="innerHTML show:window:top"
-                        title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
-                    </a>
+                <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 space-y-2 lg:space-y-0 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                     <div class="flex items-center space-x-3">
-                        {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
-                        <div class="w-full h-16 flex flex-col place-content-between">
-                            <div class="sm:flex items-center justify-between">
-                                <a class="hidden sm:block tracking-tight leading-tight sm:w-72 md:w-auto md:max-w-lg lg:max-w-2xl xl:max-w-5xl font-bold truncate"
-                                    :class="isPlaying ? 'hover:text-blue-500' : 'animate-pulse text-gray-300'"
+                        {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
+                        <div class="flex flex-col lg:flex-row place-content-between lg:items-center w-full h-16">
+                            <div class="lg:flex flex-col lg:h-16 place-content-between lg:w-3/4 lg:border-r border-gray-500 lg:pr-3">
+                                <a class="block font-bold leading-tight tracking-tight break-words max-w-lg lg:max-w-2xl xl:max-w-5xl line-clamp-2"
                                     href="{{ episode_url }}"
                                     hx-swap="innerHTML show:window:top"
-                                    title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}
+                                    title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                 </a>
+
+                                <a class="hidden lg:block font-bold leading-tight tracking-tight break-words max-w-2xl xl:max-w-5xl text-sm truncate"
+                                    href="{{ podcast_url }}"
+                                    hx-swap="innerHTML show:window:top"
+                                    title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
+                                </a>
+                            </div>
+                            <div class="lg:w-3/4 lg:pl-3">
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                    <div class="flex items-center space-x-6">
+                                    <div class="flex items-center lg:justify-center space-x-6">
                                         <button title="{{ t_play }}"
                                             @click="togglePlayPause"
                                             class="{{ BUTTON_CSS }}"
@@ -103,7 +104,7 @@
                                                 title="{{ t_decrease_playback_rate }}">
                                                 {% icon "minus" "solid" title=t_decrease_playback_rate %}
                                             </button>
-                                            <div class="tracking-tight player--interactive text-xs lg:text-sm"
+                                            <div class="text-xs tracking-tight player--interactive lg:text-sm"
                                                 title="{{ t_playback_rate }}"
                                                 x-text="rate.toFixed(1)">
                                             </div>
@@ -115,30 +116,11 @@
                                         </div>
                                     </div>
                                 {% endwith %}
-                            </div>
-                            <div class="space-y-2">
-
-                                <div class="flex text-xs justify-between lg:text-sm tracking-tight"
-                                    :class="isPlaying || 'animate-pulse text-gray-300'">
-                                    <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
-                                    <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
-                                </div>
-
-                                <div class="w-full">
-                                    <input type="range"
-                                        aria-label="Progress"
-                                        class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none appearance-none"
-                                        x-ref="range"
-                                        x-model="runtime"
-                                        @change="skip"
-                                        min="0"
-                                        :max="duration"
-                                        :disabled="!isPlaying"
-                                        :class="isPlaying ? 'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer': 'bg-gray-800 dark:bg-gray-600 cursor-not-allowed'">
-                                </div>
+                                {% include "episodes/includes/audio_progress_bar.html" with css_class="hidden lg:block" %}
                             </div>
                         </div>
                     </div>
+                    {% include "episodes/includes/audio_progress_bar.html" with css_class="lg:hidden" %}
                 </div>
             </div>
         {% endwith %}

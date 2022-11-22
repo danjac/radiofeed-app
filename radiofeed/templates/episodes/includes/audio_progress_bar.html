@@ -1,0 +1,21 @@
+{% load i18n %}
+<div class="w-full space-y-2 {{ css_class }}">
+    <div class="flex justify-between text-xs tracking-tight lg:text-sm"
+        :class="isPlaying || 'animate-pulse text-gray-300'">
+        <span x-text="counters.current" title="{{ t_current_time }}">00:00:00</span>
+        <span x-text="counters.total" title="{{ t_time_remaining }}">00:00:00</span>
+    </div>
+
+    <div class="w-full">
+        <input type="range"
+            aria-label="{% translate "Current progress. Slide to skip back and forward." %}"
+            class="flex items-center w-full h-2 mx-auto rounded-full appearance-none focus:outline-none"
+            x-ref="range"
+            x-model="runtime"
+            @change="skip"
+            min="0"
+            :max="duration"
+            :disabled="!isPlaying"
+            :class="isPlaying ? 'bg-gradient-to-r from-blue-900 to-blue-600 cursor-pointer': 'bg-gray-800 dark:bg-gray-600 cursor-not-allowed'">
+    </div>
+</div>
