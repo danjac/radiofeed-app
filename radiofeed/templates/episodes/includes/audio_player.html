@@ -43,7 +43,7 @@
                         {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
                         <div class="flex flex-col sm:flex-row place-content-between sm:items-center w-full h-16">
                             <div class="sm:flex flex-col sm:h-16 place-content-between sm:w-1/2 lg:w-3/4 sm:border-r border-gray-500 sm:pr-3">
-                                <a class="block font-bold leading-tight tracking-tight break-words max-w-lg lg:max-w-2xl xl:max-w-5xl sm:line-clamp-2"
+                                <a class="block font-bold leading-tight tracking-tight break-words max-w-lg lg:max-w-2xl xl:max-w-5xl line-clamp-2"
                                     href="{{ episode_url }}"
                                     hx-swap="innerHTML show:window:top"
                                     title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
