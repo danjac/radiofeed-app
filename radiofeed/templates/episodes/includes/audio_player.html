@@ -39,18 +39,18 @@
                     <source src="{{ media_url }}" type="{{ episode.media_type }}" />
                 </audio>
                 <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                    <div class="sm:flex items-center w-full space-y-3 sm:space-y-0">
-                        <div class="sm:w-1/2 sm:border-r border-gray-500 sm:pr-3">
+                    <div class="sm:flex items-center w-full space-y-3 sm:space-y-0 sm:divide-x divide-solid dark:divide-gray-500">
+                        <div class="sm:w-1/2">
                             <div class="flex items-center space-x-2 lg:space-x-3">
                                 {% include "includes/cover_image.html" with css_class="h-12 w-12 sm:w-16 sm:h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
                                 <div class="h-12 sm:h-16 flex flex-col place-content-between">
-                                    <a class="block font-bold leading-tight tracking-tight break-words w-60 sm:w-auto truncate sm:whitespace-normal sm:line-clamp-2"
+                                    <a class="block font-bold leading-tight tracking-tight break-words w-60 sm:w-auto truncate sm:whitespace-normal sm:line-clamp-2 sm:pr-3"
                                         href="{{ episode_url }}"
                                         hx-swap="innerHTML show:window:top"
                                         title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                     </a>
 
-                                    <a class="block font-semibold leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate"
+                                    <a class="block font-semibold leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3"
                                         href="{{ podcast_url }}"
                                         hx-swap="innerHTML show:window:top"
                                         title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
