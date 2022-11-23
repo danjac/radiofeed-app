@@ -40,7 +40,7 @@
                 </audio>
                 <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                     <div class="sm:flex items-center w-full space-y-3 sm:space-y-0">
-                        <div class="sm:w-1/2 lg:w-3/4 sm:border-r border-gray-500 sm:pr-3">
+                        <div class="sm:w-3/4 sm:border-r border-gray-500 sm:pr-3">
                             <div class="flex items-center space-x-3">
                                 {% include "includes/cover_image.html" with css_class="h-12 w-12 sm:w-16 sm:h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
                                 <div class="h-12 sm:h-16 flex flex-col place-content-between">
@@ -59,7 +59,7 @@
                             </div>
                         </div>
 
-                        <div class="sm:w-1/2 lg:w-3/4 sm:pl-3 sm:space-y-2 lg:space-y-0">
+                        <div class="sm:w-3/4 sm:pl-3 sm:space-y-2 lg:space-y-0">
                             {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                 <div class="flex items-center justify-center space-x-6">
                                     <button title="{{ t_play }}"
