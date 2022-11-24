@@ -44,13 +44,13 @@
                             <div class="flex items-center space-x-2 lg:space-x-3">
                                 {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
                                 <div class="h-16 flex flex-col place-content-between">
-                                    <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3"
+                                    <a class="block font-bold link leading-tight tracking-tight break-words line-clamp-2 sm:pr-3"
                                         href="{{ episode_url }}"
                                         hx-swap="innerHTML show:window:top"
                                         title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                     </a>
 
-                                    <a class="block font-semibold leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3"
+                                    <a class="block link leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3"
                                         href="{{ podcast_url }}"
                                         hx-swap="innerHTML show:window:top"
                                         title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
