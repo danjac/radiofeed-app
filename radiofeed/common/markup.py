@@ -9,7 +9,7 @@ import bleach
 import markdown
 
 from django.template.defaultfilters import striptags
-from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 _HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
@@ -95,7 +95,7 @@ def markup(value: str | None) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := strip_whitespace(value):
         content = value if _HTML_RE.match(value) else markdown.markdown(value)
-        return format_html(clean(content))
+        return mark_safe(clean(content))  # nosec
     return ""
 
 
