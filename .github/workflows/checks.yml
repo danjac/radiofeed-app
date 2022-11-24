@@ -1,4 +1,4 @@
-name: runtests
+name: runchecks
 
 on:
     workflow_call:
