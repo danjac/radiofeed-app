@@ -26,7 +26,7 @@ from radiofeed.users.models import User
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term: str) -> models.QuerySet[Category]:
+    def search(self, search_term: str) -> models.QuerySet["Category"]:
         """Does a simple search for categories."""
         if value := force_str(search_term):
             return self.filter(name__icontains=value)
