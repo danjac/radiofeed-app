@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-23 07:37+0000\n"
+"POT-Creation-Date: 2022-11-24 11:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -889,7 +889,7 @@ msgstr "Vähennä Toistonopeus"
 msgid "Reload Player"
 msgstr "Lataa Soitin Uudestaan"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:133
+#: radiofeed/templates/episodes/includes/audio_player.html:132
 msgid "Progress"
 msgstr "Edistymispalkki"
 
@@ -941,7 +941,8 @@ msgid "Subscriptions"
 msgstr "Tilaukset"
 
 #: radiofeed/templates/episodes/index.html:20
-msgid "Find an episode..."
+#: radiofeed/templates/podcasts/episodes.html:25
+msgid "Search: Episodes"
 msgstr "Haku: Jaksot"
 
 #: radiofeed/templates/episodes/search.html:4
@@ -1183,10 +1184,6 @@ msgstr ""
 "#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
 "            "
 
-#: radiofeed/templates/podcasts/episodes.html:25
-msgid "Search: Episodes"
-msgstr "Haku: Jaksot"
-
 #: radiofeed/templates/podcasts/includes/itunes_feed.html:15
 msgid "Adding podcast to database..."
 msgstr "Lisätään podcastin tietokantaan..."
@@ -1213,9 +1210,9 @@ msgstr "Tilaa"
 
 #: radiofeed/templates/podcasts/index.html:20
 #, fuzzy
-#| msgid "Find a category..."
-msgid "Find a podcast..."
-msgstr "Haku: Kategoriat"
+#| msgid "Search Podcasts"
+msgid "Search: Podcasts"
+msgstr "Haku: Podcastit"
 
 #: radiofeed/templates/podcasts/landing_page.html:8
 #, fuzzy, python-format
