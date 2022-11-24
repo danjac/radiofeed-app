@@ -65,7 +65,7 @@ def service_worker(request: HttpRequest) -> HttpResponse:
 def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
     start_url = reverse("podcasts:landing_page")
-    theme_color = "#ffffff"
+    theme_color = "#26323C"
 
     icon = {
         "src": static("img/wave.png"),
