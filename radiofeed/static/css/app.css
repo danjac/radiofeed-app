@@ -179,7 +179,7 @@ input[type="search"]::-webkit-search-results-decoration {
         .link:active,
         .link:hover,
         .link:focus {
-            color: theme("colors.sky.400");
+            color: theme("colors.blue.300");
         }
     }
 }
