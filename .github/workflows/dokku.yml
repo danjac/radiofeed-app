@@ -4,10 +4,10 @@ on:
     workflow_dispatch:
 
 jobs:
-    checks:
+    runchecks:
         uses: ./.github/workflows/checks.yml
     deploy:
-        needs: checks
+        needs: runchecks
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2

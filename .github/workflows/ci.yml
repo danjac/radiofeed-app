@@ -3,5 +3,5 @@ name: ci
 on: push
 
 jobs:
-    checks:
+    runchecks:
         uses: ./.github/workflows/checks.yml
