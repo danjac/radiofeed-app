@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}
+    | {% translate "Categories" %}
+{% endblock title %}
+{% block content %}
+    <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0 border-b dark:border-gray-500 pb-3">
+        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl">
+            {% translate "Categories" %}
+        </h1>
+        <div class="flex items-center justify-center sm:justify-end space-x-3">
+            {% include "includes/search_form.html" with placeholder=_("Find a category...") %}
+        </div>
+    </div>
+    {% if categories %}
+        <ul class="space-y-3 dark:divide-gray-500 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 md:grid-cols-3 {% endif %}">
+            {% for category in categories %}
+                <li class="pt-3">
+                    <a href="{{ category.get_absolute_url }}"
+                        class="link font-semibold md:text-lg w-full">
+                        <h2>{{ category.name }}</h2>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center sm:text-left">
+            {% if request.search %}
+                {% blocktranslate with search=request.search.value %}
+                    No results found for <span class="font-bold">{{ search }}</span>.
+                {% endblocktranslate %}
+            {% else %}
+                {% translate "Nothing to see here." %}
+            {% endif %}
+        </p>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}
+    | Social Network Login Failure
+{% endblock title %}
+{% block content %}
+    <h1 class="font-bold mb-3 text-lg md:text-xl xl:text-2xl">Social Network Login Failure</h1>
+    <p class="mb-3">An error occurred while attempting to login via your social network account.</p>
+    <pre class="text-mono">
+Code: {{ auth_error.code }}, Error: {{ auth_error.exception }}
+    </pre>
+{% endblock content %}

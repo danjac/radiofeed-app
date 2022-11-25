@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load cache i18n %}
+{% block content %}
+    <header class="pb-3 mb-3 border-b dark:border-gray-500 space-y-3">
+        {% with site_name=request.site.name %}
+            <h1 class="text-lg font-bold text-center lg:text-xl xl:text-2xl">Welcome to {{ site_name }}!</h1>
+            <h2 class="text-base font-semibold text-center lg:text-lg xl:text-xl">
+                {% blocktranslate %}
+                    <strong>{{ site_name }}</strong> is a <strong>free</strong> web app for discovering and listening to your favorite podcast feeds.
+                {% endblocktranslate %}
+            </h2>
+        {% endwith %}
+    </header>
+    <div class="flex flex-wrap justify-between gap-1" hx-disable="true">
+        {% cache 600 podcasts-landing-page %}
+            {% for podcast in podcasts %}
+                {% with css_class="h-28 w-28 md:h-48 md:w-48 lg:h-52 lg:w-52 xl:h-56 xl:w-56 hover:grayscale" %}
+                    <a href="{{ podcast.get_absolute_url }}" class="{{ css_class }}">
+                        {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
+                    </a>
+                {% endwith %}
+            {% endfor %}
+        {% endcache %}
+    </div>
+{% endblock content %}

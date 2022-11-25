@@ -1,0 +1,34 @@
+{% extends "podcasts/detail_base.html" %}
+{% load cache i18n %}
+{% block title %}
+    {{ block.super }} | {% translate "Episodes" %}
+{% endblock title %}
+{% block podcast_content %}
+    {% if request.search or page_obj.has_other_pages %}
+        <nav class="mb-3">
+            <ul class="sm:flex items-center justify-between pb-3 border-b dark:border-gray-500">
+                <li class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
+                    {% if request.search %}
+                        <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
+                            class="link">{% translate "Search All Podcasts" %}</a>
+                    {% else %}
+                        <a href="{{ request.path }}?{{ request.sorter.qs }}" class="link">
+                            {% if request.sorter.is_asc %}
+                                {% translate "Newest First" %}
+                            {% else %}
+                                {% translate "Oldest First" %}
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="flex items-center justify-center sm:justify-end">
+                    {% include "includes/search_form.html" with placeholder=_("Search: Episodes") %}
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+    {% get_current_language as language_code %}
+    {% cache 600 podcast-episodes request.get_full_path language_code %}
+        {% include pagination_template %}
+    {% endcache %}
+{% endblock podcast_content %}
