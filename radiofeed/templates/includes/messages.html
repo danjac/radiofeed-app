@@ -12,7 +12,6 @@
         {% endfor %}"
         {# fmt:on #}
     {% endif %}
-    @add-message.window="messages.push($event.detail)"
     {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     <div class="space-y-3">
         <template x-for="message in messages">
