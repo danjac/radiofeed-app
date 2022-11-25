@@ -3,16 +3,10 @@
     <!DOCTYPE html>
     <html lang="en">
         <head>
-            <title>
-                {{ request.site.name }}
-                {% block title %}
-                {% endblock title %}
-            </title>
+            <title>{{ request.site.name }}{% block title %}{% endblock title %}</title>
             <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}" />
             <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}" />
-            <link rel="stylesheet"
-                text="text/css"
-                href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}"/>
+            <link rel="stylesheet" text="text/css" href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}"/>
             <link rel="manifest" href="{% url 'manifest' %}" />
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />

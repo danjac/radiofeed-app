@@ -9,11 +9,7 @@ module.exports = {
         removeDeprecatedGapUtilities: true,
         purgeLayersByDefault: true,
     },
-    content: [
-        "./radiofeed/templates/**/*.html",
-        "./radiofeed/static/js/**/*.js",
-        "./tailwind-safelist.txt",
-    ],
+    content: ["./templates/**/*.html", "./tailwind-safelist.txt"],
     keyframes: true,
     variants: {
         textColor: ["responsive", "hover", "focus", "visited", "dark"],
