@@ -96,20 +96,8 @@ class Crawler:
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the database."""
         with ThreadPoolExecutor() as executor:
-            for result in executor.map(self._parse_url, self._parse_genre_urls()):
+            for result in executor.map(self._parse_genre_url, self._parse_genre_urls()):
                 yield from result
-
-    def _parse_url(self, url):
-        for batch in batcher.batcher(self._parse_podcast_ids(url), 100):
-            yield from _parse_feeds(
-                _get_response(
-                    "https://itunes.apple.com/lookup",
-                    {
-                        "id": ",".join(batch),
-                        "entity": "podcast",
-                    },
-                ).json(),
-            )
 
     def _parse_genre_urls(self) -> Iterator[str]:
         return (
@@ -122,6 +110,24 @@ class Crawler:
             if href.startswith(
                 f"https://podcasts.apple.com/{self._location}/genre/podcasts"
             )
+        )
+
+    def _parse_genre_url(self, url) -> Iterator[Feed]:
+        with ThreadPoolExecutor() as executor:
+            for result in executor.map(
+                self._parse_feeds, batcher.batcher(self._parse_podcast_ids(url), 100)
+            ):
+                yield from result
+
+    def _parse_feeds(self, feed_ids: list[str]) -> Iterator[Feed]:
+        return _parse_feeds(
+            _get_response(
+                "https://itunes.apple.com/lookup",
+                {
+                    "id": ",".join(feed_ids),
+                    "entity": "podcast",
+                },
+            ).json(),
         )
 
     def _parse_podcast_ids(self, url: str) -> Iterator[str]:
