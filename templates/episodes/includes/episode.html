@@ -21,7 +21,7 @@
                     {{ episode.cleaned_title|truncatechars:180 }}
                 </a>
             </h2>
-            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl text-xs lg:text-sm">
+            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
                 {% if is_podcast_detail %}
                     {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
                 {% else %}
