@@ -1,4 +1,4 @@
-<div class="fixed inset-x-0 z-50 w-60 lg:w-72 mx-auto"
+<div class="fixed inset-x-0 z-50 mx-auto top-5"
     id="messages"
     x-data="{messages: []}"
     {% if messages %}
@@ -13,9 +13,9 @@
         {# fmt:on #}
     {% endif %}
     {% if hx_oob %}hx-swap-oob="true"{% endif %}>
-    <div class="space-y-3">
+    <div class="space-y-3 flex justify-center">
         <template x-for="message in messages">
-            <div class="flex flex-wrap items-center justify-center p-2 text-center text-white rounded shadow-xl"
+            <div class="flex flex-wrap items-center px-2 py-1 text-center text-white rounded shadow-xl max-w-sm"
                 role="alert"
                 {# fmt:off #}
                 :class="{
