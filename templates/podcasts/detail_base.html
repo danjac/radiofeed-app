@@ -13,13 +13,11 @@
                     {% translate "Episodes" as t_episodes %}
                     {% translate "Similar" as t_similar %}
                     <nav class="flex items-center justify-center mb-3 sm:justify-start">
-                        <ul class="flex items-center space-x-6" role="tablist">
+                        <ul class="flex items-center space-x-6">
                             {% active_link podcast.get_detail_url as link %}
                             <li>
                                 <a class="{{ link.css }}"
                                     href="{{ link.url }}"
-                                    role="tab"
-                                    aria-selected="{{ link.active|yesno:"true,false" }}"
                                     tabindex="{{ link.active|yesno:"0,-1" }}"
                                     title="{{ podcast.cleaned_title }} | {{ t_about }}">
                                     {{ t_about }}
@@ -30,8 +28,6 @@
                                 <li>
                                     <a class="{{ link.css }}"
                                         href="{{ link.url }}"
-                                        role="tab"
-                                        aria-selected="{{ link.active|yesno:"true,false" }}"
                                         tabindex="{{ link.active|yesno:"0,-1" }}"
                                         title="{{ podcast.cleaned_title }} | {{ t_episodes }}">
                                         {{ t_episodes }} ({{ num_episodes }})
@@ -43,8 +39,6 @@
                                 <li>
                                     <a class="{{ link.css }}"
                                         href="{{ link.url }}"
-                                        role="tab"
-                                        aria-selected="{{ link.active|yesno:"true,false" }}"
                                         tabindex="{{ link.active|yesno:"0,-1" }}"
                                         title="{{ podcast.cleaned_title }} | {{ t_similar }}">
                                         {{ t_similar }}

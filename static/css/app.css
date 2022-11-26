@@ -178,7 +178,7 @@ input[type="search"]::-webkit-search-results-decoration {
         }
 
         .link {
-            color: theme("colors.gray.100");
+            color: theme("colors.white");
         }
 
         .link.active,
