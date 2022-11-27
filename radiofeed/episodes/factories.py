@@ -7,61 +7,58 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.common.factories import NotSet
+from radiofeed.common.factories import NotSet, notset
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
-faker = Faker()
+_faker = Faker()
 
 
 def create_episode(
     *,
-    guid: str = "",
-    podcast: Podcast | None = None,
-    title: str = "",
-    description: str = "",
-    pub_date: datetime | None = None,
-    media_url: str | NotSet | None = NotSet,
-    media_type: str = "audio/mpeg",
-    duration: str = "100",
+    guid: str = NotSet,
+    podcast: Podcast = NotSet,
+    title: str = NotSet,
+    description: str = NotSet,
+    pub_date: datetime | None = NotSet,
+    media_url: str | None = NotSet,
+    media_type: str = NotSet,
+    duration: str = NotSet,
     **kwargs,
 ) -> Episode:
 
     return Episode.objects.create(
-        guid=guid or uuid.uuid4().hex,
-        podcast=podcast or create_podcast(),
-        title=title or faker.text(),
-        description=description or faker.text(),
-        pub_date=pub_date or timezone.now(),
-        media_url=faker.url() if media_url is NotSet else media_url,
-        media_type=media_type,
-        duration=duration,
+        guid=notset(guid, lambda: uuid.uuid4().hex),
+        podcast=notset(podcast, create_podcast),
+        title=notset(title, _faker.text),
+        description=notset(description, _faker.text),
+        pub_date=notset(pub_date, timezone.now),
+        media_url=notset(media_url, _faker.url),
+        media_type=notset(media_type, "audio/mpeg"),
+        duration=notset(duration, "100"),
         **kwargs,
     )
 
 
-def create_bookmark(
-    *, episode: Episode | None = None, user: User | None = None
-) -> Bookmark:
+def create_bookmark(*, episode: Episode = NotSet, user: User = NotSet) -> Bookmark:
     return Bookmark.objects.create(
-        episode=episode or create_episode(),
-        user=user or create_user(),
+        episode=notset(episode, create_episode), user=notset(user, create_user)
     )
 
 
 def create_audio_log(
     *,
-    episode: Episode | None = None,
-    user: User | None = None,
-    listened: datetime | None = None,
-    current_time: int = 1000,
+    episode: Episode = NotSet,
+    user: User = NotSet,
+    listened: datetime = NotSet,
+    current_time: int = NotSet,
 ) -> AudioLog:
     return AudioLog.objects.create(
-        episode=episode or create_episode(),
-        user=user or create_user(),
-        listened=listened or timezone.now(),
-        current_time=current_time,
+        episode=notset(episode, create_episode),
+        user=notset(user, create_user),
+        listened=notset(listened, timezone.now),
+        current_time=notset(current_time, 1000),
     )

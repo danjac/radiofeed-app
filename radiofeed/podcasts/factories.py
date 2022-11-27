@@ -2,37 +2,38 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from django.utils import timezone
-from faker import Faker
+import faker
 
-from radiofeed.common.factories import NotSet
+from django.utils import timezone
+
+from radiofeed.common.factories import NotSet, notset
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
-faker = Faker()
+_faker = faker.Faker()
 
 
-def create_category(*, name: str = "", **kwargs) -> Category:
-    return Category.objects.create(name=name or faker.name(), **kwargs)
+def create_category(*, name: str = NotSet, **kwargs) -> Category:
+    return Category.objects.create(name=notset(name, _faker.name), **kwargs)
 
 
 def create_podcast(
     *,
-    rss: str = "",
-    title: str = "",
-    pub_date: datetime | NotSet | None = NotSet,
-    cover_url: str | NotSet | None = NotSet,
-    description: str = "",
+    rss: str = NotSet,
+    title: str = NotSet,
+    pub_date: datetime | None = NotSet,
+    cover_url: str | None = NotSet,
+    description: str = NotSet,
     categories: list[Category] | None = None,
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=rss or faker.unique.url(),
-        title=title or faker.text(),
-        cover_url="https://example.com/cover.jpg" if cover_url is NotSet else cover_url,
-        description=description or faker.text(),
-        pub_date=timezone.now() if pub_date is NotSet else pub_date,
+        rss=notset(rss, _faker.unique.url),
+        title=notset(title, _faker.text),
+        cover_url=notset(cover_url, "https://example.com/cover.jpg"),
+        description=notset(description, _faker.text),
+        pub_date=notset(pub_date, timezone.now),
         **kwargs,
     )
 
@@ -44,24 +45,26 @@ def create_podcast(
 
 def create_recommendation(
     *,
-    podcast: Podcast | None = None,
-    recommended: Podcast | None = None,
-    frequency: int = 3,
-    similarity: float = 5.0,
+    podcast: Podcast = NotSet,
+    recommended: Podcast = NotSet,
+    frequency: int = NotSet,
+    similarity: float = NotSet,
 ) -> Recommendation:
     return Recommendation.objects.create(
-        podcast=podcast or create_podcast(),
-        recommended=recommended or create_podcast(),
-        frequency=frequency,
-        similarity=similarity,
+        podcast=notset(podcast, create_podcast),
+        recommended=notset(recommended, create_podcast),
+        frequency=notset(frequency, 3),
+        similarity=notset(similarity, 0.5),
     )
 
 
 def create_subscription(
-    *, subscriber: User | None = None, podcast: Podcast | None = None
+    *,
+    subscriber: User = NotSet,
+    podcast: Podcast = NotSet,
 ) -> Subscription:
 
     return Subscription.objects.create(
-        subscriber=subscriber or create_user(),
-        podcast=podcast or create_podcast(),
+        subscriber=notset(subscriber, create_user),
+        podcast=notset(podcast, create_podcast),
     )

@@ -1,34 +1,40 @@
 from __future__ import annotations
 
-from allauth.account.models import EmailAddress
-from faker import Faker
+import faker
 
+from allauth.account.models import EmailAddress
+
+from radiofeed.common.factories import NotSet, notset
 from radiofeed.users.models import User
 
-faker = Faker()
+_faker = faker.Faker()
 
 
 def create_user(
-    *, username: str = "", email: str = "", password="testpass1", **kwargs
+    *,
+    username: str = NotSet,
+    email: str = NotSet,
+    password: str = NotSet,
+    **kwargs,
 ) -> User:
     return User.objects.create_user(
-        username=username or faker.unique.user_name(),
-        email=email or faker.unique.email(),
-        password=password,
+        username=notset(username, _faker.unique.user_name),
+        email=notset(email, _faker.unique.email),
+        password=notset(password, _faker.password),
         **kwargs,
     )
 
 
 def create_email_address(
     *,
-    user: User | None = None,
-    email: str = "",
+    user: User = NotSet,
+    email: str = NotSet,
     verified: bool = True,
     primary: bool = False,
 ) -> EmailAddress:
     return EmailAddress.objects.create(
-        user=user or create_user(),
-        email=email or faker.unique.email(),
+        user=notset(user, create_user),
+        email=notset(email, _faker.unique.email),
         verified=verified,
         primary=primary,
     )
