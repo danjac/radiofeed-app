@@ -8,8 +8,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.common.asserts import assert_hx_redirect, assert_ok
-from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
-from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.episodes.factories import create_audio_log, create_bookmark
+from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Subscription
 from radiofeed.users.models import User
 
@@ -44,18 +44,18 @@ class TestUserPreferences:
 class TestUserStats:
     def test_stats(self, client, auth_user):
 
-        SubscriptionFactory(subscriber=auth_user)
-        AudioLogFactory(user=auth_user)
-        BookmarkFactory(user=auth_user)
+        create_subscription(subscriber=auth_user)
+        create_audio_log(user=auth_user)
+        create_bookmark(user=auth_user)
 
         response = client.get(reverse("users:stats"))
         assert_ok(response)
 
     def test_stats_plural(self, client, auth_user):
 
-        AudioLogFactory.create_batch(3, user=auth_user)
-        BookmarkFactory.create_batch(3, user=auth_user)
-        SubscriptionFactory.create_batch(3, subscriber=auth_user)
+        create_audio_log.create_batch(3, user=auth_user)
+        create_bookmark.create_batch(3, user=auth_user)
+        create_subscription.create_batch(3, subscriber=auth_user)
 
         response = client.get(reverse("users:stats"))
         assert_ok(response)
@@ -78,7 +78,7 @@ class TestImportPodcastFeeds:
         )
 
     def test_post_has_new_feeds(self, client, auth_user, upload_file):
-        podcast = PodcastFactory(
+        podcast = create_podcast(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
@@ -96,7 +96,7 @@ class TestImportPodcastFeeds:
         ).exists()
 
     def test_post_has_no_new_feeds(self, client, auth_user, mocker, upload_file):
-        SubscriptionFactory(
+        create_subscription(
             podcast__rss="https://feeds.99percentinvisible.org/99percentinvisible",
             subscriber=auth_user,
         )

@@ -20,7 +20,7 @@ from radiofeed.podcasts.admin import (
     PubDateFilter,
     SubscribedFilter,
 )
-from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -36,7 +36,7 @@ def podcast_admin():
 
 @pytest.fixture
 def podcasts(db):
-    return PodcastFactory.create_batch(3, active=True, promoted=False)
+    return create_podcast.create_batch(3, active=True, promoted=False)
 
 
 @pytest.fixture
@@ -60,7 +60,7 @@ class TestPodcastAdmin:
         assert qs.count() == 3
 
     def test_get_search_results(self, podcasts, podcast_admin, req):
-        podcast = PodcastFactory(title="Indie Hackers")
+        podcast = create_podcast(title="Indie Hackers")
         qs, _ = podcast_admin.get_search_results(
             req, Podcast.objects.all(), "Indie Hackers"
         )
@@ -97,20 +97,20 @@ class TestPodcastAdmin:
 
 class TestPubDateFilter:
     def test_none(self, podcasts, podcast_admin, req):
-        PodcastFactory(pub_date=None)
+        create_podcast(pub_date=None)
         f = PubDateFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     def test_no(self, podcasts, podcast_admin, req):
-        no_pub_date = PodcastFactory(pub_date=None)
+        no_pub_date = create_podcast(pub_date=None)
         f = PubDateFilter(req, {"pub_date": "no"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == no_pub_date
 
     def test_yes(self, podcasts, podcast_admin, req):
-        no_pub_date = PodcastFactory(pub_date=None)
+        no_pub_date = create_podcast(pub_date=None)
         f = PubDateFilter(req, {"pub_date": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
@@ -119,13 +119,13 @@ class TestPubDateFilter:
 
 class TestPromotedFilter:
     def test_none(self, podcasts, podcast_admin, req):
-        PodcastFactory(promoted=False)
+        create_podcast(promoted=False)
         f = PromotedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     def test_true(self, podcasts, podcast_admin, req):
-        promoted = PodcastFactory(promoted=True)
+        promoted = create_podcast(promoted=True)
         f = PromotedFilter(req, {"promoted": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -134,8 +134,8 @@ class TestPromotedFilter:
 
 class TestHttpStatusFilter:
     def test_lookups(self, db, podcast_admin, req):
-        PodcastFactory(http_status=http.HTTPStatus.OK)
-        PodcastFactory(http_status=http.HTTPStatus.NOT_MODIFIED)
+        create_podcast(http_status=http.HTTPStatus.OK)
+        create_podcast(http_status=http.HTTPStatus.NOT_MODIFIED)
 
         f = HttpStatusFilter(req, {}, Podcast, podcast_admin)
         assert f.lookups(req, podcast_admin) == (
@@ -144,8 +144,8 @@ class TestHttpStatusFilter:
         )
 
     def test_filter(self, db, podcast_admin, req):
-        podcast = PodcastFactory(http_status=http.HTTPStatus.OK)
-        PodcastFactory(http_status=http.HTTPStatus.NOT_MODIFIED)
+        podcast = create_podcast(http_status=http.HTTPStatus.OK)
+        create_podcast(http_status=http.HTTPStatus.NOT_MODIFIED)
 
         f = HttpStatusFilter(req, {"http_status": "200"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
@@ -153,8 +153,8 @@ class TestHttpStatusFilter:
         assert qs.first() == podcast
 
     def test_none(self, db, podcast_admin, req):
-        PodcastFactory(http_status=http.HTTPStatus.OK)
-        PodcastFactory(http_status=http.HTTPStatus.NOT_MODIFIED)
+        create_podcast(http_status=http.HTTPStatus.OK)
+        create_podcast(http_status=http.HTTPStatus.NOT_MODIFIED)
 
         f = HttpStatusFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
@@ -163,20 +163,20 @@ class TestHttpStatusFilter:
 
 class TestActiveFilter:
     def test_none(self, podcasts, podcast_admin, req):
-        PodcastFactory(active=False)
+        create_podcast(active=False)
         f = ActiveFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     def test_active(self, podcasts, podcast_admin, req):
-        inactive = PodcastFactory(active=False)
+        inactive = create_podcast(active=False)
         f = ActiveFilter(req, {"active": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert inactive not in qs
 
     def test_inactive(self, podcasts, podcast_admin, req):
-        inactive = PodcastFactory(active=False)
+        inactive = create_podcast(active=False)
         f = ActiveFilter(req, {"active": "no"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -185,13 +185,13 @@ class TestActiveFilter:
 
 class TestSubscribedFilter:
     def test_subscribed_filter_none(self, podcasts, podcast_admin, req):
-        SubscriptionFactory()
+        create_subscription()
         f = SubscribedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     def test_subscribed_filter_true(self, podcasts, podcast_admin, req):
-        subscribed = SubscriptionFactory().podcast
+        subscribed = create_subscription().podcast
         f = SubscribedFilter(req, {"subscribed": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -200,24 +200,24 @@ class TestSubscribedFilter:
 
 class TestParseResultFilter:
     def test_parse_result_none(self, db, podcast_admin, req):
-        PodcastFactory(parse_result=Podcast.ParseResult.SUCCESS)
-        podcast = PodcastFactory(parse_result=None)
+        create_podcast(parse_result=Podcast.ParseResult.SUCCESS)
+        podcast = create_podcast(parse_result=None)
         f = ParseResultFilter(req, {"parse_result": "none"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == podcast
 
     def test_parse_result_empty(self, db, podcast_admin, req):
-        PodcastFactory(parse_result=Podcast.ParseResult.SUCCESS)
-        PodcastFactory(parse_result=None)
+        create_podcast(parse_result=Podcast.ParseResult.SUCCESS)
+        create_podcast(parse_result=None)
         f = ParseResultFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 2
 
     def test_specific_parse_result(self, db, podcast_admin, req):
-        podcast = PodcastFactory(parse_result=Podcast.ParseResult.SUCCESS)
-        PodcastFactory(parse_result=None)
-        PodcastFactory(parse_result=Podcast.ParseResult.NOT_MODIFIED)
+        podcast = create_podcast(parse_result=Podcast.ParseResult.SUCCESS)
+        create_podcast(parse_result=None)
+        create_podcast(parse_result=Podcast.ParseResult.NOT_MODIFIED)
         f = ParseResultFilter(
             req,
             {"parse_result": "success"},

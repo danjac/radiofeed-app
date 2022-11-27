@@ -15,13 +15,13 @@ from radiofeed.common.asserts import (
     assert_ok,
 )
 from radiofeed.episodes.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
-    EpisodeFactory,
+    create_audio_log,
+    create_bookmark,
+    create_episode,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.episodes.player import Player
-from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import create_podcast, create_subscription
 
 episodes_url = reverse_lazy("episodes:index")
 
@@ -46,9 +46,9 @@ class TestNewEpisodes:
         assert len(response.context["page_obj"].object_list) == 0
 
     def test_not_subscribed(self, client, auth_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
-        EpisodeFactory.create_batch(3)
+        promoted = create_podcast(promoted=True)
+        create_episode(podcast=promoted)
+        create_episode.create_batch(3)
         response = client.get(episodes_url)
         assert_ok(response)
 
@@ -57,13 +57,13 @@ class TestNewEpisodes:
         assert not response.context["has_subscriptions"]
 
     def test_user_has_subscribed(self, client, auth_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
+        promoted = create_podcast(promoted=True)
+        create_episode(podcast=promoted)
 
-        EpisodeFactory.create_batch(3)
+        create_episode.create_batch(3)
 
-        episode = EpisodeFactory()
-        SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
+        episode = create_episode()
+        create_subscription(subscriber=auth_user, podcast=episode.podcast)
 
         response = client.get(episodes_url)
         assert_ok(response)
@@ -74,13 +74,13 @@ class TestNewEpisodes:
         assert response.context["has_subscriptions"]
 
     def test_user_has_subscribed_promoted(self, client, auth_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
+        promoted = create_podcast(promoted=True)
+        create_episode(podcast=promoted)
 
-        EpisodeFactory.create_batch(3)
+        create_episode.create_batch(3)
 
-        episode = EpisodeFactory()
-        SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
+        episode = create_episode()
+        create_subscription(subscriber=auth_user, podcast=episode.podcast)
 
         response = client.get(episodes_url, {"promoted": True})
 
@@ -103,8 +103,8 @@ class TestSearchEpisodes:
         assert client.get(self.url, {"query": ""}).url == episodes_url
 
     def test_search(self, auth_user, client, faker):
-        EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
-        episode = EpisodeFactory(title=faker.unique.name())
+        create_episode.create_batch(3, title="zzzz", keywords="zzzz")
+        episode = create_episode(title=faker.unique.name())
         response = client.get(self.url, {"query": episode.title})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
@@ -119,7 +119,7 @@ class TestSearchEpisodes:
 class TestEpisodeDetail:
     @pytest.fixture
     def episode(self, db):
-        return EpisodeFactory(
+        return create_episode(
             podcast__owner=factory.Faker("name"),
             podcast__link=factory.Faker("url"),
             podcast__funding_url=factory.Faker("url"),
@@ -134,13 +134,13 @@ class TestEpisodeDetail:
 
     @pytest.fixture
     def prev_episode(self, auth_user, episode):
-        return EpisodeFactory(
+        return create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7)
         )
 
     @pytest.fixture
     def next_episode(self, auth_user, episode):
-        return EpisodeFactory(
+        return create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7)
         )
 
@@ -164,7 +164,7 @@ class TestEpisodeDetail:
         prev_episode,
         next_episode,
     ):
-        AudioLogFactory(episode=episode, user=auth_user, current_time=900)
+        create_audio_log(episode=episode, user=auth_user, current_time=900)
 
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
@@ -191,7 +191,7 @@ class TestEpisodeDetail:
         auth_user,
         episode,
     ):
-        EpisodeFactory(
+        create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=30)
         )
         response = client.get(episode.get_absolute_url())
@@ -205,7 +205,7 @@ class TestEpisodeDetail:
         auth_user,
         episode,
     ):
-        EpisodeFactory(
+        create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=30)
         )
         response = client.get(episode.get_absolute_url())
@@ -234,7 +234,7 @@ class TestStartPlayer:
         assert is_player_episode(client, episode)
 
     def test_another_episode_in_player(self, client, auth_user, episode):
-        client.session[Player.session_key] = EpisodeFactory().id
+        client.session[Player.session_key] = create_episode().id
 
         assert_ok(
             client.post(
@@ -248,7 +248,7 @@ class TestStartPlayer:
         assert is_player_episode(client, episode)
 
     def test_resume(self, client, auth_user, episode):
-        log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
+        log = create_audio_log(user=auth_user, episode=episode, current_time=2000)
         assert_ok(
             client.post(
                 self.url(episode),
@@ -281,7 +281,7 @@ class TestClosePlayer:
         player_episode,
     ):
 
-        log = AudioLogFactory(
+        log = create_audio_log(
             user=auth_user,
             current_time=2000,
             episode=player_episode,
@@ -305,7 +305,7 @@ class TestPlayerTimeUpdate:
 
     @pytest.fixture
     def log(self, auth_user, player_episode):
-        return AudioLogFactory(user=auth_user, episode=player_episode)
+        return create_audio_log(user=auth_user, episode=player_episode)
 
     def test_is_running(self, client, auth_user, log):
 
@@ -342,7 +342,7 @@ class TestBookmarks:
     url = reverse_lazy("episodes:bookmarks")
 
     def test_get(self, client, auth_user):
-        BookmarkFactory.create_batch(33, user=auth_user)
+        create_bookmark.create_batch(33, user=auth_user)
 
         response = client.get(self.url)
 
@@ -350,7 +350,7 @@ class TestBookmarks:
         assert len(response.context["page_obj"].object_list) == 30
 
     def test_ascending(self, client, auth_user):
-        BookmarkFactory.create_batch(33, user=auth_user)
+        create_bookmark.create_batch(33, user=auth_user)
 
         response = client.get(self.url, {"order": "asc"})
 
@@ -366,15 +366,15 @@ class TestBookmarks:
 
     def test_search(self, client, auth_user):
 
-        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
+        podcast = create_podcast(title="zzzz", keywords="zzzzz")
 
         for _ in range(3):
-            BookmarkFactory(
+            create_bookmark(
                 user=auth_user,
-                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
+                episode=create_episode(title="zzzz", keywords="zzzzz", podcast=podcast),
             )
 
-        BookmarkFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
+        create_bookmark(user=auth_user, episode=create_episode(title="testing"))
 
         response = client.get(self.url, {"query": "testing"})
         assert_ok(response)
@@ -394,7 +394,7 @@ class TestAddBookmark:
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     def test_already_bookmark(self, transactional_db, client, auth_user, episode):
-        BookmarkFactory(episode=episode, user=auth_user)
+        create_bookmark(episode=episode, user=auth_user)
         response = client.post(
             reverse("episodes:add_bookmark", args=[episode.id]),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
@@ -406,7 +406,7 @@ class TestAddBookmark:
 
 class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode):
-        BookmarkFactory(user=auth_user, episode=episode)
+        create_bookmark(user=auth_user, episode=episode)
         response = client.post(
             reverse("episodes:remove_bookmark", args=[episode.id]),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
@@ -420,7 +420,7 @@ class TestHistory:
     url = reverse_lazy("episodes:history")
 
     def test_get(self, client, auth_user):
-        AudioLogFactory.create_batch(33, user=auth_user)
+        create_audio_log.create_batch(33, user=auth_user)
         response = client.get(self.url)
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
@@ -431,7 +431,7 @@ class TestHistory:
         assert len(response.context["page_obj"].object_list) == 0
 
     def test_ascending(self, client, auth_user):
-        AudioLogFactory.create_batch(33, user=auth_user)
+        create_audio_log.create_batch(33, user=auth_user)
 
         response = client.get(self.url, {"order": "asc"})
         assert_ok(response)
@@ -440,15 +440,15 @@ class TestHistory:
 
     def test_search(self, client, auth_user):
 
-        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
+        podcast = create_podcast(title="zzzz", keywords="zzzzz")
 
         for _ in range(3):
-            AudioLogFactory(
+            create_audio_log(
                 user=auth_user,
-                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
+                episode=create_episode(title="zzzz", keywords="zzzzz", podcast=podcast),
             )
 
-        AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
+        create_audio_log(user=auth_user, episode=create_episode(title="testing"))
         response = client.get(self.url, {"query": "testing"})
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 1
@@ -459,8 +459,8 @@ class TestRemoveAudioLog:
         return reverse("episodes:remove_audio_log", args=[episode.id])
 
     def test_ok(self, client, auth_user, episode):
-        AudioLogFactory(user=auth_user, episode=episode)
-        AudioLogFactory(user=auth_user)
+        create_audio_log(user=auth_user, episode=episode)
+        create_audio_log(user=auth_user)
 
         assert_ok(
             client.post(
@@ -475,7 +475,7 @@ class TestRemoveAudioLog:
 
     def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
-        log = AudioLogFactory(user=auth_user, episode=player_episode)
+        log = create_audio_log(user=auth_user, episode=player_episode)
 
         assert_ok(
             client.post(
@@ -487,7 +487,7 @@ class TestRemoveAudioLog:
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
     def test_none_remaining(self, client, auth_user, episode):
-        log = AudioLogFactory(user=auth_user, episode=episode)
+        log = create_audio_log(user=auth_user, episode=episode)
 
         assert_ok(
             client.post(

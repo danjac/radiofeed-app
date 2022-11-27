@@ -10,11 +10,11 @@ import requests
 
 from django.utils import timezone
 
-from radiofeed.episodes.factories import EpisodeFactory
+from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.feed_parser import FeedParser, make_content_hash, parse_feed
-from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
+from radiofeed.podcasts.factories import CategoryFactory, create_podcast
 from radiofeed.podcasts.models import Podcast
 
 
@@ -110,7 +110,7 @@ class TestFeedParser:
     def test_parse_ok(self, db, mocker, categories):
 
         # set date to before latest
-        podcast = PodcastFactory(
+        podcast = create_podcast(
             pub_date=datetime(year=2020, month=3, day=1), num_retries=3
         )
 
@@ -120,7 +120,7 @@ class TestFeedParser:
         episode_title = "original title"
 
         # test updated
-        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
+        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
         mocker.patch(
             self.mock_http_get,
@@ -183,7 +183,7 @@ class TestFeedParser:
 
     def test_parse_high_num_episodes(self, db, mocker, categories):
 
-        podcast = PodcastFactory()
+        podcast = create_podcast()
 
         mocker.patch(
             self.mock_http_get,
@@ -210,7 +210,7 @@ class TestFeedParser:
 
     def test_parse_ok_no_pub_date(self, db, mocker, categories):
 
-        podcast = PodcastFactory(pub_date=None)
+        podcast = create_podcast(pub_date=None)
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
 
@@ -218,7 +218,7 @@ class TestFeedParser:
         episode_title = "original title"
 
         # test updated
-        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
+        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
         mocker.patch(
             self.mock_http_get,
@@ -275,7 +275,7 @@ class TestFeedParser:
     def test_parse_same_content(self, db, mocker, categories):
 
         content = self.get_rss_content()
-        podcast = PodcastFactory(content_hash=make_content_hash(content))
+        podcast = create_podcast(content_hash=make_content_hash(content))
 
         mocker.patch(
             self.mock_http_get,
@@ -301,7 +301,7 @@ class TestFeedParser:
 
         content = self.get_rss_content()
 
-        PodcastFactory(content_hash=make_content_hash(content))
+        create_podcast(content_hash=make_content_hash(content))
 
         mocker.patch(
             self.mock_http_get,
@@ -329,7 +329,7 @@ class TestFeedParser:
         episode_title = "original title"
 
         # test updated
-        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
+        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
         mocker.patch(
             self.mock_http_get,
@@ -407,7 +407,7 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_permanent_redirect_url_taken(self, mocker, podcast, categories):
-        other = PodcastFactory(rss=self.redirect_rss)
+        other = create_podcast(rss=self.redirect_rss)
         current_rss = podcast.rss
 
         mocker.patch(

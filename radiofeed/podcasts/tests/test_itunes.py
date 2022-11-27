@@ -8,7 +8,7 @@ import requests
 from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 
 MOCK_RESULT = {
@@ -141,7 +141,7 @@ class TestSearch:
         mock_good_response.assert_not_called()
 
     def test_podcast_exists(self, db, mock_good_response):
-        PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
+        create_podcast(rss="https://feeds.fireside.fm/testandcode/rss")
         feeds = list(itunes.search("test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()

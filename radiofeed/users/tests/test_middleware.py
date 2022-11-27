@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 
-from radiofeed.users.factories import UserFactory
+from radiofeed.users.factories import create_user
 from radiofeed.users.middleware import language_middleware
 
 
@@ -16,6 +16,6 @@ class Testlanguage_middleware:
     def test_authenticated(self, db, rf, get_response):
 
         req = rf.get("/")
-        req.user = UserFactory(language="fi")
+        req.user = create_user(language="fi")
         resp = language_middleware(get_response)(req)
         assert resp.cookies[settings.LANGUAGE_COOKIE_NAME].value == "fi"

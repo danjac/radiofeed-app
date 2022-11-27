@@ -1,31 +1,34 @@
 from __future__ import annotations
 
 from allauth.account.models import EmailAddress
-from factory import Faker, SubFactory, post_generation
-from factory.django import DjangoModelFactory
+from faker import Faker
 
 from radiofeed.users.models import User
 
-
-class UserFactory(DjangoModelFactory):
-
-    username: str = Faker("user_name")
-    email: str = Faker("email")
-
-    @post_generation
-    def password(self, *args, **kwargs):
-        self.set_password("testpass1")
-
-    class Meta:
-        model = User
-        django_get_or_create = ["username"]
+faker = Faker()
 
 
-class EmailAddressFactory(DjangoModelFactory):
-    user: User = SubFactory(UserFactory)
-    email: str = Faker("email")
-    verified: bool = True
-    primary: bool = False
+def create_user(
+    *, username: str = "", email: str = "", password="testpass1", **kwargs
+) -> User:
+    return User.objects.create_user(
+        username=username or faker.user_name(),
+        email=email or faker.email(),
+        password=password,
+        **kwargs,
+    )
 
-    class Meta:
-        model = EmailAddress
+
+def create_email_address(
+    *,
+    user: User | None = None,
+    email: str = "",
+    verified: bool = True,
+    primary: bool = False,
+) -> EmailAddress:
+    return EmailAddress.objects.create(
+        user=user or create_user(),
+        email=email or faker.email(),
+        verified=verified,
+        primary=primary,
+    )

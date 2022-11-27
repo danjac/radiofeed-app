@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.template.context import RequestContext
 
-from radiofeed.episodes.factories import AudioLogFactory
+from radiofeed.episodes.factories import create_audio_log
 from radiofeed.episodes.player import Player
 from radiofeed.episodes.templatetags.audio_player import audio_player
 
@@ -16,7 +16,7 @@ class TestAudioPlayer:
         assert audio_player(RequestContext(req)) == {}
 
     def test_is_playing(self, rf, user, episode):
-        log = AudioLogFactory(episode=episode, user=user)
+        log = create_audio_log(episode=episode, user=user)
 
         req = rf.get("/")
         req.user = user

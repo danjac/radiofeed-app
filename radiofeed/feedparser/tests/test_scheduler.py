@@ -9,7 +9,7 @@ from django.utils import timezone
 from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.factories import FeedFactory, ItemFactory
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 
 
@@ -98,7 +98,7 @@ class TestScheduledForUpdate:
     )
     def test_schedule(self, db, mocker, active, parsed, pub_date, frequency, exists):
 
-        PodcastFactory(
+        create_podcast(
             active=active,
             parsed=timezone.now() - parsed if parsed else None,
             pub_date=timezone.now() - pub_date if pub_date else None,

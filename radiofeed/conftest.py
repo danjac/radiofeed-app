@@ -7,13 +7,13 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from faker import Faker
 
-from radiofeed.episodes.factories import EpisodeFactory
+from radiofeed.episodes.factories import create_episode
 from radiofeed.podcasts.factories import (
     CategoryFactory,
-    PodcastFactory,
-    SubscriptionFactory,
+    create_podcast,
+    create_subscription,
 )
-from radiofeed.users.factories import UserFactory
+from radiofeed.users.factories import create_user
 
 
 @pytest.fixture(scope="session")
@@ -37,7 +37,7 @@ def get_response():
 
 @pytest.fixture
 def user(db):
-    return UserFactory()
+    return create_user()
 
 
 @pytest.fixture
@@ -53,19 +53,19 @@ def auth_user(client, user):
 
 @pytest.fixture
 def staff_user(db, client):
-    user = UserFactory(is_staff=True)
+    user = create_user(is_staff=True)
     client.force_login(user)
     return user
 
 
 @pytest.fixture
 def podcast(db):
-    return PodcastFactory()
+    return create_podcast()
 
 
 @pytest.fixture
 def episode(db):
-    return EpisodeFactory()
+    return create_episode()
 
 
 @pytest.fixture
@@ -75,4 +75,4 @@ def category(db):
 
 @pytest.fixture
 def subscription(auth_user, podcast):
-    return SubscriptionFactory(podcast=podcast, subscriber=auth_user)
+    return create_subscription(podcast=podcast, subscriber=auth_user)

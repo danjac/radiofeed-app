@@ -2,43 +2,64 @@ from __future__ import annotations
 
 import uuid
 
+from datetime import datetime
+
 from django.utils import timezone
-from factory import Faker, LazyFunction, SubFactory
-from factory.django import DjangoModelFactory
+from faker import Faker
 
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.podcasts.factories import PodcastFactory
-from radiofeed.users.factories import UserFactory
+from radiofeed.podcasts.factories import create_podcast
+from radiofeed.podcasts.models import Podcast
+from radiofeed.users.factories import create_user
+from radiofeed.users.models import User
+
+faker = Faker()
 
 
-class EpisodeFactory(DjangoModelFactory):
+def create_episode(
+    *,
+    guid: str = "",
+    podcast: Podcast | None = None,
+    title: str = "",
+    description: str = "",
+    media_url: str = "",
+    media_type: str = "audio/mpeg",
+    pub_date: datetime | None = None,
+    duration: str = "100",
+    **kwargs,
+) -> Episode:
 
-    guid = LazyFunction(lambda: uuid.uuid4().hex)
-    podcast = SubFactory(PodcastFactory)
-    title = Faker("text")
-    description = Faker("text")
-    media_url = Faker("url")
-    media_type = "audio/mpeg"
-    pub_date = LazyFunction(timezone.now)
-    duration = "100"
-
-    class Meta:
-        model = Episode
-
-
-class BookmarkFactory(DjangoModelFactory):
-    episode = SubFactory(EpisodeFactory)
-    user = SubFactory(UserFactory)
-
-    class Meta:
-        model = Bookmark
+    return Episode.objects.create(
+        guid=guid or uuid.uuid4().hex,
+        podcast=podcast or create_podcast(),
+        title=title or faker.text(),
+        description=description or faker.text(),
+        pub_date=pub_date or timezone.now(),
+        media_url=media_url or faker.url(),
+        media_type=media_type,
+        duration=duration,
+        **kwargs,
+    )
 
 
-class AudioLogFactory(DjangoModelFactory):
-    episode = SubFactory(EpisodeFactory)
-    user = SubFactory(UserFactory)
-    listened = LazyFunction(timezone.now)
-    current_time = 1000
+def create_bookmark(
+    *, episode: Episode | None = None, user: User | None = None
+) -> Bookmark:
+    return Bookmark.objects.create(
+        episode or create_episode(), user=user or create_user()
+    )
 
-    class Meta:
-        model = AudioLog
+
+def create_audio_log(
+    *,
+    episode: Episode | None = None,
+    user: User | None = None,
+    listened: datetime | None = None,
+    current_time: int = 1000,
+) -> AudioLog:
+    return AudioLog.objects.create(
+        episode=episode or create_episode(),
+        user=user or create_user(),
+        listened=listened or timezone.now(),
+        current_time=current_time,
+    )

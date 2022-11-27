@@ -6,7 +6,7 @@ import pytest
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Subscription
 from radiofeed.users.forms import OpmlUploadForm
 
@@ -26,7 +26,7 @@ class TestOpmlUploadForm:
 
     @pytest.fixture
     def podcast(self, db):
-        return PodcastFactory(
+        return create_podcast(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 

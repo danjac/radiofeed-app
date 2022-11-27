@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from radiofeed.podcasts.factories import (
     CategoryFactory,
-    PodcastFactory,
-    RecommendationFactory,
+    create_podcast,
+    create_recommendation,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.podcasts.recommender import Recommender, recommend
@@ -11,7 +11,7 @@ from radiofeed.podcasts.recommender import Recommender, recommend
 
 class TestRecommender:
     def test_no_suitable_matches_for_podcasts(self, db):
-        PodcastFactory(
+        create_podcast(
             title="Cool science podcast",
             keywords="science physics astronomy",
         )
@@ -23,7 +23,7 @@ class TestRecommender:
 
 class TestRecommend:
     def test_handle_empty_data_frame(self, db):
-        PodcastFactory(
+        create_podcast(
             title="Cool science podcast",
             keywords="science physics astronomy",
         )
@@ -32,15 +32,15 @@ class TestRecommend:
         assert Recommendation.objects.count() == 0
 
     def test_create_podcast_recommendations_with_no_categories(self, db):
-        podcast_1 = PodcastFactory(
+        podcast_1 = create_podcast(
             title="Cool science podcast",
             keywords="science physics astronomy",
         )
-        PodcastFactory(
+        create_podcast(
             title="Another cool science podcast",
             keywords="science physics astronomy",
         )
-        PodcastFactory(title="Philosophy things", keywords="thinking")
+        create_podcast(title="Philosophy things", keywords="thinking")
         recommend()
         recommendations = (
             Recommendation.objects.filter(podcast=podcast_1)
@@ -55,21 +55,21 @@ class TestRecommend:
         cat_2 = CategoryFactory(name="Philosophy")
         cat_3 = CategoryFactory(name="Culture")
 
-        podcast_1 = PodcastFactory(
+        podcast_1 = create_podcast(
             extracted_text="Cool science podcast science physics astronomy",
             categories=[cat_1],
         )
-        podcast_2 = PodcastFactory(
+        podcast_2 = create_podcast(
             extracted_text="Another cool science podcast science physics astronomy",
             categories=[cat_1, cat_2],
         )
 
         # ensure old recommendations are removed
-        RecommendationFactory(podcast=podcast_1)
-        RecommendationFactory(podcast=podcast_2)
+        create_recommendation(podcast=podcast_1)
+        create_recommendation(podcast=podcast_2)
 
         # must have at least one category in common
-        PodcastFactory(
+        create_podcast(
             extracted_text="Philosophy things thinking",
             categories=[cat_2, cat_3],
         )

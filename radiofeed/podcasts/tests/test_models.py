@@ -8,16 +8,16 @@ from django.utils.translation import override
 
 from radiofeed.podcasts.factories import (
     CategoryFactory,
-    PodcastFactory,
-    RecommendationFactory,
+    create_podcast,
+    create_recommendation,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.users.factories import UserFactory
+from radiofeed.users.factories import create_user
 
 
 class TestRecommendationManager:
     def test_bulk_delete(self, db):
-        RecommendationFactory.create_batch(3)
+        create_recommendation.create_batch(3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
 
@@ -55,11 +55,11 @@ class TestCategoryModel:
 
 class TestPodcastManager:
     def test_search(self, db):
-        PodcastFactory(title="testing")
+        create_podcast(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
     def test_search_if_empty(self, db):
-        PodcastFactory(title="testing")
+        create_podcast(title="testing")
         assert Podcast.objects.search("").count() == 0
 
 
@@ -89,7 +89,7 @@ class TestPodcastModel:
         assert not podcast.is_subscribed(AnonymousUser())
 
     def test_is_subscribed_false(self, podcast):
-        assert not podcast.is_subscribed(UserFactory())
+        assert not podcast.is_subscribed(create_user())
 
     def test_is_subscribed_true(self, subscription):
         assert subscription.podcast.is_subscribed(subscription.subscriber)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from radiofeed.podcasts import emails
-from radiofeed.podcasts.factories import RecommendationFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import create_recommendation, create_subscription
 
 
 class TestRecommendations:
@@ -13,13 +13,13 @@ class TestRecommendations:
 
     def test_sufficient_recommendations(self, user, mailoutbox):
 
-        first = SubscriptionFactory(subscriber=user).podcast
-        second = SubscriptionFactory(subscriber=user).podcast
-        third = SubscriptionFactory(subscriber=user).podcast
+        first = create_subscription(subscriber=user).podcast
+        second = create_subscription(subscriber=user).podcast
+        third = create_subscription(subscriber=user).podcast
 
-        RecommendationFactory(podcast=first)
-        RecommendationFactory(podcast=second)
-        RecommendationFactory(podcast=third)
+        create_recommendation(podcast=first)
+        create_recommendation(podcast=second)
+        create_recommendation(podcast=third)
 
         assert emails.send_recommendations_email(user)
 
@@ -29,8 +29,8 @@ class TestRecommendations:
 
     def test_already_recommended(self, user, mailoutbox):
 
-        subscribed = SubscriptionFactory(subscriber=user).podcast
-        recommended = RecommendationFactory(podcast=subscribed).podcast
+        subscribed = create_subscription(subscriber=user).podcast
+        recommended = create_recommendation(podcast=subscribed).podcast
         user.recommended_podcasts.add(recommended)
 
         assert not emails.send_recommendations_email(user)

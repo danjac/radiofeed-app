@@ -4,7 +4,7 @@ import pytest
 
 from allauth.account.models import EmailAddress
 
-from radiofeed.users.factories import UserFactory
+from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
 
@@ -22,7 +22,7 @@ class TestUserManager:
     def test_email_notification_recipients(
         self, db, active, send_email_notifications, exists
     ):
-        UserFactory(is_active=active, send_email_notifications=send_email_notifications)
+        create_user(is_active=active, send_email_notifications=send_email_notifications)
         assert User.objects.email_notification_recipients().exists() == exists
 
     def test_create_user(self, db):
@@ -46,7 +46,7 @@ class TestUserManager:
 
     def test_for_email_matching_email_field(self, db):
 
-        user = UserFactory(email=self.email)
+        user = create_user(email=self.email)
         assert User.objects.for_email(self.email).first() == user
 
     def test_for_email_matching_email_address_instance(self, user):

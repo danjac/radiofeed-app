@@ -1,54 +1,66 @@
 from __future__ import annotations
 
-import factory
+from datetime import datetime
 
 from django.utils import timezone
-from factory.django import DjangoModelFactory
+from faker import Faker
 
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
-from radiofeed.users.factories import UserFactory
+from radiofeed.users.factories import create_user
+from radiofeed.users.models import User
+
+faker = Faker()
 
 
-class CategoryFactory(DjangoModelFactory):
-    name = factory.Sequence(lambda i: f"category-{i}")
-
-    class Meta:
-        model = Category
+def create_category(*, name: str = "", **kwargs) -> Category:
+    return Category.objects.create(name=name or faker.name(), **kwargs)
 
 
-class PodcastFactory(DjangoModelFactory):
-    rss = factory.Sequence(lambda i: f"https://example.com/{i}.xml")
-    title = factory.Faker("text")
-    pub_date = factory.LazyFunction(timezone.now)
-    cover_url = "https://example.com/cover.jpg"
-    description = factory.Faker("text")
+def create_podcast(
+    *,
+    rss: str = "",
+    title: str = "",
+    pub_date: datetime | None = None,
+    cover_url="https://example.com/cover.jpg",
+    description: str = "",
+    categories: list[Category] or None = None,
+    **kwargs,
+) -> Podcast:
+    podcast = Podcast.objects.create(
+        rss=rss or faker.url(),
+        title=title or faker.text(),
+        cover_url=cover_url,
+        description=description or faker.text(),
+        pub_date=pub_date or timezone.now(),
+        **kwargs,
+    )
 
-    class Meta:
-        model = Podcast
+    if categories:
+        podcast.categories.set(categories)
 
-    @factory.post_generation
-    def categories(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for category in extracted:
-                self.categories.add(category)
-
-
-class RecommendationFactory(DjangoModelFactory):
-    podcast = factory.SubFactory(PodcastFactory)
-    recommended = factory.SubFactory(PodcastFactory)
-
-    frequency = 3
-    similarity = 5.0
-
-    class Meta:
-        model = Recommendation
+    return podcast
 
 
-class SubscriptionFactory(DjangoModelFactory):
-    subscriber = factory.SubFactory(UserFactory)
-    podcast = factory.SubFactory(PodcastFactory)
+def create_recommendation(
+    *,
+    podcast: Podcast | None = None,
+    recommended: Podcast | None = None,
+    frequency: int = 3,
+    similarity: float = 5.0,
+) -> Recommendation:
+    return Recommendation.objects.create(
+        podcast=podcast or create_podcast(),
+        recommened=recommended or create_podcast(),
+        frequency=frequency,
+        similarity=similarity,
+    )
 
-    class Meta:
-        model = Subscription
+
+def create_subscription(
+    *, subscriber: User | None = None, podcast: Podcast | None = None
+) -> Subscription:
+
+    return Subscription.objects.create(
+        subscriber=subscriber or create_user(),
+        podcast=podcast or create_podcast(),
+    )

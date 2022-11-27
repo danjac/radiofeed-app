@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from radiofeed.common.fast_count import FastCountPaginator
-from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 
 
 class TestFastCountPaginator:
     def test_with_fast_count(self, db):
-        PodcastFactory.create_batch(30)
+        create_podcast.create_batch(30)
         paginator = FastCountPaginator(Podcast.objects.all(), 10)
         assert paginator.count == 30
 
@@ -26,5 +26,5 @@ class TestFastCountQuerySetMixin:
 
     def test_fast_count_if_filter(self, db, mocker):
         mocker.patch(self.reltuple_count, return_value=2000)
-        PodcastFactory(title="test")
+        create_podcast(title="test")
         assert Podcast.objects.filter(title="test").fast_count() == 1

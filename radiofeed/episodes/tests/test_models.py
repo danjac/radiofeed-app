@@ -7,9 +7,9 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.episodes.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
-    EpisodeFactory,
+    create_audio_log,
+    create_bookmark,
+    create_episode,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.models import Podcast
@@ -17,28 +17,28 @@ from radiofeed.podcasts.models import Podcast
 
 class TestEpisodeManager:
     def test_with_current_time_if_anonymous(self, db, anonymous_user):
-        EpisodeFactory()
+        create_episode()
         episode = Episode.objects.with_current_time(anonymous_user).first()
 
         assert episode.current_time == 0
         assert not episode.listened
 
     def test_with_current_time_if_not_played(self, user):
-        EpisodeFactory()
+        create_episode()
         episode = Episode.objects.with_current_time(user).first()
 
         assert not episode.current_time
         assert not episode.listened
 
     def test_with_current_time_if_played(self, user):
-        log = AudioLogFactory(user=user, current_time=20, listened=timezone.now())
+        log = create_audio_log(user=user, current_time=20, listened=timezone.now())
         episode = Episode.objects.with_current_time(user).first()
 
         assert episode.current_time == 20
         assert episode.listened == log.listened
 
     def test_search(self, db):
-        EpisodeFactory(title="testing")
+        create_episode(title="testing")
         assert Episode.objects.search("testing").count() == 1
 
 
@@ -55,7 +55,7 @@ class TestEpisodeModel:
 
     def test_get_next_episode_not_same_podcast(self, episode):
 
-        EpisodeFactory(
+        create_episode(
             pub_date=episode.pub_date + datetime.timedelta(days=2),
         )
 
@@ -63,7 +63,7 @@ class TestEpisodeModel:
 
     def test_get_previous_episode_not_same_podcast(self, episode):
 
-        EpisodeFactory(
+        create_episode(
             pub_date=episode.pub_date - datetime.timedelta(days=2),
         )
 
@@ -71,7 +71,7 @@ class TestEpisodeModel:
 
     def test_get_next_episode(self, episode):
 
-        next_episode = EpisodeFactory(
+        next_episode = create_episode(
             podcast=episode.podcast,
             pub_date=episode.pub_date + datetime.timedelta(days=2),
         )
@@ -80,7 +80,7 @@ class TestEpisodeModel:
 
     def test_get_previous_episode(self, episode):
 
-        previous_episode = EpisodeFactory(
+        previous_episode = create_episode(
             podcast=episode.podcast,
             pub_date=episode.pub_date - datetime.timedelta(days=2),
         )
@@ -174,7 +174,7 @@ class TestEpisodeModel:
 
     def test_get_media_metadata(self, db):
         cover_url = "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/9b63d479-4382-4198-8e63-aac7013964ff/e5ebd302-9d49-4c56-a234-aac701396502/image.jpg?t=1568401263\u0026size=Large"
-        episode = EpisodeFactory(podcast__cover_url=cover_url)
+        episode = create_episode(podcast__cover_url=cover_url)
         data = episode.get_media_metadata()
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title
@@ -186,7 +186,7 @@ class TestEpisodeModel:
         }
 
     def test_get_cover_url_if_episode_cover(self, podcast):
-        episode = EpisodeFactory(
+        episode = create_episode(
             podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
         )
         assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
@@ -195,7 +195,7 @@ class TestEpisodeModel:
         assert episode.get_cover_url() == "https://example.com/cover.jpg"
 
     def test_get_cover_url_if_none(self, db):
-        episode = EpisodeFactory(podcast__cover_url=None)
+        episode = create_episode(podcast__cover_url=None)
         assert episode.get_cover_url() is None
 
     def test_is_bookmarked_anonymous(self, anonymous_user, episode):
@@ -205,7 +205,7 @@ class TestEpisodeModel:
         assert not episode.is_bookmarked(user)
 
     def test_is_bookmarked_true(self, user, episode):
-        fave = BookmarkFactory(user=user, episode=episode)
+        fave = create_bookmark(user=user, episode=episode)
         assert fave.episode.is_bookmarked(fave.user)
 
     @pytest.mark.parametrize(
@@ -241,13 +241,13 @@ class TestEpisodeModel:
 
 class TestBookmarkManager:
     def test_search(self, db):
-        episode = EpisodeFactory(title="testing")
-        BookmarkFactory(episode=episode)
+        episode = create_episode(title="testing")
+        create_bookmark(episode=episode)
         assert Bookmark.objects.search("testing").count() == 1
 
 
 class TestAudioLogManager:
     def test_search(self, db):
-        episode = EpisodeFactory(title="testing")
-        AudioLogFactory(episode=episode)
+        episode = create_episode(title="testing")
+        create_audio_log(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1

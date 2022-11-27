@@ -4,7 +4,7 @@ import pytest
 
 from django.template.loader import get_template
 
-from radiofeed.users.factories import EmailAddressFactory
+from radiofeed.users.factories import create_email_address
 
 
 @pytest.fixture
@@ -69,8 +69,8 @@ class TestAccount:
 
     def test_email(self, auth_req):
 
-        EmailAddressFactory(user=auth_req.user, primary=True)
-        EmailAddressFactory(user=auth_req.user, primary=False)
+        create_email_address(user=auth_req.user, primary=True)
+        create_email_address(user=auth_req.user, primary=False)
 
         assert get_template("account/email.html").render(
             {
