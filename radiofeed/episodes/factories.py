@@ -26,7 +26,7 @@ def create_episode(
     title: str = NotSet,
     description: str = NotSet,
     pub_date: datetime | None = NotSet,
-    media_url: str | None = NotSet,
+    media_url: str = NotSet,
     media_type: str = NotSet,
     duration: str = NotSet,
     **kwargs,
