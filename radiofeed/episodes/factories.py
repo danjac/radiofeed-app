@@ -18,7 +18,7 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import default_user
 from radiofeed.users.models import User
 
-_media_url_seq = (f"https://example.com/audio-{n}.mpeg" for n in itertools.count())
+_media_url_seq = (f"https://example.com/audio-{n}.mp3" for n in itertools.count())
 
 default_media_url = functools.partial(
     set_default, default_value=lambda: next(_media_url_seq)
