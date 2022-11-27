@@ -21,6 +21,11 @@ class _NotSet:
 NotSet: Any = _NotSet()
 
 
+def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:
+    """Create batch of models."""
+    return [factory(**kwargs) for i in range(0, count)]
+
+
 def notset(value: Any, default_value: Any) -> Any:
     """Returns default value if value is NotSet."""
     if value is NotSet:
@@ -28,16 +33,13 @@ def notset(value: Any, default_value: Any) -> Any:
     return value
 
 
-def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:
-    """Create batch of models."""
-    return [factory(**kwargs) for i in range(0, count)]
+# common notset defaults
 
-
-notset_username = functools.partial(notset, default_value=_faker.unique.user_name)
-notset_email = functools.partial(notset, default_value=_faker.unique.email)
-notset_url = functools.partial(notset, default_value=_faker.unique.url)
-notset_password = functools.partial(notset, default_value=_faker.password)
-notset_name = functools.partial(notset, default_value=_faker.name)
-notset_text = functools.partial(notset, default_value=_faker.text)
-notset_datetime = functools.partial(notset, default_value=timezone.now)
-notset_guid = functools.partial(notset, default_value=lambda: uuid.uuid4().hex)
+guid_notset = functools.partial(notset, default_value=lambda: uuid.uuid4().hex)
+name_notset = functools.partial(notset, default_value=_faker.name)
+datetime_notset = functools.partial(notset, default_value=timezone.now)
+email_notset = functools.partial(notset, default_value=_faker.unique.email)
+password_notset = functools.partial(notset, default_value=_faker.password)
+text_notset = functools.partial(notset, default_value=_faker.text)
+url_notset = functools.partial(notset, default_value=_faker.unique.url)
+username_notset = functools.partial(notset, default_value=_faker.unique.user_name)
