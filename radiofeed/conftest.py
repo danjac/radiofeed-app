@@ -18,7 +18,9 @@ from radiofeed.users.factories import create_user
 
 @pytest.fixture(scope="session")
 def faker():
-    return Faker()
+    faker = Faker()
+    yield faker
+    faker.unique.clear()
 
 
 @pytest.fixture

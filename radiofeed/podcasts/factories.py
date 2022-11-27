@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-import itertools
 
 from datetime import datetime
 
@@ -10,13 +9,12 @@ from radiofeed.common.factories import (
     default_name,
     default_now,
     default_text,
+    default_url,
     set_default,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import default_user
 from radiofeed.users.models import User
-
-_rss_seq = (f"https://media.rss.com/podcast-{n}/rss.xml" for n in itertools.count())
 
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
@@ -34,7 +32,7 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=set_default(rss, lambda: next(_rss_seq)),
+        rss=default_url(rss),
         title=default_text(title),
         description=default_text(description),
         pub_date=default_now(pub_date),
