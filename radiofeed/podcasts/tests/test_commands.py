@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.core.management import call_command
 
+from radiofeed.common.factories import create_batch
 from radiofeed.podcasts.factories import create_recommendation
 from radiofeed.podcasts.itunes import Feed
 from radiofeed.users.factories import create_user
@@ -12,7 +13,7 @@ class TestCreateRecommendations:
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",
             return_value=[
-                ("en", create_recommendation.create_batch(3)),
+                ("en", create_batch(create_recommendation, 3)),
             ],
         )
         call_command("create_recommendations")

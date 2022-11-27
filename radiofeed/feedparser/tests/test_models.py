@@ -6,29 +6,29 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.feedparser.factories import FeedFactory, ItemFactory
+from radiofeed.feedparser.factories import create_feed, create_item
 from radiofeed.feedparser.models import Feed, Item
 
 
 class TestItem:
     def test_pub_date_none(self):
         with pytest.raises(ValueError):
-            Item(**ItemFactory(pub_date=None))
+            Item(**create_item(pub_date=None))
 
     def test_pub_date_in_future(self):
         with pytest.raises(ValueError):
-            Item(**ItemFactory(pub_date=timezone.now() + timedelta(days=1)))
+            Item(**create_item(pub_date=timezone.now() + timedelta(days=1)))
 
     def test_not_audio_mimetype(self):
         with pytest.raises(ValueError):
-            Item(**ItemFactory(media_type="video/mpeg"))
+            Item(**create_item(media_type="video/mpeg"))
 
     def test_default_keywords_from_categories(self):
-        item = Item(**ItemFactory(), categories=["Gaming", "Hobbies", "Video Games"])
+        item = Item(**create_item(), categories=["Gaming", "Hobbies", "Video Games"])
         assert item.keywords == "Gaming Hobbies Video Games"
 
     def test_defaults(self):
-        item = Item(**ItemFactory())
+        item = Item(**create_item())
         assert item.explicit is False
         assert item.episode_type == "full"
         assert item.categories == []
@@ -38,11 +38,11 @@ class TestItem:
 class TestFeed:
     @pytest.fixture
     def item(self):
-        return Item(**ItemFactory())
+        return Item(**create_item())
 
     def test_language(self, item):
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             language="fr-CA",
             items=[item],
         )
@@ -50,11 +50,11 @@ class TestFeed:
 
     def test_no_items(self):
         with pytest.raises(ValueError):
-            Feed(**FeedFactory(), items=[])
+            Feed(**create_feed(), items=[])
 
     def test_not_complete(self, item):
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             items=[item],
             complete="no",
         )
@@ -63,7 +63,7 @@ class TestFeed:
 
     def test_complete(self, item):
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             items=[item],
             complete="yes",
         )
@@ -72,7 +72,7 @@ class TestFeed:
 
     def test_defaults(self, item):
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             items=[item],
         )
 

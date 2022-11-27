@@ -7,7 +7,7 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.feedparser import scheduler
-from radiofeed.feedparser.factories import FeedFactory, ItemFactory
+from radiofeed.feedparser.factories import create_feed, create_item
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
@@ -124,10 +124,10 @@ class TestReschedule:
 class TestSchedule:
     def test_single_date(self):
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             items=[
                 Item(
-                    **ItemFactory(
+                    **create_item(
                         pub_date=timezone.now() - timedelta(days=3),
                     )
                 )
@@ -138,10 +138,10 @@ class TestSchedule:
 
     def test_single_date_rescheduled(self):
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             items=[
                 Item(
-                    **ItemFactory(
+                    **create_item(
                         pub_date=timezone.now() - timedelta(days=33),
                     )
                 )
@@ -154,9 +154,9 @@ class TestSchedule:
 
         pub_date = timezone.now() - timedelta(days=3)
 
-        items = [Item(**ItemFactory(pub_date=pub_date)) for _ in range(12)]
+        items = [Item(**create_item(pub_date=pub_date)) for _ in range(12)]
 
-        feed = Feed(**FeedFactory(), items=items)
+        feed = Feed(**create_feed(), items=items)
 
         assert scheduler.schedule(feed).days == 3
 
@@ -168,10 +168,10 @@ class TestSchedule:
         for day in [7] * 12:
 
             pub_date = last - timedelta(days=day)
-            items.append(Item(**ItemFactory(pub_date=pub_date)))
+            items.append(Item(**create_item(pub_date=pub_date)))
             last = pub_date
 
-        feed = Feed(**FeedFactory(), items=items)
+        feed = Feed(**create_feed(), items=items)
 
         assert scheduler.schedule(feed).days == pytest.approx(7)
 
@@ -183,10 +183,10 @@ class TestSchedule:
         for day in [4, 3, 4, 2, 5, 2, 4, 4, 3, 4, 4, 4, 6, 5, 7, 7, 7, 7, 3]:
 
             pub_date = last - timedelta(days=day)
-            items.append(Item(**ItemFactory(pub_date=pub_date)))
+            items.append(Item(**create_item(pub_date=pub_date)))
             last = pub_date
 
-        feed = Feed(**FeedFactory(), items=items)
+        feed = Feed(**create_feed(), items=items)
 
         assert scheduler.schedule(feed).days == pytest.approx(4)
 
@@ -198,20 +198,20 @@ class TestSchedule:
         for day in [3, 4] * 12:
 
             pub_date = last - timedelta(days=day)
-            items.append(Item(**ItemFactory(pub_date=pub_date)))
+            items.append(Item(**create_item(pub_date=pub_date)))
             last = pub_date
 
-        feed = Feed(**FeedFactory(), items=items)
+        feed = Feed(**create_feed(), items=items)
 
         assert scheduler.schedule(feed).days == pytest.approx(3)
 
     def test_min_frequency(self):
         now = timezone.now()
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             items=[
                 Item(
-                    **ItemFactory(
+                    **create_item(
                         pub_date=pub_date,
                     )
                 )
@@ -226,10 +226,10 @@ class TestSchedule:
     def test_rescheduled(self):
         now = timezone.now()
         feed = Feed(
-            **FeedFactory(),
+            **create_feed(),
             items=[
                 Item(
-                    **ItemFactory(
+                    **create_item(
                         pub_date=pub_date,
                     )
                 )

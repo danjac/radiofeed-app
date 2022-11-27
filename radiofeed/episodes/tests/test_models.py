@@ -12,6 +12,7 @@ from radiofeed.episodes.factories import (
     create_episode,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
+from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 
 
@@ -174,7 +175,7 @@ class TestEpisodeModel:
 
     def test_get_media_metadata(self, db):
         cover_url = "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/9b63d479-4382-4198-8e63-aac7013964ff/e5ebd302-9d49-4c56-a234-aac701396502/image.jpg?t=1568401263\u0026size=Large"
-        episode = create_episode(podcast__cover_url=cover_url)
+        episode = create_episode(podcast=create_podcast(cover_url=cover_url))
         data = episode.get_media_metadata()
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title
@@ -195,7 +196,7 @@ class TestEpisodeModel:
         assert episode.get_cover_url() == "https://example.com/cover.jpg"
 
     def test_get_cover_url_if_none(self, db):
-        episode = create_episode(podcast__cover_url=None)
+        episode = create_episode(podcast=create_podcast(cover_url=None))
         assert episode.get_cover_url() is None
 
     def test_is_bookmarked_anonymous(self, anonymous_user, episode):

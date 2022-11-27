@@ -6,8 +6,9 @@ from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 from django.utils.translation import override
 
+from radiofeed.common.factories import create_batch
 from radiofeed.podcasts.factories import (
-    CategoryFactory,
+    create_category,
     create_podcast,
     create_recommendation,
 )
@@ -17,7 +18,7 @@ from radiofeed.users.factories import create_user
 
 class TestRecommendationManager:
     def test_bulk_delete(self, db):
-        create_recommendation.create_batch(3)
+        create_batch(create_recommendation, 3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
 
@@ -25,7 +26,7 @@ class TestRecommendationManager:
 class TestCategoryManager:
     @pytest.fixture
     def category(self, db):
-        return CategoryFactory(name="testing", name_fi="testaaminen")
+        return create_category(name="testing", name_fi="testaaminen")
 
     def test_search_empty(self, category):
         assert Category.objects.search("").count() == 0

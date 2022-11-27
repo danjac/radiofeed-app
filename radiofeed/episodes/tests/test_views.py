@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-import factory
 import pytest
 
 from django.urls import reverse, reverse_lazy
@@ -14,6 +13,7 @@ from radiofeed.common.asserts import (
     assert_no_content,
     assert_ok,
 )
+from radiofeed.common.factories import create_batch
 from radiofeed.episodes.factories import (
     create_audio_log,
     create_bookmark,
@@ -48,7 +48,7 @@ class TestNewEpisodes:
     def test_not_subscribed(self, client, auth_user):
         promoted = create_podcast(promoted=True)
         create_episode(podcast=promoted)
-        create_episode.create_batch(3)
+        create_batch(create_episode, 3)
         response = client.get(episodes_url)
         assert_ok(response)
 
@@ -60,7 +60,7 @@ class TestNewEpisodes:
         promoted = create_podcast(promoted=True)
         create_episode(podcast=promoted)
 
-        create_episode.create_batch(3)
+        create_batch(create_episode, 3)
 
         episode = create_episode()
         create_subscription(subscriber=auth_user, podcast=episode.podcast)
@@ -77,7 +77,7 @@ class TestNewEpisodes:
         promoted = create_podcast(promoted=True)
         create_episode(podcast=promoted)
 
-        create_episode.create_batch(3)
+        create_batch(create_episode, 3)
 
         episode = create_episode()
         create_subscription(subscriber=auth_user, podcast=episode.podcast)
@@ -103,7 +103,7 @@ class TestSearchEpisodes:
         assert client.get(self.url, {"query": ""}).url == episodes_url
 
     def test_search(self, auth_user, client, faker):
-        create_episode.create_batch(3, title="zzzz", keywords="zzzz")
+        create_batch(create_episode, 3, title="zzzz", keywords="zzzz")
         episode = create_episode(title=faker.unique.name())
         response = client.get(self.url, {"query": episode.title})
         assert_ok(response)
@@ -118,13 +118,15 @@ class TestSearchEpisodes:
 
 class TestEpisodeDetail:
     @pytest.fixture
-    def episode(self, db):
+    def episode(self, db, faker):
         return create_episode(
-            podcast__owner=factory.Faker("name"),
-            podcast__link=factory.Faker("url"),
-            podcast__funding_url=factory.Faker("url"),
-            podcast__funding_text=factory.Faker("text"),
-            podcast__keywords=factory.Faker("text"),
+            podcast=create_podcast(
+                owner=faker.name(),
+                link=faker.url(),
+                funding_url=faker.url(),
+                funding_text=faker.text(),
+                keywords=faker.text(),
+            ),
             episode_type="full",
             season=1,
             episode=3,
@@ -342,7 +344,7 @@ class TestBookmarks:
     url = reverse_lazy("episodes:bookmarks")
 
     def test_get(self, client, auth_user):
-        create_bookmark.create_batch(33, user=auth_user)
+        create_batch(create_bookmark, 33, user=auth_user)
 
         response = client.get(self.url)
 
@@ -350,7 +352,7 @@ class TestBookmarks:
         assert len(response.context["page_obj"].object_list) == 30
 
     def test_ascending(self, client, auth_user):
-        create_bookmark.create_batch(33, user=auth_user)
+        create_batch(create_bookmark, 33, user=auth_user)
 
         response = client.get(self.url, {"order": "asc"})
 
@@ -420,7 +422,7 @@ class TestHistory:
     url = reverse_lazy("episodes:history")
 
     def test_get(self, client, auth_user):
-        create_audio_log.create_batch(33, user=auth_user)
+        create_batch(create_audio_log, 33, user=auth_user)
         response = client.get(self.url)
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
@@ -431,7 +433,7 @@ class TestHistory:
         assert len(response.context["page_obj"].object_list) == 0
 
     def test_ascending(self, client, auth_user):
-        create_audio_log.create_batch(33, user=auth_user)
+        create_batch(create_audio_log, 33, user=auth_user)
 
         response = client.get(self.url, {"order": "asc"})
         assert_ok(response)

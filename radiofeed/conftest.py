@@ -9,7 +9,7 @@ from faker import Faker
 
 from radiofeed.episodes.factories import create_episode
 from radiofeed.podcasts.factories import (
-    CategoryFactory,
+    create_category,
     create_podcast,
     create_subscription,
 )
@@ -70,7 +70,7 @@ def episode(db):
 
 @pytest.fixture
 def category(db):
-    return CategoryFactory()
+    return create_category()
 
 
 @pytest.fixture

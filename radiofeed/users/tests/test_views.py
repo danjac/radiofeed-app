@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.common.asserts import assert_hx_redirect, assert_ok
+from radiofeed.common.factories import create_batch
 from radiofeed.episodes.factories import create_audio_log, create_bookmark
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Subscription
@@ -53,9 +54,9 @@ class TestUserStats:
 
     def test_stats_plural(self, client, auth_user):
 
-        create_audio_log.create_batch(3, user=auth_user)
-        create_bookmark.create_batch(3, user=auth_user)
-        create_subscription.create_batch(3, subscriber=auth_user)
+        create_batch(create_audio_log, 3, user=auth_user)
+        create_batch(create_bookmark, 3, user=auth_user)
+        create_batch(create_subscription, 3, subscriber=auth_user)
 
         response = client.get(reverse("users:stats"))
         assert_ok(response)
@@ -97,7 +98,9 @@ class TestImportPodcastFeeds:
 
     def test_post_has_no_new_feeds(self, client, auth_user, mocker, upload_file):
         create_subscription(
-            podcast__rss="https://feeds.99percentinvisible.org/99percentinvisible",
+            podcast=create_podcast(
+                rss="https://feeds.99percentinvisible.org/99percentinvisible"
+            ),
             subscriber=auth_user,
         )
 

@@ -10,6 +10,7 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
+from radiofeed.common.factories import create_batch
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -36,7 +37,7 @@ def podcast_admin():
 
 @pytest.fixture
 def podcasts(db):
-    return create_podcast.create_batch(3, active=True, promoted=False)
+    return create_batch(create_podcast, 3, active=True, promoted=False)
 
 
 @pytest.fixture

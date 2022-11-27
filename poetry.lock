@@ -502,21 +502,6 @@ python-versions = "*"
 tests = ["asttokens", "littleutils", "pytest", "rich"]
 
 [[package]]
-name = "factory-boy"
-version = "3.2.1"
-description = "A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby."
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-Faker = ">=0.7.0"
-
-[package.extras]
-dev = ["Django", "Pillow", "SQLAlchemy", "coverage", "flake8", "isort", "mongoengine", "tox", "wheel (>=0.32.0)", "zest.releaser[recommended]"]
-doc = ["Sphinx", "sphinx-rtd-theme", "sphinxcontrib-spelling"]
-
-[[package]]
 name = "faker"
 version = "13.16.0"
 description = "Faker is a Python package that generates fake data for you."
@@ -1740,7 +1725,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.12"
-content-hash = "a2be3b68dbb09f0fc44108b35d0ad5910ad3079916e433ec5404c9f27237b5d4"
+content-hash = "3401848b92692141a6a1fdf106f20d1df7b80678c65135905149bd92fb3dccdc"
 
 [metadata.files]
 appnope = [
@@ -2124,10 +2109,6 @@ execnet = [
 executing = [
     {file = "executing-1.2.0-py2.py3-none-any.whl", hash = "sha256:0314a69e37426e3608aada02473b4161d4caf5a4b244d1d0c48072b8fee7bacc"},
     {file = "executing-1.2.0.tar.gz", hash = "sha256:19da64c18d2d851112f09c287f8d3dbbdf725ab0e569077efb6cdcbd3497c107"},
-]
-factory-boy = [
-    {file = "factory_boy-3.2.1-py2.py3-none-any.whl", hash = "sha256:eb02a7dd1b577ef606b75a253b9818e6f9eaf996d94449c9d5ebb124f90dc795"},
-    {file = "factory_boy-3.2.1.tar.gz", hash = "sha256:a98d277b0c047c75eb6e4ab8508a7f81fb03d2cb21986f627913546ef7a2a55e"},
 ]
 faker = [
     {file = "Faker-13.16.0-py3-none-any.whl", hash = "sha256:920f94d5aa865fd922bc29f2cf75c75b4d86b30eec23e7174d7513241b759b05"},

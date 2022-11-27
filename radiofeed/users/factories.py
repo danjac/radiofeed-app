@@ -12,8 +12,8 @@ def create_user(
     *, username: str = "", email: str = "", password="testpass1", **kwargs
 ) -> User:
     return User.objects.create_user(
-        username=username or faker.user_name(),
-        email=email or faker.email(),
+        username=username or faker.unique.user_name(),
+        email=email or faker.unique.email(),
         password=password,
         **kwargs,
     )
@@ -28,7 +28,7 @@ def create_email_address(
 ) -> EmailAddress:
     return EmailAddress.objects.create(
         user=user or create_user(),
-        email=email or faker.email(),
+        email=email or faker.unique.email(),
         verified=verified,
         primary=primary,
     )

@@ -7,6 +7,7 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
+from radiofeed.common.factories import NotSet
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
@@ -22,9 +23,9 @@ def create_episode(
     podcast: Podcast | None = None,
     title: str = "",
     description: str = "",
-    media_url: str = "",
-    media_type: str = "audio/mpeg",
     pub_date: datetime | None = None,
+    media_url: str | NotSet | None = NotSet,
+    media_type: str = "audio/mpeg",
     duration: str = "100",
     **kwargs,
 ) -> Episode:
@@ -35,7 +36,7 @@ def create_episode(
         title=title or faker.text(),
         description=description or faker.text(),
         pub_date=pub_date or timezone.now(),
-        media_url=media_url or faker.url(),
+        media_url=faker.url() if media_url is NotSet else media_url,
         media_type=media_type,
         duration=duration,
         **kwargs,
@@ -46,7 +47,8 @@ def create_bookmark(
     *, episode: Episode | None = None, user: User | None = None
 ) -> Bookmark:
     return Bookmark.objects.create(
-        episode or create_episode(), user=user or create_user()
+        episode=episode or create_episode(),
+        user=user or create_user(),
     )
 
 

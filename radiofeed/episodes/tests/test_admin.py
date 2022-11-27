@@ -4,9 +4,11 @@ import pytest
 
 from django.contrib.admin.sites import AdminSite
 
+from radiofeed.common.factories import create_batch
 from radiofeed.episodes.admin import EpisodeAdmin
 from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
+from radiofeed.podcasts.factories import create_podcast
 
 
 class TestEpisodeAdmin:
@@ -19,7 +21,7 @@ class TestEpisodeAdmin:
         assert admin.episode_title(episode) == "testing"
 
     def test_podcast_title(self, db, admin):
-        episode = create_episode(podcast__title="testing")
+        episode = create_episode(podcast=create_podcast(title="testing"))
         assert admin.podcast_title(episode) == "testing"
 
     def test_get_ordering_no_search_term(self, admin, rf):
@@ -31,12 +33,12 @@ class TestEpisodeAdmin:
         assert ordering == []
 
     def test_get_search_results_no_search_term(self, rf, db, admin):
-        create_episode.create_batch(3)
+        create_batch(create_episode, 3)
         qs, _ = admin.get_search_results(rf.get("/"), Episode.objects.all(), "")
         assert qs.count() == 3
 
     def test_get_search_results(self, rf, db, admin):
-        create_episode.create_batch(3)
+        create_batch(create_episode, 3)
 
         episode = create_episode(title="testing python")
 

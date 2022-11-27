@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from radiofeed.podcasts.factories import (
-    CategoryFactory,
+    create_category,
     create_podcast,
     create_recommendation,
 )
@@ -51,9 +51,9 @@ class TestRecommend:
 
     def test_create_podcast_recommendations(self, db):
 
-        cat_1 = CategoryFactory(name="Science")
-        cat_2 = CategoryFactory(name="Philosophy")
-        cat_3 = CategoryFactory(name="Culture")
+        cat_1 = create_category(name="Science")
+        cat_2 = create_category(name="Philosophy")
+        cat_3 = create_category(name="Culture")
 
         podcast_1 = create_podcast(
             extracted_text="Cool science podcast science physics astronomy",

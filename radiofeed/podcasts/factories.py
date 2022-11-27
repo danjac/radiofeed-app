@@ -5,6 +5,7 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
+from radiofeed.common.factories import NotSet
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
@@ -20,18 +21,18 @@ def create_podcast(
     *,
     rss: str = "",
     title: str = "",
-    pub_date: datetime | None = None,
-    cover_url="https://example.com/cover.jpg",
+    pub_date: datetime | NotSet | None = NotSet,
+    cover_url: str | NotSet | None = NotSet,
     description: str = "",
-    categories: list[Category] or None = None,
+    categories: list[Category] | None = None,
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=rss or faker.url(),
+        rss=rss or faker.unique.url(),
         title=title or faker.text(),
-        cover_url=cover_url,
+        cover_url="https://example.com/cover.jpg" if cover_url is NotSet else cover_url,
         description=description or faker.text(),
-        pub_date=pub_date or timezone.now(),
+        pub_date=timezone.now() if pub_date is NotSet else pub_date,
         **kwargs,
     )
 
@@ -50,7 +51,7 @@ def create_recommendation(
 ) -> Recommendation:
     return Recommendation.objects.create(
         podcast=podcast or create_podcast(),
-        recommened=recommended or create_podcast(),
+        recommended=recommended or create_podcast(),
         frequency=frequency,
         similarity=similarity,
     )
