@@ -4,8 +4,13 @@ from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseRedirect,
+)
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -66,7 +71,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             "episodes/includes/episodes.html",
         )
 
-    return redirect("episodes:index")
+    return HttpResponseRedirect(reverse("episodes:index"))
 
 
 @require_safe
