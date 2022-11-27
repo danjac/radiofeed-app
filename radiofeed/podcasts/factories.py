@@ -6,19 +6,19 @@ from datetime import datetime
 
 from radiofeed.common.factories import (
     NotSet,
-    datetime_notset,
-    name_notset,
-    notset,
-    text_notset,
-    url_notset,
+    default_name,
+    default_now,
+    default_text,
+    default_url,
+    set_default,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
-from radiofeed.users.factories import user_notset
+from radiofeed.users.factories import default_user
 from radiofeed.users.models import User
 
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
-    return Category.objects.create(name=name_notset(name), **kwargs)
+    return Category.objects.create(name=default_name(name), **kwargs)
 
 
 def create_podcast(
@@ -32,11 +32,11 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=url_notset(rss),
-        title=text_notset(title),
-        description=text_notset(description),
-        pub_date=datetime_notset(pub_date),
-        cover_url=notset(cover_url, "https://example.com/cover.jpg"),
+        rss=default_url(rss),
+        title=default_text(title),
+        description=default_text(description),
+        pub_date=default_now(pub_date),
+        cover_url=set_default(cover_url, "https://example.com/cover.jpg"),
         **kwargs,
     )
 
@@ -46,7 +46,7 @@ def create_podcast(
     return podcast
 
 
-podcast_notset = functools.partial(notset, default_value=create_podcast)
+default_podcast = functools.partial(set_default, default_value=create_podcast)
 
 
 def create_recommendation(
@@ -57,10 +57,10 @@ def create_recommendation(
     similarity: float = NotSet,
 ) -> Recommendation:
     return Recommendation.objects.create(
-        podcast=podcast_notset(podcast),
-        recommended=podcast_notset(recommended),
-        frequency=notset(frequency, 3),
-        similarity=notset(similarity, 0.5),
+        podcast=default_podcast(podcast),
+        recommended=default_podcast(recommended),
+        frequency=set_default(frequency, 3),
+        similarity=set_default(similarity, 0.5),
     )
 
 
@@ -71,6 +71,6 @@ def create_subscription(
 ) -> Subscription:
 
     return Subscription.objects.create(
-        subscriber=user_notset(subscriber),
-        podcast=podcast_notset(podcast),
+        subscriber=default_user(subscriber),
+        podcast=default_podcast(podcast),
     )

@@ -6,10 +6,10 @@ from allauth.account.models import EmailAddress
 
 from radiofeed.common.factories import (
     NotSet,
-    email_notset,
-    notset,
-    password_notset,
-    username_notset,
+    default_email,
+    default_password,
+    default_username,
+    set_default,
 )
 from radiofeed.users.models import User
 
@@ -22,14 +22,14 @@ def create_user(
     **kwargs,
 ) -> User:
     return User.objects.create_user(
-        username=username_notset(username),
-        email=email_notset(email),
-        password=password_notset(password),
+        username=default_username(username),
+        email=default_email(email),
+        password=default_password(password),
         **kwargs,
     )
 
 
-user_notset = functools.partial(notset, default_value=create_user)
+default_user = functools.partial(set_default, default_value=create_user)
 
 
 def create_email_address(
@@ -40,8 +40,8 @@ def create_email_address(
     primary: bool = False,
 ) -> EmailAddress:
     return EmailAddress.objects.create(
-        user=user_notset(user),
-        email=email_notset(email),
+        user=default_user(user),
+        email=default_email(email),
         verified=verified,
         primary=primary,
     )

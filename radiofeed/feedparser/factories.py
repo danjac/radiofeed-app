@@ -4,11 +4,11 @@ from datetime import datetime
 
 from radiofeed.common.factories import (
     NotSet,
-    datetime_notset,
-    guid_notset,
-    notset,
-    text_notset,
-    url_notset,
+    default_guid,
+    default_now,
+    default_text,
+    default_url,
+    set_default,
 )
 
 
@@ -21,14 +21,14 @@ def create_item(
     **kwargs,
 ) -> dict:
     return {
-        "guid": guid_notset(guid),
-        "title": text_notset(title),
-        "media_url": url_notset(media_url),
-        "pub_date": datetime_notset(pub_date),
-        "media_type": notset(media_type, "audio/mpeg"),
+        "guid": default_guid(guid),
+        "title": default_text(title),
+        "media_url": default_url(media_url),
+        "pub_date": default_now(pub_date),
+        "media_type": set_default(media_type, "audio/mpeg"),
         **kwargs,
     }
 
 
 def create_feed(title: str = NotSet, **kwargs) -> dict:
-    return {"title": text_notset(title), **kwargs}
+    return {"title": default_text(title), **kwargs}

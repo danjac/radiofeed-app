@@ -26,20 +26,20 @@ def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:
     return [factory(**kwargs) for i in range(0, count)]
 
 
-def notset(value: Any, default_value: Any) -> Any:
+def set_default(value: Any, default_value: Any) -> Any:
     """Returns default value if value is NotSet."""
     if value is NotSet:
         return default_value() if callable(default_value) else default_value
     return value
 
 
-# common notset defaults
+# common defaults
 
-guid_notset = functools.partial(notset, default_value=lambda: uuid.uuid4().hex)
-name_notset = functools.partial(notset, default_value=_faker.name)
-datetime_notset = functools.partial(notset, default_value=timezone.now)
-email_notset = functools.partial(notset, default_value=_faker.unique.email)
-password_notset = functools.partial(notset, default_value=_faker.password)
-text_notset = functools.partial(notset, default_value=_faker.text)
-url_notset = functools.partial(notset, default_value=_faker.unique.url)
-username_notset = functools.partial(notset, default_value=_faker.unique.user_name)
+default_email = functools.partial(set_default, default_value=_faker.unique.email)
+default_guid = functools.partial(set_default, default_value=lambda: uuid.uuid4().hex)
+default_name = functools.partial(set_default, default_value=_faker.name)
+default_now = functools.partial(set_default, default_value=timezone.now)
+default_password = functools.partial(set_default, default_value=_faker.password)
+default_text = functools.partial(set_default, default_value=_faker.text)
+default_url = functools.partial(set_default, default_value=_faker.unique.url)
+default_username = functools.partial(set_default, default_value=_faker.unique.user_name)
