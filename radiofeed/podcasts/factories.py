@@ -2,20 +2,21 @@ from __future__ import annotations
 
 from datetime import datetime
 
-import faker
-
-from django.utils import timezone
-
-from radiofeed.common.factories import NotSet, notset
+from radiofeed.common.factories import (
+    NotSet,
+    notset,
+    notset_datetime,
+    notset_name,
+    notset_text,
+    notset_unique_url,
+)
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
-_faker = faker.Faker()
-
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
-    return Category.objects.create(name=notset(name, _faker.name), **kwargs)
+    return Category.objects.create(name=notset_name(name), **kwargs)
 
 
 def create_podcast(
@@ -29,11 +30,11 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=notset(rss, _faker.unique.url),
-        title=notset(title, _faker.text),
+        rss=notset_unique_url(rss),
+        title=notset_text(title),
+        description=notset_text(description),
+        pub_date=notset_datetime(pub_date),
         cover_url=notset(cover_url, "https://example.com/cover.jpg"),
-        description=notset(description, _faker.text),
-        pub_date=notset(pub_date, timezone.now),
         **kwargs,
     )
 

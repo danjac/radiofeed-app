@@ -1,20 +1,20 @@
 from __future__ import annotations
 
-import uuid
-
 from datetime import datetime
 
-from django.utils import timezone
-from faker import Faker
-
-from radiofeed.common.factories import NotSet, notset
+from radiofeed.common.factories import (
+    NotSet,
+    notset,
+    notset_datetime,
+    notset_guid,
+    notset_text,
+    notset_url,
+)
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
-
-_faker = Faker()
 
 
 def create_episode(
@@ -31,12 +31,12 @@ def create_episode(
 ) -> Episode:
 
     return Episode.objects.create(
-        guid=notset(guid, lambda: uuid.uuid4().hex),
+        guid=notset_guid(guid),
         podcast=notset(podcast, create_podcast),
-        title=notset(title, _faker.text),
-        description=notset(description, _faker.text),
-        pub_date=notset(pub_date, timezone.now),
-        media_url=notset(media_url, _faker.url),
+        title=notset_text(title),
+        description=notset_text(description),
+        pub_date=notset_datetime(pub_date),
+        media_url=notset_url(media_url),
         media_type=notset(media_type, "audio/mpeg"),
         duration=notset(duration, "100"),
         **kwargs,
@@ -59,6 +59,6 @@ def create_audio_log(
     return AudioLog.objects.create(
         episode=notset(episode, create_episode),
         user=notset(user, create_user),
-        listened=notset(listened, timezone.now),
+        listened=notset_datetime(listened),
         current_time=notset(current_time, 1000),
     )

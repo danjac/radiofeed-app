@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import functools
+import uuid
+
 from typing import Any, Callable, TypeVar
 
+from django.utils import timezone
+from faker import Faker
+
 T = TypeVar("T")
+
+_faker = Faker()
 
 
 class _NotSet:
@@ -23,3 +31,14 @@ def notset(value: Any, default_value: Any) -> Any:
 def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:
     """Create batch of models."""
     return [factory(**kwargs) for i in range(0, count)]
+
+
+notset_name = functools.partial(notset, default_value=_faker.name)
+notset_username = functools.partial(notset, default_value=_faker.user_name)
+notset_email = functools.partial(notset, default_value=_faker.email)
+notset_password = functools.partial(notset, default_value=_faker.password)
+notset_text = functools.partial(notset, default_value=_faker.text)
+notset_url = functools.partial(notset, default_value=_faker.url)
+notset_unique_url = functools.partial(notset, default_value=_faker.unique.url)
+notset_datetime = functools.partial(notset, default_value=timezone.now)
+notset_guid = functools.partial(notset, default_value=lambda: uuid.uuid4().hex)

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import uuid
-
 from datetime import datetime
 
-from django.utils import timezone
-from faker import Faker
-
-from radiofeed.common.factories import NotSet, notset
-
-_faker = Faker()
+from radiofeed.common.factories import (
+    NotSet,
+    notset,
+    notset_datetime,
+    notset_guid,
+    notset_text,
+    notset_unique_url,
+)
 
 
 def create_item(
@@ -21,14 +21,14 @@ def create_item(
     **kwargs,
 ) -> dict:
     return {
-        "guid": notset(guid, lambda: uuid.uuid4().hex),
-        "title": notset(title, _faker.text()),
-        "media_url": notset(media_url, _faker.unique.url),
+        "guid": notset_guid(guid),
+        "title": notset_text(title),
+        "media_url": notset_unique_url(media_url),
+        "pub_date": notset_datetime(pub_date),
         "media_type": notset(media_type, "audio/mpeg"),
-        "pub_date": notset(pub_date, timezone.now),
         **kwargs,
     }
 
 
 def create_feed(title: str = NotSet, **kwargs) -> dict:
-    return {"title": notset(title, _faker.text), **kwargs}
+    return {"title": notset_text(title), **kwargs}
