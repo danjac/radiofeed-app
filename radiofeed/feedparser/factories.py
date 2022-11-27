@@ -23,8 +23,8 @@ def create_item(
     return {
         "guid": default_guid(guid),
         "title": default_text(title),
-        "media_url": default_media_url(media_url),
         "pub_date": default_now(pub_date),
+        "media_url": default_media_url(media_url),
         "media_type": set_default(media_type, "audio/mpeg"),
         **kwargs,
     }
