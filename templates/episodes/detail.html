@@ -88,20 +88,20 @@
             </div>
             <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
                 {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
-                {% with explicit=episode.is_explicit %}
-                    {% if explicit %}
-                        <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
-                            class="flex items-center text-red-600 dark:text-red-500 space-x-2">
-                            {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
-                        </div>
-                    {% endif %}
-                {% endwith %}
                 {% with file_size=episode.get_file_size %}
                     {% if file_size %}<div title="Size">{{ file_size }}</div>{% endif %}
                 {% endwith %}
                 {% with duration=episode.duration_in_seconds %}
                     {% if duration %}
                         <span title="{% translate "Duration" %}">{{ duration|format_duration }}</span>
+                    {% endif %}
+                {% endwith %}
+                {% with explicit=episode.is_explicit %}
+                    {% if explicit %}
+                        <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
+                            class="flex items-center text-red-600 dark:text-red-500 space-x-2">
+                            {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
+                        </div>
                     {% endif %}
                 {% endwith %}
             </div>
