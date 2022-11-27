@@ -7,28 +7,28 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.common.factories import NotSet
+from radiofeed.common.factories import NotSet, notset
 
-faker = Faker()
+_faker = Faker()
 
 
 def create_item(
-    guid: str = "",
-    title: str = "",
-    media_url: str = "",
-    media_type: str = "audio/mpeg",
-    pub_date: datetime | NotSet | None = NotSet,
+    guid: str = NotSet,
+    title: str = NotSet,
+    media_url: str = NotSet,
+    media_type: str = NotSet,
+    pub_date: datetime = NotSet,
     **kwargs,
 ) -> dict:
     return {
-        "guid": guid or uuid.uuid4().hex,
-        "title": title or faker.text(),
-        "media_url": media_url or faker.unique.url(),
-        "media_type": media_type,
-        "pub_date": timezone.now() if pub_date is NotSet else pub_date,
+        "guid": notset(guid, lambda: uuid.uuid4().hex),
+        "title": notset(title, _faker.text()),
+        "media_url": notset(media_url, _faker.unique.url),
+        "media_type": notset(media_type, "audio/mpeg"),
+        "pub_date": notset(pub_date, timezone.now),
         **kwargs,
     }
 
 
-def create_feed(title: str = "", **kwargs) -> dict:
-    return {"title": title or faker.text(), **kwargs}
+def create_feed(title: str = NotSet, **kwargs) -> dict:
+    return {"title": notset(title, _faker.text), **kwargs}
