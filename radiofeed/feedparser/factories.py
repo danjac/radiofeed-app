@@ -8,7 +8,7 @@ from radiofeed.common.factories import (
     notset_datetime,
     notset_guid,
     notset_text,
-    notset_unique_url,
+    notset_url,
 )
 
 
@@ -23,7 +23,7 @@ def create_item(
     return {
         "guid": notset_guid(guid),
         "title": notset_text(title),
-        "media_url": notset_unique_url(media_url),
+        "media_url": notset_url(media_url),
         "pub_date": notset_datetime(pub_date),
         "media_type": notset(media_type, "audio/mpeg"),
         **kwargs,

@@ -8,7 +8,7 @@ from radiofeed.common.factories import (
     notset_datetime,
     notset_name,
     notset_text,
-    notset_unique_url,
+    notset_url,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
@@ -30,7 +30,7 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=notset_unique_url(rss),
+        rss=notset_url(rss),
         title=notset_text(title),
         description=notset_text(description),
         pub_date=notset_datetime(pub_date),
