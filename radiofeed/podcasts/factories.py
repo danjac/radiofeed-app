@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from datetime import datetime
 
 from radiofeed.common.factories import (
@@ -11,7 +13,7 @@ from radiofeed.common.factories import (
     notset_url,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
-from radiofeed.users.factories import create_user
+from radiofeed.users.factories import notset_user
 from radiofeed.users.models import User
 
 
@@ -44,6 +46,9 @@ def create_podcast(
     return podcast
 
 
+notset_podcast = functools.partial(notset, default_value=create_podcast)
+
+
 def create_recommendation(
     *,
     podcast: Podcast = NotSet,
@@ -52,8 +57,8 @@ def create_recommendation(
     similarity: float = NotSet,
 ) -> Recommendation:
     return Recommendation.objects.create(
-        podcast=notset(podcast, create_podcast),
-        recommended=notset(recommended, create_podcast),
+        podcast=notset_podcast(podcast),
+        recommended=notset_podcast(recommended),
         frequency=notset(frequency, 3),
         similarity=notset(similarity, 0.5),
     )
@@ -66,6 +71,6 @@ def create_subscription(
 ) -> Subscription:
 
     return Subscription.objects.create(
-        subscriber=notset(subscriber, create_user),
-        podcast=notset(podcast, create_podcast),
+        subscriber=notset_user(subscriber),
+        podcast=notset_podcast(podcast),
     )

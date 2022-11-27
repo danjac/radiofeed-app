@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from datetime import datetime
 
 from radiofeed.common.factories import (
@@ -11,9 +13,9 @@ from radiofeed.common.factories import (
     notset_url,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.podcasts.factories import create_podcast
+from radiofeed.podcasts.factories import notset_podcast
 from radiofeed.podcasts.models import Podcast
-from radiofeed.users.factories import create_user
+from radiofeed.users.factories import notset_user
 from radiofeed.users.models import User
 
 
@@ -32,7 +34,7 @@ def create_episode(
 
     return Episode.objects.create(
         guid=notset_guid(guid),
-        podcast=notset(podcast, create_podcast),
+        podcast=notset_podcast(podcast),
         title=notset_text(title),
         description=notset_text(description),
         pub_date=notset_datetime(pub_date),
@@ -43,9 +45,12 @@ def create_episode(
     )
 
 
+notset_episode = functools.partial(notset, default_value=create_episode)
+
+
 def create_bookmark(*, episode: Episode = NotSet, user: User = NotSet) -> Bookmark:
     return Bookmark.objects.create(
-        episode=notset(episode, create_episode), user=notset(user, create_user)
+        episode=notset_episode(episode), user=notset_user(user)
     )
 
 
@@ -57,8 +62,8 @@ def create_audio_log(
     current_time: int = NotSet,
 ) -> AudioLog:
     return AudioLog.objects.create(
-        episode=notset(episode, create_episode),
-        user=notset(user, create_user),
+        episode=notset_episode(episode),
+        user=notset_user(user),
         listened=notset_datetime(listened),
         current_time=notset(current_time, 1000),
     )

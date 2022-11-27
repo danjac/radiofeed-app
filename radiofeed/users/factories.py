@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from allauth.account.models import EmailAddress
 
 from radiofeed.common.factories import (
@@ -27,6 +29,9 @@ def create_user(
     )
 
 
+notset_user = functools.partial(notset, default_value=create_user)
+
+
 def create_email_address(
     *,
     user: User = NotSet,
@@ -35,7 +40,7 @@ def create_email_address(
     primary: bool = False,
 ) -> EmailAddress:
     return EmailAddress.objects.create(
-        user=notset(user, create_user),
+        user=notset_user(user),
         email=notset_email(email),
         verified=verified,
         primary=primary,
