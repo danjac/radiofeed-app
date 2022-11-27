@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import itertools
 
 from datetime import datetime
 
@@ -9,7 +10,6 @@ from radiofeed.common.factories import (
     default_guid,
     default_now,
     default_text,
-    default_url,
     set_default,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
@@ -17,6 +17,12 @@ from radiofeed.podcasts.factories import default_podcast
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import default_user
 from radiofeed.users.models import User
+
+_media_url_seq = (f"https://example.com/audio-{n}.mpeg" for n in itertools.count())
+
+default_media_url = functools.partial(
+    set_default, default_value=lambda: next(_media_url_seq)
+)
 
 
 def create_episode(
@@ -38,7 +44,7 @@ def create_episode(
         title=default_text(title),
         description=default_text(description),
         pub_date=default_now(pub_date),
-        media_url=default_url(media_url),
+        media_url=default_media_url(media_url),
         media_type=set_default(media_type, "audio/mpeg"),
         duration=set_default(duration, "100"),
         **kwargs,

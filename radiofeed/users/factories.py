@@ -1,17 +1,21 @@
 from __future__ import annotations
 
 import functools
+import itertools
 
 from allauth.account.models import EmailAddress
 
-from radiofeed.common.factories import (
-    NotSet,
-    default_email,
-    default_password,
-    default_username,
-    set_default,
-)
+from radiofeed.common.factories import NotSet, set_default
 from radiofeed.users.models import User
+
+_username_seq = (f"user-{n}" for n in itertools.count())
+_email_seq = (f"user-{n}@example.com" for n in itertools.count())
+
+default_username = functools.partial(
+    set_default, default_value=lambda: next(_username_seq)
+)
+
+default_email = functools.partial(set_default, default_value=lambda: next(_email_seq))
 
 
 def create_user(
@@ -24,7 +28,7 @@ def create_user(
     return User.objects.create_user(
         username=default_username(username),
         email=default_email(email),
-        password=default_password(password),
+        password=set_default(password, "testpass1"),
         **kwargs,
     )
 

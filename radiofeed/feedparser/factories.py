@@ -7,9 +7,9 @@ from radiofeed.common.factories import (
     default_guid,
     default_now,
     default_text,
-    default_url,
     set_default,
 )
+from radiofeed.episodes.factories import default_media_url
 
 
 def create_item(
@@ -23,7 +23,7 @@ def create_item(
     return {
         "guid": default_guid(guid),
         "title": default_text(title),
-        "media_url": default_url(media_url),
+        "media_url": default_media_url(media_url),
         "pub_date": default_now(pub_date),
         "media_type": set_default(media_type, "audio/mpeg"),
         **kwargs,

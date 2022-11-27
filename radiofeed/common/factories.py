@@ -35,11 +35,7 @@ def set_default(value: Any, default_value: Any) -> Any:
 
 # common defaults
 
-default_email = functools.partial(set_default, default_value=_faker.unique.email)
 default_guid = functools.partial(set_default, default_value=lambda: uuid.uuid4().hex)
 default_name = functools.partial(set_default, default_value=_faker.name)
 default_now = functools.partial(set_default, default_value=timezone.now)
-default_password = functools.partial(set_default, default_value=_faker.password)
 default_text = functools.partial(set_default, default_value=_faker.text)
-default_url = functools.partial(set_default, default_value=_faker.unique.url)
-default_username = functools.partial(set_default, default_value=_faker.unique.user_name)
