@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -79,7 +80,7 @@ def episode_detail(
         pk=episode_id,
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/detail.html",
         {
@@ -191,7 +192,9 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
-    return render(request, "episodes/includes/history.html", {"episode": episode})
+    return TemplateResponse(
+        request, "episodes/includes/history.html", {"episode": episode}
+    )
 
 
 @require_safe
@@ -249,7 +252,7 @@ def _render_audio_player(
     current_time: datetime | None,
     listened: datetime | None,
 ) -> HttpResponse:
-    return render(
+    return TemplateResponse(
         request,
         "episodes/includes/audio_player.html",
         {
@@ -265,7 +268,7 @@ def _render_audio_player(
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
-    return render(
+    return TemplateResponse(
         request,
         "episodes/includes/bookmark.html",
         {
