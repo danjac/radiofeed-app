@@ -81,7 +81,6 @@ isort = "^5.10.1"
 black = "^22.10.0"
 djhtml = "^1.5.2"
 djlint = "^1.19.7"
-pydocstyle = "^6.1.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
