@@ -8,7 +8,7 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.common.factories import NotSet, default
+from radiofeed.common.factories import NotSet, resolve
 
 _faker = Faker()
 
@@ -24,14 +24,14 @@ def create_item(
     **kwargs,
 ) -> dict:
     return {
-        "guid": default(guid, lambda: uuid.uuid4().hex),
-        "title": default(title, _faker.text),
-        "pub_date": default(pub_date, timezone.now),
-        "media_url": default(media_url, next(_media_url_seq)),
-        "media_type": default(media_type, "audio/mpeg"),
+        "guid": resolve(guid, lambda: uuid.uuid4().hex),
+        "title": resolve(title, _faker.text),
+        "pub_date": resolve(pub_date, timezone.now),
+        "media_url": resolve(media_url, next(_media_url_seq)),
+        "media_type": resolve(media_type, "audio/mpeg"),
         **kwargs,
     }
 
 
 def create_feed(title: str = NotSet, **kwargs) -> dict:
-    return {"title": default(title, _faker.text), **kwargs}
+    return {"title": resolve(title, _faker.text), **kwargs}

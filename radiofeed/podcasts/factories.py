@@ -7,7 +7,7 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.common.factories import NotSet, default
+from radiofeed.common.factories import NotSet, resolve
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
@@ -19,7 +19,7 @@ _rss_seq = (f"https://media.rss.com/podcast-{n}.xml" for n in itertools.count())
 
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
-    return Category.objects.create(name=default(name, next(_category_seq)), **kwargs)
+    return Category.objects.create(name=resolve(name, next(_category_seq)), **kwargs)
 
 
 def create_podcast(
@@ -33,11 +33,11 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=default(rss, next(_rss_seq)),
-        title=default(title, _faker.text),
-        description=default(description, _faker.text),
-        pub_date=default(pub_date, timezone.now),
-        cover_url=default(cover_url, "https://example.com/cover.jpg"),
+        rss=resolve(rss, next(_rss_seq)),
+        title=resolve(title, _faker.text),
+        description=resolve(description, _faker.text),
+        pub_date=resolve(pub_date, timezone.now),
+        cover_url=resolve(cover_url, "https://example.com/cover.jpg"),
         **kwargs,
     )
 
@@ -55,10 +55,10 @@ def create_recommendation(
     similarity: float = NotSet,
 ) -> Recommendation:
     return Recommendation.objects.create(
-        podcast=default(podcast, create_podcast),
-        recommended=default(recommended, create_podcast),
-        frequency=default(frequency, 3),
-        similarity=default(similarity, 0.5),
+        podcast=resolve(podcast, create_podcast),
+        recommended=resolve(recommended, create_podcast),
+        frequency=resolve(frequency, 3),
+        similarity=resolve(similarity, 0.5),
     )
 
 
@@ -69,6 +69,6 @@ def create_subscription(
 ) -> Subscription:
 
     return Subscription.objects.create(
-        subscriber=default(subscriber, create_user),
-        podcast=default(podcast, create_podcast),
+        subscriber=resolve(subscriber, create_user),
+        podcast=resolve(podcast, create_podcast),
     )

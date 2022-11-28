@@ -18,7 +18,7 @@ def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:
     return [factory(**kwargs) for i in range(0, count)]
 
 
-def default(value: Any, default_value: Any) -> Any:
+def resolve(value: Any, default_value: Any) -> Any:
     """Returns default value if value is NotSet."""
     if value is NotSet:
         return default_value() if callable(default_value) else default_value

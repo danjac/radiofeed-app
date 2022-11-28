@@ -4,7 +4,7 @@ import itertools
 
 from allauth.account.models import EmailAddress
 
-from radiofeed.common.factories import NotSet, default
+from radiofeed.common.factories import NotSet, resolve
 from radiofeed.users.models import User
 
 _username_seq = (f"user-{n}" for n in itertools.count())
@@ -19,9 +19,9 @@ def create_user(
     **kwargs,
 ) -> User:
     return User.objects.create_user(
-        username=default(username, next(_username_seq)),
-        email=default(email, next(_email_seq)),
-        password=default(password, "testpass1"),
+        username=resolve(username, next(_username_seq)),
+        email=resolve(email, next(_email_seq)),
+        password=resolve(password, "testpass1"),
         **kwargs,
     )
 
@@ -34,8 +34,8 @@ def create_email_address(
     primary: bool = False,
 ) -> EmailAddress:
     return EmailAddress.objects.create(
-        user=default(user, create_user),
-        email=default(email, next(_email_seq)),
+        user=resolve(user, create_user),
+        email=resolve(email, next(_email_seq)),
         verified=verified,
         primary=primary,
     )
