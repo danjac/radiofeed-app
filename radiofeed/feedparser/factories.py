@@ -1,15 +1,19 @@
 from __future__ import annotations
 
+import itertools
+
 from datetime import datetime
 
 from radiofeed.common.factories import (
     NotSet,
     default_guid,
     default_now,
+    default_sequence,
     default_text,
     set_default,
 )
-from radiofeed.episodes.factories import default_media_url
+
+_media_url_seq = (f"https://example.com/audio-{n}.mp3" for n in itertools.count())
 
 
 def create_item(
@@ -24,7 +28,7 @@ def create_item(
         "guid": default_guid(guid),
         "title": default_text(title),
         "pub_date": default_now(pub_date),
-        "media_url": default_media_url(media_url),
+        "media_url": default_sequence(media_url, _media_url_seq),
         "media_type": set_default(media_type, "audio/mpeg"),
         **kwargs,
     }

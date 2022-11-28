@@ -9,6 +9,7 @@ from radiofeed.common.factories import (
     NotSet,
     default_guid,
     default_now,
+    default_sequence,
     default_text,
     set_default,
 )
@@ -19,10 +20,6 @@ from radiofeed.users.factories import default_user
 from radiofeed.users.models import User
 
 _media_url_seq = (f"https://example.com/audio-{n}.mp3" for n in itertools.count())
-
-default_media_url = functools.partial(
-    set_default, default_value=lambda: next(_media_url_seq)
-)
 
 
 def create_episode(
@@ -44,7 +41,7 @@ def create_episode(
         title=default_text(title),
         description=default_text(description),
         pub_date=default_now(pub_date),
-        media_url=default_media_url(media_url),
+        media_url=default_sequence(media_url, _media_url_seq),
         media_type=set_default(media_type, "audio/mpeg"),
         duration=set_default(duration, "100"),
         **kwargs,

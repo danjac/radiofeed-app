@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import uuid
 
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Iterator, TypeVar
 
 from django.utils import timezone
 from faker import Faker
@@ -34,6 +34,12 @@ def set_default(value: Any, default_value: Any) -> Any:
 
 
 # common defaults
+#
+
+
+def default_sequence(value: Any, sequence: Iterator[Any]) -> Any:
+    return set_default(value, lambda: next(sequence))
+
 
 default_guid = functools.partial(set_default, default_value=lambda: uuid.uuid4().hex)
 default_name = functools.partial(set_default, default_value=_faker.name)

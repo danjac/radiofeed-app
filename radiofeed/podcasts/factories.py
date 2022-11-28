@@ -9,6 +9,7 @@ from radiofeed.common.factories import (
     NotSet,
     default_name,
     default_now,
+    default_sequence,
     default_text,
     set_default,
 )
@@ -17,8 +18,6 @@ from radiofeed.users.factories import default_user
 from radiofeed.users.models import User
 
 _rss_seq = (f"https://media.rss.com/podcast-{n}.xml" for n in itertools.count())
-
-default_rss = functools.partial(set_default, default_value=lambda: next(_rss_seq))
 
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
@@ -36,7 +35,7 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=default_rss(rss),
+        rss=default_sequence(rss, _rss_seq),
         title=default_text(title),
         description=default_text(description),
         pub_date=default_now(pub_date),
