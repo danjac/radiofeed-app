@@ -9,7 +9,6 @@ from radiofeed.common.factories import (
     NotSet,
     default_name,
     default_now,
-    default_sequence,
     default_text,
     set_default,
 )
@@ -35,7 +34,7 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=default_sequence(rss, _rss_seq),
+        rss=set_default(rss, next(_rss_seq)),
         title=default_text(title),
         description=default_text(description),
         pub_date=default_now(pub_date),
