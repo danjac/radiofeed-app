@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.utils import timezone
 
-from radiofeed.common.factories import NotSet, default
+from radiofeed.common.factories import NotSet, default, default_text
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
@@ -31,8 +31,8 @@ def create_podcast(
 ) -> Podcast:
     podcast = Podcast.objects.create(
         rss=default(rss, next(_rss_seq)),
-        title=default(title, "title"),
-        description=default(description, "description"),
+        title=default_text(title),
+        description=default_text(description),
         pub_date=default(pub_date, timezone.now),
         cover_url=default(cover_url, "https://example.com/cover.jpg"),
         **kwargs,

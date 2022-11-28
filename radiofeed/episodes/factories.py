@@ -7,7 +7,7 @@ from datetime import datetime
 
 from django.utils import timezone
 
-from radiofeed.common.factories import NotSet, default
+from radiofeed.common.factories import NotSet, default, default_text
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
@@ -33,8 +33,8 @@ def create_episode(
     return Episode.objects.create(
         guid=default(guid, lambda: uuid.uuid4().hex),
         podcast=default(podcast, create_podcast),
-        title=default(title, "title"),
-        description=default(description, "description"),
+        title=default_text(title),
+        description=default_text(description),
         pub_date=default(pub_date, timezone.now),
         media_url=default(media_url, next(_media_url_seq)),
         media_type=default(media_type, "audio/mpeg"),

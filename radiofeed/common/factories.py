@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import functools
-import uuid
 
 from typing import Any, Callable, TypeVar
 
-from django.utils import timezone
 from faker import Faker
 
 T = TypeVar("T")
@@ -33,8 +31,4 @@ def default(value: Any, default_value: Any) -> Any:
     return value
 
 
-# common defaults
-
 default_text = functools.partial(default, default_value=_faker.text)
-default_now = functools.partial(default, default_value=timezone.now)
-default_guid = functools.partial(default, default_value=lambda: uuid.uuid4().hex)
