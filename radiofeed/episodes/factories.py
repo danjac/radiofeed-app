@@ -7,10 +7,10 @@ from datetime import datetime
 
 from radiofeed.common.factories import (
     NotSet,
+    default,
     default_guid,
     default_now,
     default_text,
-    set_default,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.factories import default_podcast
@@ -40,14 +40,14 @@ def create_episode(
         title=default_text(title),
         description=default_text(description),
         pub_date=default_now(pub_date),
-        media_url=set_default(media_url, next(_media_url_seq)),
-        media_type=set_default(media_type, "audio/mpeg"),
-        duration=set_default(duration, "100"),
+        media_url=default(media_url, next(_media_url_seq)),
+        media_type=default(media_type, "audio/mpeg"),
+        duration=default(duration, "100"),
         **kwargs,
     )
 
 
-default_episode = functools.partial(set_default, default_value=create_episode)
+default_episode = functools.partial(default, default_value=create_episode)
 
 
 def create_bookmark(*, episode: Episode = NotSet, user: User = NotSet) -> Bookmark:
@@ -67,5 +67,5 @@ def create_audio_log(
         episode=default_episode(episode),
         user=default_user(user),
         listened=default_now(listened),
-        current_time=set_default(current_time, 1000),
+        current_time=default(current_time, 1000),
     )

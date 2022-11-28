@@ -26,7 +26,7 @@ def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:
     return [factory(**kwargs) for i in range(0, count)]
 
 
-def set_default(value: Any, default_value: Any) -> Any:
+def default(value: Any, default_value: Any) -> Any:
     """Returns default value if value is NotSet."""
     if value is NotSet:
         return default_value() if callable(default_value) else default_value
@@ -37,7 +37,7 @@ def set_default(value: Any, default_value: Any) -> Any:
 #
 
 
-default_name = functools.partial(set_default, default_value=_faker.name)
-default_text = functools.partial(set_default, default_value=_faker.text)
-default_now = functools.partial(set_default, default_value=timezone.now)
-default_guid = functools.partial(set_default, default_value=lambda: uuid.uuid4().hex)
+default_name = functools.partial(default, default_value=_faker.name)
+default_text = functools.partial(default, default_value=_faker.text)
+default_now = functools.partial(default, default_value=timezone.now)
+default_guid = functools.partial(default, default_value=lambda: uuid.uuid4().hex)

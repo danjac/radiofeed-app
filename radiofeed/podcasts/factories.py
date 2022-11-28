@@ -7,10 +7,10 @@ from datetime import datetime
 
 from radiofeed.common.factories import (
     NotSet,
+    default,
     default_name,
     default_now,
     default_text,
-    set_default,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import default_user
@@ -34,11 +34,11 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=set_default(rss, next(_rss_seq)),
+        rss=default(rss, next(_rss_seq)),
         title=default_text(title),
         description=default_text(description),
         pub_date=default_now(pub_date),
-        cover_url=set_default(cover_url, "https://example.com/cover.jpg"),
+        cover_url=default(cover_url, "https://example.com/cover.jpg"),
         **kwargs,
     )
 
@@ -48,7 +48,7 @@ def create_podcast(
     return podcast
 
 
-default_podcast = functools.partial(set_default, default_value=create_podcast)
+default_podcast = functools.partial(default, default_value=create_podcast)
 
 
 def create_recommendation(
@@ -61,8 +61,8 @@ def create_recommendation(
     return Recommendation.objects.create(
         podcast=default_podcast(podcast),
         recommended=default_podcast(recommended),
-        frequency=set_default(frequency, 3),
-        similarity=set_default(similarity, 0.5),
+        frequency=default(frequency, 3),
+        similarity=default(similarity, 0.5),
     )
 
 
