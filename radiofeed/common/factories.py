@@ -8,7 +8,7 @@ from faker import Faker
 
 T = TypeVar("T")
 
-_faker = Faker()
+faker = Faker()
 
 
 class _NotSet:
@@ -31,4 +31,4 @@ def default(value: Any, default_value: Any) -> Any:
     return value
 
 
-default_text = functools.partial(default, default_value=_faker.text)
+default_text = functools.partial(default, default_value=faker.text)
