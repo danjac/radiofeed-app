@@ -5,8 +5,8 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.http import HttpResponse
+from faker import Faker
 
-from radiofeed.common.factories import faker as _faker
 from radiofeed.episodes.factories import create_episode
 from radiofeed.podcasts.factories import (
     create_category,
@@ -18,8 +18,9 @@ from radiofeed.users.factories import create_user
 
 @pytest.fixture(scope="session")
 def faker():
-    yield _faker
-    _faker.unique.clear()
+    faker = Faker()
+    yield faker
+    faker.unique.clear()
 
 
 @pytest.fixture

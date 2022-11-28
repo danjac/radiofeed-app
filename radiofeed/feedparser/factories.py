@@ -6,8 +6,11 @@ import uuid
 from datetime import datetime
 
 from django.utils import timezone
+from faker import Faker
 
-from radiofeed.common.factories import NotSet, default, default_text
+from radiofeed.common.factories import NotSet, default
+
+_faker = Faker()
 
 _media_url_seq = (f"https://example.com/audio-{n}.mp3" for n in itertools.count())
 
@@ -22,7 +25,7 @@ def create_item(
 ) -> dict:
     return {
         "guid": default(guid, lambda: uuid.uuid4().hex),
-        "title": default_text(title),
+        "title": default(title, _faker.text),
         "pub_date": default(pub_date, timezone.now),
         "media_url": default(media_url, next(_media_url_seq)),
         "media_type": default(media_type, "audio/mpeg"),
@@ -31,4 +34,4 @@ def create_item(
 
 
 def create_feed(title: str = NotSet, **kwargs) -> dict:
-    return {"title": default_text(title), **kwargs}
+    return {"title": default(title, _faker.text), **kwargs}

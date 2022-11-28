@@ -1,14 +1,8 @@
 from __future__ import annotations
 
-import functools
-
 from typing import Any, Callable, TypeVar
 
-from faker import Faker
-
 T = TypeVar("T")
-
-faker = Faker()
 
 
 class _NotSet:
@@ -29,6 +23,3 @@ def default(value: Any, default_value: Any) -> Any:
     if value is NotSet:
         return default_value() if callable(default_value) else default_value
     return value
-
-
-default_text = functools.partial(default, default_value=faker.text)
