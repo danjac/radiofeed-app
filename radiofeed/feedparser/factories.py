@@ -8,6 +8,7 @@ from radiofeed.common.factories import (
     NotSet,
     default,
     default_guid,
+    default_name,
     default_now,
     default_text,
 )
@@ -34,4 +35,4 @@ def create_item(
 
 
 def create_feed(title: str = NotSet, **kwargs) -> dict:
-    return {"title": default_text(title), **kwargs}
+    return {"title": default_name(title), **kwargs}
