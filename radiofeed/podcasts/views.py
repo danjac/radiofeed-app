@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
-from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict
@@ -78,7 +77,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     return redirect("podcasts:index")
 
 
-@ratelimit(key="ip", rate="20/m")
 @require_auth
 @require_safe
 def search_itunes(request: HttpRequest) -> HttpResponse:

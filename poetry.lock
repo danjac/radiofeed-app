@@ -443,14 +443,6 @@ python-versions = ">=3.7"
 Django = ">=3.2"
 
 [[package]]
-name = "django-ratelimit"
-version = "3.0.1"
-description = "Cache-based rate-limiting for Django."
-category = "main"
-optional = false
-python-versions = ">=3.4"
-
-[[package]]
 name = "django-redis"
 version = "5.2.0"
 description = "Full featured redis cache backend for Django."
@@ -1807,7 +1799,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.12"
-content-hash = "4e7af1ff55937f593a577925b362e90c37223afc51df210f5cec07d532ebee6e"
+content-hash = "58fef256dc3e65bc962c0c7e908dfb5d16f89ec8193c7025828515a8c8ca3839"
 
 [metadata.files]
 appnope = [
@@ -2166,10 +2158,6 @@ django-object-actions = [
 django-permissions-policy = [
     {file = "django-permissions-policy-4.13.0.tar.gz", hash = "sha256:c340f822de6ea48888b8620214f98f516c53501d0f54de53d172715ab94e0da2"},
     {file = "django_permissions_policy-4.13.0-py3-none-any.whl", hash = "sha256:2c9aa83a7bb49d32f9bb77384d3fcf81b141f18df3c2bcf8810a154860a22e63"},
-]
-django-ratelimit = [
-    {file = "django-ratelimit-3.0.1.tar.gz", hash = "sha256:73223d860abd5c5d7b9a807fabb39a6220068129b514be8d78044b52607ab154"},
-    {file = "django_ratelimit-3.0.1-py2.py3-none-any.whl", hash = "sha256:857e797f23de948b204a31dba9d88aea3ce731b7a5d926d0240c772e19b5486f"},
 ]
 django-redis = [
     {file = "django-redis-5.2.0.tar.gz", hash = "sha256:8a99e5582c79f894168f5865c52bd921213253b7fd64d16733ae4591564465de"},

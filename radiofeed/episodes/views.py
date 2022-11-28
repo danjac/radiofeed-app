@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
-from ratelimit.decorators import ratelimit
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
@@ -137,7 +136,6 @@ def close_player(request: HttpRequest) -> HttpResponse:
     return HttpResponse()
 
 
-@ratelimit(key="ip", rate="20/m")
 @require_POST
 @require_auth
 def player_time_update(request: HttpRequest) -> HttpResponse:
