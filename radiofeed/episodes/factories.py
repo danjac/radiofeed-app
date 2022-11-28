@@ -28,7 +28,7 @@ def create_episode(
     podcast: Podcast = NotSet,
     title: str = NotSet,
     description: str = NotSet,
-    pub_date: datetime | None = NotSet,
+    pub_date: datetime = NotSet,
     media_url: str = NotSet,
     media_type: str = NotSet,
     duration: str = NotSet,
