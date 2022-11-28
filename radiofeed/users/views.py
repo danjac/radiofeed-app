@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.template.response import SimpleTemplateResponse, TemplateResponse
-from django.urls import reverse
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext, override
@@ -31,14 +30,14 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseClientRedirect(request.path)
 
-    return TemplateResponse(request, "account/preferences.html", {"form": form})
+    return render(request, "account/preferences.html", {"form": form})
 
 
 @require_safe
 @require_auth
 def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
-    return TemplateResponse(
+    return render(
         request,
         "account/import_export_podcast_feeds.html",
         {
@@ -68,9 +67,7 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
         else:
             messages.info(request, _("No new podcasts found in uploaded file"))
 
-    return TemplateResponse(
-        request, "account/import_export_podcast_feeds.html", {"form": form}
-    )
+    return render(request, "account/import_export_podcast_feeds.html", {"form": form})
 
 
 @require_POST
@@ -86,23 +83,25 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .iterator()
     )
 
-    return SimpleTemplateResponse(
+    response = render(
+        request,
         "account/podcasts.opml",
         {
             "podcasts": podcasts,
         },
         content_type="text/x-opml",
-        headers={
-            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-        },
     )
+    response[
+        "Content-Disposition"
+    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+    return response
 
 
 @require_safe
 @require_auth
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return TemplateResponse(request, "account/stats.html")
+    return render(request, "account/stats.html")
 
 
 @require_form_methods
@@ -117,5 +116,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, _("Your account has been deleted"))
-        return HttpResponseRedirect(reverse("podcasts:landing_page"))
-    return TemplateResponse(request, "account/delete_account.html")
+        return redirect("podcasts:landing_page")
+    return render(request, "account/delete_account.html")
