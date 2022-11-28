@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-import functools
 import itertools
 
 from datetime import datetime
 
-from radiofeed.common.factories import NotSet, default, default_now, default_text
+from django.utils import timezone
+
+from radiofeed.common.factories import NotSet, default
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
-from radiofeed.users.factories import default_user
+from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
 _category_seq = (f"category-{n}" for n in itertools.count())
@@ -30,9 +31,9 @@ def create_podcast(
 ) -> Podcast:
     podcast = Podcast.objects.create(
         rss=default(rss, next(_rss_seq)),
-        title=default_text(title),
-        description=default_text(description),
-        pub_date=default_now(pub_date),
+        title=default(title, "title"),
+        description=default(description, "description"),
+        pub_date=default(pub_date, timezone.now),
         cover_url=default(cover_url, "https://example.com/cover.jpg"),
         **kwargs,
     )
@@ -43,9 +44,6 @@ def create_podcast(
     return podcast
 
 
-default_podcast = functools.partial(default, default_value=create_podcast)
-
-
 def create_recommendation(
     *,
     podcast: Podcast = NotSet,
@@ -54,8 +52,8 @@ def create_recommendation(
     similarity: float = NotSet,
 ) -> Recommendation:
     return Recommendation.objects.create(
-        podcast=default_podcast(podcast),
-        recommended=default_podcast(recommended),
+        podcast=default(podcast, create_podcast),
+        recommended=default(recommended, create_podcast),
         frequency=default(frequency, 3),
         similarity=default(similarity, 0.5),
     )
@@ -68,6 +66,6 @@ def create_subscription(
 ) -> Subscription:
 
     return Subscription.objects.create(
-        subscriber=default_user(subscriber),
-        podcast=default_podcast(podcast),
+        subscriber=default(subscriber, create_user),
+        podcast=default(podcast, create_podcast),
     )

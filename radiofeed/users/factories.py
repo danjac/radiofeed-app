@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 import itertools
 
 from allauth.account.models import EmailAddress
@@ -27,9 +26,6 @@ def create_user(
     )
 
 
-default_user = functools.partial(default, default_value=create_user)
-
-
 def create_email_address(
     *,
     user: User = NotSet,
@@ -38,7 +34,7 @@ def create_email_address(
     primary: bool = False,
 ) -> EmailAddress:
     return EmailAddress.objects.create(
-        user=default_user(user),
+        user=default(user, create_user),
         email=default(email, next(_email_seq)),
         verified=verified,
         primary=primary,
