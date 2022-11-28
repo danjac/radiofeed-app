@@ -34,10 +34,7 @@ def default(value: Any, default_value: Any) -> Any:
 
 
 # common defaults
-#
 
-
-default_name = functools.partial(default, default_value=_faker.name)
 default_text = functools.partial(default, default_value=_faker.text)
 default_now = functools.partial(default, default_value=timezone.now)
 default_guid = functools.partial(default, default_value=lambda: uuid.uuid4().hex)

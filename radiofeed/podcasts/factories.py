@@ -5,22 +5,17 @@ import itertools
 
 from datetime import datetime
 
-from radiofeed.common.factories import (
-    NotSet,
-    default,
-    default_name,
-    default_now,
-    default_text,
-)
+from radiofeed.common.factories import NotSet, default, default_now, default_text
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import default_user
 from radiofeed.users.models import User
 
+_category_seq = (f"category-{n}" for n in itertools.count())
 _rss_seq = (f"https://media.rss.com/podcast-{n}.xml" for n in itertools.count())
 
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
-    return Category.objects.create(name=default_name(name), **kwargs)
+    return Category.objects.create(name=default(name, next(_category_seq)), **kwargs)
 
 
 def create_podcast(
