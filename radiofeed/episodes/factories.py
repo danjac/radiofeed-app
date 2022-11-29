@@ -39,7 +39,7 @@ def create_episode(
         title=resolve(title, _faker.text),
         description=resolve(description, _faker.text),
         pub_date=resolve(pub_date, timezone.now),
-        media_url=resolve(media_url, next(_media_url_seq)),
+        media_url=resolve(media_url, lambda: next(_media_url_seq)),
         media_type=resolve(media_type, "audio/mpeg"),
         duration=resolve(duration, "100"),
         **kwargs,

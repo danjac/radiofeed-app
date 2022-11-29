@@ -27,7 +27,7 @@ def create_item(
         "guid": resolve(guid, lambda: uuid.uuid4().hex),
         "title": resolve(title, _faker.text),
         "pub_date": resolve(pub_date, timezone.now),
-        "media_url": resolve(media_url, next(_media_url_seq)),
+        "media_url": resolve(media_url, lambda: next(_media_url_seq)),
         "media_type": resolve(media_type, "audio/mpeg"),
         **kwargs,
     }

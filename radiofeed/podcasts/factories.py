@@ -19,7 +19,9 @@ _rss_seq = (f"https://media.rss.com/podcast-{n}.xml" for n in itertools.count())
 
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
-    return Category.objects.create(name=resolve(name, next(_category_seq)), **kwargs)
+    return Category.objects.create(
+        name=resolve(name, lambda: next(_category_seq)), **kwargs
+    )
 
 
 def create_podcast(
@@ -33,7 +35,7 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=resolve(rss, next(_rss_seq)),
+        rss=resolve(rss, lambda: next(_rss_seq)),
         title=resolve(title, _faker.text),
         description=resolve(description, _faker.text),
         pub_date=resolve(pub_date, timezone.now),
