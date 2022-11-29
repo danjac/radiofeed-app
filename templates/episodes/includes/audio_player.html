@@ -11,7 +11,6 @@
         {% translate "Decrease Playback Rate" as t_decrease_playback_rate %}
         {% translate "Increase Playback Rate" as t_increase_playback_rate %}
         {% translate "Playback Rate" as t_playback_rate %}
-        {% translate "Reload Player" as t_reload_player %}
         {% with podcast=episode.podcast episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url media_url=episode.media_url %}
             <div x-data="
                 {# fmt:off #}
@@ -64,13 +63,12 @@
                             {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                 <div class="flex items-center justify-center space-x-6">
                                     <button title="{{ t_play }}"
-                                        @click="togglePlayPause"
                                         class="{{ BUTTON_CSS }}"
                                         :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                                        <span x-show="isPaused">
+                                        <span x-show="isPaused" x-cloak>
                                             {% icon "play-circle" "regular" size="xl" title=t_play %}
                                         </span>
-                                        <span x-show="!isPaused">
+                                        <span x-show="!isPaused" x-cloak>
                                             {% icon "pause-circle" "regular" size="xl" title=t_pause %}
                                         </span>
                                     </button>
@@ -82,15 +80,6 @@
                                         hx-swap="innerHTML"
                                         hx-disinherit="hx-indicator">
                                         {% icon "stop-circle" "regular" size="lg" title=t_close_player %}
-                                    </button>
-                                    <button title="{{ t_reload_player }}"
-                                        class="{{ BUTTON_CSS }}"
-                                        accesskey="r"
-                                        hx-post="{% url "episodes:start_player" episode.pk %}"
-                                        hx-target="#audio-player"
-                                        hx-swap="innerHTML"
-                                        hx-disinherit="hx-indicator">
-                                        {% icon "arrows-rotate" size="lg" title=t_reload_player %}
                                     </button>
                                     <div class="flex items-center space-x-2"
                                         :class="isPlaying || '{{ INACTIVE_CSS }}'">
