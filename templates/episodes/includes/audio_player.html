@@ -86,7 +86,10 @@
                                     <button title="{{ t_reload_player }}"
                                         class="{{ BUTTON_CSS }}"
                                         accesskey="r"
-                                        @click="window.location.reload()">
+                                        hx-post="{% url "episodes:start_player" episode.pk %}"
+                                        hx-target="#audio-player"
+                                        hx-swap="innerHTML"
+                                        hx-disinherit="hx-indicator">
                                         {% icon "arrows-rotate" size="lg" title=t_reload_player %}
                                     </button>
                                     <div class="flex items-center space-x-2"
