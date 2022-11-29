@@ -15,7 +15,6 @@ document.addEventListener("alpine:init", () => {
             timeUpdateUrl,
             runtime: 0,
             duration: 0,
-            rate: 1.0,
             isError: false,
             isLoaded: false,
             isPaused: false,
@@ -36,10 +35,6 @@ document.addEventListener("alpine:init", () => {
 
                 this.$watch("duration", value => {
                     this.counters.total = this.formatCounter(value);
-                });
-
-                this.$watch("rate", value => {
-                    this.$refs.audio.playbackRate = value;
                 });
 
                 this.$refs.audio.load();
@@ -140,18 +135,6 @@ document.addEventListener("alpine:init", () => {
                             return handleEvent(this.skipBack);
                     }
                 }
-
-                // playback rate
-                if (event.altKey) {
-                    switch (event.key) {
-                        case "+":
-                            return handleEvent(this.incrementRate);
-                        case "-":
-                            return handleEvent(this.decrementRate);
-                        case "0":
-                            return handleEvent(this.resetRate);
-                    }
-                }
             },
             startTimer() {
                 if (!this.timer) {
@@ -179,43 +162,20 @@ document.addEventListener("alpine:init", () => {
                     }),
                 });
             },
-            incrementRate() {
-                this.changeRate(0.1);
-            },
-            decrementRate() {
-                this.changeRate(-0.1);
-            },
-            resetRate() {
-                this.setRate(1.0);
-            },
-            changeRate(increment) {
-                const newValue = Math.max(
-                    0.5,
-                    Math.min(2.0, parseFloat(this.rate) + increment),
-                );
-                this.setRate(newValue);
-            },
-            setRate(value) {
-                this.rate = value;
-                this.saveState();
-            },
             loadState() {
                 const state = sessionStorage.getItem("player");
-                const { autoplay, rate } = state
+                const { autoplay } = state
                     ? JSON.parse(state)
                     : {
                           autoplay: false,
-                          rate: 1.0,
                       };
                 this.autoplay = autoplay || this.autoplay;
-                this.rate = rate || 1.0;
             },
             saveState() {
                 sessionStorage.setItem(
                     "player",
                     JSON.stringify({
                         autoplay: this.isPlaying,
-                        rate: this.rate,
                     }),
                 );
             },
