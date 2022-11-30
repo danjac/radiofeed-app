@@ -93,13 +93,14 @@
                             <div class="w-full">
                                 <input type="range"
                                     aria-label="{% translate "Progress" %}"
-                                    class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none cursor-pointer"
+                                    class="flex items-center w-full h-2 mx-auto rounded-full focus:outline-none"
                                     x-ref="range"
                                     x-model="runtime"
                                     @change="skip"
                                     min="0"
                                     :max="duration"
-                                    :disabled="!isPlaying">
+                                    :disabled="!isPlaying"
+                                    :class="isPlaying ? 'cursor-pointer' : 'cursor-not-allowed'">
                             </div>
                         </div>
                     </div>
