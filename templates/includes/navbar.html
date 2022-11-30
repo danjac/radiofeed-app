@@ -42,7 +42,8 @@
                             title="{{ t_toggle_menu }}"
                             x-cloak
                             x-show.transition="sidebar"
-                            @click="sidebar=false">
+                            @click="sidebar=false"
+                            @keyup.escape.window="sidebar=false">
                             {% icon "chevron-down" size="xl" title=t_toggle_menu %}
                         </button>
                     </li>
@@ -67,8 +68,11 @@
                 x-transition:enter-end="transform opacity-100 scale-100"
                 x-transition:leave="transition ease-in duration-75"
                 x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95">
-                {% include "includes/sidebar.html" %}
+                x-transition:leave-end="transform opacity-0 scale-95"
+                x-init="{# fmt:off #}
+                    $el.insertBefore(document.getElementById('sidebar').cloneNode(true), null);
+                    htmx.process($el);
+                {# fmt:on #}">
             </div>
         {% endif %}
         {% include "includes/signup_cta.html" %}
