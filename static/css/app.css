@@ -39,8 +39,8 @@ input[type="search"]::-webkit-search-results-decoration {
 
 @layer components {
     input[type="range"] {
-        --thumbSize: 18px;
-        --trackSize: 8px;
+        --thumbSize: theme("spacing.4");
+        --trackSize: theme("spacing.1");
         --thumbBg: theme("colors.blue.600");
         --trackBg: theme("colors.gray.300");
         --progressBg: theme("colors.blue.800");
