@@ -59,8 +59,8 @@
                         </div>
 
                         <div class="sm:w-1/2 flex flex-col place-content-between h-16 sm:pl-3 pt-4 sm:pt-3">
-                            <div class="flex items-center justify-between">
-                                <div x-text="counters.current" title="{{ t_current_time }}" class="text-xs lg:text-sm">00:00:00</div>
+                            <div class="grid grid-cols-3 place-content-between">
+                                <div x-text="counters.current" title="{{ t_current_time }}" class="text-xs lg:text-sm text-start">00:00:00</div>
                                 {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                     <div class="flex items-center justify-center space-x-6">
                                         <button title="{{ t_skip_back }}"
@@ -88,7 +88,7 @@
                                         </button>
                                     </div>
                                 {% endwith %}
-                                <div x-text="counters.total" title="{{ t_time_remaining }}" class="text-xs lg:text-sm">00:00:00</div>
+                                <div x-text="counters.total" title="{{ t_time_remaining }}" class="text-xs lg:text-sm text-right">00:00:00</div>
                             </div>
                             <div class="w-full">
                                 <input type="range"
