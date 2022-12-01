@@ -77,10 +77,3 @@ repos:
       hooks:
           - id: djlint-django
             args: ["--lint"]
-    - repo: local
-      hooks:
-          - id: build-css
-            name: Build CSS bundle
-            language: system
-            entry: npm
-            args: ["run", "build:css"]
