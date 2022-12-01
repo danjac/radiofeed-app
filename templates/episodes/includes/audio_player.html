@@ -10,6 +10,7 @@
         {% translate "Decrease Playback Rate" as t_decrease_playback_rate %}
         {% translate "Increase Playback Rate" as t_increase_playback_rate %}
         {% translate "Playback Rate" as t_playback_rate %}
+        {% translate "Progress" as t_progress %}
         {% with podcast=episode.podcast episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url media_url=episode.media_url %}
             <div x-data="
                 {# fmt:off #}
@@ -92,14 +93,15 @@
                             </div>
                             <div class="w-full">
                                 <input type="range"
-                                    aria-label="{% translate "Progress" %}"
-                                    class="flex items-center w-full mx-auto bg-black focus:outline-none"
+                                    aria-label="{{ t_progress }}"
+                                    title="{{ t_progress }}"
+                                    min="0"
                                     x-ref="range"
                                     x-model="runtime"
                                     @change="skip"
-                                    min="0"
                                     :max="duration"
                                     :disabled="!isPlaying"
+                                    class="flex items-center w-full mx-auto bg-black focus:outline-none"
                                     :class="isPlaying ? 'cursor-pointer' : 'cursor-not-allowed'">
                             </div>
                         </div>
