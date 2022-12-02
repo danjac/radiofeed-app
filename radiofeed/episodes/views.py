@@ -39,7 +39,6 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/includes/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -61,7 +60,6 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
                 .order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
-            "episodes/includes/episodes.html",
         )
 
     return redirect("episodes:index")
@@ -171,12 +169,7 @@ def history(request: HttpRequest) -> HttpResponse:
     else:
         logs = logs.order_by("-listened" if request.sorter.is_desc else "listened")
 
-    return render_pagination_response(
-        request,
-        logs,
-        "episodes/history.html",
-        "episodes/includes/audio_logs.html",
-    )
+    return render_pagination_response(request, logs, "episodes/history.html")
 
 
 @require_POST
@@ -205,12 +198,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.sorter.is_desc else "created"
         )
 
-    return render_pagination_response(
-        request,
-        bookmarks,
-        "episodes/bookmarks.html",
-        "episodes/includes/bookmarks.html",
-    )
+    return render_pagination_response(request, bookmarks, "episodes/bookmarks.html")
 
 
 @require_POST

@@ -6,6 +6,17 @@
 {% block search_content %}
     {% get_current_language as language_code %}
     {% cache 600 podcasts-search request.get_full_path language_code %}
-        {% include pagination_template %}
+        {% block pagination %}
+            <div class="dark:divide-gray-500 divide-y divide-solid"
+                id="{{ pagination_target }}">
+                {% include "includes/pagination_links.html" %}
+                {% for episode in page_obj.object_list %}
+                    {% include "episodes/includes/episode.html" %}
+                {% empty %}
+                    {% include "includes/empty.html" %}
+                {% endfor %}
+                {% include "includes/pagination_links.html" %}
+            </div>
+        {% endblock pagination %}
     {% endcache %}
 {% endblock search_content %}
