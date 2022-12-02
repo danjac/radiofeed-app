@@ -77,13 +77,15 @@
                     </div>
                 </div>
             </div>
-            {% if funding_url %}
-                <div class="font-semibold flex-wrap">
-                    <a href="{{ funding_url }}" target="_blank" rel="noopener">
-                        {{ podcast.funding_text|default:'Support this podcast' }}
-                    </a>
-                </div>
-            {% endif %}
+            {% with funding_url=podcast.funding_url|normalize_url %}
+                {% if funding_url %}
+                    <div class="font-semibold flex-wrap">
+                        <a href="{{ funding_url }}" target="_blank" rel="noopener">
+                            {{ podcast.funding_text|default:'Support this podcast' }}
+                        </a>
+                    </div>
+                {% endif %}
+            {% endwith %}
             {% cache 600 podcast-categories podcast.id %}
                 {% with categories=podcast.categories.all %}
                     {% if categories %}
