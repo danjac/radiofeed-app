@@ -44,7 +44,7 @@
                     </div>
                     {% cookie_notice %}
                     {% if user.is_authenticated %}
-                        <div id="audio-player">{% audio_player %}</div>
+                        {% audio_player %}
                     {% endif %}
                 </div>
             </div>

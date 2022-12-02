@@ -106,7 +106,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return _render_audio_player(
+    return _render_audio_player_action(
         request,
         episode,
         start_player=True,
@@ -125,7 +125,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             Episode.objects.with_current_time(request.user), pk=episode_id
         )
 
-        return _render_audio_player(
+        return _render_audio_player_action(
             request,
             episode,
             start_player=False,
@@ -239,7 +239,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_action(request, episode, False)
 
 
-def _render_audio_player(
+def _render_audio_player_action(
     request: HttpRequest,
     episode: Episode,
     *,
@@ -249,7 +249,7 @@ def _render_audio_player(
 ) -> HttpResponse:
     return render(
         request,
-        "episodes/includes/audio_player.html",
+        "episodes/includes/audio_controls.html",
         {
             "episode": episode,
             "start_player": start_player,
