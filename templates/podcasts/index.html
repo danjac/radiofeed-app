@@ -58,7 +58,7 @@
             id="{{ pagination_target }}">
             {% include "snippets/pagination_links.html" %}
             {% for podcast in page_obj.object_list %}
-                {% include "podcasts/podcast.html" %}
+                {% include "podcasts/snippets/podcast.html" %}
             {% empty %}
                 {% include "snippets/empty.html" %}
             {% endfor %}

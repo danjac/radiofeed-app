@@ -71,7 +71,7 @@ msgid "HTTP Status"
 msgstr ""
 
 #: radiofeed/podcasts/admin.py:122 templates/episodes/detail.html:147
-#: templates/episodes/episode.html:26
+#: templates/episodes/snippets/episode.html:26
 msgid "Release Date"
 msgstr "Päivämäärä"
 
@@ -654,7 +654,7 @@ msgstr ""
 msgid "Sign Up"
 msgstr "Rekisteröidy"
 
-#: templates/account/social_logins.html:5
+#: templates/account/snippets/social_logins.html:5
 msgid "Login or Sign up with"
 msgstr "Kirjaudu tai rekisteröidy"
 
@@ -1133,7 +1133,7 @@ msgstr ""
 "sisällön löytämiseen.\n"
 "                "
 
-#: templates/podcasts/podcast.html:19
+#: templates/podcasts/snippets/podcast.html:19
 msgid "Latest Episode"
 msgstr "Viimeinen Jakso"
 

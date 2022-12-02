@@ -37,7 +37,7 @@
             id="{{ pagination_target }}">
             {% include "snippets/pagination_links.html" %}
             {% for log in page_obj.object_list %}
-                {% include "episodes/episode.html" with episode=log.episode %}
+                {% include "episodes/snippets/episode.html" with episode=log.episode %}
             {% empty %}
                 {% include "snippets/empty.html" %}
             {% endfor %}
