@@ -3,7 +3,7 @@
 
 # Python dependencies
 
-poetry update && poetry export --without-hashes -o requirements.txt
+poetry update
 
 # Frontend dependencies
 
