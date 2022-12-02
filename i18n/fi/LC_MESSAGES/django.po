@@ -71,7 +71,7 @@ msgid "HTTP Status"
 msgstr ""
 
 #: radiofeed/podcasts/admin.py:122 radiofeed/templates/episodes/detail.html:90
-#: radiofeed/templates/episodes/includes/episode.html:26
+#: radiofeed/templates/episodes/episode.html:26
 msgid "Release Date"
 msgstr "Päivämäärä"
 
@@ -417,7 +417,7 @@ msgid "Primary"
 msgstr "Ensisijainen"
 
 #: radiofeed/templates/account/email.html:44
-#: radiofeed/templates/episodes/includes/history.html:27
+#: radiofeed/templates/episodes/history.html:27
 #: radiofeed/templates/socialaccount/connections.html:43
 msgid "Remove"
 msgstr "Poista"
@@ -500,7 +500,7 @@ msgstr "Tuo podcast-syötteet OPML-tiedostosta kokoelmaasi."
 msgid "Upload OPML"
 msgstr "Lataa OPML"
 
-#: radiofeed/templates/account/includes/social_logins.html:5
+#: radiofeed/templates/account/social_logins.html:5
 msgid "Login or Sign up with"
 msgstr "Kirjaudu tai rekisteröidy"
 
@@ -693,7 +693,7 @@ msgstr[1] ""
 "                        "
 
 #: radiofeed/templates/account/stats.html:48
-#: radiofeed/templates/episodes/includes/history.html:13
+#: radiofeed/templates/episodes/history.html:13
 msgid "Listened"
 msgstr "Kuunneltu"
 
@@ -833,88 +833,88 @@ msgstr "Historia"
 msgid "Search: History"
 msgstr "Haku: Historia"
 
-#: radiofeed/templates/episodes/includes/audio_controls.html:11
-#: radiofeed/templates/episodes/includes/audio_player.html:8
+#: radiofeed/templates/episodes/audio_controls.html:11
+#: radiofeed/templates/episodes/audio_player.html:8
 msgid "Close Player"
 msgstr "Sulje Soitin"
 
-#: radiofeed/templates/episodes/includes/audio_controls.html:13
+#: radiofeed/templates/episodes/audio_controls.html:13
 msgid "Close"
 msgstr "Sulje"
 
-#: radiofeed/templates/episodes/includes/audio_controls.html:18
+#: radiofeed/templates/episodes/audio_controls.html:18
 msgid "Open Episode in Player"
 msgstr "Avaa Jakso Soitimella"
 
-#: radiofeed/templates/episodes/includes/audio_controls.html:20
-#: radiofeed/templates/episodes/includes/audio_player.html:6
+#: radiofeed/templates/episodes/audio_controls.html:20
+#: radiofeed/templates/episodes/audio_player.html:6
 msgid "Play"
 msgstr "Soita"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:4
+#: radiofeed/templates/episodes/audio_player.html:4
 msgid "Current Time"
 msgstr "Aika"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:5
+#: radiofeed/templates/episodes/audio_player.html:5
 msgid "Time Remaining"
 msgstr "Jäljellä"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:7
+#: radiofeed/templates/episodes/audio_player.html:7
 msgid "Pause"
 msgstr "Paussi"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:9
+#: radiofeed/templates/episodes/audio_player.html:9
 msgid "Skip Back 10 Seconds"
 msgstr "Taaksepäin 10 Sekuntia"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:10
+#: radiofeed/templates/episodes/audio_player.html:10
 msgid "Skip Forward 10 Seconds"
 msgstr "Eteenpäin 10 Sekuntia"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:11
+#: radiofeed/templates/episodes/audio_player.html:11
 msgid "Decrease Playback Rate"
 msgstr "Vähennä Toistonopeus"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:12
+#: radiofeed/templates/episodes/audio_player.html:12
 msgid "Increase Playback Rate"
 msgstr "Lisää Toistonopeus"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:13
+#: radiofeed/templates/episodes/audio_player.html:13
 #, fuzzy
 #| msgid "Decrease Playback Rate"
 msgid "Playback Rate"
 msgstr "Vähennä Toistonopeus"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:14
+#: radiofeed/templates/episodes/audio_player.html:14
 msgid "Reload Player"
 msgstr "Lataa Soitin Uudestaan"
 
-#: radiofeed/templates/episodes/includes/audio_player.html:132
+#: radiofeed/templates/episodes/audio_player.html:132
 msgid "Progress"
 msgstr "Edistymispalkki"
 
-#: radiofeed/templates/episodes/includes/bookmark.html:2
+#: radiofeed/templates/episodes/bookmark.html:2
 msgid "Add to Bookmarks"
 msgstr "Lisää Kirjanmerkkeihin"
 
-#: radiofeed/templates/episodes/includes/bookmark.html:3
+#: radiofeed/templates/episodes/bookmark.html:3
 msgid "Remove from Bookmarks"
 msgstr "Poista Kirjanmerkkeistä"
 
-#: radiofeed/templates/episodes/includes/bookmark.html:16
-#: radiofeed/templates/episodes/includes/bookmark.html:23
+#: radiofeed/templates/episodes/bookmark.html:16
+#: radiofeed/templates/episodes/bookmark.html:23
 msgid "Bookmark"
 msgstr "Kirjanmerkki"
 
-#: radiofeed/templates/episodes/includes/history.html:8
+#: radiofeed/templates/episodes/history.html:8
 msgid "Are you sure you want to remove this episode from your History?"
 msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
 
-#: radiofeed/templates/episodes/includes/history.html:19
+#: radiofeed/templates/episodes/history.html:19
 msgid "Timestamp"
 msgstr "Aikaleima"
 
-#: radiofeed/templates/episodes/includes/history.html:24
+#: radiofeed/templates/episodes/history.html:24
 #, fuzzy
 #| msgid "Removed from History"
 msgid "Remove episode from your History"
@@ -1184,27 +1184,27 @@ msgstr ""
 "#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
 "            "
 
-#: radiofeed/templates/podcasts/includes/itunes_feed.html:15
+#: radiofeed/templates/podcasts/itunes_feed.html:15
 msgid "Adding podcast to database..."
 msgstr "Lisätään podcastin tietokantaan..."
 
-#: radiofeed/templates/podcasts/includes/podcast.html:19
+#: radiofeed/templates/podcasts/podcast.html:19
 msgid "Latest Episode"
 msgstr "Viimeinen Jakso"
 
-#: radiofeed/templates/podcasts/includes/subscribe.html:10
+#: radiofeed/templates/podcasts/subscribe.html:10
 msgid "Unsubscribe from this Podcast"
 msgstr "Lopeta podcastin tilaus"
 
-#: radiofeed/templates/podcasts/includes/subscribe.html:13
+#: radiofeed/templates/podcasts/subscribe.html:13
 msgid "Unsubscribe"
 msgstr "Lopeta tilaus"
 
-#: radiofeed/templates/podcasts/includes/subscribe.html:17
+#: radiofeed/templates/podcasts/subscribe.html:17
 msgid "Subscribe to this Podcast"
 msgstr "Tilaa Podcast"
 
-#: radiofeed/templates/podcasts/includes/subscribe.html:20
+#: radiofeed/templates/podcasts/subscribe.html:20
 msgid "Subscribe"
 msgstr "Tilaa"
 

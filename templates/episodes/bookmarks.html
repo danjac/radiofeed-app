@@ -37,7 +37,7 @@
             id="{{ pagination_target }}">
             {% include "includes/pagination_links.html" %}
             {% for bookmark in page_obj.object_list %}
-                {% include "episodes/includes/episode.html" with episode=bookmark.episode %}
+                {% include "episodes/episode.html" with episode=bookmark.episode %}
             {% empty %}
                 {% include "includes/empty.html" %}
             {% endfor %}
