@@ -41,10 +41,7 @@ def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
         "account/import_export_podcast_feeds.html",
-        {
-            "form": OpmlUploadForm(),
-            "target": "opml-import-form",
-        },
+        {"form": OpmlUploadForm()},
     )
 
 
