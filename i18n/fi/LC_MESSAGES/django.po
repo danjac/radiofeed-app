@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-02 19:27+0000\n"
+"POT-Creation-Date: 2022-12-02 19:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgid "HTTP Status"
 msgstr ""
 
 #: radiofeed/podcasts/admin.py:122 templates/episodes/detail.html:147
-#: templates/episodes/snippets/episode.html:26
+#: templates/episodes/includes/episode.html:26
 msgid "Release Date"
 msgstr "Päivämäärä"
 
@@ -270,9 +270,9 @@ msgstr ""
 "ilmoitettuValitettavasti tapahtui odottamaton virhe. Palvelimen "
 "ylläpitäjille on jo ilmoitettu."
 
-#: templates/about.html:4 templates/podcasts/detail.html:4
-#: templates/podcasts/detail_base.html:12 templates/snippets/navbar.html:64
-#: templates/snippets/sidebar.html:56
+#: templates/about.html:4 templates/includes/navbar.html:64
+#: templates/includes/sidebar.html:56 templates/podcasts/detail.html:4
+#: templates/podcasts/detail_base.html:12
 msgid "About"
 msgstr "Tiedot"
 
@@ -533,6 +533,10 @@ msgstr "Tuo podcast-syötteet OPML-tiedostosta kokoelmaasi."
 msgid "Upload OPML"
 msgstr "Lataa OPML"
 
+#: templates/account/includes/social_logins.html:5
+msgid "Login or Sign up with"
+msgstr "Kirjaudu tai rekisteröidy"
+
 #: templates/account/login.html:7 templates/account/login.html:33
 #: templates/socialaccount/login.html:27
 msgid "Sign In"
@@ -611,11 +615,11 @@ msgstr "Asetukset"
 msgid "Save Changes"
 msgstr "Tallenna Muutokset"
 
-#: templates/account/settings_base.html:4 templates/snippets/sidebar.html:50
+#: templates/account/settings_base.html:4 templates/includes/sidebar.html:50
 msgid "Settings"
 msgstr "Asetukset"
 
-#: templates/account/settings_base.html:10 templates/snippets/navbar.html:36
+#: templates/account/settings_base.html:10 templates/includes/navbar.html:36
 #, python-format
 msgid "Settings for %(username)s"
 msgstr "Asetukset: %(username)s"
@@ -654,10 +658,6 @@ msgstr ""
 msgid "Sign Up"
 msgstr "Rekisteröidy"
 
-#: templates/account/snippets/social_logins.html:5
-msgid "Login or Sign up with"
-msgstr "Kirjaudu tai rekisteröidy"
-
 #: templates/account/stats.html:9
 msgid "Joined"
 msgstr "Rekisteröity"
@@ -690,7 +690,7 @@ msgstr[1] ""
 "                        "
 
 #: templates/account/stats.html:31 templates/episodes/bookmarks.html:4
-#: templates/episodes/bookmarks.html:9 templates/snippets/sidebar.html:34
+#: templates/episodes/bookmarks.html:9 templates/includes/sidebar.html:34
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
@@ -823,11 +823,11 @@ msgstr "Vanhemmat"
 msgid "Search: Bookmarks"
 msgstr "Haku: Kirjanmerkit"
 
-#: templates/episodes/detail.html:11 templates/snippets/pagination_links.html:4
+#: templates/episodes/detail.html:11 templates/includes/pagination_links.html:4
 msgid "Next"
 msgstr "Seuraavat"
 
-#: templates/episodes/detail.html:12 templates/snippets/pagination_links.html:5
+#: templates/episodes/detail.html:12 templates/includes/pagination_links.html:5
 msgid "Previous"
 msgstr "Edelliset"
 
@@ -837,7 +837,7 @@ msgstr "Edelliset"
 msgid "No More Episodes"
 msgstr "Ei enää jaksoja"
 
-#: templates/episodes/detail.html:17 templates/snippets/pagination_links.html:3
+#: templates/episodes/detail.html:17 templates/includes/pagination_links.html:3
 msgid "Pagination"
 msgstr "Sivunumerointi"
 
@@ -917,7 +917,7 @@ msgid "Remove episode from your History"
 msgstr "Poistettu Historiasta"
 
 #: templates/episodes/history.html:4 templates/episodes/history.html:9
-#: templates/snippets/sidebar.html:42
+#: templates/includes/sidebar.html:42
 msgid "History"
 msgstr "Historia"
 
@@ -926,7 +926,7 @@ msgid "Search: History"
 msgstr "Haku: Historia"
 
 #: templates/episodes/index.html:4 templates/episodes/index.html:17
-#: templates/snippets/sidebar.html:18
+#: templates/includes/sidebar.html:18
 msgid "New Releases"
 msgstr "Uudet Jaksot"
 
@@ -944,9 +944,9 @@ msgstr "Tilaukset"
 msgid "Search: Episodes"
 msgstr "Haku: Jaksot"
 
-#: templates/episodes/search.html:4 templates/podcasts/itunes_search.html:4
-#: templates/podcasts/search.html:4 templates/snippets/navbar.html:14
-#: templates/snippets/search_form.html:2 templates/snippets/search_form.html:14
+#: templates/episodes/search.html:4 templates/includes/navbar.html:14
+#: templates/includes/search_form.html:2 templates/includes/search_form.html:14
+#: templates/podcasts/itunes_search.html:4 templates/podcasts/search.html:4
 msgid "Search"
 msgstr "Haku"
 
@@ -955,14 +955,112 @@ msgstr "Haku"
 msgid "Episodes"
 msgstr "Jaksot"
 
-#: templates/error_base.html:26 templates/snippets/navbar.html:21
+#: templates/error_base.html:26 templates/includes/navbar.html:21
 msgid "Home Page"
 msgstr "Kotisivu"
 
-#: templates/podcasts/categories.html:4 templates/podcasts/categories.html:9
-#: templates/podcasts/category_detail.html:4 templates/snippets/sidebar.html:26
+#: templates/includes/cookie_notice.html:8
+msgid "This site uses cookies to ensure you get the best experience."
+msgstr ""
+"Tämä sivusto käyttää evästeitä varmistaakseen, että saat parhaan "
+"käyttökokemuksen."
+
+#: templates/includes/cookie_notice.html:17
+msgid "Got it!"
+msgstr "Ymmärrään!"
+
+#: templates/includes/empty.html:4
+#, python-format
+msgid ""
+"\n"
+"            No results found for <span class=\"font-bold\">%(search)s</"
+"span>.\n"
+"        "
+msgstr ""
+"\n"
+"            Ei tuloksia hakusanasta <span class=\"font-bold\">%(search)s</"
+"span>.\n"
+"        "
+
+#: templates/includes/empty.html:8 templates/podcasts/categories.html:33
+msgid "Nothing to see here."
+msgstr "Ei tuloksia"
+
+#: templates/includes/navbar.html:15
+msgid "Toggle Menu"
+msgstr "Vaihda Valikko"
+
+#: templates/includes/navbar.html:61
+msgid "About this Site"
+msgstr "Tiedot Sivustosta"
+
+#: templates/includes/pagination_links.html:6
+#, fuzzy
+#| msgid "No More Pages"
+msgid "No More Pages"
+msgstr "Viimeinen Sivu"
+
+#: templates/includes/pagination_links.html:16
+#: templates/includes/pagination_links.html:35
+#, python-format
+msgid "Page %(page_number)s"
+msgstr "Sivu %(page_number)s"
+
+#: templates/includes/search_form.html:3
+msgid "Clear Search"
+msgstr "Poita haku"
+
+#: templates/includes/sidebar.html:10 templates/podcasts/category_detail.html:4
+#: templates/podcasts/category_detail.html:8 templates/podcasts/detail.html:95
+#: templates/podcasts/index.html:4 templates/podcasts/index.html:17
+#: templates/podcasts/search.html:4 templates/search_base.html:16
+msgid "Podcasts"
+msgstr "Podcastit"
+
+#: templates/includes/sidebar.html:26 templates/podcasts/categories.html:4
+#: templates/podcasts/categories.html:9
+#: templates/podcasts/category_detail.html:4
 msgid "Categories"
 msgstr "Kategoriat"
+
+#: templates/includes/sidebar.html:67
+msgid "Logout"
+msgstr "Kirjaudu ulos"
+
+#: templates/includes/signup_cta.html:8
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                <a class=\"%(css_class)s\"\n"
+#| "                    hx-disable=\"true\"\n"
+#| "                    href=\"%(signup_url)s\">Sign up</a>\n"
+#| "                or\n"
+#| "                <a class=\"%(css_class)s\"\n"
+#| "                    hx-disable=\"true\"\n"
+#| "                    href=\"%(login_url)s\">log in</a>\n"
+#| "                to follow your favorite podcasts and listen to episodes!\n"
+#| "            "
+msgid ""
+"\n"
+"                <a class=\"%(css_class)s\" href=\"%(signup_url)s\">Sign up</"
+"a>\n"
+"                or\n"
+"                <a class=\"%(css_class)s\" href=\"%(login_url)s\">log in</"
+"a>\n"
+"                to follow your favorite podcasts and listen to episodes!\n"
+"            "
+msgstr ""
+"\n"
+"                <a class=\"%(css_class)s\"\n"
+"                    hx-disable=\"true\"\n"
+"                    href=\"%(signup_url)s\">Kirjaudu</a>\n"
+"                tai\n"
+"                <a class=\"%(css_class)s\"\n"
+"                    hx-disable=\"true\"\n"
+"                    href=\"%(login_url)s\">rekisteröidy</a>\n"
+"                  seurataksesi suosikkipodcastejasi ja kuunnellaksesi "
+"jaksoja!\n"
+"            "
 
 #: templates/podcasts/categories.html:12
 msgid "Find a category..."
@@ -985,18 +1083,6 @@ msgstr ""
 "            Ei tuloksia hakusanasta <span class=\"font-bold\">%(search)s</"
 "span>.\n"
 "        "
-
-#: templates/podcasts/categories.html:33 templates/snippets/empty.html:8
-msgid "Nothing to see here."
-msgstr "Ei tuloksia"
-
-#: templates/podcasts/category_detail.html:4
-#: templates/podcasts/category_detail.html:8 templates/podcasts/detail.html:95
-#: templates/podcasts/index.html:4 templates/podcasts/index.html:17
-#: templates/podcasts/search.html:4 templates/search_base.html:16
-#: templates/snippets/sidebar.html:10
-msgid "Podcasts"
-msgstr "Podcastit"
 
 #: templates/podcasts/category_detail.html:7
 msgid "Search: "
@@ -1102,13 +1188,17 @@ msgstr ""
 "#000;\" href=\"%(preferences_url)s\">Asetukset</a>-suvulla.\n"
 "            "
 
+#: templates/podcasts/includes/podcast.html:19
+msgid "Latest Episode"
+msgstr "Viimeinen Jakso"
+
 #: templates/podcasts/index.html:20
 #, fuzzy
 #| msgid "Search Podcasts"
 msgid "Search: Podcasts"
 msgstr "Haku: Podcastit"
 
-#: templates/podcasts/itunes_feed.html:15
+#: templates/podcasts/itunes_search.html:25
 msgid "Adding podcast to database..."
 msgstr "Lisätään podcastin tietokantaan..."
 
@@ -1132,10 +1222,6 @@ msgstr ""
 "strong> on ilmainen podcast-sovellus suosikkiohjelmiesi keräämiseen ja uuden "
 "sisällön löytämiseen.\n"
 "                "
-
-#: templates/podcasts/snippets/podcast.html:19
-msgid "Latest Episode"
-msgstr "Viimeinen Jakso"
 
 #: templates/search_base.html:6
 #, fuzzy, python-format
@@ -1162,92 +1248,6 @@ msgstr ""
 #: templates/search_base.html:35
 msgid "Search..."
 msgstr "Haku"
-
-#: templates/snippets/cookie_notice.html:8
-msgid "This site uses cookies to ensure you get the best experience."
-msgstr ""
-"Tämä sivusto käyttää evästeitä varmistaakseen, että saat parhaan "
-"käyttökokemuksen."
-
-#: templates/snippets/cookie_notice.html:17
-msgid "Got it!"
-msgstr "Ymmärrään!"
-
-#: templates/snippets/empty.html:4
-#, python-format
-msgid ""
-"\n"
-"            No results found for <span class=\"font-bold\">%(search)s</"
-"span>.\n"
-"        "
-msgstr ""
-"\n"
-"            Ei tuloksia hakusanasta <span class=\"font-bold\">%(search)s</"
-"span>.\n"
-"        "
-
-#: templates/snippets/navbar.html:15
-msgid "Toggle Menu"
-msgstr "Vaihda Valikko"
-
-#: templates/snippets/navbar.html:61
-msgid "About this Site"
-msgstr "Tiedot Sivustosta"
-
-#: templates/snippets/pagination_links.html:6
-#, fuzzy
-#| msgid "No More Pages"
-msgid "No More Pages"
-msgstr "Viimeinen Sivu"
-
-#: templates/snippets/pagination_links.html:16
-#: templates/snippets/pagination_links.html:35
-#, python-format
-msgid "Page %(page_number)s"
-msgstr "Sivu %(page_number)s"
-
-#: templates/snippets/search_form.html:3
-msgid "Clear Search"
-msgstr "Poita haku"
-
-#: templates/snippets/sidebar.html:67
-msgid "Logout"
-msgstr "Kirjaudu ulos"
-
-#: templates/snippets/signup_cta.html:8
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                <a class=\"%(css_class)s\"\n"
-#| "                    hx-disable=\"true\"\n"
-#| "                    href=\"%(signup_url)s\">Sign up</a>\n"
-#| "                or\n"
-#| "                <a class=\"%(css_class)s\"\n"
-#| "                    hx-disable=\"true\"\n"
-#| "                    href=\"%(login_url)s\">log in</a>\n"
-#| "                to follow your favorite podcasts and listen to episodes!\n"
-#| "            "
-msgid ""
-"\n"
-"                <a class=\"%(css_class)s\" href=\"%(signup_url)s\">Sign up</"
-"a>\n"
-"                or\n"
-"                <a class=\"%(css_class)s\" href=\"%(login_url)s\">log in</"
-"a>\n"
-"                to follow your favorite podcasts and listen to episodes!\n"
-"            "
-msgstr ""
-"\n"
-"                <a class=\"%(css_class)s\"\n"
-"                    hx-disable=\"true\"\n"
-"                    href=\"%(signup_url)s\">Kirjaudu</a>\n"
-"                tai\n"
-"                <a class=\"%(css_class)s\"\n"
-"                    hx-disable=\"true\"\n"
-"                    href=\"%(login_url)s\">rekisteröidy</a>\n"
-"                  seurataksesi suosikkipodcastejasi ja kuunnellaksesi "
-"jaksoja!\n"
-"            "
 
 #: templates/socialaccount/connections.html:9
 msgid ""

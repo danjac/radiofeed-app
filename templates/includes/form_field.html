@@ -20,7 +20,7 @@
                 {% endif %}
             {% endif %}
         {% endwith %}
-        {% include "snippets/form_errors.html" with errors=field.errors %}
+        {% include "includes/form_errors.html" with errors=field.errors %}
         {% if field.help_text %}<p class="text-gray-600 dark:text-gray-300">{{ field.help_text }}</p>{% endif %}
     </div>
 {% endif %}

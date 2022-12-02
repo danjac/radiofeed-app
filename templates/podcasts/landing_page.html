@@ -16,7 +16,7 @@
             {% for podcast in podcasts %}
                 {% with css_class="h-28 w-28 md:h-48 md:w-48 lg:h-52 lg:w-52 xl:h-56 xl:w-56 hover:grayscale" %}
                     <a href="{{ podcast.get_absolute_url }}" class="{{ css_class }}">
-                        {% include "snippets/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
+                        {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
                     </a>
                 {% endwith %}
             {% endfor %}

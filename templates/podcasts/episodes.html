@@ -22,7 +22,7 @@
                     {% endif %}
                 </li>
                 <li class="flex items-center justify-center sm:justify-end">
-                    {% include "snippets/search_form.html" with placeholder=_("Search: Episodes") %}
+                    {% include "includes/search_form.html" with placeholder=_("Search: Episodes") %}
                 </li>
             </ul>
         </nav>
@@ -32,13 +32,13 @@
         {% block pagination %}
             <div class="dark:divide-gray-500 divide-y divide-solid"
                 id="{{ pagination_target }}">
-                {% include "snippets/pagination_links.html" %}
+                {% include "includes/pagination_links.html" %}
                 {% for episode in page_obj.object_list %}
-                    {% include "episodes/snippets/episode.html" %}
+                    {% include "episodes/includes/episode.html" %}
                 {% empty %}
-                    {% include "snippets/empty.html" %}
+                    {% include "includes/empty.html" %}
                 {% endfor %}
-                {% include "snippets/pagination_links.html" %}
+                {% include "includes/pagination_links.html" %}
             </div>
         {% endblock pagination %}
     {% endcache %}

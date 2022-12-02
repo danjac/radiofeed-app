@@ -13,7 +13,7 @@ Radiofeed requires the following dependencies:
 
 ### Additional requirements
 
-For ease of local development a `docker-compose.yml` is provided which snippets:
+For ease of local development a `docker-compose.yml` is provided which includes:
 
 * PostgreSQL
 * Redis

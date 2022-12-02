@@ -7,7 +7,7 @@
     <div class="w-full divide-y mb-3 space-y-3 dark:divide-gray-500">
         <div class="flex justify-between pt-4">
             <div class="w-1/2">{% translate "Joined" %}</div>
-            <div class="w-1/2 font-bold text-right">{% include "snippets/date.html" with value=user.date_joined %}</div>
+            <div class="w-1/2 font-bold text-right">{% include "includes/date.html" with value=user.date_joined %}</div>
         </div>
         {% with subscribed=user.subscriptions.count %}
             {% if subscribed %}
