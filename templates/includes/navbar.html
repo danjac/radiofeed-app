@@ -9,8 +9,7 @@
                     htmx.process($refs.menu);
                     cloned = true;
                 }
-            });
-        {# fmt:on #}"
+            });{# fmt:on #}"
         @htmx:before-request.window="showMenu=false">
         {% translate "Search" as t_search %}
         {% translate "Toggle Menu" as t_toggle_menu %}
