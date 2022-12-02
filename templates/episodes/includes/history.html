@@ -2,11 +2,10 @@
 {% with target=episode.get_history_target %}
     <div id="{{ target }}"
         hx-target="this"
-        hx-swap="outerHTML"
         hx-disinherit="hx-indicator"
         hx-push-url="false"
-        hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}"
-        {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+        hx-swap="multi:#{{ target }}:outerHTML,#messages:outerHTML"
+        hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}">
         {% if listened %}
             <div class="space-x-3 flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300">
                 <div class="flex items-center space-x-1">
@@ -30,7 +29,7 @@
             </div>
         {% endif %}
         {% if request.htmx.target == target %}
-            {% include "includes/messages.html" with hx_oob=True %}
+            {% include "includes/messages.html" %}
         {% endif %}
     </div>
 {% endwith %}

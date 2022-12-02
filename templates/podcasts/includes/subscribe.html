@@ -3,7 +3,7 @@
     <div id="{{ target }}"
         hx-target="this"
         hx-push-url="false"
-        hx-swap="outerHTML"
+        hx-swap="multi:#{{ target }}:outerHTML,#messages:outerHTML"
         hx-disinherit="hx-indicator">
         {% if is_subscribed %}
             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
@@ -22,6 +22,6 @@
         {% endif %}
     </div>
     {% if request.htmx.target == target %}
-        {% include "includes/messages.html" with hx_oob=True %}
+        {% include "includes/messages.html" %}
     {% endif %}
 {% endwith %}

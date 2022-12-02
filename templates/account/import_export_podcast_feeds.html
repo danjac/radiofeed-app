@@ -30,7 +30,7 @@
                 hx-encoding="multipart/form-data"
                 hx-target="this"
                 hx-select="#{{ target }}"
-                hx-swap="outerHTML"
+                hx-swap="multi:#{{ target }}:outerHTML,#messages:outerHTML"
                 hx-post="{{ action_url }}">
                 {% csrf_token %}
                 {{ form }}
@@ -40,10 +40,10 @@
                         {% translate "Upload OPML" %}
                     </button>
                 </div>
+                {% if request.htmx.target == target %}
+                    {% include "includes/messages.html" %}
+                {% endif %}
             </form>
-            {% if request.htmx.target == target %}
-                {% include "includes/messages.html" with hx_oob=True %}
-            {% endif %}
         {% endwith %}
     </div>
 {% endblock settings_content %}

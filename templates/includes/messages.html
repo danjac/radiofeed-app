@@ -11,8 +11,7 @@
             });
         {% endfor %}"
         {# fmt:on #}
-    {% endif %}
-    {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+    {% endif %}>
     <div class="space-y-3 flex justify-center">
         <template x-for="message in messages">
             <div class="flex flex-wrap items-center px-2 py-1 text-center text-white rounded shadow-xl max-w-sm"
