@@ -36,7 +36,7 @@ def render_pagination_response(
     param: str = _DEFAULT_PAGINATION_PARAM,
     page_size: int = 30,
     pagination_target: str = "pagination",
-    pagination_block: str = "pagination",
+    block_name: str = "pagination",
     **pagination_kwargs,
 ) -> HttpResponse:
     """Renders paginated response.
@@ -60,9 +60,7 @@ def render_pagination_response(
 
     if request.htmx and request.htmx.target == pagination_target:
         return HttpResponse(
-            render_block_to_string(
-                template_name, pagination_block, context, request=request
-            )
+            render_block_to_string(template_name, block_name, context, request=request)
         )
 
     return TemplateResponse(request, template_name, context)
