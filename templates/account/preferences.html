@@ -10,8 +10,8 @@
         novalidate
         id="preferences-form"
         hx-target="this"
-        hx-select="#preferences-form"
         hx-swap="outerHTML"
+        hx-select="#preferences-form"
         hx-post="{{ request.path }}">
         {% csrf_token %}
         {{ form }}

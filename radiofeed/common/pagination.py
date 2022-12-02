@@ -4,7 +4,7 @@ from typing import Final, Iterable
 
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.template.response import TemplateResponse
 from render_block import render_block_to_string
 
 _DEFAULT_PAGINATION_PARAM: Final = "page"
@@ -65,4 +65,4 @@ def render_pagination_response(
             )
         )
 
-    return render(request, template_name, context)
+    return TemplateResponse(request, template_name, context)

@@ -38,7 +38,9 @@ class TestLandingPage:
 class TestPodcasts:
     def test_htmx(self, client, auth_user):
         create_batch(create_podcast, 3, promoted=True)
-        response = client.get(podcasts_url, HTTP_HX_REQUEST="true")
+        response = client.get(
+            podcasts_url, HTTP_HX_REQUEST="true", HTTP_HX_TARGET="pagination"
+        )
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 3

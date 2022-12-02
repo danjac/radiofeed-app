@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -77,7 +78,7 @@ def episode_detail(
         pk=episode_id,
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/detail.html",
         {

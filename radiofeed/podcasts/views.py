@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
@@ -24,7 +25,9 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("podcasts:index")
     podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
-    return render(request, "podcasts/landing_page.html", {"podcasts": podcasts})
+    return TemplateResponse(
+        request, "podcasts/landing_page.html", {"podcasts": podcasts}
+    )
 
 
 @require_safe
@@ -91,7 +94,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
                 request, _("Sorry, an error occurred trying to access iTunes.")
             )
 
-        return render(
+        return TemplateResponse(
             request,
             "podcasts/itunes_search.html",
             {
@@ -127,7 +130,7 @@ def podcast_detail(
     """Details for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
@@ -172,7 +175,7 @@ def similar(
     """List similar podcasts based on recommendations."""
     podcast = _get_podcast_or_404(podcast_id)
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/similar.html",
         {
@@ -199,7 +202,9 @@ def category_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         categories = categories.search(request.search)
 
-    return render(request, "podcasts/categories.html", {"categories": categories})
+    return TemplateResponse(
+        request, "podcasts/categories.html", {"categories": categories}
+    )
 
 
 @require_safe
