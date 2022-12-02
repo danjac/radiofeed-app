@@ -256,9 +256,9 @@ def _render_audio_player_action(
     return HttpResponse(
         [
             render_block_to_string(
-                "episodes/detail.html", block, context, request=request
+                "episodes/detail.html", block_name, context, request=request
             )
-            for block in ("audio_controls", "history")
+            for block_name in ("audio_player", "history")
         ]
     )
 

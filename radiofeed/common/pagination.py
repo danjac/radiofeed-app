@@ -60,7 +60,12 @@ def render_pagination_response(
 
     if request.htmx and request.htmx.target == pagination_target:
         return HttpResponse(
-            render_block_to_string(template_name, block_name, context, request=request)
+            render_block_to_string(
+                template_name,
+                block_name,
+                context,
+                request=request,
+            )
         )
 
     return TemplateResponse(request, template_name, context)

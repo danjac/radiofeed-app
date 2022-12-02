@@ -63,7 +63,7 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
-                    {% block audio_controls %}
+                    {% block audio_player %}
                         {% with target=episode.get_player_target %}
                             <div hx-push-url="false"
                                 hx-target="this"
@@ -90,7 +90,7 @@
                                 {% include "episodes/audio_player.html" %}
                             {% endif %}
                         {% endwith %}
-                    {% endblock audio_controls %}
+                    {% endblock audio_player %}
                     {% block bookmark %}
                         {% with target=episode.get_bookmark_target %}
                             <div class="flex items-center"
