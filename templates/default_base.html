@@ -26,15 +26,15 @@
             hx-swap="innerHTML show:window:top"
             hx-indicator="#loader"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-            {% include "includes/hx_indicator.html" %}
+            {% include "snippets/hx_indicator.html" %}
             <div class="flex flex-col h-screen">
                 <div class="flex-grow">
-                    {% include "includes/navbar.html" %}
-                    {% include "includes/messages.html" %}
+                    {% include "snippets/navbar.html" %}
+                    {% include "snippets/messages.html" %}
                     <div class="relative flex min-h-screen p-2 pt-6 xl:pt-12 mx-auto xl:w-11/12">
                         {% if user.is_authenticated %}
                             <aside class="hidden w-full xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-28">
-                                {% include "includes/sidebar.html" %}
+                                {% include "snippets/sidebar.html" %}
                             </aside>
                         {% endif %}
                         <main class="w-full xl:block md:mx-auto xl:w-4/5"

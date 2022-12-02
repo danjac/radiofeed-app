@@ -19,7 +19,7 @@
                                 class="link">{% translate "Search All Categories" %}</a>
                         </li>
                         <li class="flex items-center justify-center sm:justify-end">
-                            {% include "includes/search_form.html" with placeholder=search_placeholder %}
+                            {% include "snippets/search_form.html" with placeholder=search_placeholder %}
                         </li>
                     </ul>
                 </nav>
@@ -31,7 +31,7 @@
                 </h1>
                 <nav class="flex items-center justify-center sm:justify-end">
                     <ul>
-                        <li>{% include "includes/search_form.html" with placeholder=search_placeholder %}</li>
+                        <li>{% include "snippets/search_form.html" with placeholder=search_placeholder %}</li>
                     </ul>
                 </nav>
             </header>
@@ -42,13 +42,13 @@
         {% block pagination %}
             <div class="dark:divide-gray-500 divide-y divide-solid"
                 id="{{ pagination_target }}">
-                {% include "includes/pagination_links.html" %}
+                {% include "snippets/pagination_links.html" %}
                 {% for podcast in page_obj.object_list %}
                     {% include "podcasts/podcast.html" %}
                 {% empty %}
-                    {% include "includes/empty.html" %}
+                    {% include "snippets/empty.html" %}
                 {% endfor %}
-                {% include "includes/pagination_links.html" %}
+                {% include "snippets/pagination_links.html" %}
             </div>
         {% endblock pagination %}
     {% endcache %}

@@ -9,13 +9,13 @@
         {% block pagination %}
             <div class="dark:divide-gray-500 divide-y divide-solid"
                 id="{{ pagination_target }}">
-                {% include "includes/pagination_links.html" %}
+                {% include "snippets/pagination_links.html" %}
                 {% for podcast in page_obj.object_list %}
                     {% include "podcasts/podcast.html" %}
                 {% empty %}
-                    {% include "includes/empty.html" %}
+                    {% include "snippets/empty.html" %}
                 {% endfor %}
-                {% include "includes/pagination_links.html" %}
+                {% include "snippets/pagination_links.html" %}
             </div>
         {% endblock pagination %}
     {% endcache %}

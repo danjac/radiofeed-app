@@ -7,9 +7,9 @@
         <div>
             {% with css_class="h-16 w-16 group-hover:grayscale" %}
                 {% if is_podcast_detail %}
-                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title %}
+                    {% include "snippets/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title %}
                 {% else %}
-                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
+                    {% include "snippets/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
                 {% endif %}
             {% endwith %}
         </div>
@@ -23,7 +23,7 @@
             </h2>
             <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
                 {% if is_podcast_detail %}
-                    {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
+                    {% include "snippets/date.html" with value=episode.pub_date title=_("Release Date") %}
                 {% else %}
                     {{ podcast.cleaned_title|truncatechars:180 }}
                 {% endif %}

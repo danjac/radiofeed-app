@@ -101,19 +101,19 @@ def active_link(
     )
 
 
-@register.inclusion_tag("includes/markdown.html")
+@register.inclusion_tag("snippets/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
     return {"content": markup.markup(value)}
 
 
-@register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
+@register.inclusion_tag("snippets/cookie_notice.html", takes_context=True)
 def cookie_notice(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked "Accept Cookies" button."""
     return {"accept_cookies": "accept-cookies" in context.request.COOKIES}
 
 
-@register.inclusion_tag("includes/icon.html")
+@register.inclusion_tag("snippets/icon.html")
 def icon(
     name: str, style: str = "", *, size="", title: str = "", css_class: str = ""
 ) -> dict:

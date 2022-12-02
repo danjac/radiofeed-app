@@ -61,7 +61,7 @@
                 {% endif %}
             {% endwith %}
             <div class="flex items-center space-x-3 sm:space-x-6">
-                {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
+                {% include "snippets/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
                     {% block audio_player %}
                         {% with target=episode.get_player_target %}
@@ -118,7 +118,7 @@
                                 {% endif %}
                             </div>
                             {% if request.htmx.target == target %}
-                                {% include "includes/messages.html" %}
+                                {% include "snippets/messages.html" %}
                             {% endif %}
                         {% endwith %}
                     {% endblock bookmark %}
@@ -144,7 +144,7 @@
                 </div>
             </div>
             <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
-                {% include "includes/date.html" with value=episode.pub_date title=_("Release Date") %}
+                {% include "snippets/date.html" with value=episode.pub_date title=_("Release Date") %}
                 {% with file_size=episode.get_file_size %}
                     {% if file_size %}<div title="Size">{{ file_size }}</div>{% endif %}
                 {% endwith %}
@@ -176,7 +176,7 @@
                                     <div class="flex items-center space-x-1">
                                         {% translate "Listened" as t_listened %}
                                         <span>{{ t_listened }}</span>
-                                        {% include "includes/date.html" with value=listened title=t_listened %}
+                                        {% include "snippets/date.html" with value=listened title=t_listened %}
                                     </div>
                                     {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
                                         {% if duration and current_time and current_time > 60 and current_time < duration %}
@@ -194,7 +194,7 @@
                                 </div>
                             {% endif %}
                             {% if request.htmx.target == target %}
-                                {% include "includes/messages.html" %}
+                                {% include "snippets/messages.html" %}
                             {% endif %}
                         </div>
                     {% endwith %}

@@ -203,7 +203,7 @@ class TestPaginationUrl:
 class TestNavbar:
     @pytest.fixture
     def tmpl(self):
-        return get_template("includes/navbar.html")
+        return get_template("snippets/navbar.html")
 
     def test_authenticated(self, tmpl, auth_req):
         rendered = tmpl.render({}, request=auth_req)
@@ -217,7 +217,7 @@ class TestNavbar:
 class TestPaginationLinks:
     @pytest.fixture
     def tmpl(self):
-        return get_template("includes/pagination_links.html")
+        return get_template("snippets/pagination_links.html")
 
     def test_no_pagination(self, req, tmpl):
         ctx = {
@@ -261,7 +261,7 @@ class TestPaginationLinks:
 class TestFormFields:
     @pytest.fixture
     def tmpl(self):
-        return get_template("includes/form_field.html")
+        return get_template("snippets/form_field.html")
 
     def test_is_hidden(self, tmpl, mocker):
         field = mocker.Mock()
