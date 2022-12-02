@@ -22,7 +22,9 @@
         {% endif %}
     </div>
     {% if request.htmx.target == target %}
-        {% include "episodes/includes/audio_player.html" with hx_oob=True %}
-        {% include "episodes/includes/history.html" with hx_oob=True %}
-    {% endif %}
+        {% with hx_oob=True %}
+            {% include "episodes/includes/audio_player.html" %}
+            {% include "episodes/includes/history.html" %}
+        {% endif %}
+    {% endwith %}
 {% endwith %}
