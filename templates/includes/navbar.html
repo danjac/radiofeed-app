@@ -6,6 +6,7 @@
             $watch('showMenu', (value) => {
                 if (value && !cloned) {
                     $refs.menu.insertBefore(document.getElementById('sidebar').cloneNode(true), null);
+                    htmx.process($refs.menu);
                     cloned = true;
                 }
             });
