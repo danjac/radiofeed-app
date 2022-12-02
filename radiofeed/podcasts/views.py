@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
+from render_block import render_block_to_string
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict
@@ -271,11 +272,14 @@ def _get_podcast_or_404(podcast_id: int) -> Podcast:
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    return render(
-        request,
-        "podcasts/includes/subscribe.html",
-        {
-            "podcast": podcast,
-            "is_subscribed": is_subscribed,
-        },
+    return HttpResponse(
+        render_block_to_string(
+            "podcasts/detail.html",
+            "subscribe",
+            {
+                "podcast": podcast,
+                "is_subscribed": is_subscribed,
+            },
+            request=request,
+        ),
     )

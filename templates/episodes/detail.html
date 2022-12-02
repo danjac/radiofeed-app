@@ -63,8 +63,65 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
-                    {% include "episodes/includes/audio_controls.html" %}
-                    {% include "episodes/includes/bookmark.html" %}
+                    {% block audio_controls %}
+                        {% with target=episode.get_player_target %}
+                            <div hx-push-url="false"
+                                hx-target="this"
+                                hx-disinherit="hx-indicator"
+                                hx-swap="multi:#{{ target }}:outerHTML,#{{ episode.get_history_target }}:outerHTML,#audio-player:outerHTML"
+                                id="{{ target }}">
+                                {% if is_playing %}
+                                    <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
+                                        hx-post="{% url 'episodes:close_player' %}"
+                                        title="{% translate "Close Player" %}">
+                                        {% icon "stop-circle" "regular" css_class="mr-2" %}
+                                        {% translate "Close" %}
+                                    </button>
+                                {% else %}
+                                    <button class="inline-flex items-center btn btn-primary btn-lg"
+                                        hx-post="{% url 'episodes:start_player' episode.id %}"
+                                        title="{% translate "Open Episode in Player" %}">
+                                        {% icon "play-circle" "regular" css_class="mr-2" %}
+                                        {% translate "Play" %}
+                                    </button>
+                                {% endif %}
+                            </div>
+                            {% if request.htmx.target == target %}
+                                {% include "episodes/includes/audio_player.html" %}
+                            {% endif %}
+                        {% endwith %}
+                    {% endblock audio_controls %}
+                    {% block bookmark %}
+                        {% with target=episode.get_bookmark_target %}
+                            <div class="flex items-center"
+                                id="{{ target }}"
+                                hx-push-url="false"
+                                hx-target="this"
+                                hx-swap="multi:#{{ target }}:outerHTML,#messages:outerHTML"
+                                hx-disinherit="hx-indicator">
+                                {% if is_bookmarked %}
+                                    {% translate "Remove from Bookmarks" as t_remove_bookmark %}
+                                    <button title="{{ t_remove_bookmark }}"
+                                        class="inline-flex items-center btn btn-default btn-outline"
+                                        hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
+                                        {% icon "star" css_class="mr-2" %}
+                                        {% translate "Bookmark" %}
+                                    </button>
+                                {% else %}
+                                    {% translate "Add to Bookmarks" as t_add_bookmark %}
+                                    <button title="{{ t_add_bookmark }}"
+                                        class="inline-flex items-center btn btn-default"
+                                        hx-post="{% url 'episodes:add_bookmark' episode.id %}">
+                                        {% icon "star" "regular" css_class="mr-2" %}
+                                        {% translate "Bookmark" %}
+                                    </button>
+                                {% endif %}
+                            </div>
+                            {% if request.htmx.target == target %}
+                                {% include "includes/messages.html" %}
+                            {% endif %}
+                        {% endwith %}
+                    {% endblock bookmark %}
                     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                         <a download
                             title="{% translate "Download audio file to your device" %}"
@@ -105,7 +162,44 @@
                     {% endif %}
                 {% endwith %}
             </div>
-            {% include "episodes/includes/history.html" with listened=episode.listened current_time=episode.current_time %}
+            {% with listened=episode.listened current_time=episode.current_time %}
+                {% block history %}
+                    {% with target=episode.get_history_target %}
+                        <div id="{{ target }}"
+                            hx-target="this"
+                            hx-disinherit="hx-indicator"
+                            hx-push-url="false"
+                            hx-swap="multi:#{{ target }}:outerHTML,#messages:outerHTML"
+                            hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}">
+                            {% if listened %}
+                                <div class="space-x-3 flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300">
+                                    <div class="flex items-center space-x-1">
+                                        {% translate "Listened" as t_listened %}
+                                        <span>{{ t_listened }}</span>
+                                        {% include "includes/date.html" with value=listened title=t_listened %}
+                                    </div>
+                                    {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
+                                        {% if duration and current_time and current_time > 60 and current_time < duration %}
+                                            <div title="{% translate "Timestamp" %}">{{ current_time|format_duration }}</div>
+                                        {% endif %}
+                                    {% endwith %}
+                                    {% if not is_playing %}
+                                        <button class="inline-flex items-center btn btn-danger text-xs lg:text-sm"
+                                            title="{% translate "Remove episode from your History" %}"
+                                            hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
+                                            {% icon "trash" css_class="mr-2" %}
+                                            {% translate "Remove" %}
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            {% if request.htmx.target == target %}
+                                {% include "includes/messages.html" %}
+                            {% endif %}
+                        </div>
+                    {% endwith %}
+                {% endblock history %}
+            {% endwith %}
             {% markdown episode.description %}
         </article>
     {% endwith %}

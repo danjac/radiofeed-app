@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
+from render_block import render_block_to_string
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
@@ -182,7 +183,14 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
-    return render(request, "episodes/includes/history.html", {"episode": episode})
+    return HttpResponse(
+        render_block_to_string(
+            "episodes/detail.html",
+            "history",
+            {"episode": episode},
+            request=request,
+        )
+    )
 
 
 @require_safe
@@ -235,27 +243,36 @@ def _render_audio_player_action(
     current_time: datetime | None,
     listened: datetime | None,
 ) -> HttpResponse:
-    return render(
-        request,
-        "episodes/includes/audio_controls.html",
-        {
-            "episode": episode,
-            "start_player": start_player,
-            "is_playing": start_player,
-            "current_time": current_time,
-            "listened": listened,
-        },
+
+    context = {
+        "episode": episode,
+        "start_player": start_player,
+        "is_playing": start_player,
+        "current_time": current_time,
+        "listened": listened,
+    }
+
+    return HttpResponse(
+        [
+            render_block_to_string(
+                "episodes/detail.html", block, context, request=request
+            )
+            for block in ("audio_controls", "history")
+        ]
     )
 
 
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
-    return render(
-        request,
-        "episodes/includes/bookmark.html",
-        {
-            "episode": episode,
-            "is_bookmarked": is_bookmarked,
-        },
+    return HttpResponse(
+        render_block_to_string(
+            "episodes/detail.html",
+            "bookmark",
+            {
+                "episode": episode,
+                "is_bookmarked": is_bookmarked,
+            },
+            request=request,
+        )
     )
