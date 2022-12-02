@@ -1,4 +1,5 @@
 (function () {
+    // from https://htmx.org/extensions/multi-swap/
     /** @type {import("../htmx").HtmxInternalApi} */
     let api;
 
