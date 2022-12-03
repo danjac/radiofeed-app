@@ -42,6 +42,10 @@ class TestEpisodeManager:
         create_episode(title="testing")
         assert Episode.objects.search("testing").count() == 1
 
+    def test_search_empty(self, db):
+        create_episode(title="testing")
+        assert Episode.objects.search("").count() == 0
+
 
 class TestEpisodeModel:
     link = "https://example.com"

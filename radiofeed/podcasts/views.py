@@ -69,6 +69,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 _get_podcasts()
                 .search(request.search)
                 .order_by(
+                    "-exact_match",
                     "-rank",
                     "-pub_date",
                 )
@@ -221,6 +222,7 @@ def category_detail(
 
     if request.search:
         podcasts = podcasts.search(request.search).order_by(
+            "-exact_match",
             "-rank",
             "-pub_date",
         )

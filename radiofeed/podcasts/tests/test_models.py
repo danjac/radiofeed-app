@@ -63,6 +63,14 @@ class TestPodcastManager:
         create_podcast(title="testing")
         assert Podcast.objects.search("").count() == 0
 
+    def test_search_title_fallback(self, db):
+        create_podcast(title="the")
+        assert Podcast.objects.search("the").count() == 1
+
+    def test_search_title_fallback_search_exact_false(self, db):
+        create_podcast(title="the")
+        assert Podcast.objects.search("the", search_exact=False).count() == 0
+
 
 class TestPodcastModel:
     def test_str(self):

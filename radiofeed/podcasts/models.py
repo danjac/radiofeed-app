@@ -68,7 +68,37 @@ class Category(models.Model):
 class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    ...
+    def search(
+        self, search_term: str, search_exact: bool = True
+    ) -> models.QuerySet["Podcast"]:
+        """Does standard full text search, optionally including exact search."""
+        qs = super().search(search_term)
+
+        if search_exact:
+            exact_matches = self.search_exact(search_term)
+            qs = qs | self.filter(
+                pk__in=set(exact_matches.values_list("pk", flat=True))
+            )
+            return qs.annotate(
+                exact_match=models.Case(
+                    models.When(
+                        models.Exists(exact_matches.filter(pk=models.OuterRef("pk"))),
+                        then=models.Value(1),
+                    ),
+                    default=0,
+                )
+            ).distinct()
+        return qs
+
+    def search_exact(self, search_term: str) -> models.QuerySet["Podcast"]:
+        """Does case-insensitive exact title search. Assigns a dummy rank value to boost result when mixed with full text search."""
+        return (
+            self.alias(title_lower=models.functions.Lower("title")).filter(
+                title_lower=force_str(search_term).casefold()
+            )
+            if search_term
+            else self.none()
+        )
 
 
 class Podcast(models.Model):
@@ -171,6 +201,10 @@ class Podcast(models.Model):
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             models.Index(fields=["promoted"]),
+            models.Index(
+                models.functions.Lower("title"),
+                name="%(app_label)s_%(class)s_lwr_title_idx",
+            ),
             GinIndex(fields=["search_vector"]),
         ]
 
