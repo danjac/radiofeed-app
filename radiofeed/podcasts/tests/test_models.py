@@ -59,6 +59,18 @@ class TestPodcastManager:
         create_podcast(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
+    def test_search_partial(self, db):
+        create_podcast(title="testing")
+        assert Podcast.objects.search("test").count() == 1
+
+    def test_search_exact(self, db):
+        create_podcast(title="testing")
+        assert Podcast.objects.search_exact("testing").count() == 1
+
+    def test_search_exact_partial(self, db):
+        create_podcast(title="testing")
+        assert Podcast.objects.search_exact("test").count() == 0
+
     def test_search_if_empty(self, db):
         create_podcast(title="testing")
         assert Podcast.objects.search("").count() == 0
