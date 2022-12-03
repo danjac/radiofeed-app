@@ -64,8 +64,28 @@ class TestPodcastManager:
         assert Podcast.objects.search("").count() == 0
 
     def test_search_title_fallback(self, db):
+        # usually "the" would be removed by stemmer
         create_podcast(title="the")
-        assert Podcast.objects.search("the").count() == 1
+        podcasts = Podcast.objects.search("the")
+        assert podcasts.count() == 1
+        assert podcasts.first().exact_match == 1
+
+    def test_compare_exact_and_partial_matches_in_search(self, db):
+        create_podcast(title="the testing")
+        create_podcast(title="testing")
+
+        podcasts = Podcast.objects.search("testing").order_by("-exact_match")
+
+        assert podcasts.count() == 2
+
+        first = podcasts[0]
+        second = podcasts[1]
+
+        assert first.title == "testing"
+        assert first.exact_match == 1
+
+        assert second.title == "the testing"
+        assert second.exact_match == 0
 
     def test_search_title_fallback_search_exact_false(self, db):
         create_podcast(title="the")
