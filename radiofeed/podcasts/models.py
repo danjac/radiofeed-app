@@ -85,13 +85,13 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
                         models.Exists(exact_matches.filter(pk=models.OuterRef("pk"))),
                         then=models.Value(1),
                     ),
-                    default=0,
+                    default=models.Value(0),
                 )
             ).distinct()
         return qs
 
     def search_exact(self, search_term: str) -> models.QuerySet["Podcast"]:
-        """Does case-insensitive exact title search. Assigns a dummy rank value to boost result when mixed with full text search."""
+        """Does case-insensitive exact title search."""
         return (
             self.alias(title_lower=models.functions.Lower("title")).filter(
                 title_lower=force_str(search_term).casefold()
