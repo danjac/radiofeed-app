@@ -5,7 +5,6 @@ import dataclasses
 import itertools
 import re
 
-from concurrent.futures import ThreadPoolExecutor
 from typing import Final, Iterator
 from urllib.parse import urlparse
 
@@ -95,9 +94,8 @@ class Crawler:
 
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the database."""
-        with ThreadPoolExecutor() as executor:
-            for result in executor.map(self._parse_genre_url, self._parse_genre_urls()):
-                yield from result
+        for url in self._parse_genre_urls():
+            yield from self._parse_genre_url(url)
 
     def _parse_genre_urls(self) -> Iterator[str]:
         return (
@@ -113,11 +111,8 @@ class Crawler:
         )
 
     def _parse_genre_url(self, url) -> Iterator[Feed]:
-        with ThreadPoolExecutor() as executor:
-            for result in executor.map(
-                self._parse_feeds, batcher.batcher(self._parse_podcast_ids(url), 100)
-            ):
-                yield from result
+        for feed_ids in batcher.batcher(self._parse_podcast_ids(url), 100):
+            yield from self._parse_feeds(feed_ids)
 
     def _parse_feeds(self, feed_ids: list[str]) -> Iterator[Feed]:
         return _parse_feeds(
