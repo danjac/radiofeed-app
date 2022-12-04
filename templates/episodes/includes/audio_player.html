@@ -12,7 +12,7 @@
             {% translate "Increase Playback Rate" as t_increase_playback_rate %}
             {% translate "Playback Rate" as t_playback_rate %}
             {% translate "Progress" as t_progress %}
-            {% with podcast=episode.podcast episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url media_url=episode.media_url %}
+            {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
                 <div x-data="
                     {# fmt:off #}
             player(
@@ -39,7 +39,7 @@
                         <div class="sm:flex items-center w-full space-y-2 sm:space-y-0 divide-y sm:divide-y-0 sm:divide-x divide-solid divide-gray-500">
                             <div class="sm:w-1/2">
                                 <div class="flex items-center space-x-2 lg:space-x-3">
-                                    {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
+                                    {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
                                     <div class="h-16 flex flex-col place-content-between">
                                         <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-blue-300"
                                             href="{{ episode_url }}"
@@ -48,7 +48,7 @@
                                         </a>
 
                                         <a class="block leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3 hover:text-blue-300"
-                                            href="{{ podcast_url }}"
+                                            href="{{ podcast.get_episodes_url }}"
                                             hx-swap="innerHTML show:window:top"
                                             title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
                                         </a>

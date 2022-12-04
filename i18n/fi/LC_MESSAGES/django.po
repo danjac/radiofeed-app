@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-02 19:56+0000\n"
+"POT-Creation-Date: 2022-12-04 13:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,47 +111,47 @@ msgstr ""
 msgid "Hi {} here are some new podcasts you might like!"
 msgstr "Hei {username}, tässä on uusia podcasteja, joista saatat pitää!"
 
-#: radiofeed/podcasts/models.py:80
+#: radiofeed/podcasts/models.py:110
 msgid "Success"
 msgstr "Menestys"
 
-#: radiofeed/podcasts/models.py:81
+#: radiofeed/podcasts/models.py:111
 msgid "Complete"
 msgstr "Valmis"
 
-#: radiofeed/podcasts/models.py:82
+#: radiofeed/podcasts/models.py:112
 msgid "Not Modified"
 msgstr "Ei muokkaattu"
 
-#: radiofeed/podcasts/models.py:83
+#: radiofeed/podcasts/models.py:113
 msgid "HTTP Error"
 msgstr "HTTP-Virhe"
 
-#: radiofeed/podcasts/models.py:84
+#: radiofeed/podcasts/models.py:114
 msgid "RSS Parser Error"
 msgstr "RSS-Jäsennysvirhe"
 
-#: radiofeed/podcasts/models.py:85
+#: radiofeed/podcasts/models.py:115
 msgid "Duplicate Feed"
 msgstr "Kaksoispodcast"
 
-#: radiofeed/podcasts/models.py:91
+#: radiofeed/podcasts/models.py:121
 msgid "Inactive podcasts will no longer be updated from their RSS feeds."
 msgstr ""
 
-#: radiofeed/podcasts/models.py:147
+#: radiofeed/podcasts/models.py:177
 msgid "Podcast Updated in Database"
 msgstr ""
 
-#: radiofeed/podcasts/views.py:94
+#: radiofeed/podcasts/views.py:95
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
-#: radiofeed/podcasts/views.py:253
+#: radiofeed/podcasts/views.py:255
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:265
+#: radiofeed/podcasts/views.py:267
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
@@ -175,18 +175,18 @@ msgstr "Valitse OPML-tiedosto"
 msgid "Your preferences have been saved"
 msgstr "Asetuksesi tallennettu"
 
-#: radiofeed/users/views.py:62
+#: radiofeed/users/views.py:59
 #, python-format
 msgid "%(count)d podcast feed added to your collection"
 msgid_plural "%(count)d podcast feeds added to your collection"
 msgstr[0] "%(count)d podcast lisätty kokoelmaasi"
 msgstr[1] "%(count)d podcastia lisätty kokoelmaasi"
 
-#: radiofeed/users/views.py:69
+#: radiofeed/users/views.py:66
 msgid "No new podcasts found in uploaded file"
 msgstr "Ei uusia podcasteja löydetty tiedostosta"
 
-#: radiofeed/users/views.py:121
+#: radiofeed/users/views.py:118
 msgid "Your account has been deleted"
 msgstr "Tilisi on poistettu"
 
@@ -762,48 +762,6 @@ msgid ""
 "        "
 msgstr ""
 
-#: templates/episodes/audio_player.html:5
-msgid "Current Time"
-msgstr "Aika"
-
-#: templates/episodes/audio_player.html:6
-msgid "Time Remaining"
-msgstr "Jäljellä"
-
-#: templates/episodes/audio_player.html:7 templates/episodes/detail.html:85
-msgid "Play"
-msgstr "Soita"
-
-#: templates/episodes/audio_player.html:8
-msgid "Pause"
-msgstr "Paussi"
-
-#: templates/episodes/audio_player.html:9
-msgid "Skip Back 10 Seconds"
-msgstr "Taaksepäin 10 Sekuntia"
-
-#: templates/episodes/audio_player.html:10
-msgid "Skip Forward 10 Seconds"
-msgstr "Eteenpäin 10 Sekuntia"
-
-#: templates/episodes/audio_player.html:11
-msgid "Decrease Playback Rate"
-msgstr "Vähennä Toistonopeus"
-
-#: templates/episodes/audio_player.html:12
-msgid "Increase Playback Rate"
-msgstr "Lisää Toistonopeus"
-
-#: templates/episodes/audio_player.html:13
-#, fuzzy
-#| msgid "Decrease Playback Rate"
-msgid "Playback Rate"
-msgstr "Vähennä Toistonopeus"
-
-#: templates/episodes/audio_player.html:14
-msgid "Progress"
-msgstr "Edistymispalkki"
-
 #: templates/episodes/bookmarks.html:17 templates/episodes/history.html:17
 #: templates/podcasts/episodes.html:13
 msgid "Search All Podcasts"
@@ -842,8 +800,9 @@ msgid "Pagination"
 msgstr "Sivunumerointi"
 
 #: templates/episodes/detail.html:53
-#, python-format
-msgid "See All Episodes for %(podcast)s"
+#, fuzzy, python-format
+#| msgid "See All Episodes for %(podcast)s"
+msgid "See all episodes for %(podcast)s"
 msgstr "Katso Kaikki Jaksot Podcastissa %(podcast)s"
 
 #: templates/episodes/detail.html:76
@@ -857,6 +816,11 @@ msgstr "Sulje"
 #: templates/episodes/detail.html:83
 msgid "Open Episode in Player"
 msgstr "Avaa Jakso Soitimella"
+
+#: templates/episodes/detail.html:85
+#: templates/episodes/includes/audio_player.html:7
+msgid "Play"
+msgstr "Soita"
 
 #: templates/episodes/detail.html:103
 msgid "Remove from Bookmarks"
@@ -924,6 +888,44 @@ msgstr "Historia"
 #: templates/episodes/history.html:29
 msgid "Search: History"
 msgstr "Haku: Historia"
+
+#: templates/episodes/includes/audio_player.html:5
+msgid "Current Time"
+msgstr "Aika"
+
+#: templates/episodes/includes/audio_player.html:6
+msgid "Time Remaining"
+msgstr "Jäljellä"
+
+#: templates/episodes/includes/audio_player.html:8
+msgid "Pause"
+msgstr "Paussi"
+
+#: templates/episodes/includes/audio_player.html:9
+msgid "Skip Back 10 Seconds"
+msgstr "Taaksepäin 10 Sekuntia"
+
+#: templates/episodes/includes/audio_player.html:10
+msgid "Skip Forward 10 Seconds"
+msgstr "Eteenpäin 10 Sekuntia"
+
+#: templates/episodes/includes/audio_player.html:11
+msgid "Decrease Playback Rate"
+msgstr "Vähennä Toistonopeus"
+
+#: templates/episodes/includes/audio_player.html:12
+msgid "Increase Playback Rate"
+msgstr "Lisää Toistonopeus"
+
+#: templates/episodes/includes/audio_player.html:13
+#, fuzzy
+#| msgid "Decrease Playback Rate"
+msgid "Playback Rate"
+msgstr "Vähennä Toistonopeus"
+
+#: templates/episodes/includes/audio_player.html:14
+msgid "Progress"
+msgstr "Edistymispalkki"
 
 #: templates/episodes/index.html:4 templates/episodes/index.html:17
 #: templates/includes/sidebar.html:18
