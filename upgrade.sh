@@ -9,7 +9,3 @@ poetry update
 
 npm run check-updates
 npm install
-
-# Pre-commit dependencies
-
-pre-commit autoupdate
