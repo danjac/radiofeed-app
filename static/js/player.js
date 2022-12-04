@@ -55,6 +55,8 @@ document.addEventListener("alpine:init", () => {
                 this.duration = event.target.duration || 0;
                 event.target.currentTime = currentTime;
 
+                this.runtime = Math.floor(event.target.currentTime);
+
                 if (startPlayer) {
                     event.target.play().catch(this.handleError.bind(this));
                 }
