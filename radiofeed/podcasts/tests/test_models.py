@@ -63,14 +63,6 @@ class TestPodcastManager:
         create_podcast(title="testing")
         assert Podcast.objects.search("test").count() == 1
 
-    def test_search_exact(self, db):
-        create_podcast(title="testing")
-        assert Podcast.objects.search_exact("testing").count() == 1
-
-    def test_search_exact_partial(self, db):
-        create_podcast(title="testing")
-        assert Podcast.objects.search_exact("test").count() == 0
-
     def test_search_if_empty(self, db):
         create_podcast(title="testing")
         assert Podcast.objects.search("").count() == 0
@@ -98,10 +90,6 @@ class TestPodcastManager:
 
         assert second.title == "the testing"
         assert second.exact_match == 0
-
-    def test_search_title_fallback_search_exact_false(self, db):
-        create_podcast(title="the")
-        assert Podcast.objects.search("the", search_exact=False).count() == 0
 
 
 class TestPodcastModel:

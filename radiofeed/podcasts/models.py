@@ -68,37 +68,25 @@ class Category(models.Model):
 class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    def search(
-        self, search_term: str, search_exact: bool = True
-    ) -> models.QuerySet["Podcast"]:
-        """Does standard full text search, optionally including exact search."""
+    def search(self, search_term: str) -> models.QuerySet["Podcast"]:
+        """Does standard full text search, prioritizing exact search results."""
+        if not search_term:
+            return self.none()
         qs = super().search(search_term)
 
-        if search_exact:
-            exact_matches = self.search_exact(search_term)
-            qs = qs | self.filter(
-                pk__in=set(exact_matches.values_list("pk", flat=True))
-            )
+        exact_qs = self.alias(title_lower=models.functions.Lower("title")).filter(
+            title_lower=force_str(search_term).casefold()
+        )
+
+        if exact_matches := set(exact_qs.values_list("pk", flat=True)):
+            qs = qs | self.filter(pk__in=exact_matches)
             return qs.annotate(
                 exact_match=models.Case(
-                    models.When(
-                        models.Exists(exact_matches.filter(pk=models.OuterRef("pk"))),
-                        then=models.Value(1),
-                    ),
+                    models.When(pk__in=exact_matches, then=models.Value(1)),
                     default=models.Value(0),
                 )
             ).distinct()
-        return qs
-
-    def search_exact(self, search_term: str) -> models.QuerySet["Podcast"]:
-        """Does case-insensitive exact title search."""
-        return (
-            self.alias(title_lower=models.functions.Lower("title")).filter(
-                title_lower=force_str(search_term).casefold()
-            )
-            if search_term
-            else self.none()
-        )
+        return qs.annotate(exact_match=models.Value(0))
 
 
 class Podcast(models.Model):
