@@ -1,0 +1,115 @@
+{% load i18n %}
+<div id="audio-player">
+    {% if episode %}
+        {% if is_playing %}
+            {% translate "Current Time" as t_current_time %}
+            {% translate "Time Remaining" as t_time_remaining %}
+            {% translate "Play" as t_play %}
+            {% translate "Pause" as t_pause %}
+            {% translate "Skip Back 10 Seconds" as t_skip_back %}
+            {% translate "Skip Forward 10 Seconds" as t_skip_forward %}
+            {% translate "Decrease Playback Rate" as t_decrease_playback_rate %}
+            {% translate "Increase Playback Rate" as t_increase_playback_rate %}
+            {% translate "Playback Rate" as t_playback_rate %}
+            {% translate "Progress" as t_progress %}
+            {% with podcast=episode.podcast episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url media_url=episode.media_url %}
+                <div x-data="
+                    {# fmt:off #}
+            player(
+                autoplay={{ start_player|yesno:'true,false' }},
+                currentTime={{ current_time|default:0 }},
+                csrfToken='{{ csrf_token }}',
+                timeUpdateUrl='{% url 'episodes:player_time_update' %}',
+            ){# fmt:on #}"
+                    @keydown.window="shortcuts"
+                    class="h-40 sm:h-28">
+                    {{ episode.get_media_metadata|json_script:"player-metadata" }}
+                    <audio x-ref="audio"
+                        preload="metadata"
+                        src="{{ media_url }}"
+                        @loadedmetadata="loaded"
+                        @play="play"
+                        @pause="pause"
+                        @ended="ended"
+                        @timeupdate="timeUpdate"
+                        @seeking="buffering"
+                        @waiting="buffering"
+                        @stalled="buffering"
+                        @suspend="buffering"
+                        @error.prevent="error">
+                        <source src="{{ media_url }}" type="{{ episode.media_type }}" />
+                    </audio>
+                    <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white bg-black opacity-100 transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                        <div class="sm:flex items-center w-full space-y-2 sm:space-y-0 divide-y sm:divide-y-0 sm:divide-x divide-solid divide-gray-500">
+                            <div class="sm:w-1/2">
+                                <div class="flex items-center space-x-2 lg:space-x-3">
+                                    {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast_url hx_swap="innerHTML show:window:top" %}
+                                    <div class="h-16 flex flex-col place-content-between">
+                                        <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-blue-300"
+                                            href="{{ episode_url }}"
+                                            hx-swap="innerHTML show:window:top"
+                                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
+                                        </a>
+
+                                        <a class="block leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3 hover:text-blue-300"
+                                            href="{{ podcast_url }}"
+                                            hx-swap="innerHTML show:window:top"
+                                            title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sm:w-1/2 flex flex-col place-content-between h-16 sm:pl-3 pt-3">
+                                <div class="grid grid-cols-3 place-content-between">
+                                    <div x-text="counters.current" title="{{ t_current_time }}" class="text-xs lg:text-sm text-start">00:00:00</div>
+                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                        <div class="flex items-center justify-center space-x-6">
+                                            <button title="{{ t_skip_back }}"
+                                                @click="skipBack"
+                                                class="{{ BUTTON_CSS }} inline-block"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                                {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
+                                            </button>
+                                            <button title="{{ t_play }}"
+                                                class="{{ BUTTON_CSS }}"
+                                                :class="{'text-gray-300 cursor-events-none': !isLoaded}"
+                                                @click="togglePlayPause">
+                                                <span x-show="!isPlaying" x-cloak>
+                                                    {% icon "play-circle" "regular" size="2xl" title=t_play %}
+                                                </span>
+                                                <span x-show="isPlaying" x-cloak>
+                                                    {% icon "pause-circle" "regular" size="2xl" title=t_pause %}
+                                                </span>
+                                            </button>
+                                            <button title="{{ t_skip_forward }}"
+                                                @click="skipForward"
+                                                class="{{ BUTTON_CSS }} inline-block"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                                {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
+                                            </button>
+                                        </div>
+                                    {% endwith %}
+                                    <div x-text="counters.total" title="{{ t_time_remaining }}" class="text-xs lg:text-sm text-right">00:00:00</div>
+                                </div>
+                                <div class="w-full">
+                                    <input type="range"
+                                        aria-label="{{ t_progress }}"
+                                        title="{{ t_progress }}"
+                                        min="0"
+                                        x-ref="range"
+                                        x-model="runtime"
+                                        @change="skip"
+                                        :max="duration"
+                                        :disabled="!isPlaying"
+                                        class="flex items-center w-full mx-auto bg-black focus:outline-none"
+                                        :class="isPlaying ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endwith %}
+        {% endif %}
+    {% endif %}
+</div>
