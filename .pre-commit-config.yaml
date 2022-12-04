@@ -82,3 +82,4 @@ repos:
       hooks:
           - id: poetry-check
           - id: poetry-export
+            args: ["--without-hashes"]
