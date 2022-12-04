@@ -1,7 +1,5 @@
 import Alpine from "alpinejs";
 
-const SESSION_KEY = "audio-player";
-
 document.addEventListener("alpine:init", () => {
     Alpine.data(
         "player",
@@ -16,7 +14,6 @@ document.addEventListener("alpine:init", () => {
             timeUpdateUrl,
             runtime: 0,
             duration: 0,
-            isError: false,
             isLoaded: false,
             isPlaying: false,
             timer: null,
@@ -45,19 +42,6 @@ document.addEventListener("alpine:init", () => {
                     this.counters.total = this.formatCounter(value);
                 });
 
-                this.$watch("isPlaying", value => {
-                    if (value) {
-                        this.isPlaying = true;
-                        this.isError = false;
-                        this.setPlayerState(true);
-                        this.startTimer();
-                    } else {
-                        this.isPlaying = false;
-                        this.setPlayerState(false);
-                        this.clearTimer();
-                    }
-                });
-
                 this.$refs.audio.load();
             },
             destroy() {
@@ -68,37 +52,28 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
-                event.target.currentTime = this.currentTime;
-
-                this.isError = false;
                 this.duration = event.target.duration || 0;
-
-                startPlayer = startPlayer || this.getPlayerState();
+                event.target.currentTime = currentTime;
 
                 if (startPlayer) {
                     event.target.play().catch(this.handleError.bind(this));
-                } else {
-                    this.pause();
                 }
 
                 this.isLoaded = true;
+                this.startTimer();
             },
             timeUpdate(event) {
                 this.runtime = Math.floor(event.target.currentTime);
-                this.isPlaying = true;
-            },
-            play() {
-                this.isPlaying = true;
-            },
-            pause() {
-                this.isPlaying = false;
             },
             ended() {
                 this.pause();
                 this.runtime = 0;
                 this.sendTimeUpdate();
             },
-            buffering() {
+            play() {
+                this.isPlaying = true;
+            },
+            pause() {
                 this.isPlaying = false;
             },
             error(event) {
@@ -175,16 +150,6 @@ document.addEventListener("alpine:init", () => {
                     }),
                 });
             },
-            getPlayerState() {
-                return !!sessionStorage.getItem(SESSION_KEY);
-            },
-            setPlayerState(active) {
-                if (active) {
-                    sessionStorage.setItem(SESSION_KEY, "true");
-                } else {
-                    sessionStorage.removeItem(SESSION_KEY);
-                }
-            },
             formatCounter(value) {
                 if (isNaN(value) || value < 0) return "00:00:00";
                 const duration = Math.floor(value);
@@ -206,8 +171,6 @@ document.addEventListener("alpine:init", () => {
                 return null;
             },
             handleError(error) {
-                this.pause();
-                this.isError = true;
                 console.error(error);
             },
         }),
