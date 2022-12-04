@@ -69,7 +69,10 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
     """Custom QuerySet of Podcast model."""
 
     def search(self, search_term: str) -> models.QuerySet["Podcast"]:
-        """Does standard full text search, prioritizing exact search results. Annotates `exact_match` to indicate such results."""
+        """Does standard full text search, prioritizing exact search results.
+
+        Annotates `exact_match` to indicate such results.
+        """
         if not search_term:
             return self.none()
 
