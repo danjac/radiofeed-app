@@ -17,7 +17,6 @@ document.addEventListener("alpine:init", () => {
             duration: 0,
             isError: false,
             isLoaded: false,
-            isPaused: false,
             isPlaying: false,
             timer: null,
             counters: {
@@ -76,7 +75,6 @@ document.addEventListener("alpine:init", () => {
                 this.isError = false;
             },
             play() {
-                this.isPaused = false;
                 this.isPlaying = true;
                 this.isError = false;
                 this.saveState();
@@ -84,7 +82,6 @@ document.addEventListener("alpine:init", () => {
             },
             pause() {
                 this.isPlaying = false;
-                this.isPaused = true;
                 this.saveState();
                 this.clearTimer();
             },
@@ -100,10 +97,10 @@ document.addEventListener("alpine:init", () => {
                 this.handleError(event.target.error);
             },
             togglePlayPause() {
-                if (this.isPaused) {
-                    this.$refs.audio.play();
-                } else {
+                if (this.isPlaying) {
                     this.$refs.audio.pause();
+                } else {
+                    this.$refs.audio.play();
                 }
             },
             skip() {
