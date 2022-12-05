@@ -3,8 +3,7 @@ from __future__ import annotations
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
-from django.template.response import TemplateResponse
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext, override
@@ -31,14 +30,14 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseClientRedirect(request.path)
 
-    return TemplateResponse(request, "account/preferences.html", {"form": form})
+    return render(request, "account/preferences.html", {"form": form})
 
 
 @require_safe
 @require_auth
 def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
-    return TemplateResponse(
+    return render(
         request,
         "account/import_export_podcast_feeds.html",
         {"form": OpmlUploadForm()},
@@ -65,9 +64,7 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
         else:
             messages.info(request, _("No new podcasts found in uploaded file"))
 
-    return TemplateResponse(
-        request, "account/import_export_podcast_feeds.html", {"form": form}
-    )
+    return render(request, "account/import_export_podcast_feeds.html", {"form": form})
 
 
 @require_POST
@@ -83,7 +80,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .iterator()
     )
 
-    response = TemplateResponse(
+    response = render(
         request,
         "account/podcasts.opml",
         {
@@ -101,7 +98,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return TemplateResponse(request, "account/stats.html")
+    return render(request, "account/stats.html")
 
 
 @require_form_methods
@@ -117,4 +114,4 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         logout(request)
         messages.info(request, _("Your account has been deleted"))
         return redirect("podcasts:landing_page")
-    return TemplateResponse(request, "account/delete_account.html")
+    return render(request, "account/delete_account.html")

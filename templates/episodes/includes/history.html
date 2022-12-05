@@ -1,0 +1,35 @@
+{% load i18n %}
+{% with target=episode.get_history_target %}
+    <div id="{{ target }}"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
+        {% if listened %}
+            <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
+                <div class="flex items-center space-x-1">
+                    {% translate "Listened" as t_listened %}
+                    <span>{{ t_listened }}</span>
+                    {% include "includes/date.html" with value=listened title=t_listened %}
+                </div>
+                {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
+                    {% if duration and current_time and current_time > 60 and current_time < duration %}
+                        <div title="{% translate "Timestamp" %}">{{ current_time|format_duration }}</div>
+                    {% endif %}
+                {% endwith %}
+                {% if not is_playing %}
+                    <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
+                        title="{% translate "Remove episode from your History" %}"
+                        hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
+                        hx-disinherit="hx-indicator"
+                        hx-push-url="false"
+                        hx-target="#{{ target }}"
+                        hx-swap="outerHTML"
+                        hx-confirm="{% translate "Are you sure you want to remove this episode from your History?" %}">
+                        {% icon "trash" css_class="mr-2" %}
+                        {% translate "Remove" %}
+                    </button>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if request.htmx.target == target %}
+            {% include "includes/messages.html" with hx_oob=True %}
+        {% endif %}
+    </div>
+{% endwith %}

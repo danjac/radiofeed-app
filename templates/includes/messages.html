@@ -1,5 +1,6 @@
 <div class="fixed inset-x-0 z-50 mx-auto top-5 w-60 lg:w-96"
     id="messages"
+    {% if hx_oob %}hx-swap-oob="true"{% endif %}
     x-data="{messages: []}"
     {% if messages %}
         {# fmt:off #}

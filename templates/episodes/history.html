@@ -32,16 +32,5 @@
             </nav>
         {% endif %}
     </header>
-    {% block pagination %}
-        <div class="dark:divide-gray-500 divide-y divide-solid"
-            id="{{ pagination_target }}">
-            {% include "includes/pagination_links.html" %}
-            {% for log in page_obj.object_list %}
-                {% include "episodes/includes/episode.html" with episode=log.episode %}
-            {% empty %}
-                {% include "includes/empty.html" %}
-            {% endfor %}
-            {% include "includes/pagination_links.html" %}
-        </div>
-    {% endblock pagination %}
+    {% include pagination_template %}
 {% endblock content %}

@@ -6,17 +6,6 @@
 {% block search_content %}
     {% get_current_language as language_code %}
     {% cache 600 podcasts-search request.get_full_path language_code %}
-        {% block pagination %}
-            <div class="dark:divide-gray-500 divide-y divide-solid"
-                id="{{ pagination_target }}">
-                {% include "includes/pagination_links.html" %}
-                {% for podcast in page_obj.object_list %}
-                    {% include "podcasts/includes/podcast.html" %}
-                {% empty %}
-                    {% include "includes/empty.html" %}
-                {% endfor %}
-                {% include "includes/pagination_links.html" %}
-            </div>
-        {% endblock pagination %}
+        {% include pagination_template %}
     {% endcache %}
 {% endblock search_content %}

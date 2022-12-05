@@ -53,16 +53,5 @@
         {% endif %}
 
     </header>
-    {% block pagination %}
-        <div class="dark:divide-gray-500 divide-y divide-solid"
-            id="{{ pagination_target }}">
-            {% include "includes/pagination_links.html" %}
-            {% for podcast in page_obj.object_list %}
-                {% include "podcasts/includes/podcast.html" %}
-            {% empty %}
-                {% include "includes/empty.html" %}
-            {% endfor %}
-            {% include "includes/pagination_links.html" %}
-        </div>
-    {% endblock pagination %}
+    {% include pagination_template %}
 {% endblock content %}

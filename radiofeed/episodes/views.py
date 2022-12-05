@@ -5,13 +5,11 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect
-from django.template.response import TemplateResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
-from render_block import render_block_to_string
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
@@ -41,6 +39,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
+        "episodes/includes/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -62,6 +61,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
                 .order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
+            "episodes/includes/episodes.html",
         )
 
     return redirect("episodes:index")
@@ -78,7 +78,7 @@ def episode_detail(
         pk=episode_id,
     )
 
-    return TemplateResponse(
+    return render(
         request,
         "episodes/detail.html",
         {
@@ -171,7 +171,12 @@ def history(request: HttpRequest) -> HttpResponse:
     else:
         logs = logs.order_by("-listened" if request.sorter.is_desc else "listened")
 
-    return render_pagination_response(request, logs, "episodes/history.html")
+    return render_pagination_response(
+        request,
+        logs,
+        "episodes/history.html",
+        "episodes/includes/audio_logs.html",
+    )
 
 
 @require_POST
@@ -184,13 +189,10 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, _("Removed from History"))
 
-    return HttpResponse(
-        render_block_to_string(
-            "episodes/detail.html",
-            "history",
-            {"episode": episode},
-            request=request,
-        )
+    return render(
+        request,
+        "episodes/includes/history.html",
+        {"episode": episode},
     )
 
 
@@ -207,7 +209,12 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.sorter.is_desc else "created"
         )
 
-    return render_pagination_response(request, bookmarks, "episodes/bookmarks.html")
+    return render_pagination_response(
+        request,
+        bookmarks,
+        "episodes/bookmarks.html",
+        "episodes/includes/bookmarks.html",
+    )
 
 
 @require_POST
@@ -245,35 +252,27 @@ def _render_audio_player_action(
     listened: datetime | None,
 ) -> HttpResponse:
 
-    context = {
-        "episode": episode,
-        "start_player": start_player,
-        "is_playing": start_player,
-        "current_time": current_time,
-        "listened": listened,
-    }
-
-    return HttpResponse(
-        [
-            render_block_to_string(
-                "episodes/detail.html", block_name, context, request=request
-            )
-            for block_name in ("audio_player", "history")
-        ]
+    return render(
+        request,
+        "episodes/includes/play.html",
+        {
+            "episode": episode,
+            "start_player": start_player,
+            "is_playing": start_player,
+            "current_time": current_time,
+            "listened": listened,
+        },
     )
 
 
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
-    return HttpResponse(
-        render_block_to_string(
-            "episodes/detail.html",
-            "bookmark",
-            {
-                "episode": episode,
-                "is_bookmarked": is_bookmarked,
-            },
-            request=request,
-        )
+    return render(
+        request,
+        "episodes/includes/bookmark.html",
+        {
+            "episode": episode,
+            "is_bookmarked": is_bookmarked,
+        },
     )

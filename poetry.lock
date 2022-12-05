@@ -458,20 +458,6 @@ redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
-name = "django-render-block"
-version = "0.9.2"
-description = "Render a particular block from a template to a string."
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-django = ">=2.2"
-
-[package.extras]
-dev = ["Jinja2 (>=2.8)"]
-
-[[package]]
 name = "django-split-settings"
 version = "1.2.0"
 description = "Organize Django settings into multiple files and directories. Easily override and modify settings. Use wildcards and optional settings files."
@@ -1812,7 +1798,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.9,<3.12"
-content-hash = "4e54c3fc04c247b84c1e504798a3250a5c13dad1f2ebb3d80ebb275c993532ba"
+content-hash = "58fef256dc3e65bc962c0c7e908dfb5d16f89ec8193c7025828515a8c8ca3839"
 
 [metadata.files]
 appnope = [
@@ -2175,10 +2161,6 @@ django-permissions-policy = [
 django-redis = [
     {file = "django-redis-5.2.0.tar.gz", hash = "sha256:8a99e5582c79f894168f5865c52bd921213253b7fd64d16733ae4591564465de"},
     {file = "django_redis-5.2.0-py3-none-any.whl", hash = "sha256:1d037dc02b11ad7aa11f655d26dac3fb1af32630f61ef4428860a2e29ff92026"},
-]
-django-render-block = [
-    {file = "django-render-block-0.9.2.tar.gz", hash = "sha256:3dde0d2abde9381685659d2ed0761b8bddf7741c48eaadec9e5b50a6c7850247"},
-    {file = "django_render_block-0.9.2-py3-none-any.whl", hash = "sha256:1768832be78476c36627b3e3a8e7d9eb0e2bc46b84daf2c51958e2f674173c40"},
 ]
 django-split-settings = [
     {file = "django-split-settings-1.2.0.tar.gz", hash = "sha256:31415a618256b54c5cee8662cbaa72a890683b8b7465d64ba88fdd3affdd6c60"},

@@ -30,7 +30,7 @@
                 hx-encoding="multipart/form-data"
                 hx-target="this"
                 hx-select="#{{ target }}"
-                hx-swap="multi:#{{ target }}:outerHTML,#messages:outerHTML"
+                hx-swap="outerHTML"
                 hx-post="{{ action_url }}">
                 {% csrf_token %}
                 {{ form }}

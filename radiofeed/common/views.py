@@ -4,7 +4,7 @@ import datetime
 
 from django.conf import settings
 from django.http import FileResponse, HttpRequest, HttpResponse, JsonResponse
-from django.template.response import TemplateResponse
+from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
@@ -20,7 +20,7 @@ def static_page(
     request: HttpRequest, template_name: str, extra_context: dict | None = None
 ) -> HttpResponse:
     """Renders simple static page."""
-    return TemplateResponse(request, template_name, extra_context)
+    return render(request, template_name, extra_context)
 
 
 @require_POST
@@ -52,9 +52,7 @@ def favicon(request: HttpRequest) -> FileResponse:
 @_cache_page
 def service_worker(request: HttpRequest) -> HttpResponse:
     """PWA service worker."""
-    return TemplateResponse(
-        request, "service_worker.js", content_type="application/javascript"
-    )
+    return render(request, "service_worker.js", content_type="application/javascript")
 
 
 @require_safe

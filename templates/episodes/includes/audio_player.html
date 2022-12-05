@@ -1,5 +1,5 @@
 {% load i18n %}
-<div id="audio-player">
+<div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if episode %}
         {% if is_playing %}
             {% translate "Current Time" as t_current_time %}
