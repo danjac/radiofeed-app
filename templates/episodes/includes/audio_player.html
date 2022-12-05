@@ -60,7 +60,7 @@
                                 <div class="grid grid-cols-3 place-content-between">
                                     <div x-text="counters.current"
                                         title="{{ t_current_time }}"
-                                        class="text-xs lg:text-sm text-start font-mono"
+                                        class="flex items-center text-xs lg:text-sm text-start font-mono"
                                         :class="isPlaying ? '' : 'text-gray-300'">
                                     </div>
                                     {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
@@ -92,7 +92,7 @@
                                     {% endwith %}
                                     <div x-text="counters.total"
                                         title="{{ t_time_remaining }}"
-                                        class="text-xs lg:text-sm text-right font-mono"
+                                        class="flex items-center text-xs lg:text-sm text-right font-mono"
                                         :class="isPlaying ? '' : 'text-gray-300'">
                                     </div>
                                 </div>
