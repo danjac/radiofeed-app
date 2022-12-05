@@ -9,3 +9,7 @@ poetry update && poetry export --without-hashes -o requirements.txt
 
 npm run check-updates
 npm install
+
+# Pre-commit dependencies
+
+pre-commit autoupdate
