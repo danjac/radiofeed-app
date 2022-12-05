@@ -18,8 +18,8 @@ document.addEventListener("alpine:init", () => {
             isPlaying: false,
             timer: null,
             counters: {
-                current: "",
-                total: "",
+                current: "00:00:00",
+                total: "00:00:00",
             },
             init() {
                 if ("mediaSession" in navigator) {
@@ -53,8 +53,8 @@ document.addEventListener("alpine:init", () => {
                 }
 
                 this.duration = event.target.duration || 0;
-                event.target.currentTime = currentTime;
 
+                event.target.currentTime = currentTime;
                 this.runtime = Math.floor(event.target.currentTime);
 
                 if (startPlayer) {
