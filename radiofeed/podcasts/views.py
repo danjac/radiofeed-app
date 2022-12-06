@@ -45,7 +45,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/index.html",
-        "podcasts/includes/pagination/podcasts.html",
+        "podcasts/pagination/podcasts.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -72,7 +72,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 )
             ),
             "podcasts/search.html",
-            "podcasts/includes/pagination/podcasts.html",
+            "podcasts/pagination/podcasts.html",
         )
 
     return redirect("podcasts:index")
@@ -159,7 +159,7 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
-        "episodes/includes/pagination/episodes.html",
+        "episodes/pagination/episodes.html",
         extra_context={
             "podcast": podcast,
             "is_podcast_detail": True,
@@ -230,7 +230,7 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        "podcasts/includes/pagination/podcasts.html",
+        "podcasts/pagination/podcasts.html",
         {"category": category},
     )
 
@@ -279,7 +279,7 @@ def _render_subscribe_action(
 ) -> HttpResponse:
     return render(
         request,
-        "podcasts/includes/actions/subscribe.html",
+        "podcasts/actions/subscribe.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,
