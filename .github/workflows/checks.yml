@@ -42,21 +42,17 @@ jobs:
 
             - name: Code quality checks
               run: |
-                  source .venv/bin/activate
                   python -m flake8 radiofeed
 
             - name: Security checks
               run: |
-                  source .venv/bin/activate
                   python -m bandit -r radiofeed -x="**/tests/**.*"
 
             - name: Check Django templates
               run: |
-                  source .venv/bin/activate
                   python manage.py validate_templates
 
             - name: Run unit tests
               run: |
-                  source .venv/bin/activate
                   xargs python -m nltk.downloader < nltk.txt
                   python -m pytest
