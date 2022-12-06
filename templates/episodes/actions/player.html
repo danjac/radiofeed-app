@@ -15,7 +15,7 @@
         {% else %}
             <button class="inline-flex items-center btn btn-primary btn-lg"
                 hx-post="{% url 'episodes:start_player' episode.id %}"
-                title="{% translate "Open Episode in Player" %}">
+                title="{% translate "Open episode in Player" %}">
                 {% icon "play-circle" "regular" css_class="mr-2" %}
                 {% translate "Play" %}
             </button>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-04 13:48+0000\n"
+"POT-Creation-Date: 2022-12-06 10:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,15 +38,15 @@ msgstr "Jakso {episode}"
 msgid "Season {season}"
 msgstr "Kausi {season}"
 
-#: radiofeed/episodes/views.py:185
+#: radiofeed/episodes/views.py:190
 msgid "Removed from History"
 msgstr "Poistettu Historiasta"
 
-#: radiofeed/episodes/views.py:224
+#: radiofeed/episodes/views.py:231
 msgid "Added to Bookmarks"
 msgstr "Lisätty Kirjanmerkkeihin"
 
-#: radiofeed/episodes/views.py:235
+#: radiofeed/episodes/views.py:242
 msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
@@ -70,7 +70,7 @@ msgstr "Ei mitään"
 msgid "HTTP Status"
 msgstr ""
 
-#: radiofeed/podcasts/admin.py:122 templates/episodes/detail.html:147
+#: radiofeed/podcasts/admin.py:122 templates/episodes/detail.html:90
 #: templates/episodes/includes/episode.html:26
 msgid "Release Date"
 msgstr "Päivämäärä"
@@ -111,47 +111,47 @@ msgstr ""
 msgid "Hi {} here are some new podcasts you might like!"
 msgstr "Hei {username}, tässä on uusia podcasteja, joista saatat pitää!"
 
-#: radiofeed/podcasts/models.py:110
+#: radiofeed/podcasts/models.py:102
 msgid "Success"
 msgstr "Menestys"
 
-#: radiofeed/podcasts/models.py:111
+#: radiofeed/podcasts/models.py:103
 msgid "Complete"
 msgstr "Valmis"
 
-#: radiofeed/podcasts/models.py:112
+#: radiofeed/podcasts/models.py:104
 msgid "Not Modified"
 msgstr "Ei muokkaattu"
 
-#: radiofeed/podcasts/models.py:113
+#: radiofeed/podcasts/models.py:105
 msgid "HTTP Error"
 msgstr "HTTP-Virhe"
 
-#: radiofeed/podcasts/models.py:114
+#: radiofeed/podcasts/models.py:106
 msgid "RSS Parser Error"
 msgstr "RSS-Jäsennysvirhe"
 
-#: radiofeed/podcasts/models.py:115
+#: radiofeed/podcasts/models.py:107
 msgid "Duplicate Feed"
 msgstr "Kaksoispodcast"
 
-#: radiofeed/podcasts/models.py:121
+#: radiofeed/podcasts/models.py:113
 msgid "Inactive podcasts will no longer be updated from their RSS feeds."
 msgstr ""
 
-#: radiofeed/podcasts/models.py:177
+#: radiofeed/podcasts/models.py:169
 msgid "Podcast Updated in Database"
 msgstr ""
 
-#: radiofeed/podcasts/views.py:95
+#: radiofeed/podcasts/views.py:93
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
-#: radiofeed/podcasts/views.py:255
+#: radiofeed/podcasts/views.py:253
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:267
+#: radiofeed/podcasts/views.py:265
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
@@ -171,22 +171,22 @@ msgstr "Haluan ilmauksia uusista suosituksista ja sisällöstä"
 msgid "Select OPML file"
 msgstr "Valitse OPML-tiedosto"
 
-#: radiofeed/users/views.py:30
+#: radiofeed/users/views.py:29
 msgid "Your preferences have been saved"
 msgstr "Asetuksesi tallennettu"
 
-#: radiofeed/users/views.py:59
+#: radiofeed/users/views.py:58
 #, python-format
 msgid "%(count)d podcast feed added to your collection"
 msgid_plural "%(count)d podcast feeds added to your collection"
 msgstr[0] "%(count)d podcast lisätty kokoelmaasi"
 msgstr[1] "%(count)d podcastia lisätty kokoelmaasi"
 
-#: radiofeed/users/views.py:66
+#: radiofeed/users/views.py:65
 msgid "No new podcasts found in uploaded file"
 msgstr "Ei uusia podcasteja löydetty tiedostosta"
 
-#: radiofeed/users/views.py:118
+#: radiofeed/users/views.py:115
 msgid "Your account has been deleted"
 msgstr "Tilisi on poistettu"
 
@@ -450,7 +450,7 @@ msgstr ""
 msgid "Primary"
 msgstr "Ensisijainen"
 
-#: templates/account/email.html:44 templates/episodes/detail.html:191
+#: templates/account/email.html:44 templates/episodes/includes/history.html:26
 #: templates/socialaccount/connections.html:43
 msgid "Remove"
 msgstr "Poista"
@@ -713,7 +713,7 @@ msgstr[1] ""
 "                            %(counter)s jaksoa\n"
 "                        "
 
-#: templates/account/stats.html:48 templates/episodes/detail.html:177
+#: templates/account/stats.html:48 templates/episodes/includes/history.html:7
 msgid "Listened"
 msgstr "Kuunneltu"
 
@@ -762,6 +762,38 @@ msgid ""
 "        "
 msgstr ""
 
+#: templates/episodes/actions/bookmark.html:10
+msgid "Remove from Bookmarks"
+msgstr "Poista Kirjanmerkkeistä"
+
+#: templates/episodes/actions/bookmark.html:15
+#: templates/episodes/actions/bookmark.html:23
+msgid "Bookmark"
+msgstr "Kirjanmerkki"
+
+#: templates/episodes/actions/bookmark.html:18
+msgid "Add to Bookmarks"
+msgstr "Lisää Kirjanmerkkeihin"
+
+#: templates/episodes/actions/player.html:11
+msgid "Close Player"
+msgstr "Sulje Soitin"
+
+#: templates/episodes/actions/player.html:13
+msgid "Close"
+msgstr "Sulje"
+
+#: templates/episodes/actions/player.html:18
+#, fuzzy
+#| msgid "Open episode in Player"
+msgid "Open episode in Player"
+msgstr "Avaa jakso Soitimella"
+
+#: templates/episodes/actions/player.html:20
+#: templates/episodes/includes/audio_player.html:7
+msgid "Play"
+msgstr "Soita"
+
 #: templates/episodes/bookmarks.html:17 templates/episodes/history.html:17
 #: templates/podcasts/episodes.html:13
 msgid "Search All Podcasts"
@@ -805,80 +837,37 @@ msgstr "Sivunumerointi"
 msgid "See all episodes for %(podcast)s"
 msgstr "Katso Kaikki Jaksot Podcastissa %(podcast)s"
 
-#: templates/episodes/detail.html:76
-msgid "Close Player"
-msgstr "Sulje Soitin"
-
-#: templates/episodes/detail.html:78
-msgid "Close"
-msgstr "Sulje"
-
-#: templates/episodes/detail.html:83
-msgid "Open Episode in Player"
-msgstr "Avaa Jakso Soitimella"
-
-#: templates/episodes/detail.html:85
-#: templates/episodes/includes/audio_player.html:7
-msgid "Play"
-msgstr "Soita"
-
-#: templates/episodes/detail.html:103
-msgid "Remove from Bookmarks"
-msgstr "Poista Kirjanmerkkeistä"
-
-#: templates/episodes/detail.html:108 templates/episodes/detail.html:116
-msgid "Bookmark"
-msgstr "Kirjanmerkki"
-
-#: templates/episodes/detail.html:111
-msgid "Add to Bookmarks"
-msgstr "Lisää Kirjanmerkkeihin"
-
-#: templates/episodes/detail.html:127
+#: templates/episodes/detail.html:70
 msgid "Download audio file to your device"
 msgstr "Lataa tiedosto omaan laiteeseen"
 
-#: templates/episodes/detail.html:130
+#: templates/episodes/detail.html:73
 msgid "Download"
 msgstr "Lataa"
 
-#: templates/episodes/detail.html:138
+#: templates/episodes/detail.html:81
 #, fuzzy
 #| msgid "Website"
 msgid "Link to Website"
 msgstr "Kotisivuun"
 
-#: templates/episodes/detail.html:139 templates/podcasts/detail.html:56
+#: templates/episodes/detail.html:82 templates/podcasts/detail.html:29
 msgid "Website"
 msgstr "Kotisivu"
 
-#: templates/episodes/detail.html:153
+#: templates/episodes/detail.html:96
 msgid "Duration"
 msgstr "Kesto"
 
-#: templates/episodes/detail.html:158
+#: templates/episodes/detail.html:101
 msgid "May contain adult themes and language. Listener discretion advised."
 msgstr ""
 "Saattaa sisältää aikuisille suunnattuja teemoja ja kieltä. Kuuntelijan "
 "harkintavaltaa suositellaan."
 
-#: templates/episodes/detail.html:160
+#: templates/episodes/detail.html:103
 msgid "Explicit"
 msgstr "Varoitus"
-
-#: templates/episodes/detail.html:173
-msgid "Are you sure you want to remove this episode from your History?"
-msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
-
-#: templates/episodes/detail.html:183
-msgid "Timestamp"
-msgstr "Aikaleima"
-
-#: templates/episodes/detail.html:188
-#, fuzzy
-#| msgid "Removed from History"
-msgid "Remove episode from your History"
-msgstr "Poistettu Historiasta"
 
 #: templates/episodes/history.html:4 templates/episodes/history.html:9
 #: templates/includes/sidebar.html:42
@@ -926,6 +915,20 @@ msgstr "Vähennä Toistonopeus"
 #: templates/episodes/includes/audio_player.html:14
 msgid "Progress"
 msgstr "Edistymispalkki"
+
+#: templates/episodes/includes/history.html:13
+msgid "Timestamp"
+msgstr "Aikaleima"
+
+#: templates/episodes/includes/history.html:18
+#, fuzzy
+#| msgid "Removed from History"
+msgid "Remove episode from your History"
+msgstr "Poistettu Historiasta"
+
+#: templates/episodes/includes/history.html:24
+msgid "Are you sure you want to remove this episode from your History?"
+msgstr "Haluatko varmasti poistaa tämän jaskon Historiastasi?"
 
 #: templates/episodes/index.html:4 templates/episodes/index.html:17
 #: templates/includes/sidebar.html:18
@@ -1013,7 +1016,7 @@ msgid "Clear Search"
 msgstr "Poita haku"
 
 #: templates/includes/sidebar.html:10 templates/podcasts/category_detail.html:4
-#: templates/podcasts/category_detail.html:8 templates/podcasts/detail.html:95
+#: templates/podcasts/category_detail.html:8 templates/podcasts/detail.html:68
 #: templates/podcasts/index.html:4 templates/podcasts/index.html:17
 #: templates/podcasts/search.html:4 templates/search_base.html:16
 msgid "Podcasts"
@@ -1064,6 +1067,22 @@ msgstr ""
 "jaksoja!\n"
 "            "
 
+#: templates/podcasts/actions/subscribe.html:10
+msgid "Unsubscribe from this Podcast"
+msgstr "Lopeta podcastin tilaus"
+
+#: templates/podcasts/actions/subscribe.html:13
+msgid "Unsubscribe"
+msgstr "Lopeta tilaus"
+
+#: templates/podcasts/actions/subscribe.html:17
+msgid "Subscribe to this Podcast"
+msgstr "Tilaa Podcast"
+
+#: templates/podcasts/actions/subscribe.html:20
+msgid "Subscribe"
+msgstr "Tilaa"
+
 #: templates/podcasts/categories.html:12
 msgid "Find a category..."
 msgstr "Haku: Kategoriat"
@@ -1094,31 +1113,15 @@ msgstr "Haku: "
 msgid "Search All Categories"
 msgstr "Etsi Kaikista Kategoreista"
 
-#: templates/podcasts/detail.html:34
-msgid "Unsubscribe from this Podcast"
-msgstr "Lopeta podcastin tilaus"
-
-#: templates/podcasts/detail.html:37
-msgid "Unsubscribe"
-msgstr "Lopeta tilaus"
-
-#: templates/podcasts/detail.html:41
-msgid "Subscribe to this Podcast"
-msgstr "Tilaa Podcast"
-
-#: templates/podcasts/detail.html:44
-msgid "Subscribe"
-msgstr "Tilaa"
-
-#: templates/podcasts/detail.html:60
+#: templates/podcasts/detail.html:33
 msgid "RSS"
 msgstr ""
 
-#: templates/podcasts/detail.html:66
+#: templates/podcasts/detail.html:39
 msgid "Admin"
 msgstr "Hallinto"
 
-#: templates/podcasts/detail.html:74
+#: templates/podcasts/detail.html:47
 msgid "Latest episode"
 msgstr "Viimeinen jakso"
 
