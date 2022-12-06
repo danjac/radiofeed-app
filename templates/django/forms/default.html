@@ -1,4 +1,4 @@
-{% include "includes/form_errors.html" with errors=form.non_field_errors %}
+{% include "includes/forms/errors.html" with errors=form.non_field_errors %}
 {% for field in form %}
-    {% include "includes/form_field.html" %}
+    {% include "includes/forms/field.html" %}
 {% endfor %}

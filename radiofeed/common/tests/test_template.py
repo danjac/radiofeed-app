@@ -261,7 +261,7 @@ class TestPaginationLinks:
 class TestFormFields:
     @pytest.fixture
     def tmpl(self):
-        return get_template("includes/form_field.html")
+        return get_template("includes/forms/field.html")
 
     def test_is_hidden(self, tmpl, mocker):
         field = mocker.Mock()
