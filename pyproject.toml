@@ -53,7 +53,6 @@ dev = [
     "bandit",
     "black",
     "coverage",
-    "coverage-badges",
     "django-coverage-plugin",
     "django-debug-toolbar",
     "djhtml",
