@@ -2,6 +2,7 @@
 blur-sm
 pointer-events-none
 opacity-50
+bg-gray-600
 bg-blue-600
 bg-green-600
 bg-indigo-600

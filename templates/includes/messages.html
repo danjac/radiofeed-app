@@ -1,42 +1,21 @@
-<div class="fixed inset-x-0 z-50 mx-auto top-5 w-60 lg:w-96"
-    id="messages"
-    {% if hx_oob %}hx-swap-oob="true"{% endif %}
-    x-data="{messages: []}"
+<div id="messages" class="fixed inset-x-0 z-50 mx-auto top-5 w-60 lg:w-96" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if messages %}
-        {# fmt:off #}
-        x-init="
-        {% for message in messages %}
-            messages.push({
-            message: '{{ message|escapejs }}',
-            tags: '{{ message.tags|escapejs }}'
-            });
-        {% endfor %}"
-        {# fmt:on #}
-    {% endif %}>
-    <div class="space-y-3 flex justify-center">
-        <template x-for="message in messages">
-            <div class="flex flex-wrap items-center px-2 py-1 text-center text-white rounded shadow-xl max-w-sm"
-                role="alert"
-                {# fmt:off #}
-                :class="{
-                debug: 'bg-gray-600',
-                error: 'bg-red-600',
-                info: 'bg-blue-600',
-                success: 'bg-green-600',
-                warning: 'bg-violet-600',
-                }[message.tags]"
-                {# fmt:on #}
-                x-data="{show: true}"
-                x-show="show"
-                x-init="setTimeout(() => show = false, 1500)"
-                x-transition:enter="transition ease-in duration-200"
-                x-transition:enter-start="transform opacity-0"
-                x-transition:enter-end="transform opacity-100"
-                x-transition:leave="transition ease-out duration-500"
-                x-transition:leave-start="transform opacity-100"
-                x-transition:leave-end="transform opacity-0">
-                <div class="flex flex-wrap mx-auto font-semibold" x-text="message.message"></div>
-            </div>
-        </template>
-    </div>
+        <div class="flex justify-center space-y-3">
+            {% for message in messages %}
+                <div class="flex flex-wrap items-center px-2 py-1 text-center text-white rounded shadow-xl max-w-sm {{ message.tags }}"
+                    role="alert"
+                    x-data="{show: true}"
+                    x-show="show"
+                    x-init="setTimeout(() => show = false, 1500)"
+                    x-transition:enter="transition ease-in duration-200"
+                    x-transition:enter-start="transform opacity-0"
+                    x-transition:enter-end="transform opacity-100"
+                    x-transition:leave="transition ease-out duration-500"
+                    x-transition:leave-start="transform opacity-100"
+                    x-transition:leave-end="transform opacity-0">
+                    <div class="flex flex-wrap mx-auto font-semibold">{{ message.message }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>

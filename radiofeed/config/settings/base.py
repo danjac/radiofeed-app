@@ -6,6 +6,7 @@ from email.utils import getaddresses
 
 import environ
 
+from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[3]
@@ -235,6 +236,16 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+# https://docs.djangoproject.com/en/4.1/ref/contrib/messages/
+
+MESSAGE_TAGS = {
+    messages.DEBUG: "bg-gray-600",
+    messages.ERROR: "bg-red-600",
+    messages.INFO: "bg-blue-600",
+    messages.SUCCESS: "bg-green-600",
+    messages.WARNING: "bg-violet-600",
 }
 
 # https://github.com/Suor/django-cacheops
