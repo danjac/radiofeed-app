@@ -2,7 +2,7 @@
     {% if messages %}
         <div class="flex justify-center space-y-3">
             {% for message in messages %}
-                <div class="flex flex-wrap items-center px-2 py-1 text-center text-white rounded shadow-xl max-w-sm {{ message.tags }}"
+                <div class="flex flex-wrap items-center px-2 py-1 text-center text-white font-bold rounded shadow-xl max-w-sm {{ message.tags }}"
                     role="alert"
                     x-data="{show: true}"
                     x-show="show"
@@ -13,7 +13,7 @@
                     x-transition:leave="transition ease-out duration-500"
                     x-transition:leave-start="transform opacity-100"
                     x-transition:leave-end="transform opacity-0">
-                    <div class="flex flex-wrap mx-auto font-semibold">{{ message.message }}</div>
+                    {{ message.message }}
                 </div>
             {% endfor %}
         </div>
