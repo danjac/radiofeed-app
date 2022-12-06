@@ -3,7 +3,9 @@ name = "radiofeed-app"
 version = "0.1.0"
 description = "Podcast aggregator app"
 license = "MIT"
-authors = ["Dan Jacob <danjac2018@gmail.com>"]
+authors = [
+    {name = "Dan Jacob", email = "danjac2018@gmail.com"}
+]
 dependencies = [
     "Brotli",
     "Django",
