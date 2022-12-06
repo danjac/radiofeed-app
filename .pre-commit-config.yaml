@@ -81,8 +81,10 @@ repos:
       rev: 6.11.0
       hooks:
           - id: pip-compile
+            files: pyproject.toml
             args: ["-o", "requirements.txt", "pyproject.toml"]
           - id: pip-compile
+            files: pyproject.toml
             args:
                 [
                     "--extra",
