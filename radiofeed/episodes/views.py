@@ -39,7 +39,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/includes/episodes.html",
+        "episodes/includes/pagination/episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -61,7 +61,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
                 .order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
-            "episodes/includes/episodes.html",
+            "episodes/includes/pagination/episodes.html",
         )
 
     return redirect("episodes:index")
@@ -175,7 +175,7 @@ def history(request: HttpRequest) -> HttpResponse:
         request,
         logs,
         "episodes/history.html",
-        "episodes/includes/audio_logs.html",
+        "episodes/includes/pagination/audio_logs.html",
     )
 
 
@@ -213,7 +213,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/includes/bookmarks.html",
+        "episodes/includes/pagination/bookmarks.html",
     )
 
 
@@ -254,7 +254,7 @@ def _render_audio_player_action(
 
     return render(
         request,
-        "episodes/includes/play_toggle.html",
+        "episodes/includes/actions/player.html",
         {
             "episode": episode,
             "start_player": start_player,
@@ -270,7 +270,7 @@ def _render_bookmark_action(
 ) -> HttpResponse:
     return render(
         request,
-        "episodes/includes/bookmark_toggle.html",
+        "episodes/includes/actions/bookmark.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,
