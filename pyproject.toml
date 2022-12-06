@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "radiofeed-app"
 version = "0.1.0"
@@ -81,11 +85,6 @@ dev = [
     "types-python-dateutil",
     "types-requests",
 ]
-
-[tool.hatch]
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
 
 [tool.pydocstyle]
 ignore = [
