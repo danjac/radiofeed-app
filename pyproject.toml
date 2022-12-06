@@ -2,6 +2,7 @@
 name = "radiofeed-app"
 version = "0.1.0"
 description = "Podcast aggregator app"
+license = "MIT"
 dependencies = [
     "Brotli",
     "Django",
