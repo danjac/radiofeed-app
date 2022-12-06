@@ -44,7 +44,40 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = [
+    "Faker",
+    "coverage",
+    "django-debug-toolbar",
+    "honcho",
+    "pytest",
+    "pytest-cov",
+    "pytest-django",
+    "pytest-forked",
+    "pytest-mock",
+    "pytest-randomly",
+    "pytest-xdist",
+    "types-requests",
+    "types-bleach",
+    "types-Markdown",
+    "types-python-dateutil",
+    "mypy",
+    "pytest-sugar",
+    "pytest-mypy",
+    "pytest-icdiff",
+    "django-coverage-plugin",
+    "coverage-badge",
+    "flake8-print",
+    "bandit",
+    "flake8",
+    "flake8-bugbear",
+    "flake8-comprehensions",
+    "flake8-debugger",
+    "flake8-deprecated",
+    "isort",
+    "black",
+    "djhtml",
+    "djlint",
+]
 
 [tool.hatch]
 [build-system]
