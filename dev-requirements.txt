@@ -43,9 +43,12 @@ colorama==0.4.6
     # via djlint
 coverage[toml]==6.5.0
     # via
+    #   coverage-badge
     #   django-coverage-plugin
     #   pytest-cov
     #   radiofeed-app (pyproject.toml)
+coverage-badge==1.1.0
+    # via radiofeed-app (pyproject.toml)
 cryptography==38.0.4
     # via pyjwt
 cssbeautifier==1.14.7
