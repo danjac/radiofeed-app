@@ -221,13 +221,13 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-platformdirs==2.5.4
+platformdirs==2.6.0
     # via black
 pluggy==1.0.0
     # via pytest
 pprintpp==0.4.0
     # via pytest-icdiff
-prompt-toolkit==3.0.33
+prompt-toolkit==3.0.36
     # via ipython
 psutil==5.9.4
     # via radiofeed-app (pyproject.toml)
