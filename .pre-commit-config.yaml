@@ -93,3 +93,12 @@ repos:
                     "dev-requirements.txt",
                     "pyproject.toml",
                 ]
+    - repo: local
+      hooks:
+          - id: build-js
+            name: build JS
+            language: system
+            files: static/\.js$
+            exclude: bundle.js|bundle.js.map
+            entry: npm
+            args: ["run", "build:js"]
