@@ -82,11 +82,20 @@ repos:
       hooks:
           - id: pip-compile
             files: pyproject.toml
-            args: ["-o", "requirements.txt", "pyproject.toml"]
+            args:
+                [
+                    "--resolver",
+                    "backtracking",
+                    "-o",
+                    "requirements.txt",
+                    "pyproject.toml",
+                ]
           - id: pip-compile
             files: pyproject.toml
             args:
                 [
+                    "--resolver",
+                    "backtracking",
                     "--extra",
                     "dev",
                     "-o",
