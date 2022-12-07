@@ -10,6 +10,11 @@ license = "MIT"
 authors = [
     {name = "Dan Jacob", email = "danjac2018@gmail.com"}
 ]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+]
 dependencies = [
     "Brotli",
     "Django",
