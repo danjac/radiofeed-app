@@ -32,8 +32,6 @@ def recommend() -> None:
         .exclude(extracted_text="")
     )
 
-    Recommendation.objects.bulk_delete()
-
     categories = Category.objects.order_by("name")
 
     # separate by language, so we don't get false matches
@@ -62,6 +60,9 @@ class Recommender:
         self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
     ) -> None:
         """Creates recommendation instances."""
+        # Delete existing recommendations first
+        Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
+
         for batch in batcher.batcher(
             self._build_matches_dict(podcasts, categories).items(), 1000
         ):
