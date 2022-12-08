@@ -97,9 +97,9 @@ repos:
                     "--resolver",
                     "backtracking",
                     "--extra",
-                    "dev",
+                    "ci",
                     "-o",
-                    "dev-requirements.txt",
+                    "ci-requirements.txt",
                     "pyproject.toml",
                 ]
           - id: pip-compile
@@ -109,8 +109,10 @@ repos:
                     "--resolver",
                     "backtracking",
                     "--extra",
+                    "dev",
+                    "--extra",
                     "ci",
                     "-o",
-                    "ci-requirements.txt",
+                    "dev-requirements.txt",
                     "pyproject.toml",
                 ]

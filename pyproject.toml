@@ -54,40 +54,6 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = [
-    "Faker",
-    "bandit",
-    "black",
-    "coverage",
-    "django-coverage-plugin",
-    "django-debug-toolbar",
-    "djhtml",
-    "djlint",
-    "flake8",
-    "flake8-bugbear",
-    "flake8-comprehensions",
-    "flake8-debugger",
-    "flake8-deprecated",
-    "flake8-print",
-    "honcho",
-    "isort",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "pytest-django",
-    "pytest-forked",
-    "pytest-icdiff",
-    "pytest-mock",
-    "pytest-mypy",
-    "pytest-randomly",
-    "pytest-sugar",
-    "pytest-xdist",
-    "types-Markdown",
-    "types-bleach",
-    "types-python-dateutil",
-    "types-requests",
-]
-
 ci = [
     "Faker",
     "bandit",
@@ -116,6 +82,16 @@ ci = [
     "types-python-dateutil",
     "types-requests",
 ]
+
+dev = [
+    "black",
+    "django-debug-toolbar",
+    "djhtml",
+    "hatch",
+    "honcho",
+    "isort",
+]
+
 
 [tool.hatch.version]
 path = "radiofeed/__init__.py"
