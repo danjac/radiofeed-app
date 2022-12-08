@@ -41,13 +41,13 @@
                                 <div class="flex items-center space-x-2 lg:space-x-3">
                                     {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
                                     <div class="h-16 flex flex-col place-content-between">
-                                        <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-blue-300"
+                                        <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-sky-400"
                                             href="{{ episode_url }}"
                                             hx-swap="innerHTML show:window:top"
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                         </a>
 
-                                        <a class="block leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3 hover:text-blue-300"
+                                        <a class="block leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3 hover:text-sky-400"
                                             href="{{ podcast.get_episodes_url }}"
                                             hx-swap="innerHTML show:window:top"
                                             title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
@@ -63,7 +63,7 @@
                                         class="flex items-center justify-start text-xs lg:text-sm font-mono"
                                         :class="isPlaying ? '' : 'text-gray-300'">
                                     </div>
-                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                    {% with BUTTON_CSS="focus:outline-none hover:text-sky-400" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                         <div class="flex items-center justify-center space-x-6">
                                             <button title="{{ t_skip_back }}"
                                                 @click="skipBack"

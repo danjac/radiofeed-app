@@ -231,7 +231,7 @@ input[type="search"]::-webkit-search-results-decoration {
         }
 
         .btn-primary.btn-outline:hover {
-            color: theme("colors.blue.400");
+            color: theme("colors.sky.400");
             background-color: theme("colors.gray.800");
             border-color: theme("colors.blue.300");
         }
@@ -266,7 +266,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
         .link.active,
         .link:hover {
-            color: theme("colors.blue.300");
+            color: theme("colors.sky.400");
         }
     }
 }
