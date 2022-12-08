@@ -38,7 +38,7 @@ jobs:
               run: sudo apt-get install libpq-dev
 
             - name: Install Python dependencies
-              run: pip install -r dev-requirements.txt
+              run: pip install -r ci-requirements.txt
 
             - name: Code quality checks
               run: |
@@ -48,9 +48,9 @@ jobs:
               run: |
                   python -m bandit -r radiofeed -x="**/tests/**.*"
 
-            - name: Check Django templates
+            - name: Lint checks on Django templates
               run: |
-                  python manage.py validate_templates
+                  python -m djlint --lint templates/
 
             - name: Run unit tests
               run: |

@@ -88,6 +88,35 @@ dev = [
     "types-requests",
 ]
 
+ci = [
+    "Faker",
+    "bandit",
+    "coverage",
+    "django-coverage-plugin",
+    "djlint",
+    "flake8",
+    "flake8-bugbear",
+    "flake8-comprehensions",
+    "flake8-debugger",
+    "flake8-deprecated",
+    "flake8-print",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-django",
+    "pytest-forked",
+    "pytest-icdiff",
+    "pytest-mock",
+    "pytest-mypy",
+    "pytest-randomly",
+    "pytest-sugar",
+    "pytest-xdist",
+    "types-Markdown",
+    "types-bleach",
+    "types-python-dateutil",
+    "types-requests",
+]
+
 [tool.hatch.version]
 path = "radiofeed/__init__.py"
 

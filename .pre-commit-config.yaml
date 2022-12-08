@@ -102,3 +102,15 @@ repos:
                     "dev-requirements.txt",
                     "pyproject.toml",
                 ]
+          - id: pip-compile
+            files: pyproject.toml
+            args:
+                [
+                    "--resolver",
+                    "backtracking",
+                    "--extra",
+                    "ci",
+                    "-o",
+                    "ci-requirements.txt",
+                    "pyproject.toml",
+                ]
