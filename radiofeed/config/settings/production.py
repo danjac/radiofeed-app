@@ -15,6 +15,9 @@ from radiofeed.config.settings.base import (
 
 include("base.py")
 
+# required when using pgbouncer's pool_mode=transaction
+DISABLE_SERVER_SIDE_CURSORS = True
+
 ADMIN_SITE_HEADER += " [PRODUCTION]"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

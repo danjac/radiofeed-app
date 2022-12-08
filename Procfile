@@ -1,2 +1,2 @@
 release: ./release.sh
-web: gunicorn radiofeed.config.wsgi -w 8
+web: bin/start-pgbouncer gunicorn radiofeed.config.wsgi -w 8
