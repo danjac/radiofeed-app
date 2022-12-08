@@ -19,7 +19,7 @@
             <meta name="keywords" content="podcasts, rss, feeds" />
             <meta name="theme-color" content="#041014" />
         </head>
-        <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth lg:text-base"
+        <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth lg:text-base bg-white dark:bg-slate-900/75"
             hx-boost="true"
             hx-target="#content"
             hx-swap="innerHTML show:window:top"
@@ -30,7 +30,7 @@
                 <div class="flex-grow">
                     {% include "includes/navbar.html" %}
                     {% include "includes/messages.html" %}
-                    <div class="relative flex min-h-screen p-2 pt-6 xl:pt-12 mx-auto xl:w-11/12 bg-white dark:bg-slate-900/75">
+                    <div class="relative flex min-h-screen p-2 pt-6 xl:pt-12 mx-auto xl:w-11/12">
                         {% if user.is_authenticated %}
                             <aside class="hidden w-full xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-28">
                                 {% include "includes/sidebar.html" %}
