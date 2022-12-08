@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "radiofeed-app"
-description = "Podcast aggregator app"
+description = "Podcast aggregator site"
 license = "MIT"
 authors = [
     {name = "Dan Jacob", email = "danjac2018@gmail.com"}
