@@ -11,6 +11,7 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.10"
+dynamic = ["version"]
 dependencies = [
     "Brotli",
     "Django",
@@ -51,7 +52,6 @@ dependencies = [
     "user-agent",
     "whitenoise",
 ]
-dynamic = ["version"]
 
 [project.optional-dependencies]
 ci = [
