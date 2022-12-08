@@ -26,7 +26,7 @@ bleach==5.0.1
     # via radiofeed-app (pyproject.toml)
 brotli==1.0.9
     # via radiofeed-app (pyproject.toml)
-certifi==2022.9.24
+certifi==2022.12.7
     # via
     #   requests
     #   sentry-sdk
@@ -203,7 +203,7 @@ numpy==1.23.5
     #   scipy
 oauthlib==3.2.2
     # via requests-oauthlib
-packaging==21.3
+packaging==22.0
     # via
     #   pytest
     #   pytest-sugar
@@ -252,8 +252,6 @@ pygments==2.13.0
     # via ipython
 pyjwt[crypto]==2.6.0
     # via django-allauth
-pyparsing==3.0.9
-    # via packaging
 pytest==7.2.0
     # via
     #   pytest-cov
