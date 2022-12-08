@@ -6,7 +6,6 @@ build-backend = "hatchling.build"
 name = "radiofeed-app"
 description = "Podcast aggregator app"
 license = "MIT"
-version = "0.1.2"
 authors = [
     {name = "Dan Jacob", email = "danjac2018@gmail.com"}
 ]
@@ -52,6 +51,7 @@ dependencies = [
     "user-agent",
     "whitenoise",
 ]
+dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
@@ -87,6 +87,9 @@ dev = [
     "types-python-dateutil",
     "types-requests",
 ]
+
+[tool.hatch.version]
+path = "radiofeed/__init__.py"
 
 [tool.pydocstyle]
 ignore = [
