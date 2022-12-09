@@ -3,7 +3,7 @@
 
 # Python dependencies
 
-pip-compile --upgrade --resolver=backtracking -o requirements.txt pyproject.toml
+pip-compile --upgrade --resolver=backtracking --extra prod -o requirements.txt pyproject.toml
 pip-compile --upgrade --resolver=backtracking --extra ci -o ci-requirements.txt pyproject.toml
 pip-compile --upgrade --resolver=backtracking --extra dev --extra ci -o dev-requirements.txt pyproject.toml
 

@@ -86,6 +86,8 @@ repos:
                 [
                     "--resolver",
                     "backtracking",
+                    "--extra",
+                    "prod",
                     "-o",
                     "requirements.txt",
                     "pyproject.toml",

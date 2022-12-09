@@ -13,10 +13,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 dynamic = ["version"]
 dependencies = [
-    "Brotli",
     "Django",
     "Markdown",
-    "Werkzeug",
     "attrs",
     "bleach",
     "dj-database-url",
@@ -34,26 +32,30 @@ dependencies = [
     "django-redis",
     "django-split-settings",
     "django-widget-tweaks",
-    "gunicorn",
     "hiredis",
     "ipython",
     "lxml",
     "nltk",
     "numpy",
     "pandas",
-    "psutil",
     "psycopg2-binary",
     "python-dateutil",
     "redis",
     "requests",
     "scikit-learn",
     "scipy",
-    "sentry-sdk",
     "user-agent",
     "whitenoise",
 ]
 
 [project.optional-dependencies]
+
+prod = [
+    "Brotli",
+    "gunicorn",
+    "sentry-sdk",
+]
+
 ci = [
     "Faker",
     "bandit",
