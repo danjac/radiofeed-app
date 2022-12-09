@@ -160,12 +160,8 @@ h11==0.14.0
     # via httpcore
 hatch==1.6.3
     # via radiofeed-app (pyproject.toml)
-hatch-vcs==0.2.1
-    # via radiofeed-app (pyproject.toml)
 hatchling==1.11.1
-    # via
-    #   hatch
-    #   hatch-vcs
+    # via hatch
 hiredis==2.0.0
     # via radiofeed-app (pyproject.toml)
 honcho==1.1.0
@@ -250,7 +246,6 @@ packaging==22.0
     #   hatchling
     #   pytest
     #   pytest-sugar
-    #   setuptools-scm
 pandas==1.5.2
     # via radiofeed-app (pyproject.toml)
 parso==0.8.3
@@ -378,8 +373,6 @@ scipy==1.9.3
     #   scikit-learn
 secretstorage==3.3.3
     # via keyring
-setuptools-scm==7.0.5
-    # via hatch-vcs
 shellingham==1.5.0
     # via hatch
 six==1.16.0
@@ -410,8 +403,6 @@ termcolor==2.1.1
     # via pytest-sugar
 threadpoolctl==3.1.0
     # via scikit-learn
-tomli==2.0.1
-    # via setuptools-scm
 tomli-w==1.0.0
     # via hatch
 tomlkit==0.11.6
@@ -438,7 +429,6 @@ typing-extensions==4.4.0
     # via
     #   django-modeltranslation
     #   mypy
-    #   setuptools-scm
 urllib3==1.26.13
     # via requests
 user-agent==0.1.10
@@ -455,6 +445,3 @@ whitenoise==6.2.0
     # via radiofeed-app (pyproject.toml)
 zipp==3.11.0
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools

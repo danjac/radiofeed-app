@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
@@ -89,7 +89,6 @@ dev = [
     "django-debug-toolbar",
     "djhtml",
     "hatch",
-    "hatch-vcs",
     "honcho",
     "ipython",
     "isort",
@@ -97,10 +96,7 @@ dev = [
 
 
 [tool.hatch.version]
-source = "vcs"
-
-[tool.hatch.build.hooks.vcs]
-version-file = "__version__.py"
+path = "radiofeed/__init__.py"
 
 [tool.pydocstyle]
 ignore = [
