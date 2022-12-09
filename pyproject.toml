@@ -99,6 +99,9 @@ dev = [
 [tool.hatch.version]
 source = "vcs"
 
+[tool.hatch.build.hooks.vcs]
+version-file = "__version__.py"
+
 [tool.pydocstyle]
 ignore = [
     "D100",
