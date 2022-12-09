@@ -100,7 +100,8 @@ dev = [
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "__version__.py"
+version-file = "radiofeed/__version__.py"
+install-pre-commit-hook = true
 
 [tool.pydocstyle]
 ignore = [
