@@ -33,7 +33,6 @@ dependencies = [
     "django-split-settings",
     "django-widget-tweaks",
     "hiredis",
-    "ipython",
     "lxml",
     "nltk",
     "numpy",
@@ -91,6 +90,7 @@ dev = [
     "djhtml",
     "hatch",
     "honcho",
+    "ipython",
     "isort",
 ]
 
