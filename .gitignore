@@ -12,8 +12,6 @@ venv
 
 *.DS_Store
 
-dist/
-
 .cache
 .data
 __pycache__
