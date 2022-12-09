@@ -27,7 +27,9 @@ def recommend() -> None:
     Only podcasts matching certain languages and updated within the past 90 days are included.
     """
     podcasts = (
-        Podcast.objects.filter(pub_date__gt=timezone.now() - timedelta(days=90))
+        Podcast.objects.filter(
+            pub_date__gt=timezone.now() - timedelta(days=90), active=True
+        )
         .filter(language__in=tokenizer.NLTK_LANGUAGES)
         .exclude(extracted_text="")
     )
