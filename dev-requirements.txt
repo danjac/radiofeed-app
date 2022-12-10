@@ -263,6 +263,8 @@ pexpect==4.8.0
     #   ipython
 pickleshare==0.7.5
     # via ipython
+pillow==9.3.0
+    # via radiofeed-app (pyproject.toml)
 platformdirs==2.6.0
     # via
     #   black
