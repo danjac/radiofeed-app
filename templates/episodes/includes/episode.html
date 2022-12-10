@@ -7,9 +7,9 @@
         <div>
             {% with css_class="h-16 w-16 group-hover:grayscale" %}
                 {% if is_podcast_detail %}
-                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title %}
+                    {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=100 %}
                 {% else %}
-                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title %}
+                    {% include "includes/cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=100 %}
                 {% endif %}
             {% endwith %}
         </div>

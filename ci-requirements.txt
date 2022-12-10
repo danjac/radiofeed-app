@@ -177,6 +177,8 @@ pathspec==0.10.2
     # via djlint
 pbr==5.11.0
     # via stevedore
+pillow==9.3.0
+    # via radiofeed-app (pyproject.toml)
 pluggy==1.0.0
     # via pytest
 pprintpp==0.4.0

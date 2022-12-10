@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import requests
+
 from django.urls import reverse
 
-from radiofeed.common.asserts import assert_ok
+from radiofeed.common.asserts import assert_bad_request, assert_ok
 
 
 class TestManifest:
@@ -40,6 +42,46 @@ class TestAcceptCookies:
         response = client.post(reverse("accept_cookies"))
         assert_ok(response)
         assert "accept-cookies" in response.cookies
+
+
+class TestCoverImage:
+    cover_url = "http://example.com/test.png"
+
+    def get_url(self, size, url):
+        return reverse("cover_image", args=[size, url])
+
+    def test_ok(self, client, db, mocker):
+        class MockResponse:
+            content = b"content"
+
+            def raise_for_status(self):
+                pass
+
+        mocker.patch("requests.get", return_value=MockResponse())
+        mocker.patch("PIL.Image.open", return_value=mocker.Mock())
+        assert_ok(client.get(self.get_url(100, self.cover_url.encode().hex())))
+
+    def test_bad_encoded_url(self, client, db):
+        assert_bad_request(client.get(self.get_url(100, "bad string")))
+
+    def test_failed_download(self, client, db, mocker):
+        class MockResponse:
+            def raise_for_status(self):
+                raise requests.HTTPError("OOPS")
+
+        mocker.patch("requests.get", return_value=MockResponse())
+        assert_bad_request(client.get(self.get_url(100, self.cover_url.encode().hex())))
+
+    def test_failed_process(self, client, db, mocker):
+        class MockResponse:
+            content = b"content"
+
+            def raise_for_status(self):
+                pass
+
+        mocker.patch("requests.get", return_value=MockResponse())
+        mocker.patch("PIL.Image.open", side_effect=IOError())
+        assert_bad_request(client.get(self.get_url(100, self.cover_url.encode().hex())))
 
 
 class TestErrorPages:

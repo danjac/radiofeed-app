@@ -61,7 +61,7 @@
                 {% endif %}
             {% endwith %}
             <div class="flex items-center space-x-3 sm:space-x-6">
-                {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
+                {% include "includes/cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=200 url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
                     {% include "episodes/actions/player.html" %}
                     {% include "episodes/actions/bookmark.html" %}

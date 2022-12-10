@@ -1,15 +1,26 @@
 from __future__ import annotations
 
 import datetime
+import io
+
+import requests
+import user_agent
 
 from django.conf import settings
-from django.http import FileResponse, HttpRequest, HttpResponse, JsonResponse
+from django.http import (
+    FileResponse,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    JsonResponse,
+)
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
+from PIL import Image
 
 _cache_control = cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
 _cache_page = cache_page(settings.DEFAULT_CACHE_TIMEOUT)
@@ -143,3 +154,28 @@ def security(request: HttpRequest) -> HttpResponse:
         ),
         content_type="text/plain",
     )
+
+
+@require_safe
+@_cache_control
+def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpResponse:
+    """Proxies a cover image from remote source."""
+    try:
+        response = requests.get(
+            bytes.fromhex(encoded_url).decode("utf-8"),
+            headers={
+                "User-Agent": user_agent.generate_user_agent(),
+            },
+        )
+        response.raise_for_status()
+
+        image = Image.open(io.BytesIO(response.content))
+        image = image.resize((size, size), Image.ANTIALIAS)
+
+        output = io.BytesIO()
+        image.save(output, format="PNG")
+
+    except (IOError, ValueError, requests.HTTPError):
+        return HttpResponseBadRequest("Error: unable to download or process image")
+
+    return HttpResponse(output.getvalue(), content_type="image/png")

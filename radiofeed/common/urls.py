@@ -13,6 +13,11 @@ urlpatterns = [
         kwargs={"template_name": "about.html"},
     ),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
+    path(
+        "cover-image/<int:size>/<str:encoded_url>.png",
+        views.cover_image,
+        name="cover_image",
+    ),
     path("robots.txt", views.robots, name="robots"),
     path("service-worker.js", views.service_worker, name="service_worker"),
     path("manifest.json", views.manifest, name="manifest"),

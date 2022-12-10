@@ -39,7 +39,7 @@
                         <div class="sm:flex items-center w-full space-y-2 sm:space-y-0 divide-y sm:divide-y-0 sm:divide-x divide-solid divide-gray-500">
                             <div class="sm:w-1/2">
                                 <div class="flex items-center space-x-2 lg:space-x-3">
-                                    {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
+                                    {% include "includes/cover_image.html" with css_class="w-16 h-16" cover_url=podcast.cover_url size=100 alt=podcast.cleaned_title url=podcast.get_absolute_url hx_swap="innerHTML show:window:top" %}
                                     <div class="h-16 flex flex-col place-content-between">
                                         <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-blue-300"
                                             href="{{ episode_url }}"

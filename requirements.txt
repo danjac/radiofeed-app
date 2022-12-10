@@ -100,6 +100,8 @@ oauthlib==3.2.2
     # via requests-oauthlib
 pandas==1.5.2
     # via radiofeed-app (pyproject.toml)
+pillow==9.3.0
+    # via radiofeed-app (pyproject.toml)
 psycopg2-binary==2.9.5
     # via radiofeed-app (pyproject.toml)
 pycparser==2.21
