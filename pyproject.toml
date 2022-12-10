@@ -90,6 +90,7 @@ dev = [
     "honcho",
     "ipython",
     "isort",
+    "rich",
 ]
 
 
