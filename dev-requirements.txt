@@ -282,8 +282,6 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-py==1.11.0
-    # via pytest-forked
 pycodestyle==2.10.0
     # via
     #   flake8
@@ -305,7 +303,6 @@ pytest==7.2.0
     # via
     #   pytest-cov
     #   pytest-django
-    #   pytest-forked
     #   pytest-icdiff
     #   pytest-mock
     #   pytest-mypy
@@ -316,8 +313,6 @@ pytest==7.2.0
 pytest-cov==4.0.0
     # via radiofeed-app (pyproject.toml)
 pytest-django==4.5.2
-    # via radiofeed-app (pyproject.toml)
-pytest-forked==1.4.0
     # via radiofeed-app (pyproject.toml)
 pytest-icdiff==0.6
     # via radiofeed-app (pyproject.toml)

@@ -70,7 +70,6 @@ ci = [
     "pytest",
     "pytest-cov",
     "pytest-django",
-    "pytest-forked",
     "pytest-icdiff",
     "pytest-mock",
     "pytest-mypy",
