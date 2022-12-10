@@ -4,7 +4,7 @@
     {{ block.super }} | {% translate "Similar" %}
 {% endblock title %}
 {% block podcast_content %}
-    <div class="dark:divide-gray-500 divide-y divide-solid">
+    <div class="divide-y divide-solid">
         {% for recommendation in recommendations %}
             {% include "podcasts/includes/podcast.html" with podcast=recommendation.recommended %}
         {% endfor %}

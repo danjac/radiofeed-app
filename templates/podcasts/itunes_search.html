@@ -4,7 +4,7 @@
     | {% translate "Search" %} | iTunes
 {% endblock title %}
 {% block search_content %}
-    <div class="dark:divide-gray-500 divide-y divide-solid">
+    <div class="divide-y divide-solid">
         {% for feed in feeds %}
             {% if feed.podcast and feed.podcast.pub_date %}
                 {% include "podcasts/includes/podcast.html" with podcast=feed.podcast %}
