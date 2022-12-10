@@ -48,7 +48,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-
 prod = [
     "Brotli",
     "gunicorn",

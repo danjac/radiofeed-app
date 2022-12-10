@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 # Python dependencies
 
 pip-compile --upgrade --resolver=backtracking --extra prod -o requirements.txt pyproject.toml
