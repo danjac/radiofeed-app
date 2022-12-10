@@ -1,6 +1,6 @@
 {% load i18n static %}
 {% with site_name=request.site.name %}
-    <header class="sticky top-0 z-20 w-full text-white bg-black shadow"
+    <header class="sticky top-0 z-20 w-full text-white bg-violet-900 shadow"
         x-data="{showMenu: false, cloned: false}"
         x-init="{# fmt:off #}
             $watch('showMenu', (value) => {
@@ -19,7 +19,7 @@
                 <a class="inline-flex items-center text-lg font-bold md:text-xl xl:text-2xl hover:text-blue-300"
                     href="{% if user.is_authenticated %}{% url 'podcasts:index' %}{% else %}{% url 'podcasts:landing_page' %}{% endif %}"
                     title="{{ site_name }}: {% translate "Home Page" %}">
-                    <img src="{% static 'img/wave.png' %}"
+                    <img src="{% static 'img/wave-white.png' %}"
                         height="100"
                         width="100"
                         alt="{{ site_name }}"
