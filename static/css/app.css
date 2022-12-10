@@ -266,7 +266,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
         .link.active,
         .link:hover {
-            color: theme("colors.blue.400");
+            color: theme("colors.blue.300");
         }
     }
 }
