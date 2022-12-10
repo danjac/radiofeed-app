@@ -270,3 +270,15 @@ input[type="search"]::-webkit-search-results-decoration {
         }
     }
 }
+
+@layer utilities {
+    @media (prefers-color-scheme: dark) {
+        .border,
+        .border-t,
+        .border-l,
+        .border-r,
+        .border-b {
+            border-color: theme("colors.gray.500");
+        }
+    }
+}

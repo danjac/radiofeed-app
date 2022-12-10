@@ -14,7 +14,7 @@
             {% else %}
                 <label class="{{ LABEL_CSS_CLASS }}" for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {% if widget_type == "fileinput" %}
-                    {% render_field field aria-label=field.label class="px-2 py-1 focus:outline-none focus:ring border dark:border-gray-500 rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm md:text-base" %}
+                    {% render_field field aria-label=field.label class="px-2 py-1 focus:outline-none focus:ring border rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm md:text-base" %}
                 {% else %}
                     {% render_field field aria-label=field.label class="p-1 dark:bg-gray-900 dark:text-white text-sm md:text-base w-64" %}
                 {% endif %}

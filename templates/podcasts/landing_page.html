@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load cache i18n %}
 {% block content %}
-    <header class="pb-3 mb-3 border-b dark:border-gray-500 space-y-3">
+    <header class="pb-3 mb-3 border-b space-y-3">
         {% with site_name=request.site.name %}
             <h1 class="text-lg font-bold text-center lg:text-xl xl:text-2xl">Welcome to {{ site_name }}!</h1>
             <h2 class="text-base font-semibold text-center lg:text-lg xl:text-xl">

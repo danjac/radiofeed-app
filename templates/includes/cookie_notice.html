@@ -1,6 +1,6 @@
 {% load i18n %}
 {% if not accept_cookies %}
-    <div class="fixed bottom-0 w-full flex justify-center z-50 py-3 text-white bg-gray-800 opacity-90"
+    <div class="fixed bottom-0 w-full flex justify-center z-50 py-3 text-white bg-black opacity-90"
         id="accept-cookies">
         <div class="px-2">
             <div class="md:flex items-center">
@@ -8,13 +8,13 @@
                     {% translate "This site uses cookies to ensure you get the best experience." %}
                 </p>
                 <div class="text-center md:text-start">
-                    <button class="px-4 p-1 border border-white w-full sm:w-auto bg-blue-800 hover:bg-blue-600 text-white"
+                    <button class="btn btn-primary px-4 py-1 border border-white text-base lg:text-lg"
                         hx-post="{% url 'accept_cookies' %}"
                         hx-target="#accept-cookies"
                         hx-push-url="false"
                         hx-swap="delete"
                         hx-disinherit="hx-indicator">
-                        {% translate "Got it!" %}
+                        {% translate "OK" %}
                     </button>
                 </div>
             </div>
