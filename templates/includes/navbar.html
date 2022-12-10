@@ -1,7 +1,8 @@
 {% load i18n static %}
 {% with site_name=request.site.name %}
-    <header class="sticky top-0 z-20 w-full text-white bg-violet-900 drop-shadow-xl"
-        x-data="{showMenu: false, cloned: false}"
+    <header class="sticky top-0 z-20 w-full text-white bg-violet-900"
+        :class="scrolling ? 'drop-shadow-xl': ''"
+        x-data="{showMenu: false, cloned: false, scrolling: false}"
         x-init="{# fmt:off #}
             $watch('showMenu', (value) => {
                 if (value && !cloned) {
@@ -10,6 +11,7 @@
                     cloned = true;
                 }
             });{# fmt:on #}"
+        @scroll.window="scrolling = window.pageYOffset > 0"
         @htmx:before-request.window="showMenu=false">
         {% translate "Search" as t_search %}
         {% translate "Toggle Menu" as t_toggle_menu %}
