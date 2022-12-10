@@ -36,7 +36,15 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
 
 
 def scheduled_for_update() -> QuerySet[Podcast]:
-    """Returns podcasts scheduled for feed update."""
+    """Returns all active podcasts scheduled for feed update.
+
+    1) Any newly added feeds
+    2) Any not checked for at least 15 days
+    3) Any with last pub date since their `frequency` value
+
+    Results are ordered by their last checked date and prioritized
+    if subscribed or promoted.
+    """
     now = timezone.now()
 
     return (
