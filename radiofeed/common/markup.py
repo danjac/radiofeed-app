@@ -94,8 +94,7 @@ def strip_html(value: str | None) -> str:
 def markup(value: str | None) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := strip_whitespace(value):
-        content = value if _HTML_RE.match(value) else _markdown.render(value)
-        return mark_safe(clean(content))  # nosec
+        return mark_safe(clean(_markdown.render(value)))  # nosec
     return ""
 
 
