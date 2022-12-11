@@ -3,6 +3,8 @@ from __future__ import annotations
 import requests
 
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.common.asserts import assert_bad_request, assert_ok
 
@@ -50,6 +52,9 @@ class TestCoverImage:
     def get_url(self, size, url):
         return reverse("cover_image", args=[size, url])
 
+    def encode_url(self, url):
+        return urlsafe_base64_encode(force_bytes(url))
+
     def test_ok(self, client, db, mocker):
         class MockResponse:
             content = b"content"
@@ -59,7 +64,7 @@ class TestCoverImage:
 
         mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
-        assert_ok(client.get(self.get_url(100, self.cover_url.encode().hex())))
+        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
     def test_bad_encoded_url(self, client, db):
         assert_bad_request(client.get(self.get_url(100, "bad string")))
@@ -70,7 +75,9 @@ class TestCoverImage:
                 raise requests.HTTPError("OOPS")
 
         mocker.patch("requests.get", return_value=MockResponse())
-        assert_bad_request(client.get(self.get_url(100, self.cover_url.encode().hex())))
+        assert_bad_request(
+            client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        )
 
     def test_failed_process(self, client, db, mocker):
         class MockResponse:

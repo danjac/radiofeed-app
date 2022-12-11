@@ -13,6 +13,9 @@ from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 
 from radiofeed.common import markup, pagination
@@ -123,6 +126,36 @@ def icon(
         "style": f"fa-{style}" if style else "fa",
         "size": f"fa-{size}" if size else "",
         "title": title,
+        "css_class": css_class,
+    }
+
+
+@register.inclusion_tag("includes/cover_image.html")
+def cover_image(
+    cover_url: str,
+    size: int,
+    title: str = "",
+    url: str = "",
+    css_class: str = "",
+):
+    """Renders a cover image with proxy URL."""
+    proxy_cover_url = (
+        reverse(
+            "cover_image",
+            kwargs={
+                "encoded_url": urlsafe_base64_encode(force_bytes(cover_url)),
+                "size": size,
+            },
+        )
+        if cover_url
+        else ""
+    )
+
+    return {
+        "cover_url": proxy_cover_url,
+        "title": title,
+        "size": size,
+        "url": url,
         "css_class": css_class,
     }
 

@@ -2,20 +2,24 @@
     {% load static %}
     {% static 'img/podcast-icon.webp' as placeholder %}
     <img class="object-cover border bg-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
-        alt="{{ alt }}"
-        title="{{ alt }}"
+        alt="{{ title }}"
+        title="{{ title }}"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
         width="{{ size }}"
         height="{{ size }}"
         src="{{ placeholder }}"
-        {% if url %} role="link" hx-get="{{ url }}" hx-push-url="true" hx-trigger="click consume"{% endif %}
+        {% if url %}
+            role="link"
+            hx-get="{{ url }}"
+            hx-push-url="true"
+            hx-trigger="click consume"
+        {% endif %}
         {% if cover_url %}
-            {% url "cover_image" size=size encoded_url=cover_url.encode.hex as proxy_cover_url %}
             x-data="{# fmt:off #}{
             isLoaded: false,
-            src: '{{ proxy_cover_url|escapejs }}',
+            src: '{{ cover_url|escapejs }}',
             placeholder: '{{ placeholder|escapejs }}'
         }{# fmt:on #}"
             @load.once="isLoaded=true;"

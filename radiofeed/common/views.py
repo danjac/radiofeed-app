@@ -18,6 +18,7 @@ from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
@@ -162,7 +163,7 @@ def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpRespon
     """Proxies a cover image from remote source."""
     try:
         response = requests.get(
-            bytes.fromhex(encoded_url).decode("utf-8"),
+            urlsafe_base64_decode(encoded_url),
             headers={
                 "User-Agent": user_agent.generate_user_agent(),
             },

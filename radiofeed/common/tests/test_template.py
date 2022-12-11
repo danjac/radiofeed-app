@@ -11,6 +11,7 @@ from django.urls import reverse
 from radiofeed.common.template import (
     absolute_uri,
     active_link,
+    cover_image,
     format_duration,
     icon,
     markdown,
@@ -295,3 +296,11 @@ class TestFormFields:
         field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
         field.errors = ["error"]
         assert tmpl.render({"field": field}, request=req)
+
+
+class TestCoverImage:
+    def test_is_cover_url(self):
+        assert cover_image("https://example.com/test.jpg", 100, "test img")["cover_url"]
+
+    def test_is_not_cover_url(self):
+        assert not cover_image("", 100, "test img")["cover_url"]
