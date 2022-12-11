@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import html
-import re
 
 from typing import Final
 
@@ -10,8 +9,6 @@ import bleach
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
-
-_HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 _ALLOWED_TAGS: Final = [
     "a",
