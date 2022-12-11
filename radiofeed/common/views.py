@@ -178,7 +178,6 @@ def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpRespon
         return HttpResponseBadRequest("Error: unable to download image")
 
     try:
-
         image = Image.open(io.BytesIO(response.content)).resize(
             (size, size), Image.Resampling.LANCZOS
         )
