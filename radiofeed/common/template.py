@@ -134,7 +134,7 @@ def icon(
 def cover_image(
     cover_url: str,
     size: int,
-    title: str = "",
+    title: str,
     url: str = "",
     css_class: str = "",
 ):
