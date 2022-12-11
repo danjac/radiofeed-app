@@ -18,6 +18,7 @@ from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
@@ -162,7 +163,7 @@ def security(request: HttpRequest) -> HttpResponse:
 def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpResponse:
     """Proxies a cover image from remote source."""
     try:
-        cover_url = urlsafe_base64_decode(encoded_url)
+        cover_url = force_str(urlsafe_base64_decode(encoded_url))
     except ValueError:
         return HttpResponseBadRequest("Error: invalid encoded URL")
 
@@ -173,14 +174,15 @@ def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpRespon
                 "User-Agent": user_agent.generate_user_agent(),
             },
         )
+
         response.raise_for_status()
-    except requests.HTTPError:
+
+    except requests.RequestException:
         return HttpResponseBadRequest("Error: unable to download image")
 
     try:
-        image = Image.open(io.BytesIO(response.content)).resize(
-            (size, size), Image.Resampling.LANCZOS
-        )
+        image = Image.open(io.BytesIO(response.content))
+        image = image.resize((size, size), Image.Resampling.LANCZOS)
 
         output = io.BytesIO()
 
