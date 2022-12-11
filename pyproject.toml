@@ -14,7 +14,6 @@ requires-python = ">=3.10"
 version = "0"
 dependencies = [
     "Django",
-    "Markdown",
     "Pillow",
     "attrs",
     "bleach",
@@ -35,6 +34,7 @@ dependencies = [
     "django-widget-tweaks",
     "hiredis",
     "lxml",
+    "markdown-it-py",
     "nltk",
     "numpy",
     "pandas",
@@ -77,7 +77,6 @@ ci = [
     "pytest-randomly",
     "pytest-sugar",
     "pytest-xdist",
-    "types-Markdown",
     "types-bleach",
     "types-python-dateutil",
     "types-requests",

@@ -6,10 +6,10 @@ import re
 from typing import Final
 
 import bleach
-import markdown
 
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
+from markdown_it import MarkdownIt
 
 _HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
@@ -61,6 +61,8 @@ _ALLOWED_ATTRS: Final = {
     "a": ["href", "target", "title"],
 }
 
+_markdown = MarkdownIt("js-default")
+
 
 def clean(value: str | None) -> str:
     """Runs Bleach through value and scrubs any unwanted HTML tags and attributes."""
@@ -92,7 +94,7 @@ def strip_html(value: str | None) -> str:
 def markup(value: str | None) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := strip_whitespace(value):
-        content = value if _HTML_RE.match(value) else markdown.markdown(value)
+        content = value if _HTML_RE.match(value) else _markdown.render(value)
         return mark_safe(clean(content))  # nosec
     return ""
 

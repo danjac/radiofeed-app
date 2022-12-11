@@ -86,8 +86,10 @@ joblib==1.2.0
     #   scikit-learn
 lxml==4.9.1
     # via radiofeed-app (pyproject.toml)
-markdown==3.4.1
+markdown-it-py==2.1.0
     # via radiofeed-app (pyproject.toml)
+mdurl==0.1.2
+    # via markdown-it-py
 nltk==3.7
     # via radiofeed-app (pyproject.toml)
 numpy==1.23.5
