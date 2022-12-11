@@ -174,9 +174,10 @@ def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpRespon
         image = image.resize((size, size), Image.ANTIALIAS)
 
         output = io.BytesIO()
-        image.save(output, format="PNG")
+
+        image.save(output, format="webp", optimize=True, quality=90)
 
     except (IOError, ValueError, requests.HTTPError):
         return HttpResponseBadRequest("Error: unable to download or process image")
 
-    return HttpResponse(output.getvalue(), content_type="image/png")
+    return HttpResponse(output.getvalue(), content_type="image/webp")
