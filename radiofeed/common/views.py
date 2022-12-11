@@ -170,8 +170,9 @@ def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpRespon
         )
         response.raise_for_status()
 
-        image = Image.open(io.BytesIO(response.content))
-        image = image.resize((size, size), Image.Resampling.LANCZOS)
+        image = Image.open(io.BytesIO(response.content)).resize(
+            (size, size), Image.Resampling.LANCZOS
+        )
 
         output = io.BytesIO()
 
