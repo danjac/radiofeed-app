@@ -32,7 +32,6 @@ _ALLOWED_TAGS: Final = [
     "h6",
     "hr",
     "i",
-    "img",
     "li",
     "ol",
     "p",
@@ -60,7 +59,6 @@ _ALLOWED_TAGS: Final = [
 
 _ALLOWED_ATTRS: Final = {
     "a": ["href", "target", "title"],
-    "img": ["src", "alt", "height", "width", "loading"],
 }
 
 
