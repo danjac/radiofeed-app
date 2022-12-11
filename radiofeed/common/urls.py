@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
     path(
-        "cover-image/<int:size>/<str:encoded_url>.png",
+        "covers/<int:size>/<str:encoded_url>.png",
         views.cover_image,
         name="cover_image",
     ),
