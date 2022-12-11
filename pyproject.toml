@@ -34,7 +34,7 @@ dependencies = [
     "django-widget-tweaks",
     "hiredis",
     "lxml",
-    "markdown-it-py",
+    "markdown",
     "nltk",
     "numpy",
     "pandas",
@@ -78,6 +78,7 @@ ci = [
     "pytest-sugar",
     "pytest-xdist",
     "types-bleach",
+    "types-markdown",
     "types-python-dateutil",
     "types-requests",
 ]

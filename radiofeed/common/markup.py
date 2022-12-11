@@ -5,10 +5,10 @@ import html
 from typing import Final
 
 import bleach
+import markdown
 
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
-from markdown_it import MarkdownIt
 
 _ALLOWED_TAGS: Final = [
     "a",
@@ -58,8 +58,6 @@ _ALLOWED_ATTRS: Final = {
     "a": ["href", "target", "title"],
 }
 
-_markdown = MarkdownIt()
-
 
 def clean(value: str | None) -> str:
     """Runs Bleach through value and scrubs any unwanted HTML tags and attributes."""
@@ -91,7 +89,7 @@ def strip_html(value: str | None) -> str:
 def markup(value: str | None) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := strip_whitespace(value):
-        return mark_safe(clean(_markdown.render(value)))  # nosec
+        return mark_safe(clean(markdown.markdown(value)))  # nosec
     return ""
 
 

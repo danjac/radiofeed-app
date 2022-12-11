@@ -147,12 +147,10 @@ jsbeautifier==1.14.7
     #   djlint
 lxml==4.9.1
     # via radiofeed-app (pyproject.toml)
-markdown-it-py==2.1.0
+markdown==3.4.1
     # via radiofeed-app (pyproject.toml)
 mccabe==0.7.0
     # via flake8
-mdurl==0.1.2
-    # via markdown-it-py
 mypy==0.991
     # via
     #   pytest-mypy
@@ -284,6 +282,8 @@ tqdm==4.64.1
     #   djlint
     #   nltk
 types-bleach==5.0.3.1
+    # via radiofeed-app (pyproject.toml)
+types-markdown==3.4.2.1
     # via radiofeed-app (pyproject.toml)
 types-python-dateutil==2.8.19.4
     # via radiofeed-app (pyproject.toml)
