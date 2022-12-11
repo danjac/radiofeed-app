@@ -33,8 +33,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-DEFAULT_CACHE_TIMEOUT = 5 * 60
-
 CACHES = {
     "default": {
         **env.cache("REDIS_URL"),
@@ -251,7 +249,7 @@ MESSAGE_TAGS = {
 # https://github.com/Suor/django-cacheops
 
 CACHEOPS_REDIS = REDIS_URL
-CACHEOPS_DEFAULTS = {"timeout": DEFAULT_CACHE_TIMEOUT}
+CACHEOPS_DEFAULTS = {"timeout": 300}
 CACHEOPS_DEGRADE_ON_FAILURE = True
 
 CACHEOPS = {

@@ -83,8 +83,6 @@ django-permissions-policy==4.14.0
     # via radiofeed-app (pyproject.toml)
 django-redis==5.2.0
     # via radiofeed-app (pyproject.toml)
-django-split-settings==1.2.0
-    # via radiofeed-app (pyproject.toml)
 django-widget-tweaks==1.4.12
     # via radiofeed-app (pyproject.toml)
 djlint==1.19.7

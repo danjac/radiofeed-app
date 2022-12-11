@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from split_settings.tools import include
-
+from radiofeed.config.settings.base import *  # noqa
 from radiofeed.config.settings.base import ALLOWED_HOSTS, TEMPLATES
-
-include("base.py")
 
 LOGGING = None
 

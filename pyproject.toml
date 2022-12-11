@@ -30,7 +30,6 @@ dependencies = [
     "django-object-actions",
     "django-permissions-policy",
     "django-redis",
-    "django-split-settings",
     "django-widget-tweaks",
     "hiredis",
     "lxml",
@@ -172,6 +171,10 @@ warn_unreachable = true
 
 [[tool.mypy.overrides]]
 module="*.tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module="*.config.*"
 ignore_errors = true
 
 [[tool.mypy.overrides]]

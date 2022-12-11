@@ -24,8 +24,10 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-_cache_control = cache_control(max_age=settings.DEFAULT_CACHE_TIMEOUT, immutable=True)
-_cache_page = cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+_DEFAULT_CACHE_TIMEOUT = 3600  # one hour
+
+_cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
+_cache_page = cache_page(_DEFAULT_CACHE_TIMEOUT)
 
 
 @require_safe
