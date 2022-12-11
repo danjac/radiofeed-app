@@ -162,13 +162,22 @@ def security(request: HttpRequest) -> HttpResponse:
 def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpResponse:
     """Proxies a cover image from remote source."""
     try:
+        cover_url = urlsafe_base64_decode(encoded_url)
+    except ValueError:
+        return HttpResponseBadRequest("Error: invalid encoded URL")
+
+    try:
         response = requests.get(
-            urlsafe_base64_decode(encoded_url),
+            cover_url,
             headers={
                 "User-Agent": user_agent.generate_user_agent(),
             },
         )
         response.raise_for_status()
+    except requests.HTTPError:
+        return HttpResponseBadRequest("Error: unable to download image")
+
+    try:
 
         image = Image.open(io.BytesIO(response.content)).resize(
             (size, size), Image.Resampling.LANCZOS
@@ -178,7 +187,7 @@ def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpRespon
 
         image.save(output, format="webp", optimize=True, quality=90)
 
-    except (IOError, ValueError, requests.HTTPError):
-        return HttpResponseBadRequest("Error: unable to download or process image")
+    except IOError:
+        return HttpResponseBadRequest("Error: unable to process image")
 
     return HttpResponse(output.getvalue(), content_type="image/webp")
