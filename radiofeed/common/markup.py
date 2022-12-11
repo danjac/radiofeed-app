@@ -61,7 +61,7 @@ _ALLOWED_ATTRS: Final = {
     "a": ["href", "target", "title"],
 }
 
-_markdown = MarkdownIt("js-default")
+_markdown = MarkdownIt()
 
 
 def clean(value: str | None) -> str:
