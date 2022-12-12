@@ -2,15 +2,7 @@
 {% with site_name=request.site.name %}
     <header class="sticky top-0 z-20 w-full text-white bg-violet-900"
         :class="scrolling ? 'drop-shadow-xl': ''"
-        x-data="{showMenu: false, cloned: false, scrolling: false}"
-        x-init="{# fmt:off #}
-            $watch('showMenu', (value) => {
-                if (value && !cloned) {
-                    $refs.menu.insertBefore(document.getElementById('sidebar').cloneNode(true), null);
-                    htmx.process($refs.menu);
-                    cloned = true;
-                }
-            });{# fmt:on #}"
+        x-data="{showMenu: false, scrolling: false}"
         @scroll.window="scrolling = window.pageYOffset > 0"
         @htmx:before-request.window="showMenu=false">
         {% translate "Search" as t_search %}
@@ -72,14 +64,14 @@
         {% if user.is_authenticated %}
             <div class="absolute left-0 z-50 w-full py-6 bg-white shadow-xl xl:hidden dark:bg-black"
                 x-cloak
-                x-show.transition="showMenu && cloned"
+                x-show.transition="showMenu"
                 x-transition:enter="transition ease-out duration-75"
                 x-transition:enter-start="transform opacity-0 scale-95"
                 x-transition:enter-end="transform opacity-100 scale-100"
                 x-transition:leave="transition ease-in duration-75"
                 x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95"
-                x-ref="menu">
+                x-transition:leave-end="transform opacity-0 scale-95">
+                {% include "includes/sidebar.html" %}
             </div>
         {% endif %}
         {% include "includes/signup_cta.html" %}
