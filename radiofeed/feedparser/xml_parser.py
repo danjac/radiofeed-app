@@ -29,7 +29,7 @@ def parse_xml(content: bytes, *tags: str) -> Iterator[lxml.etree.Element]:
             yield element
 
 
-class XPathFinder:
+class XPathParser:
     """Wrapper class for doing XPath lookups to find text or attribute values on an XML element.
 
     Args:
@@ -86,7 +86,7 @@ class XPathFinder:
 
         .. code block:: python
 
-            finder.to_dict(
+            parser.to_dict(
                 title="title/text()",
                 cover_url=[
                     "itunes:image/@href",
@@ -115,16 +115,16 @@ class XPathFinder:
 
 
 @contextmanager
-def xpath_finder(
+def xpath_parser(
     element: lxml.etree.Element, namespaces: Namespaces | None = None
-) -> Iterator[XPathFinder]:
-    """Returns XPathFinder instance for an XML element as a context manager.
+) -> Iterator[XPathParser]:
+    """Returns XPathParser instance for an XML element as a context manager.
 
     Args:
         element: the root element you want to search
         namespaces: dict of XML namespaces
     """
     try:
-        yield XPathFinder(element, namespaces)
+        yield XPathParser(element, namespaces)
     finally:
         element.clear()

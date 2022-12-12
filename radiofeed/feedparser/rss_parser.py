@@ -6,7 +6,7 @@ import lxml.etree  # nosec
 
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.feedparser.xml_parser import parse_xml, xpath_finder
+from radiofeed.feedparser.xml_parser import parse_xml, xpath_parser
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -46,17 +46,17 @@ class RssParser:
         Raises:
             RssParserError: missing or invalid RSS content
         """
-        with xpath_finder(channel, self._namespaces) as finder:
+        with xpath_parser(channel, self._namespaces) as parser:
             try:
                 return Feed(
                     items=list(self._parse_items(channel)),
-                    categories=finder.to_list(
+                    categories=parser.to_list(
                         "//googleplay:category/@text",
                         "//itunes:category/@text",
                         "//media:category/@label",
                         "//media:category/text()",
                     ),
-                    **finder.to_dict(
+                    **parser.to_dict(
                         complete="itunes:complete/text()",
                         cover_url=("itunes:image/@href", "image/url/text()"),
                         description=("description/text()", "itunes:summary/text()"),
@@ -77,11 +77,11 @@ class RssParser:
 
     def _parse_items(self, channel: lxml.etree.Element) -> Iterator[Item]:
         for item in channel.iterfind("item"):
-            with xpath_finder(item, self._namespaces) as finder:
+            with xpath_parser(item, self._namespaces) as parser:
                 try:
                     yield Item(
-                        categories=finder.to_list("category/text()"),
-                        **finder.to_dict(
+                        categories=parser.to_list("category/text()"),
+                        **parser.to_dict(
                             cover_url="itunes:image/@href",
                             description=(
                                 "content:encoded/text()",
