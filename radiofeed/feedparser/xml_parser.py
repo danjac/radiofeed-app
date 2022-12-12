@@ -5,7 +5,7 @@ import io
 from contextlib import contextmanager
 from typing import Iterable, Iterator, TypeAlias
 
-import lxml  # nosec
+import lxml.etree  # nosec
 
 Namespaces: TypeAlias = dict[str, str]
 
