@@ -78,7 +78,7 @@ class RssParser:
             except (TypeError, ValueError) as e:
                 raise RssParserError from e
 
-    def _parse_item(self, item: Item) -> Item:
+    def _parse_item(self, item: lxml.etree.Element) -> Item:
         with xpath_finder(item, self._namespaces) as finder:
             return Item(
                 categories=finder.to_list("category/text()"),
