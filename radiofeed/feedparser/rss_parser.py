@@ -19,7 +19,7 @@ def parse_rss(content: bytes) -> Feed:
         RssParserError: if XML content is invalid, or the feed is otherwise invalid or empty
     """
     try:
-        return RssParser(next(parse_xml(content, "channel"))).parse()
+        return _rss_parser.parse(next(parse_xml(content, "channel")))
     except (StopIteration, lxml.etree.XMLSyntaxError) as e:
         raise RssParserError from e
 
@@ -40,19 +40,16 @@ class RssParser:
         "podcast": "https://podcastindex.org/namespace/1.0",
     }
 
-    def __init__(self, channel: lxml.etree.Element):
-        self._channel = channel
-
-    def parse(self) -> Feed:
+    def parse(self, channel: lxml.etree.Element) -> Feed:
         """Parses RSS into a Feed instance.
 
         Raises:
             RssParserError: missing or invalid RSS content
         """
-        with xpath_finder(self._channel, self._namespaces) as finder:
+        with xpath_finder(channel, self._namespaces) as finder:
             try:
                 return Feed(
-                    items=list(self._parse_items()),
+                    items=list(self._parse_items(channel)),
                     categories=finder.to_list(
                         "//googleplay:category/@text",
                         "//itunes:category/@text",
@@ -78,35 +75,35 @@ class RssParser:
             except (TypeError, ValueError) as e:
                 raise RssParserError from e
 
-    def _parse_item(self, item: lxml.etree.Element) -> Item:
-        with xpath_finder(item, self._namespaces) as finder:
-            return Item(
-                categories=finder.to_list("category/text()"),
-                **finder.to_dict(
-                    cover_url="itunes:image/@href",
-                    description=(
-                        "content:encoded/text()",
-                        "description/text()",
-                        "itunes:summary/text()",
-                    ),
-                    duration="itunes:duration/text()",
-                    episode="itunes:episode/text()",
-                    episode_type="itunes:episodetype/text()",
-                    explicit="itunes:explicit/text()",
-                    guid="guid/text()",
-                    length=("enclosure//@length", "media:content//@fileSize"),
-                    link="link/text()",
-                    media_type=("enclosure//@type", "media:content//@type"),
-                    media_url=("enclosure//@url", "media:content//@url"),
-                    pub_date=("pubDate/text()", "pubdate/text()"),
-                    season="itunes:season/text()",
-                    title="title/text()",  # type: ignore
-                ),
-            )
+    def _parse_items(self, channel: lxml.etree.Element) -> Iterator[Item]:
+        for item in channel.iterfind("item"):
+            with xpath_finder(item, self._namespaces) as finder:
+                try:
+                    yield Item(
+                        categories=finder.to_list("category/text()"),
+                        **finder.to_dict(
+                            cover_url="itunes:image/@href",
+                            description=(
+                                "content:encoded/text()",
+                                "description/text()",
+                                "itunes:summary/text()",
+                            ),
+                            duration="itunes:duration/text()",
+                            episode="itunes:episode/text()",
+                            episode_type="itunes:episodetype/text()",
+                            explicit="itunes:explicit/text()",
+                            guid="guid/text()",
+                            length=("enclosure//@length", "media:content//@fileSize"),
+                            link="link/text()",
+                            media_type=("enclosure//@type", "media:content//@type"),
+                            media_url=("enclosure//@url", "media:content//@url"),
+                            pub_date=("pubDate/text()", "pubdate/text()"),
+                            season="itunes:season/text()",
+                            title="title/text()",  # type: ignore
+                        ),
+                    )
+                except (TypeError, ValueError):
+                    continue
 
-    def _parse_items(self) -> Iterator[Item]:
-        for item in self._channel.iterfind("item"):
-            try:
-                yield self._parse_item(item)
-            except (TypeError, ValueError):
-                continue
+
+_rss_parser = RssParser()
