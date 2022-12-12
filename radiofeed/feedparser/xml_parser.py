@@ -3,7 +3,7 @@ from __future__ import annotations
 import io
 
 from contextlib import contextmanager
-from typing import Iterable, Iterator, TypeAlias
+from typing import Generator, Iterable, Iterator, TypeAlias
 
 import lxml.etree  # nosec
 
@@ -117,7 +117,7 @@ class XPathParser:
 @contextmanager
 def xpath_parser(
     element: lxml.etree.Element, namespaces: Namespaces | None = None
-) -> Iterator[XPathParser]:
+) -> Generator[XPathParser, None, None]:
     """Returns XPathParser instance for an XML element as a context manager.
 
     Args:
