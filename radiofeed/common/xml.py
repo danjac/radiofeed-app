@@ -44,7 +44,9 @@ class XPathFinder:
 
         namespaces = namespaces or {}
 
-        if parent := element.getparent():
+        parent = element.getparent()
+
+        if parent is not None:
             namespaces = {**namespaces, **parent.nsmap}
 
         self._namespaces = namespaces or None
