@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from typing import Iterator
 
 import lxml.etree  # nosec
@@ -7,15 +9,6 @@ import lxml.etree  # nosec
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.feedparser.xml_parser import parse_xml, xpath_parser
-
-_NAMESPACES: dict[str, str] = {
-    "atom": "http://www.w3.org/2005/Atom",
-    "content": "http://purl.org/rss/1.0/modules/content/",
-    "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-    "media": "http://search.yahoo.com/mrss/",
-    "podcast": "https://podcastindex.org/namespace/1.0",
-}
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -25,17 +18,19 @@ def parse_rss(content: bytes) -> Feed:
         content: the body of the RSS or Atom feed
 
     Raises:
-        RssParserError: if XML content is invalid, or the feed is otherwise invalid or empty
+        RssParserError: if XML content is unparseable, or the feed is otherwise invalid or empty
     """
     try:
-        channel = next(parse_xml(content, "channel"))
+        return _parse_feed(next(parse_xml(content, "channel")))
     except StopIteration:
         raise RssParserError("Document does not contain <channel /> element")
     except lxml.etree.XMLSyntaxError as e:
         raise RssParserError from e
 
+
+def _parse_feed(channel: lxml.etree.Element) -> Feed:
     try:
-        with xpath_parser(channel, _NAMESPACES) as parser:
+        with _xpath_parser(channel) as parser:
             return Feed(
                 items=list(_parse_items(channel)),
                 categories=parser.to_list(
@@ -66,7 +61,7 @@ def parse_rss(content: bytes) -> Feed:
 
 def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
     for item in channel.iterfind("item"):
-        with xpath_parser(item, _NAMESPACES) as parser:
+        with _xpath_parser(item) as parser:
             try:
                 yield Item(
                     categories=parser.to_list("category/text()"),
@@ -94,3 +89,16 @@ def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
             except (TypeError, ValueError):
                 # invalid item, just continue
                 continue
+
+
+_xpath_parser = functools.partial(
+    xpath_parser,
+    namespaces={
+        "atom": "http://www.w3.org/2005/Atom",
+        "content": "http://purl.org/rss/1.0/modules/content/",
+        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+        "media": "http://search.yahoo.com/mrss/",
+        "podcast": "https://podcastindex.org/namespace/1.0",
+    },
+)
