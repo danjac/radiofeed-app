@@ -28,6 +28,19 @@ def parse_rss(content: bytes) -> Feed:
         raise RssParserError from e
 
 
+_xpath_parser = functools.partial(
+    xpath_parser,
+    namespaces={
+        "atom": "http://www.w3.org/2005/Atom",
+        "content": "http://purl.org/rss/1.0/modules/content/",
+        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+        "media": "http://search.yahoo.com/mrss/",
+        "podcast": "https://podcastindex.org/namespace/1.0",
+    },
+)
+
+
 def _parse_feed(channel: lxml.etree.Element) -> Feed:
     try:
         with _xpath_parser(channel) as parser:
@@ -89,16 +102,3 @@ def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
             except (TypeError, ValueError):
                 # invalid item, just continue
                 continue
-
-
-_xpath_parser = functools.partial(
-    xpath_parser,
-    namespaces={
-        "atom": "http://www.w3.org/2005/Atom",
-        "content": "http://purl.org/rss/1.0/modules/content/",
-        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-        "media": "http://search.yahoo.com/mrss/",
-        "podcast": "https://podcastindex.org/namespace/1.0",
-    },
-)
