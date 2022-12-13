@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.common.xml import XPathFinder, parse_xml, xpath_finder
+from radiofeed.common.xml import XPathFinder, xml_iterparse, xpath_finder
 
 
 class TestXPathFinder:
@@ -13,7 +13,7 @@ class TestXPathFinder:
 
     @pytest.fixture
     def channel(self):
-        return next(parse_xml(self.read_mock_file(), "channel"))
+        return next(xml_iterparse(self.read_mock_file(), "channel"))
 
     def test_contexttmanager(self, channel):
         with xpath_finder(channel) as finder:

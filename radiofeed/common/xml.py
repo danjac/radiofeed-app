@@ -10,7 +10,7 @@ import lxml.etree  # nosec
 Namespaces: TypeAlias = dict[str, str]
 
 
-def parse_xml(content: bytes, *tags: str) -> Iterator[lxml.etree.Element]:
+def xml_iterparse(content: bytes, *tags: str) -> Iterator[lxml.etree.Element]:
     """Iterates through elements in XML document with matching tag names.
 
     Args:
