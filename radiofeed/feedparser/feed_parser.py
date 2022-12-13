@@ -147,17 +147,19 @@ class FeedParser:
             lowercase_name__in=category_names
         )
 
+        keywords = " ".join(category_names - {c.lowercase_name for c in categories})
+
         result = self._handle_result(
             parse_result,
             active=active,
             num_retries=0,
             content_hash=content_hash,
+            keywords=keywords,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
             http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self._extract_text(feed),
-            keywords=" ".join(category_names - {c.lowercase_name for c in categories}),
             frequency=scheduler.schedule(feed),
             **attrs.asdict(
                 feed,

@@ -91,6 +91,7 @@ class Crawler:
 
     def __init__(self, location: str):
         self._location = location
+        self._feed_ids: set[str] = set()
 
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the database."""
@@ -110,20 +111,24 @@ class Crawler:
             )
         )
 
-    def _parse_genre_url(self, url) -> Iterator[Feed]:
+    def _parse_genre_url(self, url: str) -> Iterator[Feed]:
         for feed_ids in batcher.batcher(self._parse_podcast_ids(url), 100):
             yield from self._parse_feeds(feed_ids)
 
     def _parse_feeds(self, feed_ids: list[str]) -> Iterator[Feed]:
-        return _parse_feeds(
+        _feed_ids: set[str] = set(feed_ids) - self._feed_ids
+
+        yield from _parse_feeds(
             _get_response(
                 "https://itunes.apple.com/lookup",
                 {
-                    "id": ",".join(feed_ids),
+                    "id": ",".join(_feed_ids),
                     "entity": "podcast",
                 },
             ).json(),
         )
+
+        self._feed_ids = self._feed_ids.union(_feed_ids)
 
     def _parse_podcast_ids(self, url: str) -> Iterator[str]:
         return (
