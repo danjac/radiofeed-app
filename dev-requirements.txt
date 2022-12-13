@@ -63,7 +63,7 @@ defusedxml==0.7.1
     # via python3-openid
 distlib==0.3.6
     # via virtualenv
-dj-database-url==1.1.0
+dj-database-url==1.2.0
     # via radiofeed-app (pyproject.toml)
 django==4.1.4
     # via

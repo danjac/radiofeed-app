@@ -28,7 +28,7 @@ cryptography==38.0.4
     # via pyjwt
 defusedxml==0.7.1
     # via python3-openid
-dj-database-url==1.1.0
+dj-database-url==1.2.0
     # via radiofeed-app (pyproject.toml)
 django==4.1.4
     # via
