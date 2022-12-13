@@ -86,7 +86,7 @@ class XPathFinder:
 
         .. code block:: python
 
-            parser.to_dict(
+            finder.asdict(
                 title="title/text()",
                 cover_url=[
                     "itunes:image/@href",
