@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.feedparser.xml_parser import XPathParser, parse_xml, xpath_parser
+from radiofeed.common.xml_parsers import XPathParser, parse_xml, xpath_parser
 
 
 class TestXPathParser:

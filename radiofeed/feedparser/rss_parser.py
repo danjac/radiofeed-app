@@ -6,9 +6,9 @@ from typing import Iterator
 
 import lxml.etree  # nosec
 
+from radiofeed.common.xml_parsers import parse_xml, xpath_parser
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.feedparser.xml_parser import parse_xml, xpath_parser
 
 
 def parse_rss(content: bytes) -> Feed:

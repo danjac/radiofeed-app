@@ -9,7 +9,7 @@ import lxml  # nosec
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from radiofeed.feedparser.xml_parser import parse_xml, xpath_parser
+from radiofeed.common.xml_parsers import parse_xml, xpath_parser
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
