@@ -9,7 +9,7 @@ import lxml  # nosec
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from radiofeed.common.xml_parsers import parse_xml, xpath_parser
+from radiofeed.common.xml import parse_xml, xpath_finder
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
@@ -85,8 +85,8 @@ class OpmlUploadForm(forms.Form):
 
         try:
             for element in parse_xml(self.cleaned_data["opml"].read(), "outline"):
-                with xpath_parser(element) as parser:
-                    if rss := parser.first("@xmlUrl"):
+                with xpath_finder(element) as finder:
+                    if rss := finder.first("@xmlUrl"):
                         yield rss
         except lxml.etree.XMLSyntaxError:
             return

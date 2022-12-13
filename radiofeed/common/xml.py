@@ -29,7 +29,7 @@ def parse_xml(content: bytes, *tags: str) -> Iterator[lxml.etree.Element]:
             yield element
 
 
-class XPathParser:
+class XPathFinder:
     """Wrapper class for doing XPath lookups to find text or attribute values on an XML element.
 
     Args:
@@ -75,11 +75,11 @@ class XPathParser:
         except UnicodeDecodeError:
             pass
 
-    def to_list(self, *paths: str | Iterable) -> list[str]:
+    def aslist(self, *paths: str | Iterable) -> list[str]:
         """Returns path values as list."""
         return list(self.iter(*paths))
 
-    def to_dict(self, **fields: str | Iterable) -> dict[str, str | None]:
+    def asdict(self, **fields: str | Iterable) -> dict[str, str | None]:
         """Returns dict with each field mapped to one or more xpaths.
 
         Example of usage:
@@ -115,16 +115,16 @@ class XPathParser:
 
 
 @contextmanager
-def xpath_parser(
+def xpath_finder(
     element: lxml.etree.Element, namespaces: Namespaces | None = None
-) -> Generator[XPathParser, None, None]:
-    """Returns XPathParser instance for an XML element as a context manager.
+) -> Generator[XPathFinder, None, None]:
+    """Returns XPathFinder instance for an XML element as a context manager.
 
     Args:
         element: the root element you want to search
         namespaces: dict of XML namespaces
     """
     try:
-        yield XPathParser(element, namespaces)
+        yield XPathFinder(element, namespaces)
     finally:
         element.clear()

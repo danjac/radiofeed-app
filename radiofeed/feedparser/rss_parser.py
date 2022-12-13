@@ -6,7 +6,7 @@ from typing import Iterator
 
 import lxml.etree  # nosec
 
-from radiofeed.common.xml_parsers import parse_xml, xpath_parser
+from radiofeed.common.xml import parse_xml, xpath_finder
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
 
@@ -28,8 +28,8 @@ def parse_rss(content: bytes) -> Feed:
         raise RssParserError from e
 
 
-_xpath_parser = functools.partial(
-    xpath_parser,
+_xpath_finder = functools.partial(
+    xpath_finder,
     namespaces={
         "atom": "http://www.w3.org/2005/Atom",
         "content": "http://purl.org/rss/1.0/modules/content/",
@@ -43,16 +43,16 @@ _xpath_parser = functools.partial(
 
 def _parse_feed(channel: lxml.etree.Element) -> Feed:
     try:
-        with _xpath_parser(channel) as parser:
+        with _xpath_finder(channel) as finder:
             return Feed(
                 items=list(_parse_items(channel)),
-                categories=parser.to_list(
+                categories=finder.aslist(
                     "//googleplay:category/@text",
                     "//itunes:category/@text",
                     "//media:category/@label",
                     "//media:category/text()",
                 ),
-                **parser.to_dict(
+                **finder.asdict(
                     complete="itunes:complete/text()",
                     cover_url=("itunes:image/@href", "image/url/text()"),
                     description=("description/text()", "itunes:summary/text()"),
@@ -74,11 +74,11 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
 
 def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
     for item in channel.iterfind("item"):
-        with _xpath_parser(item) as parser:
+        with _xpath_finder(item) as finder:
             try:
                 yield Item(
-                    categories=parser.to_list("category/text()"),
-                    **parser.to_dict(
+                    categories=finder.aslist("category/text()"),
+                    **finder.asdict(
                         cover_url="itunes:image/@href",
                         description=(
                             "content:encoded/text()",

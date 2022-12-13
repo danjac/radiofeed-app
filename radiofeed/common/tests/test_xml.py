@@ -4,10 +4,10 @@ import pathlib
 
 import pytest
 
-from radiofeed.common.xml_parsers import XPathParser, parse_xml, xpath_parser
+from radiofeed.common.xml import XPathFinder, parse_xml, xpath_finder
 
 
-class TestXPathParser:
+class TestXPathFinder:
     def read_mock_file(self, mock_filename="rss_mock.xml"):
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
@@ -16,20 +16,20 @@ class TestXPathParser:
         return next(parse_xml(self.read_mock_file(), "channel"))
 
     def test_contexttmanager(self, channel):
-        with xpath_parser(channel) as parser:
-            assert parser.first("title/text()") == "Mysterious Universe"
+        with xpath_finder(channel) as finder:
+            assert finder.first("title/text()") == "Mysterious Universe"
 
     def test_iter(self, channel):
-        assert list(XPathParser(channel).iter("title/text()")) == [
+        assert list(XPathFinder(channel).iter("title/text()")) == [
             "Mysterious Universe"
         ]
 
-    def test_to_list(self, channel):
-        assert XPathParser(channel).to_list("title/text()") == ["Mysterious Universe"]
+    def test_aslist(self, channel):
+        assert XPathFinder(channel).aslist("title/text()") == ["Mysterious Universe"]
 
-    def test_to_dict(self, channel):
+    def test_asdict(self, channel):
 
-        assert XPathParser(channel).to_dict(
+        assert XPathFinder(channel).asdict(
             title="title/text()",
             cover_url=(
                 "itunes:image/@href",
@@ -44,16 +44,16 @@ class TestXPathParser:
         }
 
     def test_first_exists(self, channel):
-        assert XPathParser(channel).first("title/text()") == "Mysterious Universe"
+        assert XPathFinder(channel).first("title/text()") == "Mysterious Universe"
 
     def test_find_first_matching(self, channel):
         assert (
-            XPathParser(channel).first("editor/text()", "managingEditor/text()")
+            XPathFinder(channel).first("editor/text()", "managingEditor/text()")
             == "sales@mysteriousuniverse.org (8th Kind)"
         )
 
     def test_default(self, channel):
         assert (
-            XPathParser(channel).first("editor/text()", "managingEditor2/text()")
+            XPathFinder(channel).first("editor/text()", "managingEditor2/text()")
             is None
         )
