@@ -10,7 +10,7 @@ repos:
           - id: check-yaml
           - id: check-json
     - repo: https://github.com/pycqa/isort
-      rev: 5.11.1
+      rev: 5.11.2
       hooks:
           - id: isort
             additional_dependencies: ["toml"]
