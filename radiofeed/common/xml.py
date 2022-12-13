@@ -41,7 +41,13 @@ class XPathFinder:
         self, element: lxml.etree.Element, namespaces: Namespaces | None = None
     ):
         self._element = element
-        self._namespaces = (namespaces or {}) | (element.getparent().nsmap or {})
+
+        namespaces = namespaces or {}
+
+        if parent := element.getparent():
+            namespaces = {**namespaces, **parent.nsmap}
+
+        self._namespaces = namespaces or None
 
     def first(self, *paths) -> str | None:
         """Returns first matching text or attribute value.
