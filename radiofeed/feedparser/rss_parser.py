@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from typing import Iterator
 
 import lxml.etree  # nosec
@@ -7,15 +9,6 @@ import lxml.etree  # nosec
 from radiofeed.common.xml import xml_iterparse, xpath_finder
 from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
-
-_NAMESPACES = {
-    "atom": "http://www.w3.org/2005/Atom",
-    "content": "http://purl.org/rss/1.0/modules/content/",
-    "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-    "media": "http://search.yahoo.com/mrss/",
-    "podcast": "https://podcastindex.org/namespace/1.0",
-}
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -38,7 +31,7 @@ def parse_rss(content: bytes) -> Feed:
 def _parse_feed(channel: lxml.etree.Element) -> Feed:
     """Parse a RSS XML feed."""
     try:
-        with xpath_finder(channel, _NAMESPACES) as finder:
+        with _xpath_finder(channel) as finder:
             return Feed(
                 items=list(_parse_items(channel)),
                 categories=finder.aslist(
@@ -69,7 +62,7 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
 
 def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
     for item in channel.iterfind("item"):
-        with xpath_finder(item, _NAMESPACES) as finder:
+        with _xpath_finder(item) as finder:
             try:
                 yield Item(
                     categories=finder.aslist("category/text()"),
@@ -97,3 +90,16 @@ def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
             except (TypeError, ValueError):
                 # invalid item, just continue
                 continue
+
+
+_xpath_finder = functools.partial(
+    xpath_finder,
+    namespaces={
+        "atom": "http://www.w3.org/2005/Atom",
+        "content": "http://purl.org/rss/1.0/modules/content/",
+        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+        "media": "http://search.yahoo.com/mrss/",
+        "podcast": "https://podcastindex.org/namespace/1.0",
+    },
+)
