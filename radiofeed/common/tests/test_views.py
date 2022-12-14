@@ -50,7 +50,7 @@ class TestCoverImage:
     cover_url = "http://example.com/test.png"
 
     def get_url(self, size, url):
-        return reverse("cover_image", args=[size, url])
+        return reverse("cover_image", kwargs={"encoded_url": url, "size": size})
 
     def encode_url(self, url):
         return urlsafe_base64_encode(force_bytes(url))
@@ -65,6 +65,11 @@ class TestCoverImage:
         mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
+
+    def test_not_accepted_size(self, client, db, mocker):
+        assert_bad_request(
+            client.get(self.get_url(500, self.encode_url(self.cover_url)))
+        )
 
     def test_bad_encoded_url(self, client, db):
         assert_bad_request(client.get(self.get_url(100, "bad string")))

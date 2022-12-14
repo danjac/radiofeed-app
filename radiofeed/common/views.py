@@ -24,7 +24,9 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-_DEFAULT_CACHE_TIMEOUT = 3600  # one hour
+_DEFAULT_CACHE_TIMEOUT: int = 3600  # one hour
+
+_COVER_IMAGE_SIZES: tuple[int, ...] = (100, 200, 300)
 
 _cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
 _cache_page = cache_page(_DEFAULT_CACHE_TIMEOUT)
@@ -162,8 +164,11 @@ def security(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @_cache_control
-def cover_image(request: HttpRequest, size: int, encoded_url: str) -> HttpResponse:
+def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
+    if size not in _COVER_IMAGE_SIZES:
+        return HttpResponseBadRequest("Error: image is not an accepted size")
+
     try:
         cover_url = force_str(urlsafe_base64_decode(encoded_url))
     except ValueError:
