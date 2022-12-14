@@ -180,6 +180,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
             headers={
                 "User-Agent": user_agent.generate_user_agent(),
             },
+            timeout=10,
         )
 
         response.raise_for_status()
