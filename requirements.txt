@@ -74,7 +74,7 @@ funcy==1.17
     # via django-cacheops
 gunicorn==20.1.0
     # via radiofeed-app (pyproject.toml)
-hiredis==2.0.0
+hiredis==2.1.0
     # via radiofeed-app (pyproject.toml)
 idna==3.4
     # via requests
@@ -82,7 +82,7 @@ joblib==1.2.0
     # via
     #   nltk
     #   scikit-learn
-lxml==4.9.1
+lxml==4.9.2
     # via radiofeed-app (pyproject.toml)
 markdown==3.4.1
     # via radiofeed-app (pyproject.toml)

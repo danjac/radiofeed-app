@@ -160,7 +160,7 @@ hatch==1.6.3
     # via radiofeed-app (pyproject.toml)
 hatchling==1.11.1
     # via hatch
-hiredis==2.0.0
+hiredis==2.1.0
     # via radiofeed-app (pyproject.toml)
 honcho==1.1.0
     # via radiofeed-app (pyproject.toml)
@@ -210,7 +210,7 @@ jsbeautifier==1.14.7
     #   djlint
 keyring==23.11.0
     # via hatch
-lxml==4.9.1
+lxml==4.9.2
     # via radiofeed-app (pyproject.toml)
 markdown==3.4.1
     # via radiofeed-app (pyproject.toml)

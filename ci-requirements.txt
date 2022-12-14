@@ -121,7 +121,7 @@ gitdb==4.0.10
     # via gitpython
 gitpython==3.1.29
     # via bandit
-hiredis==2.0.0
+hiredis==2.1.0
     # via radiofeed-app (pyproject.toml)
 html-tag-names==0.1.2
     # via djlint
@@ -143,7 +143,7 @@ jsbeautifier==1.14.7
     # via
     #   cssbeautifier
     #   djlint
-lxml==4.9.1
+lxml==4.9.2
     # via radiofeed-app (pyproject.toml)
 markdown==3.4.1
     # via radiofeed-app (pyproject.toml)
