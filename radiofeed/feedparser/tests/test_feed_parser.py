@@ -509,7 +509,7 @@ class TestFeedParser:
 
         assert not podcast.active
         assert podcast.http_status == http.HTTPStatus.GONE
-        assert podcast.parse_result == Podcast.ParseResult.COMPLETE
+        assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed
 
     def test_parse_http_server_error(self, podcast, categories):

@@ -179,6 +179,7 @@ class FeedParser:
     def _handle_failure(self, exc: Exception) -> Result:
         try:
             http_status = exc.response.status_code  # type: ignore
+
         except AttributeError:
             http_status = None
 
@@ -201,22 +202,19 @@ class FeedParser:
             case httpx.HTTPError():
 
                 if http_status == http.HTTPStatus.NOT_MODIFIED:
-                    return self._handle_failure(NotModified())
+                    num_retries = 0
+                    parse_result = Podcast.ParseResult.NOT_MODIFIED
 
-                active = http_status not in (
-                    http.HTTPStatus.FORBIDDEN,
-                    http.HTTPStatus.NOT_FOUND,
-                    http.HTTPStatus.GONE,
-                    http.HTTPStatus.UNAUTHORIZED,
-                )
+                else:
+                    active = http_status not in (
+                        http.HTTPStatus.FORBIDDEN,
+                        http.HTTPStatus.NOT_FOUND,
+                        http.HTTPStatus.GONE,
+                        http.HTTPStatus.UNAUTHORIZED,
+                    )
+                    num_retries += 1
 
-                num_retries += 1
-
-                parse_result = (
-                    Podcast.ParseResult.COMPLETE
-                    if http_status == http.HTTPStatus.GONE
-                    else Podcast.ParseResult.HTTP_ERROR
-                )
+                    parse_result = Podcast.ParseResult.HTTP_ERROR
 
             case _:
                 raise
