@@ -100,20 +100,14 @@ class FeedParser:
             return self._handle_failure(e)
 
     def _parse_rss(self, client: httpx.Client) -> tuple[httpx.Response, Feed, str]:
-        response = client.get(
-            self._podcast.rss,
-            headers=self._get_feed_headers(),
-        )
-
+        response = client.get(self._podcast.rss, headers=self._get_feed_headers())
         response.raise_for_status()
 
         # Check if not modified: feed should return a 304 if no new updates,
         # but not in all cases, so we should also check the content body.
-        if (
-            response.status_code == http.HTTPStatus.NOT_MODIFIED
-            or (content_hash := make_content_hash(response.content))
-            == self._podcast.content_hash
-        ):
+        content_hash = make_content_hash(response.content)
+
+        if content_hash == self._podcast.content_hash:
             raise NotModified()
 
         # Check if there is another active feed with the same URL/content
@@ -205,6 +199,10 @@ class FeedParser:
                 parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
 
             case httpx.HTTPError():
+
+                if http_status == http.HTTPStatus.NOT_MODIFIED:
+                    return self._handle_failure(NotModified())
+
                 active = http_status not in (
                     http.HTTPStatus.FORBIDDEN,
                     http.HTTPStatus.NOT_FOUND,

@@ -489,7 +489,7 @@ class TestFeedParser:
 
         podcast.num_retries = 1
 
-        client = mock_client(MockResponse(status=http.HTTPStatus.NOT_MODIFIED))
+        client = mock_client(BadMockResponse(status=http.HTTPStatus.NOT_MODIFIED))
 
         assert not parse_feed(podcast, client)
 
