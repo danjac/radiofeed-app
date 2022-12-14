@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import requests
 
-
-class NotModified(requests.RequestException):
+class NotModified(ValueError):
     """RSS feed has not been modified since last update."""
 
 
-class DuplicateFeed(requests.RequestException):
+class DuplicateFeed(ValueError):
     """Another identical podcast exists in the database."""
 
 

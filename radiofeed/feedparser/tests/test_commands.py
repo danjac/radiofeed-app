@@ -15,4 +15,4 @@ class TestParseFeeds:
             return_value=Result(podcast, Podcast.ParseResult.SUCCESS),
         )
         call_command("parse_feeds", limit=200)
-        patched.assert_called_with(podcast)
+        patched.assert_called()

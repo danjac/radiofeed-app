@@ -5,6 +5,8 @@ import itertools
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 
+import httpx
+
 from django.core.management.base import BaseCommand
 
 from radiofeed.feedparser import feed_parser, scheduler
@@ -29,17 +31,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         """Command handler implementation."""
-        with ThreadPoolExecutor() as executor:
-            executor.map(
-                self._parse_feed,
-                itertools.islice(
-                    scheduler.scheduled_for_update(),
-                    options["limit"],
-                ),
-            )
+        with feed_parser.get_client() as client:
 
-    def _parse_feed(self, podcast: Podcast) -> None:
+            with ThreadPoolExecutor() as executor:
+                executor.map(
+                    lambda podcast: self._parse_feed(podcast, client),
+                    itertools.islice(
+                        scheduler.scheduled_for_update(),
+                        options["limit"],
+                    ),
+                )
+
+    def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
-        result = feed_parser.parse_feed(podcast)
+        result = feed_parser.parse_feed(podcast, client)
         style = self.style.SUCCESS if result else self.style.NOTICE
         self.stdout.write(style(f"Parsing done for {podcast}: {result}"))

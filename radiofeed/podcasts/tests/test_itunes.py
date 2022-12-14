@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pathlib
 
+import httpx
 import pytest
-import requests
 
 from django.core.cache import cache
 
@@ -39,23 +39,28 @@ class MockResponse:
         return self.json_data
 
 
-def mock_request(mocker, response):
-    return mocker.patch("requests.get", return_value=response, autospec=True)
+def mock_client(mocker, response):
+    client = mocker.Mock()
+    client.get.return_value = response
+
+    patched = mocker.patch("httpx.Client")
+    patched.return_value.__enter__.return_value = client
+    return patched
 
 
 @pytest.fixture
 def mock_good_response(mocker):
-    yield mock_request(mocker, MockResponse(json={"results": [MOCK_RESULT]}))
+    yield mock_client(mocker, MockResponse(json={"results": [MOCK_RESULT]}))
 
 
 @pytest.fixture
 def mock_bad_response(mocker):
-    yield mock_request(mocker, MockResponse(exception=requests.HTTPError()))
+    yield mock_client(mocker, MockResponse(exception=httpx.HTTPError("fail")))
 
 
 @pytest.fixture
 def mock_invalid_response(mocker):
-    yield mock_request(
+    yield mock_client(
         mocker, MockResponse(json={"results": [{"id": 12345, "url": "bad-url"}]})
     )
 
@@ -77,7 +82,11 @@ class TestCrawl:
 
             return MockResponse()
 
-        mocker.patch("requests.get", side_effect=side_effect)
+        client = mocker.Mock()
+        client.get.side_effect = side_effect
+
+        patched = mocker.patch("httpx.Client")
+        patched.return_value.__enter__.return_value = client
 
         list(itunes.crawl())
 
@@ -88,7 +97,7 @@ class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 
     def test_not_ok(self, db, mock_bad_response):
-        with pytest.raises(itunes.ItunesException):
+        with pytest.raises(httpx.HTTPError):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 

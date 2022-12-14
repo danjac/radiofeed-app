@@ -7,7 +7,7 @@ import http
 from typing import Iterator
 
 import attrs
-import requests
+import httpx
 import user_agent
 
 from django.db import transaction
@@ -24,10 +24,34 @@ from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParse
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 
+_ACCEPT_HEADER = ",".join(
+    [
+        "application/atom+xml",
+        "application/rdf+xml",
+        "application/rss+xml",
+        "application/x-netcdf",
+        "application/xml;q=0.9",
+        "text/xml;q=0.2",
+        "*/*;q=0.1",
+    ]
+)
 
-def parse_feed(podcast: Podcast) -> Result:
+
+def get_client() -> httpx.Client:
+    """Returns HTTP client."""
+    return httpx.Client(
+        headers={
+            "user-agent": user_agent.generate_user_agent(),
+            "accept": _ACCEPT_HEADER,
+        },
+        follow_redirects=True,
+        timeout=10,
+    )
+
+
+def parse_feed(podcast: Podcast, client: httpx.Client) -> Result:
     """Parses podcast RSS feed."""
-    return FeedParser(podcast).parse()
+    return FeedParser(podcast).parse(client)
 
 
 def make_content_hash(content: bytes) -> str:
@@ -55,16 +79,6 @@ class Result:
 class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
-    _accept_header: tuple[str, ...] = (
-        "application/atom+xml",
-        "application/rdf+xml",
-        "application/rss+xml",
-        "application/x-netcdf",
-        "application/xml;q=0.9",
-        "text/xml;q=0.2",
-        "*/*;q=0.1",
-    )
-
     _max_retries: int = 3
 
     _feed_attrs = attrs.fields(Feed)
@@ -74,7 +88,7 @@ class FeedParser:
         self._podcast = podcast
 
     @transaction.atomic
-    def parse(self) -> Result:
+    def parse(self, client: httpx.Client) -> Result:
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -82,17 +96,15 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            return self._handle_success(*self._parse_rss())
+            return self._handle_success(*self._parse_rss(client))
 
         except Exception as e:
             return self._handle_failure(e)
 
-    def _parse_rss(self) -> tuple[requests.Response, Feed, str]:
-        response = requests.get(
+    def _parse_rss(self, client: httpx.Client) -> tuple[httpx.Response, Feed, str]:
+        response = client.get(
             self._podcast.rss,
             headers=self._get_feed_headers(),
-            allow_redirects=True,
-            timeout=10,
         )
 
         response.raise_for_status()
@@ -104,7 +116,7 @@ class FeedParser:
             or (content_hash := make_content_hash(response.content))
             == self._podcast.content_hash
         ):
-            raise NotModified(response=response)
+            raise NotModified()
 
         # Check if there is another active feed with the same URL/content
         if (
@@ -112,16 +124,12 @@ class FeedParser:
                 Q(content_hash=content_hash) | Q(rss=response.url)
             )
         ).exists():
-            raise DuplicateFeed(response=response)
+            raise DuplicateFeed()
 
         return response, rss_parser.parse_rss(response.content), content_hash
 
     def _get_feed_headers(self) -> dict:
-        headers = {
-            "Accept": ",".join(self._accept_header),
-            "User-Agent": user_agent.generate_user_agent(),
-        }
-
+        headers = {}
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:
@@ -130,7 +138,7 @@ class FeedParser:
 
     def _handle_success(
         self,
-        response: requests.Response,
+        response: httpx.Response,
         feed: Feed,
         content_hash: str,
     ) -> Result:
@@ -198,7 +206,7 @@ class FeedParser:
                 num_retries += 1
                 parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
 
-            case requests.RequestException():
+            case httpx.HTTPError():
                 active = http_status not in (
                     http.HTTPStatus.FORBIDDEN,
                     http.HTTPStatus.NOT_FOUND,
