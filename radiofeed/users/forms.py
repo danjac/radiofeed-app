@@ -9,9 +9,11 @@ import lxml  # nosec
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from radiofeed.common.xml import xml_iterparse, xpath_finder
+from radiofeed.common.xml import XPathFinder, xml_iterparse
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
+
+_xpath_finder = XPathFinder()
 
 
 class UserPreferencesForm(forms.ModelForm):
@@ -85,7 +87,9 @@ class OpmlUploadForm(forms.Form):
 
         try:
             for element in xml_iterparse(self.cleaned_data["opml"].read(), "body"):
-                with xpath_finder(element) as finder:
-                    yield from finder.iter("//outline//@xmlUrl")
+                try:
+                    yield from _xpath_finder.iter(element, "//outline//@xmlUrl")
+                finally:
+                    element.clear()
         except lxml.etree.XMLSyntaxError:
             return

@@ -4,10 +4,10 @@ from typing import Iterator
 
 import lxml.etree  # nosec
 
-from radiofeed.common.xml import XPathFinder2, xml_iterparse
+from radiofeed.common.xml import XPathFinder, xml_iterparse
 from radiofeed.feedparser.models import Feed, Item
 
-_xpath_finder = XPathFinder2(
+_xpath_finder = XPathFinder(
     {
         "atom": "http://www.w3.org/2005/Atom",
         "content": "http://purl.org/rss/1.0/modules/content/",

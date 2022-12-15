@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.common.xml import XPathFinder, xml_iterparse, xpath_finder
+from radiofeed.common.xml import XPathFinder, xml_iterparse
 
 
 class TestXPathFinder:
@@ -15,21 +15,22 @@ class TestXPathFinder:
     def channel(self):
         return next(xml_iterparse(self.read_mock_file(), "channel"))
 
-    def test_contexttmanager(self, channel):
-        with xpath_finder(channel) as finder:
-            assert finder.first("title/text()") == "Mysterious Universe"
-
     def test_iter(self, channel):
-        assert list(XPathFinder(channel).iter("title/text()")) == [
+        assert list(XPathFinder().iter(channel, "title/text()")) == [
             "Mysterious Universe"
         ]
 
     def test_aslist(self, channel):
-        assert XPathFinder(channel).aslist("title/text()") == ["Mysterious Universe"]
+        assert XPathFinder().aslist(channel, "title/text()") == ["Mysterious Universe"]
 
     def test_asdict(self, channel):
 
-        assert XPathFinder(channel).asdict(
+        assert XPathFinder(
+            {
+                "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+            }
+        ).asdict(
+            channel,
             title="title/text()",
             cover_url=(
                 "itunes:image/@href",
@@ -44,16 +45,16 @@ class TestXPathFinder:
         }
 
     def test_first_exists(self, channel):
-        assert XPathFinder(channel).first("title/text()") == "Mysterious Universe"
+        assert XPathFinder().first(channel, "title/text()") == "Mysterious Universe"
 
     def test_find_first_matching(self, channel):
         assert (
-            XPathFinder(channel).first("editor/text()", "managingEditor/text()")
+            XPathFinder().first(channel, "editor/text()", "managingEditor/text()")
             == "sales@mysteriousuniverse.org (8th Kind)"
         )
 
     def test_default(self, channel):
         assert (
-            XPathFinder(channel).first("editor/text()", "managingEditor2/text()")
+            XPathFinder().first(channel, "editor/text()", "managingEditor2/text()")
             is None
         )
