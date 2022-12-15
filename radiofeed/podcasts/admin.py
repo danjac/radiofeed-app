@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import http
-
 from django.contrib import admin
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
@@ -84,35 +82,6 @@ class ParseResultFilter(admin.SimpleListFilter):
                 return queryset.filter(parse_result=value)
             case _:
                 return queryset
-
-
-class HttpStatusFilter(admin.SimpleListFilter):
-    """Filters podcasts based on last feed parser HTTP status."""
-
-    title = _("HTTP Status")
-    parameter_name = "http_status"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return tuple(
-            (status, f"{status} {http.HTTPStatus(status).name}")
-            for status in Podcast.objects.filter(
-                http_status__in={status.value for status in http.HTTPStatus}
-            )
-            .values_list("http_status", flat=True)
-            .order_by("http_status")
-            .distinct()
-        )
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-        if value := self.value():
-            return queryset.filter(http_status=value)
-        return queryset
 
 
 class PubDateFilter(admin.SimpleListFilter):
@@ -199,7 +168,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         PromotedFilter,
         SubscribedFilter,
         ParseResultFilter,
-        HttpStatusFilter,
     )
 
     list_display = (
@@ -226,7 +194,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         "next_scheduled_update",
         "modified",
         "etag",
-        "http_status",
         "parse_result",
         "content_hash",
     )

@@ -20,7 +20,6 @@ from radiofeed.common import batcher, tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
-from radiofeed.feedparser.exceptions import DuplicateFeed, NotModified, RssParserError
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 
@@ -35,8 +34,20 @@ _ACCEPT_HEADER = (
 )
 
 
+class NotModified(ValueError):
+    """RSS feed has not been modified since last update."""
+
+
+class Duplicate(ValueError):
+    """Another identical podcast exists in the database."""
+
+
+class Inaccessible(ValueError):
+    """Content is no longer accesssible."""
+
+
 def get_client() -> httpx.Client:
-    """Returns HTTP client."""
+    """Returns HTTP client with."""
     return httpx.Client(
         headers={
             "user-agent": user_agent.generate_user_agent(),
@@ -101,7 +112,22 @@ class FeedParser:
 
     def _parse_rss(self, client: httpx.Client) -> tuple[httpx.Response, Feed, str]:
         response = client.get(self._podcast.rss, headers=self._get_feed_headers())
-        response.raise_for_status()
+
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code in (
+                http.HTTPStatus.FORBIDDEN,
+                http.HTTPStatus.NOT_FOUND,
+                http.HTTPStatus.GONE,
+                http.HTTPStatus.UNAUTHORIZED,
+            ):
+                raise Inaccessible()
+
+            if e.response.status_code == http.HTTPStatus.NOT_MODIFIED:
+                raise NotModified()
+
+            raise
 
         # Check if not modified: feed should return a 304 if no new updates,
         # but not in all cases, so we should also check the content body.
@@ -116,7 +142,7 @@ class FeedParser:
                 Q(content_hash=content_hash) | Q(rss=response.url)
             )
         ).exists():
-            raise DuplicateFeed()
+            raise Duplicate()
 
         return response, rss_parser.parse_rss(response.content), content_hash
 
@@ -157,7 +183,6 @@ class FeedParser:
             keywords=keywords,
             rss=response.url,
             etag=response.headers.get("ETag", ""),
-            http_status=response.status_code,
             modified=parse_date(response.headers.get("Last-Modified")),
             extracted_text=self._extract_text(feed),
             frequency=scheduler.schedule(feed),
@@ -177,44 +202,30 @@ class FeedParser:
         return result
 
     def _handle_failure(self, exc: Exception) -> Result:
-        try:
-            http_status = exc.response.status_code  # type: ignore
-
-        except AttributeError:
-            http_status = None
 
         num_retries: int = self._podcast.num_retries
         active: bool = True
 
         match exc:
-            case DuplicateFeed():
+            case Duplicate():
                 active = False
                 parse_result = Podcast.ParseResult.DUPLICATE_FEED
+
+            case Inaccessible():
+                active = False
+                parse_result = Podcast.ParseResult.HTTP_ERROR
 
             case NotModified():
                 num_retries = 0
                 parse_result = Podcast.ParseResult.NOT_MODIFIED
 
-            case RssParserError():
+            case rss_parser.RssParserError():
                 num_retries += 1
                 parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
 
             case httpx.HTTPError():
-
-                if http_status == http.HTTPStatus.NOT_MODIFIED:
-                    num_retries = 0
-                    parse_result = Podcast.ParseResult.NOT_MODIFIED
-
-                else:
-                    active = http_status not in (
-                        http.HTTPStatus.FORBIDDEN,
-                        http.HTTPStatus.NOT_FOUND,
-                        http.HTTPStatus.GONE,
-                        http.HTTPStatus.UNAUTHORIZED,
-                    )
-                    num_retries += 1
-
-                    parse_result = Podcast.ParseResult.HTTP_ERROR
+                num_retries += 1
+                parse_result = Podcast.ParseResult.HTTP_ERROR
 
             case _:
                 raise
@@ -223,7 +234,6 @@ class FeedParser:
             parse_result,
             exception=exc,
             active=active and num_retries < self._max_retries,
-            http_status=http_status,
             num_retries=num_retries,
             frequency=scheduler.reschedule(
                 self._podcast.pub_date,

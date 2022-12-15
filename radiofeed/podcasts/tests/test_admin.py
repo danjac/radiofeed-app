@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import http
-
 from datetime import timedelta
 from unittest import mock
 
@@ -14,7 +12,6 @@ from radiofeed.common.factories import create_batch
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
-    HttpStatusFilter,
     ParseResultFilter,
     PodcastAdmin,
     PromotedFilter,
@@ -131,35 +128,6 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
-
-
-class TestHttpStatusFilter:
-    def test_lookups(self, db, podcast_admin, req):
-        create_podcast(http_status=http.HTTPStatus.OK)
-        create_podcast(http_status=http.HTTPStatus.NOT_MODIFIED)
-
-        f = HttpStatusFilter(req, {}, Podcast, podcast_admin)
-        assert f.lookups(req, podcast_admin) == (
-            (200, "200 OK"),
-            (304, "304 NOT_MODIFIED"),
-        )
-
-    def test_filter(self, db, podcast_admin, req):
-        podcast = create_podcast(http_status=http.HTTPStatus.OK)
-        create_podcast(http_status=http.HTTPStatus.NOT_MODIFIED)
-
-        f = HttpStatusFilter(req, {"http_status": "200"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == podcast
-
-    def test_none(self, db, podcast_admin, req):
-        create_podcast(http_status=http.HTTPStatus.OK)
-        create_podcast(http_status=http.HTTPStatus.NOT_MODIFIED)
-
-        f = HttpStatusFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 2
 
 
 class TestActiveFilter:

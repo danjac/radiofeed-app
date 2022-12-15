@@ -136,8 +136,6 @@ class Podcast(models.Model):
         blank=True,
     )
 
-    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
-
     parse_result: str = models.CharField(
         max_length=30,
         null=True,

@@ -508,7 +508,6 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert not podcast.active
-        assert podcast.http_status == http.HTTPStatus.GONE
         assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed
 
@@ -522,7 +521,6 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.active
-        assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed
         assert podcast.num_retries == 1
@@ -539,7 +537,6 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert not podcast.active
-        assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed
         assert podcast.num_retries == 4
@@ -557,6 +554,5 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.active
-        assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert podcast.parse_result == Podcast.ParseResult.HTTP_ERROR
         assert podcast.parsed

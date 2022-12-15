@@ -7,8 +7,11 @@ from typing import Iterator
 import lxml.etree  # nosec
 
 from radiofeed.common.xml import xml_iterparse, xpath_finder
-from radiofeed.feedparser.exceptions import RssParserError
 from radiofeed.feedparser.models import Feed, Item
+
+
+class RssParserError(ValueError):
+    """Broken XML syntax or missing/invalid required attributes."""
 
 
 def parse_rss(content: bytes) -> Feed:
