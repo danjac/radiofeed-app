@@ -194,7 +194,7 @@ class FeedParser:
 
             case _:
                 # any other error: raise immediately without any DB updates
-                raise
+                raise exc
 
         self._podcast_update(
             active=active and num_retries < self._max_retries,
