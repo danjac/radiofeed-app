@@ -14,7 +14,12 @@ from django.utils import timezone
 from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
-from radiofeed.feedparser.feed_parser import FeedParser, make_content_hash, parse_feed
+from radiofeed.feedparser.feed_parser import (
+    FeedParser,
+    get_categories,
+    make_content_hash,
+    parse_feed,
+)
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
 
@@ -62,7 +67,9 @@ class TestFeedParser:
 
     @pytest.fixture
     def categories(self):
-        return [
+        get_categories.cache_clear()
+
+        yield [
             create_category(name=name)
             for name in (
                 "Philosophy",

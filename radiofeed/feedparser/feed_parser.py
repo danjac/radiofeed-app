@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import hashlib
 import http
 
@@ -212,15 +213,24 @@ class FeedParser:
         )
 
     def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
-        category_names = {c.casefold() for c in feed.categories}
 
-        categories = Category.objects.annotate(lowercase_name=Lower("name")).filter(
-            lowercase_name__in=category_names
-        )
+        categories: list[Category] = []
+        keywords: str = ""
 
-        return categories, " ".join(
-            category_names - {c.lowercase_name for c in categories}
-        )
+        if category_names := {c.casefold() for c in feed.categories}:
+            categories_dct = get_categories()
+
+            categories = [
+                categories_dct[name]
+                for name in category_names
+                if name in categories_dct
+            ]
+
+            keywords = " ".join(
+                [name for name in category_names if name not in categories_dct]
+            )
+
+        return categories, keywords
 
     def _extract_text(self, feed: Feed) -> str:
         text = " ".join(
@@ -302,3 +312,12 @@ class FeedParser:
                 ),
             ),
         )
+
+
+@functools.lru_cache
+def get_categories() -> dict[str, Category]:
+    """Return a cached dict of categories with lowercase names as key."""
+    return {
+        category.lowercase_name: category
+        for category in Category.objects.annotate(lowercase_name=Lower("name"))
+    }
