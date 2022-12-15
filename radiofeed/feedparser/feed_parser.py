@@ -68,6 +68,15 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
+@functools.lru_cache
+def get_categories() -> dict[str, Category]:
+    """Returns a cached dict of categories with lowercase names as key."""
+    return {
+        category.lowercase_name: category
+        for category in Category.objects.annotate(lowercase_name=Lower("name"))
+    }
+
+
 class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
@@ -312,12 +321,3 @@ class FeedParser:
                 ),
             ),
         )
-
-
-@functools.lru_cache
-def get_categories() -> dict[str, Category]:
-    """Return a cached dict of categories with lowercase names as key."""
-    return {
-        category.lowercase_name: category
-        for category in Category.objects.annotate(lowercase_name=Lower("name"))
-    }
