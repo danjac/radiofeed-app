@@ -44,6 +44,17 @@ class Command(BaseCommand):
 
     def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
-        success = feed_parser.parse_feed(podcast, client)
-        style = self.style.SUCCESS if success else self.style.NOTICE
-        self.stdout.write(style(f"Parsing done for {podcast}"))
+
+        try:
+            feed_parser.parse_feed(podcast, client)
+            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
+        except feed_parser.NotModified:
+            self.stdout.write(self.style.NOTICE(f"{podcast} is not modified"))
+        except feed_parser.Inaccessible:
+            self.stdout.write(self.style.ERROR(f"{podcast} is no longer accessible"))
+        except feed_parser.Duplicate:
+            self.stdout.write(
+                self.style.ERROR(f"{podcast} is a duplicate of another feed")
+            )
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"{podcast} error {e}"))

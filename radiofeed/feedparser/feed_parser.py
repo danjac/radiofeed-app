@@ -88,8 +88,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    @transaction.atomic
-    def parse(self, client: httpx.Client) -> bool:
+    def parse(self, client: httpx.Client):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -97,10 +96,10 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            return self._handle_success(*self._parse_rss(client))
+            self._handle_success(*self._parse_rss(client))
 
         except Exception as e:
-            return self._handle_exception(e)
+            self._handle_exception(e)
 
     def _parse_rss(self, client: httpx.Client) -> tuple[httpx.Response, Feed, str]:
         response = client.get(self._podcast.rss, headers=self._get_feed_headers())
@@ -146,15 +145,12 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
+    @transaction.atomic
     def _handle_success(
-        self,
-        response: httpx.Response,
-        feed: Feed,
-        content_hash: str,
-    ) -> bool:
+        self, response: httpx.Response, feed: Feed, content_hash: str
+    ) -> None:
 
         active = False if feed.complete else True
-
         categories, keywords = self._extract_categories(feed)
 
         self._podcast_update(
@@ -180,9 +176,7 @@ class FeedParser:
         self._podcast.categories.set(categories)
         self._episode_updates(feed)
 
-        return True
-
-    def _handle_exception(self, exc: Exception) -> bool:
+    def _handle_exception(self, exc: Exception) -> None:
 
         num_retries: int = self._podcast.num_retries
         active: bool = True
@@ -199,6 +193,7 @@ class FeedParser:
                 num_retries += 1
 
             case _:
+                # any other error: raise immediately without any DB updates
                 raise
 
         self._podcast_update(
@@ -210,7 +205,8 @@ class FeedParser:
             ),
         )
 
-        return False
+        # re-raise original exception
+        raise exc
 
     def _podcast_update(self, **fields) -> None:
         now = timezone.now()

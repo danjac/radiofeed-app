@@ -15,11 +15,15 @@ from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.feed_parser import (
+    Duplicate,
     FeedParser,
+    Inaccessible,
+    NotModified,
     get_categories,
     make_content_hash,
     parse_feed,
 )
+from radiofeed.feedparser.rss_parser import RssParserError
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
 
@@ -147,7 +151,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -208,7 +212,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         assert Episode.objects.count() == 4940
 
@@ -241,7 +245,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -296,8 +300,8 @@ class TestFeedParser:
                 },
             ),
         )
-
-        assert not parse_feed(podcast, client)
+        with pytest.raises(NotModified):
+            assert parse_feed(podcast, client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -320,7 +324,8 @@ class TestFeedParser:
                 },
             ),
         )
-        assert not parse_feed(podcast, client)
+        with pytest.raises(Duplicate):
+            assert parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -346,7 +351,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -397,7 +402,7 @@ class TestFeedParser:
                 content=self.get_rss_content(),
             ),
         )
-        assert parse_feed(podcast, client)
+        parse_feed(podcast, client)
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
@@ -422,7 +427,8 @@ class TestFeedParser:
                 content=self.get_rss_content(),
             ),
         )
-        assert not parse_feed(podcast, client)
+        with pytest.raises(Duplicate):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -437,8 +443,8 @@ class TestFeedParser:
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             )
         )
-
-        assert not parse_feed(podcast, client)
+        with pytest.raises(RssParserError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -456,7 +462,8 @@ class TestFeedParser:
 
         podcast.num_retries = 3
 
-        assert not parse_feed(podcast, client)
+        with pytest.raises(RssParserError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
         assert not podcast.active
@@ -471,8 +478,8 @@ class TestFeedParser:
                 content=self.get_rss_content("rss_empty_mock.xml"),
             ),
         )
-
-        assert not parse_feed(podcast, client)
+        with pytest.raises(RssParserError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -485,7 +492,8 @@ class TestFeedParser:
 
         client = mock_client(BadMockResponse(status=http.HTTPStatus.NOT_MODIFIED))
 
-        assert not parse_feed(podcast, client)
+        with pytest.raises(NotModified):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -495,8 +503,9 @@ class TestFeedParser:
 
     def test_parse_http_gone(self, podcast, categories):
         client = mock_client(BadMockResponse(status=http.HTTPStatus.GONE))
+        with pytest.raises(Inaccessible):
 
-        assert not parse_feed(podcast, client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -508,7 +517,8 @@ class TestFeedParser:
             BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
-        assert not parse_feed(podcast, client)
+        with pytest.raises(httpx.HTTPError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -523,7 +533,8 @@ class TestFeedParser:
 
         podcast.num_retries = 3
 
-        assert not parse_feed(podcast, client)
+        with pytest.raises(httpx.HTTPError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -539,7 +550,8 @@ class TestFeedParser:
         podcast.pub_date = None
         podcast.save()
 
-        assert not parse_feed(podcast, client)
+        with pytest.raises(httpx.HTTPError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 

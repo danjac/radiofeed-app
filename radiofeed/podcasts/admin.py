@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
@@ -178,8 +178,31 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
         with feed_parser.get_client() as client:
-            feed_parser.parse_feed(obj, client)
-        self.message_user(request, _("Podcast has been updated"))
+            try:
+                feed_parser.parse_feed(obj, client)
+                self.message_user(
+                    request, _("Podcast has been updated"), level=messages.SUCCESS
+                )
+            except feed_parser.NotModified:
+                self.message_user(
+                    request, _("Podcast has not been modified"), level=messages.INFO
+                )
+            except feed_parser.Inaccessible:
+                self.message_user(
+                    request, _("Podcast is no longer accessible"), level=messages.ERROR
+                )
+            except feed_parser.Duplicate:
+                self.message_user(
+                    request,
+                    _("Podcast is a duplicate of another podcast"),
+                    level=messages.ERROR,
+                )
+            except Exception as e:
+                self.message_user(
+                    request,
+                    _("Error: {error}").format(error=str(e)),
+                    level=messages.ERROR,
+                )
 
     @admin.display(description=_("Estimated Next Update"))
     def next_scheduled_update(self, obj: Podcast):
