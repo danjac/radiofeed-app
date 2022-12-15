@@ -59,31 +59,6 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class ParseResultFilter(admin.SimpleListFilter):
-    """Filters podcasts based on last feed parser result."""
-
-    title = _("Feed Update Result")
-    parameter_name = "parse_result"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (("none", _("None")),) + tuple(Podcast.ParseResult.choices)
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-        match value := self.value():
-            case "none":
-                return queryset.filter(parse_result=None)
-            case value if value in Podcast.ParseResult:  # type: ignore
-                return queryset.filter(parse_result=value)
-            case _:
-                return queryset
-
-
 class PubDateFilter(admin.SimpleListFilter):
     """Filters podcasts based on last pub date."""
 
@@ -167,7 +142,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         PubDateFilter,
         PromotedFilter,
         SubscribedFilter,
-        ParseResultFilter,
     )
 
     list_display = (
@@ -194,7 +168,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         "next_scheduled_update",
         "modified",
         "etag",
-        "parse_result",
         "content_hash",
     )
 

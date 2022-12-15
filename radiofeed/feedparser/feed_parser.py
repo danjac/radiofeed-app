@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
 import hashlib
 import http
 
@@ -58,7 +57,7 @@ def get_client() -> httpx.Client:
     )
 
 
-def parse_feed(podcast: Podcast, client: httpx.Client) -> Result:
+def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
     """Parses podcast RSS feed."""
     return FeedParser(podcast).parse(client)
 
@@ -66,23 +65,6 @@ def parse_feed(podcast: Podcast, client: httpx.Client) -> Result:
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
     return hashlib.sha256(content).hexdigest()
-
-
-@dataclasses.dataclass(frozen=True)
-class Result:
-    """Result of parse feed."""
-
-    podcast: Podcast
-    result: tuple[str, str]
-    exception: Exception | None = None
-
-    def __str__(self) -> str:
-        """Returns parse result string."""
-        return str(self.result)
-
-    def __bool__(self) -> bool:
-        """Returns True if no parse exception."""
-        return self.exception is None
 
 
 class FeedParser:
@@ -97,7 +79,7 @@ class FeedParser:
         self._podcast = podcast
 
     @transaction.atomic
-    def parse(self, client: httpx.Client) -> Result:
+    def parse(self, client: httpx.Client) -> bool:
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -108,7 +90,7 @@ class FeedParser:
             return self._handle_success(*self._parse_rss(client))
 
         except Exception as e:
-            return self._handle_failure(e)
+            return self._handle_exception(e)
 
     def _parse_rss(self, client: httpx.Client) -> tuple[httpx.Response, Feed, str]:
         response = client.get(self._podcast.rss, headers=self._get_feed_headers())
@@ -159,24 +141,13 @@ class FeedParser:
         response: httpx.Response,
         feed: Feed,
         content_hash: str,
-    ) -> Result:
+    ) -> bool:
 
-        parse_result, active = (
-            (Podcast.ParseResult.COMPLETE, False)
-            if feed.complete
-            else (Podcast.ParseResult.SUCCESS, True)
-        )
+        active = False if feed.complete else True
 
-        category_names = {c.casefold() for c in feed.categories}
+        categories, keywords = self._extract_categories(feed)
 
-        categories = Category.objects.annotate(lowercase_name=Lower("name")).filter(
-            lowercase_name__in=category_names
-        )
-
-        keywords = " ".join(category_names - {c.lowercase_name for c in categories})
-
-        result = self._handle_result(
-            parse_result,
+        self._podcast_update(
             active=active,
             num_retries=0,
             content_hash=content_hash,
@@ -199,40 +170,28 @@ class FeedParser:
         self._podcast.categories.set(categories)
         self._episode_updates(feed)
 
-        return result
+        return True
 
-    def _handle_failure(self, exc: Exception) -> Result:
+    def _handle_exception(self, exc: Exception) -> bool:
 
         num_retries: int = self._podcast.num_retries
         active: bool = True
 
         match exc:
-            case Duplicate():
-                active = False
-                parse_result = Podcast.ParseResult.DUPLICATE_FEED
 
-            case Inaccessible():
+            case Inaccessible() | Duplicate():
                 active = False
-                parse_result = Podcast.ParseResult.HTTP_ERROR
 
             case NotModified():
                 num_retries = 0
-                parse_result = Podcast.ParseResult.NOT_MODIFIED
 
-            case rss_parser.RssParserError():
+            case rss_parser.RssParserError() | httpx.HTTPError():
                 num_retries += 1
-                parse_result = Podcast.ParseResult.RSS_PARSER_ERROR
-
-            case httpx.HTTPError():
-                num_retries += 1
-                parse_result = Podcast.ParseResult.HTTP_ERROR
 
             case _:
                 raise
 
-        return self._handle_result(
-            parse_result,
-            exception=exc,
+        self._podcast_update(
             active=active and num_retries < self._max_retries,
             num_retries=num_retries,
             frequency=scheduler.reschedule(
@@ -241,22 +200,27 @@ class FeedParser:
             ),
         )
 
-    def _handle_result(
-        self,
-        parse_result: tuple[str, str],
-        exception: Exception | None = None,
-        **fields,
-    ) -> Result:
+        return False
+
+    def _podcast_update(self, **fields) -> None:
         now = timezone.now()
 
         Podcast.objects.filter(pk=self._podcast.id).update(
-            parse_result=parse_result,
             updated=now,
             parsed=now,
             **fields,
         )
 
-        return Result(podcast=self._podcast, result=parse_result, exception=exception)
+    def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
+        category_names = {c.casefold() for c in feed.categories}
+
+        categories = Category.objects.annotate(lowercase_name=Lower("name")).filter(
+            lowercase_name__in=category_names
+        )
+
+        return categories, " ".join(
+            category_names - {c.lowercase_name for c in categories}
+        )
 
     def _extract_text(self, feed: Feed) -> str:
         text = " ".join(

@@ -44,6 +44,6 @@ class Command(BaseCommand):
 
     def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
-        result = feed_parser.parse_feed(podcast, client)
-        style = self.style.SUCCESS if result else self.style.NOTICE
-        self.stdout.write(style(f"Parsing done for {podcast}: {result}"))
+        success = feed_parser.parse_feed(podcast, client)
+        style = self.style.SUCCESS if success else self.style.NOTICE
+        self.stdout.write(style(f"Parsing done for {podcast}"))

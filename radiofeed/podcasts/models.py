@@ -96,16 +96,6 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
-    class ParseResult(models.TextChoices):
-        """Result of feed parser process."""
-
-        SUCCESS = "success", _("Success")
-        COMPLETE = "complete", _("Complete")
-        NOT_MODIFIED = "not_modified", _("Not Modified")
-        HTTP_ERROR = "http_error", _("HTTP Error")
-        RSS_PARSER_ERROR = "rss_parser_error", _("RSS Parser Error")
-        DUPLICATE_FEED = "duplicate_feed", _("Duplicate Feed")
-
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(
         default=True,
@@ -134,13 +124,6 @@ class Podcast(models.Model):
         max_length=64,
         null=True,
         blank=True,
-    )
-
-    parse_result: str = models.CharField(
-        max_length=30,
-        null=True,
-        blank=True,
-        choices=ParseResult.choices,
     )
 
     num_retries: int = models.PositiveSmallIntegerField(default=0)
