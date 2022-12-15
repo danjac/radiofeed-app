@@ -184,12 +184,15 @@ class FeedParser:
         match exc:
 
             case Inaccessible() | Duplicate():
+                # podcast should be discontinued and no longer updated
                 active = False
 
             case NotModified():
+                # successful pull, so reset num_retries
                 num_retries = 0
 
             case rss_parser.RssParserError() | httpx.HTTPError():
+                # increment num_retries in case a temporary error
                 num_retries += 1
 
             case _:
