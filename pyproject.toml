@@ -56,7 +56,6 @@ prod = [
 
 ci = [
     "Faker",
-    "bandit",
     "coverage",
     "django-coverage-plugin",
     "djlint",
@@ -83,6 +82,7 @@ ci = [
 ]
 
 dev = [
+    "bandit",
     "black",
     "django-debug-toolbar",
     "djhtml",
