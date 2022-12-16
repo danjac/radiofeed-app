@@ -2,30 +2,11 @@ from __future__ import annotations
 
 import io
 
-from typing import Iterable, Iterator, TypeAlias
+from typing import Any, Iterable, Iterator, TypeAlias
 
 import lxml.etree  # nosec
 
 Namespaces: TypeAlias = dict[str, str]
-
-
-def xml_iterparse(content: bytes, *tags: str) -> Iterator[lxml.etree.Element]:
-    """Iterates through elements in XML document with matching tag names.
-
-    Args:
-        content: XML document
-        `*tags`: tag names
-    """
-    for _, element in lxml.etree.iterparse(
-        io.BytesIO(content),
-        encoding="utf-8",
-        no_network=True,
-        resolve_entities=False,
-        recover=True,
-        events=("end",),
-    ):
-        if element.tag in tags:
-            yield element
 
 
 class XPathFinder:
@@ -51,10 +32,12 @@ class XPathFinder:
         for _, element in context:
             yield from self.findall(element, *paths)
             element.clear()
-            for ancestor in self.findall(element, "ancestor-or-self::*"):
-                while ancestor.getprevious() is not None:
-                    del ancestor.getparent()[0]
         del context
+
+    def findall(self, element: lxml.etree.Element, *paths: str) -> Iterator[Any]:
+        """Iterate through elements or strings."""
+        for path in paths:
+            yield from self._xpath(path)(element)
 
     def iter(self, element: lxml.etree.Element, *paths: str) -> Iterator[str]:
         """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
@@ -62,19 +45,11 @@ class XPathFinder:
         All strings are stripped of extra whitespace. Should skip any unicode errors.
         """
         try:
-            for path in paths:
-                for value in self._xpath(path)(element):
-                    if cleaned := value.strip():
-                        yield cleaned
+            for value in self.findall(element, *paths):
+                if isinstance(value, str) and (cleaned := value.strip()):
+                    yield cleaned
         except UnicodeDecodeError:
             pass
-
-    def findall(
-        self, element: lxml.etree.Element, *paths: str
-    ) -> Iterator[lxml.etree.Element]:
-        """Iterate through elements rather than strings."""
-        for path in paths:
-            yield from self._xpath(path)(element)
 
     def first(self, element: lxml.etree.Element, *paths: str) -> str | None:
         """Returns first matching text or attribute value.
