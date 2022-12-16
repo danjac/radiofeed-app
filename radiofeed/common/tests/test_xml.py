@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.common.xpath import XPathFinder
+from radiofeed.common.xml import XPathFinder, xml_iterparse
 
 
 class TestXPathFinder:
@@ -13,7 +13,7 @@ class TestXPathFinder:
 
     @pytest.fixture
     def channel(self):
-        return next(XPathFinder().iterparse(self.read_mock_file(), "channel"))
+        return next(xml_iterparse(self.read_mock_file(), "channel"))
 
     def test_iter(self, channel):
         assert list(XPathFinder().iter(channel, "title/text()")) == [
