@@ -46,7 +46,7 @@ jobs:
 
             - name: Security checks
               run: |
-                  python -m bandit -r radiofeed -x="**/tests/**.*"
+                  python -m bandit -r radiofeed -c pyproject.toml
 
             - name: Lint checks on Django templates
               run: |
