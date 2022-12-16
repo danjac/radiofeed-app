@@ -57,6 +57,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @_cache_control
+@_cache_page
 def favicon(request: HttpRequest) -> FileResponse:
     """Generates favicon file."""
     return FileResponse(
@@ -164,6 +165,7 @@ def security(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @_cache_control
+@_cache_page
 def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
     if size not in _COVER_IMAGE_SIZES:
