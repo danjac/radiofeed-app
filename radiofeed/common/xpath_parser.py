@@ -10,7 +10,7 @@ Namespaces: TypeAlias = dict[str, str]
 
 
 class XPathParser:
-    """Wrapper class for doing XPath lookups to find text or attribute values on an XML element."""
+    """Does efficient XPath lookups to find elements and text/attribute values in elements."""
 
     def __init__(self, namespaces: Namespaces | None = None):
         self._namespaces = namespaces or {}
