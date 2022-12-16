@@ -4,7 +4,7 @@ import io
 
 from typing import Any, Iterable, Iterator, TypeAlias
 
-import lxml.etree  # nosec
+import lxml.etree
 
 Namespaces: TypeAlias = dict[str, str]
 
@@ -22,11 +22,11 @@ class XPathParser:
         """Iterates through elements in XML document with matching tag names."""
         context = lxml.etree.iterparse(
             io.BytesIO(content),
+            tag=root,
             encoding="utf-8",
             no_network=True,
             resolve_entities=False,
             recover=True,
-            tag=root,
             events=("end",),
         )
         for _, element in context:
