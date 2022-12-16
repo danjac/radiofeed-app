@@ -13,8 +13,7 @@ import user_agent
 
 from django.core.cache import cache
 
-from radiofeed.common import batcher
-from radiofeed.common.xml import XPathFinder
+from radiofeed.common import batcher, xpath
 from radiofeed.podcasts.models import Podcast
 
 _ITUNES_PODCAST_ID_RE: Final = re.compile(r"id(?P<id>\d+)")
@@ -30,7 +29,7 @@ _ITUNES_LOCATIONS: Final = (
 
 _APPLE_NAMESPACE = "http://www.apple.com/itms/"
 
-_xpath_finder = XPathFinder({"apple": _APPLE_NAMESPACE})
+_xpath_finder = xpath.XPathFinder({"apple": _APPLE_NAMESPACE})
 
 
 @dataclasses.dataclass(frozen=True)

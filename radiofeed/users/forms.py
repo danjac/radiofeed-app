@@ -9,11 +9,11 @@ import lxml  # nosec
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from radiofeed.common.xml import XPathFinder
+from radiofeed.common import xpath
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
-_xpath_finder = XPathFinder()
+_xpath_finder = xpath.XPathFinder()
 
 
 class UserPreferencesForm(forms.ModelForm):
