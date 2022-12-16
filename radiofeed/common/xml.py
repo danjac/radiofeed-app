@@ -35,6 +35,27 @@ class XPathFinder:
         self._namespaces = namespaces or {}
         self._xpaths: dict[str, lxml.etree.XPath] = {}
 
+    def iterparse(
+        self, content: bytes, root: str, *paths: str
+    ) -> Iterator[lxml.etree.Element]:
+        """Iterates through elements in XML document with matching tag names."""
+        context = lxml.etree.iterparse(
+            io.BytesIO(content),
+            encoding="utf-8",
+            no_network=True,
+            resolve_entities=False,
+            recover=True,
+            tag=root,
+            events=("end",),
+        )
+        for _, element in context:
+            yield from self.findall(element, *paths)
+            element.clear()
+            for ancestor in self.findall(element, "ancestor-or-self::*"):
+                while ancestor.getprevious() is not None:
+                    del ancestor.getparent()[0]
+        del context
+
     def iter(self, element: lxml.etree.Element, *paths: str) -> Iterator[str]:
         """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
 

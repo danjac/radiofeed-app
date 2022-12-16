@@ -4,7 +4,7 @@ from typing import Iterator
 
 import lxml.etree  # nosec
 
-from radiofeed.common.xml import XPathFinder, xml_iterparse
+from radiofeed.common.xml import XPathFinder
 from radiofeed.feedparser.models import Feed, Item
 
 _xpath_finder = XPathFinder(
@@ -33,7 +33,7 @@ def parse_rss(content: bytes) -> Feed:
         RssParserError: if XML content is unparseable, or the feed is otherwise invalid or empty
     """
     try:
-        return _parse_feed(next(xml_iterparse(content, "channel")))
+        return _parse_feed(next(_xpath_finder.iterparse(content, "rss", "channel")))
     except StopIteration:
         raise RssParserError("Document does not contain <channel /> element")
     except lxml.etree.XMLSyntaxError as e:
