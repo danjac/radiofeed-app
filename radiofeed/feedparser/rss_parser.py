@@ -4,10 +4,10 @@ from typing import Iterator
 
 import lxml.etree  # nosec
 
-from radiofeed.common import xpath
+from radiofeed.common.xpath_parser import XPathParser
 from radiofeed.feedparser.models import Feed, Item
 
-_xpath_finder = xpath.XPathFinder(
+_xpath_parser = XPathParser(
     {
         "atom": "http://www.w3.org/2005/Atom",
         "content": "http://purl.org/rss/1.0/modules/content/",
@@ -33,7 +33,7 @@ def parse_rss(content: bytes) -> Feed:
         RssParserError: if XML content is unparseable, or the feed is otherwise invalid or empty
     """
     try:
-        return _parse_feed(next(_xpath_finder.iterparse(content, "rss", "channel")))
+        return _parse_feed(next(_xpath_parser.iterparse(content, "rss", "channel")))
     except StopIteration:
         raise RssParserError("Document does not contain <channel /> element")
     except lxml.etree.XMLSyntaxError as e:
@@ -45,14 +45,14 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
     try:
         return Feed(
             items=list(_parse_items(channel)),
-            categories=_xpath_finder.aslist(
+            categories=_xpath_parser.aslist(
                 channel,
                 "//googleplay:category/@text",
                 "//itunes:category/@text",
                 "//media:category/@label",
                 "//media:category/text()",
             ),
-            **_xpath_finder.asdict(
+            **_xpath_parser.asdict(
                 channel,
                 complete="itunes:complete/text()",
                 cover_url=("itunes:image/@href", "image/url/text()"),
@@ -76,11 +76,11 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
 
 
 def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
-    for item in _xpath_finder.findall(channel, "item"):
+    for item in _xpath_parser.findall(channel, "item"):
         try:
             yield Item(
-                categories=_xpath_finder.aslist(item, "category/text()"),
-                **_xpath_finder.asdict(
+                categories=_xpath_parser.aslist(item, "category/text()"),
+                **_xpath_parser.asdict(
                     item,
                     cover_url="itunes:image/@href",
                     description=(

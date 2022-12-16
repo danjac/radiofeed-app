@@ -9,7 +9,7 @@ import lxml.etree  # nosec
 Namespaces: TypeAlias = dict[str, str]
 
 
-class XPathFinder:
+class XPathParser:
     """Wrapper class for doing XPath lookups to find text or attribute values on an XML element."""
 
     def __init__(self, namespaces: Namespaces | None = None):

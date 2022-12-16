@@ -4,28 +4,28 @@ import pathlib
 
 import pytest
 
-from radiofeed.common.xpath import XPathFinder
+from radiofeed.common.xpath_parser import XPathParser
 
 
-class TestXPathFinder:
+class TestXPathParser:
     def read_mock_file(self, mock_filename="rss_mock.xml"):
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
     @pytest.fixture
     def channel(self):
-        return next(XPathFinder().iterparse(self.read_mock_file(), "rss", "channel"))
+        return next(XPathParser().iterparse(self.read_mock_file(), "rss", "channel"))
 
     def test_iter(self, channel):
-        assert list(XPathFinder().iter(channel, "title/text()")) == [
+        assert list(XPathParser().iter(channel, "title/text()")) == [
             "Mysterious Universe"
         ]
 
     def test_aslist(self, channel):
-        assert XPathFinder().aslist(channel, "title/text()") == ["Mysterious Universe"]
+        assert XPathParser().aslist(channel, "title/text()") == ["Mysterious Universe"]
 
     def test_asdict(self, channel):
 
-        assert XPathFinder(
+        assert XPathParser(
             {
                 "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
             }
@@ -45,16 +45,16 @@ class TestXPathFinder:
         }
 
     def test_first_exists(self, channel):
-        assert XPathFinder().first(channel, "title/text()") == "Mysterious Universe"
+        assert XPathParser().first(channel, "title/text()") == "Mysterious Universe"
 
     def test_find_first_matching(self, channel):
         assert (
-            XPathFinder().first(channel, "editor/text()", "managingEditor/text()")
+            XPathParser().first(channel, "editor/text()", "managingEditor/text()")
             == "sales@mysteriousuniverse.org (8th Kind)"
         )
 
     def test_default(self, channel):
         assert (
-            XPathFinder().first(channel, "editor/text()", "managingEditor2/text()")
+            XPathParser().first(channel, "editor/text()", "managingEditor2/text()")
             is None
         )
