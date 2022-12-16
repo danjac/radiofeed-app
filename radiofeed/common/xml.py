@@ -48,6 +48,13 @@ class XPathFinder:
         except UnicodeDecodeError:
             pass
 
+    def findall(
+        self, element: lxml.etree.Element, *paths: str
+    ) -> Iterator[lxml.etree.Element]:
+        """Iterate through elements rather than strings."""
+        for path in paths:
+            yield from self._xpath(path)(element)
+
     def first(self, element: lxml.etree.Element, *paths: str) -> str | None:
         """Returns first matching text or attribute value.
 
@@ -58,7 +65,7 @@ class XPathFinder:
         except StopIteration:
             return None
 
-    def aslist(self, element: lxml.etree.Element, *paths: str | Iterable) -> list[str]:
+    def aslist(self, element: lxml.etree.Element, *paths: str) -> list[str]:
         """Returns path values as list."""
         return list(self.iter(element, *paths))
 

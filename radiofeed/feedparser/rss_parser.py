@@ -76,7 +76,7 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
 
 
 def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
-    for item in channel.iterfind("item"):
+    for item in _xpath_finder.findall(channel, "item"):
         try:
             yield Item(
                 categories=_xpath_finder.aslist(item, "category/text()"),
