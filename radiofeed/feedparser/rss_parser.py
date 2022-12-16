@@ -103,7 +103,6 @@ def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
                 ),
             )
         except (TypeError, ValueError):
-            # invalid item, just continue
             continue
         finally:
             item.clear()

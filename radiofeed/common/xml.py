@@ -72,6 +72,8 @@ class XPathFinder:
         }
 
     def _xpath(self, path: str) -> lxml.etree.XPath:
-        if path not in self._xpaths:
-            self._xpaths[path] = lxml.etree.XPath(path, namespaces=self._namespaces)
-        return self._xpaths[path]
+        if not (xpath := self._xpaths.get(path)):
+            self._xpaths[path] = xpath = lxml.etree.XPath(
+                path, namespaces=self._namespaces
+            )
+        return xpath
