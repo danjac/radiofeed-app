@@ -56,7 +56,7 @@ prod = [
 
 ci = [
     "Faker",
-    "bandit",
+    "bandit[toml]",
     "coverage",
     "django-coverage-plugin",
     "djlint",

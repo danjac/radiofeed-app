@@ -20,7 +20,7 @@ attrs==22.1.0
     #   radiofeed-app (pyproject.toml)
 backcall==0.2.0
     # via ipython
-bandit==1.7.4
+bandit[toml]==1.7.4
     # via radiofeed-app (pyproject.toml)
 black==22.12.0
     # via radiofeed-app (pyproject.toml)
@@ -401,6 +401,8 @@ termcolor==2.1.1
     # via pytest-sugar
 threadpoolctl==3.1.0
     # via scikit-learn
+toml==0.10.2
+    # via bandit
 tomli-w==1.0.0
     # via hatch
 tomlkit==0.11.6
