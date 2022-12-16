@@ -35,17 +35,7 @@ class XPathFinder:
         self._namespaces = namespaces or {}
         self._xpaths: dict[str, lxml.etree.XPath] = {}
 
-    def first(self, element: lxml.etree.Element, *paths) -> str | None:
-        """Returns first matching text or attribute value.
-
-        Tries each path in turn. If no values found returns `default`.
-        """
-        try:
-            return next(self.iter(element, *paths))
-        except StopIteration:
-            return None
-
-    def iter(self, element: lxml.etree.Element, *paths) -> Iterator[str]:
+    def iter(self, element: lxml.etree.Element, *paths: str) -> Iterator[str]:
         """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
 
         All strings are stripped of extra whitespace. Should skip any unicode errors.
@@ -57,6 +47,16 @@ class XPathFinder:
                         yield cleaned
         except UnicodeDecodeError:
             pass
+
+    def first(self, element: lxml.etree.Element, *paths: str) -> str | None:
+        """Returns first matching text or attribute value.
+
+        Tries each path in turn. If no values found returns `default`.
+        """
+        try:
+            return next(self.iter(element, *paths))
+        except StopIteration:
+            return None
 
     def aslist(self, element: lxml.etree.Element, *paths: str | Iterable) -> list[str]:
         """Returns path values as list."""
