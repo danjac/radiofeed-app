@@ -4,10 +4,10 @@ from typing import Iterator
 
 import lxml.etree  # nosec
 
-from radiofeed.common.xml import XPathFinder, xml_iterparse
+from radiofeed.common import xpath
 from radiofeed.feedparser.models import Feed, Item
 
-_xpath_finder = XPathFinder(
+_xpath_finder = xpath.XPathFinder(
     {
         "atom": "http://www.w3.org/2005/Atom",
         "content": "http://purl.org/rss/1.0/modules/content/",
@@ -33,7 +33,7 @@ def parse_rss(content: bytes) -> Feed:
         RssParserError: if XML content is unparseable, or the feed is otherwise invalid or empty
     """
     try:
-        return _parse_feed(next(xml_iterparse(content, "channel")))
+        return _parse_feed(next(_xpath_finder.iterparse(content, "channel")))
     except StopIteration:
         raise RssParserError("Document does not contain <channel /> element")
     except lxml.etree.XMLSyntaxError as e:
@@ -76,7 +76,7 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
 
 
 def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
-    for item in channel.iterfind("item"):
+    for item in _xpath_finder.findall(channel, "//item"):
         try:
             yield Item(
                 categories=_xpath_finder.aslist(item, "category/text()"),

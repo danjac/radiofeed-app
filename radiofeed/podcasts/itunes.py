@@ -13,8 +13,7 @@ import user_agent
 
 from django.core.cache import cache
 
-from radiofeed.common import batcher
-from radiofeed.common.xml import XPathFinder, xml_iterparse
+from radiofeed.common import batcher, xpath
 from radiofeed.podcasts.models import Podcast
 
 _ITUNES_PODCAST_ID_RE: Final = re.compile(r"id(?P<id>\d+)")
@@ -28,7 +27,7 @@ _ITUNES_LOCATIONS: Final = (
     "us",
 )
 
-_xpath_finder = XPathFinder()
+_xpath_finder = xpath.XPathFinder({"apple": "http://www.apple.com/itms/"})
 
 
 @dataclasses.dataclass(frozen=True)
@@ -145,7 +144,7 @@ class Crawler:
         )
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
-        for element in xml_iterparse(content, "{http://www.apple.com/itms/}html"):
+        for element in _xpath_finder.iterparse(content, "/apple:html"):
             try:
                 yield from _xpath_finder.iter(element, "//a//@href")
             finally:
