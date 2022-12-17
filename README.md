@@ -1,4 +1,4 @@
-## NOTE: main repo now at https://codeberg.org/danjac/radiofeed-app
+## NOTE: repo now at https://codeberg.org/danjac/radiofeed-app. Mirror at https://github.com/danjac/radiofeed-app
 
 This is the source code for a [simple, easy to use podcatcher web application](https://radiofeed.me). You are free to use this source to host the app yourself.
 
