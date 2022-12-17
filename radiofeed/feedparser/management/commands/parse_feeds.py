@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import itertools
-
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 
@@ -32,14 +30,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         """Command handler implementation."""
         with feed_parser.get_client() as client:
-
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     lambda podcast: self._parse_feed(podcast, client),
-                    itertools.islice(
-                        scheduler.scheduled_for_update(),
-                        options["limit"],
-                    ),
+                    scheduler.scheduled_for_update()[: options["limit"]].iterator(),
                 )
 
     def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
