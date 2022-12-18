@@ -496,6 +496,7 @@ class TestFeedParser:
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
+
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed

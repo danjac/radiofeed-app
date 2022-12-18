@@ -178,6 +178,9 @@ class FeedParser:
 
     def _handle_exception(self, exc: Exception) -> None:
 
+        # check if podcast should be discontinued and no longer updated.
+        # if a parsing error (e.g. HTTP or RSS error) then increment the num_retries field.
+
         num_retries: int = self._podcast.num_retries
         active: bool = True
 
@@ -199,13 +202,21 @@ class FeedParser:
                 # any other error: raise immediately without any DB updates
                 raise exc
 
-        self._podcast_update(
-            active=active and num_retries < self._max_retries,
-            num_retries=num_retries,
-            frequency=scheduler.reschedule(
+        # if number of errors exceeds threshold then deactivate the podcast
+        active = active and num_retries < self._max_retries
+
+        # if podcast is still active, reschedule next update check
+        frequency = (
+            scheduler.reschedule(
                 self._podcast.pub_date,
                 self._podcast.frequency,
-            ),
+            )
+            if active
+            else self._podcast.frequency
+        )
+
+        self._podcast_update(
+            active=active, num_retries=num_retries, frequency=frequency
         )
 
         # re-raise original exception
