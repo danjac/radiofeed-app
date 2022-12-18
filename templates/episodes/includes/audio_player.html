@@ -12,6 +12,7 @@
             {% translate "Increase Playback Rate" as t_increase_playback_rate %}
             {% translate "Playback Rate" as t_playback_rate %}
             {% translate "Progress" as t_progress %}
+            {% translate "Loading..." as t_loading %}
             {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
                 <div x-data="
                     {# fmt:off #}
@@ -63,8 +64,11 @@
                                         class="flex items-center justify-start text-xs lg:text-sm font-mono"
                                         :class="isPlaying ? '' : 'text-gray-300'">
                                     </div>
+                                    <div class="flex items-center justify-center animate-pulse opacity-75 space-x-6" x-show="!isLoaded">
+                                        {{ t_loading }}
+                                    </div>
                                     {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                        <div class="flex items-center justify-center space-x-6">
+                                        <div class="flex items-center justify-center space-x-6" x-show="isLoaded" x-cloak>
                                             <button title="{{ t_skip_back }}"
                                                 @click="skipBack"
                                                 class="{{ BUTTON_CSS }} inline-block"
@@ -73,7 +77,6 @@
                                             </button>
                                             <button title="{{ t_play }}"
                                                 class="{{ BUTTON_CSS }}"
-                                                :class="{'text-gray-300 cursor-events-none': !isLoaded}"
                                                 @click="togglePlayPause">
                                                 <span x-show="!isPlaying" x-cloak>
                                                     {% icon "play-circle" "regular" size="2xl" title=t_play %}
