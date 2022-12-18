@@ -47,7 +47,7 @@ class Inaccessible(ValueError):
 
 
 def get_client() -> httpx.Client:
-    """Returns HTTP client with."""
+    """Returns HTTP client with suitable headers."""
     return httpx.Client(
         headers={
             "user-agent": user_agent.generate_user_agent(),
