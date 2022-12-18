@@ -182,20 +182,24 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         with feed_parser.get_client() as client:
             try:
                 feed_parser.parse_feed(obj, client)
+
             except feed_parser.NotModified:
                 self.message_user(
                     request, _("Podcast has not been modified"), level=messages.INFO
                 )
+
             except feed_parser.Inaccessible:
                 self.message_user(
                     request, _("Podcast is no longer accessible"), level=messages.ERROR
                 )
+
             except feed_parser.Duplicate:
                 self.message_user(
                     request,
                     _("Podcast is a duplicate of another podcast"),
                     level=messages.ERROR,
                 )
+
             except rss_parser.RssParserError as e:
                 self.message_user(
                     request,
