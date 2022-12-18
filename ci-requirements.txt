@@ -90,7 +90,7 @@ django-redis==5.2.0
     # via radiofeed-app (pyproject.toml)
 django-widget-tweaks==1.4.12
     # via radiofeed-app (pyproject.toml)
-djlint==1.19.7
+djlint==1.19.9
     # via radiofeed-app (pyproject.toml)
 editorconfig==0.12.3
     # via
@@ -242,7 +242,7 @@ python-dateutil==2.8.2
     #   radiofeed-app (pyproject.toml)
 python3-openid==3.2.0
     # via django-allauth
-pytz==2022.6
+pytz==2022.7
     # via pandas
 pyyaml==6.0
     # via

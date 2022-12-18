@@ -125,7 +125,7 @@ python-dateutil==2.8.2
     #   radiofeed-app (pyproject.toml)
 python3-openid==3.2.0
     # via django-allauth
-pytz==2022.6
+pytz==2022.7
     # via pandas
 redis==4.4.0
     # via
@@ -149,7 +149,7 @@ scipy==1.9.3
     # via
     #   radiofeed-app (pyproject.toml)
     #   scikit-learn
-sentry-sdk==1.11.1
+sentry-sdk==1.12.0
     # via radiofeed-app (pyproject.toml)
 six==1.16.0
     # via

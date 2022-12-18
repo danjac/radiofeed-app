@@ -10,7 +10,7 @@ repos:
           - id: check-yaml
           - id: check-json
     - repo: https://github.com/pycqa/isort
-      rev: 5.11.2
+      rev: v5.11.3
       hooks:
           - id: isort
             additional_dependencies: ["toml"]
@@ -73,12 +73,12 @@ repos:
       hooks:
           - id: djhtml
     - repo: https://github.com/Riverside-Healthcare/djLint
-      rev: v1.19.7
+      rev: v1.19.9
       hooks:
           - id: djlint-django
             args: ["--lint"]
     - repo: https://github.com/jazzband/pip-tools
-      rev: 6.12.0
+      rev: 6.12.1
       hooks:
           - id: pip-compile
             files: pyproject.toml

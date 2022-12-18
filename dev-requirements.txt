@@ -112,7 +112,7 @@ django-widget-tweaks==1.4.12
     # via radiofeed-app (pyproject.toml)
 djhtml==1.5.2
     # via radiofeed-app (pyproject.toml)
-djlint==1.19.7
+djlint==1.19.9
     # via radiofeed-app (pyproject.toml)
 editables==0.3
     # via hatchling
@@ -192,7 +192,7 @@ iniconfig==1.1.1
     # via pytest
 ipython==8.7.0
     # via radiofeed-app (pyproject.toml)
-isort==5.11.2
+isort==5.11.3
     # via radiofeed-app (pyproject.toml)
 jaraco-classes==3.2.3
     # via keyring
@@ -335,7 +335,7 @@ python-dateutil==2.8.2
     #   radiofeed-app (pyproject.toml)
 python3-openid==3.2.0
     # via django-allauth
-pytz==2022.6
+pytz==2022.7
     # via pandas
 pyyaml==6.0
     # via
