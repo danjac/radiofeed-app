@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import httpx
+
 from django.core.management import call_command
 
-from radiofeed.feedparser import feed_parser
+from radiofeed.feedparser import feed_parser, rss_parser
 from radiofeed.podcasts.factories import create_podcast
 
 
@@ -42,11 +44,20 @@ class TestParseFeeds:
         call_command("parse_feeds", limit=200)
         patched.assert_called()
 
-    def test_error(self, db, mocker):
+    def test_rss_error(self, db, mocker):
         create_podcast(pub_date=None)
         patched = mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=ValueError("unknown error"),
+            side_effect=rss_parser.RssParserError("unknown error"),
+        )
+        call_command("parse_feeds", limit=200)
+        patched.assert_called()
+
+    def test_http_error(self, db, mocker):
+        create_podcast(pub_date=None)
+        patched = mocker.patch(
+            "radiofeed.feedparser.feed_parser.parse_feed",
+            side_effect=httpx.HTTPError("unknown error"),
         )
         call_command("parse_feeds", limit=200)
         patched.assert_called()

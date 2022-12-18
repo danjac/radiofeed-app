@@ -7,7 +7,7 @@ import httpx
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.feedparser import feed_parser, rss_parser, scheduler
 from radiofeed.podcasts.models import Podcast
 
 
@@ -41,7 +41,6 @@ class Command(BaseCommand):
 
         try:
             feed_parser.parse_feed(podcast, client)
-            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
 
         except feed_parser.NotModified:
             self.stdout.write(self.style.NOTICE(f"{podcast} is not modified"))
@@ -54,5 +53,11 @@ class Command(BaseCommand):
                 self.style.ERROR(f"{podcast} is a duplicate of another feed")
             )
 
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f"{podcast} error {e}"))
+        except rss_parser.RssParserError as e:
+            self.stdout.write(self.style.ERROR(f"{podcast} RSS parser error {e}"))
+
+        except httpx.HTTPError as e:
+            self.stdout.write(self.style.ERROR(f"{podcast} HTTP error {e}"))
+
+        else:
+            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
