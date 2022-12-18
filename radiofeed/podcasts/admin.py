@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import httpx
+
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
@@ -8,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.common.fast_count import FastCountAdminMixin
-from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.feedparser import feed_parser, rss_parser, scheduler
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -180,9 +182,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         with feed_parser.get_client() as client:
             try:
                 feed_parser.parse_feed(obj, client)
-                self.message_user(
-                    request, _("Podcast has been updated"), level=messages.SUCCESS
-                )
             except feed_parser.NotModified:
                 self.message_user(
                     request, _("Podcast has not been modified"), level=messages.INFO
@@ -197,11 +196,23 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
                     _("Podcast is a duplicate of another podcast"),
                     level=messages.ERROR,
                 )
-            except Exception as e:
+            except rss_parser.RssParserError as e:
                 self.message_user(
                     request,
-                    _("Error: {error}").format(error=str(e)),
+                    _("RSS parser error: {error}").format(error=str(e)),
                     level=messages.ERROR,
+                )
+
+            except httpx.HTTPError as e:
+                self.message_user(
+                    request,
+                    _("HTTP error: {error}").format(error=str(e)),
+                    level=messages.ERROR,
+                )
+
+            else:
+                self.message_user(
+                    request, _("Podcast has been updated"), level=messages.SUCCESS
                 )
 
     @admin.display(description=_("Estimated Next Update"))
