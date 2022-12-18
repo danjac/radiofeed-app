@@ -61,6 +61,3 @@ class Command(BaseCommand):
 
         else:
             self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
-
-        finally:
-            del podcast
