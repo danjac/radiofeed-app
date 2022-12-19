@@ -50,7 +50,7 @@ django==4.1.4
     #   radiofeed-app (pyproject.toml)
 django-allauth==0.51.0
     # via radiofeed-app (pyproject.toml)
-django-anymail==8.6
+django-anymail==9.0
     # via radiofeed-app (pyproject.toml)
 django-cacheops==6.1
     # via radiofeed-app (pyproject.toml)
@@ -101,7 +101,7 @@ markdown==3.4.1
     # via radiofeed-app (pyproject.toml)
 nltk==3.8
     # via radiofeed-app (pyproject.toml)
-numpy==1.23.5
+numpy==1.24.0
     # via
     #   pandas
     #   radiofeed-app (pyproject.toml)
