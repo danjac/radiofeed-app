@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     help = """Sends recommendations emails"""
 
-    def handle(self, *args, **options):
+    def handle(self, **options):
         """Command handler implementation."""
         for user in User.objects.email_notification_recipients():
             emails.send_recommendations_email(user)

@@ -10,6 +10,6 @@ class Command(BaseCommand):
 
     help = """Runs recommendation algorithms."""
 
-    def handle(self, *args, **options):
+    def handle(self, **options):
         """Command handler implementation."""
         recommender.recommend()
