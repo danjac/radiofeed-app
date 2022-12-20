@@ -4,8 +4,6 @@
 #
 #    pip-compile --extra=ci --extra=dev --output-file=dev-requirements.txt --resolver=backtracking pyproject.toml
 #
-anyio==3.6.2
-    # via httpcore
 asgiref==3.6.0
     # via django
 asttokens==2.2.1
@@ -27,10 +25,7 @@ black==22.12.0
 bleach==5.0.1
     # via radiofeed-app (pyproject.toml)
 certifi==2022.12.7
-    # via
-    #   httpcore
-    #   httpx
-    #   requests
+    # via requests
 cffi==1.15.1
     # via cryptography
 charset-normalizer==2.1.1
@@ -39,9 +34,7 @@ click==8.1.3
     # via
     #   black
     #   djlint
-    #   hatch
     #   nltk
-    #   userpath
 colorama==0.4.6
     # via djlint
 commonmark==0.9.1
@@ -52,17 +45,13 @@ coverage[toml]==7.0.0
     #   pytest-cov
     #   radiofeed-app (pyproject.toml)
 cryptography==38.0.4
-    # via
-    #   pyjwt
-    #   secretstorage
+    # via pyjwt
 cssbeautifier==1.14.7
     # via djlint
 decorator==5.1.1
     # via ipython
 defusedxml==0.7.1
     # via python3-openid
-distlib==0.3.6
-    # via virtualenv
 dj-database-url==1.2.0
     # via radiofeed-app (pyproject.toml)
 django==4.1.4
@@ -114,8 +103,6 @@ djhtml==1.5.2
     # via radiofeed-app (pyproject.toml)
 djlint==1.19.9
     # via radiofeed-app (pyproject.toml)
-editables==0.3
-    # via hatchling
 editorconfig==0.12.3
     # via
     #   cssbeautifier
@@ -127,9 +114,7 @@ executing==1.2.0
 faker==15.3.4
     # via radiofeed-app (pyproject.toml)
 filelock==3.8.2
-    # via
-    #   pytest-mypy
-    #   virtualenv
+    # via pytest-mypy
 flake8==6.0.0
     # via
     #   flake8-bugbear
@@ -154,12 +139,6 @@ gitdb==4.0.10
     # via gitpython
 gitpython==3.1.29
     # via bandit
-h11==0.14.0
-    # via httpcore
-hatch==1.6.3
-    # via radiofeed-app (pyproject.toml)
-hatchling==1.11.1
-    # via hatch
 hiredis==2.1.0
     # via radiofeed-app (pyproject.toml)
 honcho==1.1.0
@@ -168,38 +147,20 @@ html-tag-names==0.1.2
     # via djlint
 html-void-elements==0.1.0
     # via djlint
-httpcore==0.16.3
-    # via httpx
-httpx==0.23.1
-    # via hatch
-hyperlink==21.0.0
-    # via hatch
 icdiff==2.0.5
     # via pytest-icdiff
 idna==3.4
-    # via
-    #   anyio
-    #   hyperlink
-    #   requests
-    #   rfc3986
+    # via requests
 importlib-metadata==5.2.0
-    # via
-    #   djlint
-    #   keyring
+    # via djlint
 iniconfig==1.1.1
     # via pytest
 ipython==8.7.0
     # via radiofeed-app (pyproject.toml)
 isort==5.11.3
     # via radiofeed-app (pyproject.toml)
-jaraco-classes==3.2.3
-    # via keyring
 jedi==0.18.2
     # via ipython
-jeepney==0.8.0
-    # via
-    #   keyring
-    #   secretstorage
 joblib==1.2.0
     # via
     #   nltk
@@ -208,8 +169,6 @@ jsbeautifier==1.14.7
     # via
     #   cssbeautifier
     #   djlint
-keyring==23.13.1
-    # via hatch
 lxml==4.9.2
     # via radiofeed-app (pyproject.toml)
 markdown==3.4.1
@@ -218,8 +177,6 @@ matplotlib-inline==0.1.6
     # via ipython
 mccabe==0.7.0
     # via flake8
-more-itertools==9.0.0
-    # via jaraco-classes
 mypy==0.991
     # via
     #   pytest-mypy
@@ -240,8 +197,6 @@ oauthlib==3.2.2
     # via requests-oauthlib
 packaging==22.0
     # via
-    #   hatch
-    #   hatchling
     #   pytest
     #   pytest-sugar
 pandas==1.5.2
@@ -252,26 +207,18 @@ pathspec==0.10.3
     # via
     #   black
     #   djlint
-    #   hatchling
 pbr==5.11.0
     # via stevedore
 pexpect==4.8.0
-    # via
-    #   hatch
-    #   ipython
+    # via ipython
 pickleshare==0.7.5
     # via ipython
 pillow==9.3.0
     # via radiofeed-app (pyproject.toml)
 platformdirs==2.6.0
-    # via
-    #   black
-    #   hatch
-    #   virtualenv
+    # via black
 pluggy==1.0.0
-    # via
-    #   hatchling
-    #   pytest
+    # via pytest
 pprintpp==0.4.0
     # via pytest-icdiff
 prompt-toolkit==3.0.36
@@ -297,8 +244,6 @@ pygments==2.13.0
     #   rich
 pyjwt[crypto]==2.6.0
     # via django-allauth
-pyperclip==1.8.2
-    # via hatch
 pytest==7.2.0
     # via
     #   pytest-cov
@@ -356,22 +301,14 @@ requests==2.28.1
     #   requests-oauthlib
 requests-oauthlib==1.3.1
     # via django-allauth
-rfc3986[idna2008]==1.5.0
-    # via httpx
 rich==12.6.0
-    # via
-    #   hatch
-    #   radiofeed-app (pyproject.toml)
+    # via radiofeed-app (pyproject.toml)
 scikit-learn==1.2.0
     # via radiofeed-app (pyproject.toml)
 scipy==1.9.3
     # via
     #   radiofeed-app (pyproject.toml)
     #   scikit-learn
-secretstorage==3.3.3
-    # via keyring
-shellingham==1.5.0
-    # via hatch
 six==1.16.0
     # via
     #   asttokens
@@ -383,11 +320,6 @@ six==1.16.0
     #   user-agent
 smmap==5.0.0
     # via gitdb
-sniffio==1.3.0
-    # via
-    #   anyio
-    #   httpcore
-    #   httpx
 sqlparse==0.4.3
     # via
     #   django
@@ -402,10 +334,6 @@ threadpoolctl==3.1.0
     # via scikit-learn
 toml==0.10.2
     # via bandit
-tomli-w==1.0.0
-    # via hatch
-tomlkit==0.11.6
-    # via hatch
 tqdm==4.64.1
     # via
     #   djlint
@@ -432,10 +360,6 @@ urllib3==1.26.13
     # via requests
 user-agent==0.1.10
     # via radiofeed-app (pyproject.toml)
-userpath==1.8.0
-    # via hatch
-virtualenv==20.17.1
-    # via hatch
 wcwidth==0.2.5
     # via prompt-toolkit
 webencodings==0.5.1

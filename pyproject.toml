@@ -86,7 +86,6 @@ dev = [
     "black",
     "django-debug-toolbar",
     "djhtml",
-    "hatch",
     "honcho",
     "ipython",
     "isort",
