@@ -6,9 +6,16 @@ repos:
             exclude: bundle.js|bundle.js.map|bundle.css
           - id: end-of-file-fixer
             exclude: bundle.js|bundle.js.map|bundle.css
+          - id: check-builtin-literals
+          - id: check-json
+          - id: check-merge-conflict
+          - id: check-shebang-scripts-are-executable
           - id: check-toml
           - id: check-yaml
-          - id: check-json
+          - id: debug-statements
+          - id: destroyed-symlinks
+          - id: detect-private-key
+          - id: name-tests-test
     - repo: https://github.com/pycqa/isort
       rev: v5.11.3
       hooks:
