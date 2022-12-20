@@ -27,7 +27,7 @@ class Command(BaseCommand):
             default=360,
         )
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, **options) -> None:
         """Command handler implementation."""
         with feed_parser.get_client() as client:
             with ThreadPoolExecutor() as executor:
