@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import httpx
+import requests
 
 from django.contrib import messages
 from django.db import IntegrityError
@@ -90,7 +90,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
         try:
             feeds = itunes.search_cached(request.search.value)
-        except httpx.HTTPError:
+        except requests.RequestException:
             messages.error(
                 request, _("Sorry, an error occurred trying to access iTunes.")
             )

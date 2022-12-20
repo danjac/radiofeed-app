@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import io
 
-import httpx
+import requests
 import user_agent
 
 from django.conf import settings
@@ -177,18 +177,18 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
         return HttpResponseBadRequest("Error: invalid encoded URL")
 
     try:
-        response = httpx.get(
+        response = requests.get(
             cover_url,
             headers={
                 "User-Agent": user_agent.generate_user_agent(),
             },
             timeout=10,
-            follow_redirects=True,
+            allow_redirects=True,
         )
 
         response.raise_for_status()
 
-    except httpx.HTTPError:
+    except requests.RequestException:
         return HttpResponseBadRequest("Error: unable to download image")
 
     try:

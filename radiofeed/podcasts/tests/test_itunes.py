@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pathlib
 
-import httpx
 import pytest
+import requests
 
 from django.core.cache import cache
 
@@ -39,29 +39,42 @@ class MockResponse:
         return self.json_data
 
 
-def mock_client(mocker, response):
-    client = mocker.Mock()
-    client.get.return_value = response
-
-    patched = mocker.patch("httpx.Client")
-    patched.return_value.__enter__.return_value = client
-    return patched
-
-
 @pytest.fixture
 def mock_good_response(mocker):
-    yield mock_client(mocker, MockResponse(json={"results": [MOCK_RESULT]}))
+    yield mocker.patch(
+        "requests.get",
+        return_value=MockResponse(
+            json={
+                "results": [MOCK_RESULT],
+            },
+        ),
+    )
 
 
 @pytest.fixture
 def mock_bad_response(mocker):
-    yield mock_client(mocker, MockResponse(exception=httpx.HTTPError("fail")))
+    yield mocker.patch(
+        "requests.get",
+        return_value=MockResponse(
+            exception=requests.HTTPError("fail"),
+        ),
+    )
 
 
 @pytest.fixture
 def mock_invalid_response(mocker):
-    yield mock_client(
-        mocker, MockResponse(json={"results": [{"id": 12345, "url": "bad-url"}]})
+    yield mocker.patch(
+        "requests.get",
+        return_value=MockResponse(
+            json={
+                "results": [
+                    {
+                        "id": 12345,
+                        "url": "bad-url",
+                    }
+                ]
+            }
+        ),
     )
 
 
@@ -82,13 +95,8 @@ class TestCrawl:
 
             return MockResponse()
 
-        client = mocker.Mock()
-        client.get.side_effect = side_effect
-
-        patched = mocker.patch("httpx.Client")
-        patched.return_value.__enter__.return_value = client
-
-        list(itunes.crawl())
+        with mocker.patch("requests.get", side_effect=side_effect):
+            list(itunes.crawl())
 
         assert Podcast.objects.count() == 1
 
@@ -97,7 +105,7 @@ class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 
     def test_not_ok(self, db, mock_bad_response):
-        with pytest.raises(httpx.HTTPError):
+        with pytest.raises(requests.HTTPError):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 

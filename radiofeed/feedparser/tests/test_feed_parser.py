@@ -6,8 +6,8 @@ import pathlib
 from datetime import datetime
 from unittest import mock
 
-import httpx
 import pytest
+import requests
 
 from django.utils import timezone
 
@@ -49,17 +49,15 @@ class MockResponse:
 
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
-        raise httpx.HTTPStatusError(
+        raise requests.HTTPError(
             self.content,
             request=mock.Mock(),
             response=self,
         )
 
 
-def mock_client(response):
-    client = mock.Mock()
-    client.get.return_value = response
-    return client
+def mock_request(response):
+    return mock.patch("requests.get", return_value=response)
 
 
 class TestFeedParser:
@@ -108,7 +106,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(ValueError):
-            assert not parse_feed(podcast, mocker.Mock())
+            assert not parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -121,7 +119,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(ValueError):
-            assert not parse_feed(podcast, mocker.Mock())
+            assert not parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -141,7 +139,7 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=self.get_rss_content(),
@@ -150,8 +148,8 @@ class TestFeedParser:
                     "Last-Modified": self.updated,
                 },
             ),
-        )
-        parse_feed(podcast, client)
+        ):
+            parse_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -202,7 +200,7 @@ class TestFeedParser:
 
         podcast = create_podcast()
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=self.get_rss_content("rss_high_num_episodes.xml"),
@@ -211,8 +209,8 @@ class TestFeedParser:
                     "Last-Modified": self.updated,
                 },
             ),
-        )
-        parse_feed(podcast, client)
+        ):
+            parse_feed(podcast)
 
         assert Episode.objects.count() == 4940
 
@@ -235,7 +233,7 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=self.get_rss_content(),
@@ -244,8 +242,8 @@ class TestFeedParser:
                     "Last-Modified": self.updated,
                 },
             ),
-        )
-        parse_feed(podcast, client)
+        ):
+            parse_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -290,7 +288,7 @@ class TestFeedParser:
         content = self.get_rss_content()
         podcast = create_podcast(content_hash=make_content_hash(content))
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=content,
@@ -299,9 +297,9 @@ class TestFeedParser:
                     "Last-Modified": self.updated,
                 },
             ),
-        )
-        with pytest.raises(NotModified):
-            assert parse_feed(podcast, client)
+        ):
+            with pytest.raises(NotModified):
+                assert parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -314,7 +312,7 @@ class TestFeedParser:
 
         create_podcast(content_hash=make_content_hash(content))
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=content,
@@ -323,9 +321,9 @@ class TestFeedParser:
                     "Last-Modified": self.updated,
                 },
             ),
-        )
-        with pytest.raises(Duplicate):
-            assert parse_feed(podcast, client)
+        ):
+            with pytest.raises(Duplicate):
+                assert parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -341,7 +339,7 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=self.get_rss_content("rss_mock_complete.xml"),
@@ -350,8 +348,8 @@ class TestFeedParser:
                     "Last-Modified": self.updated,
                 },
             ),
-        )
-        parse_feed(podcast, client)
+        ):
+            parse_feed(podcast)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -391,7 +389,7 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
     def test_parse_permanent_redirect(self, mocker, podcast, categories):
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=self.redirect_rss,
                 status=http.HTTPStatus.PERMANENT_REDIRECT,
@@ -401,8 +399,8 @@ class TestFeedParser:
                 },
                 content=self.get_rss_content(),
             ),
-        )
-        parse_feed(podcast, client)
+        ):
+            parse_feed(podcast)
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
@@ -416,7 +414,7 @@ class TestFeedParser:
         other = create_podcast(rss=self.redirect_rss)
         current_rss = podcast.rss
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=other.rss,
                 status=http.HTTPStatus.PERMANENT_REDIRECT,
@@ -426,9 +424,9 @@ class TestFeedParser:
                 },
                 content=self.get_rss_content(),
             ),
-        )
-        with pytest.raises(Duplicate):
-            parse_feed(podcast, client)
+        ):
+            with pytest.raises(Duplicate):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -437,14 +435,14 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_no_podcasts(self, podcast, categories):
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             )
-        )
-        with pytest.raises(RssParserError):
-            parse_feed(podcast, client)
+        ):
+            with pytest.raises(RssParserError):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -453,17 +451,17 @@ class TestFeedParser:
 
     def test_parse_no_podcasts_max_retries(self, podcast, categories):
 
-        client = mock_client(
+        podcast.num_retries = 3
+
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             )
-        )
+        ):
 
-        podcast.num_retries = 3
-
-        with pytest.raises(RssParserError):
-            parse_feed(podcast, client)
+            with pytest.raises(RssParserError):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert not podcast.active
@@ -472,14 +470,14 @@ class TestFeedParser:
 
     def test_parse_empty_feed(self, podcast, categories):
 
-        client = mock_client(
+        with mock_request(
             MockResponse(
                 url=podcast.rss,
                 content=self.get_rss_content("rss_empty_mock.xml"),
             ),
-        )
-        with pytest.raises(RssParserError):
-            parse_feed(podcast, client)
+        ):
+            with pytest.raises(RssParserError):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -490,10 +488,9 @@ class TestFeedParser:
 
         podcast.num_retries = 1
 
-        client = mock_client(BadMockResponse(status=http.HTTPStatus.NOT_MODIFIED))
-
-        with pytest.raises(NotModified):
-            parse_feed(podcast, client)
+        with mock_request(BadMockResponse(status=http.HTTPStatus.NOT_MODIFIED)):
+            with pytest.raises(NotModified):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -503,10 +500,9 @@ class TestFeedParser:
         assert podcast.num_retries == 0
 
     def test_parse_http_gone(self, podcast, categories):
-        client = mock_client(BadMockResponse(status=http.HTTPStatus.GONE))
-        with pytest.raises(Inaccessible):
-
-            parse_feed(podcast, client)
+        with mock_request(BadMockResponse(status=http.HTTPStatus.GONE)):
+            with pytest.raises(Inaccessible):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -514,12 +510,11 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_http_server_error(self, podcast, categories):
-        client = mock_client(
+        with mock_request(
             BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-        )
-
-        with pytest.raises(httpx.HTTPError):
-            parse_feed(podcast, client)
+        ):
+            with pytest.raises(requests.HTTPError):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -528,14 +523,13 @@ class TestFeedParser:
         assert podcast.num_retries == 1
 
     def test_parse_http_server_error_max_retries(self, podcast, categories):
-        client = mock_client(
-            BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-        )
-
         podcast.num_retries = 3
 
-        with pytest.raises(httpx.HTTPError):
-            parse_feed(podcast, client)
+        with mock_request(
+            BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+        ):
+            with pytest.raises(requests.HTTPError):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
 
@@ -544,15 +538,15 @@ class TestFeedParser:
         assert podcast.num_retries == 4
 
     def test_parse_http_server_error_no_pub_date(self, podcast, categories):
-        client = mock_client(
-            BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-        )
 
         podcast.pub_date = None
         podcast.save()
 
-        with pytest.raises(httpx.HTTPError):
-            parse_feed(podcast, client)
+        with mock_request(
+            BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+        ):
+            with pytest.raises(requests.HTTPError):
+                parse_feed(podcast)
 
         podcast.refresh_from_db()
 

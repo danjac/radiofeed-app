@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import httpx
+import requests
 
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
@@ -179,45 +179,44 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        with feed_parser.get_client() as client:
-            try:
-                feed_parser.parse_feed(obj, client)
+        try:
+            feed_parser.parse_feed(obj)
 
-            except feed_parser.NotModified:
-                self.message_user(
-                    request, _("Podcast has not been modified"), level=messages.INFO
-                )
+        except feed_parser.NotModified:
+            self.message_user(
+                request, _("Podcast has not been modified"), level=messages.INFO
+            )
 
-            except feed_parser.Inaccessible:
-                self.message_user(
-                    request, _("Podcast is no longer accessible"), level=messages.ERROR
-                )
+        except feed_parser.Inaccessible:
+            self.message_user(
+                request, _("Podcast is no longer accessible"), level=messages.ERROR
+            )
 
-            except feed_parser.Duplicate:
-                self.message_user(
-                    request,
-                    _("Podcast is a duplicate of another podcast"),
-                    level=messages.ERROR,
-                )
+        except feed_parser.Duplicate:
+            self.message_user(
+                request,
+                _("Podcast is a duplicate of another podcast"),
+                level=messages.ERROR,
+            )
 
-            except rss_parser.RssParserError as e:
-                self.message_user(
-                    request,
-                    _("RSS parser error: {error}").format(error=str(e)),
-                    level=messages.ERROR,
-                )
+        except rss_parser.RssParserError as e:
+            self.message_user(
+                request,
+                _("RSS parser error: {error}").format(error=str(e)),
+                level=messages.ERROR,
+            )
 
-            except httpx.HTTPError as e:
-                self.message_user(
-                    request,
-                    _("HTTP error: {error}").format(error=str(e)),
-                    level=messages.ERROR,
-                )
+        except requests.RequestException as e:
+            self.message_user(
+                request,
+                _("HTTP error: {error}").format(error=str(e)),
+                level=messages.ERROR,
+            )
 
-            else:
-                self.message_user(
-                    request, _("Podcast has been updated"), level=messages.SUCCESS
-                )
+        else:
+            self.message_user(
+                request, _("Podcast has been updated"), level=messages.SUCCESS
+            )
 
     @admin.display(description=_("Estimated Next Update"))
     def next_scheduled_update(self, obj: Podcast):

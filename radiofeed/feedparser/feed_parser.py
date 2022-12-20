@@ -7,7 +7,7 @@ import http
 from typing import Iterator
 
 import attrs
-import httpx
+import requests
 import user_agent
 
 from django.db import transaction
@@ -46,21 +46,9 @@ class Inaccessible(ValueError):
     """Content is no longer accesssible."""
 
 
-def get_client() -> httpx.Client:
-    """Returns HTTP client with suitable headers."""
-    return httpx.Client(
-        headers={
-            "user-agent": user_agent.generate_user_agent(),
-            "accept": _ACCEPT_HEADER,
-        },
-        follow_redirects=True,
-        timeout=10,
-    )
-
-
-def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
+def parse_feed(podcast: Podcast) -> bool:
     """Parses podcast RSS feed."""
-    return FeedParser(podcast).parse(client)
+    return FeedParser(podcast).parse()
 
 
 def make_content_hash(content: bytes) -> str:
@@ -88,7 +76,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, client: httpx.Client):
+    def parse(self):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -96,27 +84,34 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            self._handle_success(*self._parse_rss(client))
+            self._handle_success(*self._parse_rss())
 
         except Exception as e:
             self._handle_exception(e)
 
-    def _parse_rss(self, client: httpx.Client) -> tuple[httpx.Response, Feed, str]:
-        response = client.get(self._podcast.rss, headers=self._get_feed_headers())
+    def _parse_rss(self) -> tuple[requests.Response, Feed, str]:
+
+        response = requests.get(
+            self._podcast.rss,
+            headers=self._get_feed_headers(),
+            timeout=10,
+            allow_redirects=True,
+        )
 
         try:
             response.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            if e.response.status_code in (
-                http.HTTPStatus.FORBIDDEN,
-                http.HTTPStatus.NOT_FOUND,
-                http.HTTPStatus.GONE,
-                http.HTTPStatus.UNAUTHORIZED,
-            ):
-                raise Inaccessible()
+        except requests.RequestException as e:
+            if e.response:
+                if e.response.status_code in (
+                    http.HTTPStatus.FORBIDDEN,
+                    http.HTTPStatus.NOT_FOUND,
+                    http.HTTPStatus.GONE,
+                    http.HTTPStatus.UNAUTHORIZED,
+                ):
+                    raise Inaccessible()
 
-            if e.response.status_code == http.HTTPStatus.NOT_MODIFIED:
-                raise NotModified()
+                if e.response.status_code == http.HTTPStatus.NOT_MODIFIED:
+                    raise NotModified()
 
             raise
 
@@ -138,7 +133,10 @@ class FeedParser:
         return response, rss_parser.parse_rss(response.content), content_hash
 
     def _get_feed_headers(self) -> dict:
-        headers = {}
+        headers = {
+            "Accept": _ACCEPT_HEADER,
+            "User-Agent": user_agent.generate_user_agent(),
+        }
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:
@@ -147,7 +145,7 @@ class FeedParser:
 
     @transaction.atomic
     def _handle_success(
-        self, response: httpx.Response, feed: Feed, content_hash: str
+        self, response: requests.Response, feed: Feed, content_hash: str
     ) -> None:
 
         active = False if feed.complete else True
@@ -194,7 +192,7 @@ class FeedParser:
                 # successful pull, so reset num_retries
                 num_retries = 0
 
-            case rss_parser.RssParserError() | httpx.HTTPError():
+            case rss_parser.RssParserError() | requests.RequestException():
                 # increment num_retries in case a temporary error
                 num_retries += 1
 

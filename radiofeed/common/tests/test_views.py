@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import httpx
+import requests
 
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -62,7 +62,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
@@ -80,9 +80,9 @@ class TestCoverImage:
     def test_failed_download(self, client, db, mocker):
         class MockResponse:
             def raise_for_status(self):
-                raise httpx.HTTPError("OOPS")
+                raise requests.HTTPError("OOPS")
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         assert_bad_request(
             client.get(self.get_url(100, self.encode_url(self.cover_url)))
         )
@@ -94,7 +94,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", side_effect=IOError())
         assert_bad_request(
             client.get(self.get_url(100, self.encode_url(self.cover_url)))
