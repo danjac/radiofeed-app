@@ -32,6 +32,7 @@ class TestLandingPage:
         assert len(response.context["podcasts"]) == 3
 
     def test_authenticated(self, client, auth_user):
+        # should redirect to podcasts index page
         response = client.get(self.url)
         assert response.url == podcasts_url
 
