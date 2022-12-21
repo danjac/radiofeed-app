@@ -3,14 +3,12 @@ from __future__ import annotations
 import pathlib
 
 from email.utils import getaddresses
-from typing import Literal, TypeAlias
+from typing import Literal
 
 import environ
 
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
-
-Config: TypeAlias = dict[str, dict]
 
 Environments = Literal["development", "production", "test"]
 
@@ -37,7 +35,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-CACHES: Config = {
+CACHES: dict = {
     "default": {
         **env.cache("REDIS_URL"),
         "OPTIONS": {
@@ -57,7 +55,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
-ADMINS: list[str] = getaddresses(env.list("ADMINS", default=[]))
+ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
 SITE_ID = 1
 
@@ -133,7 +131,7 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-AUTH_PASSWORD_VALIDATORS: list[Config] = [
+AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
     },
@@ -150,7 +148,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
-SOCIALACCOUNT_PROVIDERS: Config = {
+SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [
             "profile",
@@ -188,7 +186,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-TEMPLATES: list[Config] = [
+TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
@@ -212,7 +210,7 @@ TEMPLATES: list[Config] = [
     }
 ]
 
-LOGGING: Config | None = {
+LOGGING: dict | None = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
@@ -256,7 +254,7 @@ CACHEOPS_REDIS = REDIS_URL
 CACHEOPS_DEFAULTS = {"timeout": 300}
 CACHEOPS_DEGRADE_ON_FAILURE = True
 
-CACHEOPS: Config = {
+CACHEOPS = {
     "podcasts.*": {"ops": "all"},
     "episodes.*": {"ops": "all"},
     "users.*": {"ops": "all"},
