@@ -11,7 +11,6 @@ import requests
 import user_agent
 
 from django.db import transaction
-from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
@@ -145,6 +144,13 @@ class FeedParser:
 
             raise
 
+        # if redirects to new URL, check another podcast doesn't already have this URL.
+
+        if response.url != self._podcast.rss and (
+            Podcast.objects.filter(rss=response.url).exists()
+        ):
+            raise Duplicate()
+
         return response
 
     def _get_feed_headers(self) -> dict:
@@ -159,17 +165,17 @@ class FeedParser:
         return headers
 
     def _check_content_hash(self, response: requests.Response) -> str:
+        # we make a content hash of the response and check podcast current content hash
+        # and any other podcast content for duplicates
 
         content_hash = make_content_hash(response.content)
 
         if content_hash == self._podcast.content_hash:
             raise NotModified()
 
-        if (
-            Podcast.objects.exclude(pk=self._podcast.id)
-            .filter(Q(content_hash=content_hash) | Q(rss=response.url))
-            .exists()
-        ):
+        # check another podcast does not have identical content
+
+        if Podcast.objects.filter(content_hash=content_hash).exists():
             raise Duplicate()
 
         return content_hash

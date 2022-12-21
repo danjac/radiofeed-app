@@ -174,6 +174,7 @@ class Podcast(models.Model):
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             models.Index(fields=["promoted"]),
+            models.Index(fields=["content_hash"]),
             models.Index(
                 models.functions.Lower("title"),
                 name="%(app_label)s_%(class)s_lwr_title_idx",
