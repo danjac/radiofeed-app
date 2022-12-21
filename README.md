@@ -8,6 +8,7 @@ Radiofeed requires the following dependencies:
 
 * Python 3.10+
 * Node 16+
+* Poetry
 
 ### Additional requirements
 
@@ -31,10 +32,10 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 Copy the file `.env.example` to `.env` and set the variables accordingly. These settings should work as-is with the Docker containers defined in `docker-compose.yml`.
 
-To install dependencies (it's recommended to run you development environment in a virtualenv):
+To install dependencies for local development:
 
 ```bash
-pip install -r dev-requirements.txt
+poetry install
 ```
 
 Install the NLTK corpora:
