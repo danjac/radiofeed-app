@@ -1,96 +1,147 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "radiofeed-app"
-description = "Podcast aggregator site"
-license = "MIT"
-authors = [
-    {name = "Dan Jacob", email = "danjac2018@gmail.com"}
-]
-readme = "README.md"
-requires-python = ">=3.10"
 version = "0"
-dependencies = [
-    "Django",
-    "Pillow",
-    "attrs",
-    "bleach",
-    "dj-database-url",
-    "django-allauth",
-    "django-anymail",
-    "django-cacheops",
-    "django-environ",
-    "django-extensions",
-    "django-fast-update",
-    "django-htmx",
-    "django-model-utils",
-    "django-modeltranslation",
-    "django-object-actions",
-    "django-permissions-policy",
-    "django-redis",
-    "django-widget-tweaks",
-    "hiredis",
-    "lxml",
-    "markdown",
-    "nltk",
-    "numpy",
-    "pandas",
-    "psycopg2-binary",
-    "python-dateutil",
-    "redis",
-    "requests",
-    "scikit-learn",
-    "scipy",
-    "user-agent",
-    "whitenoise",
-]
+description = "Podcast aggregator app"
+authors = ["Dan Jacob <danjac2018@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "radiofeed_app"}]
 
-[project.optional-dependencies]
-prod = [
-    "Brotli",
-    "gunicorn",
-    "sentry-sdk",
-]
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^4.1.4"
+Pillow = "^9.3.0"
+attrs = "^22.1.0"
+bleach = "^5.0.1"
+dj-database-url = "^1.2.0"
+django-allauth = "^0.51.0"
+django-cacheops = "^6.1"
+django-environ = "^0.9.0"
+django-extensions = "^3.2.1"
+django-fast-update = "^0.2.1"
+django-htmx = "^1.13.0"
+django-model-utils = "^4.3.1"
+django-modeltranslation = "^0.18.7"
+django-object-actions = "^4.1.0"
+django-permissions-policy = "^4.14.0"
+django-redis = "^5.2.0"
+django-widget-tweaks = "^1.4.12"
+hiredis = "^2.1.0"
+lxml = "^4.9.2"
+Markdown = "^3.4.1"
+nltk = "^3.8"
+numpy = "^1.24.0"
+pandas = "^1.5.2"
+psycopg2-binary = "^2.9.5"
+python-dateutil = "^2.8.2"
+redis = "^4.4.0"
+requests = "^2.28.1"
+scikit-learn = "^1.2.0"
+scipy = "^1.9.3"
+user-agent = "^0.1.10"
+whitenoise = "^6.2.0"
 
-ci = [
-    "Faker",
-    "bandit[toml]",
-    "coverage",
-    "django-coverage-plugin",
-    "djlint",
-    "flake8",
-    "flake8-bugbear",
-    "flake8-comprehensions",
-    "flake8-debugger",
-    "flake8-deprecated",
-    "flake8-print",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "pytest-django",
-    "pytest-icdiff",
-    "pytest-mock",
-    "pytest-mypy",
-    "pytest-randomly",
-    "pytest-sugar",
-    "pytest-xdist",
-    "types-bleach",
-    "types-markdown",
-    "types-python-dateutil",
-    "types-requests",
-]
+[tool.poetry.group.dev.dependencies]
+black = "^22.12.0"
+django-debug-toolbar = "^3.8.1"
+djhtml = "^1.5.2"
+honcho = "^1.1.0"
+ipython = "^8.7.0"
+isort = "^5.11.3"
 
-dev = [
-    "black",
-    "django-debug-toolbar",
-    "djhtml",
-    "honcho",
-    "ipython",
-    "isort",
-    "rich",
-]
+#[project]
+#name = "radiofeed-app"
+#description = "Podcast aggregator site"
+#license = "MIT"
+#authors = [
+    #{name = "Dan Jacob", email = "danjac2018@gmail.com"}
+#]
+#readme = "README.md"
+#requires-python = ">=3.10"
+#version = "0"
+#dependencies = [
+    #"Django",
+    #"Pillow",
+    #"attrs",
+    #"bleach",
+    #"dj-database-url",
+    #"django-allauth",
+    #"django-anymail",
+    #"django-cacheops",
+    #"django-environ",
+    #"django-extensions",
+    #"django-fast-update",
+    #"django-htmx",
+    #"django-model-utils",
+    #"django-modeltranslation",
+    #"django-object-actions",
+    #"django-permissions-policy",
+    #"django-redis",
+    #"django-widget-tweaks",
+    #"hiredis",
+    #"lxml",
+    #"markdown",
+    #"nltk",
+    #"numpy",
+    #"pandas",
+    #"psycopg2-binary",
+    #"python-dateutil",
+    #"redis",
+    #"requests",
+    #"scikit-learn",
+    #"scipy",
+    #"user-agent",
+    #"whitenoise",
+#]
+
+#[project.optional-dependencies]
+#prod = [
+    #"Brotli",
+    #"gunicorn",
+    #"sentry-sdk",
+#]
+
+#ci = [
+    #"Faker",
+    #"bandit[toml]",
+    #"coverage",
+    #"django-coverage-plugin",
+    #"djlint",
+    #"flake8",
+    #"flake8-bugbear",
+    #"flake8-comprehensions",
+    #"flake8-debugger",
+    #"flake8-deprecated",
+    #"flake8-print",
+    #"mypy",
+    #"pytest",
+    #"pytest-cov",
+    #"pytest-django",
+    #"pytest-icdiff",
+    #"pytest-mock",
+    #"pytest-mypy",
+    #"pytest-randomly",
+    #"pytest-sugar",
+    #"pytest-xdist",
+    #"types-bleach",
+    #"types-markdown",
+    #"types-python-dateutil",
+    #"types-requests",
+#]
+
+#dev = [
+    #"black",
+    #"django-debug-toolbar",
+    #"djhtml",
+    #"honcho",
+    #"ipython",
+    #"isort",
+    #"rich",
+#]
 
 
 [tool.pydocstyle]
