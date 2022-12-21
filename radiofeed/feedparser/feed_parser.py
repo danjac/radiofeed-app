@@ -124,12 +124,7 @@ class FeedParser:
         if content_hash == self._podcast.content_hash:
             raise NotModified()
 
-        # Check if there is another active feed with the same URL/content
-        if (
-            Podcast.objects.exclude(pk=self._podcast.id).filter(
-                Q(content_hash=content_hash) | Q(rss=response.url)
-            )
-        ).exists():
+        if self._is_duplicate(response, content_hash):
             raise Duplicate()
 
         return response, rss_parser.parse_rss(response.content), content_hash
@@ -144,6 +139,13 @@ class FeedParser:
         if self._podcast.modified:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
+
+    def _is_duplicate(self, response: requests.Response, content_hash: str) -> bool:
+        return (
+            Podcast.objects.exclude(pk=self._podcast.id)
+            .filter(Q(content_hash=content_hash) | Q(rss=response.url))
+            .exists()
+        )
 
     @transaction.atomic
     def _handle_success(
