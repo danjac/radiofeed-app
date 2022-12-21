@@ -272,7 +272,6 @@ ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
 
-DEBUG_ERROR_PAGES = False
 
 # Environments
 
@@ -295,8 +294,6 @@ match ENVIRONMENT:
 
         INTERNAL_IPS = ["127.0.0.1"]
 
-        DEBUG_ERROR_PAGES = True
-
     case "testing":
 
         LOGGING = None
@@ -313,8 +310,6 @@ match ENVIRONMENT:
 
         # django-coverage-plugin
         TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore
-
-        DEBUG_ERROR_PAGES = True
 
     case "production":
 

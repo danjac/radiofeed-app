@@ -7,6 +7,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.common.asserts import assert_bad_request, assert_ok
+from radiofeed.common.views import static_page
 
 
 class TestManifest:
@@ -102,20 +103,20 @@ class TestCoverImage:
 
 
 class TestErrorPages:
-    def test_bad_request(self, db, client):
-        assert_ok(client.get(reverse("error:bad_request")))
+    def test_bad_request(self, db, rf):
+        assert_ok(static_page(rf.get("/"), "400.html"))
 
-    def test_not_found(self, db, client):
-        assert_ok(client.get(reverse("error:not_found")))
+    def test_not_found(self, db, rf):
+        assert_ok(static_page(rf.get("/"), "404.html"))
 
-    def test_forbidden(self, db, client):
-        assert_ok(client.get(reverse("error:forbidden")))
+    def test_forbidden(self, db, rf):
+        assert_ok(static_page(rf.get("/"), "403.html"))
 
-    def test_not_allowed(self, db, client):
-        assert_ok(client.get(reverse("error:not_allowed")))
+    def test_not_allowed(self, db, rf):
+        assert_ok(static_page(rf.get("/"), "405.html"))
 
-    def test_server_error(self, db, client):
-        assert_ok(client.get(reverse("error:server_error")))
+    def test_server_error(self, db, rf):
+        assert_ok(static_page(rf.get("/"), "500.html"))
 
-    def test_csrf(self, db, client):
-        assert_ok(client.get(reverse("error:csrf_error")))
+    def test_csrf(self, db, rf):
+        assert_ok(static_page(rf.get("/"), "403_csrf.html"))
