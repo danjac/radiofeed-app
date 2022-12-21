@@ -9,7 +9,6 @@ description = "Podcast aggregator app"
 authors = ["Dan Jacob <danjac2018@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "radiofeed_app"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
