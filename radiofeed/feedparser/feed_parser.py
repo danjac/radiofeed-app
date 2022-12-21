@@ -100,20 +100,19 @@ class FeedParser:
             allow_redirects=True,
         )
 
+        if response.status_code == http.HTTPStatus.NOT_MODIFIED:
+            raise NotModified()
+
         try:
             response.raise_for_status()
         except requests.RequestException as e:
-            if e.response:
-                if e.response.status_code in (
-                    http.HTTPStatus.FORBIDDEN,
-                    http.HTTPStatus.NOT_FOUND,
-                    http.HTTPStatus.GONE,
-                    http.HTTPStatus.UNAUTHORIZED,
-                ):
-                    raise Inaccessible()
-
-                if e.response.status_code == http.HTTPStatus.NOT_MODIFIED:
-                    raise NotModified()
+            if e.response and e.response.status_code in (
+                http.HTTPStatus.FORBIDDEN,
+                http.HTTPStatus.NOT_FOUND,
+                http.HTTPStatus.GONE,
+                http.HTTPStatus.UNAUTHORIZED,
+            ):
+                raise Inaccessible()
 
             raise
 

@@ -488,7 +488,7 @@ class TestFeedParser:
 
         podcast.num_retries = 1
 
-        with mock_request(BadMockResponse(status=http.HTTPStatus.NOT_MODIFIED)):
+        with mock_request(MockResponse(status=http.HTTPStatus.NOT_MODIFIED)):
             with pytest.raises(NotModified):
                 parse_feed(podcast)
 
