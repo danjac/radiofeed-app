@@ -12,7 +12,7 @@ from django.urls import reverse_lazy
 
 Environments = Literal["development", "production", "test"]
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
 env = environ.Env()
 
@@ -65,7 +65,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-ROOT_URLCONF = "radiofeed.config.urls"
+ROOT_URLCONF = "radiofeed.urls"
 
 INSTALLED_APPS = [
     "django.forms",

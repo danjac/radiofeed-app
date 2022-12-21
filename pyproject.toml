@@ -129,8 +129,9 @@ add_imports = "from __future__ import annotations"
 source=["radiofeed", "templates"]
 omit=[
     "**/factories.py",
+    "**/settings.py",
+    "**/wsgi.py",
     "*/migrations/*",
-    "*/config/*",
     "*/nltk/*",
     "*/static/*",
     "*/tests/*",
@@ -144,7 +145,7 @@ plugins = [
 template_extensions = ["html"]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.config.settings"
+DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts="-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing"
 testpaths="radiofeed"
 env=[
@@ -165,11 +166,11 @@ warn_unused_configs = false
 warn_unreachable = true
 
 [[tool.mypy.overrides]]
-module="*.tests.*"
+module="radiofeed.settings"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
-module="*.config.*"
+module="*.tests.*"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
