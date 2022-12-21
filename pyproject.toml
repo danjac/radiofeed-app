@@ -78,6 +78,7 @@ types-markdown = "^3.4.2.1"
 types-python-dateutil = "^2.8.19.5"
 types-requests = "^2.28.11.6"
 bandit = {extras = ["toml"], version = "^1.7.4"}
+pytest-env = "^0.8.1"
 
 [tool.poetry.group.prod.dependencies]
 brotli = "^1.0.9"
@@ -143,9 +144,12 @@ plugins = [
 template_extensions = ["html"]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.config.settings.test"
+DJANGO_SETTINGS_MODULE="radiofeed.config.settings"
 addopts="-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing"
 testpaths="radiofeed"
+env=[
+    "ENVIRONMENT=testing",
+]
 
 [tool.mypy]
 python_version = "3.11"
