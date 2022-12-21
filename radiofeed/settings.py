@@ -3,12 +3,14 @@ from __future__ import annotations
 import pathlib
 
 from email.utils import getaddresses
-from typing import Literal
+from typing import Literal, TypeAlias
 
 import environ
 
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
+
+Config: TypeAlias = dict[str, dict]
 
 Environments = Literal["development", "production", "test"]
 
@@ -35,7 +37,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-CACHES: dict[str, dict] = {
+CACHES: Config = {
     "default": {
         **env.cache("REDIS_URL"),
         "OPTIONS": {
@@ -53,9 +55,9 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
-ADMINS = getaddresses(env.list("ADMINS", default=[]))
+ADMINS: list[str] = getaddresses(env.list("ADMINS", default=[]))
 
 SITE_ID = 1
 
@@ -67,7 +69,7 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 ROOT_URLCONF = "radiofeed.urls"
 
-INSTALLED_APPS = [
+INSTALLED_APPS: list[str] = [
     "django.forms",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -95,7 +97,7 @@ INSTALLED_APPS = [
     "radiofeed.users",
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE: list[str] = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django_permissions_policy.PermissionsPolicyMiddleware",
@@ -131,7 +133,7 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS: list[Config] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
     },
@@ -148,7 +150,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
-SOCIALACCOUNT_PROVIDERS = {
+SOCIALACCOUNT_PROVIDERS: Config = {
     "google": {
         "SCOPE": [
             "profile",
@@ -186,7 +188,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-TEMPLATES = [
+TEMPLATES: list[Config] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
@@ -210,7 +212,7 @@ TEMPLATES = [
     }
 ]
 
-LOGGING: dict | None = {
+LOGGING: Config | None = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
@@ -254,7 +256,7 @@ CACHEOPS_REDIS = REDIS_URL
 CACHEOPS_DEFAULTS = {"timeout": 300}
 CACHEOPS_DEGRADE_ON_FAILURE = True
 
-CACHEOPS = {
+CACHEOPS: Config = {
     "podcasts.*": {"ops": "all"},
     "episodes.*": {"ops": "all"},
     "users.*": {"ops": "all"},
