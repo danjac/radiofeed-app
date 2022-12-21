@@ -86,7 +86,7 @@ class FeedParser:
         """
         try:
             response = self._get_response()
-            content_hash = self._make_content_hash(response)
+            content_hash = self._make_content_hash(response.content)
             feed = rss_parser.parse_rss(response.content)
 
             active = not (feed.complete)
@@ -164,11 +164,11 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _make_content_hash(self, response: requests.Response) -> str:
+    def _make_content_hash(self, content: bytes) -> str:
         # we make a content hash of the response and check podcast current content hash
         # and any other podcast content for duplicates
 
-        content_hash = make_content_hash(response.content)
+        content_hash = make_content_hash(content)
 
         if content_hash == self._podcast.content_hash:
             raise NotModified()
