@@ -10,6 +10,17 @@ import environ
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
 
+try:
+    import sentry_sdk
+
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.logging import ignore_logger
+
+    HAS_SENTRY = True
+except ImportError:
+    HAS_SENTRY = False
+
+
 Environments = Literal["development", "production", "test"]
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
@@ -358,11 +369,7 @@ match ENVIRONMENT:
 
         # Sentry
 
-        if SENTRY_URL := env("SENTRY_URL", default=None):
-            import sentry_sdk
-
-            from sentry_sdk.integrations.django import DjangoIntegration
-            from sentry_sdk.integrations.logging import ignore_logger
+        if HAS_SENTRY and (SENTRY_URL := env("SENTRY_URL", default=None)):
 
             ignore_logger("django.security.DisallowedHost")
 
