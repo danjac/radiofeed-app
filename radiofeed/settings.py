@@ -35,7 +35,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-CACHES = {
+CACHES: dict[str, dict] = {
     "default": {
         **env.cache("REDIS_URL"),
         "OPTIONS": {
@@ -210,7 +210,7 @@ TEMPLATES = [
     }
 ]
 
-LOGGING = {
+LOGGING: dict | None = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
@@ -294,7 +294,7 @@ match ENVIRONMENT:
 
         INTERNAL_IPS = ["127.0.0.1"]
 
-    case "testing":
+    case "test":
 
         LOGGING = None
 

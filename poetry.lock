@@ -1231,13 +1231,13 @@ files = [
 
 [[package]]
 name = "icdiff"
-version = "2.0.5"
+version = "2.0.6"
 description = "improved colored diff"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "icdiff-2.0.5.tar.gz", hash = "sha256:35d24b728e48b7e0a12bdb69386d3bfc7eef4fe922d0ac1cd70d6e5c11630bae"},
+    {file = "icdiff-2.0.6.tar.gz", hash = "sha256:a2673b335d671e64fc73c44e1eaa0aa01fd0e68354e58ee17e863ab29912a79a"},
 ]
 
 [[package]]

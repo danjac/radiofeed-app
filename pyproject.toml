@@ -149,7 +149,7 @@ DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts="-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing"
 testpaths="radiofeed"
 env=[
-    "ENVIRONMENT=testing",
+    "ENVIRONMENT=test",
 ]
 
 [tool.mypy]
@@ -164,10 +164,6 @@ warn_unused_ignores = false
 warn_redundant_casts = false
 warn_unused_configs = false
 warn_unreachable = true
-
-[[tool.mypy.overrides]]
-module="radiofeed.settings"
-ignore_errors = true
 
 [[tool.mypy.overrides]]
 module="*.tests.*"
