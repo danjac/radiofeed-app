@@ -53,96 +53,37 @@ honcho = "^1.1.0"
 ipython = "^8.7.0"
 isort = "^5.11.3"
 
-#[project]
-#name = "radiofeed-app"
-#description = "Podcast aggregator site"
-#license = "MIT"
-#authors = [
-    #{name = "Dan Jacob", email = "danjac2018@gmail.com"}
-#]
-#readme = "README.md"
-#requires-python = ">=3.10"
-#version = "0"
-#dependencies = [
-    #"Django",
-    #"Pillow",
-    #"attrs",
-    #"bleach",
-    #"dj-database-url",
-    #"django-allauth",
-    #"django-anymail",
-    #"django-cacheops",
-    #"django-environ",
-    #"django-extensions",
-    #"django-fast-update",
-    #"django-htmx",
-    #"django-model-utils",
-    #"django-modeltranslation",
-    #"django-object-actions",
-    #"django-permissions-policy",
-    #"django-redis",
-    #"django-widget-tweaks",
-    #"hiredis",
-    #"lxml",
-    #"markdown",
-    #"nltk",
-    #"numpy",
-    #"pandas",
-    #"psycopg2-binary",
-    #"python-dateutil",
-    #"redis",
-    #"requests",
-    #"scikit-learn",
-    #"scipy",
-    #"user-agent",
-    #"whitenoise",
-#]
+[tool.poetry.group.ci.dependencies]
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+pytest-django = "^4.5.2"
+pytest-icdiff = "^0.6"
+pytest-mock = "^3.10.0"
+mypy = "^0.991"
+pytest-mypy = "^0.10.3"
+pytest-randomly = "^3.12.0"
+pytest-sugar = "^0.9.6"
+pytest-xdist = "^3.1.0"
+faker = "^15.3.4"
+coverage = "^7.0.0"
+django-coverage-plugin = "^3.0.0"
+djlint = "^1.19.9"
+flake8 = "^6.0.0"
+flake8-bugbear = "^22.12.6"
+flake8-comprehensions = "^3.10.1"
+flake8-debugger = "^4.1.2"
+flake8-deprecated = "^2.0.1"
+flake8-print = "^5.0.0"
+types-bleach = "^5.0.3.1"
+types-markdown = "^3.4.2.1"
+types-python-dateutil = "^2.8.19.5"
+types-requests = "^2.28.11.6"
 
-#[project.optional-dependencies]
-#prod = [
-    #"Brotli",
-    #"gunicorn",
-    #"sentry-sdk",
-#]
-
-#ci = [
-    #"Faker",
-    #"bandit[toml]",
-    #"coverage",
-    #"django-coverage-plugin",
-    #"djlint",
-    #"flake8",
-    #"flake8-bugbear",
-    #"flake8-comprehensions",
-    #"flake8-debugger",
-    #"flake8-deprecated",
-    #"flake8-print",
-    #"mypy",
-    #"pytest",
-    #"pytest-cov",
-    #"pytest-django",
-    #"pytest-icdiff",
-    #"pytest-mock",
-    #"pytest-mypy",
-    #"pytest-randomly",
-    #"pytest-sugar",
-    #"pytest-xdist",
-    #"types-bleach",
-    #"types-markdown",
-    #"types-python-dateutil",
-    #"types-requests",
-#]
-
-#dev = [
-    #"black",
-    #"django-debug-toolbar",
-    #"djhtml",
-    #"honcho",
-    #"ipython",
-    #"isort",
-    #"rich",
-#]
-
+[tool.poetry.group.prod.dependencies]
+brotli = "^1.0.9"
+gunicorn = "^20.1.0"
+sentry-sdk = "^1.12.1"
+django-anymail = "^9.0"
 
 [tool.pydocstyle]
 ignore = [

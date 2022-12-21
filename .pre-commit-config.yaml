@@ -89,5 +89,15 @@ repos:
           - id: poetry-check
           - id: poetry-lock
           - id: poetry-export
-            args: ["-f", "requirements.txt", "-o", "requirements.txt"]
+            args: ["-prod", "-f", "requirements.txt", "-o", "requirements.txt"]
+            verbose: true
+          - id: poetry-export
+            args:
+                [
+                    "-ci",
+                    "-f",
+                    "ci-requirements.txt",
+                    "-o",
+                    "ci-requirements.txt",
+                ]
             verbose: true
