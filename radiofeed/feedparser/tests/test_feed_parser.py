@@ -112,14 +112,24 @@ class TestFeedParser:
         assert podcast.active
 
     def test_parse_rss_exception(self, podcast, mocker):
-
         mocker.patch(
-            "radiofeed.feedparser.feed_parser.FeedParser._parse_rss",
+            "radiofeed.feedparser.rss_parser.parse_rss",
             side_effect=ValueError(),
         )
 
-        with pytest.raises(ValueError):
-            assert not parse_feed(podcast)
+        with mock_request(
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        ):
+
+            with pytest.raises(ValueError):
+                assert not parse_feed(podcast)
 
         podcast.refresh_from_db()
         assert podcast.active

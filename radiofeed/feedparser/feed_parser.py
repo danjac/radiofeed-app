@@ -86,13 +86,42 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            self._handle_success(*self._parse_rss())
+            response = self._get_response()
+            content_hash = self._check_content_hash(response)
+            feed = rss_parser.parse_rss(response.content)
+
+            active = not (feed.complete)
+            categories, keywords = self._extract_categories(feed)
+
+            with transaction.atomic():
+
+                self._podcast_update(
+                    active=active,
+                    num_retries=0,
+                    content_hash=content_hash,
+                    keywords=keywords,
+                    rss=response.url,
+                    etag=response.headers.get("ETag", ""),
+                    modified=parse_date(response.headers.get("Last-Modified")),
+                    extracted_text=self._extract_text(feed),
+                    frequency=scheduler.schedule(feed),
+                    **attrs.asdict(
+                        feed,
+                        filter=attrs.filters.exclude(  # type: ignore
+                            self._feed_attrs.categories,
+                            self._feed_attrs.complete,
+                            self._feed_attrs.items,
+                        ),
+                    ),
+                )
+
+                self._podcast.categories.set(categories)
+                self._episode_updates(feed)
 
         except Exception as e:
             self._handle_exception(e)
 
-    def _parse_rss(self) -> tuple[requests.Response, Feed, str]:
-
+    def _get_response(self) -> requests.Response:
         response = requests.get(
             self._podcast.rss,
             headers=self._get_feed_headers(),
@@ -116,17 +145,7 @@ class FeedParser:
 
             raise
 
-        # Check if not modified: feed should return a 304 if no new updates,
-        # but not in all cases, so we should also check the content body.
-        content_hash = make_content_hash(response.content)
-
-        if content_hash == self._podcast.content_hash:
-            raise NotModified()
-
-        if self._is_duplicate(response, content_hash):
-            raise Duplicate()
-
-        return response, rss_parser.parse_rss(response.content), content_hash
+        return response
 
     def _get_feed_headers(self) -> dict:
         headers = {
@@ -139,43 +158,21 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _is_duplicate(self, response: requests.Response, content_hash: str) -> bool:
-        return (
+    def _check_content_hash(self, response: requests.Response) -> str:
+
+        content_hash = make_content_hash(response.content)
+
+        if content_hash == self._podcast.content_hash:
+            raise NotModified()
+
+        if (
             Podcast.objects.exclude(pk=self._podcast.id)
             .filter(Q(content_hash=content_hash) | Q(rss=response.url))
             .exists()
-        )
+        ):
+            raise Duplicate()
 
-    @transaction.atomic
-    def _handle_success(
-        self, response: requests.Response, feed: Feed, content_hash: str
-    ) -> None:
-
-        active = False if feed.complete else True
-        categories, keywords = self._extract_categories(feed)
-
-        self._podcast_update(
-            active=active,
-            num_retries=0,
-            content_hash=content_hash,
-            keywords=keywords,
-            rss=response.url,
-            etag=response.headers.get("ETag", ""),
-            modified=parse_date(response.headers.get("Last-Modified")),
-            extracted_text=self._extract_text(feed),
-            frequency=scheduler.schedule(feed),
-            **attrs.asdict(
-                feed,
-                filter=attrs.filters.exclude(  # type: ignore
-                    self._feed_attrs.categories,
-                    self._feed_attrs.complete,
-                    self._feed_attrs.items,
-                ),
-            ),
-        )
-
-        self._podcast.categories.set(categories)
-        self._episode_updates(feed)
+        return content_hash
 
     def _handle_exception(self, exc: Exception) -> None:
 
