@@ -1,9 +1,7 @@
 {% spaceless %}
-    {% load static %}
-    {% static 'img/podcast-icon.webp' as placeholder %}
     <img class="object-cover border bg-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
-        alt="{{ title }}"
         title="{{ title }}"
+        alt="{{ title }}"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
@@ -24,7 +22,6 @@
         }{# fmt:on #}"
             @load.once="isLoaded=true;"
             @error.once="src=placeholder;isLoaded=true;"
-            :class="{'blur-sm': !isLoaded}"
-            :src="src"
+            :src="isLoaded ? src : placeholder"
         {% endif %}>
 {% endspaceless %}

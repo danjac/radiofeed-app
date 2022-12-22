@@ -13,6 +13,7 @@ from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -151,8 +152,11 @@ def cover_image(
         else ""
     )
 
+    placeholder = static(f"img/placeholder-{size}.webp")
+
     return {
         "cover_url": proxy_cover_url,
+        "placeholder": placeholder,
         "title": title,
         "size": size,
         "url": url,
