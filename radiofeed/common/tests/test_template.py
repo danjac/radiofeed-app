@@ -304,7 +304,3 @@ class TestCoverImage:
 
     def test_is_not_cover_url(self):
         assert not cover_image("", 100, "test img")["cover_url"]
-
-    def test_is_not_cover_image_size(self):
-        with pytest.raises(ValueError):
-            cover_image("https://example.com/test.jpg", 500, "test img")

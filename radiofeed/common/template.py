@@ -25,7 +25,6 @@ register = template.Library()
 
 ActiveLink = collections.namedtuple("ActiveLink", ["url", "css", "active"])
 
-COVER_IMAGE_SIZES: tuple[int, ...] = (100, 200, 300)
 
 _validate_url = URLValidator(["http", "https"])
 
@@ -141,10 +140,7 @@ def cover_image(
     css_class: str = "",
 ):
     """Renders a cover image with proxy URL."""
-    if size not in COVER_IMAGE_SIZES:
-        raise ValueError("invalid image size")
-
-    proxy_cover_url = (
+    proxy_url = (
         reverse(
             "cover_image",
             kwargs={
@@ -159,7 +155,7 @@ def cover_image(
     placeholder = static(f"img/placeholder-{size}.webp")
 
     return {
-        "cover_url": proxy_cover_url,
+        "cover_url": proxy_url,
         "placeholder": placeholder,
         "title": title,
         "size": size,
