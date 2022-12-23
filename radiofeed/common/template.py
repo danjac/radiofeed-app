@@ -142,7 +142,7 @@ def cover_image(
 ):
     """Renders a cover image with proxy URL."""
     if size not in COVER_IMAGE_SIZES:
-        raise ValueError(f"Invald image size {size}")
+        raise ValueError("invalid image size")
 
     proxy_cover_url = (
         reverse(

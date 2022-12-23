@@ -170,7 +170,7 @@ def security(request: HttpRequest) -> HttpResponse:
 def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
     if size not in COVER_IMAGE_SIZES:
-        return HttpResponseBadRequest("Error: image is not an accepted size")
+        return HttpResponseBadRequest("Error: invalid image size")
 
     try:
         cover_url = force_str(urlsafe_base64_decode(encoded_url))
