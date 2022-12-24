@@ -58,7 +58,7 @@ def make_content_hash(content: bytes) -> str:
 
 
 def get_client() -> httpx.Client:
-    """Returns HTTP session."""
+    """Returns HTTP client."""
     return httpx.Client(
         headers={
             "Accept": _ACCEPT_HEADER,
