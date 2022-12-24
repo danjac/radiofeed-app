@@ -10,6 +10,7 @@ import httpx
 import user_agent
 
 from django.db import transaction
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
@@ -97,7 +98,19 @@ class FeedParser:
         """
         try:
             response = self._get_response(client)
-            content_hash = self._make_content_hash(response.content)
+            content_hash = make_content_hash(response.content)
+
+            if content_hash == self._podcast.content_hash:
+                raise NotModified()
+
+            if (
+                Podcast.objects.exclude(pk=self._podcast.pk)
+                .filter(Q(rss=response.url) | Q(content_hash=content_hash))
+                .exists()
+            ):
+
+                raise Duplicate()
+
             feed = rss_parser.parse_rss(response.content)
 
             active = not (feed.complete)
@@ -143,13 +156,6 @@ class FeedParser:
         # check for any other http errors
         response.raise_for_status()
 
-        # if redirects to new URL, check another podcast doesn't already have this URL.
-
-        if response.url != self._podcast.rss and (
-            Podcast.objects.filter(rss=response.url).exists()
-        ):
-            raise Duplicate()
-
         return response
 
     def _get_feed_headers(self) -> dict[str, str]:
@@ -159,22 +165,6 @@ class FeedParser:
         if self._podcast.modified:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
-
-    def _make_content_hash(self, content: bytes) -> str:
-        # we make a content hash of the response and check podcast current content hash
-        # and any other podcast content for duplicates
-
-        content_hash = make_content_hash(content)
-
-        if content_hash == self._podcast.content_hash:
-            raise NotModified()
-
-        # check another podcast does not have identical content
-
-        if Podcast.objects.filter(content_hash=content_hash).exists():
-            raise Duplicate()
-
-        return content_hash
 
     def _handle_exception(self, exc: Exception) -> None:
 
