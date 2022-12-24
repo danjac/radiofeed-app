@@ -63,7 +63,7 @@ def search_cached(search_term: str) -> list[Feed]:
 
 def search(search_term: str) -> Iterator[Feed]:
     """Runs search for podcasts on iTunes API."""
-    with get_session() as session:
+    with _get_session() as session:
         return _parse_feeds(
             _get_response(
                 session,
@@ -76,16 +76,9 @@ def search(search_term: str) -> Iterator[Feed]:
         )
 
 
-def get_session() -> requests.Session:
-    """Return HTTP session."""
-    session = requests.Session()
-    session.headers = {"User-Agent": user_agent.generate_user_agent()}
-    return session
-
-
 def crawl() -> Iterator[Feed]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
-    with requests.Session() as session:
+    with _get_session() as session:
 
         for location in _ITUNES_LOCATIONS:
             yield from Crawler(session, location).crawl()
@@ -196,6 +189,13 @@ def _parse_feeds(json_data: dict) -> Iterator[Feed]:
         )
 
         yield from feeds
+
+
+def _get_session() -> requests.Session:
+    """Return HTTP session."""
+    session = requests.Session()
+    session.headers = {"User-Agent": user_agent.generate_user_agent()}
+    return session
 
 
 def _get_response(
