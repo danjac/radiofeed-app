@@ -47,9 +47,9 @@ class Inaccessible(ValueError):
     """Content is no longer accesssible."""
 
 
-def parse_feed(podcast: Podcast, session: httpx.Client) -> bool:
+def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
     """Parses podcast RSS feed."""
-    return FeedParser(podcast).parse(session)
+    return FeedParser(podcast).parse(client)
 
 
 def make_content_hash(content: bytes) -> str:
@@ -89,7 +89,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, session: httpx.Client):
+    def parse(self, client: httpx.Client):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -97,7 +97,7 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            response = self._get_response(session)
+            response = self._get_response(client)
             content_hash = self._make_content_hash(response.content)
             feed = rss_parser.parse_rss(response.content)
 
@@ -132,11 +132,8 @@ class FeedParser:
         except Exception as e:
             self._handle_exception(e)
 
-    def _get_response(self, session: httpx.Client) -> httpx.Response:
-        response = session.get(
-            self._podcast.rss,
-            headers=self._get_feed_headers(),
-        )
+    def _get_response(self, client: httpx.Client) -> httpx.Response:
+        response = client.get(self._podcast.rss, headers=self._get_feed_headers())
 
         try:
             response.raise_for_status()
