@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import requests
+import httpx
 
 from django.core.management import call_command
 
@@ -57,7 +57,7 @@ class TestParseFeeds:
         create_podcast(pub_date=None)
         patched = mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=requests.HTTPError(),
+            side_effect=httpx.HTTPError("error"),
         )
         call_command("parse_feeds", limit=200)
         patched.assert_called()

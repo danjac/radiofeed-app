@@ -3,7 +3,7 @@ from __future__ import annotations
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 
-import requests
+import httpx
 
 from django.core.management.base import BaseCommand
 
@@ -29,18 +29,18 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with feed_parser.get_session() as session:
+        with feed_parser.get_client() as client:
             with ThreadPoolExecutor() as executor:
                 executor.map(
-                    lambda podcast: self._parse_feed(podcast, session),
+                    lambda podcast: self._parse_feed(podcast, client),
                     scheduler.scheduled_for_update()[: options["limit"]].iterator(),
                 )
 
-    def _parse_feed(self, podcast: Podcast, session: requests.Session) -> None:
+    def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
 
         try:
-            feed_parser.parse_feed(podcast, session)
+            feed_parser.parse_feed(podcast, client)
 
         except feed_parser.NotModified:
             self.stdout.write(self.style.NOTICE(f"{podcast} is not modified"))
@@ -56,7 +56,7 @@ class Command(BaseCommand):
         except rss_parser.RssParserError as e:
             self.stdout.write(self.style.ERROR(f"{podcast} RSS parser error {e}"))
 
-        except requests.RequestException as e:
+        except httpx.HTTPError as e:
             self.stdout.write(self.style.ERROR(f"{podcast} HTTP error {e}"))
 
         else:

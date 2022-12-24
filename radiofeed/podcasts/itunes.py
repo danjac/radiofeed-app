@@ -8,7 +8,7 @@ import re
 from typing import Final, Iterator
 from urllib.parse import urlparse
 
-import requests
+import httpx
 import user_agent
 
 from django.core.cache import cache
@@ -63,10 +63,10 @@ def search_cached(search_term: str) -> list[Feed]:
 
 def search(search_term: str) -> Iterator[Feed]:
     """Runs search for podcasts on iTunes API."""
-    with _get_session() as session:
+    with _get_client() as client:
         return _parse_feeds(
             _get_response(
-                session,
+                client,
                 "https://itunes.apple.com/search",
                 {
                     "term": search_term,
@@ -78,10 +78,10 @@ def search(search_term: str) -> Iterator[Feed]:
 
 def crawl() -> Iterator[Feed]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
-    with _get_session() as session:
+    with _get_client() as client:
 
         for location in _ITUNES_LOCATIONS:
-            yield from Crawler(session, location).crawl()
+            yield from Crawler(client, location).crawl()
 
 
 class Crawler:
@@ -91,8 +91,8 @@ class Crawler:
         location: country location e.g. "us"
     """
 
-    def __init__(self, session: requests.Session, location: str):
-        self._session = session
+    def __init__(self, client: httpx.Client, location: str):
+        self._client = client
         self._location = location
         self._feed_ids: set[str] = set()
 
@@ -106,7 +106,7 @@ class Crawler:
             href
             for href in self._parse_urls(
                 _get_response(
-                    self._session,
+                    self._client,
                     f"https://itunes.apple.com/{self._location}/genre/podcasts/id26",
                 ).content
             )
@@ -124,7 +124,7 @@ class Crawler:
 
         yield from _parse_feeds(
             _get_response(
-                self._session,
+                self._client,
                 "https://itunes.apple.com/lookup",
                 {
                     "id": ",".join(_feed_ids),
@@ -140,7 +140,7 @@ class Crawler:
             podcast_id
             for podcast_id in (
                 self._parse_podcast_id(href)
-                for href in self._parse_urls(_get_response(self._session, url).content)
+                for href in self._parse_urls(_get_response(self._client, url).content)
                 if href.startswith(
                     f"https://podcasts.apple.com/{self._location}/podcast/"
                 )
@@ -191,21 +191,21 @@ def _parse_feeds(json_data: dict) -> Iterator[Feed]:
         yield from feeds
 
 
-def _get_session() -> requests.Session:
-    """Return HTTP session."""
-    session = requests.Session()
-    session.headers = {"User-Agent": user_agent.generate_user_agent()}
-    return session
+def _get_client() -> httpx.Client:
+    """Return HTTP client."""
+    return httpx.Client(
+        headers={"User-Agent": user_agent.generate_user_agent()},
+        timeout=10,
+        follow_redirects=True,
+    )
 
 
 def _get_response(
-    session: requests.Session, url: str, params: dict | None = None
-) -> requests.Response:
-    response = session.get(
+    client: httpx.Client, url: str, params: dict | None = None
+) -> httpx.Response:
+    response = client.get(
         url,
         params=params,
-        timeout=10,
-        allow_redirects=True,
     )
     response.raise_for_status()
     return response

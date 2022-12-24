@@ -7,7 +7,7 @@ import http
 from typing import Iterator
 
 import attrs
-import requests
+import httpx
 import user_agent
 
 from django.db import transaction
@@ -47,7 +47,7 @@ class Inaccessible(ValueError):
     """Content is no longer accesssible."""
 
 
-def parse_feed(podcast: Podcast, session: requests.Session) -> bool:
+def parse_feed(podcast: Podcast, session: httpx.Client) -> bool:
     """Parses podcast RSS feed."""
     return FeedParser(podcast).parse(session)
 
@@ -57,16 +57,16 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def get_session() -> requests.Session:
+def get_client() -> httpx.Client:
     """Returns HTTP session."""
-    session = requests.Session()
-
-    session.headers = {
-        "Accept": _ACCEPT_HEADER,
-        "User-Agent": user_agent.generate_user_agent(),
-    }
-
-    return session
+    return httpx.Client(
+        headers={
+            "Accept": _ACCEPT_HEADER,
+            "User-Agent": user_agent.generate_user_agent(),
+        },
+        timeout=10,
+        follow_redirects=True,
+    )
 
 
 @functools.lru_cache
@@ -89,7 +89,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, session: requests.Session):
+    def parse(self, session: httpx.Client):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -132,27 +132,25 @@ class FeedParser:
         except Exception as e:
             self._handle_exception(e)
 
-    def _get_response(self, session: requests.Session) -> requests.Response:
+    def _get_response(self, session: httpx.Client) -> httpx.Response:
         response = session.get(
             self._podcast.rss,
             headers=self._get_feed_headers(),
-            timeout=10,
-            allow_redirects=True,
         )
-
-        if response.status_code == http.HTTPStatus.NOT_MODIFIED:
-            raise NotModified()
 
         try:
             response.raise_for_status()
-        except requests.RequestException as e:
-            if e.response and e.response.status_code in (
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code in (
                 http.HTTPStatus.FORBIDDEN,
                 http.HTTPStatus.NOT_FOUND,
                 http.HTTPStatus.GONE,
                 http.HTTPStatus.UNAUTHORIZED,
             ):
                 raise Inaccessible()
+
+            if response.status_code == http.HTTPStatus.NOT_MODIFIED:
+                raise NotModified()
 
             raise
 
@@ -207,7 +205,7 @@ class FeedParser:
                 # successful pull, so reset num_retries
                 num_retries = 0
 
-            case rss_parser.RssParserError() | requests.RequestException():
+            case rss_parser.RssParserError() | httpx.HTTPError():
                 # increment num_retries in case a temporary error
                 num_retries += 1
 

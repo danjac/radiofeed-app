@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pathlib
 
+import httpx
 import pytest
-import requests
 
 from django.core.cache import cache
 
@@ -39,7 +39,7 @@ class MockResponse:
         return self.json_data
 
 
-class MockSession:
+class MockClient:
     def __init__(self, response=None):
         self.response = response
 
@@ -56,8 +56,8 @@ class MockSession:
 @pytest.fixture
 def mock_good_response(mocker):
     yield mocker.patch(
-        "requests.Session",
-        return_value=MockSession(
+        "httpx.Client",
+        return_value=MockClient(
             MockResponse(
                 json={
                     "results": [MOCK_RESULT],
@@ -70,10 +70,10 @@ def mock_good_response(mocker):
 @pytest.fixture
 def mock_bad_response(mocker):
     yield mocker.patch(
-        "requests.Session",
-        return_value=MockSession(
+        "httpx.Client",
+        return_value=MockClient(
             MockResponse(
-                exception=requests.HTTPError("fail"),
+                exception=httpx.HTTPError("fail"),
             ),
         ),
     )
@@ -82,8 +82,8 @@ def mock_bad_response(mocker):
 @pytest.fixture
 def mock_invalid_response(mocker):
     yield mocker.patch(
-        "requests.Session",
-        return_value=MockSession(
+        "httpx.Client",
+        return_value=MockClient(
             MockResponse(
                 json={
                     "results": [
@@ -100,7 +100,7 @@ def mock_invalid_response(mocker):
 
 class TestCrawl:
     def test_crawl(self, db, mocker):
-        class _MockSession(MockSession):
+        class _MockClient(MockClient):
             def get(self, url, *args, **kwargs):
 
                 if url == "https://itunes.apple.com/lookup":
@@ -114,7 +114,7 @@ class TestCrawl:
 
                 return MockResponse()
 
-        mocker.patch("requests.Session", return_value=_MockSession())
+        mocker.patch("httpx.Client", return_value=_MockClient())
 
         list(itunes.crawl())
 
@@ -125,7 +125,7 @@ class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 
     def test_not_ok(self, db, mock_bad_response):
-        with pytest.raises(requests.HTTPError):
+        with pytest.raises(httpx.HTTPError):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 
