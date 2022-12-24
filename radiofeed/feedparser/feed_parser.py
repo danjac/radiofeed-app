@@ -47,14 +47,26 @@ class Inaccessible(ValueError):
     """Content is no longer accesssible."""
 
 
-def parse_feed(podcast: Podcast) -> bool:
+def parse_feed(podcast: Podcast, session: requests.Session) -> bool:
     """Parses podcast RSS feed."""
-    return FeedParser(podcast).parse()
+    return FeedParser(podcast).parse(session)
 
 
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
     return hashlib.sha256(content).hexdigest()
+
+
+def get_session() -> requests.Session:
+    """Returns HTTP session."""
+    session = requests.Session()
+
+    session.headers = {
+        "Accept": _ACCEPT_HEADER,
+        "User-Agent": user_agent.generate_user_agent(),
+    }
+
+    return session
 
 
 @functools.lru_cache
@@ -77,7 +89,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self):
+    def parse(self, session: requests.Session):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -85,7 +97,7 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            response = self._get_response()
+            response = self._get_response(session)
             content_hash = self._make_content_hash(response.content)
             feed = rss_parser.parse_rss(response.content)
 
@@ -120,8 +132,8 @@ class FeedParser:
         except Exception as e:
             self._handle_exception(e)
 
-    def _get_response(self) -> requests.Response:
-        response = requests.get(
+    def _get_response(self, session: requests.Session) -> requests.Response:
+        response = session.get(
             self._podcast.rss,
             headers=self._get_feed_headers(),
             timeout=10,
@@ -153,11 +165,8 @@ class FeedParser:
 
         return response
 
-    def _get_feed_headers(self) -> dict:
-        headers = {
-            "Accept": _ACCEPT_HEADER,
-            "User-Agent": user_agent.generate_user_agent(),
-        }
+    def _get_feed_headers(self) -> dict[str, str]:
+        headers = {}
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:

@@ -39,14 +39,30 @@ class MockResponse:
         return self.json_data
 
 
+class MockSession:
+    def __init__(self, response=None):
+        self.response = response
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def get(self, *args, **kwargs):
+        return self.response
+
+
 @pytest.fixture
 def mock_good_response(mocker):
     yield mocker.patch(
-        "requests.get",
-        return_value=MockResponse(
-            json={
-                "results": [MOCK_RESULT],
-            },
+        "requests.Session",
+        return_value=MockSession(
+            MockResponse(
+                json={
+                    "results": [MOCK_RESULT],
+                },
+            )
         ),
     )
 
@@ -54,9 +70,11 @@ def mock_good_response(mocker):
 @pytest.fixture
 def mock_bad_response(mocker):
     yield mocker.patch(
-        "requests.get",
-        return_value=MockResponse(
-            exception=requests.HTTPError("fail"),
+        "requests.Session",
+        return_value=MockSession(
+            MockResponse(
+                exception=requests.HTTPError("fail"),
+            ),
         ),
     )
 
@@ -64,39 +82,41 @@ def mock_bad_response(mocker):
 @pytest.fixture
 def mock_invalid_response(mocker):
     yield mocker.patch(
-        "requests.get",
-        return_value=MockResponse(
-            json={
-                "results": [
-                    {
-                        "id": 12345,
-                        "url": "bad-url",
-                    }
-                ]
-            }
+        "requests.Session",
+        return_value=MockSession(
+            MockResponse(
+                json={
+                    "results": [
+                        {
+                            "id": 12345,
+                            "url": "bad-url",
+                        }
+                    ]
+                }
+            ),
         ),
     )
 
 
 class TestCrawl:
     def test_crawl(self, db, mocker):
-        def side_effect(*args, **kwargs):
+        class _MockSession(MockSession):
+            def get(self, url, *args, **kwargs):
 
-            url = args[0]
+                if url == "https://itunes.apple.com/lookup":
+                    return MockResponse(json={"results": [MOCK_RESULT]})
 
-            if url == "https://itunes.apple.com/lookup":
-                return MockResponse(json={"results": [MOCK_RESULT]})
+                if url.endswith("/genre/podcasts/id26"):
+                    return MockResponse(mock_file="podcasts.html")
 
-            if url.endswith("/genre/podcasts/id26"):
-                return MockResponse(mock_file="podcasts.html")
+                if "/genre/podcasts" in url:
+                    return MockResponse(mock_file="genre.html")
 
-            if "/genre/podcasts" in url:
-                return MockResponse(mock_file="genre.html")
+                return MockResponse()
 
-            return MockResponse()
+        mocker.patch("requests.Session", return_value=_MockSession())
 
-        with mocker.patch("requests.get", side_effect=side_effect):
-            list(itunes.crawl())
+        list(itunes.crawl())
 
         assert Podcast.objects.count() == 1
 

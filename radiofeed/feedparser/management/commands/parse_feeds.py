@@ -29,17 +29,18 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with ThreadPoolExecutor() as executor:
-            executor.map(
-                self._parse_feed,
-                scheduler.scheduled_for_update()[: options["limit"]].iterator(),
-            )
+        with feed_parser.get_session() as session:
+            with ThreadPoolExecutor() as executor:
+                executor.map(
+                    lambda podcast: self._parse_feed(podcast, session),
+                    scheduler.scheduled_for_update()[: options["limit"]].iterator(),
+                )
 
-    def _parse_feed(self, podcast: Podcast) -> None:
+    def _parse_feed(self, podcast: Podcast, session: requests.Session) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
 
         try:
-            feed_parser.parse_feed(podcast)
+            feed_parser.parse_feed(podcast, session)
 
         except feed_parser.NotModified:
             self.stdout.write(self.style.NOTICE(f"{podcast} is not modified"))
