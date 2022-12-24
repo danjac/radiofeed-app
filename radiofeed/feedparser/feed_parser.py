@@ -108,7 +108,6 @@ class FeedParser:
                 .filter(Q(rss=response.url) | Q(content_hash=content_hash))
                 .exists()
             ):
-
                 raise Duplicate()
 
             feed = rss_parser.parse_rss(response.content)
