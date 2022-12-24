@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import functools
 import hashlib
-import http
 
 from typing import Iterator
 
@@ -135,21 +134,14 @@ class FeedParser:
     def _get_response(self, client: httpx.Client) -> httpx.Response:
         response = client.get(self._podcast.rss, headers=self._get_feed_headers())
 
-        try:
-            response.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            if e.response.status_code in (
-                http.HTTPStatus.FORBIDDEN,
-                http.HTTPStatus.NOT_FOUND,
-                http.HTTPStatus.GONE,
-                http.HTTPStatus.UNAUTHORIZED,
-            ):
-                raise Inaccessible()
+        if response.is_redirect:
+            raise NotModified()
 
-            if response.status_code == http.HTTPStatus.NOT_MODIFIED:
-                raise NotModified()
+        if response.is_client_error:
+            raise Inaccessible()
 
-            raise
+        # check for any other http errors
+        response.raise_for_status()
 
         # if redirects to new URL, check another podcast doesn't already have this URL.
 

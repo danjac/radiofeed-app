@@ -4,7 +4,6 @@ import http
 import pathlib
 
 from datetime import datetime
-from unittest import mock
 
 import httpx
 import pytest
@@ -28,34 +27,6 @@ from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
 
 
-class MockResponse:
-    def __init__(
-        self,
-        url="",
-        status=http.HTTPStatus.OK,
-        content=b"",
-        headers=None,
-        links=None,
-    ):
-        self.url = url
-        self.content = content
-        self.headers = headers or {}
-        self.links = links or {}
-        self.status_code = status
-
-    def raise_for_status(self):
-        ...
-
-
-class BadMockResponse(MockResponse):
-    def raise_for_status(self):
-        raise httpx.HTTPStatusError(
-            self.content,
-            request=mock.Mock(),
-            response=self,
-        )
-
-
 class MockClient:
     def __init__(self, response):
         self.response = response
@@ -68,6 +39,10 @@ class MockClient:
 
     def get(self, *args, **kwargs):
         return self.response
+
+
+def mock_response(url, status_code, **kwargs):
+    return httpx.Response(status_code, request=httpx.Request("GET", url), **kwargs)
 
 
 def mock_client(mocker, response):
@@ -134,13 +109,10 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content(),
-                headers={
-                    "ETag": "abc123",
-                    "Last-Modified": self.updated,
-                },
             ),
         )
 
@@ -168,8 +140,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -232,8 +205,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_high_num_episodes.xml"),
                 headers={
                     "ETag": "abc123",
@@ -268,8 +242,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -326,8 +301,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -353,8 +329,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -383,8 +360,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_mock_complete.xml"),
                 headers={
                     "ETag": "abc123",
@@ -437,9 +415,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=self.redirect_rss,
-                status=http.HTTPStatus.PERMANENT_REDIRECT,
+            mock_response(
+                self.redirect_rss,
+                http.HTTPStatus.OK,
                 headers={
                     "ETag": "abc123",
                     "Last-Modified": self.updated,
@@ -464,9 +442,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=other.rss,
-                status=http.HTTPStatus.PERMANENT_REDIRECT,
+            mock_response(
+                other.rss,
+                http.HTTPStatus.OK,
                 headers={
                     "ETag": "abc123",
                     "Last-Modified": self.updated,
@@ -489,8 +467,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
@@ -510,8 +489,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
@@ -530,8 +510,9 @@ class TestFeedParser:
 
         mock_client(
             mocker,
-            MockResponse(
-                url=podcast.rss,
+            mock_response(
+                podcast.rss,
+                http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_empty_mock.xml"),
             ),
         )
@@ -549,7 +530,7 @@ class TestFeedParser:
 
         podcast.num_retries = 1
 
-        mock_client(mocker, BadMockResponse(status=http.HTTPStatus.NOT_MODIFIED))
+        mock_client(mocker, mock_response(podcast.rss, http.HTTPStatus.NOT_MODIFIED))
 
         with httpx.Client() as session:
             with pytest.raises(NotModified):
@@ -564,7 +545,7 @@ class TestFeedParser:
 
     def test_parse_http_gone(self, mocker, podcast, categories):
 
-        mock_client(mocker, BadMockResponse(status=http.HTTPStatus.GONE))
+        mock_client(mocker, mock_response(podcast.rss, http.HTTPStatus.GONE))
 
         with httpx.Client() as session:
             with pytest.raises(Inaccessible):
@@ -576,10 +557,10 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_http_server_error(self, mocker, podcast, categories):
-
         mock_client(
-            mocker, BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+            mocker, mock_response(podcast.rss, http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
+
         with httpx.Client() as session:
             with pytest.raises(httpx.HTTPError):
                 parse_feed(podcast, session)
@@ -594,7 +575,7 @@ class TestFeedParser:
         podcast.num_retries = 3
 
         mock_client(
-            mocker, BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+            mocker, mock_response(podcast.rss, http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
         with httpx.Client() as session:
@@ -613,7 +594,7 @@ class TestFeedParser:
         podcast.save()
 
         mock_client(
-            mocker, BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+            mocker, mock_response(podcast.rss, http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
         with httpx.Client() as session:
