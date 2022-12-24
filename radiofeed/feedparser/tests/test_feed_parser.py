@@ -70,8 +70,8 @@ class MockSession:
         return self.response
 
 
-def mock_session(response):
-    return mock.patch("requests.Session", return_value=MockSession(response), spec=True)
+def mock_session(mocker, response):
+    return mocker.patch("requests.Session", return_value=MockSession(response))
 
 
 class TestFeedParser:
@@ -132,17 +132,15 @@ class TestFeedParser:
             side_effect=ValueError(),
         )
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content(),
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                ),
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
             ),
         )
 
@@ -168,17 +166,15 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content(),
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                ),
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
             ),
         )
 
@@ -234,17 +230,15 @@ class TestFeedParser:
 
         podcast = create_podcast()
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content("rss_high_num_episodes.xml"),
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content("rss_high_num_episodes.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
             ),
         )
 
@@ -272,17 +266,15 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content(),
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
             ),
         )
 
@@ -332,17 +324,15 @@ class TestFeedParser:
         content = self.get_rss_content()
         podcast = create_podcast(content_hash=make_content_hash(content))
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=content,
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=content,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
             ),
         )
 
@@ -361,17 +351,15 @@ class TestFeedParser:
 
         create_podcast(content_hash=make_content_hash(content))
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=content,
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=content,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
             ),
         )
 
@@ -393,17 +381,15 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content("rss_mock_complete.xml"),
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content("rss_mock_complete.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
             ),
         )
 
@@ -449,18 +435,16 @@ class TestFeedParser:
 
     def test_parse_permanent_redirect(self, mocker, podcast, categories):
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=self.redirect_rss,
-                    status=http.HTTPStatus.PERMANENT_REDIRECT,
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                    content=self.get_rss_content(),
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=self.redirect_rss,
+                status=http.HTTPStatus.PERMANENT_REDIRECT,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+                content=self.get_rss_content(),
             ),
         )
         with requests.Session() as session:
@@ -478,18 +462,16 @@ class TestFeedParser:
         other = create_podcast(rss=self.redirect_rss)
         current_rss = podcast.rss
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=other.rss,
-                    status=http.HTTPStatus.PERMANENT_REDIRECT,
-                    headers={
-                        "ETag": "abc123",
-                        "Last-Modified": self.updated,
-                    },
-                    content=self.get_rss_content(),
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=other.rss,
+                status=http.HTTPStatus.PERMANENT_REDIRECT,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+                content=self.get_rss_content(),
             ),
         )
 
@@ -505,13 +487,11 @@ class TestFeedParser:
 
     def test_parse_no_podcasts(self, mocker, podcast, categories):
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content("rss_no_podcasts_mock.xml"),
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
 
@@ -528,13 +508,11 @@ class TestFeedParser:
 
         podcast.num_retries = 3
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content("rss_no_podcasts_mock.xml"),
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
 
@@ -550,13 +528,11 @@ class TestFeedParser:
 
     def test_parse_empty_feed(self, mocker, podcast, categories):
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                MockResponse(
-                    url=podcast.rss,
-                    content=self.get_rss_content("rss_empty_mock.xml"),
-                )
+        mock_session(
+            mocker,
+            MockResponse(
+                url=podcast.rss,
+                content=self.get_rss_content("rss_empty_mock.xml"),
             ),
         )
 
@@ -573,10 +549,7 @@ class TestFeedParser:
 
         podcast.num_retries = 1
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(MockResponse(status=http.HTTPStatus.NOT_MODIFIED)),
-        )
+        mock_session(mocker, MockResponse(status=http.HTTPStatus.NOT_MODIFIED))
 
         with requests.Session() as session:
             with pytest.raises(NotModified):
@@ -591,10 +564,7 @@ class TestFeedParser:
 
     def test_parse_http_gone(self, mocker, podcast, categories):
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(BadMockResponse(status=http.HTTPStatus.GONE)),
-        )
+        mock_session(mocker, BadMockResponse(status=http.HTTPStatus.GONE))
 
         with requests.Session() as session:
             with pytest.raises(Inaccessible):
@@ -607,11 +577,8 @@ class TestFeedParser:
 
     def test_parse_http_server_error(self, mocker, podcast, categories):
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-            ),
+        mock_session(
+            mocker, BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
         with requests.Session() as session:
             with pytest.raises(requests.HTTPError):
@@ -626,11 +593,8 @@ class TestFeedParser:
     def test_parse_http_server_error_max_retries(self, mocker, podcast, categories):
         podcast.num_retries = 3
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-            ),
+        mock_session(
+            mocker, BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
         with requests.Session() as session:
@@ -648,11 +612,8 @@ class TestFeedParser:
         podcast.pub_date = None
         podcast.save()
 
-        mocker.patch(
-            "requests.Session",
-            return_value=MockSession(
-                BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-            ),
+        mock_session(
+            mocker, BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
         with requests.Session() as session:
