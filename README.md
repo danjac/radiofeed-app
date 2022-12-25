@@ -89,8 +89,8 @@ The following environment variables should be set in your production installatio
 
 ```
 ENVIRONMENT='production'
-DATABASE_URL=''
-REDIS_URL=''
+DATABASE_URL='<database-url>'
+REDIS_URL='<redis-url>'
 ADMIN_URL='some-random-url/'
 ADMINS='me@site.com'
 ALLOWED_HOSTS='my-domain'
