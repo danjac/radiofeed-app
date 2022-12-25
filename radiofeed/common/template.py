@@ -140,19 +140,23 @@ def cover_image(
     css_class: str = "",
 ):
     """Renders a cover image with proxy URL."""
+    placeholder = static(f"img/placeholder-{size}.webp")
+
     proxy_url = (
-        reverse(
-            "cover_image",
-            kwargs={
-                "encoded_url": urlsafe_base64_encode(force_bytes(cover_url)),
-                "size": size,
-            },
+        (
+            reverse(
+                "cover_image",
+                kwargs={
+                    "encoded_url": urlsafe_base64_encode(force_bytes(cover_url)),
+                    "size": size,
+                },
+            )
+            if cover_url
+            else ""
         )
         if cover_url
-        else ""
+        else placeholder
     )
-
-    placeholder = static(f"img/placeholder-{size}.webp")
 
     return {
         "cover_url": proxy_url,

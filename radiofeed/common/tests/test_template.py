@@ -303,4 +303,7 @@ class TestCoverImage:
         assert cover_image("https://example.com/test.jpg", 100, "test img")["cover_url"]
 
     def test_is_not_cover_url(self):
-        assert not cover_image("", 100, "test img")["cover_url"]
+        assert (
+            cover_image("", 100, "test img")["cover_url"]
+            == "/static/img/placeholder-100.webp"
+        )
