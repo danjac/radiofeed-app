@@ -120,6 +120,69 @@ class TestCrawl:
 
         assert Podcast.objects.count() == 1
 
+    def test_crawl_with_parse_genre_error(self, db, mocker):
+        class _MockClient(MockClient):
+            def get(self, url, *args, **kwargs):
+
+                if url == "https://itunes.apple.com/lookup":
+                    return MockResponse(json={"results": [MOCK_RESULT]})
+
+                if url.endswith("/genre/podcasts/id26"):
+                    return MockResponse(mock_file="podcasts.html")
+
+                if "/genre/podcasts" in url:
+                    return MockResponse(exception=httpx.HTTPError("oops"))
+
+                return MockResponse()
+
+        mocker.patch("httpx.Client", return_value=_MockClient())
+
+        list(itunes.crawl())
+
+        assert Podcast.objects.count() == 0
+
+    def test_crawl_with_parse_feeds_error(self, db, mocker):
+        class _MockClient(MockClient):
+            def get(self, url, *args, **kwargs):
+
+                if url == "https://itunes.apple.com/lookup":
+                    return MockResponse(exception=httpx.HTTPError("oops"))
+
+                if url.endswith("/genre/podcasts/id26"):
+                    return MockResponse(mock_file="podcasts.html")
+
+                if "/genre/podcasts" in url:
+                    return MockResponse(mock_file="genre.html")
+
+                return MockResponse()
+
+        mocker.patch("httpx.Client", return_value=_MockClient())
+
+        list(itunes.crawl())
+
+        assert Podcast.objects.count() == 0
+
+    def test_crawl_with_podcasts_url_error(self, db, mocker):
+        class _MockClient(MockClient):
+            def get(self, url, *args, **kwargs):
+
+                if url == "https://itunes.apple.com/lookup":
+                    return MockResponse(json={"results": [MOCK_RESULT]})
+
+                if url.endswith("/genre/podcasts/id26"):
+                    return MockResponse(exception=httpx.HTTPError("oops"))
+
+                if "/genre/podcasts" in url:
+                    return MockResponse(mock_file="genre.html")
+
+                return MockResponse()
+
+        mocker.patch("httpx.Client", return_value=_MockClient())
+
+        list(itunes.crawl())
+
+        assert Podcast.objects.count() == 0
+
 
 class TestSearch:
     cache_key = "itunes:6447567a64413d3d"

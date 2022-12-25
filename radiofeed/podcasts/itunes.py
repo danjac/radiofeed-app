@@ -101,52 +101,64 @@ class Crawler:
         for url in self._parse_genre_urls():
             yield from self._parse_genre_url(url)
 
-    def _parse_genre_urls(self) -> Iterator[str]:
-        return (
-            href
-            for href in self._parse_urls(
-                _get_response(
-                    self._client,
-                    f"https://itunes.apple.com/{self._location}/genre/podcasts/id26",
-                ).content
-            )
-            if href.startswith(
-                f"https://podcasts.apple.com/{self._location}/genre/podcasts"
-            )
-        )
+    def _parse_genre_urls(self) -> list[str]:
+        try:
+            return [
+                href
+                for href in self._parse_urls(
+                    _get_response(
+                        self._client,
+                        f"https://itunes.apple.com/{self._location}/genre/podcasts/id26",
+                    ).content
+                )
+                if href.startswith(
+                    f"https://podcasts.apple.com/{self._location}/genre/podcasts"
+                )
+            ]
+        except httpx.HTTPError:
+            return []
 
     def _parse_genre_url(self, url: str) -> Iterator[Feed]:
         for feed_ids in batcher.batcher(self._parse_podcast_ids(url), 100):
             yield from self._parse_feeds(feed_ids)
 
     def _parse_feeds(self, feed_ids: list[str]) -> Iterator[Feed]:
-        _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
-        yield from _parse_feeds(
-            _get_response(
-                self._client,
-                "https://itunes.apple.com/lookup",
-                {
-                    "id": ",".join(_feed_ids),
-                    "entity": "podcast",
-                },
-            ).json(),
-        )
+        try:
+            _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
-        self._feed_ids = self._feed_ids.union(_feed_ids)
-
-    def _parse_podcast_ids(self, url: str) -> Iterator[str]:
-        return (
-            podcast_id
-            for podcast_id in (
-                self._parse_podcast_id(href)
-                for href in self._parse_urls(_get_response(self._client, url).content)
-                if href.startswith(
-                    f"https://podcasts.apple.com/{self._location}/podcast/"
-                )
+            yield from _parse_feeds(
+                _get_response(
+                    self._client,
+                    "https://itunes.apple.com/lookup",
+                    {
+                        "id": ",".join(_feed_ids),
+                        "entity": "podcast",
+                    },
+                ).json(),
             )
-            if podcast_id
-        )
+
+            self._feed_ids = self._feed_ids.union(_feed_ids)
+        except httpx.HTTPError:
+            return
+
+    def _parse_podcast_ids(self, url: str) -> list[str]:
+        try:
+            return [
+                podcast_id
+                for podcast_id in (
+                    self._parse_podcast_id(href)
+                    for href in self._parse_urls(
+                        _get_response(self._client, url).content
+                    )
+                    if href.startswith(
+                        f"https://podcasts.apple.com/{self._location}/podcast/"
+                    )
+                )
+                if podcast_id
+            ]
+        except httpx.HTTPError:
+            return []
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
         for element in _xpath_parser.iterparse(
