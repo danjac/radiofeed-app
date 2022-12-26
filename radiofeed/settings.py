@@ -53,11 +53,11 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
+ADMINS = getaddresses(env.list("ADMINS", default=[]))
+
 CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
-
-ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
 SITE_ID = 1
 
@@ -269,7 +269,6 @@ CACHEOPS = {
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
-
 
 # Environments
 
