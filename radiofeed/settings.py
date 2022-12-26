@@ -281,7 +281,7 @@ match ENVIRONMENT:
 
         DEBUG = True
 
-        ADMIN_SITE_HEADER += " [LOCAL]"
+        ADMIN_SITE_HEADER += " [DEVELOPMENT]"
 
         INSTALLED_APPS = [
             "whitenoise.runserver_nostatic",
