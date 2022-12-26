@@ -53,6 +53,8 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
+CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
+
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
@@ -116,7 +118,9 @@ MIDDLEWARE: list[str] = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# base Django admin URL (should be something obscure in production)
+# admin settings
+
+ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 ADMIN_URL = env("ADMIN_URL", default="admin/")
 
@@ -265,12 +269,6 @@ CACHEOPS = {
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
-
-# Project specific
-
-ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
-
-CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
 
 
 # Environments
