@@ -54,7 +54,7 @@ class XPathParser:
     def first(self, element: lxml.etree.Element, *paths: str) -> str | None:
         """Returns first matching text or attribute value.
 
-        Tries each path in turn. If no values found returns `default`.
+        Tries each path in turn. If no values found returns None.
         """
         try:
             return next(self.iter(element, *paths))
