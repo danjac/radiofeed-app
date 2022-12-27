@@ -44,7 +44,7 @@ Install the NLTK corpora:
 xargs python -m nltk.downloader <./nltk.txt
 ```
 
-Finally, run migrations:
+Run database migrations:
 
 ```bash
 python manage.py migrate
