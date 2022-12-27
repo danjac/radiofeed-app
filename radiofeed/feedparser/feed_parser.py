@@ -104,36 +104,35 @@ class FeedParser:
             response = self._get_response(client)
             content_hash = self._make_content_hash(response)
             feed = self._parse_rss(response.content)
+        except FeedParserError as e:
+            return self._handle_exception(e)
 
-            categories, keywords = self._extract_categories(feed)
+        categories, keywords = self._extract_categories(feed)
 
-            with transaction.atomic():
+        with transaction.atomic():
 
-                self._podcast_update(
-                    num_retries=0,
-                    content_hash=content_hash,
-                    keywords=keywords,
-                    rss=response.url,
-                    active=not (feed.complete),
-                    etag=response.headers.get("ETag", ""),
-                    modified=parse_date(response.headers.get("Last-Modified")),
-                    extracted_text=self._extract_text(feed),
-                    frequency=scheduler.schedule(feed),
-                    **attrs.asdict(
-                        feed,
-                        filter=attrs.filters.exclude(  # type: ignore
-                            self._feed_attrs.categories,
-                            self._feed_attrs.complete,
-                            self._feed_attrs.items,
-                        ),
+            self._podcast_update(
+                num_retries=0,
+                content_hash=content_hash,
+                keywords=keywords,
+                rss=response.url,
+                active=not (feed.complete),
+                etag=response.headers.get("ETag", ""),
+                modified=parse_date(response.headers.get("Last-Modified")),
+                extracted_text=self._extract_text(feed),
+                frequency=scheduler.schedule(feed),
+                **attrs.asdict(
+                    feed,
+                    filter=attrs.filters.exclude(  # type: ignore
+                        self._feed_attrs.categories,
+                        self._feed_attrs.complete,
+                        self._feed_attrs.items,
                     ),
-                )
+                ),
+            )
 
-                self._podcast.categories.set(categories)
-                self._episode_updates(feed)
-
-        except Exception as e:
-            self._handle_exception(e)
+            self._podcast.categories.set(categories)
+            self._episode_updates(feed)
 
     def _get_response(self, client: httpx.Client) -> httpx.Response:
         try:
@@ -182,7 +181,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _handle_exception(self, exc: Exception) -> None:
+    def _handle_exception(self, exc: FeedParserError) -> None:
 
         # check if podcast should be discontinued and no longer updated.
         # if a parsing error (e.g. HTTP or RSS error) then increment the num_retries field.
@@ -204,10 +203,6 @@ class FeedParser:
                 # increment num_retries in case a temporary error
                 num_retries += 1
 
-            case _:
-                # any other error: raise immediately without any DB updates
-                raise exc
-
         # if number of errors exceeds threshold then deactivate the podcast
         active = active and num_retries < self._max_retries
 
@@ -222,7 +217,9 @@ class FeedParser:
         )
 
         self._podcast_update(
-            active=active, num_retries=num_retries, frequency=frequency
+            active=active,
+            num_retries=num_retries,
+            frequency=frequency,
         )
 
         # re-raise original exception
