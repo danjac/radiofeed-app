@@ -209,19 +209,23 @@ class TestPodcastDetail:
 
     def test_get_podcast_active(self, client, auth_user, podcast):
         podcast.categories.set(create_batch(create_category, 3))
+        create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
         assert response.context["podcast"] == podcast
+        assert response.context["is_subscribed"] is True
 
     def test_get_podcast_inactive(self, client, auth_user):
         podcast = create_podcast(active=False)
+        create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert_ok(response)
         assert response.context["podcast"] == podcast
+        assert response.context["is_subscribed"] is False
 
     def test_get_podcast_admin(self, client, staff_user, podcast):
         response = client.get(
