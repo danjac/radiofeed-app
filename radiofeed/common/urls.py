@@ -1,22 +1,11 @@
 from __future__ import annotations
 
-from django.conf import settings
 from django.urls import path
 
 from radiofeed.common import views
 
 urlpatterns = [
-    path(
-        "about/",
-        views.static_page,
-        name="about",
-        kwargs={
-            "template_name": "about.html",
-            "extra_context": {
-                "contact_email": settings.CONTACT_EMAIL,
-            },
-        },
-    ),
+    path("about/", views.about_page, name="about"),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
     path(
         "covers/<str:encoded_url>/<int:size>/cover.webp",

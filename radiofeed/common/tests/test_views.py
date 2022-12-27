@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import httpx
 
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.common.asserts import assert_bad_request, assert_ok
-from radiofeed.common.views import static_page
 
 
 class TestManifest:
@@ -104,19 +104,19 @@ class TestCoverImage:
 
 class TestErrorPages:
     def test_bad_request(self, db, rf):
-        assert_ok(static_page(rf.get("/"), "400.html"))
+        assert_ok(render(rf.get("/"), "400.html"))
 
     def test_not_found(self, db, rf):
-        assert_ok(static_page(rf.get("/"), "404.html"))
+        assert_ok(render(rf.get("/"), "404.html"))
 
     def test_forbidden(self, db, rf):
-        assert_ok(static_page(rf.get("/"), "403.html"))
+        assert_ok(render(rf.get("/"), "403.html"))
 
     def test_not_allowed(self, db, rf):
-        assert_ok(static_page(rf.get("/"), "405.html"))
+        assert_ok(render(rf.get("/"), "405.html"))
 
     def test_server_error(self, db, rf):
-        assert_ok(static_page(rf.get("/"), "500.html"))
+        assert_ok(render(rf.get("/"), "500.html"))
 
     def test_csrf(self, db, rf):
-        assert_ok(static_page(rf.get("/"), "403_csrf.html"))
+        assert_ok(render(rf.get("/"), "403_csrf.html"))

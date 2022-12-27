@@ -33,11 +33,9 @@ _cache_page = cache_page(_DEFAULT_CACHE_TIMEOUT)
 
 
 @require_safe
-def static_page(
-    request: HttpRequest, template_name: str, extra_context: dict | None = None
-) -> HttpResponse:
-    """Renders simple static page."""
-    return render(request, template_name, extra_context)
+def about_page(request: HttpRequest) -> HttpResponse:
+    """Renders about page."""
+    return render(request, "about.html", {"contact_email": settings.CONTACT_EMAIL})
 
 
 @require_POST
@@ -156,7 +154,7 @@ def security(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
             [
-                f"Contact: mailto:{settings.DEFAULT_FROM_EMAIL}",
+                f"Contact: mailto:{settings.CONTACT_EMAIL}",
             ]
         ),
         content_type="text/plain",
