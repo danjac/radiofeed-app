@@ -58,6 +58,9 @@ ADMINS = getaddresses(env.list("ADMINS", default=[]))
 SERVER_EMAIL = f"errors@{EMAIL_HOST}"
 DEFAULT_FROM_EMAIL = f"support@{EMAIL_HOST}"
 
+# email shown in about page etc
+CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
+
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
 SITE_ID = 1

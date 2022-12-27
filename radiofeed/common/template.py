@@ -44,12 +44,6 @@ def pagination_url(context: RequestContext, *args, **kwargs) -> str:
     return pagination.pagination_url(context.request, *args, **kwargs)
 
 
-@register.simple_tag
-def get_support_email() -> str:
-    """Returns DEFAULT_FROM_EMAIL setting."""
-    return settings.DEFAULT_FROM_EMAIL
-
-
 @register.simple_tag(takes_context=True)
 def absolute_uri(
     context: Context,
