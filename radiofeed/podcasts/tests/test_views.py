@@ -207,8 +207,16 @@ class TestPodcastDetail:
         assert_ok(response)
         assert response.context["podcast"] == podcast
 
-    def test_get_podcast_authenticated(self, client, auth_user, podcast):
+    def test_get_podcast_active(self, client, auth_user, podcast):
         podcast.categories.set(create_batch(create_category, 3))
+        response = client.get(
+            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
+        )
+        assert_ok(response)
+        assert response.context["podcast"] == podcast
+
+    def test_get_podcast_inactive(self, client, auth_user):
+        podcast = create_podcast(active=False)
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
@@ -341,13 +349,12 @@ class TestCategoryDetail:
 
 
 class TestSubscribe:
-    @pytest.fixture
     def url(self, podcast):
         return reverse("podcasts:subscribe", args=[podcast.id])
 
-    def test_subscribe(self, client, podcast, auth_user, url):
+    def test_subscribe(self, client, podcast, auth_user):
         response = client.post(
-            url,
+            self.url(podcast),
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
             HTTP_HX_REQUEST="true",
         )
@@ -356,13 +363,33 @@ class TestSubscribe:
             podcast=podcast, subscriber=auth_user
         ).exists()
 
+    def test_inactive(
+        self,
+        client,
+        auth_user,
+    ):
+        podcast = create_podcast(active=False)
+        response = client.post(
+            self.url(podcast),
+            HTTP_HX_TARGET=podcast.get_subscribe_target(),
+            HTTP_HX_REQUEST="true",
+        )
+        assert_not_found(response)
+        assert not Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
+
     def test_already_subscribed(
-        self, transactional_db, client, podcast, auth_user, url
+        self,
+        transactional_db,
+        client,
+        podcast,
+        auth_user,
     ):
 
         create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.post(
-            url,
+            self.url(podcast),
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
             HTTP_HX_REQUEST="true",
         )

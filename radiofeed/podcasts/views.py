@@ -240,12 +240,12 @@ def category_detail(
 @require_POST
 @require_auth
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Subscribe a user to a podcast.
+    """Subscribe a user to a podcast. Podcast must be active.
 
     Returns:
         returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise returns the subscribe action as HTMX snippet.
     """
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = _get_podcast_or_404(podcast_id, active=True)
 
     try:
         Subscription.objects.create(subscriber=request.user, podcast=podcast)
@@ -272,8 +272,8 @@ def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def _get_podcast_or_404(podcast_id: int) -> Podcast:
-    return get_object_or_404(_get_podcasts(), pk=podcast_id)
+def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
+    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
 
 
 def _render_subscribe_action(

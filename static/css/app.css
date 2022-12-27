@@ -163,7 +163,7 @@ input[type="search"]::-webkit-search-results-decoration {
         }
     }
 
-    .btn.focus {
+    .btn.focus:enabled {
         outline: 2px solid transparent;
         outline-offset: 2px;
     }
@@ -174,7 +174,7 @@ input[type="search"]::-webkit-search-results-decoration {
         border: solid theme("borderWidth.DEFAULT") theme("colors.blue.800");
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:enabled {
         background-color: theme("colors.blue.600");
     }
 
@@ -184,8 +184,17 @@ input[type="search"]::-webkit-search-results-decoration {
         border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
     }
 
-    .btn-default:hover {
+    .btn-default:hover:enabled {
         background-color: theme("colors.purple.600");
+    }
+
+    .btn-danger {
+        color: theme("colors.white");
+        background-color: theme("colors.red.800");
+    }
+
+    .btn-danger:hover:enabled {
+        background-color: theme("colors.red.600");
     }
 
     .btn-outline {
@@ -197,7 +206,7 @@ input[type="search"]::-webkit-search-results-decoration {
         border: solid theme("borderWidth.DEFAULT") theme("colors.blue.800");
     }
 
-    .btn-primary.btn-outline:hover {
+    .btn-primary.btn-outline:hover:enabled {
         color: theme("colors.blue.600");
         background-color: theme("colors.gray.100");
         border-color: theme("colors.blue.800");
@@ -208,19 +217,21 @@ input[type="search"]::-webkit-search-results-decoration {
         border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
     }
 
-    .btn-default.btn-outline:hover {
+    .btn-default.btn-outline:hover:enabled {
         color: theme("colors.purple.600");
         background-color: theme("colors.gray.100");
         border-color: theme("colors.purple.800");
     }
 
-    .btn-danger {
-        color: theme("colors.white");
-        background-color: theme("colors.red.800");
+    .btn-danger.btn-outline {
+        color: theme("colors.red.800");
+        border: solid theme("borderWidth.DEFAULT") theme("colors.red.800");
     }
 
-    .btn-danger:hover {
-        background-color: theme("colors.red.600");
+    .btn-danger.btn-outline:hover:enabled {
+        color: theme("colors.red.600");
+        background-color: theme("colors.gray.100");
+        border-color: theme("colors.red.800");
     }
 
     @media (prefers-color-scheme: dark) {
@@ -230,16 +241,27 @@ input[type="search"]::-webkit-search-results-decoration {
             border-color: theme("colors.gray.500");
         }
 
-        .btn-primary.btn-outline:hover {
+        .btn-danger.btn-outline {
+            color: theme("colors.red.500");
+            border-color: theme("colors.red.500");
+        }
+
+        .btn-primary.btn-outline:hover:enabled {
             color: theme("colors.blue.300");
-            background-color: theme("colors.gray.800");
+            background-color: inherit;
             border-color: theme("colors.blue.300");
         }
 
-        .btn-default.btn-outline:hover {
+        .btn-default.btn-outline:hover:enabled {
             color: theme("colors.purple.400");
-            background-color: theme("colors.gray.800");
+            background-color: inherit;
             border-color: theme("colors.purple.300");
+        }
+
+        .btn-danger.btn-outline:hover:enabled {
+            color: theme("colors.red.500");
+            background-color: inherit;
+            border-color: theme("colors.red.500");
         }
     }
 
