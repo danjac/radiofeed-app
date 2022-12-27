@@ -55,7 +55,8 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
-CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
+SERVER_EMAIL = f"errors@{EMAIL_HOST}"
+DEFAULT_FROM_EMAIL = f"support@{EMAIL_HOST}"
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
@@ -369,10 +370,7 @@ match ENVIRONMENT:
 
         # Mailgun
 
-        MAILGUN_API_KEY = env("MAILGUN_API_KEY", default=None)
-        MAILGUN_SENDER_DOMAIN = env("MAILGUN_SENDER_DOMAIN", default=None)
-
-        if MAILGUN_API_KEY and MAILGUN_SENDER_DOMAIN:
+        if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
 
             INSTALLED_APPS += ["anymail"]
 
@@ -385,8 +383,5 @@ match ENVIRONMENT:
             ANYMAIL = {
                 "MAILGUN_API_KEY": MAILGUN_API_KEY,
                 "MAILGUN_API_URL": MAILGUN_API_URL,
-                "MAILGUN_SENDER_DOMAIN": MAILGUN_SENDER_DOMAIN,
+                "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
             }
-
-            SERVER_EMAIL = f"errors@{MAILGUN_SENDER_DOMAIN}"
-            DEFAULT_FROM_EMAIL = f"support@{MAILGUN_SENDER_DOMAIN}"

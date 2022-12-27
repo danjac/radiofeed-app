@@ -45,9 +45,9 @@ def pagination_url(context: RequestContext, *args, **kwargs) -> str:
 
 
 @register.simple_tag
-def get_contact_email() -> str:
-    """Returns CONTACT_EMAIL setting."""
-    return settings.CONTACT_EMAIL
+def get_support_email() -> str:
+    """Returns DEFAULT_FROM_EMAIL setting."""
+    return settings.DEFAULT_FROM_EMAIL
 
 
 @register.simple_tag(takes_context=True)

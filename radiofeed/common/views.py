@@ -156,7 +156,7 @@ def security(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         "\n".join(
             [
-                f"Contact: mailto:{settings.CONTACT_EMAIL}",
+                f"Contact: mailto:{settings.DEFAULT_FROM_EMAIL}",
             ]
         ),
         content_type="text/plain",

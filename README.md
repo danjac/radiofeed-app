@@ -103,12 +103,14 @@ REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
 ADMINS=me@mysite.com
 ALLOWED_HOSTS=mysite.com
+EMAIL_HOST=mysite.com
 MAILGUN_API_KEY=<mailgun_api_key>
-MAILGUN_SENDER_DOMAIN=mysite.com
 SECRET_KEY=<secret>
 SENTRY_URL=<sentry-url>
 CONTACT_EMAIL=admin@mysite.com
 ```
+
+`EMAIL_HOST` should be set to your Mailgun sender domain along with `MAILGUN_API_KEY` if you are using Mailgun.
 
 You should ensure the `SECRET_KEY` is sufficiently random: run the `generate_secret_key` custom Django command to create a suitable random string. In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_.
 
