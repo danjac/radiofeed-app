@@ -58,6 +58,12 @@ python manage.py loaddata --populate=all ./radiofeed/podcasts/fixtures/categorie
 python manage.py loaddata --populate=all ./radiofeed/podcasts/fixtures/podcasts.json.gz
 ```
 
+Finally, as with any Django project, you should also create a super-user to access the admin section:
+
+```bash
+python manage.py createsuperuser
+```
+
 This should provide some useful data to get started with.
 
 ### Frontend setup
