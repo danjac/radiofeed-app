@@ -28,8 +28,9 @@ from radiofeed.podcasts.models import Podcast
 
 
 class MockClient:
-    def __init__(self, response):
+    def __init__(self, response=None, exception=None):
         self.response = response
+        self.exception = exception
 
     def __enter__(self):
         return self
@@ -38,6 +39,8 @@ class MockClient:
         pass
 
     def get(self, *args, **kwargs):
+        if self.exception:
+            raise self.exception
         return self.response
 
 
@@ -45,8 +48,8 @@ def mock_response(url, status_code, **kwargs):
     return httpx.Response(status_code, request=httpx.Request("GET", url), **kwargs)
 
 
-def mock_client(mocker, response):
-    return mocker.patch("httpx.Client", return_value=MockClient(response))
+def mock_client(mocker, response=None, exception=None):
+    return mocker.patch("httpx.Client", return_value=MockClient(response, exception))
 
 
 class TestFeedParser:
@@ -560,6 +563,19 @@ class TestFeedParser:
         mock_client(
             mocker, mock_response(podcast.rss, http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
+
+        with httpx.Client() as session:
+            with pytest.raises(FeedParserError):
+                parse_feed(podcast, session)
+
+        podcast.refresh_from_db()
+
+        assert podcast.active
+        assert podcast.parsed
+        assert podcast.num_retries == 1
+
+    def test_parse_connect_error(self, mocker, podcast, categories):
+        mock_client(mocker, exception=httpx.ConnectError("fail"))
 
         with httpx.Client() as session:
             with pytest.raises(FeedParserError):

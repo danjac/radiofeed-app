@@ -151,7 +151,10 @@ class FeedParser:
             self._handle_exception(e)
 
     def _get_response(self, client: httpx.Client) -> httpx.Response:
-        response = client.get(self._podcast.rss, headers=self._get_feed_headers())
+        try:
+            response = client.get(self._podcast.rss, headers=self._get_feed_headers())
+        except httpx.HTTPError as e:
+            raise FeedParserError from e
 
         if response.is_redirect:
             raise NotModified()
