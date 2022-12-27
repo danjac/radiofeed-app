@@ -207,7 +207,7 @@ class TestPodcastDetail:
         assert_ok(response)
         assert response.context["podcast"] == podcast
 
-    def test_get_podcast_active(self, client, auth_user, podcast):
+    def test_get_podcast_subscribed(self, client, auth_user, podcast):
         podcast.categories.set(create_batch(create_category, 3))
         create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.get(
@@ -217,9 +217,7 @@ class TestPodcastDetail:
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is True
 
-    def test_get_podcast_inactive(self, client, auth_user):
-        podcast = create_podcast(active=False)
-        create_subscription(subscriber=auth_user, podcast=podcast)
+    def test_get_podcast_not_subscribed(self, client, auth_user, podcast):
         response = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
@@ -364,22 +362,6 @@ class TestSubscribe:
         )
         assert_ok(response)
         assert Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
-    def test_inactive(
-        self,
-        client,
-        auth_user,
-    ):
-        podcast = create_podcast(active=False)
-        response = client.post(
-            self.url(podcast),
-            HTTP_HX_TARGET=podcast.get_subscribe_target(),
-            HTTP_HX_REQUEST="true",
-        )
-        assert_not_found(response)
-        assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
 

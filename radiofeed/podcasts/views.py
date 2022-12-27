@@ -136,7 +136,7 @@ def podcast_detail(
         "podcasts/detail.html",
         {
             "podcast": podcast,
-            "is_subscribed": podcast.active and podcast.is_subscribed(request.user),
+            "is_subscribed": podcast.is_subscribed(request.user),
         },
     )
 
@@ -245,7 +245,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     Returns:
         returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise returns the subscribe action as HTMX snippet.
     """
-    podcast = _get_podcast_or_404(podcast_id, active=True)
+    podcast = _get_podcast_or_404(podcast_id)
 
     try:
         Subscription.objects.create(subscriber=request.user, podcast=podcast)
@@ -272,8 +272,8 @@ def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
-    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
+def _get_podcast_or_404(podcast_id: int) -> Podcast:
+    return get_object_or_404(_get_podcasts(), pk=podcast_id)
 
 
 def _render_subscribe_action(
