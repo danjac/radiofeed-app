@@ -105,7 +105,7 @@ class FeedParser:
             content_hash = self._make_content_hash(response)
             feed = self._parse_rss(response.content)
         except FeedParserError as e:
-            return self._handle_exception(e)
+            return self._handle_feed_error(e)
 
         categories, keywords = self._extract_categories(feed)
 
@@ -181,7 +181,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _handle_exception(self, exc: FeedParserError) -> None:
+    def _handle_feed_error(self, exc: FeedParserError) -> None:
 
         # check if podcast should be discontinued and no longer updated.
         # if a parsing error (e.g. HTTP or RSS error) then increment the num_retries field.
