@@ -114,10 +114,7 @@ class FeedParser:
             ):
                 raise Duplicate()
 
-            try:
-                feed = rss_parser.parse_rss(response.content)
-            except rss_parser.RssParserError as e:
-                raise FeedParserError from e
+            feed = self._parse_rss(response.content)
 
             active = not (feed.complete)
             categories, keywords = self._extract_categories(feed)
@@ -166,6 +163,12 @@ class FeedParser:
             return response
 
         except httpx.HTTPError as e:
+            raise FeedParserError from e
+
+    def _parse_rss(self, content: bytes) -> Feed:
+        try:
+            return rss_parser.parse_rss(content)
+        except rss_parser.RssParserError as e:
             raise FeedParserError from e
 
     def _get_feed_headers(self) -> dict[str, str]:
