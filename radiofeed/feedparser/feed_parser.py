@@ -105,17 +105,16 @@ class FeedParser:
             content_hash = self._make_content_hash(response)
             feed = self._parse_rss(response.content)
 
-            active = not (feed.complete)
             categories, keywords = self._extract_categories(feed)
 
             with transaction.atomic():
 
                 self._podcast_update(
-                    active=active,
                     num_retries=0,
                     content_hash=content_hash,
                     keywords=keywords,
                     rss=response.url,
+                    active=not (feed.complete),
                     etag=response.headers.get("ETag", ""),
                     modified=parse_date(response.headers.get("Last-Modified")),
                     extracted_text=self._extract_text(feed),
