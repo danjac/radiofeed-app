@@ -153,22 +153,20 @@ class FeedParser:
     def _get_response(self, client: httpx.Client) -> httpx.Response:
         try:
             response = client.get(self._podcast.rss, headers=self._get_feed_headers())
-        except httpx.HTTPError as e:
-            raise FeedParserError from e
 
-        if response.is_redirect:
-            raise NotModified()
+            if response.is_redirect:
+                raise NotModified()
 
-        if response.is_client_error:
-            raise Inaccessible()
+            if response.is_client_error:
+                raise Inaccessible()
 
-        try:
-            # check for any other http errors
+                # check for any other http errors
             response.raise_for_status()
+
+            return response
+
         except httpx.HTTPError as e:
             raise FeedParserError from e
-
-        return response
 
     def _get_feed_headers(self) -> dict[str, str]:
         headers = {}
