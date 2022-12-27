@@ -136,7 +136,7 @@ def podcast_detail(
         "podcasts/detail.html",
         {
             "podcast": podcast,
-            "is_subscribed": podcast.is_subscribed(request.user),
+            "is_subscribed": podcast.active and podcast.is_subscribed(request.user),
         },
     )
 
