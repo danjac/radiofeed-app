@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import httpx
-
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
@@ -10,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.common.fast_count import FastCountAdminMixin
-from radiofeed.feedparser import feed_parser, rss_parser, scheduler
+from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -200,17 +198,10 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
                 level=messages.ERROR,
             )
 
-        except rss_parser.RssParserError as e:
+        except feed_parser.FeedParserError as e:
             self.message_user(
                 request,
-                _("RSS parser error: {error}").format(error=str(e)),
-                level=messages.ERROR,
-            )
-
-        except httpx.HTTPError as e:
-            self.message_user(
-                request,
-                _("HTTP error: {error}").format(error=str(e)),
+                _("Feed parser error: {error}").format(error=str(e)),
                 level=messages.ERROR,
             )
 

@@ -16,13 +16,13 @@ from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.feed_parser import (
     Duplicate,
     FeedParser,
+    FeedParserError,
     Inaccessible,
     NotModified,
     get_categories,
     make_content_hash,
     parse_feed,
 )
-from radiofeed.feedparser.rss_parser import RssParserError
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
 
@@ -475,7 +475,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(RssParserError):
+            with pytest.raises(FeedParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -498,7 +498,7 @@ class TestFeedParser:
 
         with httpx.Client() as session:
 
-            with pytest.raises(RssParserError):
+            with pytest.raises(FeedParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -518,7 +518,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(RssParserError):
+            with pytest.raises(FeedParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -562,7 +562,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(httpx.HTTPError):
+            with pytest.raises(FeedParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -579,7 +579,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(httpx.HTTPError):
+            with pytest.raises(FeedParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -598,7 +598,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(httpx.HTTPError):
+            with pytest.raises(FeedParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()

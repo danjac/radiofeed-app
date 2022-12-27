@@ -35,15 +35,19 @@ _ACCEPT_HEADER = ",".join(
 )
 
 
-class NotModified(ValueError):
+class FeedParserError(ValueError):
+    """Generic parser error."""
+
+
+class NotModified(FeedParserError):
     """RSS feed has not been modified since last update."""
 
 
-class Duplicate(ValueError):
+class Duplicate(FeedParserError):
     """Another identical podcast exists in the database."""
 
 
-class Inaccessible(ValueError):
+class Inaccessible(FeedParserError):
     """Content is no longer accesssible."""
 
 
@@ -110,7 +114,10 @@ class FeedParser:
             ):
                 raise Duplicate()
 
-            feed = rss_parser.parse_rss(response.content)
+            try:
+                feed = rss_parser.parse_rss(response.content)
+            except rss_parser.RssParserError as e:
+                raise FeedParserError from e
 
             active = not (feed.complete)
             categories, keywords = self._extract_categories(feed)
@@ -152,8 +159,11 @@ class FeedParser:
         if response.is_client_error:
             raise Inaccessible()
 
-        # check for any other http errors
-        response.raise_for_status()
+        try:
+            # check for any other http errors
+            response.raise_for_status()
+        except httpx.HTTPError as e:
+            raise FeedParserError from e
 
         return response
 
@@ -183,7 +193,7 @@ class FeedParser:
                 # successful pull, so reset num_retries
                 num_retries = 0
 
-            case rss_parser.RssParserError() | httpx.HTTPError():
+            case FeedParserError():
                 # increment num_retries in case a temporary error
                 num_retries += 1
 

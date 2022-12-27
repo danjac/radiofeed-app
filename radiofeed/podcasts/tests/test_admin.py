@@ -3,15 +3,18 @@ from __future__ import annotations
 from datetime import timedelta
 from unittest import mock
 
-import httpx
 import pytest
 
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
 from radiofeed.common.factories import create_batch
-from radiofeed.feedparser import rss_parser
-from radiofeed.feedparser.feed_parser import Duplicate, Inaccessible, NotModified
+from radiofeed.feedparser.feed_parser import (
+    Duplicate,
+    FeedParserError,
+    Inaccessible,
+    NotModified,
+)
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -106,18 +109,12 @@ class TestPodcastAdmin:
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()
 
-    def test_parse_podcast_feed_rss_error(self, mocker, podcast, podcast_admin, req):
+    def test_parse_podcast_feed_generic_error(
+        self, mocker, podcast, podcast_admin, req
+    ):
         patched = mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=rss_parser.RssParserError("oops"),
-        )
-        podcast_admin.parse_podcast_feed(req, podcast)
-        patched.assert_called()
-
-    def test_parse_podcast_feed_http_error(self, mocker, podcast, podcast_admin, req):
-        patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=httpx.HTTPError("error"),
+            side_effect=FeedParserError("error"),
         )
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()
