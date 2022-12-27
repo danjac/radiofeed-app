@@ -102,7 +102,18 @@ class FeedParser:
         """
         try:
             response = self._get_response(client)
-            content_hash = self._make_content_hash(response)
+            content_hash = make_content_hash(response.content)
+
+            if content_hash == self._podcast.content_hash:
+                raise NotModified()
+
+            if (
+                Podcast.objects.exclude(pk=self._podcast.pk)
+                .filter(Q(rss=response.url) | Q(content_hash=content_hash))
+                .exists()
+            ):
+                raise Duplicate()
+
             feed = self._parse_rss(response.content)
         except FeedParserError as e:
             return self._handle_feed_error(e)
@@ -157,21 +168,6 @@ class FeedParser:
             return rss_parser.parse_rss(content)
         except rss_parser.RssParserError as e:
             raise FeedParserError from e
-
-    def _make_content_hash(self, response: httpx.Response) -> str:
-        content_hash = make_content_hash(response.content)
-
-        if content_hash == self._podcast.content_hash:
-            raise NotModified()
-
-        if (
-            Podcast.objects.exclude(pk=self._podcast.pk)
-            .filter(Q(rss=response.url) | Q(content_hash=content_hash))
-            .exists()
-        ):
-            raise Duplicate()
-
-        return content_hash
 
     def _get_feed_headers(self) -> dict[str, str]:
         headers = {}
