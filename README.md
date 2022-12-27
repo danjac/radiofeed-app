@@ -97,18 +97,20 @@ python -m pytest
 The following environment variables should be set in your production installation. Some providers may set some of these automatically e.g. `DATABASE_URL`:
 
 ```
-ENVIRONMENT='production'
-DATABASE_URL='<database-url>'
-REDIS_URL='<redis-url>'
-ADMIN_URL='some-random-url/'
-ADMINS='me@site.com'
-ALLOWED_HOSTS='my-domain'
-MAILGUN_API_KEY='<mailgun_api_key>'
-MAILGUN_SENDER_DOMAIN='my-domain'
-SECRET_KEY='<secret>'
-SENTRY_URL='<sentry-url>'
-CONTACT_EMAIL='my-site@host.com'
+ENVIRONMENT=production
+DATABASE_URL=<database-url>
+REDIS_URL=<redis-url>
+ADMIN_URL=<admin-url>
+ADMINS=me@mysite.com
+ALLOWED_HOSTS=mysite.com
+MAILGUN_API_KEY=<mailgun_api_key>
+MAILGUN_SENDER_DOMAIN=mysite.com
+SECRET_KEY=<secret>
+SENTRY_URL=<sentry-url>
+CONTACT_EMAIL=admin@mysite.com
 ```
+
+You should ensure the `SECRET_KEY` is sufficiently random: run the `generate_secret_key` custom Django command to create a suitable random string. In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_.
 
 A `Procfile` is provided for Heroku-like deployments (including Dokku, Railway etc).
 
