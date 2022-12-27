@@ -182,10 +182,6 @@ class FeedParser:
         return headers
 
     def _handle_feed_error(self, exc: FeedParserError) -> None:
-
-        # check if podcast should be discontinued and no longer updated.
-        # if a parsing error (e.g. HTTP or RSS error) then increment the num_retries field.
-
         num_retries: int = self._podcast.num_retries
         active: bool = True
 
