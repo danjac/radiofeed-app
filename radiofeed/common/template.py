@@ -164,7 +164,7 @@ def cover_image(
 
 @register.filter
 @stringfilter
-def normalize_url(url: str) -> str:
+def force_url(url: str) -> str:
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if url:
         for value in (url, f"https://{url}"):

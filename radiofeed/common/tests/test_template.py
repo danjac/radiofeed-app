@@ -12,10 +12,10 @@ from radiofeed.common.template import (
     absolute_uri,
     active_link,
     cover_image,
+    force_url,
     format_duration,
     icon,
     markdown,
-    normalize_url,
     pagination_url,
 )
 
@@ -174,21 +174,21 @@ class TestMarkdown:
         return markdown(value) == {"content": expected}
 
 
-class TestNormalizeUrl:
+class TestForceUrl:
     base_url = "www.newstatesman.com/podcast"
     expected_url = "https://" + base_url
 
     def test_none(self):
-        assert normalize_url(None) == ""
+        assert force_url(None) == ""
 
     def test_empty(self):
-        assert normalize_url("") == ""
+        assert force_url("") == ""
 
     def test_missing_http(self):
-        assert normalize_url(self.base_url) == self.expected_url
+        assert force_url(self.base_url) == self.expected_url
 
     def test_already_complete(self):
-        assert normalize_url(self.expected_url) == self.expected_url
+        assert force_url(self.expected_url) == self.expected_url
 
 
 class TestPaginationUrl:

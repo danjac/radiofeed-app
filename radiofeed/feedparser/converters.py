@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.common.template import normalize_url
+from radiofeed.common.template import force_url
 
 
 def language(value: str) -> str:
@@ -24,7 +24,7 @@ def url(value: str | None) -> str | None:
     Returns:
         str | None
     """
-    return normalize_url(value) or None
+    return force_url(value) or None
 
 
 def duration(value: str | None) -> str:
