@@ -1,4 +1,4 @@
-This is the source code for a [simple, easy to use podcatcher web application](https://radiofeed.me). You are free to use this source to host the app yourself.
+This is the source code for a [simple, easy to use podcatcher web application](https://radiofeed.me). You are free to use this source to host the app yourself. The application is intended to be run in production in Heroku or a Heroku-like PAAS such as Dokku or Railway; however it should be quite easy to adapt it to run in other environments such as AWS EC2.
 
 ![desktop](/screenshots/desktop.png?raw=True)
 
@@ -84,7 +84,7 @@ This will start up:
 * Django development server
 * `tailwindcss` and `esbuild` for building frontend assets on the fly
 
-Honcho is installed in your local development environment.
+Honcho is installed in your virtualenv.
 
 Tests can be run with `pytest`:
 
@@ -142,10 +142,10 @@ An `app.json` configuration with these cron schedules is included for Dokku depl
 
 ### Updating dependencies
 
-For quick updates just run
+To update backend, frontend and development dependencies, just run the `upgrade.sh` script:
 
 ```bash
 ./upgrade.sh
 ```
 
-You can then run tests and commit any changes.
+After testing updates you can then commit these to the repo.
