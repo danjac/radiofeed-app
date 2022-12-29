@@ -178,7 +178,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
         try:
-            with feed_parser.get_client() as client:
+            with feed_parser.get_client(request) as client:
                 feed_parser.parse_feed(obj, client)
 
         except feed_parser.NotModified:

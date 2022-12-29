@@ -89,7 +89,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         feeds: list[itunes.Feed] = []
 
         try:
-            feeds = itunes.search_cached(request.search.value)
+            feeds = itunes.search_cached(request.search.value, request)
         except requests.RequestException:
             messages.error(
                 request, _("Sorry, an error occurred trying to access iTunes.")
