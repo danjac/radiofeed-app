@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import datetime
 import io
+import mimetypes
+import urllib
 
 import httpx
 
@@ -173,14 +175,21 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
     except ValueError:
         return HttpResponseBadRequest("Error: invalid encoded URL")
 
+    headers = {
+        "User-Agent": request.user_agent,
+    }
+
+    mimetype, _ = mimetypes.guess_type(urllib.parse.urlparse(cover_url).path)
+
+    if mimetype:
+        headers["Accept"] = mimetype
+
     try:
         response = httpx.get(
             cover_url,
-            headers={
-                "User-Agent": request.user_agent,
-            },
             timeout=10,
             follow_redirects=True,
+            headers=headers,
         )
 
         response.raise_for_status()

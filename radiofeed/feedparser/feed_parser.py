@@ -21,18 +21,6 @@ from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 
-_ACCEPT_HEADER = ",".join(
-    [
-        "application/atom+xml",
-        "application/rdf+xml",
-        "application/rss+xml",
-        "application/x-netcdf",
-        "application/xml;q=0.9",
-        "text/xml;q=0.2",
-        "*/*;q=0.1",
-    ]
-)
-
 
 class FeedParserError(ValueError):
     """Generic parser error."""
@@ -60,18 +48,6 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def get_client(user_agent: str) -> httpx.Client:
-    """Returns HTTP client."""
-    return httpx.Client(
-        headers={
-            "Accept": _ACCEPT_HEADER,
-            "User-Agent": user_agent,
-        },
-        timeout=10,
-        follow_redirects=True,
-    )
-
-
 @functools.lru_cache
 def get_categories() -> dict[str, Category]:
     """Returns a cached dict of categories with lowercase names as key."""
@@ -85,12 +61,25 @@ class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _max_retries: int = 3
+    _timeout: int = 10
 
     _feed_attrs = attrs.fields(Feed)  # type: ignore
     _item_attrs = attrs.fields(Item)  # type: ignore
 
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
+
+        self._accept = ",".join(
+            [
+                "application/atom+xml",
+                "application/rdf+xml",
+                "application/rss+xml",
+                "application/x-netcdf",
+                "application/xml;q=0.9",
+                "text/xml;q=0.2",
+                "*/*;q=0.1",
+            ]
+        )
 
     def parse(self, client: httpx.Client):
         """Updates Podcast instance with RSS or Atom feed source.
@@ -146,7 +135,12 @@ class FeedParser:
 
     def _get_response(self, client: httpx.Client) -> httpx.Response:
         try:
-            response = client.get(self._podcast.rss, headers=self._get_feed_headers())
+            response = client.get(
+                self._podcast.rss,
+                follow_redirects=True,
+                timeout=self._timeout,
+                headers=self._get_feed_headers(),
+            )
 
             if response.is_redirect:
                 raise NotModified()
@@ -169,7 +163,7 @@ class FeedParser:
             raise FeedParserError from e
 
     def _get_feed_headers(self) -> dict[str, str]:
-        headers = {}
+        headers = {"Accept": self._accept}
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:

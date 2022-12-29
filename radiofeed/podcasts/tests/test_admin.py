@@ -43,10 +43,10 @@ def podcasts(db):
 
 
 @pytest.fixture
-def req(rf, user_agent):
+def req(rf):
     req = rf.get("/")
     req._messages = mock.Mock()
-    req.user_agent = user_agent
+    req.user_agent = "radiofeed"
     return req
 
 

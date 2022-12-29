@@ -99,7 +99,7 @@ def mock_invalid_response(mocker):
 
 
 class TestCrawl:
-    def test_crawl(self, db, mocker, user_agent):
+    def test_crawl(self, db, mocker):
         class _MockClient(MockClient):
             def get(self, url, *args, **kwargs):
 
@@ -116,11 +116,12 @@ class TestCrawl:
 
         mocker.patch("httpx.Client", return_value=_MockClient())
 
-        list(itunes.crawl(user_agent))
+        with httpx.Client() as client:
+            list(itunes.crawl(client))
 
         assert Podcast.objects.count() == 1
 
-    def test_crawl_with_parse_genre_error(self, db, mocker, user_agent):
+    def test_crawl_with_parse_genre_error(self, db, mocker):
         class _MockClient(MockClient):
             def get(self, url, *args, **kwargs):
 
@@ -137,11 +138,12 @@ class TestCrawl:
 
         mocker.patch("httpx.Client", return_value=_MockClient())
 
-        list(itunes.crawl(user_agent))
+        with httpx.Client() as client:
+            list(itunes.crawl(client))
 
         assert Podcast.objects.count() == 0
 
-    def test_crawl_with_parse_feeds_error(self, db, mocker, user_agent):
+    def test_crawl_with_parse_feeds_error(self, db, mocker):
         class _MockClient(MockClient):
             def get(self, url, *args, **kwargs):
 
@@ -158,11 +160,12 @@ class TestCrawl:
 
         mocker.patch("httpx.Client", return_value=_MockClient())
 
-        list(itunes.crawl(user_agent))
+        with httpx.Client() as client:
+            list(itunes.crawl(client))
 
         assert Podcast.objects.count() == 0
 
-    def test_crawl_with_podcasts_url_error(self, db, mocker, user_agent):
+    def test_crawl_with_podcasts_url_error(self, db, mocker):
         class _MockClient(MockClient):
             def get(self, url, *args, **kwargs):
 
@@ -179,7 +182,8 @@ class TestCrawl:
 
         mocker.patch("httpx.Client", return_value=_MockClient())
 
-        list(itunes.crawl(user_agent))
+        with httpx.Client() as client:
+            list(itunes.crawl(client))
 
         assert Podcast.objects.count() == 0
 
@@ -187,29 +191,35 @@ class TestCrawl:
 class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 
-    def test_not_ok(self, db, user_agent, mock_bad_response):
-        with pytest.raises(httpx.HTTPError):
-            list(itunes.search("test", user_agent))
+    def test_not_ok(self, db, mock_bad_response):
+
+        with httpx.Client() as client:
+            with pytest.raises(httpx.HTTPError):
+                list(itunes.search(client, "test"))
         assert not Podcast.objects.exists()
 
-    def test_ok(self, db, user_agent, mock_good_response):
-        feeds = list(itunes.search("test", user_agent))
+    def test_ok(self, db, mock_good_response):
+
+        with httpx.Client() as client:
+            feeds = list(itunes.search(client, "test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
-    def test_bad_data(self, db, user_agent, mock_invalid_response):
-        feeds = list(itunes.search("test", user_agent))
+    def test_bad_data(self, db, mock_invalid_response):
+        with httpx.Client() as client:
+            feeds = list(itunes.search(client, "test"))
+
         assert not feeds
 
     def test_is_not_cached(
         self,
         db,
-        user_agent,
         mock_good_response,
         locmem_cache,
     ):
 
-        feeds = itunes.search_cached("test", user_agent)
+        with httpx.Client() as client:
+            feeds = itunes.search_cached(client, "test")
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
@@ -219,7 +229,6 @@ class TestSearch:
     def test_is_cached(
         self,
         db,
-        user_agent,
         mock_good_response,
         locmem_cache,
     ):
@@ -235,15 +244,18 @@ class TestSearch:
             ],
         )
 
-        feeds = itunes.search_cached("test", user_agent)
+        with httpx.Client() as client:
+            feeds = itunes.search_cached(client, "test")
 
         assert len(feeds) == 1
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
 
-        mock_good_response.assert_not_called()
+        mock_good_response.get.assert_not_called()
 
-    def test_podcast_exists(self, db, user_agent, mock_good_response):
+    def test_podcast_exists(self, db, mock_good_response):
         create_podcast(rss="https://feeds.fireside.fm/testandcode/rss")
-        feeds = list(itunes.search("test", user_agent))
+
+        with httpx.Client() as client:
+            feeds = list(itunes.search(client, "test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()

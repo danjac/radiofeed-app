@@ -51,36 +51,33 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search_cached(search_term: str, user_agent: str) -> list[Feed]:
+def search_cached(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
     if (feeds := cache.get(cache_key)) is None:
-        feeds = list(search(search_term, user_agent))
+        feeds = list(search(client, search_term))
         cache.set(cache_key, feeds)
     return feeds
 
 
-def search(search_term: str, user_agent: str) -> Iterator[Feed]:
+def search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
     """Runs search for podcasts on iTunes API."""
-    with _get_client(user_agent) as client:
-        return _parse_feeds(
-            _get_response(
-                client,
-                "https://itunes.apple.com/search",
-                {
-                    "term": search_term,
-                    "media": "podcast",
-                },
-            ).json()
+    return _parse_feeds(
+        _get_json_response(
+            client,
+            "https://itunes.apple.com/search",
+            {
+                "term": search_term,
+                "media": "podcast",
+            },
         )
+    )
 
 
-def crawl(user_agent: str) -> Iterator[Feed]:
+def crawl(client: httpx.Client) -> Iterator[Feed]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
-    with _get_client(user_agent) as client:
-
-        for location in _ITUNES_LOCATIONS:
-            yield from Crawler(client, location).crawl()
+    for location in _ITUNES_LOCATIONS:
+        yield from Crawler(client, location).crawl()
 
 
 class Crawler:
@@ -127,14 +124,14 @@ class Crawler:
             _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
             yield from _parse_feeds(
-                _get_response(
+                _get_json_response(
                     self._client,
                     "https://itunes.apple.com/lookup",
                     {
                         "id": ",".join(_feed_ids),
                         "entity": "podcast",
                     },
-                ).json(),
+                ),
             )
 
             self._feed_ids = self._feed_ids.union(_feed_ids)
@@ -202,24 +199,23 @@ def _parse_feeds(json_data: dict) -> Iterator[Feed]:
         yield from feeds
 
 
-def _get_client(user_agent: str) -> httpx.Client:
-    """Return HTTP client."""
-    return httpx.Client(
-        headers={"User-Agent": user_agent},
-        timeout=10,
-        follow_redirects=True,
-    )
-
-
 def _get_response(
-    client: httpx.Client, url: str, params: dict | None = None
+    client: httpx.Client, url: str, params: dict | None = None, **kwargs
 ) -> httpx.Response:
-    response = client.get(
-        url,
-        params=params,
-    )
+    response = client.get(url, params=params, **kwargs)
     response.raise_for_status()
     return response
+
+
+def _get_json_response(
+    client: httpx.Client, url: str, params: dict | None = None
+) -> dict:
+    return _get_response(
+        client,
+        url,
+        params,
+        headers={"Accept": "application/json"},
+    ).json()
 
 
 def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:

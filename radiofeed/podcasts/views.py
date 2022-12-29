@@ -89,7 +89,10 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         feeds: list[itunes.Feed] = []
 
         try:
-            feeds = itunes.search_cached(request.search.value, request.user_agent)
+            with httpx.Client(
+                headers={"User-Agent": request.user_agent}, timeout=5
+            ) as client:
+                feeds = itunes.search_cached(client, request.search.value)
         except httpx.HTTPError:
             messages.error(
                 request, _("Sorry, an error occurred trying to access iTunes.")
