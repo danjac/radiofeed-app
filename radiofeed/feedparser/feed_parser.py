@@ -7,7 +7,6 @@ from typing import Iterator
 
 import attrs
 import httpx
-import user_agent
 
 from django.db import transaction
 from django.db.models import Q
@@ -15,7 +14,7 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common import batcher, tokenizer
+from radiofeed.common import batcher, tokenizer, user_agent
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -66,7 +65,7 @@ def get_client() -> httpx.Client:
     return httpx.Client(
         headers={
             "Accept": _ACCEPT_HEADER,
-            "User-Agent": user_agent.generate_user_agent(),
+            "User-Agent": user_agent.user_agent(),
         },
         timeout=10,
         follow_redirects=True,

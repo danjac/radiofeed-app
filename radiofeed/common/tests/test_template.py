@@ -100,12 +100,12 @@ class TestAbsoluteUri:
 
     def test_not_has_request_no_url(self, db):
         url = absolute_uri({})
-        assert url == self.EXAMPLE_HTTP_URL
+        assert url == self.EXAMPLE_HTTP_URL + "/"
 
     def test_not_has_request_no_url_https(self, db, settings):
         settings.SECURE_SSL_REDIRECT = True
         url = absolute_uri({})
-        assert url == self.EXAMPLE_HTTPS_URL
+        assert url == self.EXAMPLE_HTTPS_URL + "/"
 
     def test_not_has_request_static_url(self, db):
         url = absolute_uri({}, self.SEARCH_URL)

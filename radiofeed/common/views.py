@@ -4,7 +4,6 @@ import datetime
 import io
 
 import httpx
-import user_agent
 
 from django.conf import settings
 from django.http import (
@@ -23,6 +22,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
+
+from radiofeed.common import user_agent
 
 _DEFAULT_CACHE_TIMEOUT: int = 3600  # one hour
 
@@ -178,7 +179,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
         response = httpx.get(
             cover_url,
             headers={
-                "User-Agent": user_agent.generate_user_agent(),
+                "User-Agent": user_agent.user_agent(),
             },
             timeout=10,
             follow_redirects=True,

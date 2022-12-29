@@ -3042,20 +3042,6 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "p
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
-name = "user-agent"
-version = "0.1.10"
-description = "User-Agent generator"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "user_agent-0.1.10.tar.gz", hash = "sha256:b86537cb2a9d3bda0e2afcc654ec15b383502836877a67520654acadf73f1723"},
-]
-
-[package.dependencies]
-six = "*"
-
-[[package]]
 name = "wcwidth"
 version = "0.2.5"
 description = "Measures the displayed width of unicode strings in a terminal"
@@ -3113,4 +3099,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ff8866f4ff1a2c33a2c3ee4755beafba0350282b036834ee368f0c572e6308c0"
+content-hash = "674df462254921c1233169ace70c23b099867d1a6bb2119c3416ef605cffb3c0"

@@ -9,11 +9,10 @@ from typing import Final, Iterator
 from urllib.parse import urlparse
 
 import httpx
-import user_agent
 
 from django.core.cache import cache
 
-from radiofeed.common import batcher
+from radiofeed.common import batcher, user_agent
 from radiofeed.common.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast
 
@@ -206,7 +205,7 @@ def _parse_feeds(json_data: dict) -> Iterator[Feed]:
 def _get_client() -> httpx.Client:
     """Return HTTP client."""
     return httpx.Client(
-        headers={"User-Agent": user_agent.generate_user_agent()},
+        headers={"User-Agent": user_agent.user_agent()},
         timeout=10,
         follow_redirects=True,
     )
