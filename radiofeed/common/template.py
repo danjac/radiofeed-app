@@ -3,7 +3,11 @@ from __future__ import annotations
 import collections
 import math
 
+from urllib import parse
+
 from django import template
+from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
@@ -15,7 +19,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext as _
 
-from radiofeed.common import markup, pagination, user_agent
+from radiofeed.common import markup, pagination
 
 register = template.Library()
 
@@ -41,19 +45,14 @@ def pagination_url(context: RequestContext, *args, **kwargs) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(
-    context: Context,
-    url: str | None = None,
-    *args,
-    **kwargs,
-) -> str:
+def absolute_uri(context: Context, url: str | None = None, *args, **kwargs) -> str:
     """Generate absolute URI based on server environment or current Site."""
     url = resolve_url(url, *args, **kwargs) if url else "/"
 
     if request := context.get("request", None):
         return request.build_absolute_uri(url)
 
-    return user_agent.get_absolute_uri(url)
+    return build_absolute_uri(url)
 
 
 @register.filter
@@ -167,3 +166,10 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
+
+
+def build_absolute_uri(url: str = "/") -> str:
+    """Returns the full absolute URI based on current Site. Use when request is unavailable."""
+    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+    base_url = f"{protocol}://{Site.objects.get_current().domain}"
+    return parse.urljoin(base_url, url)
