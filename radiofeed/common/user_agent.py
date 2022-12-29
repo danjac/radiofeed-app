@@ -12,8 +12,8 @@ def user_agent(request: HttpRequest | None = None) -> str:
     """Returns user agent including dynamic date-based versioning."""
     return " ".join(
         (
-            f"python-httpx/{httpx.__version__}"
-            f"(Radiofeed/{timezone.now().strftime('%Y-%d-%m')});"
-            f"+{build_absolute_uri('/', request)})"
+            f"python-httpx/{httpx.__version__}",
+            f"(Radiofeed/{timezone.now().strftime('%Y-%d-%m')});",
+            f"+{build_absolute_uri('/', request)})",
         )
     )
