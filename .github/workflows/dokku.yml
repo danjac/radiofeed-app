@@ -15,7 +15,7 @@ jobs:
                   fetch-depth: 0
 
             - name: Deploy to Dokku
-              uses: vitalyliber/dokku-github-action@v7.0
+              uses: vitalyliber/dokku-github-action@v7.1
               env:
                   PRIVATE_KEY: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
                   HOST: ${{ secrets.DOKKU_HOST }}
