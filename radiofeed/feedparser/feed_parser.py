@@ -60,6 +60,16 @@ def get_categories() -> dict[str, Category]:
 class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
+    _accept = (
+        "application/atom+xml,"
+        "application/rdf+xml,"
+        "application/rss+xml,"
+        "application/x-netcdf,"
+        "application/xml;q=0.9,"
+        "text/xml;q=0.2,"
+        "*/*;q=0.1"
+    )
+
     _max_retries: int = 3
 
     _feed_attrs = attrs.fields(Feed)  # type: ignore
@@ -67,18 +77,6 @@ class FeedParser:
 
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
-
-        self._accept = ",".join(
-            [
-                "application/atom+xml",
-                "application/rdf+xml",
-                "application/rss+xml",
-                "application/x-netcdf",
-                "application/xml;q=0.9",
-                "text/xml;q=0.2",
-                "*/*;q=0.1",
-            ]
-        )
 
     def parse(self, client: httpx.Client):
         """Updates Podcast instance with RSS or Atom feed source.
