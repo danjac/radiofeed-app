@@ -30,7 +30,10 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with httpx.Client(headers={"User-Agent": user_agent.user_agent()}) as client:
+        with httpx.Client(
+            headers={"User-Agent": user_agent.user_agent()},
+            timeout=10,
+        ) as client:
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     lambda podcast: self._parse_feed(podcast, client),

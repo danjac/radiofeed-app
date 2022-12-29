@@ -17,7 +17,6 @@ class Command(BaseCommand):
         """Handle implementation."""
         with httpx.Client(
             headers={"User-Agent": user_agent.user_agent()},
-            follow_redirects=True,
             timeout=10,
         ) as client:
 

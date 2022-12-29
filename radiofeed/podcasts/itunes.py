@@ -105,6 +105,7 @@ class Crawler:
                     _get_response(
                         self._client,
                         f"https://itunes.apple.com/{self._location}/genre/podcasts/id26",
+                        follow_redirects=True,
                     ).content
                 )
                 if href.startswith(
@@ -145,7 +146,7 @@ class Crawler:
                 for podcast_id in (
                     self._parse_podcast_id(href)
                     for href in self._parse_urls(
-                        _get_response(self._client, url).content
+                        _get_response(self._client, url, follow_redirects=True).content
                     )
                     if href.startswith(
                         f"https://podcasts.apple.com/{self._location}/podcast/"

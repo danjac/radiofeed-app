@@ -180,7 +180,9 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
         try:
-            with httpx.Client(headers={"User-Agent": request.user_agent}) as client:
+            with httpx.Client(
+                headers={"User-Agent": request.user_agent}, timeout=5
+            ) as client:
                 feed_parser.parse_feed(obj, client)
 
         except feed_parser.NotModified:

@@ -61,7 +61,6 @@ class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _max_retries: int = 3
-    _timeout: int = 10
 
     _feed_attrs = attrs.fields(Feed)  # type: ignore
     _item_attrs = attrs.fields(Item)  # type: ignore
@@ -138,7 +137,6 @@ class FeedParser:
             response = client.get(
                 self._podcast.rss,
                 follow_redirects=True,
-                timeout=self._timeout,
                 headers=self._get_feed_headers(),
             )
 
