@@ -66,7 +66,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             request,
             (
                 _get_podcasts()
-                .search(request.search)
+                .search(request.search.value)
                 .order_by(
                     "-exact_match",
                     "-rank",
@@ -151,7 +151,7 @@ def episodes(
     episodes = podcast.episodes.select_related("podcast")
 
     if request.search:
-        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
+        episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         episodes = episodes.order_by(
             "-pub_date" if request.sorter.is_desc else "pub_date"
@@ -202,7 +202,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     )
 
     if request.search:
-        categories = categories.search(request.search)
+        categories = categories.search(request.search.value)
 
     return render(request, "podcasts/categories.html", {"categories": categories})
 
@@ -220,7 +220,7 @@ def category_detail(
     podcasts = _get_podcasts().filter(categories=category).distinct()
 
     if request.search:
-        podcasts = podcasts.search(request.search).order_by(
+        podcasts = podcasts.search(request.search.value).order_by(
             "-exact_match",
             "-rank",
             "-pub_date",

@@ -63,7 +63,7 @@ class SearchQuerySetMixin(T_QuerySet):
         if not search_term:
             return self.none()
 
-        query = SearchQuery(force_str(search_term), search_type=self.search_type)
+        query = SearchQuery(search_term, search_type=self.search_type)
 
         return (
             self.annotate(

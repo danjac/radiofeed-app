@@ -57,7 +57,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             request,
             (
                 Episode.objects.select_related("podcast")
-                .search(request.search)
+                .search(request.search.value)
                 .order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
@@ -167,7 +167,7 @@ def history(request: HttpRequest) -> HttpResponse:
     logs = request.user.audio_logs.select_related("episode", "episode__podcast")
 
     if request.search:
-        logs = logs.search(request.search).order_by("-rank", "-listened")
+        logs = logs.search(request.search.value).order_by("-rank", "-listened")
     else:
         logs = logs.order_by("-listened" if request.sorter.is_desc else "listened")
 
@@ -203,7 +203,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
 
     if request.search:
-        bookmarks = bookmarks.search(request.search).order_by("-rank", "-created")
+        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
     else:
         bookmarks = bookmarks.order_by(
             "-created" if request.sorter.is_desc else "created"
