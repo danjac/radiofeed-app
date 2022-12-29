@@ -15,6 +15,9 @@ repos:
           - id: debug-statements
           - id: destroyed-symlinks
           - id: detect-private-key
+          - id: file-contents-sorter
+            args: ["--ignore-case", "--unique"]
+            files: ^(\.gitignore|\.dockerignore|requirements[-\w]*.txt)$
     - repo: https://github.com/pycqa/isort
       rev: 5.11.4
       hooks:
