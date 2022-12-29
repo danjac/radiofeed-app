@@ -111,6 +111,7 @@ MIDDLEWARE: list[str] = [
     "radiofeed.common.middleware.cache_control_middleware",
     "radiofeed.common.middleware.search_middleware",
     "radiofeed.common.middleware.sorter_middleware",
+    "radiofeed.common.middleware.user_agent_middleware",
     "radiofeed.episodes.middleware.player_middleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",

@@ -7,6 +7,7 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from faker import Faker
 
+from radiofeed.common.user_agent import user_agent as _user_agent
 from radiofeed.episodes.factories import create_episode
 from radiofeed.podcasts.factories import (
     create_category,
@@ -30,6 +31,11 @@ def locmem_cache(settings):
     }
     yield
     cache.clear()
+
+
+@pytest.fixture
+def user_agent(db):
+    return _user_agent()
 
 
 @pytest.fixture(scope="session")

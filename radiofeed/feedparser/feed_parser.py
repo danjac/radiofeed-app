@@ -11,11 +11,10 @@ import httpx
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common import batcher, tokenizer, user_agent
+from radiofeed.common import batcher, tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -61,12 +60,12 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def get_client(request: HttpRequest | None = None) -> httpx.Client:
+def get_client(user_agent: str) -> httpx.Client:
     """Returns HTTP client."""
     return httpx.Client(
         headers={
             "Accept": _ACCEPT_HEADER,
-            "User-Agent": user_agent.user_agent(request),
+            "User-Agent": user_agent,
         },
         timeout=10,
         follow_redirects=True,

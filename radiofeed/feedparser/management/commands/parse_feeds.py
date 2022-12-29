@@ -7,6 +7,7 @@ import httpx
 
 from django.core.management.base import BaseCommand
 
+from radiofeed.common import user_agent
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.podcasts.models import Podcast
 
@@ -29,7 +30,7 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with feed_parser.get_client() as client:
+        with feed_parser.get_client(user_agent.user_agent()) as client:
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     lambda podcast: self._parse_feed(podcast, client),

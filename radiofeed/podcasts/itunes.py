@@ -11,9 +11,8 @@ from urllib.parse import urlparse
 import httpx
 
 from django.core.cache import cache
-from django.http import HttpRequest
 
-from radiofeed.common import batcher, user_agent
+from radiofeed.common import batcher
 from radiofeed.common.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast
 
@@ -52,18 +51,18 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search_cached(search_term: str, request: HttpRequest | None = None) -> list[Feed]:
+def search_cached(search_term: str, user_agent: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
     if (feeds := cache.get(cache_key)) is None:
-        feeds = list(search(search_term, request))
+        feeds = list(search(search_term, user_agent))
         cache.set(cache_key, feeds)
     return feeds
 
 
-def search(search_term: str, request: HttpRequest | None = None) -> Iterator[Feed]:
+def search(search_term: str, user_agent: str) -> Iterator[Feed]:
     """Runs search for podcasts on iTunes API."""
-    with _get_client(request) as client:
+    with _get_client(user_agent) as client:
         return _parse_feeds(
             _get_response(
                 client,
@@ -76,9 +75,9 @@ def search(search_term: str, request: HttpRequest | None = None) -> Iterator[Fee
         )
 
 
-def crawl() -> Iterator[Feed]:
+def crawl(user_agent: str) -> Iterator[Feed]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
-    with _get_client() as client:
+    with _get_client(user_agent) as client:
 
         for location in _ITUNES_LOCATIONS:
             yield from Crawler(client, location).crawl()
@@ -203,10 +202,10 @@ def _parse_feeds(json_data: dict) -> Iterator[Feed]:
         yield from feeds
 
 
-def _get_client(request: HttpRequest | None = None) -> httpx.Client:
+def _get_client(user_agent: str) -> httpx.Client:
     """Return HTTP client."""
     return httpx.Client(
-        headers={"User-Agent": user_agent.user_agent(request)},
+        headers={"User-Agent": user_agent},
         timeout=10,
         follow_redirects=True,
     )

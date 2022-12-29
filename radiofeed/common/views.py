@@ -23,8 +23,6 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.common import user_agent
-
 _DEFAULT_CACHE_TIMEOUT: int = 3600  # one hour
 
 _COVER_IMAGE_SIZES: tuple[int, ...] = (100, 200, 300)
@@ -179,7 +177,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
         response = httpx.get(
             cover_url,
             headers={
-                "User-Agent": user_agent.user_agent(request),
+                "User-Agent": request.user_agent,
             },
             timeout=10,
             follow_redirects=True,

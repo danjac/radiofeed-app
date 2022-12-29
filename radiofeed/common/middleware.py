@@ -5,9 +5,17 @@ from typing import Callable
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
+from radiofeed.common import user_agent
 from radiofeed.common.decorators import middleware
 from radiofeed.common.search import Search
 from radiofeed.common.sorter import Sorter
+
+
+@middleware
+def user_agent_middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
+    """Appends user agent to request."""
+    request.user_agent = SimpleLazyObject(lambda: user_agent.user_agent(request))
+    return get_response(request)
 
 
 @middleware
