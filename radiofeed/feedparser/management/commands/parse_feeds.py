@@ -30,15 +30,14 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with httpx.Client(
+        with ThreadPoolExecutor() as executor, httpx.Client(
             headers={"User-Agent": user_agent.user_agent()},
             timeout=10,
         ) as client:
-            with ThreadPoolExecutor() as executor:
-                executor.map(
-                    lambda podcast: self._parse_feed(podcast, client),
-                    scheduler.scheduled_for_update()[: options["limit"]].iterator(),
-                )
+            executor.map(
+                lambda podcast: self._parse_feed(podcast, client),
+                scheduler.scheduled_for_update()[: options["limit"]].iterator(),
+            )
 
     def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
