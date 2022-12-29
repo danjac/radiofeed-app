@@ -152,7 +152,7 @@ class TestSearchItunes:
             ),
         ]
         mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search_cached", return_value=feeds
+            "radiofeed.podcasts.itunes.search", return_value=feeds
         )
 
         response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
@@ -163,7 +163,7 @@ class TestSearchItunes:
 
     def test_search_exception(self, client, auth_user, mocker):
         mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search_cached",
+            "radiofeed.podcasts.itunes.search",
             side_effect=httpx.HTTPError("oops"),
         )
 

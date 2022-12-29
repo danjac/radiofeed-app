@@ -219,7 +219,7 @@ class TestSearch:
     ):
 
         with httpx.Client() as client:
-            feeds = itunes.search_cached(client, "test")
+            feeds = itunes.search(client, "test")
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
@@ -245,7 +245,7 @@ class TestSearch:
         )
 
         with httpx.Client() as client:
-            feeds = itunes.search_cached(client, "test")
+            feeds = itunes.search(client, "test")
 
         assert len(feeds) == 1
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()

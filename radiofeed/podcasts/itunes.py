@@ -51,27 +51,13 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search_cached(client: httpx.Client, search_term: str) -> list[Feed]:
+def search(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
     if (feeds := cache.get(cache_key)) is None:
-        feeds = list(search(client, search_term))
+        feeds = list(_search(client, search_term))
         cache.set(cache_key, feeds)
     return feeds
-
-
-def search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
-    """Runs search for podcasts on iTunes API."""
-    return _parse_feeds(
-        _get_json_response(
-            client,
-            "https://itunes.apple.com/search",
-            {
-                "term": search_term,
-                "media": "podcast",
-            },
-        )
-    )
 
 
 def crawl(client: httpx.Client) -> Iterator[Feed]:
@@ -170,6 +156,19 @@ class Crawler:
         if match := _ITUNES_PODCAST_ID_RE.search(urlparse(url).path.split("/")[-1]):
             return match.group("id")
         return None
+
+
+def _search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
+    return _parse_feeds(
+        _get_json_response(
+            client,
+            "https://itunes.apple.com/search",
+            {
+                "term": search_term,
+                "media": "podcast",
+            },
+        )
+    )
 
 
 def _parse_feeds(json_data: dict) -> Iterator[Feed]:
