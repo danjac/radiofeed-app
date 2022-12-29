@@ -179,7 +179,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
         response = httpx.get(
             cover_url,
             headers={
-                "User-Agent": user_agent.user_agent(),
+                "User-Agent": user_agent.user_agent(request),
             },
             timeout=10,
             follow_redirects=True,
