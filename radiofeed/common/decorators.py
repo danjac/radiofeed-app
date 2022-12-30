@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 
-from typing import Callable
+from typing import Any, Callable
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
@@ -34,7 +34,7 @@ def middleware(
 def lazy_object_middleware(attrname: str) -> Callable:
     """Creates middleware that sets request property with a SimpleLazyObject."""
 
-    def _decorator(fn: Callable) -> Callable:
+    def _decorator(fn: Callable[[HttpRequest], Any]) -> Callable:
         @functools.wraps(fn)
         def _middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
             setattr(request, attrname, SimpleLazyObject(lambda: fn(request)))
