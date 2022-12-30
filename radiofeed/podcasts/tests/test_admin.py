@@ -9,12 +9,7 @@ from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
 from radiofeed.common.factories import create_batch
-from radiofeed.feedparser.feed_parser import (
-    Duplicate,
-    Inaccessible,
-    Invalid,
-    NotModified,
-)
+from radiofeed.feedparser.feed_parser import Inaccessible
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -89,33 +84,9 @@ class TestPodcastAdmin:
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()
 
-    def test_parse_podcast_feed_inaccessible(self, mocker, podcast, podcast_admin, req):
+    def test_parse_podcast_feed_parser_error(self, mocker, podcast, podcast_admin, req):
         patched = mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed", side_effect=Inaccessible()
-        )
-        podcast_admin.parse_podcast_feed(req, podcast)
-        patched.assert_called()
-
-    def test_parse_podcast_feed_not_modified(self, mocker, podcast, podcast_admin, req):
-        patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed", side_effect=NotModified()
-        )
-        podcast_admin.parse_podcast_feed(req, podcast)
-        patched.assert_called()
-
-    def test_parse_podcast_feed_duplicate(self, mocker, podcast, podcast_admin, req):
-        patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed", side_effect=Duplicate()
-        )
-        podcast_admin.parse_podcast_feed(req, podcast)
-        patched.assert_called()
-
-    def test_parse_podcast_feed_generic_error(
-        self, mocker, podcast, podcast_admin, req
-    ):
-        patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=Invalid("error"),
         )
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()

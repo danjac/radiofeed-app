@@ -15,38 +15,11 @@ class TestParseFeeds:
         call_command("parse_feeds", limit=200)
         patched.assert_called()
 
-    def test_duplicate(self, db, mocker):
+    def test_feed_parser_error(self, db, mocker):
         create_podcast(pub_date=None)
         patched = mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
             side_effect=feed_parser.Duplicate(),
-        )
-        call_command("parse_feeds", limit=200)
-        patched.assert_called()
-
-    def test_inaccessible(self, db, mocker):
-        create_podcast(pub_date=None)
-        patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=feed_parser.Inaccessible(),
-        )
-        call_command("parse_feeds", limit=200)
-        patched.assert_called()
-
-    def test_not_modified(self, db, mocker):
-        create_podcast(pub_date=None)
-        patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=feed_parser.NotModified(),
-        )
-        call_command("parse_feeds", limit=200)
-        patched.assert_called()
-
-    def test_invalid(self, db, mocker):
-        create_podcast(pub_date=None)
-        patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=feed_parser.Invalid("unknown error"),
         )
         call_command("parse_feeds", limit=200)
         patched.assert_called()
