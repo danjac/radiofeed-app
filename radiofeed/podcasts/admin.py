@@ -202,10 +202,10 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
                 level=messages.ERROR,
             )
 
-        except feed_parser.FeedParserError as e:
+        except feed_parser.Invalid:
             self.message_user(
                 request,
-                _("Feed parser error: {error}").format(error=str(e)),
+                _("Podcast is temporarily unavailable"),
                 level=messages.ERROR,
             )
 

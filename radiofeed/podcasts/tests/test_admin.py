@@ -11,8 +11,8 @@ from django.utils import timezone
 from radiofeed.common.factories import create_batch
 from radiofeed.feedparser.feed_parser import (
     Duplicate,
-    FeedParserError,
     Inaccessible,
+    Invalid,
     NotModified,
 )
 from radiofeed.podcasts.admin import (
@@ -115,7 +115,7 @@ class TestPodcastAdmin:
     ):
         patched = mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=FeedParserError("error"),
+            side_effect=Invalid("error"),
         )
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()

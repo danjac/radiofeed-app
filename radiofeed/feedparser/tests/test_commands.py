@@ -42,11 +42,11 @@ class TestParseFeeds:
         call_command("parse_feeds", limit=200)
         patched.assert_called()
 
-    def test_generic_error(self, db, mocker):
+    def test_invalid(self, db, mocker):
         create_podcast(pub_date=None)
         patched = mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
-            side_effect=feed_parser.FeedParserError("unknown error"),
+            side_effect=feed_parser.Invalid("unknown error"),
         )
         call_command("parse_feeds", limit=200)
         patched.assert_called()

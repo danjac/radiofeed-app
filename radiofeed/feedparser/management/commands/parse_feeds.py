@@ -55,8 +55,8 @@ class Command(BaseCommand):
                 self.style.ERROR(f"{podcast} is a duplicate of another feed")
             )
 
-        except feed_parser.FeedParserError as e:
-            self.stdout.write(self.style.ERROR(f"{podcast} feed parser error {e}"))
+        except feed_parser.Invalid:
+            self.stdout.write(self.style.ERROR(f"{podcast} is temporarily unavailable"))
 
         else:
             self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))

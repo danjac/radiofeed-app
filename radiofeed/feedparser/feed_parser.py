@@ -38,6 +38,10 @@ class Inaccessible(FeedParserError):
     """Content is no longer accesssible."""
 
 
+class Invalid(FeedParserError):
+    """Content temporarily unaccessible or unparseable."""
+
+
 def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
     """Parses podcast RSS feed."""
     return FeedParser(podcast).parse(client)
@@ -150,13 +154,13 @@ class FeedParser:
             return response
 
         except httpx.HTTPError as e:
-            raise FeedParserError from e
+            raise Invalid from e
 
     def _parse_rss(self, content: bytes) -> Feed:
         try:
             return rss_parser.parse_rss(content)
         except rss_parser.RssParserError as e:
-            raise FeedParserError from e
+            raise Invalid from e
 
     def _get_feed_headers(self) -> dict[str, str]:
         headers = {"Accept": self._accept}
@@ -176,13 +180,13 @@ class FeedParser:
                 # podcast should be discontinued and no longer updated
                 active = False
 
-            case NotModified():
-                # successful pull, so reset num_retries
-                num_retries = 0
-
-            case FeedParserError():
+            case Invalid():
                 # increment num_retries in case a temporary error
                 num_retries += 1
+
+            case _:
+                # any other result: reset num_retries
+                num_retries = 0
 
         # if number of errors exceeds threshold then deactivate the podcast
         active = active and num_retries < self._max_retries

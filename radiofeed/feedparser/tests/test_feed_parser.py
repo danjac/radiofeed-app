@@ -16,8 +16,8 @@ from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.feed_parser import (
     Duplicate,
     FeedParser,
-    FeedParserError,
     Inaccessible,
+    Invalid,
     NotModified,
     get_categories,
     make_content_hash,
@@ -478,7 +478,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(FeedParserError):
+            with pytest.raises(Invalid):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -501,7 +501,7 @@ class TestFeedParser:
 
         with httpx.Client() as session:
 
-            with pytest.raises(FeedParserError):
+            with pytest.raises(Invalid):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -521,7 +521,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(FeedParserError):
+            with pytest.raises(Invalid):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -565,7 +565,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(FeedParserError):
+            with pytest.raises(Invalid):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -578,7 +578,7 @@ class TestFeedParser:
         mock_client(mocker, exception=httpx.ConnectError("fail"))
 
         with httpx.Client() as session:
-            with pytest.raises(FeedParserError):
+            with pytest.raises(Invalid):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -595,7 +595,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(FeedParserError):
+            with pytest.raises(Invalid):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -614,7 +614,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(FeedParserError):
+            with pytest.raises(Invalid):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
