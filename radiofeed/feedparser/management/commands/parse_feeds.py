@@ -45,7 +45,7 @@ class Command(BaseCommand):
             feed_parser.parse_feed(podcast, client)
 
         except feed_parser.FeedParserError:
-            self.stdout.write(self.style.ERROR(f"{podcast} is not updated"))
+            self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
 
         else:
             self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
