@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-06 10:22+0000\n"
+"POT-Creation-Date: 2022-12-30 10:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: radiofeed/common/template.py:77
+#: radiofeed/common/template.py:64
 #, python-brace-format
 msgid "{total_hours}h"
 msgstr "{total_hours}t"
 
-#: radiofeed/common/template.py:80
+#: radiofeed/common/template.py:67
 #, python-brace-format
 msgid "{total_minutes}min"
 msgstr ""
@@ -50,58 +50,52 @@ msgstr "Lisätty Kirjanmerkkeihin"
 msgid "Removed from Bookmarks"
 msgstr "Poistettu Kirjanmerkkeistä"
 
-#: radiofeed/podcasts/admin.py:42 radiofeed/podcasts/admin.py:50
+#: radiofeed/podcasts/admin.py:41 radiofeed/podcasts/admin.py:49
 msgid "Active"
 msgstr "Aktiivinen"
 
-#: radiofeed/podcasts/admin.py:51
+#: radiofeed/podcasts/admin.py:50
 msgid "Inactive"
 msgstr "Ei Aktiivinen"
 
-#: radiofeed/podcasts/admin.py:68
-msgid "Feed Update Result"
-msgstr "Jäsennystulos"
-
-#: radiofeed/podcasts/admin.py:75
-msgid "None"
-msgstr "Ei mitään"
-
-#: radiofeed/podcasts/admin.py:93
-msgid "HTTP Status"
-msgstr ""
-
-#: radiofeed/podcasts/admin.py:122 templates/episodes/detail.html:90
+#: radiofeed/podcasts/admin.py:67 templates/episodes/detail.html:90
 #: templates/episodes/includes/episode.html:26
 msgid "Release Date"
 msgstr "Päivämäärä"
 
-#: radiofeed/podcasts/admin.py:130
+#: radiofeed/podcasts/admin.py:75
 #, fuzzy
 #| msgid "Release Date"
 msgid "With release date"
 msgstr "Päivämäärä"
 
-#: radiofeed/podcasts/admin.py:131
+#: radiofeed/podcasts/admin.py:76
 #, fuzzy
 #| msgid "With no pub date"
 msgid "With no release date"
 msgstr "Ilman päivämäärää"
 
-#: radiofeed/podcasts/admin.py:150 radiofeed/podcasts/admin.py:157
+#: radiofeed/podcasts/admin.py:95 radiofeed/podcasts/admin.py:102
 msgid "Promoted"
 msgstr "Ylennetyt"
 
-#: radiofeed/podcasts/admin.py:176 templates/account/stats.html:15
+#: radiofeed/podcasts/admin.py:121 templates/account/stats.html:15
 msgid "Subscribed"
 msgstr "Tilaattu"
 
-#: radiofeed/podcasts/admin.py:242
+#: radiofeed/podcasts/admin.py:190
+#, fuzzy
+#| msgid "Podcast has been queued for update"
+msgid "Podcast has not been updated"
+msgstr "Podcast päivystysjonossa"
+
+#: radiofeed/podcasts/admin.py:195
 #, fuzzy
 #| msgid "Podcast has been queued for update"
 msgid "Podcast has been updated"
 msgstr "Podcast päivystysjonossa"
 
-#: radiofeed/podcasts/admin.py:244
+#: radiofeed/podcasts/admin.py:198
 msgid "Estimated Next Update"
 msgstr ""
 
@@ -111,63 +105,39 @@ msgstr ""
 msgid "Hi {} here are some new podcasts you might like!"
 msgstr "Hei {username}, tässä on uusia podcasteja, joista saatat pitää!"
 
-#: radiofeed/podcasts/models.py:102
-msgid "Success"
-msgstr "Menestys"
-
 #: radiofeed/podcasts/models.py:103
-msgid "Complete"
-msgstr "Valmis"
-
-#: radiofeed/podcasts/models.py:104
-msgid "Not Modified"
-msgstr "Ei muokkaattu"
-
-#: radiofeed/podcasts/models.py:105
-msgid "HTTP Error"
-msgstr "HTTP-Virhe"
-
-#: radiofeed/podcasts/models.py:106
-msgid "RSS Parser Error"
-msgstr "RSS-Jäsennysvirhe"
-
-#: radiofeed/podcasts/models.py:107
-msgid "Duplicate Feed"
-msgstr "Kaksoispodcast"
-
-#: radiofeed/podcasts/models.py:113
 msgid "Inactive podcasts will no longer be updated from their RSS feeds."
 msgstr ""
 
-#: radiofeed/podcasts/models.py:169
+#: radiofeed/podcasts/models.py:150
 msgid "Podcast Updated in Database"
 msgstr ""
 
-#: radiofeed/podcasts/views.py:93
+#: radiofeed/podcasts/views.py:98
 msgid "Sorry, an error occurred trying to access iTunes."
 msgstr "Yhteys iTunesiin ei menestynyt"
 
-#: radiofeed/podcasts/views.py:253
+#: radiofeed/podcasts/views.py:258
 msgid "You are now subscribed to this podcast"
 msgstr "Olet tilaanut podcastin"
 
-#: radiofeed/podcasts/views.py:265
+#: radiofeed/podcasts/views.py:270
 msgid "You are no longer subscribed to this podcast"
 msgstr "Olet lopettanut tilauksen podcastiin"
 
-#: radiofeed/users/forms.py:29
+#: radiofeed/users/forms.py:31
 msgid "Language"
 msgstr "Kieli"
 
-#: radiofeed/users/forms.py:30
+#: radiofeed/users/forms.py:32
 msgid "Send email notifications"
 msgstr "Lähetä ilmoituksia sähköpostilla"
 
-#: radiofeed/users/forms.py:35
+#: radiofeed/users/forms.py:37
 msgid "I'd like to receive notications of new content and recommendations."
 msgstr "Haluan ilmauksia uusista suosituksista ja sisällöstä"
 
-#: radiofeed/users/forms.py:44
+#: radiofeed/users/forms.py:46
 msgid "Select OPML file"
 msgstr "Valitse OPML-tiedosto"
 
@@ -270,7 +240,7 @@ msgstr ""
 "ilmoitettuValitettavasti tapahtui odottamaton virhe. Palvelimen "
 "ylläpitäjille on jo ilmoitettu."
 
-#: templates/about.html:4 templates/includes/navbar.html:64
+#: templates/about.html:4 templates/includes/navbar.html:58
 #: templates/includes/sidebar.html:56 templates/podcasts/detail.html:4
 #: templates/podcasts/detail_base.html:12
 msgid "About"
@@ -326,7 +296,7 @@ msgid ""
 "\n"
 "                        <strong>%(site_name)s</strong> is an\n"
 "                        <a target=\"_blank\" rel=\"noopener\" href=\"https://"
-"github.com/danjac/radiofeed/\">open source project</a>\n"
+"github.com/danjac/radiofeed-app\">open source project</a>\n"
 "                        under the <a href=\"https://mit-license.org/\" "
 "target=\"_blank\" rel=\"noopener\">MIT license</a>.\n"
 "                    "
@@ -619,7 +589,7 @@ msgstr "Tallenna Muutokset"
 msgid "Settings"
 msgstr "Asetukset"
 
-#: templates/account/settings_base.html:10 templates/includes/navbar.html:36
+#: templates/account/settings_base.html:10 templates/includes/navbar.html:30
 #, python-format
 msgid "Settings for %(username)s"
 msgstr "Asetukset: %(username)s"
@@ -916,6 +886,10 @@ msgstr "Vähennä Toistonopeus"
 msgid "Progress"
 msgstr "Edistymispalkki"
 
+#: templates/episodes/includes/audio_player.html:15
+msgid "Loading..."
+msgstr ""
+
 #: templates/episodes/includes/history.html:13
 msgid "Timestamp"
 msgstr "Aikaleima"
@@ -949,8 +923,8 @@ msgstr "Tilaukset"
 msgid "Search: Episodes"
 msgstr "Haku: Jaksot"
 
-#: templates/episodes/search.html:4 templates/includes/navbar.html:14
-#: templates/includes/search_form.html:2 templates/includes/search_form.html:14
+#: templates/episodes/search.html:4 templates/includes/navbar.html:8
+#: templates/includes/search_form.html:2 templates/includes/search_form.html:13
 #: templates/podcasts/itunes_search.html:4 templates/podcasts/search.html:4
 msgid "Search"
 msgstr "Haku"
@@ -960,7 +934,7 @@ msgstr "Haku"
 msgid "Episodes"
 msgstr "Jaksot"
 
-#: templates/error_base.html:26 templates/includes/navbar.html:21
+#: templates/error_base.html:26 templates/includes/navbar.html:15
 msgid "Home Page"
 msgstr "Kotisivu"
 
@@ -971,8 +945,8 @@ msgstr ""
 "käyttökokemuksen."
 
 #: templates/includes/cookie_notice.html:17
-msgid "Got it!"
-msgstr "Ymmärrään!"
+msgid "OK"
+msgstr ""
 
 #: templates/includes/empty.html:4
 #, python-format
@@ -991,11 +965,11 @@ msgstr ""
 msgid "Nothing to see here."
 msgstr "Ei tuloksia"
 
-#: templates/includes/navbar.html:15
+#: templates/includes/navbar.html:9
 msgid "Toggle Menu"
 msgstr "Vaihda Valikko"
 
-#: templates/includes/navbar.html:61
+#: templates/includes/navbar.html:55
 msgid "About this Site"
 msgstr "Tiedot Sivustosta"
 
@@ -1271,6 +1245,10 @@ msgid ""
 "this account.\n"
 "            "
 msgstr ""
+"\n"
+"Sinulla ei ole tähän tiliin liitettyjä sosiaalisen "
+"verkoston tilejä tällä hetkellä\n"
+"            "
 
 #: templates/socialaccount/connections.html:54
 msgid "Add a 3rd Party Account"
@@ -1285,7 +1263,7 @@ msgstr "Ota yhteyttä palveluun %(provider_name)s"
 #, python-format
 msgid ""
 "You are about to connect a new third party account from %(provider_name)s."
-msgstr ""
+msgstr "Olet kirjautumassa kolmannen osapuolen tilillä %(provider_name)s."
 
 #: templates/socialaccount/login.html:14
 #, python-format
@@ -1296,7 +1274,7 @@ msgstr ""
 #, python-format
 msgid ""
 "You are about to sign in using a third party account from %(provider_name)s."
-msgstr ""
+msgstr "Olet kirjautumassa kolmannen osapuolen tilillä %(provider_name)s."
 
 #: templates/socialaccount/login.html:25
 msgid "Connect"
@@ -1312,3 +1290,7 @@ msgid ""
 "following form:\n"
 "            "
 msgstr ""
+"\n"
+"Olet kirjautumassa %(site_name)s-sivustolle käyttäen %(provider_name)s-tiliäsi. "
+"Viimeisenä vaiheena täytä seuraava lomake:\n"
+"            "
