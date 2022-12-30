@@ -7,6 +7,7 @@ from typing import Callable
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
+from django.utils.functional import SimpleLazyObject
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -28,6 +29,20 @@ def middleware(
         return _middleware
 
     return _wrapper
+
+
+def lazy_object_middleware(attrname: str) -> Callable:
+    """Creates middleware that sets request property with a SimpleLazyObject."""
+
+    def _decorator(fn: Callable) -> Callable:
+        @functools.wraps(fn)
+        def _middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
+            setattr(request, attrname, SimpleLazyObject(lambda: fn(request)))
+            return get_response(request)
+
+        return middleware(_middleware)
+
+    return _decorator
 
 
 def require_auth(view: Callable) -> Callable:

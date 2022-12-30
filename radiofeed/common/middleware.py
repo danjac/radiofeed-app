@@ -3,33 +3,29 @@ from __future__ import annotations
 from typing import Callable
 
 from django.http import HttpRequest, HttpResponse
-from django.utils.functional import SimpleLazyObject
 
 from radiofeed.common import user_agent
-from radiofeed.common.decorators import middleware
+from radiofeed.common.decorators import lazy_object_middleware, middleware
 from radiofeed.common.search import Search
 from radiofeed.common.sorter import Sorter
 
 
-@middleware
-def user_agent_middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
+@lazy_object_middleware("user_agent")
+def user_agent_middleware(request: HttpRequest) -> str:
     """Appends user agent to request."""
-    request.user_agent = SimpleLazyObject(lambda: user_agent.user_agent(request))
-    return get_response(request)
+    return user_agent.user_agent(request)
 
 
-@middleware
-def search_middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
-    """Adds Search instance to request."""
-    request.search = SimpleLazyObject(lambda: Search(request))
-    return get_response(request)
+@lazy_object_middleware("search")
+def search_middleware(request: HttpRequest) -> Search:
+    """Adds Search to request."""
+    return Search(request)
 
 
-@middleware
-def sorter_middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
-    """Adds Sorter instance to request."""
-    request.sorter = SimpleLazyObject(lambda: Sorter(request))
-    return get_response(request)
+@lazy_object_middleware("sorter")
+def sorter_middleware(request: HttpRequest) -> Sorter:
+    """Adds Sorter to request."""
+    return Sorter(request)
 
 
 @middleware
