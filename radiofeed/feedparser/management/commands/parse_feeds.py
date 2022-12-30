@@ -44,19 +44,8 @@ class Command(BaseCommand):
         try:
             feed_parser.parse_feed(podcast, client)
 
-        except feed_parser.NotModified:
-            self.stdout.write(self.style.NOTICE(f"{podcast} is not modified"))
-
-        except feed_parser.Inaccessible:
-            self.stdout.write(self.style.ERROR(f"{podcast} is no longer accessible"))
-
-        except feed_parser.Duplicate:
-            self.stdout.write(
-                self.style.ERROR(f"{podcast} is a duplicate of another feed")
-            )
-
-        except feed_parser.Invalid:
-            self.stdout.write(self.style.ERROR(f"{podcast} is temporarily unavailable"))
+        except feed_parser.FeedParserError:
+            self.stdout.write(self.style.ERROR(f"{podcast} is not updated"))
 
         else:
             self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
