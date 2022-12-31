@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import pytest
 
+from django.utils.encoding import force_str
 from django_htmx.middleware import HtmxMiddleware
 
 from radiofeed.common.middleware import (
     cache_control_middleware,
     search_middleware,
     sorter_middleware,
+    user_agent_middleware,
 )
 
 
@@ -68,3 +70,14 @@ class TestSearchMiddleware:
         mw(req)
         assert not req.search
         assert not str(req.search)
+
+
+class TestUserAgentMiddleware:
+    @pytest.fixture
+    def mw(self, get_response):
+        return user_agent_middleware(get_response)
+
+    def test_user_agent(self, rf, mw):
+        req = rf.get("/")
+        mw(req)
+        assert force_str(req.user_agent).startswith("python-httpx")
