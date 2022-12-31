@@ -11,6 +11,7 @@ from django_object_actions import DjangoObjectActions
 
 from radiofeed.common.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -185,7 +186,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
             ) as client:
                 feed_parser.parse_feed(obj, client)
 
-        except feed_parser.FeedParserError:
+        except FeedParserError:
             self.message_user(
                 request, _("Podcast has not been updated"), level=messages.ERROR
             )

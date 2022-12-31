@@ -13,12 +13,15 @@ from django.utils import timezone
 from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
-from radiofeed.feedparser.feed_parser import (
+from radiofeed.feedparser.exceptions import (
     Duplicate,
-    FeedParser,
     Inaccessible,
-    Invalid,
     NotModified,
+    RssParserError,
+    Unavailable,
+)
+from radiofeed.feedparser.feed_parser import (
+    FeedParser,
     get_categories,
     make_content_hash,
     parse_feed,
@@ -478,7 +481,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(Invalid):
+            with pytest.raises(RssParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -501,7 +504,7 @@ class TestFeedParser:
 
         with httpx.Client() as session:
 
-            with pytest.raises(Invalid):
+            with pytest.raises(RssParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -521,7 +524,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(Invalid):
+            with pytest.raises(RssParserError):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -565,7 +568,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(Invalid):
+            with pytest.raises(Unavailable):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -578,7 +581,7 @@ class TestFeedParser:
         mock_client(mocker, exception=httpx.ConnectError("fail"))
 
         with httpx.Client() as session:
-            with pytest.raises(Invalid):
+            with pytest.raises(Unavailable):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -595,7 +598,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(Invalid):
+            with pytest.raises(Unavailable):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -614,7 +617,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(Invalid):
+            with pytest.raises(Unavailable):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()

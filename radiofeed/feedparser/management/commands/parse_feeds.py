@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand
 
 from radiofeed.common import user_agent
 from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.models import Podcast
 
 
@@ -44,7 +45,7 @@ class Command(BaseCommand):
         try:
             feed_parser.parse_feed(podcast, client)
 
-        except feed_parser.FeedParserError:
+        except FeedParserError:
             self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
 
         else:

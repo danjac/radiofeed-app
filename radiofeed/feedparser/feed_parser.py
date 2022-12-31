@@ -18,28 +18,16 @@ from radiofeed.common import batcher, tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
+from radiofeed.feedparser.exceptions import (
+    Duplicate,
+    FeedParserError,
+    Inaccessible,
+    NotModified,
+    RssParserError,
+    Unavailable,
+)
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
-
-
-class FeedParserError(ValueError):
-    """Generic parser error."""
-
-
-class NotModified(FeedParserError):
-    """RSS feed has not been modified since last update."""
-
-
-class Duplicate(FeedParserError):
-    """Another identical podcast exists in the database."""
-
-
-class Inaccessible(FeedParserError):
-    """Content is no longer accesssible."""
-
-
-class Invalid(FeedParserError):
-    """Content temporarily unaccessible or unparseable."""
 
 
 def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
@@ -102,8 +90,7 @@ class FeedParser:
                 .exists()
             ):
                 raise Duplicate()
-
-            feed = self._parse_rss(response.content)
+            feed = rss_parser.parse_rss(response.content)
         except FeedParserError as e:
             return self._handle_feed_error(e)
 
@@ -154,13 +141,7 @@ class FeedParser:
             return response
 
         except httpx.HTTPError as e:
-            raise Invalid from e
-
-    def _parse_rss(self, content: bytes) -> Feed:
-        try:
-            return rss_parser.parse_rss(content)
-        except rss_parser.RssParserError as e:
-            raise Invalid from e
+            raise Unavailable from e
 
     def _get_feed_headers(self) -> dict[str, str]:
         headers = {"Accept": self._accept}
@@ -176,11 +157,11 @@ class FeedParser:
 
         match exc:
 
-            case Inaccessible() | Duplicate():
+            case Duplicate() | Inaccessible():
                 # podcast should be discontinued and no longer updated
                 active = False
 
-            case Invalid():
+            case RssParserError() | Unavailable():
                 # increment num_retries in case a temporary error
                 num_retries += 1
 

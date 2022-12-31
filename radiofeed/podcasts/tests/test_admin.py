@@ -9,7 +9,7 @@ from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
 from radiofeed.common.factories import create_batch
-from radiofeed.feedparser.feed_parser import Inaccessible
+from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -86,7 +86,7 @@ class TestPodcastAdmin:
 
     def test_parse_podcast_feed_parser_error(self, mocker, podcast, podcast_admin, req):
         patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed", side_effect=Inaccessible()
+            "radiofeed.feedparser.feed_parser.parse_feed", side_effect=FeedParserError()
         )
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()

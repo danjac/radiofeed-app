@@ -4,7 +4,8 @@ import pathlib
 
 import pytest
 
-from radiofeed.feedparser.rss_parser import RssParserError, parse_rss
+from radiofeed.feedparser.exceptions import RssParserError
+from radiofeed.feedparser.rss_parser import parse_rss
 
 
 class TestParseRss:
