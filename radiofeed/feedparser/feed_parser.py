@@ -135,7 +135,7 @@ class FeedParser:
             if response.is_client_error:
                 raise Inaccessible()
 
-                # check for any other http errors
+            # check for any other http errors
             response.raise_for_status()
 
             return response
