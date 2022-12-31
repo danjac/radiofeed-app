@@ -2,10 +2,10 @@ from __future__ import annotations
 
 
 class FeedParserError(ValueError):
-    """Generic parser error."""
+    """Base feed parser exception."""
 
 
-class RssParserError(FeedParserError):
+class InvalidRSS(FeedParserError):
     """Error parsing RSS content."""
 
 

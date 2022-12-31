@@ -5,7 +5,7 @@ from typing import Iterator
 import lxml.etree  # nosec
 
 from radiofeed.common.xpath_parser import XPathParser
-from radiofeed.feedparser.exceptions import RssParserError
+from radiofeed.feedparser.exceptions import InvalidRSS
 from radiofeed.feedparser.models import Feed, Item
 
 _xpath_parser = XPathParser(
@@ -27,14 +27,14 @@ def parse_rss(content: bytes) -> Feed:
         content: the body of the RSS or Atom feed
 
     Raises:
-        RssParserError: if XML content is unparseable, or the feed is otherwise invalid or empty
+        InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid or empty
     """
     try:
         return _parse_feed(next(_xpath_parser.iterparse(content, "rss", "channel")))
     except StopIteration:
-        raise RssParserError("Document does not contain <channel /> element")
+        raise InvalidRSS("Document does not contain <channel /> element")
     except lxml.etree.XMLSyntaxError as e:
-        raise RssParserError from e
+        raise InvalidRSS from e
 
 
 def _parse_feed(channel: lxml.etree.Element) -> Feed:
@@ -67,7 +67,7 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
             ),
         )
     except (TypeError, ValueError) as e:
-        raise RssParserError from e
+        raise InvalidRSS from e
     finally:
         channel.clear()
 

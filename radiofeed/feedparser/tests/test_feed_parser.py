@@ -16,8 +16,8 @@ from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     Duplicate,
     Inaccessible,
+    InvalidRSS,
     NotModified,
-    RssParserError,
     Unavailable,
 )
 from radiofeed.feedparser.feed_parser import (
@@ -481,7 +481,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(RssParserError):
+            with pytest.raises(InvalidRSS):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -504,7 +504,7 @@ class TestFeedParser:
 
         with httpx.Client() as session:
 
-            with pytest.raises(RssParserError):
+            with pytest.raises(InvalidRSS):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()
@@ -524,7 +524,7 @@ class TestFeedParser:
         )
 
         with httpx.Client() as session:
-            with pytest.raises(RssParserError):
+            with pytest.raises(InvalidRSS):
                 parse_feed(podcast, session)
 
         podcast.refresh_from_db()

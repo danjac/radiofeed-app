@@ -22,8 +22,8 @@ from radiofeed.feedparser.exceptions import (
     Duplicate,
     FeedParserError,
     Inaccessible,
+    InvalidRSS,
     NotModified,
-    RssParserError,
     Unavailable,
 )
 from radiofeed.feedparser.models import Feed, Item
@@ -161,7 +161,7 @@ class FeedParser:
                 # podcast should be discontinued and no longer updated
                 active = False
 
-            case RssParserError() | Unavailable():
+            case InvalidRSS() | Unavailable():
                 # increment num_retries in case a temporary error
                 num_retries += 1
 
