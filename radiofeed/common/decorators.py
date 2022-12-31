@@ -23,7 +23,7 @@ def middleware(
     """Create a middleware callable."""
 
     @functools.wraps(middleware_fn)
-    def _wrapper(get_response: GetResponse):
+    def _wrapper(get_response: GetResponse) -> GetResponse:
         def _middleware(request: HttpRequest) -> HttpResponse:
             return middleware_fn(request, get_response)
 
@@ -35,7 +35,7 @@ def middleware(
 def lazy_object_middleware(attrname: str) -> Callable:
     """Creates middleware that sets request property with a SimpleLazyObject."""
 
-    def _decorator(fn: Callable[[HttpRequest], Any]) -> Callable:
+    def _decorator(fn: Callable[[HttpRequest], Any]) -> GetResponse:
         @functools.wraps(fn)
         def _middleware(
             request: HttpRequest, get_response: GetResponse
