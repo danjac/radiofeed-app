@@ -72,7 +72,7 @@ class OpmlUploadForm(forms.Form):
                 [
                     Subscription(podcast=podcast, subscriber=user)
                     for podcast in itertools.islice(
-                        Podcast.objects.filter(rss__in=self._parse_opml())
+                        Podcast.objects.filter(rss__in=set(self._parse_opml()))
                         .exclude(subscriptions__subscriber=user)
                         .distinct(),
                         limit,
