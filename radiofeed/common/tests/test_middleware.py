@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from django.http import HttpResponse
 from django.utils.encoding import force_str
 from django_htmx.middleware import HtmxMiddleware
 
@@ -33,10 +34,23 @@ class TestCacheControlMiddleware:
     def cache_mw(self, get_response):
         return cache_control_middleware(get_response)
 
+    def test_is_htmx_request_cache_control_already_set(self, rf):
+        def _get_response(request):
+            request.htmx = True
+            resp = HttpResponse()
+            resp["Cache-Control"] = "max-age=3600"
+            return resp
+
+        req = rf.get("/")
+        req.htmx = True
+
+        resp = cache_control_middleware(_get_response)(req)
+        assert resp.headers["Cache-Control"] == "max-age=3600"
+
     def test_is_htmx_request(self, htmx_req, htmx_mw, cache_mw):
         htmx_mw(htmx_req)
         resp = cache_mw(htmx_req)
-        assert "Cache-Control" in resp.headers
+        assert resp.headers["Cache-Control"] == "no-store, max-age=0"
 
     def test_is_not_htmx_request(self, req, htmx_mw, cache_mw):
         htmx_mw(req)
