@@ -19,7 +19,7 @@ require_form_methods = require_http_methods(["GET", "POST"])
 
 def middleware(
     middleware_fn: Callable[[HttpRequest, GetResponse], HttpResponse]
-) -> Callable:
+) -> GetResponse:
     """Create a middleware callable."""
 
     @functools.wraps(middleware_fn)
@@ -32,7 +32,7 @@ def middleware(
     return _wrapper
 
 
-def lazy_object_middleware(attrname: str) -> Callable:
+def lazy_object_middleware(attrname: str) -> GetResponse:
     """Creates middleware that sets request property with a SimpleLazyObject."""
 
     def _decorator(fn: Callable[[HttpRequest], Any]) -> GetResponse:
