@@ -22,7 +22,7 @@ def middleware(
     """Create a middleware callable."""
 
     @functools.wraps(middleware_fn)
-    def _wrapper(get_response: Callable):
+    def _wrapper(get_response: Callable[[HttpRequest], HttpResponse]):
         def _middleware(request: HttpRequest) -> HttpResponse:
             return middleware_fn(request, get_response)
 
