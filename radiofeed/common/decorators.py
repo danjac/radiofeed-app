@@ -12,17 +12,18 @@ from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.common.http import HttpResponseUnauthorized
+from radiofeed.common.types import GetResponse
 
 require_form_methods = require_http_methods(["GET", "POST"])
 
 
 def middleware(
-    middleware_fn: Callable[[HttpRequest, Callable], HttpResponse]
+    middleware_fn: Callable[[HttpRequest, GetResponse], HttpResponse]
 ) -> Callable:
     """Create a middleware callable."""
 
     @functools.wraps(middleware_fn)
-    def _wrapper(get_response: Callable[[HttpRequest], HttpResponse]):
+    def _wrapper(get_response: GetResponse):
         def _middleware(request: HttpRequest) -> HttpResponse:
             return middleware_fn(request, get_response)
 
@@ -36,7 +37,9 @@ def lazy_object_middleware(attrname: str) -> Callable:
 
     def _decorator(fn: Callable[[HttpRequest], Any]) -> Callable:
         @functools.wraps(fn)
-        def _middleware(request: HttpRequest, get_response: Callable) -> HttpResponse:
+        def _middleware(
+            request: HttpRequest, get_response: GetResponse
+        ) -> HttpResponse:
             setattr(request, attrname, SimpleLazyObject(lambda: fn(request)))
             return get_response(request)
 

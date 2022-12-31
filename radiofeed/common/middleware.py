@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from typing import Callable
-
 from django.http import HttpRequest, HttpResponse
 
 from radiofeed.common import user_agent
 from radiofeed.common.decorators import lazy_object_middleware, middleware
 from radiofeed.common.search import Search
 from radiofeed.common.sorter import Sorter
+from radiofeed.common.types import GetResponse
 
 
 @lazy_object_middleware("user_agent")
@@ -30,7 +29,7 @@ def sorter_middleware(request: HttpRequest) -> Sorter:
 
 @middleware
 def cache_control_middleware(
-    request: HttpRequest, get_response: Callable
+    request: HttpRequest, get_response: GetResponse
 ) -> HttpResponse:
     """Workaround for https://github.com/bigskysoftware/htmx/issues/497.
 
