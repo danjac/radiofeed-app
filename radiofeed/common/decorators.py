@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 
-from typing import Any, Callable
+from typing import Any, Callable, Concatenate, ParamSpec
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
@@ -13,6 +13,8 @@ from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.common.http import HttpResponseUnauthorized
 from radiofeed.common.types import GetResponse
+
+P = ParamSpec("P")
 
 require_form_methods = require_http_methods(["GET", "POST"])
 
@@ -48,11 +50,15 @@ def lazy_object_middleware(attrname: str) -> GetResponse:
     return _decorator
 
 
-def require_auth(view: Callable) -> Callable:
+def require_auth(
+    view: Callable[Concatenate[HttpRequest, P], HttpResponse]
+) -> Callable[Concatenate[HttpRequest, P], HttpResponse]:
     """Login required decorator also handling HTMX and AJAX views."""
 
     @functools.wraps(view)
-    def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+    def _wrapper(
+        request: HttpRequest, *args: P.args, **kwargs: P.kwargs
+    ) -> HttpResponse:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
