@@ -183,9 +183,7 @@ class FeedParser:
         )
 
         self._podcast_update(
-            active=active,
-            num_retries=num_retries,
-            frequency=frequency,
+            active=active, num_retries=num_retries, frequency=frequency
         )
 
         # re-raise original exception
@@ -195,9 +193,7 @@ class FeedParser:
         now = timezone.now()
 
         Podcast.objects.filter(pk=self._podcast.id).update(
-            updated=now,
-            parsed=now,
-            **fields,
+            updated=now, parsed=now, **fields
         )
 
     def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
