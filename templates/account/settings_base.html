@@ -17,7 +17,7 @@
                             tabindex="{{ link.active|yesno:"0,-1" }}"
                             href="{{ link.url }}">{% translate "Preferences" %}</a>
                     </li>
-                    {% active_link 'users:import_export_podcast_feeds' as link %}
+                    {% active_link 'users:manage_podcast_feeds' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"

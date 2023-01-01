@@ -62,9 +62,9 @@ class TestUserStats:
         assert_ok(response)
 
 
-class TestImportExportPodcastFeeds:
+class TestManagePodcastFeeds:
     def test_get(self, client, auth_user):
-        assert_ok(client.get(reverse("users:import_export_podcast_feeds")))
+        assert_ok(client.get(reverse("users:manage_podcast_feeds")))
 
 
 class TestImportPodcastFeeds:

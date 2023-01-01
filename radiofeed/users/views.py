@@ -35,11 +35,11 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-def import_export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
     return render(
         request,
-        "account/import_export_podcast_feeds.html",
+        "account/podcast_feeds.html",
         {"form": OpmlUploadForm()},
     )
 
@@ -64,7 +64,7 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
         else:
             messages.info(request, _("No new podcasts found in uploaded file"))
 
-    return render(request, "account/import_export_podcast_feeds.html", {"form": form})
+    return render(request, "account/podcast_feeds.html", {"form": form})
 
 
 @require_POST
