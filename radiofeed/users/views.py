@@ -64,7 +64,7 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
         else:
             messages.info(request, _("No new podcasts found in uploaded file"))
 
-    return render(request, "account/podcast_feeds.html", {"form": form})
+    return redirect("users:manage_podcast_feeds")
 
 
 @require_POST

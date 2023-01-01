@@ -6,6 +6,7 @@ import pytest
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
+from pytest_django.asserts import assertRedirects
 
 from radiofeed.common.asserts import assert_hx_redirect, assert_ok
 from radiofeed.common.factories import create_batch
@@ -69,6 +70,7 @@ class TestManagePodcastFeeds:
 
 class TestImportPodcastFeeds:
     url = reverse_lazy("users:import_podcast_feeds")
+    redirect_url = reverse_lazy("users:manage_podcast_feeds")
 
     @pytest.fixture
     def upload_file(self):
@@ -83,13 +85,14 @@ class TestImportPodcastFeeds:
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
-        assert_ok(
+        assertRedirects(
             client.post(
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="import-feeds-form",
                 HTTP_HX_REQUEST="true",
-            )
+            ),
+            self.redirect_url,
         )
 
         assert Subscription.objects.filter(
@@ -104,26 +107,28 @@ class TestImportPodcastFeeds:
             subscriber=auth_user,
         )
 
-        assert_ok(
+        assertRedirects(
             client.post(
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="opml-import-form",
                 HTTP_HX_REQUEST="true",
-            )
+            ),
+            self.redirect_url,
         )
 
         assert Subscription.objects.filter(subscriber=auth_user).exists()
 
     def test_post_is_empty(self, client, auth_user, mocker, upload_file):
 
-        assert_ok(
+        assertRedirects(
             client.post(
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="opml-import-form",
                 HTTP_HX_REQUEST="true",
-            )
+            ),
+            self.redirect_url,
         )
 
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
