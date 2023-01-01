@@ -37,11 +37,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 @require_auth
 def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
-    return render(
-        request,
-        "account/podcast_feeds.html",
-        {"form": OpmlUploadForm()},
-    )
+    return render(request, "account/podcast_feeds.html", {"form": OpmlUploadForm()})
 
 
 @require_POST
