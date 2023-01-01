@@ -6,7 +6,6 @@ import pytest
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertRedirects
 
 from radiofeed.common.asserts import assert_hx_redirect, assert_ok
 from radiofeed.common.factories import create_batch
@@ -85,14 +84,13 @@ class TestImportPodcastFeeds:
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
-        assertRedirects(
+        assert_ok(
             client.post(
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="import-feeds-form",
                 HTTP_HX_REQUEST="true",
             ),
-            self.redirect_url,
         )
 
         assert Subscription.objects.filter(
@@ -107,28 +105,39 @@ class TestImportPodcastFeeds:
             subscriber=auth_user,
         )
 
-        assertRedirects(
+        assert_ok(
             client.post(
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="opml-import-form",
                 HTTP_HX_REQUEST="true",
             ),
-            self.redirect_url,
         )
 
         assert Subscription.objects.filter(subscriber=auth_user).exists()
 
     def test_post_is_empty(self, client, auth_user, mocker, upload_file):
 
-        assertRedirects(
+        assert_ok(
             client.post(
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="opml-import-form",
                 HTTP_HX_REQUEST="true",
             ),
-            self.redirect_url,
+        )
+
+        assert not Subscription.objects.filter(subscriber=auth_user).exists()
+
+    def test_invalid_form(self, client, auth_user, mocker, upload_file):
+
+        assert_ok(
+            client.post(
+                self.url,
+                data={},
+                HTTP_HX_TARGET="opml-import-form",
+                HTTP_HX_REQUEST="true",
+            ),
         )
 
         assert not Subscription.objects.filter(subscriber=auth_user).exists()

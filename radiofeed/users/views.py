@@ -49,20 +49,22 @@ def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
 def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form = OpmlUploadForm(request.POST, request.FILES)
-    if form.is_valid() and (new_feeds := form.subscribe_to_feeds(request.user)):
-        messages.success(
-            request,
-            ngettext(
-                "%(count)d podcast feed added to your collection",
-                "%(count)d podcast feeds added to your collection",
-                new_feeds,
-            )
-            % {"count": new_feeds},
-        )
-    else:
-        messages.info(request, _("No new podcasts found in uploaded file"))
+    if form.is_valid():
 
-    return redirect("users:manage_podcast_feeds")
+        if new_feeds := form.subscribe_to_feeds(request.user):
+            messages.success(
+                request,
+                ngettext(
+                    "%(count)d podcast feed added to your collection",
+                    "%(count)d podcast feeds added to your collection",
+                    new_feeds,
+                )
+                % {"count": new_feeds},
+            )
+        else:
+            messages.info(request, _("No new podcasts found in uploaded file"))
+
+    return render(request, "account/podcast_feeds.html", {"form": form})
 
 
 @require_POST
