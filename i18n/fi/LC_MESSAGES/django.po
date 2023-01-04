@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 09:28+0000\n"
+"POT-Creation-Date: 2023-01-04 10:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,7 +79,7 @@ msgstr "Ilman päivämäärää"
 msgid "Promoted"
 msgstr "Ylennetyt"
 
-#: radiofeed/podcasts/admin.py:122 templates/account/stats.html:16
+#: radiofeed/podcasts/admin.py:122 templates/account/stats.html:15
 msgid "Subscribed"
 msgstr "Tilaattu"
 
@@ -141,22 +141,22 @@ msgstr "Haluan ilmauksia uusista suosituksista ja sisällöstä"
 msgid "Select OPML file"
 msgstr "Valitse OPML-tiedosto"
 
-#: radiofeed/users/views.py:31
+#: radiofeed/users/views.py:29
 msgid "Your preferences have been saved"
 msgstr "Asetuksesi tallennettu"
 
-#: radiofeed/users/views.py:56
+#: radiofeed/users/views.py:54
 #, python-format
 msgid "%(count)d podcast feed added to your collection"
 msgid_plural "%(count)d podcast feeds added to your collection"
 msgstr[0] "%(count)d podcast lisätty kokoelmaasi"
 msgstr[1] "%(count)d podcastia lisätty kokoelmaasi"
 
-#: radiofeed/users/views.py:63
+#: radiofeed/users/views.py:61
 msgid "No new podcasts found in uploaded file"
 msgstr "Ei uusia podcasteja löydetty tiedostosta"
 
-#: radiofeed/users/views.py:134
+#: radiofeed/users/views.py:111
 msgid "Your account has been deleted"
 msgstr "Tilisi on poistettu"
 
@@ -625,15 +625,11 @@ msgstr ""
 msgid "Sign Up"
 msgstr "Rekisteröidy"
 
-#: templates/account/stats.html:8
-msgid "Activity"
-msgstr "Toiminta"
-
-#: templates/account/stats.html:10
+#: templates/account/stats.html:9
 msgid "Joined"
 msgstr "Rekisteröity"
 
-#: templates/account/stats.html:19
+#: templates/account/stats.html:18
 #, fuzzy, python-format
 #| msgid ""
 #| "\n"
@@ -660,12 +656,12 @@ msgstr[1] ""
 "                            %(counter)s podcastia\n"
 "                        "
 
-#: templates/account/stats.html:32 templates/episodes/bookmarks.html:4
+#: templates/account/stats.html:31 templates/episodes/bookmarks.html:4
 #: templates/episodes/bookmarks.html:9 templates/includes/sidebar.html:34
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
-#: templates/account/stats.html:36 templates/account/stats.html:52
+#: templates/account/stats.html:35 templates/account/stats.html:51
 #, python-format
 msgid ""
 "\n"
@@ -684,13 +680,9 @@ msgstr[1] ""
 "                            %(counter)s jaksoa\n"
 "                        "
 
-#: templates/account/stats.html:49 templates/episodes/includes/history.html:7
+#: templates/account/stats.html:48 templates/episodes/includes/history.html:7
 msgid "Listened"
 msgstr "Kuunneltu"
-
-#: templates/account/stats.html:65
-msgid "Most Listened Podcasts"
-msgstr "Kuunneltuimmat Podcastit"
 
 #: templates/account/verification_sent.html:4
 #: templates/account/verification_sent.html:7
@@ -1299,6 +1291,3 @@ msgstr ""
 "Olet kirjautumassa %(site_name)s-sivustolle käyttäen %(provider_name)s-"
 "tiliäsi. Viimeisenä vaiheena täytä seuraava lomake:\n"
 "            "
-
-#~ msgid "Export"
-#~ msgstr "Vie"
