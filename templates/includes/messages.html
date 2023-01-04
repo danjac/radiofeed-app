@@ -1,8 +1,8 @@
-<div id="messages" class="fixed inset-x-0 z-50 mx-auto bottom-5 w-60 lg:w-96" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+<div id="messages" class="fixed inset-x-0 z-50 mx-auto bottom-5 w-60 lg:w-72" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if messages %}
-        <div class="flex justify-center space-y-3">
+        <div class="space-y-3">
             {% for message in messages %}
-                <div class="flex flex-wrap items-center px-2 py-1 text-center text-white font-bold rounded shadow-xl max-w-sm {{ message.tags }}"
+                <div class="flex flex-wrap justify-center items-center px-2 py-1 text-center text-white font-bold rounded shadow-xl max-w-sm {{ message.tags }}"
                     role="alert"
                     x-data="{show: true}"
                     x-show="show"
