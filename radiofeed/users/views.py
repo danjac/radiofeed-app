@@ -102,15 +102,13 @@ def user_stats(request: HttpRequest) -> HttpResponse:
         logs.select_related("episode").values_list("episode__podcast", flat=True)
     ):
 
-        counters = (
-            logs.filter(episode__podcast=OuterRef("pk"))
-            .values("episode__podcast")
-            .annotate(counter=Count("id"))
-            .values("counter")
-        )
-
         top_podcasts = (
-            Podcast.objects.annotate(num_listens=counters)
+            Podcast.objects.annotate(
+                num_listens=logs.filter(episode__podcast=OuterRef("pk"))
+                .values("episode__podcast")
+                .annotate(counter=Count("id"))
+                .values("counter")
+            )
             .filter(pk__in=podcast_ids)
             .order_by("-num_listens", "-pub_date")[:10]
         )
