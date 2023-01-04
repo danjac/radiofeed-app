@@ -472,7 +472,7 @@ dev = ["black", "flake8", "isort", "nox", "pre-commit"]
 
 [[package]]
 name = "djlint"
-version = "1.19.10"
+version = "1.19.11"
 description = "HTML Template Linter and Formatter"
 category = "dev"
 optional = false
@@ -484,7 +484,7 @@ colorama = ">=0.4.4,<0.5.0"
 cssbeautifier = ">=1.14.4,<2.0.0"
 html-tag-names = ">=0.1.2,<0.2.0"
 html-void-elements = ">=0.1.0,<0.2.0"
-importlib-metadata = ">=5.0.0,<6.0.0"
+importlib-metadata = ">=6.0.0,<7.0.0"
 jsbeautifier = ">=1.14.4,<2.0.0"
 pathspec = ">=0.10.0,<0.11.0"
 PyYAML = ">=6.0,<7.0"
@@ -770,7 +770,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "importlib-metadata"
-version = "5.2.0"
+version = "6.0.0"
 description = "Read metadata from Python packages"
 category = "dev"
 optional = false
@@ -2143,8 +2143,8 @@ djhtml = [
     {file = "djhtml-1.5.2.tar.gz", hash = "sha256:b54c4ab6effaf3dbe87d616ba30304f1dba22f07127a563df4130a71acc290ea"},
 ]
 djlint = [
-    {file = "djlint-1.19.10-py3-none-any.whl", hash = "sha256:6ab1883bcb5941b9d32180acdbe02d9b445d467efa8567483dc04d874c9dc441"},
-    {file = "djlint-1.19.10.tar.gz", hash = "sha256:bc9a7d0dd63af5a29f58a4c5fab232e9f30aed12b860a90728ac5828963299f0"},
+    {file = "djlint-1.19.11-py3-none-any.whl", hash = "sha256:c19d732c79b660f7d406517254bfd3e98f6c3c2de0cb300766b5555077d4ae08"},
+    {file = "djlint-1.19.11.tar.gz", hash = "sha256:98bbe094a6f176258a578b16c492cbbb9384e3a3b447c9241ee4a6427d703402"},
 ]
 editorconfig = [
     {file = "EditorConfig-0.12.3-py3-none-any.whl", hash = "sha256:6b0851425aa875b08b16789ee0eeadbd4ab59666e9ebe728e526314c4a2e52c1"},
@@ -2328,8 +2328,8 @@ idna = [
     {file = "idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
 ]
 importlib-metadata = [
-    {file = "importlib_metadata-5.2.0-py3-none-any.whl", hash = "sha256:0eafa39ba42bf225fc00e67f701d71f85aead9f878569caf13c3724f704b970f"},
-    {file = "importlib_metadata-5.2.0.tar.gz", hash = "sha256:404d48d62bba0b7a77ff9d405efd91501bef2e67ff4ace0bed40a0cf28c3c7cd"},
+    {file = "importlib_metadata-6.0.0-py3-none-any.whl", hash = "sha256:7efb448ec9a5e313a57655d35aa54cd3e01b7e1fbcf72dce1bf06119420f5bad"},
+    {file = "importlib_metadata-6.0.0.tar.gz", hash = "sha256:e354bedeb60efa6affdcc8ae121b73544a7aa74156d047311948f6d711cd378d"},
 ]
 iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
