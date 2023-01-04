@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.db.models import Count, OuterRef
+from django.db.models import Count, OuterRef, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -97,6 +97,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     logs = AudioLog.objects.filter(user=request.user)
+    top_podcasts: QuerySet[Podcast] | None = None
 
     if podcast_ids := set(
         logs.select_related("episode").values_list("episode__podcast", flat=True)
@@ -112,8 +113,6 @@ def user_stats(request: HttpRequest) -> HttpResponse:
             .filter(pk__in=podcast_ids)
             .order_by("-num_listens", "-pub_date")[:10]
         )
-    else:
-        top_podcasts = []
 
     return render(request, "account/stats.html", {"top_podcasts": top_podcasts})
 
