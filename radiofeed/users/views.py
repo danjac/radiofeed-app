@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.db.models import Count
+from django.db.models import Count, OuterRef
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.common.decorators import require_auth, require_form_methods
+from radiofeed.episodes.models import AudioLog
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -95,11 +96,26 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    top_podcasts = (
-        Podcast.objects.annotate(num_listens=Count("episodes__audio_logs"))
-        .filter(episodes__audio_logs__user=request.user)
-        .order_by("-num_listens", "-pub_date")
-    )[:10]
+    logs = AudioLog.objects.filter(user=request.user)
+
+    if podcast_ids := set(
+        logs.select_related("episode").values_list("episode__podcast", flat=True)
+    ):
+
+        counters = (
+            logs.filter(episode__podcast=OuterRef("pk"))
+            .values("episode__podcast")
+            .annotate(counter=Count("id"))
+            .values("counter")
+        )
+
+        top_podcasts = (
+            Podcast.objects.annotate(num_listens=counters)
+            .filter(pk__in=podcast_ids)
+            .order_by("-num_listens", "-pub_date")[:10]
+        )
+    else:
+        top_podcasts = []
 
     return render(request, "account/stats.html", {"top_podcasts": top_podcasts})
 
