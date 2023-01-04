@@ -60,17 +60,4 @@
             {% endif %}
         {% endwith %}
     </div>
-
-    {% if top_podcasts %}
-        <h2 class="mb-3 text-base lg:text-lg font-semibold">{% translate "Most Listened Podcasts" %}</h2>
-        <ol class="w-full divide-y list-decimal list-inside">
-            {% for podcast in top_podcasts %}
-                <li class="py-2">
-                    <a href="{{ podcast.get_absolute_url }}" class="link">
-                        {{ podcast.cleaned_title }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ol>
-    {% endif %}
 {% endblock settings_content %}

@@ -51,16 +51,6 @@ class TestUserStats:
 
         response = client.get(reverse("users:stats"))
         assert_ok(response)
-        assert response.context["top_podcasts"].count() == 1
-
-    def test_stats_no_logs(self, client, auth_user):
-
-        create_subscription(subscriber=auth_user)
-        create_bookmark(user=auth_user)
-
-        response = client.get(reverse("users:stats"))
-        assert_ok(response)
-        assert response.context["top_podcasts"] is None
 
     def test_stats_plural(self, client, auth_user):
 
