@@ -73,17 +73,20 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 ROOT_URLCONF = "radiofeed.urls"
 
-INSTALLED_APPS: list[str] = [
-    "django.forms",
+DJANGO_APPS: list[str] = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.postgres",
+    "django.contrib.sessions",
     "django.contrib.sitemaps",
+    "django.contrib.sites",
     "django.contrib.staticfiles",
+    "django.forms",
+]
+
+THIRD_PARTY_APPS: list[str] = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -95,11 +98,16 @@ INSTALLED_APPS: list[str] = [
     "fast_update",
     "modeltranslation",
     "widget_tweaks",
+]
+
+PROJECT_APPS: list[str] = [
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
     "radiofeed.users",
 ]
+
+INSTALLED_APPS: list[str] = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE: list[str] = [
     "django.middleware.security.SecurityMiddleware",
