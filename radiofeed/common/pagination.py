@@ -6,12 +6,12 @@ from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 
-_DEFAULT_PAGINATION_PARAM: Final = "page"
+_PARAM: Final = "page"
+_TARGET: Final = "pagination"
+_PAGE_SIZE: Final = 30
 
 
-def pagination_url(
-    request: HttpRequest, page_number: int, param: str = _DEFAULT_PAGINATION_PARAM
-) -> str:
+def pagination_url(request: HttpRequest, page_number: int) -> str:
     """Inserts the page query string parameter with the provided page number into the template.
 
     Preserves the original request path and any other query string parameters.
@@ -23,7 +23,7 @@ def pagination_url(
         updated URL path with new page
     """
     qs = request.GET.copy()
-    qs[param] = page_number
+    qs[_PARAM] = page_number
     return f"{request.path}?{qs.urlencode()}"
 
 
@@ -33,27 +33,21 @@ def render_pagination_response(
     template_name: str,
     pagination_template_name: str,
     extra_context: dict | None = None,
-    param: str = _DEFAULT_PAGINATION_PARAM,
-    page_size: int = 30,
-    pagination_target: str = "pagination",
-    **pagination_kwargs,
 ) -> HttpResponse:
     """Renders paginated response.
 
     Raises:
-        Http404: invalid page
+        Http404: invalid page number
     """
     try:
-        page = Paginator(object_list, page_size, **pagination_kwargs).page(
-            request.GET.get(param, 1)
-        )
+        page = Paginator(object_list, _PAGE_SIZE).page(request.GET.get(_PARAM, 1))
 
     except InvalidPage:
         raise Http404()
 
     template_name = (
         pagination_template_name
-        if request.htmx and request.htmx.target == pagination_target
+        if request.htmx and request.htmx.target == _TARGET
         else template_name
     )
 
@@ -62,7 +56,7 @@ def render_pagination_response(
         template_name,
         {
             "page_obj": page,
-            "pagination_target": pagination_target,
+            "pagination_target": _TARGET,
             "pagination_template": pagination_template_name,
             **(extra_context or {}),
         },
