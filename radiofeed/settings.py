@@ -107,7 +107,6 @@ PROJECT_APPS: list[str] = [
     "radiofeed.users",
 ]
 
-INSTALLED_APPS: list[str] = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE: list[str] = [
     "django.middleware.security.SecurityMiddleware",
@@ -295,10 +294,10 @@ match ENVIRONMENT:
 
         ADMIN_SITE_HEADER += " [DEVELOPMENT]"
 
-        INSTALLED_APPS = [
+        THIRD_PARTY_APPS += [
             "whitenoise.runserver_nostatic",
             "debug_toolbar",
-        ] + INSTALLED_APPS
+        ]
 
         MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
@@ -384,7 +383,7 @@ match ENVIRONMENT:
 
         if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
 
-            INSTALLED_APPS += ["anymail"]
+            THIRD_PARTY_APPS += ["anymail"]
 
             EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
@@ -397,3 +396,7 @@ match ENVIRONMENT:
                 "MAILGUN_API_URL": MAILGUN_API_URL,
                 "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
             }
+
+# combine all apps
+
+INSTALLED_APPS: list[str] = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
