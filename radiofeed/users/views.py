@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -94,7 +95,16 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return render(request, "account/stats.html")
+    top_podcasts = (
+        Podcast.objects.annotate(
+            num_listens=Count("episodes__audio_logs", distinct=True)
+        )
+        .filter(episodes__audio_logs__user=request.user)
+        .distinct()
+        .order_by("-num_listens", "-pub_date")
+    )[:10]
+
+    return render(request, "account/stats.html", {"top_podcasts": top_podcasts})
 
 
 @require_form_methods
