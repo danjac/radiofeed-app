@@ -60,7 +60,7 @@ class TestUserStats:
 
         response = client.get(reverse("users:stats"))
         assert_ok(response)
-        assert response.context["top_podcasts"] == []
+        assert response.context["top_podcasts"] is None
 
     def test_stats_plural(self, client, auth_user):
 
