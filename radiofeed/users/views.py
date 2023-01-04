@@ -96,11 +96,8 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     top_podcasts = (
-        Podcast.objects.annotate(
-            num_listens=Count("episodes__audio_logs", distinct=True)
-        )
+        Podcast.objects.annotate(num_listens=Count("episodes__audio_logs"))
         .filter(episodes__audio_logs__user=request.user)
-        .distinct()
         .order_by("-num_listens", "-pub_date")
     )[:10]
 
