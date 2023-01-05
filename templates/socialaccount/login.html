@@ -1,20 +1,19 @@
 {% extends "base.html" %}
-{% load i18n %}
 {% block content %}
     {% with provider_name=provider.name %}
         {% if process == "connect" %}
             <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">
-                {% blocktrans %}Connect to {{ provider_name }}{% endblocktrans %}
+                Connect to {{ provider_name }}
             </h1>
             <p class="mb-3">
-                {% blocktrans %}You are about to connect a new third party account from {{ provider_name }}.{% endblocktrans %}
+                You are about to connect a new third party account from {{ provider_name }}.
             </p>
         {% else %}
             <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">
-                {% blocktrans %}Sign In Via {{ provider_name }}{% endblocktrans %}
+                Sign In Via {{ provider_name }}
             </h1>
             <p class="mb-3">
-                {% blocktrans %}You are about to sign in using a third party account from {{ provider_name }}.{% endblocktrans %}
+                You are about to sign in using a third party account from {{ provider_name }}.
             </p>
         {% endif %}
         <form method="post" hx-disable="true">
@@ -22,9 +21,9 @@
             <button class="inline-flex items-center btn btn-primary" type="submit">
                 {% icon "sign-in" css_class="mr-2" %}
                 {% if process == "connect" %}
-                    {% translate "Connect" %}
+                    Connect
                 {% else %}
-                    {% translate "Sign In" %}
+                    Sign In
                 {% endif %}
             </button>
         </form>

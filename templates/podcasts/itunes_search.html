@@ -1,7 +1,6 @@
 {% extends "search_base.html" %}
-{% load i18n %}
 {% block title %}
-    | {% translate "Search" %} | iTunes
+    | Search | iTunes
 {% endblock title %}
 {% block search_content %}
     <div class="divide-y divide-solid">
@@ -22,7 +21,7 @@
                             </a>
                         </h2>
                         <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
-                            <span class="animate-pulse">{% translate "Adding podcast to database..." %}</span>
+                            <span class="animate-pulse">Adding podcast to database...</span>
                         </h3>
                     </div>
                 </article>

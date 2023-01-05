@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% load cache i18n %}
+{% load cache %}
 {% block content %}
     <header class="mb-3 xl:mb-6 space-y-3">
         {% with site_name=request.site.name %}
             <h1 class="text-lg font-bold text-center lg:text-xl xl:text-2xl">Welcome to {{ site_name }}!</h1>
             <h2 class="text-base font-semibold text-center lg:text-lg xl:text-xl">
-                {% blocktranslate %}
-                    <strong>{{ site_name }}</strong> is a <strong>free</strong> web app for discovering and listening to your favorite podcast feeds.
-                {% endblocktranslate %}
+                <strong>{{ site_name }}</strong> is a <strong>free</strong> web app for discovering and listening to your favorite podcast feeds.
             </h2>
         {% endwith %}
     </header>
