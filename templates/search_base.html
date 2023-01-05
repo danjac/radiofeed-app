@@ -1,9 +1,8 @@
 {% extends "base.html" %}
-{% load i18n %}
 {% block content %}
     <header class="mb-3 pb-3 border-b space-y-3">
         <h1 class="flex items-center justify-center sm:justify-start mb-3 text-lg lg:text-xl xl:text-2xl font-bold">
-            {% blocktranslate with site_name=request.site.name %}Search {{ site_name }}{% endblocktranslate %}
+            Search {{ request.site.name }}
         </h1>
         <nav class="sm:flex justify-between">
             <ul class="flex items-center mb-3 sm:mb-0 space-x-6 justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none">
@@ -12,27 +11,27 @@
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            title="{% translate "Search Podcasts" %}"
-                            href="{{ link.url|add:search_qs }}">{% translate "Podcasts" %}</a>
+                            title="Search Podcasts"
+                            href="{{ link.url|add:search_qs }}">Podcasts</a>
                     </li>
                     {% active_link 'episodes:search_episodes' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            title="{% translate "Search Episodes" %}"
-                            href="{{ link.url|add:search_qs }}">{% translate "Episodes" %}</a>
+                            title="Search Episodes"
+                            href="{{ link.url|add:search_qs }}">Episodes</a>
                     </li>
                     {% active_link 'podcasts:search_itunes' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            title="{% translate "Search iTunes" %}"
-                            href="{{ link.url|add:search_qs }}">{% translate "iTunes" %}</a>
+                            title="Search iTunes"
+                            href="{{ link.url|add:search_qs }}">iTunes</a>
                     </li>
                 {% endwith %}
             </ul>
             <ul class="flex items-center justify-center sm:justify-end">
-                <li>{% include "includes/search_form.html" with placeholder=_("Search...") %}</li>
+                <li>{% include "includes/search_form.html" with placeholder="Search..." %}</li>
             </ul>
         </nav>
     </header>

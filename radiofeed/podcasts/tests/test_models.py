@@ -4,7 +4,6 @@ import pytest
 
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
-from django.utils.translation import override
 
 from radiofeed.common.factories import create_batch
 from radiofeed.podcasts.factories import (
@@ -26,22 +25,13 @@ class TestRecommendationManager:
 class TestCategoryManager:
     @pytest.fixture
     def category(self, db):
-        return create_category(name="testing", name_fi="testaaminen")
+        return create_category(name="testing")
 
     def test_search_empty(self, category):
         assert Category.objects.search("").count() == 0
 
-    def test_search_english(self, category):
-
-        with override("en"):
-            assert Category.objects.search("testing").count() == 1
-            assert Category.objects.search("testaaminen").count() == 0
-
-    def test_search_finnish(self, category):
-
-        with override("fi"):
-            assert Category.objects.search("testing").count() == 0
-            assert Category.objects.search("testaaminen").count() == 1
+    def test_search(self, category):
+        assert Category.objects.search("testing").count() == 1
 
 
 class TestCategoryModel:

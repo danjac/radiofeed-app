@@ -96,7 +96,6 @@ THIRD_PARTY_APPS: list[str] = [
     "django_htmx",
     "django_object_actions",
     "fast_update",
-    "modeltranslation",
     "widget_tweaks",
 ]
 
@@ -175,22 +174,14 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# Internationalization
+# Internationalization/Localization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
 LANGUAGE_CODE = "en"
-LANGUAGES = [
-    ("en", "English"),
-    ("fi", "Suomi"),
-]
-LANGUAGE_COOKIE_DOMAIN = env("LANGUAGE_COOKIE_DOMAIN", default=None)
-LANGUAGE_COOKIE_SAMESITE = "Lax"
-
-LOCALE_PATHS = [BASE_DIR / "i18n"]
 
 TIME_ZONE = "UTC"
 
-USE_I18N = True
+USE_I18N = False
 
 USE_TZ = True
 
@@ -274,12 +265,6 @@ CACHEOPS = {
     "episodes.*": {"ops": "all"},
     "users.*": {"ops": "all"},
 }
-
-# Model translations
-# https://django-modeltranslation.readthedocs.io/en/latest/installation.html#configuration
-
-MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
-MODELTRANSLATION_FALLBACK_LANGUAGES = ("en",)
 
 # Environments
 

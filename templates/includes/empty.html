@@ -1,10 +1,7 @@
-{% load i18n %}
 <p class="text-center sm:text-left py-2">
     {% if request.search %}
-        {% blocktranslate with search=request.search.value %}
-            No results found for <span class="font-bold">{{ search }}</span>.
-        {% endblocktranslate %}
+        No results found for <span class="font-bold">{{ request.search.value }}</span>.
     {% else %}
-        {% translate "Nothing to see here." %}
+        Nothing to see here.
     {% endif %}
 </p>

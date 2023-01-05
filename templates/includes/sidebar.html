@@ -1,4 +1,4 @@
-{% load cache i18n %}
+{% load cache %}
 {% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
     <nav class="pl-3 xl:pl-0 xl:pt-12 text-base md:text-lg lg:text-xl">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-3 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:flex xl:flex-col xl:justify-content-between">
@@ -7,7 +7,7 @@
                     accesskey="p"
                     class="{{ SIDEBAR_CSS }}">
                     {% icon "rss" css_class=ICON_CSS %}
-                    {% translate "Podcasts" %}
+                    Podcasts
                 </a>
             </li>
             <li>
@@ -15,7 +15,7 @@
                     accesskey="n"
                     class="{{ SIDEBAR_CSS }}">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
-                    {% translate "New Releases" %}
+                    New Releases
                 </a>
             </li>
             <li>
@@ -23,7 +23,7 @@
                     accesskey="c"
                     class="{{ SIDEBAR_CSS }}">
                     {% icon "tag" css_class=ICON_CSS %}
-                    {% translate "Categories" %}
+                    Categories
                 </a>
             </li>
             <li>
@@ -31,7 +31,7 @@
                     accesskey="b"
                     class="{{ SIDEBAR_CSS }}">
                     {% icon "star" css_class=ICON_CSS %}
-                    {% translate "Bookmarks" %}
+                    Bookmarks
                 </a>
             </li>
             <li>
@@ -39,7 +39,7 @@
                     accesskey="h"
                     class="{{ SIDEBAR_CSS }}">
                     {% icon "history" css_class=ICON_CSS %}
-                    {% translate "History" %}
+                    History
                 </a>
             </li>
             <li>
@@ -47,13 +47,13 @@
                     accesskey="s"
                     class="{{ SIDEBAR_CSS }}">
                     {% icon "cog" css_class=ICON_CSS %}
-                    {% translate "Settings" %}
+                    Settings
                 </a>
             </li>
             <li>
                 <a href="{% url 'about' %}" accesskey="a" class="{{ SIDEBAR_CSS }}">
                     {% icon "info-circle" css_class=ICON_CSS %}
-                    {% translate "About" %}
+                    About
                 </a>
             </li>
             <li>
@@ -64,7 +64,7 @@
                     {% csrf_token %}
                     <button accesskey="l" class="{{ SIDEBAR_CSS }}">
                         {% icon "sign-out" css_class=ICON_CSS %}
-                        {% translate "Logout" %}
+                        Logout
                     </button>
                 </form>
             </li>
