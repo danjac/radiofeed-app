@@ -1,17 +1,6 @@
-{% load i18n %}
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if episode %}
         {% if is_playing %}
-            {% translate "Current Time" as t_current_time %}
-            {% translate "Time Remaining" as t_time_remaining %}
-            {% translate "Play" as t_play %}
-            {% translate "Pause" as t_pause %}
-            {% translate "Skip Back 10 Seconds" as t_skip_back %}
-            {% translate "Skip Forward 10 Seconds" as t_skip_forward %}
-            {% translate "Decrease Playback Rate" as t_decrease_playback_rate %}
-            {% translate "Increase Playback Rate" as t_increase_playback_rate %}
-            {% translate "Playback Rate" as t_playback_rate %}
-            {% translate "Progress" as t_progress %}
             {% translate "Loading..." as t_loading %}
             {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
                 <div x-data="
@@ -60,22 +49,22 @@
                             <div class="sm:w-1/2 flex flex-col place-content-end h-16 sm:pl-3 space-y-3">
                                 <div class="grid grid-cols-3 place-content-between">
                                     <div x-text="counters.current"
-                                        title="{{ t_current_time }}"
+                                        title="Current Time"
                                         class="flex items-center justify-start text-xs lg:text-sm font-mono"
                                         :class="isPlaying ? '' : 'text-gray-300'">
                                     </div>
                                     <div class="flex items-center justify-center animate-pulse opacity-75 space-x-6" x-show="!isLoaded">
-                                        {{ t_loading }}
+                                        Loading...
                                     </div>
                                     {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                         <div class="flex items-center justify-center space-x-6" x-show="isLoaded" x-cloak>
-                                            <button title="{{ t_skip_back }}"
+                                            <button title="Skip Back 10 Seconds"
                                                 @click="skipBack"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'">
                                                 {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
                                             </button>
-                                            <button title="{{ t_play }}"
+                                            <button title="Play"
                                                 class="{{ BUTTON_CSS }}"
                                                 @click="togglePlayPause">
                                                 <span x-show="!isPlaying" x-cloak>
@@ -85,7 +74,7 @@
                                                     {% icon "pause-circle" "regular" size="2xl" title=t_pause %}
                                                 </span>
                                             </button>
-                                            <button title="{{ t_skip_forward }}"
+                                            <button title="Skip Forward 10 Seconds"
                                                 @click="skipForward"
                                                 class="{{ BUTTON_CSS }} inline-block"
                                                 :class="isPlaying || '{{ INACTIVE_CSS }}'">
@@ -94,15 +83,15 @@
                                         </div>
                                     {% endwith %}
                                     <div x-text="counters.total"
-                                        title="{{ t_time_remaining }}"
+                                        title="Time Remaining"
                                         class="flex items-center justify-end text-xs lg:text-sm font-mono"
                                         :class="isPlaying ? '' : 'text-gray-300'">
                                     </div>
                                 </div>
                                 <div class="w-full">
                                     <input type="range"
-                                        aria-label="{{ t_progress }}"
-                                        title="{{ t_progress }}"
+                                        aria-label="Progress"
+                                        title="Progress"
                                         min="0"
                                         x-ref="range"
                                         x-model="runtime"
