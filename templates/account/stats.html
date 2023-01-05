@@ -1,26 +1,21 @@
 {% extends "account/settings_base.html" %}
-{% load i18n %}
 {% block title %}
-    {{ block.super }} | {% translate "Statistics" %}
+    {{ block.super }} | Statistics
 {% endblock title %}
 {% block settings_content %}
     <table class="w-full">
         <tbody class="divide-y space-y-3">
             <tr class="flex justify-between pt-4">
-                <td class="w-1/2">{% translate "Joined" %}</td>
+                <td class="w-1/2">Joined</td>
                 <td class="w-1/2 font-bold text-right">{% include "includes/date.html" with value=user.date_joined %}</td>
             </tr>
             {% with subscribed=user.subscriptions.count %}
                 {% if subscribed %}
                     <tr class="flex justify-between pt-4">
-                        <td class="w-1/2">{% translate "Subscribed" %}</td>
+                        <td class="w-1/2">Subscribed</td>
                         <td class="w-1/2 font-bold text-right">
                             <a href="{% url 'podcasts:index' %}" class="link font-bold underline">
-                                {% blocktranslate count counter=subscribed %}
-                                    1 podcast
-                                {% plural %}
-                                    {{ counter }} podcasts
-                                {% endblocktranslate %}
+                                {{ subscribed }} podcasts{{ subscribed|pluralize }}
                             </a>
                         </td>
                     </tr>
@@ -29,15 +24,11 @@
             {% with bookmarks=user.bookmarks.count %}
                 {% if bookmarks %}
                     <tr class="flex justify-between pt-4">
-                        <td class="w-1/2">{% translate "Bookmarks" %}</td>
+                        <td class="w-1/2">Bookmarks</td>
                         <td class="w-1/2 font-bold text-right">
                             <a href="{% url 'episodes:bookmarks' %}"
                                 class="link font-bold underline">
-                                {% blocktranslate count counter=bookmarks %}
-                                    1 episode
-                                {% plural %}
-                                    {{ counter }} episodes
-                                {% endblocktranslate %}
+                                {{ bookmarks }} episode{{ bookmarks|pluralize }}
                             </a>
                         </td>
                     </tr>
@@ -46,14 +37,10 @@
             {% with listened=user.audio_logs.count %}
                 {% if listened %}
                     <tr class="flex justify-between pt-4">
-                        <td class="w-1/2">{% translate "Listened" %}</td>
+                        <td class="w-1/2">Listened</td>
                         <td class="w-1/2 font-bold text-right">
                             <a href="{% url 'episodes:history' %}" class="link font-bold underline">
-                                {% blocktranslate count counter=listened %}
-                                    1 episode
-                                {% plural %}
-                                    {{ counter }} episodes
-                                {% endblocktranslate %}
+                                {{ listened }} episode{{ listened|pluralize }}
                             </a>
                         </td>
                     </tr>

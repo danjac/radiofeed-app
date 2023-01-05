@@ -1,13 +1,12 @@
 {% extends "base.html" %}
-{% load i18n %}
 {% block title %}
-    | {% translate "Settings" %}
+    | Settings
 {% endblock title %}
 {% block content %}
     {% if user.is_authenticated %}
         <header class="mb-3 pb-3 border-b space-y-6">
             <h1 class="max-w-max text-lg lg:text-xl xl:text-2xl break-words font-bold">
-                {% blocktranslate with username=user.username %}Settings for {{ username }}{% endblocktranslate %}
+                Settings for {{ user.username }}
             </h1>
             <nav>
                 <ul class="flex items-center space-x-6 overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none">
@@ -15,43 +14,43 @@
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            href="{{ link.url }}">{% translate "Preferences" %}</a>
+                            href="{{ link.url }}">Preferences</a>
                     </li>
                     {% active_link 'users:manage_podcast_feeds' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            href="{{ link.url }}">{% translate "Import/Export Feeds" %}</a>
+                            href="{{ link.url }}">Import/Export Feeds</a>
                     </li>
                     {% active_link 'users:stats' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            href="{{ link.url }}">{% translate "Statistics" %}</a>
+                            href="{{ link.url }}">Statistics</a>
                     </li>
                     {% active_link 'account_email' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            href="{{ link.url }}">{% translate "Email Addresses" %}</a>
+                            href="{{ link.url }}">Email Addresses</a>
                     </li>
                     {% active_link 'account_change_password' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            href="{{ link.url }}">{% translate "Change Password" %}</a>
+                            href="{{ link.url }}">Change Password</a>
                     </li>
                     {% active_link 'socialaccount_connections' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            href="{{ link.url }}">{% translate "Social Logins" %}</a>
+                            href="{{ link.url }}">Social Logins</a>
                     </li>
                     {% active_link 'users:delete_account' as link %}
                     <li>
                         <a class="{{ link.css }}"
                             tabindex="{{ link.active|yesno:"0,-1" }}"
-                            href="{{ link.url }}">{% translate "Delete Account" %}</a>
+                            href="{{ link.url }}">Delete Account</a>
                     </li>
                 </ul>
             </nav>

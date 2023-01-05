@@ -1,13 +1,12 @@
 {% extends "account/settings_base.html" %}
-{% load i18n %}
 {% block title %}
-    {{ block.super }} | {% translate "Import/Export Feeds" %}
+    {{ block.super }} | Import/Export Feeds
 {% endblock title %}
 {% block settings_content %}
     <div class="space-y-6">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">
-                <h2 class="font-semibold">{% translate "Export your podcast feeds to an OPML file." %}</h2>
+                <h2 class="font-semibold">Export your podcast feeds to an OPML file.</h2>
                 <form method="post"
                     action="{% url 'users:export_podcast_feeds' %}"
                     class="pb-3"
@@ -16,14 +15,14 @@
                     <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
                         <button class="flex sm:inline-flex items-center justify-center btn btn-default">
                             {% icon "download" css_class="mr-2" %}
-                            {% translate "Download OPML" %}
+                            Download OPML
                         </button>
                     </div>
                 </form>
             </div>
         {% endif %}
         <div class="space-y-3">
-            <h2 class="font-semibold">{% translate "Import feeds from an OPML file into your collection." %}</h2>
+            <h2 class="font-semibold">Import feeds from an OPML file into your collection.</h2>
             {% with target="import-feeds-form" %}
                 {% url 'users:import_podcast_feeds' as action_url %}
                 <form method="post"
@@ -42,7 +41,7 @@
                     <div>
                         <button class="inline-flex items-center btn btn-default">
                             {% icon "upload" css_class="mr-2" %}
-                            {% translate "Upload OPML" %}
+                            Upload OPML
                         </button>
                     </div>
                     {% if request.htmx.target == target %}
