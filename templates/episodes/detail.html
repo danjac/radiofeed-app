@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load i18n %}
 {% block title %}
     | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
@@ -8,25 +7,22 @@
         <header class="mb-3 border-b pb-3 space-y-6">
             <h1 class="font-bold text-lg lg:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
             {% if next_episode or previous_episode %}
-                {% translate "Next" as t_next %}
-                {% translate "Previous" as t_previous %}
-                {% translate "No More Episodes" as t_no_more_episodes %}
                 <nav>
                     <ul class="flex justify-between"
                         role="navigation"
-                        aria-label="{% translate "Pagination" %}">
+                        aria-label="Pagination">
                         <li>
                             {% if previous_episode %}
                                 <a class="link"
                                     href="{{ previous_episode.get_absolute_url }}"
                                     aria-label="{{ previous_episode.cleaned_title }}"
                                     title="{{ previous_episode.cleaned_title }}">
-                                    {{ t_previous }}
+                                    Previous
                                 </a>
                             {% else %}
                                 <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                                    title="{{ t_no_more_episodes }}"
-                                    aria-label="{{ t_no_more_episodes }}">{{ t_previous }}</span>
+                                    title="No More Episodes"
+                                    aria-label="No More Episodes">Previous</span>
                             {% endif %}
                         </li>
                         <li>
@@ -35,12 +31,12 @@
                                     href="{{ next_episode.get_absolute_url }}"
                                     aria-label="{{ next_episode.cleaned_title }}"
                                     title="{{ next_episode.cleaned_title }}">
-                                    {{ t_next }}
+                                    Next
                                 </a>
                             {% else %}
                                 <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                                    title="{{ t_no_more_episodes }}"
-                                    aria-label="{{ t_no_more_episodes }}">{{ t_next }}</span>
+                                    title="No More Episodes"
+                                    aria-label="No More Episodes">Next</span>
                             {% endif %}
                         </li>
                     </ul>
@@ -50,7 +46,7 @@
         <article class="space-y-3">
             <h2 class="text-base lg:text-lg">
                 <a href="{{ podcast.get_episodes_url }}"
-                    title="{% blocktranslate with podcast=podcast.cleaned_title %}See all episodes for {{ podcast }}{% endblocktranslate %}"
+                    title="See all episodes for {{ podcast.cleaned_title }}"
                     class="link">
                     {{ podcast.cleaned_title }}
                 </a>
@@ -67,10 +63,10 @@
                     {% include "episodes/actions/bookmark.html" %}
                     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                         <a download
-                            title="{% translate "Download audio file to your device" %}"
+                            title="Download audio file to your device"
                             href="{{ episode.media_url }}"
                             class="link">
-                            {% translate "Download" %}
+                            Download
                         </a>
                         {% with link=episode.get_link %}
                             {% if link %}
@@ -78,8 +74,8 @@
                                     target="_blank"
                                     rel="noopener"
                                     class="link"
-                                    title="{% translate "Link to Website" %}">
-                                    {% translate "Website" %}
+                                    title="Link to Website">
+                                    Website
                                 </a>
                             {% endif %}
                         {% endwith %}
@@ -93,14 +89,14 @@
                 {% endwith %}
                 {% with duration=episode.duration_in_seconds %}
                     {% if duration %}
-                        <span title="{% translate "Duration" %}">{{ duration|format_duration }}</span>
+                        <span title="Duration">{{ duration|format_duration }}</span>
                     {% endif %}
                 {% endwith %}
                 {% with explicit=episode.is_explicit %}
                     {% if explicit %}
-                        <div title="{% translate "May contain adult themes and language. Listener discretion advised." %}"
+                        <div title="May contain adult themes and language. Listener discretion advised."
                             class="flex items-center text-red-600 dark:text-red-500 space-x-2">
-                            {% icon "warning" %} <span class="inline-block">{% translate "Explicit" %}</span>
+                            {% icon "warning" %} <span class="inline-block">Explicit</span>
                         </div>
                     {% endif %}
                 {% endwith %}

@@ -1,53 +1,48 @@
 {% extends "base.html" %}
-{% load i18n %}
 {% block title %}
-    | {% translate "New Releases" %}
+    | New Releases
     {% if has_subscriptions %}
         |
         {% if promoted %}
-            {% translate "Promotions" %}
+            Promotions
         {% else %}
-            {% translate "Subscriptions" %}
+            Subscriptions
         {% endif %}
     {% endif %}
 {% endblock title %}
 {% block content %}
     <header class="mb-3 pb-3 border-b">
         {% url 'episodes:index' as index_url %}
-        {% translate "New Releases" as t_new_releases %}
-        {% translate "Promotions" as t_promotions %}
-        {% translate "Subscriptions" as t_subscriptions %}
-        {% translate "Search: Episodes" as t_search_episodes %}
         {% if has_subscriptions %}
             <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">
-                {{ t_new_releases }}:
+                New Releases:
                 {% if promoted %}
-                    {{ t_promotions }}
+                    Promotions
                 {% else %}
-                    {{ t_subscriptions }}
+                    Subscriptions
                 {% endif %}
             </h1>
             <nav>
                 <ul class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
                     <li class="flex items-center justify-center sm:justify-start">
                         {% if promoted %}
-                            <a href="{{ index_url }}" class="link">{{ t_subscriptions }}</a>
+                            <a href="{{ index_url }}" class="link">Subscriptions</a>
                         {% else %}
-                            <a href="{{ index_url }}?promoted=true" class="link">{{ t_promotions }}</a>
+                            <a href="{{ index_url }}?promoted=true" class="link">Promotions</a>
                         {% endif %}
                     </li>
                     <li class="flex items-center justify-center sm:justify-end space-x-3">
-                        {% include "includes/search_form.html" with placeholder=t_search_episodes %}
+                        {% include "includes/search_form.html" with placeholder="Search: Episodes" %}
                     </li>
                 </ul>
             </nav>
         {% else %}
             <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
                 <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
-                    {{ t_new_releases }}
+                    New Releases
                 </h1>
                 <div class="flex items-center justify-center sm:justify-end space-x-3">
-                    {% include "includes/search_form.html" with placeholder=t_search_episodes %}
+                    {% include "includes/search_form.html" with placeholder="Search: Episodes" %}
                 </div>
             </div>
         {% endif %}
