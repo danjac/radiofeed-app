@@ -1,16 +1,14 @@
 {% extends "account/base.html" %}
-{% load i18n account %}
+{% load account %}
 {% block title %}
-    | {% translate "Confirm E-mail Address" %}
+    | Confirm E-mail Address
 {% endblock title %}
 {% block content %}
-    <h1 class="font-bold mb-3 text-lg md:text-xl xl:text-2xl">{% translate "Confirm E-mail Address" %}</h1>
+    <h1 class="font-bold mb-3 text-lg md:text-xl xl:text-2xl">Confirm E-mail Address</h1>
     {% if confirmation %}
         {% user_display confirmation.email_address.user as user_display %}
         <p class="mb-3">
-            {% blocktranslate with email=confirmation.email_address.email %}
-                Please confirm that <strong>{{ email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
-            {% endblocktranslate %}
+            Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
         </p>
         <form method="post"
             action="{% url 'account_confirm_email' confirmation.key %}"
@@ -23,16 +21,13 @@
                     name="action_add"
                     value="true">
                     {% icon "check" css_class="mr-2" %}
-                    {% translate "Confirm E-Mail" %}
+                    Confirm E-Mail
                 </button>
             </div>
         </form>
     {% else %}
-        {% url 'account_email' as email_url %}
         <p>
-            {% blocktranslate %}
-                This e-mail confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.
-            {% endblocktranslate %}
+            This e-mail confirmation link expired or is invalid. Please <a href="{% url 'account_email' %}">issue a new e-mail confirmation request</a>.
         </p>
     {% endif %}
 {% endblock content %}

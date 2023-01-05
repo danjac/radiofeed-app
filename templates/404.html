@@ -1,9 +1,8 @@
 {% extends "error_base.html" %}
-{% load i18n %}
 {% block title %}
-    {% translate "Error: 404 Not Found" %}
+    Error: 404 Not Found
 {% endblock title %}
 {% block content %}
-    <h1 class="mb-6 font-bold text-lg md:text-xl xl:text-2xl">{% translate "404: Not Found" %}</h1>
-    <p>{% translate "Sorry, this page does not exist, or it has been removed." %}</p>
+    <h1 class="mb-6 font-bold text-lg md:text-xl xl:text-2xl">404: Not Found</h1>
+    <p>Sorry, this page does not exist, or it has been removed.</p>
 {% endblock content %}
