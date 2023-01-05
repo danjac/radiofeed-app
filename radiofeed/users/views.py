@@ -4,9 +4,8 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
+from django.template.defaultfilters import pluralize
 from django.utils import timezone
-from django.utils.translation import gettext as _
-from django.utils.translation import ngettext
 from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -25,7 +24,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
         form.save()
 
-        messages.success(request, _("Your preferences have been saved"))
+        messages.success(request, "Your preferences have been saved")
 
         return HttpResponseClientRedirect(request.path)
 
@@ -49,15 +48,10 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
-                ngettext(
-                    "%(count)d podcast feed added to your collection",
-                    "%(count)d podcast feeds added to your collection",
-                    new_feeds,
-                )
-                % {"count": new_feeds},
+                f"{new_feeds} podcast feed{pluralize(new_feeds)} added to your collection",
             )
         else:
-            messages.info(request, _("No new podcasts found in uploaded file"))
+            messages.info(request, "No new podcasts found in uploaded file")
 
     return render(request, "account/podcast_feeds.html", {"form": form})
 
@@ -107,6 +101,6 @@ def delete_account(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)
-        messages.info(request, _("Your account has been deleted"))
+        messages.info(request, "Your account has been deleted")
         return redirect("podcasts:landing_page")
     return render(request, "account/delete_account.html")

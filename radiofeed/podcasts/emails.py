@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
-from django.utils.translation import gettext as _
 
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
@@ -63,7 +62,7 @@ def send_recommendations_email(
     context = {"recipient": user, "site": site, "podcasts": podcasts}
 
     send_mail(
-        _("Hi {} here are some new podcasts you might like!".format(user.username)),
+        f"Hi {user.username}, here are some new podcasts you might like!",
         loader.render_to_string("podcasts/emails/recommendations.txt", context),
         settings.DEFAULT_FROM_EMAIL,
         [user.email],

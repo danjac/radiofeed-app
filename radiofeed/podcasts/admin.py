@@ -6,7 +6,6 @@ from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
-from django.utils.translation import gettext_lazy as _
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.common.fast_count import FastCountAdminMixin
@@ -39,7 +38,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ActiveFilter(admin.SimpleListFilter):
     """Filters active/inactive podcasts."""
 
-    title = _("Active")
+    title = "Active"
     parameter_name = "active"
 
     def lookups(
@@ -47,8 +46,8 @@ class ActiveFilter(admin.SimpleListFilter):
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (
-            ("yes", _("Active")),
-            ("no", _("Inactive")),
+            ("yes", "Active"),
+            ("no", "Inactive"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
@@ -65,7 +64,7 @@ class ActiveFilter(admin.SimpleListFilter):
 class PubDateFilter(admin.SimpleListFilter):
     """Filters podcasts based on last pub date."""
 
-    title = _("Release Date")
+    title = "Release Date"
     parameter_name = "pub_date"
 
     def lookups(
@@ -73,8 +72,8 @@ class PubDateFilter(admin.SimpleListFilter):
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (
-            ("yes", _("With release date")),
-            ("no", _("With no release date")),
+            ("yes", "With release date"),
+            ("no", "With no release date"),
         )
 
     def queryset(
@@ -93,14 +92,14 @@ class PubDateFilter(admin.SimpleListFilter):
 class PromotedFilter(admin.SimpleListFilter):
     """Filters podcasts promoted status."""
 
-    title = _("Promoted")
+    title = "Promoted"
     parameter_name = "promoted"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", _("Promoted")),)
+        return (("yes", "Promoted"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
@@ -119,7 +118,7 @@ class SubscribedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", _("Subscribed")),)
+        return (("yes", "Subscribed"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
@@ -188,15 +187,15 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
         except FeedParserError:
             self.message_user(
-                request, _("Podcast has not been updated"), level=messages.ERROR
+                request, "Podcast has not been updated", level=messages.ERROR
             )
 
         else:
             self.message_user(
-                request, _("Podcast has been updated"), level=messages.SUCCESS
+                request, "Podcast has been updated", level=messages.SUCCESS
             )
 
-    @admin.display(description=_("Estimated Next Update"))
+    @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast):
         """Return estimated next update time."""
         return timeuntil(scheduler.next_scheduled_update(obj))

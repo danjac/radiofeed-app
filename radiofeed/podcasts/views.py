@@ -8,7 +8,6 @@ from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.decorators import require_auth
@@ -94,9 +93,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             ) as client:
                 feeds = itunes.search(client, request.search.value)
         except httpx.HTTPError:
-            messages.error(
-                request, _("Sorry, an error occurred trying to access iTunes.")
-            )
+            messages.error(request, "Sorry, an error occurred trying to access iTunes.")
 
         return render(
             request,
@@ -255,7 +252,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     except IntegrityError:
         return HttpResponseConflict()
 
-    messages.success(request, _("You are now subscribed to this podcast"))
+    messages.success(request, "You are now subscribed to this podcast")
     return _render_subscribe_action(request, podcast, True)
 
 
@@ -267,7 +264,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
 
-    messages.info(request, _("You are no longer subscribed to this podcast"))
+    messages.info(request, "You are no longer subscribed to this podcast")
     return _render_subscribe_action(request, podcast, False)
 
 

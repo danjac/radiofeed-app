@@ -14,7 +14,6 @@ from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 
 from radiofeed.common.fast_count import FastCountQuerySetMixin
@@ -97,11 +96,10 @@ class Podcast(models.Model):
     """Podcast channel or feed."""
 
     rss: str = models.URLField(unique=True, max_length=500)
+
     active: bool = models.BooleanField(
         default=True,
-        help_text=_(
-            "Inactive podcasts will no longer be updated from their RSS feeds."
-        ),
+        help_text="Inactive podcasts will no longer be updated from their RSS feeds.",
     )
 
     etag: str = models.TextField(blank=True)
@@ -147,7 +145,7 @@ class Podcast(models.Model):
 
     created: datetime = models.DateTimeField(auto_now_add=True)
     updated: datetime = models.DateTimeField(
-        auto_now=True, verbose_name=_("Podcast Updated in Database")
+        auto_now=True, verbose_name="Podcast Updated in Database"
     )
 
     explicit: bool = models.BooleanField(default=False)

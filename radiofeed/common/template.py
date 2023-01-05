@@ -18,7 +18,6 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.utils.translation import gettext as _
 
 from radiofeed.common import markup, pagination
 
@@ -61,10 +60,10 @@ def format_duration(total_seconds: int | None) -> str:
     rv: list[str] = []
 
     if total_hours := math.floor(total_seconds / 3600):
-        rv.append(_("{total_hours}h").format(total_hours=total_hours))
+        rv.append(f"{total_hours}h")
 
     if total_minutes := round((total_seconds % 3600) / 60):
-        rv.append(_("{total_minutes}min").format(total_minutes=total_minutes))
+        rv.append(f"{total_minutes}min")
 
     return " ".join(rv)
 

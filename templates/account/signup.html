@@ -7,10 +7,8 @@
         Sign Up
     </h1>
     <p class="mb-3">
-        {% blocktranslate %}
-            Already have an account? Then please
-            <a class="underline link" href="{{ login_url }}">sign in</a>.
-        {% endblocktranslate %}
+        Already have an account? Then please
+        <a class="underline link" href="{{ login_url }}">sign in</a>.
     </p>
     <form method="post"
         action="{{ request.path }}"

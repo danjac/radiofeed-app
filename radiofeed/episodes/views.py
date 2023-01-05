@@ -8,7 +8,6 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.decorators import require_auth
@@ -187,7 +186,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     if episode.id not in request.player:
         request.user.audio_logs.filter(episode=episode).delete()
-        messages.info(request, _("Removed from History"))
+        messages.info(request, "Removed from History")
 
     return render(
         request,
@@ -228,7 +227,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         return HttpResponseConflict()
 
-    messages.success(request, _("Added to Bookmarks"))
+    messages.success(request, "Added to Bookmarks")
     return _render_bookmark_action(request, episode, True)
 
 
@@ -239,7 +238,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
     request.user.bookmarks.filter(episode=episode).delete()
 
-    messages.info(request, _("Removed from Bookmarks"))
+    messages.info(request, "Removed from Bookmarks")
     return _render_bookmark_action(request, episode, False)
 
 

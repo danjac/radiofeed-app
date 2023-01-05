@@ -7,7 +7,6 @@ from typing import Iterator
 import lxml  # nosec
 
 from django import forms
-from django.utils.translation import gettext_lazy as _
 
 from radiofeed.common.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast, Subscription
@@ -25,13 +24,11 @@ class UserPreferencesForm(forms.ModelForm):
         fields = ("send_email_notifications",)
 
         labels = {
-            "send_email_notifications": _("Send email notifications"),
+            "send_email_notifications": "Send email notifications",
         }
 
         help_texts = {
-            "send_email_notifications": _(
-                "I'd like to receive notications of new content and recommendations."
-            ),
+            "send_email_notifications": "I'd like to receive notications of new content and recommendations."
         }
 
 
@@ -39,7 +36,7 @@ class OpmlUploadForm(forms.Form):
     """Form for uploading OPML into user collection."""
 
     opml = forms.FileField(
-        label=_("Select OPML file"),
+        label="Select OPML file",
         widget=forms.FileInput(
             attrs={
                 "accept": ",".join(
