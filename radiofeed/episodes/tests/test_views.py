@@ -126,6 +126,7 @@ class TestEpisodeDetail:
                 funding_url=faker.url(),
                 funding_text=faker.text(),
                 keywords=faker.text(),
+                explicit=True,
             ),
             episode_type="full",
             season=1,
