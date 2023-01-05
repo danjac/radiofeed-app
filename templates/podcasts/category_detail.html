@@ -36,8 +36,7 @@
             </header>
         {% endif %}
     {% endwith %}
-    {% get_current_language as language_code %}
-    {% cache 600 category-podcasts request.get_full_path language_code %}
+    {% cache 600 category-podcasts request.get_full_path %}
         {% include pagination_template %}
     {% endcache %}
 {% endblock content %}
