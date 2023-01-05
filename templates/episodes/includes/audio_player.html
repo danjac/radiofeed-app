@@ -1,7 +1,6 @@
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if episode %}
         {% if is_playing %}
-            {% translate "Loading..." as t_loading %}
             {% with podcast=episode.podcast episode_url=episode.get_absolute_url media_url=episode.media_url %}
                 <div x-data="
                     {# fmt:off #}
