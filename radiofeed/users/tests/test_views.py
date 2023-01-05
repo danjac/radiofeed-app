@@ -7,7 +7,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.common.asserts import assert_hx_redirect, assert_ok
+from radiofeed.common.asserts import assert_ok
 from radiofeed.common.factories import create_batch
 from radiofeed.episodes.factories import create_audio_log, create_bookmark
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -30,10 +30,9 @@ class TestUserPreferences:
             },
             HTTP_HX_TARGET="preferences-form",
             HTTP_HX_REQUEST="true",
-            HTTP_HX_CURRENT_URL=self.url,
         )
 
-        assert_hx_redirect(response, self.url)
+        assert_ok(response)
 
         auth_user.refresh_from_db()
 

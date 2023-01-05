@@ -7,7 +7,6 @@ from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.common.decorators import require_auth, require_form_methods
 from radiofeed.podcasts.models import Podcast
@@ -25,8 +24,6 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         form.save()
 
         messages.success(request, "Your preferences have been saved")
-
-        return HttpResponseClientRedirect(request.path)
 
     return render(request, "account/preferences.html", {"form": form})
 
