@@ -22,13 +22,9 @@ class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
 
-        fields = (
-            "language",
-            "send_email_notifications",
-        )
+        fields = ("send_email_notifications",)
 
         labels = {
-            "language": _("Language"),
             "send_email_notifications": _("Send email notifications"),
         }
 

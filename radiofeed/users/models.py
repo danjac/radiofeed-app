@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -61,12 +60,6 @@ class User(AbstractUser):
     """Custom User model."""
 
     send_email_notifications: bool = models.BooleanField(default=True)
-
-    language: str = models.CharField(
-        max_length=2,
-        choices=settings.LANGUAGES,
-        default="en",
-    )
 
     objects: models.Manager["User"] = UserManager()
 
