@@ -1,4 +1,3 @@
-{% load i18n %}
 {% with target=podcast.get_subscribe_target %}
     <div id="{{ target }}"
         hx-target="this"
@@ -7,17 +6,17 @@
         hx-disinherit="hx-indicator">
         {% if is_subscribed %}
             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
-                title="{% translate "Unsubscribe from this Podcast" %}"
+                title="Unsubscribe from this Podcast"
                 hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
                 {% icon "eye-slash" css_class="mr-2" %}
-                {% translate "Unsubscribe" %}
+                Unsubscribe
             </button>
         {% else %}
             <button class="inline-flex items-center btn btn-primary btn-lg"
-                title="{% translate "Subscribe to this Podcast" %}"
+                title="Subscribe to this Podcast"
                 hx-post="{% url 'podcasts:subscribe' podcast.id %}">
                 {% icon "eye" css_class="mr-2" %}
-                {% translate "Subscribe" %}
+                Subscribe
             </button>
         {% endif %}
     </div>

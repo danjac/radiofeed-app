@@ -1,4 +1,3 @@
-{% load i18n %}
 <!DOCTYPE html>
 <html lang="en-us">
     <head>
@@ -11,11 +10,9 @@
             font-weight: 700;
             font-size: 1.25rem;
             line-height: 1.75rem">
-            {% blocktranslate with username=recipient.username site_name=site.name %}
-                Hi {{ username }}, greetings from {{ site_name }}!
-            {% endblocktranslate %}
+            Hi {{ user.username }}, greetings from {{ site.name }}!
         </h1>
-        <p style="margin-bottom: 0.75rem;">{% translate "Here are some podcasts you might find interesting:" %}</p>
+        <p style="margin-bottom: 0.75rem;">Here are some podcasts you might find interesting:</p>
         {% for podcast in podcasts %}
             <div style="margin-bottom: 0.75rem;
                 padding-bottom: 0.75rem;
@@ -33,10 +30,8 @@
         {% endfor %}
         <p>
             {% absolute_uri 'users:preferences' as preferences_url %}
-            {% blocktranslate %}
-                If you do not want to receive any more notifications, just uncheck the "Send email notifications"
-                option on your <a style="text-decoration: underline; color: #000;" href="{{ preferences_url }}">Settings</a> page.
-            {% endblocktranslate %}
+            If you do not want to receive any more notifications, just uncheck the "Send email notifications"
+            option on your <a style="text-decoration: underline; color: #000;" href="{% absolute_uri 'users:preferences' %}">Settings</a> page.
         </p>
     </body>
 </html>

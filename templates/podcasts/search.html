@@ -1,11 +1,7 @@
 {% extends "search_base.html" %}
-{% load cache i18n %}
-{% block title %}
-    | {% translate "Search" %} | {% translate "Podcasts" %}
-{% endblock title %}
+{% load cache %}
+{% block title %} | Search | Podcasts{% endblock title %}
 {% block search_content %}
-    {% get_current_language as language_code %}
-    {% cache 600 podcasts-search request.get_full_path language_code %}
-        {% include pagination_template %}
-    {% endcache %}
+    {% cache 600 podcasts-search request.get_full_path %}
+    {% include pagination_template %}
 {% endblock search_content %}
