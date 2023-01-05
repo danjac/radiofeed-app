@@ -106,7 +106,11 @@ document.addEventListener("alpine:init", () => {
                 this.skipTo(10);
             },
             shortcuts(event) {
-                if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
+                if (
+                    event.ctrlKey ||
+                    event.altKey ||
+                    event.target.tagName.match(/INPUT|TEXTAREA/)
+                ) {
                     return;
                 }
 
@@ -116,15 +120,13 @@ document.addEventListener("alpine:init", () => {
                     fn.bind(this)();
                 };
 
-                if (!event.ctrlKey && !event.altKey) {
-                    switch (event.code) {
-                        case "Space":
-                            return handleEvent(this.togglePlayPause);
-                        case "ArrowRight":
-                            return handleEvent(this.skipForward);
-                        case "ArrowLeft":
-                            return handleEvent(this.skipBack);
-                    }
+                switch (event.code) {
+                    case "Space":
+                        return handleEvent(this.togglePlayPause);
+                    case "ArrowRight":
+                        return handleEvent(this.skipForward);
+                    case "ArrowLeft":
+                        return handleEvent(this.skipBack);
                 }
             },
             startTimer() {
