@@ -27,7 +27,6 @@ class TestUserPreferences:
             self.url,
             {
                 "send_email_notifications": False,
-                "language": "fi",
             },
             HTTP_HX_TARGET="preferences-form",
             HTTP_HX_REQUEST="true",
@@ -39,7 +38,6 @@ class TestUserPreferences:
         auth_user.refresh_from_db()
 
         assert not auth_user.send_email_notifications
-        assert auth_user.language == "fi"
 
 
 class TestUserStats:

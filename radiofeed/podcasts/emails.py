@@ -5,7 +5,6 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 from django.utils.translation import gettext as _
-from django.utils.translation import override
 
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
@@ -63,16 +62,14 @@ def send_recommendations_email(
 
     context = {"recipient": user, "site": site, "podcasts": podcasts}
 
-    with override(user.language):
-
-        send_mail(
-            _("Hi {} here are some new podcasts you might like!".format(user.username)),
-            loader.render_to_string("podcasts/emails/recommendations.txt", context),
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            html_message=loader.render_to_string(
-                "podcasts/emails/recommendations.html", context
-            ),
-        )
+    send_mail(
+        _("Hi {} here are some new podcasts you might like!".format(user.username)),
+        loader.render_to_string("podcasts/emails/recommendations.txt", context),
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        html_message=loader.render_to_string(
+            "podcasts/emails/recommendations.html", context
+        ),
+    )
 
     return True

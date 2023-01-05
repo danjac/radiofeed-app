@@ -6,7 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.utils.translation import ngettext, override
+from django.utils.translation import ngettext
 from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -23,10 +23,9 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
     if request.method == "POST" and form.is_valid():
 
-        user = form.save()
+        form.save()
 
-        with override(user.language):
-            messages.success(request, _("Your preferences have been saved"))
+        messages.success(request, _("Your preferences have been saved"))
 
         return HttpResponseClientRedirect(request.path)
 
