@@ -6,11 +6,9 @@
                     <span>Listened</span>
                     {% include "includes/date.html" with value=listened title="Listened" %}
                 </div>
-                {% with duration=episode.duration_in_seconds current_time=current_time|default:0 %}
-                    {% if duration and current_time and current_time > 60 and current_time < duration %}
-                        <div title="Timestamp">{{ current_time|format_duration }}</div>
-                    {% endif %}
-                {% endwith %}
+                {% if current_time and current_time > 60 %}
+                    <div title="Timestamp">{{ current_time|format_duration }}</div>
+                {% endif %}
                 {% if not is_playing %}
                     <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
                         title="Remove episode from your History"
