@@ -13,5 +13,5 @@ def user_agent(request: HttpRequest | None = None) -> str:
     return (
         f"python-httpx/{httpx.__version__} "
         f"(Radiofeed/{timezone.now().strftime('%Y-%d-%m')}; "
-        f"+{build_absolute_uri('/', request)})"
+        f"+{build_absolute_uri(request=request)})"
     )
