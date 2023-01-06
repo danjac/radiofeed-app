@@ -2,29 +2,11 @@ from __future__ import annotations
 
 from django.http import HttpRequest, HttpResponse
 
-from radiofeed.common import user_agent
 from radiofeed.common.decorators import lazy_object_middleware, middleware
 from radiofeed.common.search import Search
 from radiofeed.common.sorter import Sorter
 from radiofeed.common.types import GetResponse
-
-
-@lazy_object_middleware("user_agent")
-def user_agent_middleware(request: HttpRequest) -> str:
-    """Adds user agent to request."""
-    return user_agent.user_agent(request)
-
-
-@lazy_object_middleware("search")
-def search_middleware(request: HttpRequest) -> Search:
-    """Adds Search to request."""
-    return Search(request)
-
-
-@lazy_object_middleware("sorter")
-def sorter_middleware(request: HttpRequest) -> Sorter:
-    """Adds Sorter to request."""
-    return Sorter(request)
+from radiofeed.common.user_agent import user_agent
 
 
 @middleware
@@ -40,3 +22,10 @@ def cache_control_middleware(
         # don't override if cache explicitly set
         response.setdefault("Cache-Control", "no-store, max-age=0")
     return response
+
+
+search_middleware = lazy_object_middleware("search")(Search)
+
+sorter_middleware = lazy_object_middleware("sorter")(Sorter)
+
+user_agent_middleware = lazy_object_middleware("user_agent")(user_agent)
