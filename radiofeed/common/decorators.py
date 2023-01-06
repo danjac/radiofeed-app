@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import functools
 
-from typing import Any, Callable, Concatenate, ParamSpec
+from typing import Callable, Concatenate, ParamSpec
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
-from django.utils.functional import SimpleLazyObject
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -32,22 +31,6 @@ def middleware(
         return _middleware
 
     return _wrapper
-
-
-def lazy_object_middleware(attrname: str) -> GetResponse:
-    """Creates middleware that sets request property with a SimpleLazyObject."""
-
-    def _decorator(fn: Callable[[HttpRequest], Any]) -> GetResponse:
-        @functools.wraps(fn)
-        def _middleware(
-            request: HttpRequest, get_response: GetResponse
-        ) -> HttpResponse:
-            setattr(request, attrname, SimpleLazyObject(lambda: fn(request)))
-            return get_response(request)
-
-        return middleware(_middleware)
-
-    return _decorator
 
 
 def require_auth(
