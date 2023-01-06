@@ -11,7 +11,7 @@ from radiofeed.common.types import GetResponse
 
 @lazy_object_middleware("user_agent")
 def user_agent_middleware(request: HttpRequest) -> str:
-    """Appends user agent to request."""
+    """Adds user agent to request."""
     return user_agent.user_agent(request)
 
 
