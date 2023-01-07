@@ -105,6 +105,29 @@ PROJECT_APPS: list[str] = [
     "radiofeed.podcasts",
     "radiofeed.users",
 ]
+#
+# middleware
+
+MIDDLEWARE: list[str] = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django_permissions_policy.PermissionsPolicyMiddleware",
+    "django.contrib.sites.middleware.CurrentSiteMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
+    "radiofeed.common.middleware.cache_control_middleware",
+    "radiofeed.common.middleware.search_middleware",
+    "radiofeed.common.middleware.sorter_middleware",
+    "radiofeed.common.middleware.user_agent_middleware",
+    "radiofeed.episodes.middleware.player_middleware",
+]
+
 
 # Permissions Policy
 
@@ -124,7 +147,6 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "payment": [],
     "usb": [],
 }
-
 
 # admin settings
 
@@ -266,39 +288,6 @@ CACHEOPS = {
 
 # Sentry
 
-if SENTRY_URL := env("SENTRY_URL", default=None):
-    import sentry_sdk
-
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.logging import ignore_logger
-
-    ignore_logger("django.security.DisallowedHost")
-
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.5,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )
-
-# Mailgun
-
-if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
-
-    THIRD_PARTY_APPS += ["anymail"]
-
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-    MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
-
-    ANYMAIL = {
-        "MAILGUN_API_KEY": MAILGUN_API_KEY,
-        "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
-    }
-
 # Environments
 
 ENVIRONMENT: Environments = env("ENVIRONMENT", default="development")
@@ -318,6 +307,11 @@ match ENVIRONMENT:
         ]
 
         INTERNAL_IPS = ["127.0.0.1"]
+
+        MIDDLEWARE += [
+            "django_browser_reload.middleware.BrowserReloadMiddleware",
+            "debug_toolbar.middleware.DebugToolbarMiddleware",
+        ]
 
     case "test":
 
@@ -357,45 +351,46 @@ match ENVIRONMENT:
 
         SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+        MIDDLEWARE += [
+            "django.middleware.common.BrokenLinkEmailsMiddleware",
+            "django.middleware.gzip.GZipMiddleware",
+        ]
+
+        if SENTRY_URL := env("SENTRY_URL", default=None):
+            import sentry_sdk
+
+            from sentry_sdk.integrations.django import DjangoIntegration
+            from sentry_sdk.integrations.logging import ignore_logger
+
+            ignore_logger("django.security.DisallowedHost")
+
+            sentry_sdk.init(
+                dsn=SENTRY_URL,
+                integrations=[DjangoIntegration()],
+                traces_sample_rate=0.5,
+                # If you wish to associate users to errors (assuming you are using
+                # django.contrib.auth) you may enable sending PII data.
+                send_default_pii=True,
+            )
+
+        # Mailgun
+
+        if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
+
+            THIRD_PARTY_APPS += ["anymail"]
+
+            EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+            MAILGUN_API_URL = env(
+                "MAILGUN_API_URL", default="https://api.mailgun.net/v3"
+            )
+
+            ANYMAIL = {
+                "MAILGUN_API_KEY": MAILGUN_API_KEY,
+                "MAILGUN_API_URL": MAILGUN_API_URL,
+                "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
+            }
+
 # combine all apps
 
 INSTALLED_APPS: list[str] = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
-
-# build middleware
-
-MIDDLEWARE: list[str] = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django_permissions_policy.PermissionsPolicyMiddleware",
-    "django.contrib.sites.middleware.CurrentSiteMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.common.BrokenLinkEmailsMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_htmx.middleware.HtmxMiddleware",
-    "radiofeed.common.middleware.cache_control_middleware",
-    "radiofeed.common.middleware.search_middleware",
-    "radiofeed.common.middleware.sorter_middleware",
-    "radiofeed.common.middleware.user_agent_middleware",
-    "radiofeed.episodes.middleware.player_middleware",
-]
-
-# Gzip and browser reload middleware are incompatible
-if "django_browser_reload" in INSTALLED_APPS:
-    MIDDLEWARE += [
-        "django_browser_reload.middleware.BrowserReloadMiddleware",
-    ]
-
-else:
-    MIDDLEWARE += [
-        "django.middleware.gzip.GZipMiddleware",
-    ]
-
-if "debug_toolbar" in INSTALLED_APPS:
-    MIDDLEWARE += [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
