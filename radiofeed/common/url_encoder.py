@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from django.core.signing import BadSignature, JSONSerializer, Signer
 
+_signer = Signer()
+
 
 class DecodeError(BadSignature):
     """Any invalid signature."""
@@ -9,7 +11,7 @@ class DecodeError(BadSignature):
 
 def encode_url(url: str, key: str = "url") -> str:
     """Encode url into signed encoded string."""
-    return Signer().sign_object({key: url}, compress=True, serializer=JSONSerializer)
+    return _signer.sign_object({key: url}, compress=True, serializer=JSONSerializer)
 
 
 def decode_url(encoded_url: str, key: str = "url") -> str:
@@ -19,7 +21,7 @@ def decode_url(encoded_url: str, key: str = "url") -> str:
         DecodeError: invalid encoded string
     """
     try:
-        return Signer().unsign_object(encoded_url, serializer=JSONSerializer)[key]
+        return _signer.unsign_object(encoded_url, serializer=JSONSerializer)[key]
     except KeyError:
         raise DecodeError("Invalid object structure")
     except BadSignature as e:
