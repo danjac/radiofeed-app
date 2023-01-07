@@ -170,7 +170,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
 
     try:
         cover_url = encoder.decode(encoded_url)
-    except encoder.DecodeError:
+    except ValueError:
         return HttpResponseBadRequest("Error: invalid encoded URL")
 
     try:
