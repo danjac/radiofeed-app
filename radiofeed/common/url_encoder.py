@@ -8,17 +8,19 @@ class DecodeError(BadSignature):
 
 
 def encode_url(url: str) -> str:
-    """Return encoded string from a URL."""
+    """Make a random token and store in cache."""
     return dumps({"url": url}, compress=True)
 
 
-def decode_url(encoded: str) -> str:
+def decode_url(encoded_url: str) -> str:
     """Decode url from an encoded string.
 
     Raises:
         DecodeError: invalid encoded string
     """
     try:
-        return loads(encoded)["url"]
-    except (KeyError, BadSignature) as e:
+        return loads(encoded_url)["url"]
+    except KeyError:
+        raise DecodeError("Invalid signed object")
+    except BadSignature as e:
         raise DecodeError from e
