@@ -120,6 +120,7 @@ MIDDLEWARE: list[str] = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "radiofeed.common.middleware.cache_control_middleware",
     "radiofeed.common.middleware.search_middleware",
@@ -128,25 +129,6 @@ MIDDLEWARE: list[str] = [
     "radiofeed.episodes.middleware.player_middleware",
 ]
 
-
-# Permissions Policy
-
-# https://pypi.org/project/django-permissions-policy/
-
-PERMISSIONS_POLICY: dict[str, list] = {
-    "accelerometer": [],
-    "ambient-light-sensor": [],
-    "camera": [],
-    "document-domain": [],
-    "encrypted-media": [],
-    "fullscreen": [],
-    "geolocation": [],
-    "gyroscope": [],
-    "magnetometer": [],
-    "microphone": [],
-    "payment": [],
-    "usb": [],
-}
 
 # admin settings
 
@@ -286,7 +268,24 @@ CACHEOPS = {
     "users.*": {"ops": "all"},
 }
 
-# Sentry
+# Permissions Policy
+
+# https://pypi.org/project/django-permissions-policy/
+
+PERMISSIONS_POLICY: dict[str, list] = {
+    "accelerometer": [],
+    "ambient-light-sensor": [],
+    "camera": [],
+    "document-domain": [],
+    "encrypted-media": [],
+    "fullscreen": [],
+    "geolocation": [],
+    "gyroscope": [],
+    "magnetometer": [],
+    "microphone": [],
+    "payment": [],
+    "usb": [],
+}
 
 # Environments
 
@@ -350,11 +349,6 @@ match ENVIRONMENT:
         CSRF_COOKIE_SECURE = True
 
         SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-        MIDDLEWARE += [
-            "django.middleware.common.BrokenLinkEmailsMiddleware",
-            "django.middleware.gzip.GZipMiddleware",
-        ]
 
         if SENTRY_URL := env("SENTRY_URL", default=None):
             import sentry_sdk
