@@ -5,7 +5,7 @@ import httpx
 from django.shortcuts import render
 from django.urls import reverse
 
-from radiofeed.common import url_encoder
+from radiofeed.common import encoder
 from radiofeed.common.asserts import assert_bad_request, assert_ok
 
 
@@ -53,7 +53,7 @@ class TestCoverImage:
         return reverse("cover_image", kwargs={"encoded_url": url, "size": size})
 
     def encode_url(self, url):
-        return url_encoder.encode_url(url)
+        return encoder.encode(url)
 
     def test_ok(self, client, db, mocker):
         class MockResponse:

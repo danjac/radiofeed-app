@@ -17,7 +17,7 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed.common import markup, pagination, url_encoder
+from radiofeed.common import encoder, markup, pagination
 
 register = template.Library()
 
@@ -127,7 +127,7 @@ def cover_image(
             reverse(
                 "cover_image",
                 kwargs={
-                    "encoded_url": url_encoder.encode_url(cover_url),
+                    "encoded_url": encoder.encode(cover_url),
                     "size": size,
                 },
             )
