@@ -49,6 +49,7 @@ djhtml = "^1.5.2"
 honcho = "^1.1.0"
 ipython = "^8.7.0"
 isort = "^5.11.3"
+django-browser-reload = "^1.6.0"
 
 [tool.poetry.group.ci.dependencies]
 pytest = "^7.2.0"
