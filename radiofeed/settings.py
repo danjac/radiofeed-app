@@ -305,12 +305,12 @@ match ENVIRONMENT:
             "whitenoise.runserver_nostatic",
         ]
 
-        INTERNAL_IPS = ["127.0.0.1"]
-
         MIDDLEWARE += [
             "django_browser_reload.middleware.BrowserReloadMiddleware",
             "debug_toolbar.middleware.DebugToolbarMiddleware",
         ]
+
+        INTERNAL_IPS = ["127.0.0.1"]
 
     case "test":
 
