@@ -16,6 +16,10 @@ class TestDecodeUrl:
     def test_ok(self):
         assert url_encoder.decode_url(url_encoder.encode_url(_url)) == _url
 
+    def test_invalid_key(self):
+        with pytest.raises(url_encoder.DecodeError):
+            url_encoder.decode_url(url_encoder.encode_url(_url, "wrong-key"))
+
     def test_error(self):
         with pytest.raises(url_encoder.DecodeError):
             url_encoder.decode_url("bad string")

@@ -1,26 +1,26 @@
 from __future__ import annotations
 
-from django.core.signing import BadSignature, dumps, loads
+from django.core.signing import BadSignature, JSONSerializer, Signer
 
 
 class DecodeError(BadSignature):
     """Any invalid signature."""
 
 
-def encode_url(url: str) -> str:
-    """Make a random token and store in cache."""
-    return dumps({"url": url}, compress=True)
+def encode_url(url: str, key: str = "url") -> str:
+    """Encode url into signed encoded string."""
+    return Signer().sign_object({key: url}, compress=True, serializer=JSONSerializer)
 
 
-def decode_url(encoded_url: str) -> str:
+def decode_url(encoded_url: str, key: str = "url") -> str:
     """Decode url from an encoded string.
 
     Raises:
         DecodeError: invalid encoded string
     """
     try:
-        return loads(encoded_url)["url"]
+        return Signer().unsign_object(encoded_url, serializer=JSONSerializer)[key]
     except KeyError:
-        raise DecodeError("Invalid signed object")
+        raise DecodeError("Invalid object structure")
     except BadSignature as e:
         raise DecodeError from e
