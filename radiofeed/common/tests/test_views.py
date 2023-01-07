@@ -4,9 +4,8 @@ import httpx
 
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 
+from radiofeed.common import url_encoder
 from radiofeed.common.asserts import assert_bad_request, assert_ok
 
 
@@ -54,7 +53,7 @@ class TestCoverImage:
         return reverse("cover_image", kwargs={"encoded_url": url, "size": size})
 
     def encode_url(self, url):
-        return urlsafe_base64_encode(force_bytes(url))
+        return url_encoder.encode_url(url)
 
     def test_ok(self, client, db, mocker):
         class MockResponse:

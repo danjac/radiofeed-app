@@ -17,11 +17,11 @@ from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
+
+from radiofeed.common import url_encoder
 
 _DEFAULT_CACHE_TIMEOUT: int = 3600  # one hour
 
@@ -169,8 +169,8 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
         return HttpResponseBadRequest("Error: invalid image size")
 
     try:
-        cover_url = force_str(urlsafe_base64_decode(encoded_url))
-    except ValueError:
+        cover_url = url_encoder.decode_url(encoded_url)
+    except url_encoder.DecodeError:
         return HttpResponseBadRequest("Error: invalid encoded URL")
 
     try:

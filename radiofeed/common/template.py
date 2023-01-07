@@ -16,10 +16,8 @@ from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 
-from radiofeed.common import markup, pagination
+from radiofeed.common import markup, pagination, url_encoder
 
 register = template.Library()
 
@@ -129,7 +127,7 @@ def cover_image(
             reverse(
                 "cover_image",
                 kwargs={
-                    "encoded_url": urlsafe_base64_encode(force_bytes(cover_url)),
+                    "encoded_url": url_encoder.encode_url(cover_url),
                     "size": size,
                 },
             )
