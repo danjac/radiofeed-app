@@ -3,6 +3,8 @@ from __future__ import annotations
 import datetime
 import io
 
+from typing import Final
+
 import httpx
 
 from django.conf import settings
@@ -24,7 +26,7 @@ from PIL import Image
 
 from radiofeed.common import encoder
 
-_DEFAULT_CACHE_TIMEOUT: int = 3600  # one hour
+_DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
 
 
 _cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
