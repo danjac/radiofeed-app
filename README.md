@@ -98,11 +98,11 @@ The following environment variables should be set in your production installatio
 
 ```
 ENVIRONMENT=production
+DOMAIN_NAME=mysite
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
 ADMINS=me@mysite.com
-ALLOWED_HOSTS=mysite.com
 EMAIL_HOST=mysite.com
 MAILGUN_API_KEY=<mailgun_api_key>
 SECRET_KEY=<secret>
