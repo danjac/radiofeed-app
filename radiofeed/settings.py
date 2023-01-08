@@ -52,11 +52,13 @@ CACHES: dict = {
 
 DOMAIN_NAME = env("DOMAIN_NAME", default="localhost")
 
-HTTP_PROTOCOL = "http"
-
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
+HTTP_PROTOCOL = "http"
+
 SITE_ID = 1
+
+# Sessions and cookies
 
 SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
@@ -319,7 +321,7 @@ match ENVIRONMENT:
 
         INTERNAL_IPS = ["127.0.0.1"]
 
-        ALLOWED_HOSTS += ["localhost"]
+        ALLOWED_HOSTS += ["localhost", "0.0.0.0", "127.0.0.1"]  # nosec
 
     case "test":
 
@@ -328,8 +330,6 @@ match ENVIRONMENT:
         PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
         DOMAIN_NAME = "example.com"
-
-        ALLOWED_HOSTS += [".example.com"]
 
         CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 
@@ -357,8 +357,6 @@ match ENVIRONMENT:
         SECURE_SSL_REDIRECT = True
 
         HTTP_PROTOCOL = "https"
-
-        ALLOWED_HOSTS += ["." + DOMAIN_NAME]
 
         SESSION_COOKIE_SECURE = True
         CSRF_COOKIE_SECURE = True
@@ -400,6 +398,7 @@ match ENVIRONMENT:
                 "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
             }
 
+ALLOWED_HOSTS += ["." + DOMAIN_NAME]
 
 BASE_URL = f"{HTTP_PROTOCOL}://{DOMAIN_NAME}"
 
