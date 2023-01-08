@@ -63,25 +63,25 @@ class TestIcon:
 
 
 class TestAbsoluteUri:
-    ABSOLUTE_URI = "http://example.com"
+    BASE_URL = "http://example.com"
 
     SEARCH_URL = "/podcasts/search/"
     DETAIL_URL = "/podcasts/12345/test/"
 
     def test_no_url(self):
-        assert absolute_uri() == self.ABSOLUTE_URI + "/"
+        assert absolute_uri() == self.BASE_URL + "/"
 
     def test_static_url(self):
         url = absolute_uri(self.SEARCH_URL)
-        assert url == self.ABSOLUTE_URI + self.SEARCH_URL
+        assert url == self.BASE_URL + self.SEARCH_URL
 
     def test_resolved_url(self):
         url = absolute_uri("podcasts:podcast_detail", podcast_id=12345, slug="test")
-        assert url == self.ABSOLUTE_URI + self.DETAIL_URL
+        assert url == self.BASE_URL + self.DETAIL_URL
 
     def test_model(self, podcast):
         url = absolute_uri(podcast)
-        assert url == self.ABSOLUTE_URI + podcast.get_absolute_url()
+        assert url == self.BASE_URL + podcast.get_absolute_url()
 
 
 class TestFormatDuration:

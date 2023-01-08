@@ -401,7 +401,7 @@ match ENVIRONMENT:
             }
 
 
-ABSOLUTE_URI = f"{HTTP_PROTOCOL}://{DOMAIN_NAME}"
+BASE_URL = f"{HTTP_PROTOCOL}://{DOMAIN_NAME}"
 
 # combine all apps
 

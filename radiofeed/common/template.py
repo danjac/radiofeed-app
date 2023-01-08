@@ -162,4 +162,4 @@ def force_url(url: str) -> str:
 
 def build_absolute_uri(url: str = "") -> str:
     """Returns the full absolute URI based on request or current Site."""
-    return parse.urljoin(settings.ABSOLUTE_URI, url or "/")
+    return parse.urljoin(settings.BASE_URL, url or "/")
