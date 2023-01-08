@@ -52,8 +52,6 @@ CACHES: dict = {
 
 DOMAIN_NAME = env("DOMAIN_NAME", default="localhost")
 
-ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
-
 HTTP_PROTOCOL = "http"
 
 SITE_ID = 1
@@ -396,7 +394,8 @@ match ENVIRONMENT:
                 "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
             }
 
-ALLOWED_HOSTS += [DOMAIN_NAME]
+
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[DOMAIN_NAME])
 
 BASE_URL = f"{HTTP_PROTOCOL}://{DOMAIN_NAME}"
 
