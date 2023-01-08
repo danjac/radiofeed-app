@@ -54,7 +54,7 @@ DOMAIN_NAME = env("DOMAIN_NAME", default="localhost")
 
 HTTP_PROTOCOL = "http"
 
-ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[]) + ["." + DOMAIN_NAME]
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
 SITE_ID = 1
 
@@ -319,6 +319,8 @@ match ENVIRONMENT:
 
         INTERNAL_IPS = ["127.0.0.1"]
 
+        ALLOWED_HOSTS += ["localhost"]
+
     case "test":
 
         LOGGING = None
@@ -355,6 +357,8 @@ match ENVIRONMENT:
         SECURE_SSL_REDIRECT = True
 
         HTTP_PROTOCOL = "https"
+
+        ALLOWED_HOSTS += ["." + DOMAIN_NAME]
 
         SESSION_COOKIE_SECURE = True
         CSRF_COOKIE_SECURE = True
