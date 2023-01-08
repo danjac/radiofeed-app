@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from radiofeed.common import encoder
-from radiofeed.common.asserts import assert_bad_request, assert_ok
+from radiofeed.common.asserts import assert_bad_request, assert_not_found, assert_ok
 
 
 class TestManifest:
@@ -67,9 +67,7 @@ class TestCoverImage:
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
     def test_not_accepted_size(self, client, db, mocker):
-        assert_bad_request(
-            client.get(self.get_url(500, self.encode_url(self.cover_url)))
-        )
+        assert_not_found(client.get(self.get_url(500, self.encode_url(self.cover_url))))
 
     def test_bad_encoded_url(self, client, db):
         assert_bad_request(client.get(self.get_url(100, "bad string")))

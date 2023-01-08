@@ -8,6 +8,7 @@ import httpx
 from django.conf import settings
 from django.http import (
     FileResponse,
+    Http404,
     HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
@@ -25,7 +26,6 @@ from radiofeed.common import encoder
 
 _DEFAULT_CACHE_TIMEOUT: int = 3600  # one hour
 
-_COVER_IMAGE_SIZES: tuple[int, ...] = (100, 200, 300)
 
 _cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
 _cache_page = cache_page(_DEFAULT_CACHE_TIMEOUT)
@@ -165,14 +165,12 @@ def security(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
+    if size not in (100, 200, 300):
+        raise Http404("Invalid image size")
+
     try:
-        if size not in _COVER_IMAGE_SIZES:
-            raise ValueError("invalid image size")
-
-        cover_url = encoder.decode(encoded_url)
-
         response = httpx.get(
-            cover_url,
+            encoder.decode(encoded_url),
             follow_redirects=True,
             timeout=5,
             headers={
@@ -182,8 +180,10 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
 
         response.raise_for_status()
 
-        image = Image.open(io.BytesIO(response.content))
-        image = image.resize((size, size), Image.Resampling.LANCZOS)
+        image = Image.open(io.BytesIO(response.content)).resize(
+            (size, size),
+            Image.Resampling.LANCZOS,
+        )
 
         output = io.BytesIO()
 
@@ -192,4 +192,4 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
         return HttpResponse(output.getvalue(), content_type="image/webp")
 
     except (IOError, ValueError, httpx.HTTPError):
-        return HttpResponseBadRequest("Error fetching image")
+        return HttpResponseBadRequest("Error rendering image")
