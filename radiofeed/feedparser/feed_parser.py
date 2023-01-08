@@ -52,14 +52,16 @@ def get_categories() -> dict[str, Category]:
 class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
-    _accept = (
-        "application/atom+xml,"
-        "application/rdf+xml,"
-        "application/rss+xml,"
-        "application/x-netcdf,"
-        "application/xml;q=0.9,"
-        "text/xml;q=0.2,"
-        "*/*;q=0.1"
+    _accept = ",".join(
+        [
+            "application/atom+xml",
+            "application/rdf+xml",
+            "application/rss+xml",
+            "application/x-netcdf",
+            "application/xml;q=0.9",
+            "text/xml;q=0.2",
+            "*/*;q=0.1",
+        ]
     )
 
     _max_retries: int = 3
