@@ -321,8 +321,6 @@ match ENVIRONMENT:
 
         INTERNAL_IPS = ["127.0.0.1"]
 
-        ALLOWED_HOSTS += ["localhost", "0.0.0.0", "127.0.0.1"]  # nosec
-
     case "test":
 
         LOGGING = None
@@ -398,7 +396,7 @@ match ENVIRONMENT:
                 "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
             }
 
-ALLOWED_HOSTS += ["." + DOMAIN_NAME]
+ALLOWED_HOSTS += [DOMAIN_NAME]
 
 BASE_URL = f"{HTTP_PROTOCOL}://{DOMAIN_NAME}"
 
