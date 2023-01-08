@@ -48,6 +48,22 @@ CACHES: dict = {
     },
 }
 
+# Server info
+
+DOMAIN_NAME = env("DOMAIN_NAME", default="localhost")
+
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[]) + ["." + DOMAIN_NAME]
+
+SITE_ID = 1
+
+SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
+CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+# Email configuration
+
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
@@ -57,19 +73,10 @@ ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
 SERVER_EMAIL = f"errors@{EMAIL_HOST}"
 DEFAULT_FROM_EMAIL = f"support@{EMAIL_HOST}"
-
+#
 # email shown in about page etc
+#
 CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
-
-ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
-
-SITE_ID = 1
-
-SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-
-CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 ROOT_URLCONF = "radiofeed.urls"
 
@@ -125,7 +132,6 @@ MIDDLEWARE: list[str] = [
     "radiofeed.common.middleware.cache_control_middleware",
     "radiofeed.common.middleware.search_middleware",
     "radiofeed.common.middleware.sorter_middleware",
-    "radiofeed.common.middleware.user_agent_middleware",
     "radiofeed.episodes.middleware.player_middleware",
 ]
 
@@ -317,6 +323,8 @@ match ENVIRONMENT:
         LOGGING = None
 
         PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+        DOMAIN_NAME = "example.com"
 
         ALLOWED_HOSTS += [".example.com"]
 

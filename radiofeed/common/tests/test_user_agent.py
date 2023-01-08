@@ -16,13 +16,7 @@ class TestUserAgent:
             return_value=datetime.datetime(year=2022, month=12, day=30),
         )
 
-    def test_with_request(self, rf, mock_now):
-        assert (
-            user_agent.user_agent(rf.get("/"))
-            == f"python-httpx/{httpx.__version__} (Radiofeed/2022-30-12; +http://testserver/)"
-        )
-
-    def test_with_site(self, db, mock_now):
+    def test_ok(self, mock_now):
         assert (
             user_agent.user_agent()
             == f"python-httpx/{httpx.__version__} (Radiofeed/2022-30-12; +http://example.com/)"

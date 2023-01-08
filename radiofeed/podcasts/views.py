@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.common import user_agent
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict
 from radiofeed.common.pagination import render_pagination_response
@@ -89,7 +90,8 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
         try:
             with httpx.Client(
-                headers={"User-Agent": request.user_agent}, timeout=5
+                headers={"User-Agent": user_agent.user_agent()},
+                timeout=5,
             ) as client:
                 feeds = itunes.search(client, request.search.value)
         except httpx.HTTPError:
