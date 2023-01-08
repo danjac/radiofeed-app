@@ -94,7 +94,7 @@ python -m pytest
 
 ## Deployment
 
-The following environment variables should be set in your production installation (changing `radiofeed.app` for your domain). Some providers may set some of these automatically e.g. `DATABASE_URL`:
+The following environment variables should be set in your production installation (changing `radiofeed.app` for your domain).
 
 ```
 ENVIRONMENT=production
@@ -109,6 +109,8 @@ SECRET_KEY=<secret>
 SENTRY_URL=<sentry-url>
 CONTACT_EMAIL=admin@radiofeed.app
 ```
+
+Some settings such as `DATABASE_URL` may be set automatically by certain PAAS providers such as Heroku. Consult your provider documentation as required.
 
 `EMAIL_HOST` should be set to your Mailgun sender domain along with `MAILGUN_API_KEY` if you are using Mailgun.
 
