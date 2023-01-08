@@ -165,15 +165,12 @@ def security(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
-    if size not in _COVER_IMAGE_SIZES:
-        return HttpResponseBadRequest("Error: invalid image size")
-
     try:
+        if size not in _COVER_IMAGE_SIZES:
+            raise ValueError("invalid image size")
+
         cover_url = encoder.decode(encoded_url)
-    except ValueError:
-        return HttpResponseBadRequest("Error: invalid encoded URL")
 
-    try:
         response = httpx.get(
             cover_url,
             follow_redirects=True,
@@ -185,10 +182,6 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
 
         response.raise_for_status()
 
-    except httpx.HTTPError:
-        return HttpResponseBadRequest("Error: unable to download image")
-
-    try:
         image = Image.open(io.BytesIO(response.content))
         image = image.resize((size, size), Image.Resampling.LANCZOS)
 
@@ -196,7 +189,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
 
         image.save(output, format="webp", optimize=True, quality=90)
 
-    except IOError:
-        return HttpResponseBadRequest("Error: unable to process image")
+        return HttpResponse(output.getvalue(), content_type="image/webp")
 
-    return HttpResponse(output.getvalue(), content_type="image/webp")
+    except (IOError, ValueError, httpx.HTTPError):
+        return HttpResponseBadRequest("Error fetching image")
