@@ -52,6 +52,8 @@ CACHES: dict = {
 
 DOMAIN_NAME = env("DOMAIN_NAME", default="localhost")
 
+HTTP_PROTOCOL = "http"
+
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[]) + ["." + DOMAIN_NAME]
 
 SITE_ID = 1
@@ -352,6 +354,8 @@ match ENVIRONMENT:
         SECURE_HSTS_SECONDS = 15768001  # 6 months
         SECURE_SSL_REDIRECT = True
 
+        HTTP_PROTOCOL = "https"
+
         SESSION_COOKIE_SECURE = True
         CSRF_COOKIE_SECURE = True
 
@@ -391,6 +395,9 @@ match ENVIRONMENT:
                 "MAILGUN_API_URL": MAILGUN_API_URL,
                 "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
             }
+
+
+ABSOLUTE_URI = f"{HTTP_PROTOCOL}://{DOMAIN_NAME}"
 
 # combine all apps
 

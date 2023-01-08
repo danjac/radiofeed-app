@@ -162,5 +162,4 @@ def force_url(url: str) -> str:
 
 def build_absolute_uri(url: str = "") -> str:
     """Returns the full absolute URI based on request or current Site."""
-    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
-    return parse.urljoin(f"{protocol}://{settings.DOMAIN_NAME}", url or "/")
+    return parse.urljoin(settings.ABSOLUTE_URI, url or "/")
