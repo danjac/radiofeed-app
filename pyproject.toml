@@ -127,10 +127,10 @@ add_imports = "from __future__ import annotations"
 source=["radiofeed", "templates"]
 omit=[
     "**/factories.py",
-    "**/settings.py",
     "**/wsgi.py",
     "*/migrations/*",
     "*/nltk/*",
+    "*/settings/*",
     "*/static/*",
     "*/tests/*",
 ]

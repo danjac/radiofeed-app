@@ -47,8 +47,9 @@ SITE_ID = 1
 
 # Session and cookies
 
-SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
+SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
 
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
