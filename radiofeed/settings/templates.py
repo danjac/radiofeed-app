@@ -3,7 +3,7 @@ from __future__ import annotations
 from radiofeed.settings.base import BASE_DIR
 
 
-def configure_templates(debug: bool = False) -> dict:
+def configure_templates(debug: bool = False) -> list[dict]:
     """Build TEMPLATES configuration."""
     return [
         {
@@ -30,6 +30,6 @@ def configure_templates(debug: bool = False) -> dict:
     ]
 
 
-# default template configuration
+# default template configuration: just include("templates.py") to load
 
 TEMPLATES = configure_templates()
