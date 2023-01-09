@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from split_settings.tools import include
 
-from radiofeed.settings.templates import configure_templates
+from radiofeed.settings.base import configure_templates
 
 include("base.py")
 

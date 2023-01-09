@@ -15,7 +15,6 @@ from radiofeed.settings.base import (
 )
 
 include("base.py")
-include("templates.py")
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
 
