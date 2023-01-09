@@ -3,29 +3,19 @@ from __future__ import annotations
 import pathlib
 
 from email.utils import getaddresses
-from typing import Literal
 
 import environ
 
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
 
-Environments = Literal["development", "production", "test"]
-
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 env = environ.Env()
 
 environ.Env.read_env(BASE_DIR / ".env")
 
-ENVIRONMENT: Environments = env("ENVIRONMENT", default="development")
-
-DEVELOPMENT = ENVIRONMENT == "development"
-PRODUCTION = ENVIRONMENT == "production"
-TESTING = ENVIRONMENT == "test"
-
-DEBUG = DEVELOPMENT
-TEMPLATE_DEBUG = DEVELOPMENT or TESTING
+DEBUG = False
 
 SECRET_KEY = env(
     "SECRET_KEY",
@@ -49,12 +39,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DOMAIN_NAME: str = env("DOMAIN_NAME", default="localhost")
 
-if TESTING:
-    DOMAIN_NAME = "example.com"
-
-HTTP_PROTOCOL = "https" if PRODUCTION else "http"
-
-BASE_URL = f"{HTTP_PROTOCOL}://{DOMAIN_NAME}"
+BASE_URL = f"http://{DOMAIN_NAME}"
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[DOMAIN_NAME])
 
@@ -68,34 +53,12 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-if PRODUCTION:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-
 # Email configuration
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
-# Mailgun
-
-if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
-
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-    MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
-
-    ANYMAIL = {
-        "MAILGUN_API_KEY": MAILGUN_API_KEY,
-        "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
-    }
-
-elif TESTING:
-    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-
-else:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
@@ -109,7 +72,7 @@ ROOT_URLCONF = "radiofeed.urls"
 
 # Installed apps
 
-DJANGO_APPS: list[str] = [
+INSTALLED_APPS: list[str] = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -120,9 +83,6 @@ DJANGO_APPS: list[str] = [
     "django.contrib.sites",
     "django.contrib.staticfiles",
     "django.forms",
-]
-
-THIRD_PARTY_APPS: list[str] = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -133,26 +93,12 @@ THIRD_PARTY_APPS: list[str] = [
     "django_object_actions",
     "fast_update",
     "widget_tweaks",
-]
-
-if DEVELOPMENT:
-    THIRD_PARTY_APPS += [
-        "debug_toolbar",
-        "django_browser_reload",
-        "whitenoise.runserver_nostatic",
-    ]
-
-if PRODUCTION:
-    THIRD_PARTY_APPS += ["anymail"]
-
-PROJECT_APPS: list[str] = [
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
     "radiofeed.users",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 # Middleware
 
@@ -176,20 +122,11 @@ MIDDLEWARE: list[str] = [
     "radiofeed.episodes.middleware.player_middleware",
 ]
 
-if DEVELOPMENT:
-    MIDDLEWARE += [
-        "django_browser_reload.middleware.BrowserReloadMiddleware",
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
-
-
 # admin settings
 
 ADMIN_URL = env("ADMIN_URL", default="admin/")
 
-ADMIN_SITE_HEADER = (
-    env("ADMIN_SITE_HEADER", default="Radiofeed Admin") + f" [{ENVIRONMENT.upper()}]"
-)
+ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 # Authentication
 
@@ -210,9 +147,6 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
-if TESTING:
-    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
 
@@ -250,10 +184,6 @@ USE_TZ = True
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-if PRODUCTION:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    STATIC_ROOT = BASE_DIR / "staticfiles"
-
 # Templates
 
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
@@ -266,7 +196,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
-            "debug": TEMPLATE_DEBUG,
+            "debug": False,
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -314,28 +244,6 @@ LOGGING: dict | None = {
     },
 }
 
-if TESTING:
-    LOGGING = None
-
-# Sentry
-
-if SENTRY_URL := env("SENTRY_URL", default=None):
-    import sentry_sdk
-
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.logging import ignore_logger
-
-    ignore_logger("django.security.DisallowedHost")
-
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.5,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )
-
 # Messages
 
 # https://docs.djangoproject.com/en/4.1/ref/contrib/messages/
@@ -363,9 +271,6 @@ CACHES: dict = {
     },
 }
 
-if TESTING:
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-
 # Cacheops
 
 # https://github.com/Suor/django-cacheops
@@ -378,38 +283,4 @@ CACHEOPS = {
     "podcasts.*": {"ops": "all"},
     "episodes.*": {"ops": "all"},
     "users.*": {"ops": "all"},
-}
-
-if TESTING:
-    CACHEOPS_ENABLED = False
-
-# Secure settings
-
-if PRODUCTION:
-
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_HSTS_SECONDS = 15768001  # 6 months
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
-
-# Permissions Policy
-
-# https://pypi.org/project/django-permissions-policy/
-
-PERMISSIONS_POLICY: dict[str, list] = {
-    "accelerometer": [],
-    "ambient-light-sensor": [],
-    "camera": [],
-    "document-domain": [],
-    "encrypted-media": [],
-    "fullscreen": [],
-    "geolocation": [],
-    "gyroscope": [],
-    "magnetometer": [],
-    "microphone": [],
-    "payment": [],
-    "usb": [],
 }

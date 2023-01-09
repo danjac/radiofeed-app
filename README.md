@@ -100,7 +100,7 @@ python -m pytest
 The following environment variables should be set in your production installation (changing `radiofeed.app` for your domain).
 
 ```
-ENVIRONMENT=production
+DJANGO_SETTINGS_MODULE=radiofeed.settings.production
 DOMAIN_NAME=radiofeed.app
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
