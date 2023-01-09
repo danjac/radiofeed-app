@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from radiofeed.settings.base import *  # noqa
+from split_settings.tools import include
 
-INSTALLED_APPS += ["anymail"]  # noqa
+from radiofeed.settings.base import ADMIN_SITE_HEADER, BASE_DIR
 
-ADMIN_SITE_HEADER += " [PRODUCTION]"  # noqa
+include("base.py")
+include("mailgun.py")
+include("sentry.py")
+
+ADMIN_SITE_HEADER += " [PRODUCTION]"
 
 # Sessions and cookies
 
@@ -14,7 +18,7 @@ CSRF_COOKIE_SECURE = True
 # Static files
 #
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # noqa
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Secure settings
 
@@ -44,38 +48,3 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "payment": [],
     "usb": [],
 }
-#
-# Mailgun
-
-if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):  # noqa
-
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-    MAILGUN_API_URL = env(  # noqa
-        "MAILGUN_API_URL", default="https://api.mailgun.net/v3"
-    )
-
-    ANYMAIL = {
-        "MAILGUN_API_KEY": MAILGUN_API_KEY,
-        "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,  # noqa
-    }
-
-# Sentry
-
-if SENTRY_URL := env("SENTRY_URL", default=None):  # noqa
-    import sentry_sdk
-
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.logging import ignore_logger
-
-    ignore_logger("django.security.DisallowedHost")
-
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.5,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )

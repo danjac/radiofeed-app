@@ -41,6 +41,7 @@ scikit-learn = "^1.2.0"
 scipy = "^1.9.3"
 whitenoise = "^6.2.0"
 httpx = "^0.23.1"
+django-split-settings = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
