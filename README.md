@@ -101,7 +101,7 @@ The following environment variables should be set in your production installatio
 
 ```
 DJANGO_SETTINGS_MODULE=radiofeed.settings.production
-DOMAIN_NAME=radiofeed.app
+ALLOWED_HOSTS=.radiofeed.app
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
@@ -120,6 +120,8 @@ Some settings such as `DATABASE_URL` may be set automatically by certain PAAS pr
 You should ensure the `SECRET_KEY` is sufficiently random: run the `generate_secret_key` custom Django command to create a suitable random string. In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_.
 
 A `Procfile` is provided for Heroku-like deployments (including Dokku, Railway etc).
+
+Once you have access to the Django Admin, you should configure the default Site instance with the correct production domain.
 
 ### Crons
 

@@ -68,23 +68,26 @@ class TestAbsoluteUri:
     SEARCH_URL = "/podcasts/search/"
     DETAIL_URL = "/podcasts/12345/test/"
 
-    def test_no_url(self):
-        assert absolute_uri() == self.BASE_URL + "/"
+    def test_no_url(self, db):
+        assert absolute_uri({}) == self.BASE_URL + "/"
 
-    def test_https(self, settings):
+    def test_request(self, rf):
+        assert absolute_uri({"request": rf.get("/")}) == "http://testserver/"
+
+    def test_https(self, db, settings):
         settings.SECURE_SSL_REDIRECT = True
-        assert absolute_uri() == "https://example.com/"
+        assert absolute_uri({}) == "https://example.com/"
 
-    def test_static_url(self):
-        url = absolute_uri(self.SEARCH_URL)
+    def test_static_url(self, db):
+        url = absolute_uri({}, self.SEARCH_URL)
         assert url == self.BASE_URL + self.SEARCH_URL
 
-    def test_resolved_url(self):
-        url = absolute_uri("podcasts:podcast_detail", podcast_id=12345, slug="test")
+    def test_resolved_url(self, db):
+        url = absolute_uri({}, "podcasts:podcast_detail", podcast_id=12345, slug="test")
         assert url == self.BASE_URL + self.DETAIL_URL
 
-    def test_model(self, podcast):
-        url = absolute_uri(podcast)
+    def test_model(self, podcast, db):
+        url = absolute_uri({}, podcast)
         assert url == self.BASE_URL + podcast.get_absolute_url()
 
 

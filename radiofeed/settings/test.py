@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from radiofeed.settings.base import *  # noqa
 
-DOMAIN_NAME = "example.com"
-
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 # enable debug for coverage

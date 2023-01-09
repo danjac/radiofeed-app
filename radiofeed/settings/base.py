@@ -37,9 +37,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-DOMAIN_NAME: str = env("DOMAIN_NAME", default="localhost")
-
-ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[DOMAIN_NAME])
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
 
 SITE_ID = 1
 
@@ -118,6 +116,7 @@ MIDDLEWARE: list[str] = [
     "radiofeed.common.middleware.cache_control_middleware",
     "radiofeed.common.middleware.search_middleware",
     "radiofeed.common.middleware.sorter_middleware",
+    "radiofeed.common.middleware.user_agent_middleware",
     "radiofeed.episodes.middleware.player_middleware",
 ]
 
