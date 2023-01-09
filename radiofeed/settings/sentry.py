@@ -7,7 +7,7 @@ from sentry_sdk.integrations.logging import ignore_logger
 
 from radiofeed.settings.base import env
 
-if SENTRY_URL := env("SENTRY_URL", default=None):  # noqa
+if SENTRY_URL := env("SENTRY_URL", default=None):
 
     ignore_logger("django.security.DisallowedHost")
 
