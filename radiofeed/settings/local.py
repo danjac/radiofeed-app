@@ -7,8 +7,6 @@ from radiofeed.settings.base import ADMIN_SITE_HEADER, INSTALLED_APPS, MIDDLEWAR
 include("base.py")
 include("debug.py")
 
-DEBUG = True
-
 INSTALLED_APPS += [
     "debug_toolbar",
     "django_browser_reload",
@@ -19,6 +17,5 @@ MIDDLEWARE += [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
-
 
 ADMIN_SITE_HEADER += " [DEVELOPMENT]"
