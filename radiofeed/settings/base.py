@@ -39,8 +39,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DOMAIN_NAME: str = env("DOMAIN_NAME", default="localhost")
 
-BASE_URL = f"http://{DOMAIN_NAME}"
-
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[DOMAIN_NAME])
 
 SITE_ID = 1

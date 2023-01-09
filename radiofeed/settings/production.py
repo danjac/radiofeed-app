@@ -4,8 +4,6 @@ from radiofeed.settings.base import *  # noqa
 
 INSTALLED_APPS += ["anymail"]  # noqa
 
-BASE_URL = f"https://{DOMAIN_NAME}"  # noqa
-
 ADMIN_SITE_HEADER += " [PRODUCTION]"  # noqa
 
 # Sessions and cookies

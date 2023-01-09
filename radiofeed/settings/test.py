@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from radiofeed.settings.base import *  # noqa
 
-BASE_URL = "http://example.com"
+DOMAIN_NAME = "example.com"
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
