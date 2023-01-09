@@ -43,23 +43,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-if TESTING:
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-
-else:
-    CACHES: dict = {
-        "default": {
-            **env.cache("REDIS_URL"),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                # Mimicing memcache behavior.
-                # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
-                "IGNORE_EXCEPTIONS": True,
-                "PARSER_CLASS": "redis.connection.HiredisParser",
-            },
+CACHES: dict = {
+    "default": {
+        **env.cache("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # Mimicing memcache behavior.
+            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
+            "IGNORE_EXCEPTIONS": True,
+            "PARSER_CLASS": "redis.connection.HiredisParser",
         },
-    }
-
+    },
+}
 
 # Server info
 
@@ -76,24 +71,6 @@ ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[DOMAIN_NAME])
 
 SITE_ID = 1
 
-# Secure server headers
-
-if PRODUCTION:
-
-    HTTP_PROTOCOL = "https"
-
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_HSTS_SECONDS = 15768001  # 6 months
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
-
-if DEVELOPMENT:
-    INTERNAL_IPS = ["127.0.0.1"]
-
-
 # Sessions and cookies
 
 SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
@@ -102,21 +79,12 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-if PRODUCTION:
-
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-
-
 # Email configuration
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
-if TESTING:
-    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-else:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
@@ -154,13 +122,15 @@ THIRD_PARTY_APPS: list[str] = [
     "widget_tweaks",
 ]
 
-if ENVIRONMENT == "development":
+if DEVELOPMENT:
     THIRD_PARTY_APPS += [
         "debug_toolbar",
         "django_browser_reload",
         "whitenoise.runserver_nostatic",
     ]
 
+if PRODUCTION:
+    THIRD_PARTY_APPS += ["anymail"]
 
 PROJECT_APPS: list[str] = [
     "radiofeed.episodes",
@@ -168,6 +138,9 @@ PROJECT_APPS: list[str] = [
     "radiofeed.podcasts",
     "radiofeed.users",
 ]
+# combine all apps
+
+INSTALLED_APPS: list[str] = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 #
 # middleware
 
@@ -226,9 +199,6 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-if ENVIRONMENT == "test":
-    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
 LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
 
 LOGIN_URL = "account_login"
@@ -267,11 +237,6 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-if PRODUCTION:
-
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    STATIC_ROOT = BASE_DIR / "staticfiles"
-
 
 TEMPLATES = [
     {
@@ -297,36 +262,33 @@ TEMPLATES = [
     }
 ]
 
-if TESTING:
-    LOGGING = None
-else:
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "handlers": {
-            "console": {"class": "logging.StreamHandler"},
-            "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+    },
+    "loggers": {
+        "root": {
+            "handlers": ["console"],
+            "level": "INFO",
         },
-        "loggers": {
-            "root": {
-                "handlers": ["console"],
-                "level": "INFO",
-            },
-            "django.server": {
-                "handlers": ["console"],
-                "level": "INFO",
-                "propagate": False,
-            },
-            "django.security.DisallowedHost": {
-                "handlers": ["null"],
-                "propagate": False,
-            },
-            "django.request": {
-                "level": "CRITICAL",
-                "propagate": False,
-            },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
         },
-    }
+        "django.security.DisallowedHost": {
+            "handlers": ["null"],
+            "propagate": False,
+        },
+        "django.request": {
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+    },
+}
 
 # https://docs.djangoproject.com/en/4.1/ref/contrib/messages/
 
@@ -350,9 +312,6 @@ CACHEOPS = {
     "users.*": {"ops": "all"},
 }
 
-if TESTING:
-    CACHEOPS_ENABLED = False
-
 # Permissions Policy
 
 # https://pypi.org/project/django-permissions-policy/
@@ -372,40 +331,69 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "usb": [],
 }
 
-if SENTRY_URL := env("SENTRY_URL", default=None):
-    import sentry_sdk
+# Production-specific
+if PRODUCTION:
 
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.logging import ignore_logger
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
-    ignore_logger("django.security.DisallowedHost")
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_SECONDS = 15768001  # 6 months
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
 
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.5,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Mailgun
+    if SENTRY_URL := env("SENTRY_URL", default=None):
+        import sentry_sdk
 
-if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
+        from sentry_sdk.integrations.django import DjangoIntegration
+        from sentry_sdk.integrations.logging import ignore_logger
 
-    THIRD_PARTY_APPS += ["anymail"]
+        ignore_logger("django.security.DisallowedHost")
 
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+        sentry_sdk.init(
+            dsn=SENTRY_URL,
+            integrations=[DjangoIntegration()],
+            traces_sample_rate=0.5,
+            # If you wish to associate users to errors (assuming you are using
+            # django.contrib.auth) you may enable sending PII data.
+            send_default_pii=True,
+        )
 
-    MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+    # Mailgun
 
-    ANYMAIL = {
-        "MAILGUN_API_KEY": MAILGUN_API_KEY,
-        "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
-    }
+    if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
+
+        EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+        MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+
+        ANYMAIL = {
+            "MAILGUN_API_KEY": MAILGUN_API_KEY,
+            "MAILGUN_API_URL": MAILGUN_API_URL,
+            "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
+        }
 
 
-# combine all apps
+# Development-specific
 
-INSTALLED_APPS: list[str] = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
+if DEVELOPMENT:
+    INTERNAL_IPS = ["127.0.0.1"]
+
+# Testing-specific
+if TESTING:
+
+    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+
+    CACHEOPS_ENABLED = False
+
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+    LOGGING = None
