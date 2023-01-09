@@ -24,6 +24,7 @@ MIDDLEWARE += [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore
+for template in TEMPLATES:
+    template["OPTIONS"]["debug"] = True
 
 ADMIN_SITE_HEADER += " [DEVELOPMENT]"
