@@ -16,7 +16,7 @@ For ease of local development a `docker-compose.yml` is provided which includes:
 
 * PostgreSQL
 * Redis
-* Mailhog
+* Mailhog (for local email testing and development)
 
 Just run `docker-compose`:
 
@@ -30,7 +30,10 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 ### Django setup
 
-Copy the file `.env.example` to `.env` and set the variables accordingly. These settings should work as-is with the Docker containers defined in `docker-compose.yml`.
+
+Copy `.env.example` to `.env`.
+
+The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then change these settings accordingly.
 
 To install dependencies for local development:
 

@@ -27,7 +27,10 @@ TESTING = ENVIRONMENT == "test"
 DEBUG = DEVELOPMENT
 TEMPLATE_DEBUG = DEVELOPMENT or TESTING
 
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env(
+    "SECRET_KEY",
+    default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
+)
 
 DATABASES = {
     "default": {
