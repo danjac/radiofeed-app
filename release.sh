@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# check secure
+
+./manage.py check --deploy
+
 # migrations
 
 ./manage.py migrate

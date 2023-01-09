@@ -22,8 +22,8 @@ environ.Env.read_env(BASE_DIR / ".env")
 ENVIRONMENT: Environments = env("ENVIRONMENT", default="development")
 
 DEVELOPMENT = ENVIRONMENT == "development"
-TESTING = ENVIRONMENT == "test"
 PRODUCTION = ENVIRONMENT == "production"
+TESTING = ENVIRONMENT == "test"
 
 DEBUG = DEVELOPMENT
 TEMPLATE_DEBUG = DEVELOPMENT or TESTING
@@ -58,10 +58,7 @@ CACHES: dict = {
 
 # Server info
 
-if TESTING:
-    DOMAIN_NAME = "example.com"
-else:
-    DOMAIN_NAME = env("DOMAIN_NAME", default="localhost")
+DOMAIN_NAME = "example.com" if TESTING else env("DOMAIN_NAME", default="localhost")
 
 HTTP_PROTOCOL = "https" if PRODUCTION else "http"
 
@@ -89,10 +86,10 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
 SERVER_EMAIL = f"errors@{EMAIL_HOST}"
-DEFAULT_FROM_EMAIL = f"support@{EMAIL_HOST}"
+DEFAULT_FROM_EMAIL = f"no-reply@{EMAIL_HOST}"
 
 # email shown in about page etc
-CONTACT_EMAIL = env("CONTACT_EMAIL", default="admin@localhost")
+CONTACT_EMAIL = env("CONTACT_EMAIL", default=f"admin@{EMAIL_HOST}")
 
 ROOT_URLCONF = "radiofeed.urls"
 
@@ -173,11 +170,11 @@ if DEVELOPMENT:
 
 # admin settings
 
-ADMIN_SITE_HEADER = (
-    env("ADMIN_SITE_HEADER", default="Radiofeed Admin") + f" {ENVIRONMENT}"
-)
-
 ADMIN_URL = env("ADMIN_URL", default="admin/")
+
+ADMIN_SITE_HEADER = (
+    env("ADMIN_SITE_HEADER", default="Radiofeed Admin") + f" [{ENVIRONMENT.upper()}]"
+)
 
 # auth
 
@@ -237,7 +234,6 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -262,7 +258,7 @@ TEMPLATES = [
     }
 ]
 
-LOGGING = {
+LOGGING: dict | None = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
@@ -331,6 +327,21 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "usb": [],
 }
 
+# Environment-specific overrides
+
+# Testing-specific
+if TESTING:
+
+    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+
+    CACHEOPS_ENABLED = False
+
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+    LOGGING = None
+
 # Production-specific
 if PRODUCTION:
 
@@ -347,6 +358,8 @@ if PRODUCTION:
 
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     STATIC_ROOT = BASE_DIR / "staticfiles"
+
+    # Sentry
 
     if SENTRY_URL := env("SENTRY_URL", default=None):
         import sentry_sdk
@@ -378,22 +391,3 @@ if PRODUCTION:
             "MAILGUN_API_URL": MAILGUN_API_URL,
             "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
         }
-
-
-# Development-specific
-
-if DEVELOPMENT:
-    INTERNAL_IPS = ["127.0.0.1"]
-
-# Testing-specific
-if TESTING:
-
-    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-
-    CACHEOPS_ENABLED = False
-
-    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
-    LOGGING = None
