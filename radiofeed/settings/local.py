@@ -3,9 +3,11 @@ from __future__ import annotations
 from split_settings.tools import include
 
 from radiofeed.settings.base import ADMIN_SITE_HEADER, INSTALLED_APPS, MIDDLEWARE
+from radiofeed.settings.templates import configure_templates
 
 include("base.py")
-include("debug.py")
+
+DEBUG = True
 
 INSTALLED_APPS += [
     "debug_toolbar",
@@ -19,3 +21,5 @@ MIDDLEWARE += [
 ]
 
 ADMIN_SITE_HEADER += " [DEVELOPMENT]"
+
+TEMPLATES = configure_templates(debug=True)

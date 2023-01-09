@@ -7,6 +7,7 @@ from radiofeed.settings.base import ADMIN_SITE_HEADER, BASE_DIR
 include("base.py")
 include("mailgun.py")
 include("sentry.py")
+include("templates.py")
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
 
