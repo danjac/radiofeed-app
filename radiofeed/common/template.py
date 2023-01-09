@@ -171,6 +171,4 @@ def build_absolute_uri(url: str = "", request: HttpRequest | None = None) -> str
 
     protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
-    return parse.urljoin(
-        protocol + "://" + Site.objects.get_current().domain, url or "/"
-    )
+    return parse.urljoin(protocol + "://" + Site.objects.get_current().domain, url)
