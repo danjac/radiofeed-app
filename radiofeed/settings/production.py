@@ -1,21 +1,12 @@
 from __future__ import annotations
 
-import sentry_sdk
-
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.logging import ignore_logger
 from split_settings.tools import include
 
-from radiofeed.settings.base import (
-    ADMIN_SITE_HEADER,
-    BASE_DIR,
-    EMAIL_HOST,
-    INSTALLED_APPS,
-    env,
-)
+from radiofeed.settings.base import ADMIN_SITE_HEADER, BASE_DIR
 
 include("base.py")
 include("mailgun.py")
+include("sentry.py")
 include("templates.py")
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
@@ -58,34 +49,3 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "payment": [],
     "usb": [],
 }
-
-# Mailgun
-
-if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
-
-    INSTALLED_APPS += ["anymail"]
-
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-    MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
-
-    ANYMAIL = {
-        "MAILGUN_API_KEY": MAILGUN_API_KEY,
-        "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
-    }
-
-# Sentry
-
-if SENTRY_URL := env("SENTRY_URL", default=None):
-
-    ignore_logger("django.security.DisallowedHost")
-
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.5,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )
