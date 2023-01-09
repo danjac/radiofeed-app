@@ -44,10 +44,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
+DOMAIN_NAME: str = env("DOMAIN_NAME", default="localhost")
+
 if TESTING:
     DOMAIN_NAME = "example.com"
-else:
-    DOMAIN_NAME = env("DOMAIN_NAME", default="localhost")
 
 HTTP_PROTOCOL = "https" if PRODUCTION else "http"
 
@@ -66,7 +66,6 @@ CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 if PRODUCTION:
-
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
@@ -284,36 +283,36 @@ TEMPLATES = [
 
 # Logging
 
+LOGGING: dict | None = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+    },
+    "loggers": {
+        "root": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.security.DisallowedHost": {
+            "handlers": ["null"],
+            "propagate": False,
+        },
+        "django.request": {
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+    },
+}
+
 if TESTING:
     LOGGING = None
-else:
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "handlers": {
-            "console": {"class": "logging.StreamHandler"},
-            "null": {"level": "DEBUG", "class": "logging.NullHandler"},
-        },
-        "loggers": {
-            "root": {
-                "handlers": ["console"],
-                "level": "INFO",
-            },
-            "django.server": {
-                "handlers": ["console"],
-                "level": "INFO",
-                "propagate": False,
-            },
-            "django.security.DisallowedHost": {
-                "handlers": ["null"],
-                "propagate": False,
-            },
-            "django.request": {
-                "level": "CRITICAL",
-                "propagate": False,
-            },
-        },
-    }
 
 # Sentry
 
@@ -348,38 +347,38 @@ MESSAGE_TAGS = {
 
 # Caches
 
+CACHES: dict = {
+    "default": {
+        **env.cache("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # Mimicing memcache behavior.
+            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
+            "IGNORE_EXCEPTIONS": True,
+            "PARSER_CLASS": "redis.connection.HiredisParser",
+        },
+    },
+}
+
 if TESTING:
     CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-else:
-    CACHES = {
-        "default": {
-            **env.cache("REDIS_URL"),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                # Mimicing memcache behavior.
-                # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
-                "IGNORE_EXCEPTIONS": True,
-                "PARSER_CLASS": "redis.connection.HiredisParser",
-            },
-        },
-    }
 
 # Cacheops
 
 # https://github.com/Suor/django-cacheops
 
+CACHEOPS_REDIS = REDIS_URL
+CACHEOPS_DEFAULTS = {"timeout": 300}
+CACHEOPS_DEGRADE_ON_FAILURE = True
+
+CACHEOPS = {
+    "podcasts.*": {"ops": "all"},
+    "episodes.*": {"ops": "all"},
+    "users.*": {"ops": "all"},
+}
+
 if TESTING:
     CACHEOPS_ENABLED = False
-else:
-    CACHEOPS_REDIS = REDIS_URL
-    CACHEOPS_DEFAULTS = {"timeout": 300}
-    CACHEOPS_DEGRADE_ON_FAILURE = True
-
-    CACHEOPS = {
-        "podcasts.*": {"ops": "all"},
-        "episodes.*": {"ops": "all"},
-        "users.*": {"ops": "all"},
-    }
 
 # Secure settings
 
@@ -397,7 +396,7 @@ if PRODUCTION:
 
 # https://pypi.org/project/django-permissions-policy/
 
-PERMISSIONS_POLICY = {
+PERMISSIONS_POLICY: dict[str, list] = {
     "accelerometer": [],
     "ambient-light-sensor": [],
     "camera": [],
