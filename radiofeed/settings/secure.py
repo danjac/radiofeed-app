@@ -1,11 +1,7 @@
-# Sessions and cookies
-
 from __future__ import annotations
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-
-# Secure settings
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
