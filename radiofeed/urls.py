@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
@@ -15,13 +16,13 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
-if "debug_toolbar" in settings.INSTALLED_APPS:  # pragma: no cover
+if apps.is_installed("debug_toolbar"):  # pragma: no cover
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),
     ]
 
 
-if "django_browser_reload" in settings.INSTALLED_APPS:  # pragma: no cover
+if apps.is_installed("django_browser_reload"):  # pragma: no cover
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
     ]
