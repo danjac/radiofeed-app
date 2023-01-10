@@ -4,8 +4,8 @@ import sentry_sdk
 
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
-from split_settings.tools import include
 
+from radiofeed.settings.base import *  # noqa
 from radiofeed.settings.base import (
     ADMIN_SITE_HEADER,
     BASE_DIR,
@@ -13,8 +13,6 @@ from radiofeed.settings.base import (
     INSTALLED_APPS,
     env,
 )
-
-include("base.py")
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
 

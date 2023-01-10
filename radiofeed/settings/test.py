@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from split_settings.tools import include
-
+from radiofeed.settings.base import *  # noqa
 from radiofeed.settings.base import configure_templates
-
-include("base.py")
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
