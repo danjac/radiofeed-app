@@ -71,7 +71,7 @@ if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
     }
 
 # Sentry
-#
+
 if SENTRY_URL := env("SENTRY_URL", default=None):
 
     ignore_logger("django.security.DisallowedHost")
