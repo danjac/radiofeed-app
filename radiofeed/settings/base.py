@@ -22,13 +22,6 @@ SECRET_KEY = env(
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
-DATABASES = {
-    "default": {
-        **env.db(),
-        "ATOMIC_REQUESTS": True,
-        "CONN_MAX_AGE": 360,
-    },
-}
 
 REDIS_URL = env("REDIS_URL")
 
@@ -258,6 +251,22 @@ CACHEOPS = {
     "episodes.*": {"ops": "all"},
     "users.*": {"ops": "all"},
 }
+
+# Databases
+
+
+def configure_databases(conn_max_age: int = 360) -> dict:
+    """Build DATABASES configuration."""
+    return {
+        "default": {
+            **env.db(),
+            "ATOMIC_REQUESTS": True,
+            "CONN_MAX_AGE": conn_max_age,
+        },
+    }
+
+
+DATABASES = configure_databases()
 
 # Templates
 
