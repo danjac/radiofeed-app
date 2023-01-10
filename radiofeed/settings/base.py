@@ -23,7 +23,7 @@ SECRET_KEY = env(
 )
 
 
-REDIS_URL = env("REDIS_URL")
+REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
 
 # prevent deprecation warnings
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -227,7 +227,7 @@ MESSAGE_TAGS = {
 
 CACHES: dict = {
     "default": {
-        **env.cache("REDIS_URL"),
+        **env.cache("REDIS_URL", default=REDIS_URL),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             # Mimicing memcache behavior.
