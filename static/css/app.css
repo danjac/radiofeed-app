@@ -291,6 +291,26 @@ input[type="search"]::-webkit-search-results-decoration {
             color: theme("colors.blue.300");
         }
     }
+
+    .message-success {
+        background-color: theme("colors.green.600");
+    }
+
+    .message-debug {
+        background-color: theme("colors.stone.600");
+    }
+
+    .message-info {
+        background-color: theme("colors.blue.600");
+    }
+
+    .message-error {
+        background-color: theme("colors.red.600");
+    }
+
+    .message-warning {
+        background-color: theme("colors.rose.600");
+    }
 }
 
 @layer utilities {

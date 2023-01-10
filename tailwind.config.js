@@ -10,6 +10,13 @@ module.exports = {
         purgeLayersByDefault: true,
     },
     content: ["./templates/**/*.html"],
+    safelist: [
+        "message-debug",
+        "message-error",
+        "message-info",
+        "message-success",
+        "message-warning",
+    ],
     keyframes: true,
     variants: {
         textColor: ["responsive", "hover", "focus", "visited", "dark"],
