@@ -3,12 +3,7 @@
 {% block title %}
     | Podcasts
     {% if has_subscriptions %}
-        |
-        {% if promoted %}
-            Promotions
-        {% else %}
-            Subscriptions
-        {% endif %}
+        | {{ promoted|yesno:"Promotions,Subscriptions" }}
     {% endif %}
 {% endblock title %}
 {% block content %}
@@ -16,12 +11,7 @@
         {% url 'podcasts:index' as index_url %}
         {% if has_subscriptions %}
             <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">
-                Podcasts:
-                {% if promoted %}
-                    Promotions
-                {% else %}
-                    Subscriptions
-                {% endif %}
+                Podcasts: {{ promoted|yesno:"Promotions,Subscriptions" }}
             </h1>
             <nav>
                 <ul class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
