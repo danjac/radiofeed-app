@@ -13,7 +13,7 @@ BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 env = environ.Env()
 
-environ.Env.read_env(BASE_DIR / ".env")
+env.read_env(BASE_DIR / ".env")
 
 DEBUG = False
 
