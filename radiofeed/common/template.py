@@ -151,7 +151,10 @@ def cover_image(
 @register.filter
 @stringfilter
 def force_url(url: str) -> str:
-    """If a URL is provided minus http(s):// prefix, prepends protocol."""
+    """If a URL is provided minus http(s):// prefix, prepends protocol.
+
+    If we cannot create a valid URL, just return an empty string.
+    """
     if url:
         for value in (url, f"https://{url}"):
             try:

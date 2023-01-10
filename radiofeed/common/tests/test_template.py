@@ -147,19 +147,20 @@ class TestMarkdown:
 
 class TestForceUrl:
     base_url = "www.newstatesman.com/podcast"
-    expected_url = "https://" + base_url
+    full_url = "https://" + base_url
 
-    def test_none(self):
-        assert force_url(None) == ""
-
-    def test_empty(self):
-        assert force_url("") == ""
-
-    def test_missing_http(self):
-        assert force_url(self.base_url) == self.expected_url
-
-    def test_already_complete(self):
-        assert force_url(self.expected_url) == self.expected_url
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (None, ""),
+            ("", ""),
+            ("random-string", ""),
+            (base_url, full_url),
+            (full_url, full_url),
+        ],
+    )
+    def test_force_url(self, value, expected):
+        assert force_url(value) == expected
 
 
 class TestPaginationUrl:
