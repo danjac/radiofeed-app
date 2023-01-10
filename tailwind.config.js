@@ -9,7 +9,7 @@ module.exports = {
         removeDeprecatedGapUtilities: true,
         purgeLayersByDefault: true,
     },
-    content: ["./templates/**/*.html", "./tailwind-safelist.txt"],
+    content: ["./templates/**/*.html"],
     keyframes: true,
     variants: {
         textColor: ["responsive", "hover", "focus", "visited", "dark"],
