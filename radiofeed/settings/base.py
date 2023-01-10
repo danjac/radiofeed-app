@@ -4,33 +4,33 @@ import pathlib
 
 from email.utils import getaddresses
 
-import environ
+import dj_database_url
 
+from decouple import AutoConfig, Csv
 from django.contrib.messages import constants as messages
 from django.urls import reverse_lazy
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
-env = environ.Env()
+config = AutoConfig(search_path=BASE_DIR)
 
-env.read_env(BASE_DIR / ".env")
 
 DEBUG = False
 
-SECRET_KEY = env(
+SECRET_KEY = config(
     "SECRET_KEY",
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
 
-REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
 
 # prevent deprecation warnings
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=[])
+ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="", cast=Csv())
 
 SITE_ID = 1
 
@@ -38,25 +38,25 @@ SITE_ID = 1
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
-SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
+SESSION_COOKIE_DOMAIN = config("SESSION_COOKIE_DOMAIN", default=None)
 
-CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+CSRF_COOKIE_DOMAIN = config("CSRF_COOKIE_DOMAIN", default=None)
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
 
 # Email configuration
 
-EMAIL_HOST = env("EMAIL_HOST", default="localhost")
-EMAIL_PORT = env.int("EMAIL_PORT", default=25)
+EMAIL_HOST = config("EMAIL_HOST", default="localhost")
+EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-ADMINS = getaddresses(env.list("ADMINS", default=[]))
+ADMINS = getaddresses(config("ADMINS", default="", cast=Csv()))
 
-SERVER_EMAIL = f"errors@{EMAIL_HOST}"
-DEFAULT_FROM_EMAIL = f"no-reply@{EMAIL_HOST}"
+SERVER_EMAIL = config("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
 
 # email shown in about page etc
-CONTACT_EMAIL = env("CONTACT_EMAIL", default=f"admin@{EMAIL_HOST}")
+CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"admin@{EMAIL_HOST}")
 
 ROOT_URLCONF = "radiofeed.urls"
 
@@ -115,9 +115,9 @@ MIDDLEWARE: list[str] = [
 
 # admin settings
 
-ADMIN_URL = env("ADMIN_URL", default="admin/")
+ADMIN_URL = config("ADMIN_URL", default="admin/")
 
-ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
+ADMIN_SITE_HEADER = config("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 # Authentication
 
@@ -172,7 +172,7 @@ USE_TZ = True
 
 # Static files
 
-STATIC_URL = env("STATIC_URL", default="/static/")
+STATIC_URL = config("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Templates
@@ -227,15 +227,14 @@ MESSAGE_TAGS = {
 
 CACHES: dict = {
     "default": {
-        **env.cache("REDIS_URL", default=REDIS_URL),
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # Mimicing memcache behavior.
-            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
             "IGNORE_EXCEPTIONS": True,
             "PARSER_CLASS": "redis.connection.HiredisParser",
         },
-    },
+    }
 }
 
 # Cacheops
@@ -259,7 +258,7 @@ def configure_databases(conn_max_age: int = 360) -> dict:
     """Build DATABASES configuration."""
     return {
         "default": {
-            **env.db(),
+            **config("DATABASE_URL", cast=dj_database_url.parse),
             "ATOMIC_REQUESTS": True,
             "CONN_MAX_AGE": conn_max_age,
         },

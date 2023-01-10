@@ -11,7 +11,7 @@ from radiofeed.settings.base import (
     BASE_DIR,
     EMAIL_HOST,
     INSTALLED_APPS,
-    env,
+    config,
 )
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
@@ -56,13 +56,13 @@ PERMISSIONS_POLICY: dict[str, list] = {
 
 # Mailgun
 
-if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
+if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
 
     INSTALLED_APPS += ["anymail"]
 
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
-    MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
 
     ANYMAIL = {
         "MAILGUN_API_KEY": MAILGUN_API_KEY,
@@ -72,7 +72,7 @@ if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
 
 # Sentry
 
-if SENTRY_URL := env("SENTRY_URL", default=None):
+if SENTRY_URL := config("SENTRY_URL", default=None):
 
     ignore_logger("django.security.DisallowedHost")
 
