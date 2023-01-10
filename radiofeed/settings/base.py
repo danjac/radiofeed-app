@@ -260,9 +260,12 @@ def configure_databases(conn_max_age: int = 360) -> dict:
     """Build DATABASES configuration."""
     return {
         "default": {
-            **config("DATABASE_URL", cast=dj_database_url.parse),
+            **dj_database_url.parse(
+                config("DATABASE_URL"),
+                conn_max_age=conn_max_age,
+                conn_health_checks=conn_max_age > 0,
+            ),
             "ATOMIC_REQUESTS": True,
-            "CONN_MAX_AGE": conn_max_age,
         },
     }
 
