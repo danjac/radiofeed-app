@@ -117,7 +117,9 @@ Some settings such as `DATABASE_URL` may be set automatically by certain PAAS pr
 
 `EMAIL_HOST` should be set to your Mailgun sender domain along with `MAILGUN_API_KEY` if you are using Mailgun.
 
-You should ensure the `SECRET_KEY` is sufficiently random: run the `generate_secret_key` custom Django command to create a suitable random string. In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_.
+You should ensure the `SECRET_KEY` is sufficiently random: run the `generate_secret_key` custom Django command to create a suitable random string.
+
+In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_. Make sure it ends in a forward slash, e.g. _some-random-path/_.
 
 A `Procfile` is provided for Heroku-like deployments (including Dokku, Railway etc).
 
