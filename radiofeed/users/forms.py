@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import itertools
 
-from typing import Iterator
+from collections.abc import Iterator
 
 import lxml  # nosec
 
 from django import forms
 
-from radiofeed.common.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
+from radiofeed.utils.xpath_parser import XPathParser
 
 _xpath_parser = XPathParser()
 

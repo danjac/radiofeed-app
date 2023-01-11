@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import io
 
-from typing import Any, Iterable, Iterator, TypeAlias
+from collections.abc import Iterable, Iterator
+from typing import Any, TypeAlias
 
 import lxml.etree
 
