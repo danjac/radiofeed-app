@@ -170,10 +170,10 @@ def security(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
-    if size not in (100, 200, 300):
-        raise Http404
-
     try:
+        if size not in (100, 200, 300):
+            raise ValidationError("Invalid image size")
+
         cover_url = Signer().unsign(request.GET["url"])
         _url_validator(cover_url)
     except (KeyError, BadSignature, ValidationError):
