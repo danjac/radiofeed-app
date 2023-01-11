@@ -5,7 +5,7 @@ import datetime
 import httpx
 import pytest
 
-from radiofeed.common import user_agent
+from radiofeed.utils import user_agent
 
 
 class TestUserAgent:

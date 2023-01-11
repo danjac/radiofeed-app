@@ -4,8 +4,8 @@ import httpx
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.common import user_agent
 from radiofeed.podcasts import itunes
+from radiofeed.utils import user_agent
 
 
 class Command(BaseCommand):

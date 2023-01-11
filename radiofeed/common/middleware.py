@@ -3,11 +3,11 @@ from __future__ import annotations
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
-from radiofeed.common import user_agent
 from radiofeed.common.decorators import middleware
 from radiofeed.common.search import Search
 from radiofeed.common.sorter import Sorter
 from radiofeed.common.types import GetResponse
+from radiofeed.utils import user_agent
 
 
 @middleware
