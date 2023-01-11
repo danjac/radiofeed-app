@@ -14,7 +14,6 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed.common import pagination
 from radiofeed.utils.http import build_absolute_uri
 from radiofeed.utils.markup import markup
 
@@ -27,7 +26,7 @@ _validate_url = URLValidator(["http", "https"])
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context: RequestContext, *args, **kwargs) -> str:
+def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -> str:
     """Inserts the "page" query string parameter with the provided page number into the template.
 
     Preserves the original request path and any other query string parameters.
@@ -38,7 +37,7 @@ def pagination_url(context: RequestContext, *args, **kwargs) -> str:
     Returns:
         updated URL path with new page
     """
-    return pagination.pagination_url(context.request, *args, **kwargs)
+    return context.request.paginator.url(page_number, *args, **kwargs)
 
 
 @register.simple_tag(takes_context=True)

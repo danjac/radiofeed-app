@@ -12,7 +12,6 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict
-from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Subscription
@@ -48,8 +47,7 @@ def index(request: HttpRequest) -> HttpResponse:
         else podcasts.filter(pk__in=subscribed)
     )
 
-    return render_pagination_response(
-        request,
+    return request.paginator.render(
         podcasts,
         "podcasts/index.html",
         "podcasts/pagination/podcasts.html",
@@ -67,8 +65,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
 
-        return render_pagination_response(
-            request,
+        return request.paginator.render(
             (
                 _get_podcasts()
                 .search(request.search.value)
@@ -164,8 +161,7 @@ def episodes(
             "-pub_date" if request.sorter.is_desc else "pub_date"
         )
 
-    return render_pagination_response(
-        request,
+    return request.paginator.render(
         episodes,
         "podcasts/episodes.html",
         "episodes/pagination/episodes.html",
@@ -235,8 +231,7 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination_response(
-        request,
+    return request.paginator.render(
         podcasts,
         "podcasts/category_detail.html",
         "podcasts/pagination/podcasts.html",

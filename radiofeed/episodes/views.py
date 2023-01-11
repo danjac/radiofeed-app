@@ -12,7 +12,6 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
-from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
 
 
@@ -34,8 +33,7 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         episodes = episodes.filter(podcast__pk__in=subscribed)
 
-    return render_pagination_response(
-        request,
+    return request.paginator.render(
         episodes,
         "episodes/index.html",
         "episodes/pagination/episodes.html",
@@ -52,8 +50,7 @@ def index(request: HttpRequest) -> HttpResponse:
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
-        return render_pagination_response(
-            request,
+        return request.paginator.render(
             (
                 Episode.objects.select_related("podcast")
                 .search(request.search.value)
@@ -170,8 +167,7 @@ def history(request: HttpRequest) -> HttpResponse:
     else:
         logs = logs.order_by("-listened" if request.sorter.is_desc else "listened")
 
-    return render_pagination_response(
-        request,
+    return request.paginator.render(
         logs,
         "episodes/history.html",
         "episodes/pagination/audio_logs.html",
@@ -208,8 +204,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.sorter.is_desc else "created"
         )
 
-    return render_pagination_response(
-        request,
+    return request.paginator.render(
         bookmarks,
         "episodes/bookmarks.html",
         "episodes/pagination/bookmarks.html",
