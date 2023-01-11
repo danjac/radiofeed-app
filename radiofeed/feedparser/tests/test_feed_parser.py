@@ -12,7 +12,6 @@ from django.utils import timezone
 
 from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
-from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     Duplicate,
     Inaccessible,
@@ -28,6 +27,7 @@ from radiofeed.feedparser.feed_parser import (
 )
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
+from radiofeed.utils.date_parser import parse_date
 
 
 class MockClient:

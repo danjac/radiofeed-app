@@ -16,7 +16,6 @@ from django.utils.http import http_date, quote_etag
 
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
-from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     Duplicate,
     FeedParserError,
@@ -28,6 +27,7 @@ from radiofeed.feedparser.exceptions import (
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.utils import batcher, tokenizer
+from radiofeed.utils.date_parser import parse_date
 
 
 def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
