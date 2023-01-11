@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import base64
 import dataclasses
 import itertools
 import re
@@ -13,6 +12,7 @@ import httpx
 
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.utils import batcher
@@ -55,9 +55,7 @@ class Feed:
 
 def search(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
-    cache_key = (
-        "itunes:" + base64.urlsafe_b64encode(force_bytes(search_term, "utf-8")).hex()
-    )
+    cache_key = "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
     if (feeds := cache.get(cache_key)) is None:
         feeds = list(_search(client, search_term))
         cache.set(cache_key, feeds)
