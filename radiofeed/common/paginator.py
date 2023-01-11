@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import dataclasses
+
 from collections.abc import Iterable
 
 from django.core import paginator
@@ -7,12 +9,12 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 
 
+@dataclasses.dataclass(frozen=True)
 class Paginator:
     """Wraps pagination functionality."""
 
-    def __init__(self, request: HttpRequest, param: str = "page"):
-        self.request = request
-        self.param = param
+    request: HttpRequest
+    param = "page"
 
     def url(self, page_number: int) -> str:
         """Inserts the page query string parameter with the provided page number into the template.
