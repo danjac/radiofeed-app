@@ -9,7 +9,7 @@ from django.core.signing import Signer
 from django.shortcuts import render
 from django.urls import reverse
 
-from radiofeed.common.asserts import assert_not_found, assert_ok
+from radiofeed.utils.asserts import assert_not_found, assert_ok
 
 
 class TestManifest:
