@@ -8,7 +8,9 @@ from typing import Final
 import httpx
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.signing import BadSignature, Signer
+from django.core.validators import URLValidator
 from django.http import (
     FileResponse,
     Http404,
@@ -30,6 +32,8 @@ _DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
 
 _cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
 _cache_page = cache_page(_DEFAULT_CACHE_TIMEOUT)
+
+_url_validator = URLValidator(["http", "https"])
 
 
 @require_safe
@@ -170,13 +174,14 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
         raise Http404
 
     try:
-        cover_url = request.GET["url"]
-    except KeyError:
+        cover_url = Signer().unsign(request.GET["url"])
+        _url_validator(cover_url)
+    except (KeyError, BadSignature, ValidationError):
         raise Http404
 
     try:
         response = httpx.get(
-            Signer().unsign(cover_url),
+            cover_url,
             follow_redirects=True,
             timeout=5,
             headers={
@@ -197,5 +202,5 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
 
         return HttpResponse(output.getvalue(), content_type="image/webp")
 
-    except (OSError, BadSignature, httpx.HTTPError):
+    except (OSError, httpx.HTTPError):
         return HttpResponseBadRequest("Error rendering image")

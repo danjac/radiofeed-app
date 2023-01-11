@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import urllib.parse
+import uuid
 
 import httpx
 
@@ -75,11 +76,21 @@ class TestCoverImage:
     def test_missing_url(self, client, db):
         assert_not_found(client.get(reverse("cover_image", kwargs={"size": 100})))
 
+    def test_invalid_url(self, client, db):
+        assert_not_found(
+            client.get(self.get_url(100, self.encode_url("ftp://example.com")))
+        )
+
     def test_not_accepted_size(self, client, db, mocker):
         assert_not_found(client.get(self.get_url(500, self.encode_url(self.cover_url))))
 
-    def test_bad_encoded_url(self, client, db):
-        assert_bad_request(client.get(self.get_url(100, "bad string")))
+    def test_unencoded_url(self, client, db):
+        assert_not_found(client.get(self.get_url(100, self.cover_url)))
+
+    def test_badly_encoded_url(self, client, db):
+        assert_not_found(
+            client.get(self.get_url(100, self.cover_url + ":" + uuid.uuid4().hex))
+        )
 
     def test_failed_download(self, client, db, mocker):
         class MockResponse:
