@@ -5,7 +5,7 @@ import httpx
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import itunes
-from radiofeed.utils import user_agent
+from radiofeed.utils.http import user_agent
 
 
 class Command(BaseCommand):
@@ -15,10 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         """Handle implementation."""
-        with httpx.Client(
-            headers={"User-Agent": user_agent.user_agent()},
-            timeout=10,
-        ) as client:
+        with httpx.Client(headers={"User-Agent": user_agent()}, timeout=10) as client:
 
             for feed in itunes.crawl(client):
                 style = (
