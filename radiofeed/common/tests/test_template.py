@@ -8,6 +8,7 @@ from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.urls import reverse
 
+from radiofeed.common.paginator import Paginator
 from radiofeed.common.template import (
     absolute_uri,
     active_link,
@@ -167,6 +168,7 @@ class TestPaginationUrl:
     def test_append_page_number_to_querystring(self, rf):
 
         req = rf.get("/search/", {"query": "test"})
+        req.paginator = Paginator(req)
         url = pagination_url(RequestContext(req), 5)
         assert url.startswith("/search/?")
         assert "query=test" in url
@@ -192,32 +194,37 @@ class TestPaginationLinks:
     def tmpl(self):
         return get_template("includes/pagination_links.html")
 
-    def test_no_pagination(self, req, tmpl):
+    @pytest.fixture
+    def page_req(self, req):
+        req.paginator = Paginator(req)
+        return req
+
+    def test_no_pagination(self, page_req, tmpl):
         ctx = {
             "page_obj": PageObj(has_other_pages=False),
         }
-        rendered = tmpl.render(ctx, request=req)
+        rendered = tmpl.render(ctx, request=page_req)
         assert "Pagination" not in rendered
 
-    def test_has_next(self, req, tmpl):
+    def test_has_next(self, page_req, tmpl):
         ctx = {
             "page_obj": PageObj(
                 has_other_pages=True, has_next=True, next_page_number=2
             ),
         }
-        rendered = tmpl.render(ctx, request=req)
+        rendered = tmpl.render(ctx, request=page_req)
         assert rendered.count("No More Pages") == 2
 
-    def test_has_previous(self, req, tmpl):
+    def test_has_previous(self, page_req, tmpl):
         ctx = {
             "page_obj": PageObj(
                 has_other_pages=True, has_previous=True, previous_page_number=1
             ),
         }
-        rendered = tmpl.render(ctx, request=req)
+        rendered = tmpl.render(ctx, request=page_req)
         assert rendered.count("No More Pages") == 2
 
-    def test_has_next_and_previous(self, req, tmpl):
+    def test_has_next_and_previous(self, page_req, tmpl):
         ctx = {
             "page_obj": PageObj(
                 has_other_pages=True,
@@ -227,7 +234,7 @@ class TestPaginationLinks:
                 next_page_number=3,
             ),
         }
-        rendered = tmpl.render(ctx, request=req)
+        rendered = tmpl.render(ctx, request=page_req)
         assert rendered.count("No More Pages") == 0
 
 
