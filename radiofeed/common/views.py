@@ -203,4 +203,4 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
             settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp"
         ).open("rb")
 
-    return FileResponse(output, filename="cover.webp")
+    return FileResponse(output, filename="cover.webp", content_type="image/webp")
