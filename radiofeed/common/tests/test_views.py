@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import urllib.parse
+
 import httpx
 
+from django.core.signing import Signer
 from django.shortcuts import render
 from django.urls import reverse
 
-from radiofeed.common import encoder
 from radiofeed.common.asserts import assert_bad_request, assert_not_found, assert_ok
 
 
@@ -50,10 +52,14 @@ class TestCoverImage:
     cover_url = "http://example.com/test.png"
 
     def get_url(self, size, url):
-        return reverse("cover_image", kwargs={"encoded_url": url, "size": size})
+        return (
+            reverse("cover_image", kwargs={"size": size})
+            + "?"
+            + urllib.parse.urlencode({"url": url})
+        )
 
     def encode_url(self, url):
-        return encoder.encode(url)
+        return Signer().sign(url)
 
     def test_ok(self, client, db, mocker):
         class MockResponse:
@@ -66,14 +72,14 @@ class TestCoverImage:
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
+    def test_missing_url(self, client, db):
+        assert_not_found(client.get(reverse("cover_image", kwargs={"size": 100})))
+
     def test_not_accepted_size(self, client, db, mocker):
         assert_not_found(client.get(self.get_url(500, self.encode_url(self.cover_url))))
 
     def test_bad_encoded_url(self, client, db):
         assert_bad_request(client.get(self.get_url(100, "bad string")))
-
-    def test_invalid_url(self, client, db):
-        assert_bad_request(client.get(self.get_url(100, self.encode_url("bad string"))))
 
     def test_failed_download(self, client, db, mocker):
         class MockResponse:

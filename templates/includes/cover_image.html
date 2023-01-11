@@ -7,7 +7,7 @@
         decoding="async"
         width="{{ size }}"
         height="{{ size }}"
-        src="{{ cover_url }}"
+        src="{{ cover_url|default:placeholder }}"
         {% if url %}
             role="link"
             hx-get="{{ url }}"

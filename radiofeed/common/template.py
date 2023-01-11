@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import collections
 import math
-
-from urllib import parse
+import urllib.parse
 
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
+from django.core.signing import Signer
 from django.core.validators import URLValidator
 from django.http import HttpRequest
 from django.shortcuts import resolve_url
@@ -17,7 +17,7 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed.common import encoder, markup, pagination
+from radiofeed.common import markup, pagination
 
 register = template.Library()
 
@@ -123,19 +123,16 @@ def cover_image(
     placeholder = static(f"img/placeholder-{size}.webp")
 
     proxy_url = (
-        (
-            reverse(
-                "cover_image",
-                kwargs={
-                    "encoded_url": encoder.encode(cover_url),
-                    "size": size,
-                },
-            )
-            if cover_url
-            else ""
+        reverse(
+            "cover_image",
+            kwargs={
+                "size": size,
+            },
         )
+        + "?"
+        + urllib.parse.urlencode({"url": Signer().sign(cover_url)})
         if cover_url
-        else placeholder
+        else ""
     )
 
     return {
@@ -174,4 +171,6 @@ def build_absolute_uri(url: str = "", request: HttpRequest | None = None) -> str
 
     protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
-    return parse.urljoin(protocol + "://" + Site.objects.get_current().domain, url)
+    return urllib.parse.urljoin(
+        protocol + "://" + Site.objects.get_current().domain, url
+    )

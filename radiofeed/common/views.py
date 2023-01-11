@@ -8,6 +8,7 @@ from typing import Final
 import httpx
 
 from django.conf import settings
+from django.core.signing import BadSignature, Signer
 from django.http import (
     FileResponse,
     Http404,
@@ -23,8 +24,6 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
-
-from radiofeed.common import encoder
 
 _DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
 
@@ -165,14 +164,19 @@ def security(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
+def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
     if size not in (100, 200, 300):
-        raise Http404("Invalid image size")
+        raise Http404
+
+    try:
+        cover_url = request.GET["url"]
+    except KeyError:
+        raise Http404
 
     try:
         response = httpx.get(
-            encoder.decode(encoded_url),
+            Signer().unsign(cover_url),
             follow_redirects=True,
             timeout=5,
             headers={
@@ -193,5 +197,5 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
 
         return HttpResponse(output.getvalue(), content_type="image/webp")
 
-    except (IOError, ValueError, httpx.HTTPError):
+    except (OSError, BadSignature, httpx.HTTPError):
         return HttpResponseBadRequest("Error rendering image")
