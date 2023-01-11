@@ -17,15 +17,15 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from radiofeed.common.fast_count import FastCountQuerySetMixin
-from radiofeed.common.markup import strip_html
 from radiofeed.common.search import SearchQuerySetMixin
 from radiofeed.users.models import User
+from radiofeed.utils.markup import strip_html
 
 
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term: str) -> models.QuerySet["Category"]:
+    def search(self, search_term: str) -> models.QuerySet[Category]:
         """Does a simple search for categories."""
         if value := force_str(search_term):
             return self.filter(name__icontains=value)
@@ -44,7 +44,7 @@ class Category(models.Model):
         related_name="children",
     )
 
-    objects: models.Manager["Category"] = CategoryQuerySet.as_manager()
+    objects: models.Manager[Category] = CategoryQuerySet.as_manager()
 
     class Meta:
         verbose_name_plural = "categories"
@@ -67,7 +67,7 @@ class Category(models.Model):
 class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    def search(self, search_term: str) -> models.QuerySet["Podcast"]:
+    def search(self, search_term: str) -> models.QuerySet[Podcast]:
         """Does standard full text search, prioritizing exact search results.
 
         Annotates `exact_match` to indicate such results.
@@ -165,7 +165,7 @@ class Podcast(models.Model):
 
     search_vector: str | None = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager["Podcast"] = PodcastQuerySet.as_manager()
+    objects: models.Manager[Podcast] = PodcastQuerySet.as_manager()
 
     class Meta:
         indexes = [
@@ -291,7 +291,7 @@ class Recommendation(models.Model):
         blank=True,
     )
 
-    objects: models.Manager["Recommendation"] = RecommendationQuerySet.as_manager()
+    objects: models.Manager[Recommendation] = RecommendationQuerySet.as_manager()
 
     class Meta:
         indexes = [

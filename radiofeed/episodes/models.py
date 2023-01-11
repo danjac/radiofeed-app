@@ -19,10 +19,10 @@ from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
 from radiofeed.common.fast_count import FastCountQuerySetMixin
-from radiofeed.common.markup import strip_html
 from radiofeed.common.search import SearchQuerySetMixin
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
+from radiofeed.utils.markup import strip_html
 
 
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
@@ -82,7 +82,7 @@ class Episode(models.Model):
 
     search_vector: str | None = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
+    objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()
     fast_update_objects: models.Manager = FastUpdateManager()
 
     # annotations
@@ -312,7 +312,7 @@ class AudioLog(TimeStampedModel):
     listened: datetime = models.DateTimeField()
     current_time: int = models.IntegerField(default=0)
 
-    objects: models.Manager["AudioLog"] = AudioLogQuerySet.as_manager()
+    objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()
 
     class Meta:
         constraints = [

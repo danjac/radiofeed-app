@@ -17,7 +17,8 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed.common import markup, pagination
+from radiofeed.common import pagination
+from radiofeed.utils import markup
 
 register = template.Library()
 

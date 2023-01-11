@@ -24,7 +24,7 @@ class TestTokenize:
 
     def test_extract_attribute_error(self, mocker):
         mocker.patch(
-            "radiofeed.common.tokenizer._lemmatizer.lemmatize",
+            "radiofeed.utils.tokenizer._lemmatizer.lemmatize",
             side_effect=AttributeError,
         )
         assert tokenize("en", "the cat sits on the mat") == []
