@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 
-from typing import Iterable
+from collections.abc import Iterable
 
 
 def batcher(iterable: Iterable, batch_size: int) -> Iterable[list]:

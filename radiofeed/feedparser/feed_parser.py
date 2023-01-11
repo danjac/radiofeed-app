@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import hashlib
 
-from typing import Iterator
+from collections.abc import Iterator
 
 import attrs
 import httpx
@@ -14,7 +14,7 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.common import batcher, tokenizer
+from radiofeed.common import tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -28,6 +28,7 @@ from radiofeed.feedparser.exceptions import (
 )
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.utils import batcher
 
 
 def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
