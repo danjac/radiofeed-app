@@ -170,10 +170,12 @@ def security(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
-    try:
-        if size not in (100, 200, 300):
-            raise ValidationError("Invalid image size")
+    # only certain range of sizes permitted
+    if size not in (100, 200, 300):
+        raise Http404
 
+    # check cover url is legit
+    try:
         cover_url = Signer().unsign(request.GET["url"])
         _url_validator(cover_url)
     except (KeyError, BadSignature, ValidationError):
@@ -191,6 +193,10 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
 
         response.raise_for_status()
 
+    except httpx.HTTPError:
+        return HttpResponseBadRequest("Error: cannot fetch remote image")
+
+    try:
         image = Image.open(io.BytesIO(response.content)).resize(
             (size, size),
             Image.Resampling.LANCZOS,
@@ -200,7 +206,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
 
         image.save(output, format="webp", optimize=True, quality=90)
 
-        return HttpResponse(output.getvalue(), content_type="image/webp")
+    except OSError:
+        return HttpResponseBadRequest("Error: cannot process image")
 
-    except (OSError, httpx.HTTPError):
-        return HttpResponseBadRequest("Error rendering image")
+    return HttpResponse(output.getvalue(), content_type="image/webp")
