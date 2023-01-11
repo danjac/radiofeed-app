@@ -12,8 +12,8 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict, HttpResponseNoContent
-from radiofeed.common.pagination import render_pagination_response
 from radiofeed.episodes.models import Episode
+from radiofeed.utils.pagination import render_pagination_response
 
 
 @require_safe

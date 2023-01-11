@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Final, Iterable
+from collections.abc import Iterable
+from typing import Final
 
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404, HttpRequest, HttpResponse
