@@ -9,7 +9,7 @@ from django.core.signing import Signer
 from django.shortcuts import render
 from django.urls import reverse
 
-from radiofeed.common.asserts import assert_bad_request, assert_not_found, assert_ok
+from radiofeed.common.asserts import assert_not_found, assert_ok
 
 
 class TestManifest:
@@ -98,9 +98,7 @@ class TestCoverImage:
                 raise httpx.HTTPError("OOPS")
 
         mocker.patch("httpx.get", return_value=MockResponse())
-        assert_bad_request(
-            client.get(self.get_url(100, self.encode_url(self.cover_url)))
-        )
+        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
     def test_failed_process(self, client, db, mocker):
         class MockResponse:
@@ -111,9 +109,7 @@ class TestCoverImage:
 
         mocker.patch("httpx.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", side_effect=IOError())
-        assert_bad_request(
-            client.get(self.get_url(100, self.encode_url(self.cover_url)))
-        )
+        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
 
 class TestErrorPages:

@@ -11,14 +11,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.signing import BadSignature, Signer
 from django.core.validators import URLValidator
-from django.http import (
-    FileResponse,
-    Http404,
-    HttpRequest,
-    HttpResponse,
-    HttpResponseBadRequest,
-    JsonResponse,
-)
+from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
@@ -181,6 +174,8 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     except (KeyError, BadSignature, ValidationError):
         raise Http404
 
+    # attempt to download and process the image
+
     try:
         response = httpx.get(
             cover_url,
@@ -193,10 +188,6 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
 
         response.raise_for_status()
 
-    except httpx.HTTPError:
-        return HttpResponseBadRequest("Error: cannot fetch remote image")
-
-    try:
         image = Image.open(io.BytesIO(response.content)).resize(
             (size, size),
             Image.Resampling.LANCZOS,
@@ -206,7 +197,14 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
 
         image.save(output, format="webp", optimize=True, quality=90)
 
-    except OSError:
-        return HttpResponseBadRequest("Error: cannot process image")
+    except (OSError, httpx.HTTPError):
+        # if error we should return placeholder, so we don't keep
+        # trying to fetch and process a bad image
+
+        return FileResponse(
+            (settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp").open(
+                "rb"
+            )
+        )
 
     return HttpResponse(output.getvalue(), content_type="image/webp")
