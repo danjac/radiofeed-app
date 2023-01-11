@@ -14,9 +14,8 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
+from radiofeed.utils import markup, pagination
 from radiofeed.utils.http import build_absolute_uri
-from radiofeed.utils.markup import markup
-from radiofeed.utils.pagination import pagination_url as _pagination_url
 
 register = template.Library()
 
@@ -38,7 +37,7 @@ def pagination_url(context: RequestContext, *args, **kwargs) -> str:
     Returns:
         updated URL path with new page
     """
-    return _pagination_url(context.request, *args, **kwargs)
+    return pagination.pagination_url(context.request, *args, **kwargs)
 
 
 @register.simple_tag(takes_context=True)
@@ -87,7 +86,7 @@ def active_link(
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
-    return {"content": markup(value)}
+    return {"content": markup.markup(value)}
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
