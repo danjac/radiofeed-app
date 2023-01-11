@@ -189,8 +189,6 @@ class TestCrawl:
 
 
 class TestSearch:
-    cache_key = "itunes:6447567a64413d3d"
-
     def test_not_ok(self, db, mock_bad_response):
 
         with httpx.Client() as client:
@@ -224,7 +222,7 @@ class TestSearch:
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
-        assert cache.get(self.cache_key) == feeds
+        assert cache.get(itunes.search_cache_key("test")) == feeds
 
     def test_is_cached(
         self,
@@ -234,7 +232,7 @@ class TestSearch:
     ):
 
         cache.set(
-            self.cache_key,
+            itunes.search_cache_key("test"),
             [
                 itunes.Feed(
                     rss="https://example.com",

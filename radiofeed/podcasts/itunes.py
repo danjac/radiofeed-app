@@ -55,11 +55,16 @@ class Feed:
 
 def search(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
-    cache_key = "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
+    cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
         feeds = list(_search(client, search_term))
         cache.set(cache_key, feeds)
     return feeds
+
+
+def search_cache_key(search_term: str) -> str:
+    """Cache key based on search term."""
+    return "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
 
 
 def crawl(client: httpx.Client) -> Iterator[Feed]:
