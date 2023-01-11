@@ -174,8 +174,6 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     except (KeyError, BadSignature, ValidationError):
         raise Http404
 
-    # attempt to download and process the image
-
     try:
         response = httpx.get(
             cover_url,
@@ -194,17 +192,15 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
         )
 
         output = io.BytesIO()
-
         image.save(output, format="webp", optimize=True, quality=90)
+        output.seek(0)
 
     except (OSError, httpx.HTTPError):
-        # if error we should return placeholder, so we don't keep
-        # trying to fetch and process a bad image
+        # if error we should return a placeholder, so we don't keep
+        # trying to fetch and process a bad image instead of caching result
 
-        return FileResponse(
-            (settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp").open(
-                "rb"
-            )
-        )
+        output = (
+            settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp"
+        ).open("rb")
 
-    return HttpResponse(output.getvalue(), content_type="image/webp")
+    return FileResponse(output, filename="cover.webp")
