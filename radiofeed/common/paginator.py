@@ -14,7 +14,10 @@ class Paginator:
     """Wraps pagination functionality."""
 
     request: HttpRequest
-    param = "page"
+
+    param: str = "page"
+    page_size: int = 30
+    target: str = "pagination"
 
     def url(self, page_number: int) -> str:
         """Inserts the page query string parameter with the provided page number into the template.
@@ -37,8 +40,6 @@ class Paginator:
         template_name: str,
         pagination_template_name: str,
         extra_context: dict | None = None,
-        page_size: int = 30,
-        target: str = "pagination",
     ) -> HttpResponse:
         """Renders paginated response.
 
@@ -46,7 +47,7 @@ class Paginator:
             Http404: invalid page number
         """
         try:
-            page = paginator.Paginator(object_list, page_size).page(
+            page = paginator.Paginator(object_list, self.page_size).page(
                 self.request.GET.get(self.param, 1)
             )
 
@@ -55,7 +56,7 @@ class Paginator:
 
         template_name = (
             pagination_template_name
-            if self.request.htmx and self.request.htmx.target == target
+            if self.request.htmx and self.request.htmx.target == self.target
             else template_name
         )
 
@@ -64,7 +65,7 @@ class Paginator:
             template_name,
             {
                 "page_obj": page,
-                "pagination_target": target,
+                "pagination_target": self.target,
                 "pagination_template": pagination_template_name,
                 **(extra_context or {}),
             },
