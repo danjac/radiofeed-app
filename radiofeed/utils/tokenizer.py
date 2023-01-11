@@ -3,9 +3,10 @@ from __future__ import annotations
 import datetime
 import re
 
+from collections.abc import Iterator
 from datetime import date, timedelta
 from functools import lru_cache
-from typing import Final, Iterator
+from typing import Final
 
 from django.conf import settings
 from django.utils import timezone, translation
@@ -56,7 +57,7 @@ _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
 
 
-@lru_cache()
+@lru_cache
 def get_stopwords(language: str) -> frozenset[str]:
     """Return all stopwords for a language, if available.
 
