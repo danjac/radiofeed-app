@@ -53,6 +53,6 @@ def sorter_middleware(request: HttpRequest, get_response: GetResponse) -> HttpRe
 def user_agent_middleware(
     request: HttpRequest, get_response: GetResponse
 ) -> HttpResponse:
-    """Adds Sorter instance to request as `request.sorter`."""
+    """Adds user_agent string to request."""
     request.user_agent = SimpleLazyObject(lambda: user_agent(request))
     return get_response(request)
