@@ -5,17 +5,19 @@ import math
 import urllib.parse
 
 from django import template
+from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.signing import Signer
 from django.core.validators import URLValidator
+from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed.utils.http import build_absolute_uri
-from radiofeed.utils.markup import markup
+from radiofeed.common.markup import markup
 
 register = template.Library()
 
@@ -158,3 +160,17 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
+
+
+def build_absolute_uri(url: str = "", request: HttpRequest | None = None) -> str:
+    """Returns the full absolute URI based on request or current Site."""
+    url = url or "/"
+
+    if request:
+        return request.build_absolute_uri(url)
+
+    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+
+    return urllib.parse.urljoin(
+        protocol + "://" + Site.objects.get_current().domain, url
+    )

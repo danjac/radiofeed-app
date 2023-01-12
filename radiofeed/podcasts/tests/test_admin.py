@@ -8,6 +8,7 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
+from radiofeed.common.factories import create_batch
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.admin import (
     ActiveFilter,
@@ -19,7 +20,6 @@ from radiofeed.podcasts.admin import (
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.utils.factories import create_batch
 
 
 @pytest.fixture(scope="module")

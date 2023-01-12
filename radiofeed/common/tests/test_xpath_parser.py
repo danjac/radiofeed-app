@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from radiofeed.utils.xpath_parser import XPathParser
+from radiofeed.common.xpath_parser import XPathParser
 
 
 class TestXPathParser:
