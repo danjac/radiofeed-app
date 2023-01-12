@@ -11,6 +11,8 @@ from radiofeed.settings.base import (
 
 DEBUG = True
 
+# INTERNAL_IPS required for debug toolbar
+
 INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS += [

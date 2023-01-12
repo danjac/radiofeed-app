@@ -18,10 +18,14 @@ ADMIN_SITE_HEADER += " [PRODUCTION]"
 
 # Static files
 
+# http://whitenoise.evans.io/en/stable/django.html
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Secure settings
+
+# https://docs.djangoproject.com/en/4.1/topics/security/
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -56,6 +60,8 @@ PERMISSIONS_POLICY: dict[str, list] = {
 
 # Mailgun
 
+# https://anymail.dev/en/v9.0/esps/mailgun/
+
 if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
 
     INSTALLED_APPS += ["anymail"]
@@ -71,6 +77,8 @@ if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
     }
 
 # Sentry
+
+# https://docs.sentry.io/platforms/python/guides/django/
 
 if SENTRY_URL := config("SENTRY_URL", default=None):
 
