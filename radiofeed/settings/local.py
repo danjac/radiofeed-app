@@ -3,6 +3,7 @@ from __future__ import annotations
 from radiofeed.settings.base import *  # noqa
 from radiofeed.settings.base import (
     ADMIN_SITE_HEADER,
+    ALLOWED_HOSTS,
     INSTALLED_APPS,
     MIDDLEWARE,
     configure_databases,
@@ -14,6 +15,8 @@ DEBUG = True
 # INTERNAL_IPS required for debug toolbar
 
 INTERNAL_IPS = ["127.0.0.1"]
+
+ALLOWED_HOSTS += ["localhost"]
 
 INSTALLED_APPS += [
     "debug_toolbar",
