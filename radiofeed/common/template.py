@@ -6,13 +6,11 @@ import urllib.parse
 
 from django import template
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.signing import Signer
 from django.core.validators import URLValidator
-from django.http import HttpRequest
 from django.shortcuts import resolve_url
-from django.template.context import Context, RequestContext
+from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
@@ -42,11 +40,10 @@ def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -
     return context.request.paginator.url(page_number, *args, **kwargs)
 
 
-@register.simple_tag(takes_context=True)
-def absolute_uri(context: Context, url: str = "", *args, **kwargs) -> str:
-    """Generate absolute URI based on server environment or current Site."""
-    url = resolve_url(url, *args, **kwargs) if url else ""
-    return build_absolute_uri(url, context.get("request", None))
+@register.simple_tag
+def absolute_uri(url: str = "", *args, **kwargs) -> str:
+    """Generate absolute URI."""
+    return build_absolute_uri(resolve_url(url, *args, **kwargs) if url else "")
 
 
 @register.filter
@@ -162,15 +159,7 @@ def force_url(url: str) -> str:
     return ""
 
 
-def build_absolute_uri(url: str = "", request: HttpRequest | None = None) -> str:
+def build_absolute_uri(url: str = "") -> str:
     """Returns the full absolute URI based on request or current Site."""
-    url = url or "/"
-
-    if request:
-        return request.build_absolute_uri(url)
-
     protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
-
-    return urllib.parse.urljoin(
-        protocol + "://" + Site.objects.get_current().domain, url
-    )
+    return urllib.parse.urljoin(protocol + "://" + settings.DOMAIN_NAME, url or "/")

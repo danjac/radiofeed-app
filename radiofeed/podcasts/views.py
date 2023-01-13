@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict
+from radiofeed.common.user_agent import user_agent
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Subscription
@@ -92,7 +93,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
         try:
             with httpx.Client(
-                headers={"User-Agent": request.user_agent},
+                headers={"User-Agent": user_agent()},
                 timeout=5,
             ) as client:
                 feeds = itunes.search(client, request.search.value)

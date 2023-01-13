@@ -11,7 +11,6 @@ from radiofeed.common.paginator import Paginator
 from radiofeed.common.search import Search
 from radiofeed.common.sorter import Sorter
 from radiofeed.common.types import GetResponse
-from radiofeed.common.user_agent import user_agent
 
 
 @middleware
@@ -45,5 +44,3 @@ paginator_middleware = lazy_object_middleware(Paginator, "paginator")
 search_middleware = lazy_object_middleware(Search, "search")
 
 sorter_middleware = lazy_object_middleware(Sorter, "sorter")
-
-user_agent_middleware = lazy_object_middleware(user_agent, "user_agent")

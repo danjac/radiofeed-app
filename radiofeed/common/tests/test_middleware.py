@@ -3,14 +3,13 @@ from __future__ import annotations
 import pytest
 
 from django.http import HttpResponse
-from django.utils.encoding import force_str
 from django_htmx.middleware import HtmxMiddleware
 
 from radiofeed.common.middleware import (
     cache_control_middleware,
+    paginator_middleware,
     search_middleware,
     sorter_middleware,
-    user_agent_middleware,
 )
 
 
@@ -86,11 +85,11 @@ class TestSearchMiddleware:
         assert not str(req.search)
 
 
-class TestUserAgentMiddleware:
+class TestPaginatorMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return user_agent_middleware(get_response)
+        return paginator_middleware(get_response)
 
-    def test_user_agent(self, req, mw):
+    def test_paginator(self, req, mw):
         mw(req)
-        assert force_str(req.user_agent)
+        assert req.paginator.url(1) == "/?page=1"
