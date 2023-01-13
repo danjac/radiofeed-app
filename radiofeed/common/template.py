@@ -43,7 +43,9 @@ def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -
 @register.simple_tag
 def absolute_uri(url: str = "", *args, **kwargs) -> str:
     """Generate absolute URI."""
-    return build_absolute_uri(resolve_url(url, *args, **kwargs) if url else "")
+    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+    url = resolve_url(url, *args, **kwargs) if url else "/"
+    return urllib.parse.urljoin(protocol + "://" + settings.DOMAIN_NAME, url)
 
 
 @register.filter
@@ -157,9 +159,3 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
-
-
-def build_absolute_uri(url: str = "") -> str:
-    """Returns the full absolute URI based on request or current Site."""
-    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
-    return urllib.parse.urljoin(protocol + "://" + settings.DOMAIN_NAME, url or "/")

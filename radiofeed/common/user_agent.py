@@ -4,7 +4,7 @@ import httpx
 
 from django.utils import timezone
 
-from radiofeed.common.template import build_absolute_uri
+from radiofeed.common.template import absolute_uri
 
 
 def user_agent() -> str:
@@ -13,6 +13,6 @@ def user_agent() -> str:
         [
             f"python-httpx/{httpx.__version__}",
             f"(Radiofeed/{timezone.now().strftime('%Y-%d-%m')};",
-            f"+{build_absolute_uri()})",
+            f"+{absolute_uri()})",
         ]
     )

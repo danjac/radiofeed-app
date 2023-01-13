@@ -12,7 +12,6 @@ from radiofeed.common.paginator import Paginator
 from radiofeed.common.template import (
     absolute_uri,
     active_link,
-    build_absolute_uri,
     cover_image,
     force_url,
     format_duration,
@@ -281,21 +280,3 @@ class TestCoverImage:
 
     def test_is_not_cover_url(self):
         assert cover_image("", 100, "test img")["cover_url"] == ""
-
-
-class TestBuildAbsoluteUri:
-    BASE_URL = "http://example.com"
-
-    SEARCH_URL = "/podcasts/search/"
-    DETAIL_URL = "/podcasts/12345/test/"
-
-    def test_no_url(self):
-        assert build_absolute_uri() == self.BASE_URL + "/"
-
-    def test_https(self, settings):
-        settings.SECURE_SSL_REDIRECT = True
-        assert build_absolute_uri() == "https://example.com/"
-
-    def test_with_url(self):
-        url = build_absolute_uri(self.SEARCH_URL)
-        assert url == self.BASE_URL + self.SEARCH_URL
