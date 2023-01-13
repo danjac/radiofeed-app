@@ -8,9 +8,7 @@ from typing import Final
 import httpx
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.signing import BadSignature, Signer
-from django.core.validators import URLValidator
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.templatetags.static import static
@@ -27,8 +25,6 @@ _DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
 
 _cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
 _cache_page = cache_page(_DEFAULT_CACHE_TIMEOUT)
-
-_url_validator = URLValidator(["http", "https"])
 
 
 @require_safe
@@ -172,8 +168,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     # check cover url is legit
     try:
         cover_url = Signer().unsign(request.GET["url"])
-        _url_validator(cover_url)
-    except (KeyError, BadSignature, ValidationError):
+    except (KeyError, BadSignature):
         raise Http404
 
     try:
