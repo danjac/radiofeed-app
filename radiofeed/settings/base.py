@@ -38,13 +38,9 @@ SITE_ID = 1
 # Session and cookies
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-
-SESSION_COOKIE_DOMAIN = config("SESSION_COOKIE_DOMAIN", default=None)
 SESSION_COOKIE_HTTPONLY = True
 
-CSRF_COOKIE_DOMAIN = config("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_COOKIE_HTTPONLY = True
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
 
 # Email configuration
 
