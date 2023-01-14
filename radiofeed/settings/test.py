@@ -3,8 +3,6 @@ from __future__ import annotations
 from radiofeed.settings.base import *  # noqa
 from radiofeed.settings.base import configure_databases, configure_templates
 
-DOMAIN_NAME = "example.com"
-
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
