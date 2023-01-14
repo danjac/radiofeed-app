@@ -7,10 +7,10 @@ import httpx
 
 from django.core.management.base import BaseCommand
 
+from radiofeed.common.user_agent import user_agent
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.models import Podcast
-from radiofeed.utils.user_agent import user_agent
 
 
 class Command(BaseCommand):

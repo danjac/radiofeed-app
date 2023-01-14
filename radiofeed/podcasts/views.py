@@ -12,10 +12,10 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.common.decorators import require_auth
 from radiofeed.common.http import HttpResponseConflict
+from radiofeed.common.user_agent import user_agent
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Subscription
-from radiofeed.utils.user_agent import user_agent
 
 
 @require_safe
