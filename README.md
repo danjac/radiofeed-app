@@ -76,18 +76,16 @@ To install frontend dependencies just run `npm ci`.
 
 ### Running development environment
 
-The easiest way to spin up your local development environment is using [Honcho](https://honcho.readthedocs.io/):
+The easiest way to spin up your local development environment is to run the `bootstrap.sh` script. This uses [Honcho](https://honcho.readthedocs.io/), which is included as a local dependency:
 
 ```bash
-honcho -f Procfile.local start
+./bootstrap.sh
 ```
 
 This will start up:
 
 * Django development server
 * `tailwindcss` and `esbuild` for building frontend assets on the fly
-
-Honcho is installed in your virtualenv.
 
 Tests can be run with `pytest`:
 
