@@ -13,8 +13,8 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
+from radiofeed.common import encoder, markup
 from radiofeed.common.absolute_uri import build_absolute_uri
-from radiofeed.utils import encoder, markup
 
 register = template.Library()
 

@@ -19,10 +19,10 @@ from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
 from radiofeed.common.fast_count import FastCountQuerySetMixin
+from radiofeed.common.markup import strip_html
 from radiofeed.common.search import SearchQuerySetMixin
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
-from radiofeed.utils.markup import strip_html
 
 
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
