@@ -29,11 +29,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-DOMAIN_NAME = config("DOMAIN_NAME", default="localhost")
+ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
 HTTP_PROTOCOL = "http"
-
-ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default=DOMAIN_NAME, cast=Csv())
 
 SITE_ID = 1
 

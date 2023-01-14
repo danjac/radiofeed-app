@@ -177,7 +177,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
             follow_redirects=True,
             timeout=5,
             headers={
-                "User-Agent": user_agent(),
+                "User-Agent": user_agent(request),
             },
         )
 

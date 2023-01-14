@@ -6,10 +6,12 @@ import urllib.parse
 
 from django import template
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.http import HttpRequest
 from django.shortcuts import resolve_url
-from django.template.context import RequestContext
+from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
@@ -39,12 +41,12 @@ def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -
     return context.request.paginator.url(page_number, *args, **kwargs)
 
 
-@register.simple_tag
-def absolute_uri(url: str = "", *args, **kwargs) -> str:
+@register.simple_tag(takes_context=True)
+def absolute_uri(context: Context, url: str = "", *args, **kwargs) -> str:
     """Generate absolute URI."""
-    return urllib.parse.urljoin(
-        settings.HTTP_PROTOCOL + "://" + settings.DOMAIN_NAME,
-        url=resolve_url(url, *args, **kwargs) if url else "/",
+    return build_absolute_uri(
+        resolve_url(url, *args, **kwargs) if url else "",
+        request=context.get("request", None),
     )
 
 
@@ -158,3 +160,15 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
+
+
+def build_absolute_uri(url: str = "", request: HttpRequest | None = None) -> str:
+    """Build absolute URI from request, falling back to current Site if unavailable."""
+    url = url or "/"
+
+    if request is not None:
+        return request.build_absolute_uri(url)
+
+    return urllib.parse.urljoin(
+        settings.HTTP_PROTOCOL + "://" + Site.objects.get_current().domain, url
+    )

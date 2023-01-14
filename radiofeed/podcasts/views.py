@@ -93,7 +93,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
         try:
             with httpx.Client(
-                headers={"User-Agent": user_agent()},
+                headers={"User-Agent": user_agent(request)},
                 timeout=5,
             ) as client:
                 feeds = itunes.search(client, request.search.value)
