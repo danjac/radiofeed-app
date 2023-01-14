@@ -8,7 +8,7 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.common.factories import NotSet, resolve
+from radiofeed.utils.factories import NotSet, resolve
 
 _faker = Faker()
 

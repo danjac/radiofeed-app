@@ -4,8 +4,8 @@ import itertools
 
 from allauth.account.models import EmailAddress
 
-from radiofeed.common.factories import NotSet, resolve
 from radiofeed.users.models import User
+from radiofeed.utils.factories import NotSet, resolve
 
 _username_seq = (f"user-{n}" for n in itertools.count())
 _email_seq = (f"user-{n}@example.com" for n in itertools.count())
