@@ -7,8 +7,8 @@ import httpx
 from django.shortcuts import render
 from django.urls import reverse
 
-from radiofeed.common import encoder
-from radiofeed.common.asserts import assert_not_found, assert_ok
+from radiofeed.utils import encoder
+from radiofeed.utils.asserts import assert_not_found, assert_ok
 
 
 class TestManifest:
