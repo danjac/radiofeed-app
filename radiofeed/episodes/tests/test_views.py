@@ -7,6 +7,7 @@ import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertNotContains
 
+from radiofeed.common.factories import create_batch
 from radiofeed.episodes.factories import (
     create_audio_log,
     create_bookmark,
@@ -21,7 +22,6 @@ from radiofeed.utils.asserts import (
     assert_no_content,
     assert_ok,
 )
-from radiofeed.utils.factories import create_batch
 
 episodes_url = reverse_lazy("episodes:index")
 
