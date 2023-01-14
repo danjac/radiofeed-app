@@ -38,8 +38,8 @@ SITE_ID = 1
 # Session and cookies
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-SESSION_COOKIE_HTTPONLY = True
 
+SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
 # Email configuration
