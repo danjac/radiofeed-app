@@ -2,14 +2,10 @@ from __future__ import annotations
 
 import collections
 import math
-import urllib.parse
 
 from django import template
-from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
@@ -17,6 +13,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 
 from radiofeed.common import encoder, markup
+from radiofeed.common.absolute_uri import build_absolute_uri
 
 register = template.Library()
 
@@ -160,15 +157,3 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
-
-
-def build_absolute_uri(url: str = "", request: HttpRequest | None = None) -> str:
-    """Build absolute URI from request, falling back to current Site if unavailable."""
-    url = url or "/"
-
-    if request is not None:
-        return request.build_absolute_uri(url)
-
-    return urllib.parse.urljoin(
-        settings.HTTP_PROTOCOL + "://" + Site.objects.get_current().domain, url
-    )
