@@ -6,6 +6,7 @@ import math
 from django import template
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.db.models import Model
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
@@ -39,10 +40,16 @@ def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context: Context, url: str = "", *args, **kwargs) -> str:
-    """Generate absolute URI."""
+def absolute_uri(context: Context, to: str | Model = "", *args, **kwargs) -> str:
+    """Generate absolute URI.
+
+    `to` argument can be :
+        * a URL string
+        * URL pattern along with `*args` and `**kwargs`
+        * Django model with `get_absolute_url()` method.
+    """
     return build_absolute_uri(
-        resolve_url(url, *args, **kwargs) if url else "",
+        resolve_url(to, *args, **kwargs) if to else "",
         request=context.get("request", None),
     )
 
