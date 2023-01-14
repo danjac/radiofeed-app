@@ -8,7 +8,6 @@ from typing import Final
 import httpx
 
 from django.conf import settings
-from django.core.signing import BadSignature, Signer
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.templatetags.static import static
@@ -18,6 +17,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
+from radiofeed.common import encoder
 from radiofeed.common.user_agent import user_agent
 
 _DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
@@ -159,7 +159,7 @@ def security(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, size: int) -> HttpResponse:
+def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
     """Proxies a cover image from remote source."""
     # only certain range of sizes permitted
     if size not in (100, 200, 300):
@@ -167,8 +167,8 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
 
     # check cover url is legit
     try:
-        cover_url = Signer().unsign(request.GET["url"])
-    except (KeyError, BadSignature):
+        cover_url = encoder.decode(encoded_url)
+    except ValueError:
         raise Http404
 
     try:
