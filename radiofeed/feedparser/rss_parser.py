@@ -4,9 +4,9 @@ from collections.abc import Iterator
 
 import lxml.etree  # nosec
 
+from radiofeed.common.xpath_parser import XPathParser
 from radiofeed.feedparser.exceptions import InvalidRSS
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.utils.xpath_parser import XPathParser
 
 _xpath_parser = XPathParser(
     {
