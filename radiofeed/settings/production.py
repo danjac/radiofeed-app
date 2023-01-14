@@ -16,7 +16,7 @@ from radiofeed.settings.base import (
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
 
-# set protocol for absolute uri in allauth and our own emails
+# Set HTTPS for absolute uris in allauth and our own absolute links
 
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = HTTP_PROTOCOL = "https"
 
