@@ -73,7 +73,7 @@ class TestAbsoluteUri:
         assert absolute_uri() == self.BASE_URL + "/"
 
     def test_https(self, settings):
-        settings.SECURE_SSL_REDIRECT = True
+        settings.HTTP_PROTOCOL = "https"
         assert absolute_uri() == "https://example.com/"
 
     def test_static_url(self):

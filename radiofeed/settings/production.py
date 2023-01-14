@@ -16,6 +16,10 @@ from radiofeed.settings.base import (
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
 
+# set protocol for absolute uri in allauth and our own emails
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = HTTP_PROTOCOL = "https"
+
 # Static files
 
 # http://whitenoise.evans.io/en/stable/django.html
