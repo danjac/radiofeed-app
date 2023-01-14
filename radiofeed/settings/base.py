@@ -55,7 +55,7 @@ SERVER_EMAIL = config("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
 
 # email shown in about page etc
-CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"admin@{EMAIL_HOST}")
+CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
 ROOT_URLCONF = "radiofeed.urls"
 

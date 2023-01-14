@@ -108,7 +108,6 @@ EMAIL_HOST=mg.radiofeed.app
 MAILGUN_API_KEY=<mailgun_api_key>
 SECRET_KEY=<secret>
 SENTRY_URL=<sentry-url>
-CONTACT_EMAIL=admin@radiofeed.app
 ```
 
 Some settings such as `DATABASE_URL` may be set automatically by certain PAAS providers such as Heroku. Consult your provider documentation as required.
