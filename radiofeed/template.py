@@ -13,8 +13,8 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed import encoder, markup
-from radiofeed.absolute_uri import build_absolute_uri
+from radiofeed import markup
+from radiofeed.http import build_absolute_uri, urlsafe_encode
 
 register = template.Library()
 
@@ -131,7 +131,7 @@ def cover_image(
         reverse(
             "cover_image",
             kwargs={
-                "encoded_url": encoder.encode(cover_url),
+                "encoded_url": urlsafe_encode(cover_url),
                 "size": size,
             },
         )

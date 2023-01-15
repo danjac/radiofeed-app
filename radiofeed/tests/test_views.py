@@ -7,8 +7,8 @@ import httpx
 from django.shortcuts import render
 from django.urls import reverse
 
-from radiofeed import encoder
 from radiofeed.asserts import assert_not_found, assert_ok
+from radiofeed.http import urlsafe_encode
 
 
 class TestManifest:
@@ -55,7 +55,7 @@ class TestCoverImage:
         return reverse("cover_image", kwargs={"size": size, "encoded_url": url})
 
     def encode_url(self, url):
-        return encoder.encode(url)
+        return urlsafe_encode(url)
 
     def test_ok(self, client, db, mocker):
         class MockResponse:

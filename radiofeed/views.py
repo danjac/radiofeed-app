@@ -17,7 +17,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed import encoder, user_agent
+from radiofeed.http import urlsafe_decode, user_agent
 
 _DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
 
@@ -166,7 +166,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
 
     # check cover url is legit
     try:
-        cover_url = encoder.decode(encoded_url)
+        cover_url = urlsafe_decode(encoded_url)
     except ValueError:
         raise Http404
 
@@ -176,7 +176,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
             follow_redirects=True,
             timeout=5,
             headers={
-                "User-Agent": user_agent.user_agent(request),
+                "User-Agent": user_agent(request),
             },
         )
 

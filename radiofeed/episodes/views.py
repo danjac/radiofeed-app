@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
-from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
+from radiofeed.response import HttpResponseConflict, HttpResponseNoContent
 
 
 @require_safe
