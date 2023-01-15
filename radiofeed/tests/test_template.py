@@ -9,7 +9,7 @@ from django.template.loader import get_template
 from django.urls import reverse
 
 from radiofeed.common.paginator import Paginator
-from radiofeed.common.template import (
+from radiofeed.template import (
     absolute_uri,
     active_link,
     cover_image,

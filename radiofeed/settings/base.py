@@ -282,7 +282,7 @@ def configure_templates(debug: bool = False) -> list[dict]:
                     "django.contrib.messages.context_processors.messages",
                 ],
                 "builtins": [
-                    "radiofeed.common.template",
+                    "radiofeed.template",
                 ],
             },
         }
