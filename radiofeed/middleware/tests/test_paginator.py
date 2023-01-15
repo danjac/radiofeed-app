@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.paginator import Paginator
+from radiofeed.middleware.paginator import Paginator
 
 
 class TestPaginationUrl:

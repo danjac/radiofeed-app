@@ -7,9 +7,9 @@ from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
 from radiofeed.decorators import middleware
-from radiofeed.paginator import Paginator
-from radiofeed.search import Search
-from radiofeed.sorter import Sorter
+from radiofeed.middleware.paginator import Paginator
+from radiofeed.middleware.search import Search
+from radiofeed.middleware.sorter import Sorter
 from radiofeed.types import GetResponse
 
 

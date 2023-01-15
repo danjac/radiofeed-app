@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.sorter import Sorter
+from radiofeed.middleware.sorter import Sorter
 
 
 class TestSorter:
