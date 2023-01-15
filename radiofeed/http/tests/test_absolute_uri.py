@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.common.absolute_uri import build_absolute_uri
+from radiofeed.http.absolute_uri import build_absolute_uri
 
 
 class TestBuildAbsoluteUri:

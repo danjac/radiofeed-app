@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.common.encoder import decode, encode
+from radiofeed.http.encoder import decode, encode
 
 
 class TestEncode:

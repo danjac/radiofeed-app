@@ -5,7 +5,7 @@ import httpx
 from django.http import HttpRequest
 from django.utils import timezone
 
-from radiofeed.common.absolute_uri import build_absolute_uri
+from radiofeed.http.absolute_uri import build_absolute_uri
 
 
 def user_agent(request: HttpRequest | None = None) -> str:
