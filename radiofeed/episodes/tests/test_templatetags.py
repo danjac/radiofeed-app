@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.template.context import RequestContext
 
 from radiofeed.episodes.factories import create_audio_log
-from radiofeed.episodes.player import Player
+from radiofeed.episodes.middleware.player import Player
 from radiofeed.episodes.templatetags.audio_player import audio_player
 
 

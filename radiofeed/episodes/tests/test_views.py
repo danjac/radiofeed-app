@@ -18,8 +18,8 @@ from radiofeed.episodes.factories import (
     create_bookmark,
     create_episode,
 )
+from radiofeed.episodes.middleware.player import Player
 from radiofeed.episodes.models import AudioLog, Bookmark
-from radiofeed.episodes.player import Player
 from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 
