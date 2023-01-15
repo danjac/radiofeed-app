@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.common.types import GetResponse
-from radiofeed.http.response import HttpResponseUnauthorized
+from radiofeed.http import HttpResponseUnauthorized
 
 P = ParamSpec("P")
 

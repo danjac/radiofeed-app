@@ -13,9 +13,9 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
+from radiofeed import encoder
+from radiofeed.absolute_uri import build_absolute_uri
 from radiofeed.common import markup
-from radiofeed.http import encoder
-from radiofeed.http.absolute_uri import build_absolute_uri
 
 register = template.Library()
 

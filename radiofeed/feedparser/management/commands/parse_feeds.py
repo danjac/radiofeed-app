@@ -9,8 +9,8 @@ from django.core.management.base import BaseCommand
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.http.user_agent import user_agent
 from radiofeed.podcasts.models import Podcast
+from radiofeed.user_agent import user_agent
 
 
 class Command(BaseCommand):

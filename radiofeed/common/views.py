@@ -17,7 +17,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.http import encoder, user_agent
+from radiofeed import encoder, user_agent
 
 _DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
 
