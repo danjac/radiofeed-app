@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.common.decorators import require_auth
+from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
 from radiofeed.http.response import HttpResponseConflict
 from radiofeed.http.user_agent import user_agent

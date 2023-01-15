@@ -7,7 +7,7 @@ from django.urls import reverse
 from django_htmx.middleware import HtmxDetails
 
 from radiofeed.common.asserts import assert_hx_redirect, assert_ok, assert_unauthorized
-from radiofeed.common.decorators import require_auth
+from radiofeed.decorators import require_auth
 
 
 class TestRequireAuth:
