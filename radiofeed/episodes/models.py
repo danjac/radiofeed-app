@@ -18,10 +18,10 @@ from django.utils.text import slugify
 from fast_update.query import FastUpdateManager
 from model_utils.models import TimeStampedModel
 
-from radiofeed.db.fast_count import FastCountQuerySetMixin
-from radiofeed.db.search import SearchQuerySetMixin
+from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.markup import strip_html
 from radiofeed.podcasts.models import Podcast
+from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
