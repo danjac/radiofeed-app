@@ -1,12 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Any
-
 from django.http import HttpRequest, HttpResponse
-from django.utils.functional import SimpleLazyObject
 
-from radiofeed.decorators import middleware
+from radiofeed.decorators import lazy_object_middleware, middleware
 from radiofeed.paginator import Paginator
 from radiofeed.search import Search
 from radiofeed.sorter import Sorter
@@ -28,21 +24,8 @@ def cache_control_middleware(
     return response
 
 
-def lazy_object_middleware(
-    fn: Callable[[HttpRequest], Any], to_attr: str
-) -> GetResponse:
-    """Appends a lazy object to request mapped to `to_attr`."""
+paginator_middleware = lazy_object_middleware("paginator")(Paginator)
 
-    @middleware
-    def _middleware(request: HttpRequest, get_response: GetResponse) -> HttpResponse:
-        setattr(request, to_attr, SimpleLazyObject(lambda: fn(request)))
-        return get_response(request)
+search_middleware = lazy_object_middleware("search")(Search)
 
-    return _middleware
-
-
-paginator_middleware = lazy_object_middleware(Paginator, "paginator")
-
-search_middleware = lazy_object_middleware(Search, "search")
-
-sorter_middleware = lazy_object_middleware(Sorter, "sorter")
+sorter_middleware = lazy_object_middleware("sorter")(Sorter)

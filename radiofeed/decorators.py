@@ -3,11 +3,12 @@ from __future__ import annotations
 import functools
 
 from collections.abc import Callable
-from typing import Concatenate, ParamSpec
+from typing import Any, Concatenate, ParamSpec
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
+from django.utils.functional import SimpleLazyObject
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -30,6 +31,22 @@ def middleware(
             return middleware_fn(request, get_response)
 
         return _middleware
+
+    return _wrapper
+
+
+def lazy_object_middleware(to_attr: str) -> GetResponse:
+    """Appends a lazy object to request mapped to `to_attr`."""
+
+    def _wrapper(fn: Callable[[HttpRequest], Any]) -> GetResponse:
+        @functools.wraps(fn)
+        def _middleware(
+            request: HttpRequest, get_response: GetResponse
+        ) -> HttpResponse:
+            setattr(request, to_attr, SimpleLazyObject(lambda: fn(request)))
+            return get_response(request)
+
+        return middleware(_middleware)
 
     return _wrapper
 
