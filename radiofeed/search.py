@@ -12,7 +12,7 @@ from django.http import HttpRequest
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 
-from radiofeed.common.types import T_QuerySet
+from radiofeed.types import T_QuerySet
 
 
 @dataclasses.dataclass(frozen=True)

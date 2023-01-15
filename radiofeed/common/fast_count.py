@@ -7,7 +7,7 @@ from django.db import connections
 from django.http import HttpRequest
 from django.utils.functional import cached_property
 
-from radiofeed.common.types import T_ModelAdmin, T_QuerySet
+from radiofeed.types import T_ModelAdmin, T_QuerySet
 
 
 class FastCounter(Protocol):
