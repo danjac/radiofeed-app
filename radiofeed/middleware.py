@@ -28,12 +28,14 @@ def cache_control_middleware(
     return response
 
 
-def lazy_object_middleware(fn: Callable[[HttpRequest], Any], attr: str) -> GetResponse:
-    """Appends a lazy object to request mapped to `attr`."""
+def lazy_object_middleware(
+    fn: Callable[[HttpRequest], Any], to_attr: str
+) -> GetResponse:
+    """Appends a lazy object to request mapped to `to_attr`."""
 
     @middleware
     def _middleware(request: HttpRequest, get_response: GetResponse) -> HttpResponse:
-        setattr(request, attr, SimpleLazyObject(lambda: fn(request)))
+        setattr(request, to_attr, SimpleLazyObject(lambda: fn(request)))
         return get_response(request)
 
     return _middleware
