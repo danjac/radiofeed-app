@@ -6,6 +6,9 @@ from django.http import HttpResponse
 from django_htmx.middleware import HtmxMiddleware
 
 from radiofeed.middleware import (
+    Paginator,
+    Search,
+    Sorter,
     cache_control_middleware,
     paginator_middleware,
     search_middleware,
@@ -93,3 +96,66 @@ class TestPaginatorMiddleware:
     def test_paginator(self, req, mw):
         mw(req)
         assert req.paginator.url(1) == "/?page=1"
+
+
+class TestPaginationUrl:
+    def test_append_page_number_to_querystring(self, rf):
+
+        req = rf.get("/search/", {"query": "test"})
+        paginator = Paginator(req)
+
+        url = paginator.url(5)
+        assert url.startswith("/search/?")
+        assert "query=test" in url
+        assert "page=5" in url
+
+
+class TestSearch:
+    def test_search(self, rf):
+        req = rf.get("/", {"query": "testing"})
+        search = Search(req)
+        assert search
+        assert str(search) == "testing"
+        assert search.qs == "query=testing"
+
+    def test_no_search(self, rf):
+        req = rf.get("/")
+        search = Search(req)
+        assert not search
+        assert not str(search)
+        assert search.qs == ""
+
+
+class TestSorter:
+    def test_default_value(self, rf):
+        req = rf.get("/")
+        sorter = Sorter(req)
+        assert sorter.value == "desc"
+        assert sorter.is_desc
+
+    def test_asc_value(self, rf):
+        req = rf.get("/", {"order": "asc"})
+        sorter = Sorter(req)
+        assert sorter.value == "asc"
+        assert sorter.is_asc
+
+    def test_desc_value(self, rf):
+        req = rf.get("/", {"order": "desc"})
+        sorter = Sorter(req)
+        assert sorter.value == "desc"
+        assert sorter.is_desc
+
+    def test_str(self, rf):
+        req = rf.get("/")
+        sorter = Sorter(req)
+        assert str(sorter) == "desc"
+
+    def test_qs_if_asc(self, rf):
+        req = rf.get("/", {"order": "asc"})
+        sorter = Sorter(req)
+        assert sorter.qs == "order=desc"
+
+    def test_qs_if_desc(self, rf):
+        req = rf.get("/", {"order": "desc"})
+        sorter = Sorter(req)
+        assert sorter.qs == "order=asc"
