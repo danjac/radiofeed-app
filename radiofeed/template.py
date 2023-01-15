@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import collections
+import dataclasses
 import math
 
 from django import template
@@ -18,7 +18,14 @@ from radiofeed.http import build_absolute_uri, urlsafe_encode
 
 register = template.Library()
 
-ActiveLink = collections.namedtuple("ActiveLink", ["url", "css", "active"])
+
+@dataclasses.dataclass(frozen=True)
+class ActiveLink:
+    """Url info including active link state."""
+
+    url: str
+    css: str
+    active: bool = False
 
 
 _validate_url = URLValidator(["http", "https"])
@@ -84,9 +91,9 @@ def active_link(
     url = resolve_url(url_name, *args, **kwargs)
 
     return (
-        ActiveLink(url, f"{css} {active_css}", True)
+        ActiveLink(url=url, css=f"{css} {active_css}", active=True)
         if context.request.path == url
-        else ActiveLink(url, css, False)
+        else ActiveLink(url=url, css=css, active=False)
     )
 
 
