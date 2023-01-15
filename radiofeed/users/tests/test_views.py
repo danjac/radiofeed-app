@@ -8,8 +8,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.common.asserts import assert_ok
-from radiofeed.common.factories import create_batch
 from radiofeed.episodes.factories import create_audio_log, create_bookmark
+from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Subscription
 from radiofeed.users.models import User

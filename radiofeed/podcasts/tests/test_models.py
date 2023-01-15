@@ -5,7 +5,7 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 
-from radiofeed.common.factories import create_batch
+from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import (
     create_category,
     create_podcast,

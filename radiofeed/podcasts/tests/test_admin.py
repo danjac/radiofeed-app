@@ -8,7 +8,7 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
-from radiofeed.common.factories import create_batch
+from radiofeed.factories import create_batch
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.admin import (
     ActiveFilter,

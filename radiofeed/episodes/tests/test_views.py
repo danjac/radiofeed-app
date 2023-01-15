@@ -13,7 +13,6 @@ from radiofeed.common.asserts import (
     assert_no_content,
     assert_ok,
 )
-from radiofeed.common.factories import create_batch
 from radiofeed.episodes.factories import (
     create_audio_log,
     create_bookmark,
@@ -21,6 +20,7 @@ from radiofeed.episodes.factories import (
 )
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.episodes.player import Player
+from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 
 episodes_url = reverse_lazy("episodes:index")

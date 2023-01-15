@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.core.management import call_command
 
-from radiofeed.common.factories import create_batch
+from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_recommendation
 from radiofeed.podcasts.itunes import Feed
 from radiofeed.users.factories import create_user
