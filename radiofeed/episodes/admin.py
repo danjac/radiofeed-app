@@ -5,8 +5,8 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
-from radiofeed.common.fast_count import FastCountAdminMixin
 from radiofeed.episodes.models import Episode
+from radiofeed.fast_count import FastCountAdminMixin
 
 
 @admin.register(Episode)
@@ -18,17 +18,15 @@ class EpisodeAdmin(FastCountAdminMixin, admin.ModelAdmin):
     raw_id_fields = ("podcast",)
     search_fields = ("search_document",)
 
+    @admin.display(description="Title")
     def episode_title(self, obj: Episode) -> str:
         """Render truncated episode title."""
         return truncatechars(obj.title, 30)
 
-    episode_title.short_description = "Title"  # type: ignore
-
+    @admin.display(description="Podcast")
     def podcast_title(self, obj: Episode) -> str:
         """Render truncated podcast title."""
         return truncatechars(obj.podcast.title, 30)
-
-    podcast_title.short_description = "Podcast"  # type: ignore
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str
