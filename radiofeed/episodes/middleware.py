@@ -5,15 +5,19 @@ import dataclasses
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
-from radiofeed.decorators import middleware
 from radiofeed.types import GetResponse
 
 
-@middleware
-def player_middleware(request: HttpRequest, get_response: GetResponse) -> HttpResponse:
+class PlayerMiddleware:
     """Adds `Player` instance as `request.player`."""
-    request.player = SimpleLazyObject(lambda: Player(request))
-    return get_response(request)
+
+    def __init__(self, get_response: GetResponse):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.player = SimpleLazyObject(lambda: Player(request))
+        return self.get_response(request)
 
 
 @dataclasses.dataclass(frozen=True)

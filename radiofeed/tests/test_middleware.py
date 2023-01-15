@@ -6,13 +6,13 @@ from django.http import HttpResponse
 from django_htmx.middleware import HtmxMiddleware
 
 from radiofeed.middleware import (
+    CacheControlMiddleware,
     Paginator,
+    PaginatorMiddleware,
     Search,
+    SearchMiddleware,
     Sorter,
-    cache_control_middleware,
-    paginator_middleware,
-    search_middleware,
-    sorter_middleware,
+    SorterMiddleware,
 )
 
 
@@ -34,7 +34,7 @@ def htmx_req(rf):
 class TestCacheControlMiddleware:
     @pytest.fixture
     def cache_mw(self, get_response):
-        return cache_control_middleware(get_response)
+        return CacheControlMiddleware(get_response)
 
     def test_is_htmx_request_cache_control_already_set(self, rf):
         def _get_response(request):
@@ -46,7 +46,7 @@ class TestCacheControlMiddleware:
         req = rf.get("/")
         req.htmx = True
 
-        resp = cache_control_middleware(_get_response)(req)
+        resp = CacheControlMiddleware(_get_response)(req)
         assert resp.headers["Cache-Control"] == "max-age=3600"
 
     def test_is_htmx_request(self, htmx_req, htmx_mw, cache_mw):
@@ -63,7 +63,7 @@ class TestCacheControlMiddleware:
 class TestSorterMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return sorter_middleware(get_response)
+        return SorterMiddleware(get_response)
 
     def test_sorter(self, rf, mw):
         req = rf.get("/")
@@ -74,7 +74,7 @@ class TestSorterMiddleware:
 class TestSearchMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return search_middleware(get_response)
+        return SearchMiddleware(get_response)
 
     def test_search(self, rf, mw):
         req = rf.get("/", {"query": "testing"})
@@ -91,7 +91,7 @@ class TestSearchMiddleware:
 class TestPaginatorMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return paginator_middleware(get_response)
+        return PaginatorMiddleware(get_response)
 
     def test_paginator(self, req, mw):
         mw(req)

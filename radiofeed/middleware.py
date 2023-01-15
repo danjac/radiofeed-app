@@ -11,46 +11,61 @@ from django.shortcuts import render
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
-from radiofeed.decorators import middleware
 from radiofeed.types import GetResponse
 
 
-@middleware
-def cache_control_middleware(
-    request: HttpRequest, get_response: GetResponse
-) -> HttpResponse:
+class CacheControlMiddleware:
     """Workaround for https://github.com/bigskysoftware/htmx/issues/497.
 
     Place after HtmxMiddleware.
     """
-    response = get_response(request)
-    if request.htmx:
-        # don't override if cache explicitly set
-        response.setdefault("Cache-Control", "no-store, max-age=0")
-    return response
+
+    def __init__(self, get_response: GetResponse):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        response = self.get_response(request)
+        if request.htmx:
+            # don't override if cache explicitly set
+            response.setdefault("Cache-Control", "no-store, max-age=0")
+        return response
 
 
-@middleware
-def paginator_middleware(
-    request: HttpRequest, get_response: GetResponse
-) -> HttpResponse:
+class PaginatorMiddleware:
     """Adds `Paginator` instance as `request.paginator`."""
-    request.paginator = SimpleLazyObject(lambda: Paginator(request))
-    return get_response(request)
+
+    def __init__(self, get_response: GetResponse):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.paginator = SimpleLazyObject(lambda: Paginator(request))
+        return self.get_response(request)
 
 
-@middleware
-def search_middleware(request: HttpRequest, get_response: GetResponse) -> HttpResponse:
+class SearchMiddleware:
     """Adds `Search` instance as `request.search`."""
-    request.search = SimpleLazyObject(lambda: Search(request))
-    return get_response(request)
+
+    def __init__(self, get_response: GetResponse):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.search = SimpleLazyObject(lambda: Search(request))
+        return self.get_response(request)
 
 
-@middleware
-def sorter_middleware(request: HttpRequest, get_response: GetResponse) -> HttpResponse:
+class SorterMiddleware:
     """Adds `Sorter` instance as `request.sorter`."""
-    request.sorter = SimpleLazyObject(lambda: Sorter(request))
-    return get_response(request)
+
+    def __init__(self, get_response: GetResponse):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.sorter = SimpleLazyObject(lambda: Sorter(request))
+        return self.get_response(request)
 
 
 @dataclasses.dataclass(frozen=True)

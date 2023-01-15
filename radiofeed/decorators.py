@@ -12,26 +12,10 @@ from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.response import HttpResponseUnauthorized
-from radiofeed.types import GetResponse
 
 P = ParamSpec("P")
 
 require_form_methods = require_http_methods(["GET", "POST"])
-
-
-def middleware(
-    middleware_fn: Callable[[HttpRequest, GetResponse], HttpResponse]
-) -> GetResponse:
-    """Create a middleware callable."""
-
-    @functools.wraps(middleware_fn)
-    def _wrapper(get_response: GetResponse) -> GetResponse:
-        def _middleware(request: HttpRequest) -> HttpResponse:
-            return middleware_fn(request, get_response)
-
-        return _middleware
-
-    return _wrapper
 
 
 def require_auth(

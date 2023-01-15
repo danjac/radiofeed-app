@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.episodes.middleware import Player, player_middleware
+from radiofeed.episodes.middleware import Player, PlayerMiddleware
 
 
 class TestPlayerMiddleware:
     def test_middleware(self, rf, get_response):
         req = rf.get("/")
-        player_middleware(get_response)(req)
+        PlayerMiddleware(get_response)(req)
         assert req.player
 
 
