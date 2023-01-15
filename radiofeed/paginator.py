@@ -4,7 +4,8 @@ import dataclasses
 
 from collections.abc import Iterable
 
-from django.core import paginator
+from django.core.paginator import InvalidPage
+from django.core.paginator import Paginator as _Paginator
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 
@@ -18,6 +19,8 @@ class Paginator:
     param: str = "page"
     page_size: int = 30
     target: str = "pagination"
+
+    paginator_class: type[_Paginator] = _Paginator
 
     def url(self, page_number: int) -> str:
         """Inserts the page query string parameter with the provided page number into the template.
@@ -47,12 +50,12 @@ class Paginator:
             Http404: invalid page number
         """
         try:
-            page = paginator.Paginator(object_list, self.page_size).page(
+            page = self.paginator_class(object_list, self.page_size).page(
                 self.request.GET.get(self.param, 1)
             )
 
-        except paginator.InvalidPage:
-            raise Http404()
+        except InvalidPage:
+            raise Http404
 
         template_name = (
             pagination_template_name
