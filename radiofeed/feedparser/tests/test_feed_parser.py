@@ -10,9 +10,9 @@ import pytest
 
 from django.utils import timezone
 
-from radiofeed.common.date_parser import parse_date
 from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
+from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     Duplicate,
     Inaccessible,

@@ -15,7 +15,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.common import batcher
-from radiofeed.common.xpath_parser import XPathParser
+from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast
 
 _ITUNES_PODCAST_ID_RE: Final = re.compile(r"id(?P<id>\d+)")

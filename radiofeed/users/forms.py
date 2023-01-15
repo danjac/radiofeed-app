@@ -8,7 +8,7 @@ import lxml  # nosec
 
 from django import forms
 
-from radiofeed.common.xpath_parser import XPathParser
+from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
