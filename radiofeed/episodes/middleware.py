@@ -4,6 +4,8 @@ import dataclasses
 
 from django.http import HttpRequest
 
+from radiofeed.middleware import lazy_object_middleware
+
 
 @dataclasses.dataclass(frozen=True)
 class Player:
@@ -27,3 +29,6 @@ class Player:
     def pop(self) -> int | None:
         """Returns primary key of episode in player, if any in session, and removes the episode ID from the session."""
         return self.request.session.pop(self.session_key, None)
+
+
+player_middleware = lazy_object_middleware(Player, "player")

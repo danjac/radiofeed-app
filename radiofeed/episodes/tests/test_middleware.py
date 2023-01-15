@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.episodes.middleware import player_middleware
-from radiofeed.episodes.middleware.player import Player
+from radiofeed.episodes.middleware import Player, player_middleware
 
 
 class TestPlayerMiddleware:
