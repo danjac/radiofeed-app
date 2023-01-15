@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from radiofeed.common.search import Search
+from radiofeed.search import Search
 
 
 class TestSearch:

@@ -20,8 +20,8 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed.common.fast_count import FastCountQuerySetMixin
 from radiofeed.common.markup import strip_html
-from radiofeed.common.search import SearchQuerySetMixin
 from radiofeed.podcasts.models import Podcast
+from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
