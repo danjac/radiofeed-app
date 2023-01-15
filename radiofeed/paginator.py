@@ -52,7 +52,7 @@ class Paginator:
             )
 
         except paginator.InvalidPage:
-            raise Http404()
+            raise Http404
 
         template_name = (
             pagination_template_name
