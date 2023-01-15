@@ -8,7 +8,7 @@ from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
 from django_object_actions import DjangoObjectActions
 
-from radiofeed.fast_count import FastCountAdminMixin
+from radiofeed.admin import FastCountAdminMixin
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.models import Category, Podcast
