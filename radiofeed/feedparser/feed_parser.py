@@ -14,7 +14,7 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed import batcher, tokenizer
+from radiofeed import tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -27,6 +27,7 @@ from radiofeed.feedparser.exceptions import (
     Unavailable,
 )
 from radiofeed.feedparser.models import Feed, Item
+from radiofeed.itertools import batcher
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -244,7 +245,7 @@ class FeedParser:
 
         # update existing content
 
-        for batch in batcher.batcher(self._episodes_for_update(feed, guids), 1000):
+        for batch in batcher(self._episodes_for_update(feed, guids), 1000):
             Episode.fast_update_objects.copy_update(
                 batch,
                 fields=[
@@ -266,7 +267,7 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in batcher.batcher(self._episodes_for_insert(feed, guids), 100):
+        for batch in batcher(self._episodes_for_insert(feed, guids), 100):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _episodes_for_insert(
