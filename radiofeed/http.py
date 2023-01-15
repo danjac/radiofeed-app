@@ -44,7 +44,7 @@ def urlsafe_encode(value: str) -> str:
 
 
 def urlsafe_decode(encoded: str) -> str:
-    """Decodes value encoded by `encode()`.
+    """Decodes value encoded by `urlsafe_encode()`.
 
     Raises:
         ValueError: bad signature or encoding.
