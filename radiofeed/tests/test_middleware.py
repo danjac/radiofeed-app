@@ -5,7 +5,7 @@ import pytest
 from django.http import HttpResponse
 from django_htmx.middleware import HtmxMiddleware
 
-from radiofeed.common.middleware import (
+from radiofeed.middleware import (
     cache_control_middleware,
     paginator_middleware,
     search_middleware,

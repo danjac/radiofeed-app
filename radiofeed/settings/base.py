@@ -105,10 +105,10 @@ MIDDLEWARE: list[str] = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "radiofeed.common.middleware.cache_control_middleware",
-    "radiofeed.common.middleware.paginator_middleware",
-    "radiofeed.common.middleware.search_middleware",
-    "radiofeed.common.middleware.sorter_middleware",
+    "radiofeed.middleware.cache_control_middleware",
+    "radiofeed.middleware.paginator_middleware",
+    "radiofeed.middleware.search_middleware",
+    "radiofeed.middleware.sorter_middleware",
     "radiofeed.episodes.middleware.player_middleware",
 ]
 
