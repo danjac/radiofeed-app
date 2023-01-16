@@ -84,7 +84,7 @@ class Page:
         """
         qs = self.request.GET.copy()
         qs[self.param] = page_number
-        return f"{self.request.path}?{qs.urlencode()}"
+        return self.request.path + "?" + qs.urlencode()
 
     @cached_property
     def current(self) -> str:
