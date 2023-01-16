@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from urllib.parse import urlencode
 
 from django.core import paginator
@@ -11,17 +11,19 @@ from django.shortcuts import render
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
-from radiofeed.types import GetResponse
+
+class BaseMiddleware:
+    """Base middleware class."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
 
 
-class CacheControlMiddleware:
+class CacheControlMiddleware(BaseMiddleware):
     """Workaround for https://github.com/bigskysoftware/htmx/issues/497.
 
     Place after HtmxMiddleware.
     """
-
-    def __init__(self, get_response: GetResponse):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -32,11 +34,8 @@ class CacheControlMiddleware:
         return response
 
 
-class PaginatorMiddleware:
+class PaginatorMiddleware(BaseMiddleware):
     """Adds `Paginator` instance as `request.paginator`."""
-
-    def __init__(self, get_response: GetResponse):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -44,11 +43,8 @@ class PaginatorMiddleware:
         return self.get_response(request)
 
 
-class SearchMiddleware:
+class SearchMiddleware(BaseMiddleware):
     """Adds `Search` instance as `request.search`."""
-
-    def __init__(self, get_response: GetResponse):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -56,11 +52,8 @@ class SearchMiddleware:
         return self.get_response(request)
 
 
-class SorterMiddleware:
+class SorterMiddleware(BaseMiddleware):
     """Adds `Sorter` instance as `request.sorter`."""
-
-    def __init__(self, get_response: GetResponse):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""

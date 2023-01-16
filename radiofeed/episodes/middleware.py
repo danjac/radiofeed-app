@@ -5,14 +5,11 @@ import dataclasses
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
-from radiofeed.types import GetResponse
+from radiofeed.middleware import BaseMiddleware
 
 
-class PlayerMiddleware:
+class PlayerMiddleware(BaseMiddleware):
     """Adds `Player` instance as `request.player`."""
-
-    def __init__(self, get_response: GetResponse):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
