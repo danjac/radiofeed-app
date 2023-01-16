@@ -57,7 +57,16 @@ def search(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
-        feeds = list(_search(client, search_term))
+        feeds = list(
+            _parse_feeds(
+                client,
+                "https://itunes.apple.com/search",
+                {
+                    "term": search_term,
+                    "media": "podcast",
+                },
+            )
+        )
         cache.set(cache_key, feeds)
     return feeds
 
@@ -118,14 +127,12 @@ class Crawler:
             _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
             yield from _parse_feeds(
-                _get_json_response(
-                    self._client,
-                    "https://itunes.apple.com/lookup",
-                    {
-                        "id": ",".join(_feed_ids),
-                        "entity": "podcast",
-                    },
-                ),
+                self._client,
+                "https://itunes.apple.com/lookup",
+                {
+                    "id": ",".join(_feed_ids),
+                    "entity": "podcast",
+                },
             )
 
             self._feed_ids = self._feed_ids.union(_feed_ids)
@@ -165,21 +172,29 @@ class Crawler:
         return None
 
 
-def _search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
-    return _parse_feeds(
-        _get_json_response(
-            client,
-            "https://itunes.apple.com/search",
-            {
-                "term": search_term,
-                "media": "podcast",
-            },
-        )
-    )
+def _get_response(
+    client: httpx.Client, url: str, params: dict | None = None, **kwargs
+) -> httpx.Response:
+    response = client.get(url, params=params, **kwargs)
+    response.raise_for_status()
+    return response
 
 
-def _parse_feeds(json_data: dict) -> Iterator[Feed]:
-    for batch in batcher(_build_feeds_from_json(json_data), 100):
+def _parse_feeds(
+    client: httpx.Client, url: str, params: dict | None = None
+) -> Iterator[Feed]:
+
+    for batch in batcher(
+        _build_feeds_from_json(
+            _get_response(
+                client,
+                url,
+                params,
+                headers={"Accept": "application/json"},
+            ).json()
+        ),
+        100,
+    ):
 
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
@@ -204,25 +219,6 @@ def _parse_feeds(json_data: dict) -> Iterator[Feed]:
         )
 
         yield from feeds
-
-
-def _get_response(
-    client: httpx.Client, url: str, params: dict | None = None, **kwargs
-) -> httpx.Response:
-    response = client.get(url, params=params, **kwargs)
-    response.raise_for_status()
-    return response
-
-
-def _get_json_response(
-    client: httpx.Client, url: str, params: dict | None = None
-) -> dict:
-    return _get_response(
-        client,
-        url,
-        params,
-        headers={"Accept": "application/json"},
-    ).json()
 
 
 def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
