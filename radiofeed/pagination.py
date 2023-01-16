@@ -22,6 +22,8 @@ def render_pagination_response(
 
     Requires `CurrentPageMiddleware`.
     """
+    page = Paginator(object_list, page_size).get_page(request.page.current)
+
     template_name = (
         pagination_template_name
         if request.htmx and request.htmx.target == pagination_target
@@ -32,9 +34,7 @@ def render_pagination_response(
         request,
         template_name,
         {
-            "page_obj": Paginator(object_list, page_size).get_page(
-                request.page.current
-            ),
+            "page_obj": page,
             "pagination_target": pagination_target,
             "pagination_template": pagination_template_name,
             **(extra_context or {}),
