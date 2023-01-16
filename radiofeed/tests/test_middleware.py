@@ -109,14 +109,7 @@ class TestPage:
         assert "query=test" in url
         assert "page=5" in url
 
-    def test_current_page_default(self, rf):
-
-        req = rf.get("/")
-        page = Page(req)
-
-        assert page.current == "1"
-
-    def test_current_page_ok(self, rf):
+    def test_current_page(self, rf):
 
         req = rf.get("/", {"page": "100"})
         page = Page(req)

@@ -59,7 +59,7 @@ class TestPodcasts:
 
     def test_invalid_page(self, client, auth_user):
         response = client.get(podcasts_url, {"page": 1000})
-        assert_not_found(response)
+        assert_ok(response)
 
     def test_user_is_subscribed_promoted(self, client, auth_user):
         """If user is not subscribed any podcasts, just show general feed"""

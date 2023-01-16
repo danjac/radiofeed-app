@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from django.core.paginator import InvalidPage, Paginator
-from django.http import Http404, HttpRequest, HttpResponse
+from django.core.paginator import Paginator
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 
@@ -21,16 +21,7 @@ def render_pagination_response(
     Conditionally renders to selected pagination template if matching HTMX target.
 
     Requires `CurrentPageMiddleware`.
-
-    Raises:
-        Http404: invalid page number
     """
-    try:
-        page = Paginator(object_list, page_size).page(request.page.current)
-
-    except InvalidPage:
-        raise Http404
-
     template_name = (
         pagination_template_name
         if request.htmx and request.htmx.target == pagination_target
@@ -41,7 +32,9 @@ def render_pagination_response(
         request,
         template_name,
         {
-            "page_obj": page,
+            "page_obj": Paginator(object_list, page_size).get_page(
+                request.page.current
+            ),
             "pagination_target": pagination_target,
             "pagination_template": pagination_template_name,
             **(extra_context or {}),
