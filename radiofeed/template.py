@@ -18,6 +18,8 @@ from radiofeed.http import build_absolute_uri, urlsafe_encode
 
 register = template.Library()
 
+_validate_url = URLValidator(["http", "https"])
+
 
 @dataclasses.dataclass(frozen=True)
 class ActiveLink:
@@ -26,9 +28,6 @@ class ActiveLink:
     url: str
     css: str
     active: bool = False
-
-
-_validate_url = URLValidator(["http", "https"])
 
 
 @register.simple_tag(takes_context=True)
