@@ -41,7 +41,6 @@ def podcasts(db):
 def req(rf):
     req = rf.get("/")
     req._messages = mock.Mock()
-    req.user_agent = "radiofeed"
     return req
 
 
