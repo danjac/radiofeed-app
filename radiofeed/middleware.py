@@ -89,7 +89,7 @@ class Page:
     @cached_property
     def current(self) -> str:
         """Returns current page number from URL."""
-        return self.request.GET.get("page", "1")
+        return self.request.GET.get(self.param, "1")
 
 
 @dataclasses.dataclass(frozen=True)
