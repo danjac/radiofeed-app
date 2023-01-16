@@ -114,15 +114,23 @@ class TestPage:
         req = rf.get("/")
         page = Page(req)
 
-        assert page.current == "1"
+        assert page.current == 1
 
     def test_current_page_ok(self, rf):
 
         req = rf.get("/", {"page": "100"})
         page = Page(req)
 
-        assert page.current == "100"
+        assert page.current == 100
         assert str(page) == "100"
+
+    def test_current_page_invalid(self, rf):
+
+        req = rf.get("/", {"page": "invalid"})
+        page = Page(req)
+
+        assert page.current == 1
+        assert str(page) == "1"
 
 
 class TestSearch:
