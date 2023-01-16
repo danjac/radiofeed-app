@@ -69,15 +69,12 @@ class Page:
 
     def __str__(self) -> str:
         """Returns current page."""
-        return str(self.current)
+        return self.current
 
     @cached_property
-    def current(self) -> int:
+    def current(self) -> str:
         """Returns current page number from URL."""
-        try:
-            return int(self.request.GET.get(self.param, 1))
-        except ValueError:
-            return 1
+        return self.request.GET.get(self.param, "1")
 
     def url(self, page_number: int) -> str:
         """Inserts the page query string parameter with the provided page number into the template.
