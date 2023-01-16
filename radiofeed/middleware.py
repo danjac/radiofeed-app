@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import dataclasses
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from urllib.parse import urlencode
 
-from django.core import paginator
-from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
@@ -34,12 +32,12 @@ class CacheControlMiddleware(BaseMiddleware):
         return response
 
 
-class PaginatorMiddleware(BaseMiddleware):
-    """Adds `Paginator` instance as `request.paginator`."""
+class CurrentPageMiddleware(BaseMiddleware):
+    """Adds `Page` instance as `request.page`."""
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.paginator = SimpleLazyObject(lambda: Paginator(request))
+        request.page = SimpleLazyObject(lambda: Page(request))
         return self.get_response(request)
 
 
@@ -62,14 +60,16 @@ class SorterMiddleware(BaseMiddleware):
 
 
 @dataclasses.dataclass(frozen=True)
-class Paginator:
-    """Wraps pagination functionality."""
+class Page:
+    """Wraps pagination request query functionality."""
 
     request: HttpRequest
 
     param: str = "page"
-    page_size: int = 30
-    target: str = "pagination"
+
+    def __str__(self) -> str:
+        """Returns current page."""
+        return self.current
 
     def url(self, page_number: int) -> str:
         """Inserts the page query string parameter with the provided page number into the template.
@@ -86,44 +86,10 @@ class Paginator:
         qs[self.param] = page_number
         return f"{self.request.path}?{qs.urlencode()}"
 
-    def render(
-        self,
-        object_list: Iterable,
-        template_name: str,
-        pagination_template_name: str,
-        extra_context: dict | None = None,
-    ) -> HttpResponse:
-        """Renders optimized paginated response.
-
-        Conditionally renders to selected pagination template if matching HTMX target.
-
-        Raises:
-            Http404: invalid page number
-        """
-        try:
-            page = paginator.Paginator(object_list, self.page_size).page(
-                self.request.GET.get(self.param, 1)
-            )
-
-        except paginator.InvalidPage:
-            raise Http404
-
-        template_name = (
-            pagination_template_name
-            if self.request.htmx and self.request.htmx.target == self.target
-            else template_name
-        )
-
-        return render(
-            self.request,
-            template_name,
-            {
-                "page_obj": page,
-                "pagination_target": self.target,
-                "pagination_template": pagination_template_name,
-                **(extra_context or {}),
-            },
-        )
+    @cached_property
+    def current(self) -> str:
+        """Returns current page number from URL."""
+        return self.request.GET.get("page", "1")
 
 
 @dataclasses.dataclass(frozen=True)

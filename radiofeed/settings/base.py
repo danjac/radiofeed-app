@@ -106,7 +106,7 @@ MIDDLEWARE: list[str] = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "radiofeed.middleware.CacheControlMiddleware",
-    "radiofeed.middleware.PaginatorMiddleware",
+    "radiofeed.middleware.CurrentPageMiddleware",
     "radiofeed.middleware.SearchMiddleware",
     "radiofeed.middleware.SorterMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",

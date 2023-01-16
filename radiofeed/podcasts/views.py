@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import http
+
 import httpx
 
 from django.contrib import messages
@@ -13,9 +15,9 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
 from radiofeed.http import user_agent
+from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Subscription
-from radiofeed.response import HttpResponseConflict
 
 
 @require_safe
@@ -48,7 +50,8 @@ def index(request: HttpRequest) -> HttpResponse:
         else podcasts.filter(pk__in=subscribed)
     )
 
-    return request.paginator.render(
+    return render_pagination_response(
+        request,
         podcasts,
         "podcasts/index.html",
         "podcasts/pagination/podcasts.html",
@@ -66,7 +69,8 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
 
-        return request.paginator.render(
+        return render_pagination_response(
+            request,
             (
                 _get_podcasts()
                 .search(request.search.value)
@@ -162,7 +166,8 @@ def episodes(
             "-pub_date" if request.sorter.is_desc else "pub_date"
         )
 
-    return request.paginator.render(
+    return render_pagination_response(
+        request,
         episodes,
         "podcasts/episodes.html",
         "episodes/pagination/episodes.html",
@@ -232,7 +237,8 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return request.paginator.render(
+    return render_pagination_response(
+        request,
         podcasts,
         "podcasts/category_detail.html",
         "podcasts/pagination/podcasts.html",
@@ -253,7 +259,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     try:
         Subscription.objects.create(subscriber=request.user, podcast=podcast)
     except IntegrityError:
-        return HttpResponseConflict()
+        return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
     messages.success(request, "You are now subscribed to this podcast")
     return _render_subscribe_action(request, podcast, True)

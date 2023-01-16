@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import http
 
 from collections.abc import Callable
 from typing import Concatenate, ParamSpec
@@ -10,8 +11,6 @@ from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
-
-from radiofeed.response import HttpResponseUnauthorized
 
 P = ParamSpec("P")
 
@@ -37,7 +36,7 @@ def require_auth(
 
         # plain non-HTMX AJAX: return a 401
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return HttpResponseUnauthorized()
+            return HttpResponse(status=http.HTTPStatus.UNAUTHORIZED)
 
         return redirect_to_login(request.get_full_path())
 

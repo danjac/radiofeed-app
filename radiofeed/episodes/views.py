@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import http
+
 from datetime import datetime, timedelta
 
 from django.contrib import messages
@@ -12,7 +14,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
-from radiofeed.response import HttpResponseConflict, HttpResponseNoContent
+from radiofeed.pagination import render_pagination_response
 
 
 @require_safe
@@ -33,7 +35,8 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         episodes = episodes.filter(podcast__pk__in=subscribed)
 
-    return request.paginator.render(
+    return render_pagination_response(
+        request,
         episodes,
         "episodes/index.html",
         "episodes/pagination/episodes.html",
@@ -50,7 +53,8 @@ def index(request: HttpRequest) -> HttpResponse:
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
-        return request.paginator.render(
+        return render_pagination_response(
+            request,
             (
                 Episode.objects.select_related("podcast")
                 .search(request.search.value)
@@ -153,7 +157,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         except (KeyError, ValueError):
             return HttpResponseBadRequest()
 
-    return HttpResponseNoContent()
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 @require_safe
@@ -167,7 +171,8 @@ def history(request: HttpRequest) -> HttpResponse:
     else:
         logs = logs.order_by("-listened" if request.sorter.is_desc else "listened")
 
-    return request.paginator.render(
+    return render_pagination_response(
+        request,
         logs,
         "episodes/history.html",
         "episodes/pagination/audio_logs.html",
@@ -204,7 +209,8 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.sorter.is_desc else "created"
         )
 
-    return request.paginator.render(
+    return render_pagination_response(
+        request,
         bookmarks,
         "episodes/bookmarks.html",
         "episodes/pagination/bookmarks.html",
@@ -220,7 +226,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     try:
         request.user.bookmarks.create(episode=episode)
     except IntegrityError:
-        return HttpResponseConflict()
+        return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
     messages.success(request, "Added to Bookmarks")
     return _render_bookmark_action(request, episode, True)

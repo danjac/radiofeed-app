@@ -7,8 +7,8 @@ from django_htmx.middleware import HtmxMiddleware
 
 from radiofeed.middleware import (
     CacheControlMiddleware,
-    Paginator,
-    PaginatorMiddleware,
+    CurrentPageMiddleware,
+    Page,
     Search,
     SearchMiddleware,
     Sorter,
@@ -88,26 +88,41 @@ class TestSearchMiddleware:
         assert not str(req.search)
 
 
-class TestPaginatorMiddleware:
+class TestCurrentPageMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return PaginatorMiddleware(get_response)
+        return CurrentPageMiddleware(get_response)
 
-    def test_paginator(self, req, mw):
+    def test_page(self, req, mw):
         mw(req)
-        assert req.paginator.url(1) == "/?page=1"
+        assert req.page.url(1) == "/?page=1"
 
 
-class TestPaginationUrl:
+class TestPage:
     def test_append_page_number_to_querystring(self, rf):
 
         req = rf.get("/search/", {"query": "test"})
-        paginator = Paginator(req)
+        page = Page(req)
 
-        url = paginator.url(5)
+        url = page.url(5)
         assert url.startswith("/search/?")
         assert "query=test" in url
         assert "page=5" in url
+
+    def test_current_page_default(self, rf):
+
+        req = rf.get("/")
+        page = Page(req)
+
+        assert page.current == "1"
+
+    def test_current_page_ok(self, rf):
+
+        req = rf.get("/", {"page": "100"})
+        page = Page(req)
+
+        assert page.current == "100"
+        assert str(page) == "100"
 
 
 class TestSearch:

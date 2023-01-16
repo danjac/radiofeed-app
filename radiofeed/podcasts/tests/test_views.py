@@ -58,7 +58,7 @@ class TestPodcasts:
         assert not response.context["has_subscriptions"]
 
     def test_invalid_page(self, client, auth_user):
-        response = client.get(podcasts_url, {"page": "xyz"})
+        response = client.get(podcasts_url, {"page": 1000})
         assert_not_found(response)
 
     def test_user_is_subscribed_promoted(self, client, auth_user):
