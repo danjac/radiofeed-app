@@ -76,7 +76,7 @@ class Page:
         """Returns current page number from URL."""
         try:
             return int(self.request.GET.get(self.param, 1))
-        except (KeyError, ValueError):
+        except ValueError:
             return 1
 
     def url(self, page_number: int) -> str:
