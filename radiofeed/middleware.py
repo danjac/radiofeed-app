@@ -93,7 +93,9 @@ class Paginator:
         pagination_template_name: str,
         extra_context: dict | None = None,
     ) -> HttpResponse:
-        """Renders paginated response.
+        """Renders optimized paginated response.
+
+        Conditionally renders to selected pagination template if matching HTMX target.
 
         Raises:
             Http404: invalid page number
