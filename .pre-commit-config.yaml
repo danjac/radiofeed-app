@@ -56,10 +56,9 @@ repos:
                     "flake8-print",
                 ]
     - repo: https://github.com/pycqa/pydocstyle
-      rev: 6.2.3
+      rev: 6.2.2
       hooks:
           - id: pydocstyle
-            pass_filenames: true
             additional_dependencies: ["toml"]
             exclude: tests/|migrations/|factories.py|apps.py|conftest.py
     - repo: https://github.com/MarcoGorelli/absolufy-imports
