@@ -19,7 +19,7 @@ def render_pagination_response(
 
     Conditionally renders to selected pagination template if matching HTMX target.
 
-    Requires `CurrentPageMiddleware`.
+    Requires `CurrentPageMiddleware` in MIDDLEWARE.
     """
     page = Paginator(object_list, page_size).get_page(request.page.current)
 
