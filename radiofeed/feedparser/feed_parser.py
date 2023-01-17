@@ -31,9 +31,9 @@ from radiofeed.itertools import batcher
 from radiofeed.podcasts.models import Category, Podcast
 
 
-def parse_feed(podcast: Podcast, client: httpx.Client) -> bool:
+def parse_feed(podcast: Podcast, client: httpx.Client) -> None:
     """Parses podcast RSS feed."""
-    return FeedParser(podcast).parse(client)
+    FeedParser(podcast).parse(client)
 
 
 def make_content_hash(content: bytes) -> str:
