@@ -9,6 +9,8 @@ from django.http import HttpRequest, HttpResponse
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
+from radiofeed.http import user_agent
+
 
 class BaseMiddleware:
     """Base middleware class."""
@@ -30,6 +32,15 @@ class CacheControlMiddleware(BaseMiddleware):
             # don't override if cache explicitly set
             response.setdefault("Cache-Control", "no-store, max-age=0")
         return response
+
+
+class UserAgentMiddleware(BaseMiddleware):
+    """Adds `user_agent` string to request. Used to make API calls from a view."""
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.user_agent = SimpleLazyObject(lambda: user_agent(request))
+        return self.get_response(request)
 
 
 class CurrentPageMiddleware(BaseMiddleware):

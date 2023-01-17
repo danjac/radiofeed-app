@@ -39,7 +39,7 @@ def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -
     Given the above and a URL of "/search?q=test" the result would
     be something like: "/search?q=test&page=3"
 
-    Requires `CurrentPageMiddleware`.
+    Requires `CurrentPageMiddleware` in MIDDLEWARE.
 
     Returns:
         updated URL path with new page
@@ -60,23 +60,6 @@ def absolute_uri(context: Context, to: str | Model = "", *args, **kwargs) -> str
         resolve_url(to, *args, **kwargs) if to else "",
         request=context.get("request", None),
     )
-
-
-@register.filter
-def format_duration(total_seconds: int | None) -> str:
-    """Formats duration (in seconds) as human readable value e.g. 1h 30min."""
-    if total_seconds is None or total_seconds < 60:
-        return ""
-
-    rv: list[str] = []
-
-    if total_hours := math.floor(total_seconds / 3600):
-        rv.append(f"{total_hours}h")
-
-    if total_minutes := round((total_seconds % 3600) / 60):
-        rv.append(f"{total_minutes}min")
-
-    return " ".join(rv)
 
 
 @register.simple_tag(takes_context=True)
@@ -155,6 +138,23 @@ def cover_image(
         "url": url,
         "css_class": css_class,
     }
+
+
+@register.filter
+def format_duration(total_seconds: int | None) -> str:
+    """Formats duration (in seconds) as human readable value e.g. 1h 30min."""
+    if total_seconds is None or total_seconds < 60:
+        return ""
+
+    rv: list[str] = []
+
+    if total_hours := math.floor(total_seconds / 3600):
+        rv.append(f"{total_hours}h")
+
+    if total_minutes := round((total_seconds % 3600) / 60):
+        rv.append(f"{total_minutes}min")
+
+    return " ".join(rv)
 
 
 @register.filter
