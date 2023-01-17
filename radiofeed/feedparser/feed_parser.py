@@ -31,16 +31,6 @@ from radiofeed.itertools import batcher
 from radiofeed.podcasts.models import Category, Podcast
 
 
-def parse_feed(podcast: Podcast, client: httpx.Client) -> None:
-    """Parses podcast RSS feed."""
-    FeedParser(podcast).parse(client)
-
-
-def make_content_hash(content: bytes) -> str:
-    """Hashes RSS content."""
-    return hashlib.sha256(content).hexdigest()
-
-
 @functools.lru_cache
 def get_categories() -> dict[str, Category]:
     """Returns a cached dict of categories with lowercase names as key."""
@@ -48,6 +38,11 @@ def get_categories() -> dict[str, Category]:
         category.lowercase_name: category
         for category in Category.objects.annotate(lowercase_name=Lower("name"))
     }
+
+
+def make_content_hash(content: bytes) -> str:
+    """Hashes RSS content."""
+    return hashlib.sha256(content).hexdigest()
 
 
 class FeedParser:

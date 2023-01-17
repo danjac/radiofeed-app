@@ -183,7 +183,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
             with httpx.Client(
                 headers={"User-Agent": request.user_agent}, timeout=5
             ) as client:
-                feed_parser.parse_feed(obj, client)
+                feed_parser.FeedParser(obj).parse(client)
 
         except FeedParserError:
             self.message_user(

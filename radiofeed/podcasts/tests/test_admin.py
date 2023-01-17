@@ -81,13 +81,14 @@ class TestPodcastAdmin:
         assert ordering == []
 
     def test_parse_podcast_feed_ok(self, mocker, podcast, podcast_admin, req):
-        patched = mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
+        patched = mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()
 
     def test_parse_podcast_feed_parser_error(self, mocker, podcast, podcast_admin, req):
         patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed", side_effect=FeedParserError()
+            "radiofeed.feedparser.feed_parser.FeedParser.parse",
+            side_effect=FeedParserError(),
         )
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()

@@ -10,7 +10,7 @@ class TestParseFeeds:
     def test_ok(self, db, mocker):
         create_podcast(pub_date=None)
         patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
+            "radiofeed.feedparser.feed_parser.FeedParser.parse",
         )
         call_command("parse_feeds", limit=200)
         patched.assert_called()
@@ -18,7 +18,7 @@ class TestParseFeeds:
     def test_feed_parser_error(self, db, mocker):
         create_podcast(pub_date=None)
         patched = mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
+            "radiofeed.feedparser.feed_parser.FeedParser.parse",
             side_effect=Duplicate(),
         )
         call_command("parse_feeds", limit=200)

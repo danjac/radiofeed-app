@@ -24,7 +24,6 @@ from radiofeed.feedparser.feed_parser import (
     FeedParser,
     get_categories,
     make_content_hash,
-    parse_feed,
 )
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
@@ -100,9 +99,9 @@ class TestFeedParser:
             side_effect=ValueError(),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(ValueError):
-                assert not parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -122,9 +121,9 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(ValueError):
-                assert not parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -157,8 +156,8 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
-            parse_feed(podcast, session)
+        with httpx.Client() as client:
+            FeedParser(podcast).parse(client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -222,8 +221,8 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
-            parse_feed(podcast, session)
+        with httpx.Client() as client:
+            FeedParser(podcast).parse(client)
 
         assert Episode.objects.count() == 4940
 
@@ -259,8 +258,8 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
-            parse_feed(podcast, session)
+        with httpx.Client() as client:
+            FeedParser(podcast).parse(client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -318,9 +317,9 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(NotModified):
-                assert parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -346,9 +345,9 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(Duplicate):
-                assert parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
@@ -377,8 +376,8 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
-            parse_feed(podcast, session)
+        with httpx.Client() as client:
+            FeedParser(podcast).parse(client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -431,8 +430,8 @@ class TestFeedParser:
                 content=self.get_rss_content(),
             ),
         )
-        with httpx.Client() as session:
-            parse_feed(podcast, session)
+        with httpx.Client() as client:
+            FeedParser(podcast).parse(client)
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
@@ -459,9 +458,9 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(Duplicate):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
@@ -480,9 +479,9 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(InvalidRSS):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -502,10 +501,10 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
 
             with pytest.raises(InvalidRSS):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
         assert not podcast.active
@@ -523,9 +522,9 @@ class TestFeedParser:
             ),
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(InvalidRSS):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -538,9 +537,9 @@ class TestFeedParser:
 
         mock_client(mocker, mock_response(podcast.rss, http.HTTPStatus.NOT_MODIFIED))
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(NotModified):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
@@ -553,9 +552,9 @@ class TestFeedParser:
 
         mock_client(mocker, mock_response(podcast.rss, http.HTTPStatus.GONE))
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(Inaccessible):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
@@ -567,9 +566,9 @@ class TestFeedParser:
             mocker, mock_response(podcast.rss, http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(Unavailable):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
@@ -580,9 +579,9 @@ class TestFeedParser:
     def test_parse_connect_error(self, mocker, podcast, categories):
         mock_client(mocker, exception=httpx.ConnectError("fail"))
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(Unavailable):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
@@ -597,9 +596,9 @@ class TestFeedParser:
             mocker, mock_response(podcast.rss, http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(Unavailable):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
@@ -616,9 +615,9 @@ class TestFeedParser:
             mocker, mock_response(podcast.rss, http.HTTPStatus.INTERNAL_SERVER_ERROR)
         )
 
-        with httpx.Client() as session:
+        with httpx.Client() as client:
             with pytest.raises(Unavailable):
-                parse_feed(podcast, session)
+                FeedParser(podcast).parse(client)
 
         podcast.refresh_from_db()
 
