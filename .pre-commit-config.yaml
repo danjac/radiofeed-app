@@ -59,8 +59,8 @@ repos:
       rev: 6.2.3
       hooks:
           - id: pydocstyle
-            additional_dependencies: ["toml"]
             pass_filenames: true
+            additional_dependencies: ["toml"]
             exclude: tests/|migrations/|factories.py|apps.py|conftest.py
     - repo: https://github.com/MarcoGorelli/absolufy-imports
       rev: v0.3.1
