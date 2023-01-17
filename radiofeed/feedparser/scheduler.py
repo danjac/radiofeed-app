@@ -64,6 +64,7 @@ def scheduled_for_update() -> QuerySet[Podcast]:
             F("promoted").desc(),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
+            F("created").desc(),
         )
     )
 
