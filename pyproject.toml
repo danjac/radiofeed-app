@@ -103,7 +103,6 @@ ignore = [
     "D413",
 ]
 
-
 [tool.isort]
 default_section="THIRDPARTY"
 known_first_party="radiofeed"
