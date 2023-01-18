@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Sized
-
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
@@ -10,7 +8,7 @@ from django.shortcuts import render
 
 def render_pagination_response(
     request: HttpRequest,
-    object_list: QuerySet | Sized,
+    object_list: QuerySet,
     template_name: str,
     pagination_template_name: str,
     extra_context: dict | None = None,
