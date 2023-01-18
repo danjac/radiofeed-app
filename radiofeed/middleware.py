@@ -40,7 +40,7 @@ class PaginationMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.pagination = SimpleLazyObject(lambda: Pagination(request))
+        request.pagination = Pagination(request)
         return self.get_response(request)
 
 
@@ -49,7 +49,7 @@ class SearchMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.search = SimpleLazyObject(lambda: Search(request))
+        request.search = Search(request)
         return self.get_response(request)
 
 
@@ -58,7 +58,7 @@ class OrderingMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.ordering = SimpleLazyObject(lambda: Ordering(request))
+        request.ordering = Ordering(request)
         return self.get_response(request)
 
 
