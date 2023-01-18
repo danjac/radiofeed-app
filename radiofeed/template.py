@@ -31,7 +31,7 @@ class ActiveLink:
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -> str:
+def pagination_url(context: RequestContext, page_number: int) -> str:
     """Inserts the "page" query string parameter with the provided page number into the template.
 
     Preserves the original request path and any other query string parameters.
@@ -44,7 +44,7 @@ def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -
     Returns:
         updated URL path with new page
     """
-    return context.request.pagination.url(page_number, *args, **kwargs)
+    return context.request.pagination.url(page_number)
 
 
 @register.simple_tag(takes_context=True)
