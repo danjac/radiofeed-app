@@ -3,8 +3,6 @@ from __future__ import annotations
 import datetime
 import io
 
-from typing import Final
-
 import httpx
 
 from django.conf import settings
@@ -19,11 +17,8 @@ from PIL import Image
 
 from radiofeed.http import urlsafe_decode
 
-_DEFAULT_CACHE_TIMEOUT: Final = 60 * 60 * 24  # one day
-
-
-_cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
-_cache_page = cache_page(_DEFAULT_CACHE_TIMEOUT)
+_cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
+_cache_page = cache_page(60 * 60)
 
 
 @require_safe
