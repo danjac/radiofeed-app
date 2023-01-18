@@ -68,7 +68,7 @@
                             class="link">
                             Download
                         </a>
-                        {% with link=episode.get_link %}
+                        {% with link=episode.get_link|force_url %}
                             {% if link %}
                                 <a href="{{ link }}"
                                     target="_blank"

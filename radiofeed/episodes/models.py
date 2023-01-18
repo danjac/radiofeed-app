@@ -28,7 +28,9 @@ from radiofeed.users.models import User
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Episode model."""
 
-    def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet[Episode]:
+    def with_current_time(
+        self, user: User | AnonymousUser
+    ) -> models.QuerySet[Episode]:  # pyright: ignore
         """Adds `current_time`, `remaining` and `listened` annotations.
 
         Both will be None if user is anonymous or there is no listening history.
@@ -82,7 +84,7 @@ class Episode(models.Model):
 
     search_vector: str | None = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()
+    objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()  # pyright: ignore
     fast_update_objects: models.Manager = FastUpdateManager()
 
     # annotations
@@ -312,7 +314,7 @@ class AudioLog(TimeStampedModel):
     listened: datetime = models.DateTimeField()
     current_time: int = models.IntegerField(default=0)
 
-    objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()
+    objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()  # pyright: ignore
 
     class Meta:
         constraints = [
