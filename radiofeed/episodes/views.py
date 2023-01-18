@@ -169,7 +169,7 @@ def history(request: HttpRequest) -> HttpResponse:
     if request.search:
         logs = logs.search(request.search.value).order_by("-rank", "-listened")
     else:
-        logs = logs.order_by("-listened" if request.sorter.is_desc else "listened")
+        logs = logs.order_by("-listened" if request.ordering.is_desc else "listened")
 
     return render_pagination_response(
         request,
@@ -206,7 +206,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
     else:
         bookmarks = bookmarks.order_by(
-            "-created" if request.sorter.is_desc else "created"
+            "-created" if request.ordering.is_desc else "created"
         )
 
     return render_pagination_response(

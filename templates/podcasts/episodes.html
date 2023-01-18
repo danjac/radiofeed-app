@@ -12,12 +12,8 @@
                         <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                             class="link">Search All Podcasts</a>
                     {% else %}
-                        <a href="{{ request.path }}?{{ request.sorter.qs }}" class="link">
-                            {% if request.sorter.is_asc %}
-                                Newest First
-                            {% else %}
-                                Oldest First
-                            {% endif %}
+                        <a href="{{ request.path }}?{{ request.ordering.qs }}" class="link">
+                            {{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}
                         </a>
                     {% endif %}
                 </li>

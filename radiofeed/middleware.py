@@ -34,6 +34,33 @@ class CacheControlMiddleware(BaseMiddleware):
         return response
 
 
+class PaginationMiddleware(BaseMiddleware):
+    """Adds `PaginationParams` instance as `request.pagination`."""
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.pagination = SimpleLazyObject(lambda: PaginationParams(request))
+        return self.get_response(request)
+
+
+class SearchMiddleware(BaseMiddleware):
+    """Adds `SearchParams` instance as `request.search`."""
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.search = SimpleLazyObject(lambda: SearchParams(request))
+        return self.get_response(request)
+
+
+class OrderingMiddleware(BaseMiddleware):
+    """Adds `OrderingParams` instance as `request.ordering`."""
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation."""
+        request.ordering = SimpleLazyObject(lambda: OrderingParams(request))
+        return self.get_response(request)
+
+
 class UserAgentMiddleware(BaseMiddleware):
     """Adds `user_agent` string to request. Used to make API calls from a view."""
 
@@ -43,36 +70,9 @@ class UserAgentMiddleware(BaseMiddleware):
         return self.get_response(request)
 
 
-class CurrentPageMiddleware(BaseMiddleware):
-    """Adds `Page` instance as `request.page`."""
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-        request.page = SimpleLazyObject(lambda: Page(request))
-        return self.get_response(request)
-
-
-class SearchMiddleware(BaseMiddleware):
-    """Adds `Search` instance as `request.search`."""
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-        request.search = SimpleLazyObject(lambda: Search(request))
-        return self.get_response(request)
-
-
-class SorterMiddleware(BaseMiddleware):
-    """Adds `Sorter` instance as `request.sorter`."""
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-        request.sorter = SimpleLazyObject(lambda: Sorter(request))
-        return self.get_response(request)
-
-
 @dataclasses.dataclass(frozen=True)
-class Page:
-    """Wraps pagination request query functionality."""
+class PaginationParams:
+    """Handles pagination parameters in request."""
 
     request: HttpRequest
 
@@ -104,8 +104,8 @@ class Page:
 
 
 @dataclasses.dataclass(frozen=True)
-class Sorter:
-    """Encapsulates sorting/ordering functionality."""
+class OrderingParams:
+    """Handles ordering parameters in request."""
 
     request: HttpRequest
 
@@ -141,8 +141,8 @@ class Sorter:
 
 
 @dataclasses.dataclass(frozen=True)
-class Search:
-    """Encapsulates generic search query in a request."""
+class SearchParams:
+    """Handles search parameters in request."""
 
     request: HttpRequest
     param: str = "query"

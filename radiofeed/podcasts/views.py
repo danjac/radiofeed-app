@@ -167,7 +167,7 @@ def episodes(
         episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         episodes = episodes.order_by(
-            "-pub_date" if request.sorter.is_desc else "pub_date"
+            "-pub_date" if request.ordering.is_desc else "pub_date"
         )
 
     return render_pagination_response(

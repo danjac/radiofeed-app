@@ -39,12 +39,12 @@ def pagination_url(context: RequestContext, page_number: int, *args, **kwargs) -
     Given the above and a URL of "/search?q=test" the result would
     be something like: "/search?q=test&page=3"
 
-    Requires `CurrentPageMiddleware` in MIDDLEWARE.
+    Requires `PaginationMiddleware` in MIDDLEWARE.
 
     Returns:
         updated URL path with new page
     """
-    return context.request.page.url(page_number, *args, **kwargs)
+    return context.request.pagination.url(page_number, *args, **kwargs)
 
 
 @register.simple_tag(takes_context=True)

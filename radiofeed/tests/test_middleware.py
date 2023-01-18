@@ -7,12 +7,12 @@ from django_htmx.middleware import HtmxMiddleware
 
 from radiofeed.middleware import (
     CacheControlMiddleware,
-    CurrentPageMiddleware,
-    Page,
-    Search,
+    OrderingMiddleware,
+    OrderingParams,
+    PaginationMiddleware,
+    PaginationParams,
     SearchMiddleware,
-    Sorter,
-    SorterMiddleware,
+    SearchParams,
     UserAgentMiddleware,
 )
 
@@ -61,15 +61,15 @@ class TestCacheControlMiddleware:
         assert "Cache-Control" not in resp.headers
 
 
-class TestSorterMiddleware:
+class TestOrderingMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return SorterMiddleware(get_response)
+        return OrderingMiddleware(get_response)
 
-    def test_sorter(self, rf, mw):
+    def test_ordering(self, rf, mw):
         req = rf.get("/")
         mw(req)
-        assert req.sorter.value == "desc"
+        assert req.ordering.value == "desc"
 
 
 class TestSearchMiddleware:
@@ -89,14 +89,14 @@ class TestSearchMiddleware:
         assert not str(req.search)
 
 
-class TestCurrentPageMiddleware:
+class TestPaginationMiddleware:
     @pytest.fixture
     def mw(self, get_response):
-        return CurrentPageMiddleware(get_response)
+        return PaginationMiddleware(get_response)
 
     def test_page(self, req, mw):
         mw(req)
-        assert req.page.url(1) == "/?page=1"
+        assert req.pagination.url(1) == "/?page=1"
 
 
 class TestUserAgentMiddleware:
@@ -109,11 +109,11 @@ class TestUserAgentMiddleware:
         assert "testserver" in req.user_agent
 
 
-class TestPage:
+class TestPaginationParams:
     def test_append_page_number_to_querystring(self, rf):
 
         req = rf.get("/search/", {"query": "test"})
-        page = Page(req)
+        page = PaginationParams(req)
 
         url = page.url(5)
         assert url.startswith("/search/?")
@@ -123,7 +123,7 @@ class TestPage:
     def test_current_page(self, rf):
 
         req = rf.get("/", {"page": "100"})
-        page = Page(req)
+        page = PaginationParams(req)
 
         assert page.current == "100"
         assert str(page) == "100"
@@ -131,58 +131,58 @@ class TestPage:
     def test_current_page_empty(self, rf):
 
         req = rf.get("/")
-        page = Page(req)
+        page = PaginationParams(req)
 
         assert page.current == ""
         assert str(page) == ""
 
 
-class TestSearch:
+class TestSearchParams:
     def test_search(self, rf):
         req = rf.get("/", {"query": "testing"})
-        search = Search(req)
+        search = SearchParams(req)
         assert search
         assert str(search) == "testing"
         assert search.qs == "query=testing"
 
     def test_no_search(self, rf):
         req = rf.get("/")
-        search = Search(req)
+        search = SearchParams(req)
         assert not search
         assert not str(search)
         assert search.qs == ""
 
 
-class TestSorter:
+class TestOrderingParams:
     def test_default_value(self, rf):
         req = rf.get("/")
-        sorter = Sorter(req)
-        assert sorter.value == "desc"
-        assert sorter.is_desc
+        ordering = OrderingParams(req)
+        assert ordering.value == "desc"
+        assert ordering.is_desc
 
     def test_asc_value(self, rf):
         req = rf.get("/", {"order": "asc"})
-        sorter = Sorter(req)
-        assert sorter.value == "asc"
-        assert sorter.is_asc
+        ordering = OrderingParams(req)
+        assert ordering.value == "asc"
+        assert ordering.is_asc
 
     def test_desc_value(self, rf):
         req = rf.get("/", {"order": "desc"})
-        sorter = Sorter(req)
-        assert sorter.value == "desc"
-        assert sorter.is_desc
+        ordering = OrderingParams(req)
+        assert ordering.value == "desc"
+        assert ordering.is_desc
 
     def test_str(self, rf):
         req = rf.get("/")
-        sorter = Sorter(req)
-        assert str(sorter) == "desc"
+        ordering = OrderingParams(req)
+        assert str(ordering) == "desc"
 
     def test_qs_if_asc(self, rf):
         req = rf.get("/", {"order": "asc"})
-        sorter = Sorter(req)
-        assert sorter.qs == "order=desc"
+        ordering = OrderingParams(req)
+        assert ordering.qs == "order=desc"
 
     def test_qs_if_desc(self, rf):
         req = rf.get("/", {"order": "desc"})
-        sorter = Sorter(req)
-        assert sorter.qs == "order=asc"
+        ordering = OrderingParams(req)
+        assert ordering.qs == "order=asc"
