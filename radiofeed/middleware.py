@@ -36,29 +36,29 @@ class CacheControlMiddleware(BaseMiddleware):
 
 
 class PaginationMiddleware(BaseMiddleware):
-    """Adds `PaginationParams` instance as `request.pagination`."""
+    """Adds `Pagination` instance as `request.pagination`."""
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.pagination = SimpleLazyObject(lambda: PaginationParams(request))
+        request.pagination = SimpleLazyObject(lambda: Pagination(request))
         return self.get_response(request)
 
 
 class SearchMiddleware(BaseMiddleware):
-    """Adds `SearchParams` instance as `request.search`."""
+    """Adds `Search` instance as `request.search`."""
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.search = SimpleLazyObject(lambda: SearchParams(request))
+        request.search = SimpleLazyObject(lambda: Search(request))
         return self.get_response(request)
 
 
 class OrderingMiddleware(BaseMiddleware):
-    """Adds `OrderingParams` instance as `request.ordering`."""
+    """Adds `Ordering` instance as `request.ordering`."""
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.ordering = SimpleLazyObject(lambda: OrderingParams(request))
+        request.ordering = SimpleLazyObject(lambda: Ordering(request))
         return self.get_response(request)
 
 
@@ -72,7 +72,7 @@ class UserAgentMiddleware(BaseMiddleware):
 
 
 @dataclasses.dataclass(frozen=True)
-class PaginationParams:
+class Pagination:
     """Handles pagination parameters in request."""
 
     request: HttpRequest
@@ -105,17 +105,17 @@ class PaginationParams:
 
 
 @dataclasses.dataclass(frozen=True)
-class OrderingParams:
+class Ordering:
     """Handles ordering parameters in request."""
 
-    class Ordering(enum.StrEnum):
+    class Choices(enum.StrEnum):
         ASC = enum.auto()
         DESC = enum.auto()
 
     request: HttpRequest
 
     param: str = "order"
-    default: str = Ordering.DESC
+    default: str = Choices.DESC
 
     def __str__(self) -> str:
         """Returns ordering value."""
@@ -129,23 +129,23 @@ class OrderingParams:
     @cached_property
     def is_asc(self) -> bool:
         """Returns True if sort ascending."""
-        return self.value == self.Ordering.ASC
+        return self.value == self.Choices.ASC
 
     @cached_property
     def is_desc(self) -> bool:
         """Returns True if sort descending."""
-        return self.value == self.Ordering.DESC
+        return self.value == self.Choices.DESC
 
     @cached_property
     def reverse_qs(self) -> str:
         """Returns ascending query string parameter/value if current url descending and vice versa."""
         return urlencode(
-            {self.param: self.Ordering.DESC if self.is_asc else self.Ordering.ASC}
+            {self.param: self.Choices.DESC if self.is_asc else self.Choices.ASC}
         )
 
 
 @dataclasses.dataclass(frozen=True)
-class SearchParams:
+class Search:
     """Handles search parameters in request."""
 
     request: HttpRequest

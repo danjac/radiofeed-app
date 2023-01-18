@@ -150,7 +150,7 @@ document.addEventListener("alpine:init", () => {
                     headers: {
                         "X-CSRFToken": this.csrfToken,
                     },
-                    body: new URLSearchParams({
+                    body: new URLSearch({
                         current_time: this.runtime,
                     }),
                 });

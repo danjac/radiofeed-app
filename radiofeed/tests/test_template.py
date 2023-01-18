@@ -8,7 +8,7 @@ from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.urls import reverse
 
-from radiofeed.middleware import PaginationParams
+from radiofeed.middleware import Pagination
 from radiofeed.template import (
     absolute_uri,
     active_link,
@@ -168,7 +168,7 @@ class TestPaginationUrl:
     def test_append_page_number_to_querystring(self, rf):
 
         req = rf.get("/search/", {"query": "test"})
-        req.pagination = PaginationParams(req)
+        req.pagination = Pagination(req)
         url = pagination_url(RequestContext(req), 5)
         assert url.startswith("/search/?")
         assert "query=test" in url
@@ -196,7 +196,7 @@ class TestPaginationLinks:
 
     @pytest.fixture
     def page_req(self, req):
-        req.pagination = PaginationParams(req)
+        req.pagination = Pagination(req)
         return req
 
     def test_no_pagination(self, page_req, tmpl):
