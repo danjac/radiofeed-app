@@ -1,41 +1,18 @@
 from __future__ import annotations
 
-import urllib.parse
-
-import httpx
-
-from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.signing import BadSignature, Signer
-from django.http import HttpRequest
-from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from fake_useragent import UserAgent
 
 _signer = Signer()
 
-
-def build_absolute_uri(url: str = "", request: HttpRequest | None = None) -> str:
-    """Build absolute URI from request, falling back to current Site if unavailable."""
-    url = url or "/"
-
-    if request is not None:
-        return request.build_absolute_uri(url)
-
-    return urllib.parse.urljoin(
-        settings.HTTP_PROTOCOL + "://" + Site.objects.get_current().domain, url
-    )
+_user_agent = UserAgent()
 
 
-def user_agent(request: HttpRequest | None = None) -> str:
-    """Returns user agent including dynamic date-based versioning."""
-    return " ".join(
-        [
-            f"python-httpx/{httpx.__version__}",
-            f"(Radiofeed/{timezone.now().strftime('%Y-%d-%m')};",
-            f"+{build_absolute_uri(request=request)})",
-        ]
-    )
+def user_agent() -> str:
+    """Returns a fake user agent for API calls etc."""
+    return _user_agent.random
 
 
 def urlsafe_encode(value: str) -> str:

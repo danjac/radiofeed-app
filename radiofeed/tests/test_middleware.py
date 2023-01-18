@@ -13,7 +13,6 @@ from radiofeed.middleware import (
     PaginationMiddleware,
     Search,
     SearchMiddleware,
-    UserAgentMiddleware,
 )
 
 
@@ -97,16 +96,6 @@ class TestPaginationMiddleware:
     def test_page(self, req, mw):
         mw(req)
         assert req.pagination.url(1) == "/?page=1"
-
-
-class TestUserAgentMiddleware:
-    @pytest.fixture
-    def mw(self, get_response):
-        return UserAgentMiddleware(get_response)
-
-    def test_page(self, req, mw):
-        mw(req)
-        assert "testserver" in req.user_agent
 
 
 class TestPagination:

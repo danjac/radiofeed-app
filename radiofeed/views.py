@@ -15,7 +15,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.http import urlsafe_decode
+from radiofeed.http import urlsafe_decode, user_agent
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
 _cache_page = cache_page(60 * 60)
@@ -171,7 +171,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
             follow_redirects=True,
             timeout=5,
             headers={
-                "User-Agent": request.user_agent,
+                "User-Agent": user_agent(),
             },
         )
 

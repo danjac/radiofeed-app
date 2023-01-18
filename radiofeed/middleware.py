@@ -8,9 +8,7 @@ from urllib.parse import urlencode
 
 from django.http import HttpRequest, HttpResponse
 from django.utils.encoding import force_str
-from django.utils.functional import SimpleLazyObject, cached_property
-
-from radiofeed.http import user_agent
+from django.utils.functional import cached_property
 
 
 class BaseMiddleware:
@@ -59,15 +57,6 @@ class OrderingMiddleware(BaseMiddleware):
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
         request.ordering = Ordering(request)
-        return self.get_response(request)
-
-
-class UserAgentMiddleware(BaseMiddleware):
-    """Adds `user_agent` string to request. Used to make API calls from a view."""
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-        request.user_agent = SimpleLazyObject(lambda: user_agent(request))
         return self.get_response(request)
 
 

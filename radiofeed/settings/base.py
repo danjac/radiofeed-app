@@ -109,7 +109,6 @@ MIDDLEWARE: list[str] = [
     "radiofeed.middleware.OrderingMiddleware",
     "radiofeed.middleware.PaginationMiddleware",
     "radiofeed.middleware.SearchMiddleware",
-    "radiofeed.middleware.UserAgentMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",
 ]
 

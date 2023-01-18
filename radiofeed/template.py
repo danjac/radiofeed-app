@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import dataclasses
 import math
+import urllib.parse
 
 from django import template
+from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db.models import Model
@@ -14,7 +17,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 
 from radiofeed import markup
-from radiofeed.http import build_absolute_uri, urlsafe_encode
+from radiofeed.http import urlsafe_encode
 
 register = template.Library()
 
@@ -56,9 +59,13 @@ def absolute_uri(context: Context, to: str | Model = "", *args, **kwargs) -> str
         * URL pattern along with `*args` and `**kwargs`
         * Django model with `get_absolute_url()` method.
     """
-    return build_absolute_uri(
-        resolve_url(to, *args, **kwargs) if to else "",
-        request=context.get("request", None),
+    url = resolve_url(to, *args, **kwargs) if to else "/"
+
+    if request := context.get("request", None):
+        return request.build_absolute_uri(url)
+
+    return urllib.parse.urljoin(
+        settings.HTTP_PROTOCOL + "://" + Site.objects.get_current().domain, url
     )
 
 

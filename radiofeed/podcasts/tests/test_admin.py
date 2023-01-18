@@ -10,7 +10,6 @@ from django.utils import timezone
 
 from radiofeed.factories import create_batch
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.http import user_agent
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -42,7 +41,6 @@ def podcasts(db):
 def req(rf):
     req = rf.get("/")
     req._messages = mock.Mock()
-    req.user_agent = user_agent(req)
     return req
 
 

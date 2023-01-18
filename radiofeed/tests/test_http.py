@@ -1,36 +1,8 @@
 from __future__ import annotations
 
-import datetime
-
-import httpx
 import pytest
 
-from radiofeed.http import (
-    build_absolute_uri,
-    urlsafe_decode,
-    urlsafe_encode,
-    user_agent,
-)
-
-
-class TestBuildAbsoluteUri:
-    BASE_URL = "http://example.com"
-
-    SEARCH_URL = "/podcasts/search/"
-    DETAIL_URL = "/podcasts/12345/test/"
-
-    def test_no_url(self, db):
-        assert build_absolute_uri() == self.BASE_URL + "/"
-
-    def test_with_url(self, db):
-        assert build_absolute_uri("/podcasts/") == self.BASE_URL + "/podcasts/"
-
-    def test_with_request(self, rf):
-        assert build_absolute_uri(request=rf.get("/")) == "http://testserver/"
-
-    def test_https(self, db, settings):
-        settings.HTTP_PROTOCOL = "https"
-        assert build_absolute_uri() == "https://example.com/"
+from radiofeed.http import urlsafe_decode, urlsafe_encode
 
 
 class TestUrlsafeEncode:
@@ -51,18 +23,3 @@ class TestUrlsafeDecode:
     def test_bad_encoding(self):
         with pytest.raises(ValueError):
             urlsafe_decode("testing")
-
-
-class TestUserAgent:
-    @pytest.fixture
-    def mock_now(self, mocker):
-        mocker.patch(
-            "django.utils.timezone.now",
-            return_value=datetime.datetime(year=2022, month=12, day=30),
-        )
-
-    def test_ok(self, db, mock_now):
-        assert (
-            user_agent()
-            == f"python-httpx/{httpx.__version__} (Radiofeed/2022-30-12; +http://example.com/)"
-        )

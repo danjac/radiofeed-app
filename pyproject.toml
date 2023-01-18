@@ -3,7 +3,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "radiofeed-app"
+name = "radiofeed"
 version = "0.1.0"
 description = "Podcast aggregator app"
 authors = ["Dan Jacob <danjac2018@gmail.com>"]
@@ -41,6 +41,7 @@ scipy = "^1.9.3"
 whitenoise = "^6.2.0"
 httpx = "^0.23.1"
 python-decouple = "^3.7"
+fake-useragent = "^1.1.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
