@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import enum
 
 from collections.abc import Callable
 from urllib.parse import urlencode
@@ -107,34 +108,40 @@ class PaginationParams:
 class OrderingParams:
     """Handles ordering parameters in request."""
 
+    class Ordering(enum.StrEnum):
+        ASC = enum.auto()
+        DESC = enum.auto()
+
     request: HttpRequest
 
     param: str = "order"
-    default: str = "desc"
+    default: str = Ordering.DESC
 
     def __str__(self) -> str:
         """Returns ordering value."""
-        return self.value
+        return str(self.value)
 
     @cached_property
-    def value(self) -> str:
+    def value(self) -> Ordering:
         """Returns the search query value, if any."""
         return self.request.GET.get(self.param, self.default)
 
     @cached_property
     def is_asc(self) -> bool:
         """Returns True if sort ascending."""
-        return self.value == "asc"
+        return self.value == self.Ordering.ASC
 
     @cached_property
     def is_desc(self) -> bool:
         """Returns True if sort descending."""
-        return self.value == "desc"
+        return self.value == self.Ordering.DESC
 
     @cached_property
     def reverse_qs(self) -> str:
         """Returns ascending query string parameter/value if current url descending and vice versa."""
-        return urlencode({self.param: "desc" if self.is_asc else "asc"})
+        return urlencode(
+            {self.param: self.Ordering.DESC if self.is_asc else self.Ordering.ASC}
+        )
 
 
 @dataclasses.dataclass(frozen=True)
