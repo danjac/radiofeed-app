@@ -206,6 +206,7 @@ _TZ_INFOS: Final = {
         ("ULAST", 9),
         ("ULAT", 8),
         ("UTC", 0),
+        ("UT", 0),
         ("UYST", -2),
         ("UYT", -3),
         ("UZT", 5),
