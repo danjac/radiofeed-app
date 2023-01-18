@@ -94,6 +94,19 @@ class TestImportPodcastFeeds:
             subscriber=auth_user, podcast=podcast
         ).exists()
 
+    def test_post_podcast_not_in_db(self, client, auth_user, upload_file):
+
+        assert_ok(
+            client.post(
+                self.url,
+                data={"opml": upload_file},
+                HTTP_HX_TARGET="import-feeds-form",
+                HTTP_HX_REQUEST="true",
+            ),
+        )
+
+        assert Subscription.objects.filter(subscriber=auth_user).count() == 0
+
     def test_post_has_no_new_feeds(self, client, auth_user, mocker, upload_file):
         create_subscription(
             podcast=create_podcast(
@@ -126,7 +139,7 @@ class TestImportPodcastFeeds:
 
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
-    def test_invalid_form(self, client, auth_user, mocker, upload_file):
+    def test_invalid_form(self, client, auth_user, mocker):
 
         assert_ok(
             client.post(
