@@ -19,7 +19,7 @@ from PIL import Image
 
 from radiofeed.http import urlsafe_decode
 
-_DEFAULT_CACHE_TIMEOUT: Final = 3600  # one hour
+_DEFAULT_CACHE_TIMEOUT: Final = 60 * 60 * 24  # one day
 
 
 _cache_control = cache_control(max_age=_DEFAULT_CACHE_TIMEOUT, immutable=True)
