@@ -177,12 +177,12 @@ class TestOrderingParams:
         ordering = OrderingParams(req)
         assert str(ordering) == "desc"
 
-    def test_qs_if_asc(self, rf):
+    def test_reverse_qs_if_asc(self, rf):
         req = rf.get("/", {"order": "asc"})
         ordering = OrderingParams(req)
-        assert ordering.qs == "order=desc"
+        assert ordering.reverse_qs == "order=desc"
 
-    def test_qs_if_desc(self, rf):
+    def test_reverse_qs_if_desc(self, rf):
         req = rf.get("/", {"order": "desc"})
         ordering = OrderingParams(req)
-        assert ordering.qs == "order=asc"
+        assert ordering.reverse_qs == "order=asc"

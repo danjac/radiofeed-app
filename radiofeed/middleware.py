@@ -109,9 +109,6 @@ class OrderingParams:
 
     request: HttpRequest
 
-    asc: str = "asc"
-    desc: str = "desc"
-
     param: str = "order"
     default: str = "desc"
 
@@ -127,17 +124,17 @@ class OrderingParams:
     @cached_property
     def is_asc(self) -> bool:
         """Returns True if sort ascending."""
-        return self.value == self.asc
+        return self.value == "asc"
 
     @cached_property
     def is_desc(self) -> bool:
         """Returns True if sort descending."""
-        return self.value == self.desc
+        return self.value == "desc"
 
     @cached_property
-    def qs(self) -> str:
+    def reverse_qs(self) -> str:
         """Returns ascending query string parameter/value if current url descending and vice versa."""
-        return urlencode({self.param: self.desc if self.is_asc else self.asc})
+        return urlencode({self.param: "desc" if self.is_asc else "asc"})
 
 
 @dataclasses.dataclass(frozen=True)
