@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from radiofeed.asserts import assert_not_found, assert_ok
-from radiofeed.http import urlsafe_encode
+from radiofeed.encoding import urlsafe_encode
 
 
 class TestManifest:
@@ -54,9 +54,6 @@ class TestCoverImage:
     def get_url(self, size, url):
         return reverse("cover_image", kwargs={"size": size, "encoded_url": url})
 
-    def encode_url(self, url):
-        return urlsafe_encode(url)
-
     def test_ok(self, client, db, mocker):
         class MockResponse:
             content = b"content"
@@ -66,10 +63,10 @@ class TestCoverImage:
 
         mocker.patch("httpx.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
-        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
+        assert_ok(client.get(self.get_url(100, urlsafe_encode(self.cover_url))))
 
     def test_not_accepted_size(self, client, db, mocker):
-        assert_not_found(client.get(self.get_url(500, self.encode_url(self.cover_url))))
+        assert_not_found(client.get(self.get_url(500, urlsafe_encode(self.cover_url))))
 
     def test_badly_encoded_url(self, client, db):
         assert_not_found(client.get(self.get_url(100, uuid.uuid4().hex)))
@@ -80,7 +77,7 @@ class TestCoverImage:
                 raise httpx.HTTPError("OOPS")
 
         mocker.patch("httpx.get", return_value=MockResponse())
-        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
+        assert_ok(client.get(self.get_url(100, urlsafe_encode(self.cover_url))))
 
     def test_failed_process(self, client, db, mocker):
         class MockResponse:
@@ -91,7 +88,7 @@ class TestCoverImage:
 
         mocker.patch("httpx.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", side_effect=IOError())
-        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
+        assert_ok(client.get(self.get_url(100, urlsafe_encode(self.cover_url))))
 
 
 class TestErrorPages:

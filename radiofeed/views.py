@@ -15,7 +15,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.http import urlsafe_decode, user_agent
+from radiofeed.encoding import urlsafe_decode
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
 _cache_page = cache_page(60 * 60)
@@ -154,7 +154,10 @@ def security(request: HttpRequest) -> HttpResponse:
 @_cache_control
 @_cache_page
 def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
-    """Proxies a cover image from remote source."""
+    """Proxies a cover image from remote source.
+
+    Encoded URL should be encoded and signed correctly using the `cover_image` template tag, so we can verify the request comes from this site.
+    """
     # only certain range of sizes permitted
     if size not in (100, 200, 300):
         raise Http404
@@ -171,7 +174,7 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
             follow_redirects=True,
             timeout=5,
             headers={
-                "User-Agent": user_agent(),
+                "User-Agent": settings.USER_AGENT,
             },
         )
 

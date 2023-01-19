@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pathlib
+import tomllib
 
 from email.utils import getaddresses
 
@@ -31,7 +32,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
+# Protocol used to determine absolute URIs when request is unavailable
 HTTP_PROTOCOL = "http"
+
+# Poetry should have canonical version
+with (BASE_DIR / "pyproject.toml").open("rb") as fp:
+    VERSION = tomllib.load(fp)["tool"]["poetry"]["version"]
+
+# User-Agent header for API calls from this site
+USER_AGENT = f"Radiofeed/{VERSION}"
 
 SITE_ID = 1
 

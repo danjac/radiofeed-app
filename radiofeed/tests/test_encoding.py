@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.http import urlsafe_decode, urlsafe_encode
+from radiofeed.encoding import urlsafe_decode, urlsafe_encode
 
 
 class TestUrlsafeEncode:

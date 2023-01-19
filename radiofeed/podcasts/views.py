@@ -4,6 +4,7 @@ import http
 
 import httpx
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
@@ -14,7 +15,6 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
-from radiofeed.http import user_agent
 from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast, Subscription
@@ -102,7 +102,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
         try:
             with httpx.Client(
-                headers={"User-Agent": user_agent()},
+                headers={"User-Agent": settings.USER_AGENT},
                 timeout=5,
             ) as client:
                 feeds = itunes.search(client, request.search.value)

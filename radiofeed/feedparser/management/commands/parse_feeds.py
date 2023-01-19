@@ -5,11 +5,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 import httpx
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.http import user_agent
 from radiofeed.podcasts.models import Podcast
 
 
@@ -30,7 +30,7 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
         with httpx.Client(
-            headers={"User-Agent": user_agent()}, timeout=10
+            headers={"User-Agent": settings.USER_AGENT}, timeout=10
         ) as client, ThreadPoolExecutor() as executor:
             executor.map(
                 lambda podcast: self._parse_feed(podcast, client),

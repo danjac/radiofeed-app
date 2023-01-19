@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import httpx
 
+from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
@@ -11,7 +12,6 @@ from django_object_actions import DjangoObjectActions
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.http import user_agent
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -182,7 +182,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         """Runs feed parser on single podcast."""
         try:
             with httpx.Client(
-                headers={"User-Agent": user_agent()}, timeout=5
+                headers={"User-Agent": settings.USER_AGENT}, timeout=5
             ) as client:
                 feed_parser.FeedParser(obj).parse(client)
 
