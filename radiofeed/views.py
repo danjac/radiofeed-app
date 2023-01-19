@@ -155,7 +155,7 @@ def security(request: HttpRequest) -> HttpResponse:
 def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source.
 
-    Encoded URL should be encoded and signed correctly using the `cover_image` template tag, so we can verify the request comes from this site.
+    URL should be signed, so we can verify the request comes from this site.
     """
     # only certain range of sizes permitted
     if size not in (100, 200, 300):
