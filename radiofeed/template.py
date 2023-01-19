@@ -8,6 +8,7 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
+from django.core.signing import Signer
 from django.core.validators import URLValidator
 from django.db.models import Model
 from django.shortcuts import resolve_url
@@ -16,7 +17,6 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed.encoding import urlsafe_encode
 from radiofeed.markup import markup
 
 register = template.Library()
@@ -129,10 +129,11 @@ def cover_image(
         reverse(
             "cover_image",
             kwargs={
-                "encoded_url": urlsafe_encode(cover_url),
                 "size": size,
             },
         )
+        + "?"
+        + urllib.parse.urlencode({"url": Signer().sign(cover_url)})
         if cover_url
         else ""
     )

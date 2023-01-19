@@ -6,6 +6,7 @@ import io
 import httpx
 
 from django.conf import settings
+from django.core.signing import BadSignature, Signer
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.templatetags.static import static
@@ -14,8 +15,6 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
-
-from radiofeed.encoding import urlsafe_decode
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
 _cache_page = cache_page(60 * 60)
@@ -153,7 +152,7 @@ def security(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpResponse:
+def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source.
 
     Encoded URL should be encoded and signed correctly using the `cover_image` template tag, so we can verify the request comes from this site.
@@ -164,8 +163,8 @@ def cover_image(request: HttpRequest, encoded_url: str, size: int) -> HttpRespon
 
     # check cover url is legit
     try:
-        cover_url = urlsafe_decode(encoded_url)
-    except ValueError:
+        cover_url = Signer().unsign(request.GET["url"])
+    except (KeyError, BadSignature):
         raise Http404
 
     try:
