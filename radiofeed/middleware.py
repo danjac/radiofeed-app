@@ -81,9 +81,6 @@ class Pagination:
         """Inserts the page query string parameter with the provided page number into the current query string.
 
         Preserves the original request path and any other query string parameters.
-
-        Returns:
-            updated URL path with new page
         """
         qs = self.request.GET.copy()
         qs[self.param] = page_number
