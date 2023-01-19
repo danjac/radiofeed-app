@@ -74,16 +74,13 @@ class Pagination:
 
     @cached_property
     def current(self) -> str:
-        """Returns current page number from URL."""
+        """Returns current page number from query string."""
         return self.request.GET.get(self.param, "")
 
     def url(self, page_number: int) -> str:
-        """Inserts the page query string parameter with the provided page number into the template.
+        """Inserts the page query string parameter with the provided page number into the current query string.
 
         Preserves the original request path and any other query string parameters.
-
-        Given the above and a URL of "/search?q=test" the result would
-        be something like: "/search?q=test&p=3"
 
         Returns:
             updated URL path with new page
