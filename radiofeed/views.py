@@ -170,11 +170,11 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     try:
         response = httpx.get(
             cover_url,
-            follow_redirects=True,
-            timeout=5,
             headers={
                 "User-Agent": settings.USER_AGENT,
             },
+            follow_redirects=True,
+            timeout=5,
         )
 
         response.raise_for_status()
