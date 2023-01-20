@@ -45,12 +45,5 @@ services:
             - "8025:8025"
             - "1025:1025"
 
-    app:
-        build:
-            context: .
-            dockerfile: ./Dockerfile
-        ports:
-            - "8080:8080"
-
 volumes:
     pg_data: {}
