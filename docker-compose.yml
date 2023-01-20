@@ -1,10 +1,9 @@
-version: '3.8'
+version: "3.8"
 
-x-logging:
-    &default-logging
+x-logging: &default-logging
     options:
-        max-size: '10k'
-        max-file: '3'
+        max-size: "10k"
+        max-file: "3"
 
 services:
     postgres:
@@ -14,37 +13,44 @@ services:
         volumes:
             - pg_data:/var/lib/postgresql/data
         mem_limit: 100m
-        stop_grace_period: '3s'
+        stop_grace_period: "3s"
         logging: *default-logging
         healthcheck:
-            test: [ 'CMD', 'pg_isready', '-U', 'postgres' ]
+            test: ["CMD", "pg_isready", "-U", "postgres"]
             interval: 1s
             timeout: 3s
             retries: 30
         ports:
-            - '5432:5432'
+            - "5432:5432"
 
     redis:
         image: redis:7.0.5-bullseye
         mem_limit: 100m
-        stop_grace_period: '3s'
+        stop_grace_period: "3s"
         logging: *default-logging
         healthcheck:
-            test: [ 'CMD', 'redis-cli', 'ping' ]
+            test: ["CMD", "redis-cli", "ping"]
             interval: 1s
             timeout: 3s
             retries: 30
         ports:
-            - '6379:6379'
+            - "6379:6379"
 
     mailhog:
         image: mailhog/mailhog:v1.0.1
         mem_limit: 100m
-        stop_grace_period: '3s'
+        stop_grace_period: "3s"
         logging: *default-logging
         ports:
-            - '8025:8025'
-            - '1025:1025'
+            - "8025:8025"
+            - "1025:1025"
+
+    app:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        ports:
+            - "8080:8080"
 
 volumes:
     pg_data: {}
