@@ -12,6 +12,7 @@ from django.contrib.sites.models import Site
 from django.core.signing import BadSignature, Signer
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.template.defaultfilters import truncatechars
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
@@ -88,7 +89,7 @@ def manifest(request: HttpRequest) -> HttpResponse:
             "dir": "ltr",
             "display": "standalone",
             "name": site.name,
-            "short_name": site.name,
+            "short_name": truncatechars(site.name, 12),
             "orientation": "any",
             "scope": start_url,
             "start_url": start_url,
