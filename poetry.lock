@@ -809,6 +809,25 @@ files = [
 Django = ">=3.2,<4.2"
 
 [[package]]
+name = "django-health-check"
+version = "3.17.0"
+description = "Run checks on services like databases, queue servers, celery processes, etc."
+category = "dev"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django-health-check-3.17.0.tar.gz", hash = "sha256:d1b8671e79d1de6e3dd1a9c69566222b0bfcfacca8b90511a4407b2d0d3d2778"},
+    {file = "django_health_check-3.17.0-py2.py3-none-any.whl", hash = "sha256:20dc5ccb516a4e7163593fd4026f0a7531e3027b47d23ebe3bd9dbc99ac4354c"},
+]
+
+[package.dependencies]
+django = ">=2.2"
+
+[package.extras]
+docs = ["sphinx"]
+test = ["celery", "pytest", "pytest-cov", "pytest-django", "redis"]
+
+[[package]]
 name = "django-htmx"
 version = "1.13.0"
 description = "Extensions for using Django with htmx."
@@ -2816,14 +2835,14 @@ tornado = ["tornado (>=5)"]
 
 [[package]]
 name = "setuptools"
-version = "66.0.0"
+version = "66.1.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "setuptools-66.0.0-py3-none-any.whl", hash = "sha256:a78d01d1e2c175c474884671dde039962c9d74c7223db7369771fcf6e29ceeab"},
-    {file = "setuptools-66.0.0.tar.gz", hash = "sha256:bd6eb2d6722568de6d14b87c44a96fac54b2a45ff5e940e639979a3d1792adb6"},
+    {file = "setuptools-66.1.0-py3-none-any.whl", hash = "sha256:fc19f9f62120a763300fd78e234b3cbd3417be098f08c156eaaf36420627e57b"},
+    {file = "setuptools-66.1.0.tar.gz", hash = "sha256:78a02bdea8a5cb66dec1c507598c443bcc75562817d2556c1a17f7a344615bb4"},
 ]
 
 [package.extras]
@@ -3121,4 +3140,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "513c6e3d03d5e512cd78298c1b05fb53ef998f9f7474dbe23c262c899e5e6238"
+content-hash = "95e7b8500023d3562addfde2c45c76dcd8b37672611511fc18db7d7454197c65"

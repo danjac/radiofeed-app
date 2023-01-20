@@ -35,3 +35,8 @@ if "django_browser_reload" in settings.INSTALLED_APPS:  # pragma: no cover
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
     ]
+
+if "health_check" in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path("ht/", include("health_check.urls")),
+    ]
