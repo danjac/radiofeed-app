@@ -3,6 +3,8 @@ from __future__ import annotations
 import datetime
 import io
 
+from typing import Final
+
 import httpx
 
 from django.conf import settings
@@ -15,6 +17,8 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
+
+_COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
 _cache_page = cache_page(60 * 60)
@@ -158,7 +162,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     URL should be signed, so we can verify the request comes from this site.
     """
     # only certain range of sizes permitted
-    if size not in (100, 200, 300):
+    if size not in _COVER_IMAGE_SIZES:
         raise Http404
 
     # check cover url is legit

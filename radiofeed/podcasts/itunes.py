@@ -29,7 +29,7 @@ _ITUNES_LOCATIONS: Final = (
     "us",
 )
 
-_APPLE_NAMESPACE = "http://www.apple.com/itms/"
+_APPLE_NAMESPACE: Final = "http://www.apple.com/itms/"
 
 _xpath_parser = XPathParser({"apple": _APPLE_NAMESPACE})
 
