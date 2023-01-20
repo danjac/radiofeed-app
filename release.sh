@@ -4,6 +4,10 @@
 
 ./manage.py check --deploy
 
+# staticfiles
+
+./manage.py collectstatic
+
 # migrations
 
 ./manage.py migrate
