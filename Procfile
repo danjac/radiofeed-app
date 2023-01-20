@@ -1,0 +1,1 @@
+web: ./release.sh

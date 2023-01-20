@@ -14,5 +14,3 @@ RUN pip install -r ./requirements.txt
 RUN xargs python -m nltk.downloader <./nltk.txt
 
 COPY . /app
-
-CMD ["./release.sh"]
