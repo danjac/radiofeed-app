@@ -11,7 +11,3 @@ RUN pip install --disable-pip-version-check --no-cache-dir -r ./requirements.txt
 RUN xargs python -m nltk.downloader <./nltk.txt
 
 COPY . /app
-
-# RUN ./release.sh
-
-# RUN gunicorn -c ./gunicorn.conf.py radiofeed.wsgi
