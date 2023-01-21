@@ -35,33 +35,19 @@ Copy `.env.example` to `.env`.
 
 The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then change these settings accordingly.
 
-To install dependencies for local development:
+To install dependencies for local development just run:
 
 ```bash
-poetry install
+make install
 ```
 
-Install the NLTK corpora:
+Run database migrations and install fixtures:
 
 ```bash
-xargs python -m nltk.downloader <./nltk.txt
+make db
 ```
 
-Run database migrations:
-
-```bash
-python manage.py migrate
-```
-
-You can also install default iTunes categories and a selection of popular podcasts from fixtures:
-
-```bash
-python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-
-python manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
-```
-
-This should provide some useful data to get started with. You can run the `parse_feeds` command detailed below to sync podcasts with their RSS feeds.
+You can run the `parse_feeds` command detailed below to sync podcasts with their RSS feeds.
 
 Finally, as with any Django project, you should also create a super-user to access the admin section:
 
