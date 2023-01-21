@@ -14,7 +14,7 @@
 
 # static files
 
-./manage.py collectstatic --no-input
+# ./manage.py collectstatic --no-input
 
 # start server
 
