@@ -50,7 +50,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def favicon(request: HttpRequest) -> FileResponse:
+def favicon(request: HttpRequest) -> HttpResponse:
     """Generates favicon file."""
     return FileResponse(
         (settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb")
