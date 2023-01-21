@@ -24,9 +24,7 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 ### Building development environment
 
-First copy `.env.example` to `.env`.
-
-The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then change these settings accordingly.
+The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then make a `.env` file and set `DATABASE_URL` and/or `REDIS_URL` accordingly.
 
 To install dependencies for local development:
 
