@@ -22,10 +22,9 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
-### Django setup
+### Building development environment
 
-
-Copy `.env.example` to `.env`.
+First copy `.env.example` to `.env`.
 
 The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then change these settings accordingly.
 
@@ -35,9 +34,9 @@ To install dependencies for local development just run:
 make install
 ```
 
-This will build your local Docker images and Python and frontend dependencies. You should then run `docker-compose up -d` to start Docker services.
+This will build your local Docker images and Python and frontend dependencies. You should then run `docker-compose up -d` to start Docker services if you are using them.
 
-Run database migrations and install fixtures:
+Next run database migrations and install fixtures:
 
 ```bash
 make db
