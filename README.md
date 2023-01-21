@@ -51,11 +51,6 @@ Finally, as with any Django project, you should also create a super-user to acce
 python manage.py createsuperuser
 ```
 
-
-### Frontend setup
-
-To install frontend dependencies just run `npm ci`.
-
 ### Running development environment
 
 The easiest way to spin up your local development environment is to run [Honcho](https://honcho.readthedocs.io/), which is included as a local dependency:
