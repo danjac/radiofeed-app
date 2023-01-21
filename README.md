@@ -24,6 +24,12 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 ### Building development environment
 
+It's recommended to run this project inside a virtualenv:
+
+```
+python -m venv .venv
+```
+
 First copy `.env.example` to `.env`.
 
 The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then change these settings accordingly.
