@@ -18,12 +18,6 @@ For ease of local development a `docker-compose.yml` is provided which includes:
 * Redis
 * Mailhog (for local email testing and development)
 
-Just run `docker-compose`:
-
-```bash
-docker-compose build && docker-compose up -d
-```
-
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
@@ -40,6 +34,8 @@ To install dependencies for local development just run:
 ```bash
 make install
 ```
+
+This will build your local Docker images and Python and frontend dependencies. You should then run `docker-compose up -d` to start Docker services.
 
 Run database migrations and install fixtures:
 
