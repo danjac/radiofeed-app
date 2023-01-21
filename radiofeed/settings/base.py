@@ -257,7 +257,10 @@ def configure_databases(conn_max_age: int = 360) -> dict:
     return {
         "default": {
             **dj_database_url.parse(
-                config("DATABASE_URL"),
+                config(
+                    "DATABASE_URL",
+                    "postgresql://postgres:password@localhost:5432/postgres",
+                ),
                 conn_max_age=conn_max_age,
                 conn_health_checks=conn_max_age > 0,
             ),
