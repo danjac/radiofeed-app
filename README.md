@@ -118,7 +118,7 @@ You should ensure the `SECRET_KEY` is sufficiently random: run the `generate_sec
 
 In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_. Make sure it ends in a forward slash, e.g. _some-random-path/_.
 
-A `Procfile` is provided for Heroku-like deployments (including Dokku, Railway etc).
+A Dockerfile is provided for standard container deployments e.g. on Dokku.
 
 Once you have access to the Django Admin, you should configure the default Site instance with the correct production name and domain.
 
