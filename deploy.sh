@@ -12,10 +12,6 @@
 
 ./manage.py clear_cache
 
-# static files
-
-# ./manage.py collectstatic --no-input
-
 # start server
 
 gunicorn -c ./gunicorn.conf.py radiofeed.wsgi
