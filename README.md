@@ -28,18 +28,29 @@ First copy `.env.example` to `.env`.
 
 The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then change these settings accordingly.
 
-To install dependencies for local development just run:
+To install dependencies for local development:
 
 ```bash
-make install
+poetry install
+npm ci
 ```
 
-This will build your local Docker images and Python and frontend dependencies. You should then run `docker-compose up -d` to start Docker services if you are using them.
+This will build your local Docker images and Python and frontend dependencies.
+
+You should then run `docker-compose up -d` to start Docker services if you are using them.
+
+Download NLTK data:
+
+```bash
+xargs python -m nltk.downloader <./nltk.txt
+```
 
 Next run database migrations and install fixtures:
 
 ```bash
-make db
+python manage.py migrate
+python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+python manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 ```
 
 You can run the `parse_feeds` command detailed below to sync podcasts with their RSS feeds.
