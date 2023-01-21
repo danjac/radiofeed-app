@@ -22,6 +22,10 @@ SECRET_KEY = config(
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
+DATABASE_URL = config(
+    "DATABASE_URL",
+    default="postgresql://postgres:password@localhost:5432/postgres",
+)
 
 REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
 
@@ -257,10 +261,7 @@ def configure_databases(conn_max_age: int = 360) -> dict:
     return {
         "default": {
             **dj_database_url.parse(
-                config(
-                    "DATABASE_URL",
-                    "postgresql://postgres:password@localhost:5432/postgres",
-                ),
+                DATABASE_URL,
                 conn_max_age=conn_max_age,
                 conn_health_checks=conn_max_age > 0,
             ),
