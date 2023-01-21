@@ -16,4 +16,4 @@ RUN xargs python -m nltk.downloader < /app/nltk.txt
 
 COPY . /app
 
-CMD ["./release.sh"]
+CMD ["./deploy.sh"]
