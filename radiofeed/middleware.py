@@ -105,7 +105,7 @@ class Ordering:
         return str(self.value)
 
     @cached_property
-    def value(self) -> Ordering:
+    def value(self) -> str:
         """Returns the search query value, if any."""
         return self.request.GET.get(self.param, self.default)
 
