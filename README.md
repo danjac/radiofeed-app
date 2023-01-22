@@ -22,37 +22,15 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
-### Development
+## Development
 
-To install dependencies and download NLTK data:
+A `Makefile` has been provided to help with local development:
 
-```bash
-make install nltk
-```
-
-To start Django webserver and Tailwind and esbuild (to build frontend files on the fly):
-
-```bash
-make start
-```
-
-If you are using Docker:
-
-```
-make compose start
-```
-
-Running tests:
-
-```
-make test
-```
-
-Updating dependencies:
-
-```
-make upgrade
-```
+* `make build`: install and download front and backend dependencies
+* `make compose`: start Docker services
+* `make db`: run migrations and load sample fixtures
+* `make start`: start Django dev server and Node services (Tailwind and esbuild)
+* `make test`: run unit tests
 
 ## Deployment
 

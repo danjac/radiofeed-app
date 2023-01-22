@@ -1,3 +1,5 @@
+build: install nltk
+
 compose:
 	docker-compose up -d
 
@@ -6,13 +8,13 @@ install:
 	poetry install
 	pre-commit install
 
+nltk:
+	xargs poetry run nltk.downloader <./nltk.txt
+
 db:
 	python manage.py migrate
 	python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
-
-nltk:
-	xargs poetry run nltk.downloader <./nltk.txt
 
 test:
 	poetry run pytest
