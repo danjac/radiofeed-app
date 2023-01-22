@@ -25,7 +25,7 @@ start:
 clean:
 	git clean -Xdf
 
-upgrade:
+update:
 	poetry update
 	npm run check-updates && npm install
 	pre-commit autoupdate
