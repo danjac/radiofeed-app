@@ -1,9 +1,11 @@
+all: install nltk compose db start
+
 compose:
 	docker-compose up -d
 
 install:
 	npm ci
-	python -m poetry install
+	poetry install
 
 db:
 	python manage.py migrate
@@ -23,6 +25,6 @@ clean:
 	git clean -Xdf
 
 upgrade:
-	python -m poetry update
+	poetry update
 	npm run check-updates && npm install
 	pre-commit autoupdate
