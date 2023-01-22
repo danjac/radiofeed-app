@@ -6,6 +6,7 @@ compose:
 install:
 	npm ci
 	poetry install
+	pre-commit install
 
 db:
 	python manage.py migrate
