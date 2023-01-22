@@ -3,21 +3,26 @@ compose:
 
 install:
 	npm ci
-	poetry install
-	xargs python -m nltk.downloader <./nltk.txt
+	python -m poetry install
 
 db:
 	python manage.py migrate
 	python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
+nltk:
+	xargs poetry run nltk.downloader <./nltk.txt
+
 test:
-	python -m pytest
+	poetry run pytest
 
 start:
-	python -m honcho start -f honcho.procfile
+	poetry run honcho start -f honcho.procfile
+
+clean:
+	git clean -Xdf
 
 upgrade:
-	poetry update
+	python -m poetry update
 	npm run check-updates && npm install
 	pre-commit autoupdate

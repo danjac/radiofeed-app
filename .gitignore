@@ -1,61 +1,45 @@
-*.pyc
-*.egg
-
-*.lock
-
-*.sqlite3
+# *.mo
+# Ansible
+# Common typos
+# Django media/static dirs
+# Translations
+'
+*.bak
 *.db
-db
-
-venv
-.venv
-
 *.DS_Store
-
+*.egg
+*.lock
+*.pot
+*.pyc
+*.sqlite3
+*.swp
+*log
 .cache
-.data
-__pycache__
-.mypy_cache/
-.pytest_cache/
-.vscode/
 .coverage
 .coverage*
-.vim/
-
-.idea/
-
-node_modules/
-
-*.bak
-
-logs
-*log
-npm-debug.log*
-
-# Translations
-# *.mo
-*.pot
-
-# Django media/static dirs
-media/
-staticfiles
-
-.ipython/
+.data
 .env
-
-celerybeat.pid
-celerybeat-schedule
-
-# Common typos
-:w
-'
-:
-*.swp
-
-# Ansible
-
+.idea/
+.ipython/
+.mypy_cache/
+.pytest_cache/
 .vault_pass
-hosts
-vars.yml
-
+.venv
+.vim/
+.vscode/
+:
+:w
+__pycache__
+celerybeat-schedule
+celerybeat.pid
+db
 db/audiotrails-volume
+dist/
+hosts
+logs
+media/
+node_modules/
+npm-debug.log*
+staticfiles
+vars.yml
+venv
