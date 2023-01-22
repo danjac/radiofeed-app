@@ -29,8 +29,7 @@ The default settings should just work as-is with the services provided with the 
 To install dependencies for local development:
 
 ```bash
-poetry install
-npm ci
+poetry install && npm ci
 ```
 
 This will build your local Docker images and Python and frontend dependencies.
@@ -47,8 +46,7 @@ Next run database migrations and install fixtures:
 
 ```bash
 python manage.py migrate
-python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-python manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
+python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz ./radiofeed/podcasts/fixtures/podcasts.json.gz
 ```
 
 You can run the `parse_feeds` command detailed below to sync podcasts with their RSS feeds.
