@@ -24,10 +24,10 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 ### Development
 
-To install dependencies:
+To install dependencies and download NLTK data:
 
 ```bash
-make install
+make install nltk
 ```
 
 To start Django webserver and Tailwind and esbuild (to build frontend files on the fly):
