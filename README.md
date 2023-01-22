@@ -24,13 +24,22 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 ## Development
 
-A `Makefile` has been provided to help with local development:
+A `Makefile` has been provided to help with setting up a local development environment:
 
 * `make build`: install and download front and backend dependencies
 * `make compose`: start Docker services
 * `make db`: run migrations and load sample fixtures
-* `make start`: start Django dev server and Node services (Tailwind and esbuild)
-* `make test`: run unit tests
+
+The following commands are useful while working on the project:
+
+* `python manage.py runserver`: run the Django development server
+* `python -m pytest`: run unit tests
+* `npm run build:js`: compile JavaScript assets
+* `npm run watch:js`: compile JavaScript assets on the fly
+* `npm run build:css`: compile CSS assets (including Tailwind)
+* `npm run watch:css`: compile CSS assets (including Tailwind) on the fly
+
+If you are running several of these services simultaneously you should use a multiplexer such as Tmux.
 
 ## Deployment
 

@@ -16,12 +16,6 @@ db:
 	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
-test:
-	poetry run pytest
-
-start:
-	poetry run honcho start -f honcho.procfile
-
 clean:
 	git clean -Xdf
 
