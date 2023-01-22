@@ -12,9 +12,9 @@ nltk:
 	xargs poetry run nltk.downloader <./nltk.txt
 
 db:
-	python manage.py migrate
-	python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-	python manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
+	poetry run ./manage.py migrate
+	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
 test:
 	poetry run pytest
