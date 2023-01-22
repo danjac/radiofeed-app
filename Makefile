@@ -2,8 +2,8 @@ compose:
 	docker-compose up -d
 
 install:
-	poetry install
 	npm ci
+	poetry install
 	xargs python -m nltk.downloader <./nltk.txt
 
 db:
@@ -19,6 +19,5 @@ start:
 
 upgrade:
 	poetry update
-	npm run check-updates
-	npm install
+	npm run check-updates && npm install
 	pre-commit autoupdate

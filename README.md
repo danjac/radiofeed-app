@@ -22,58 +22,36 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
-### Building development environment
+### Development
 
-The default settings should just work as-is with the services provided with the `docker-compose.yml` file. If you are using local instances of PostgreSQL, Redis, etc then make a `.env` file and set `DATABASE_URL` and/or `REDIS_URL` accordingly.
-
-To install dependencies for local development:
+To install dependencies:
 
 ```bash
-poetry install && npm ci
+make install
 ```
 
-This will build your local Docker images and Python and frontend dependencies.
-
-You should then run `docker-compose up -d` to start Docker services if you are using them.
-
-Download NLTK data:
+To start Django webserver and Tailwind and esbuild (to build frontend files on the fly):
 
 ```bash
-xargs python -m nltk.downloader <./nltk.txt
+make start
 ```
 
-Next run database migrations and install fixtures:
+If you are using Docker:
 
-```bash
-python manage.py migrate
-python manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz ./radiofeed/podcasts/fixtures/podcasts.json.gz
+```
+make compose start
 ```
 
-You can run the `parse_feeds` command detailed below to sync podcasts with their RSS feeds.
+Running tests:
 
-Finally, as with any Django project, you should also create a super-user to access the admin section:
-
-```bash
-python manage.py createsuperuser
+```
+make test
 ```
 
-### Running development environment
+Updating dependencies:
 
-The easiest way to spin up your local development environment is to run [Honcho](https://honcho.readthedocs.io/), which is included as a local dependency:
-
-```bash
-honcho start -f honcho.procfile
 ```
-
-This will start up:
-
-* Django development server
-* `tailwindcss` and `esbuild` for building frontend assets on the fly
-
-Tests can be run with `pytest`:
-
-```bash
-python -m pytest
+make upgrade
 ```
 
 ## Deployment
@@ -128,13 +106,3 @@ Send podcast recommendations to users:
 ```
 
 An `app.json` configuration with these cron schedules is included for Dokku deployment.
-
-### Updating dependencies
-
-To update backend, frontend and development dependencies, just run the `upgrade.sh` script:
-
-```bash
-./upgrade.sh
-```
-
-After testing updates you can then commit these to the repo.
