@@ -1,5 +1,3 @@
-all: install nltk compose db start
-
 compose:
 	docker-compose up -d
 
