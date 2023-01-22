@@ -16,6 +16,6 @@ RUN xargs python -m nltk.downloader < /app/nltk.txt
 
 COPY . /app
 
-RUN python manage.py collectstatic --settings=radiofeed.settings.production --no-input
+RUN python manage.py collectstatic --no-input --traceback
 
 CMD ["./deploy.sh"]
