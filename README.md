@@ -8,7 +8,7 @@ Radiofeed requires the following dependencies:
 
 * Python 3.10+
 * Node 16+
-* pip-tools
+* [pip-tools](https://github.com/jazzband/pip-tools)
 
 ### Additional requirements
 

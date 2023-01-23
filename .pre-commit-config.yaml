@@ -129,6 +129,7 @@ repos:
             args:
                 [
                     "requirements/base.in",
+                    "requirements/ci.in",
                     "requirements/dev.in",
                     "-o",
                     "requirements-dev.txt",

@@ -22,7 +22,7 @@ clean:
 update:
 	pip-compile requirements/base.in requirements/prod.in -o requirements.txt --resolver=backtracking
 	pip-compile requirements/base.in requirements/ci.in -o requirements-ci.txt --resolver=backtracking
-	pip-compile requirements/base.in requirements/dev.in -o requirements-ci.txt --resolver=backtracking
+	pip-compile requirements/base.in requirements/ci.in requirements/dev.in -o requirements-dev.txt --resolver=backtracking
 	python -m pip install -r requirements-dev.txt
 	npm run check-updates && npm install
 	pre-commit autoupdate
