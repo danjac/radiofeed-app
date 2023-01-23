@@ -100,39 +100,13 @@ repos:
       rev: 6.12.1
       hooks:
           - id: pip-compile
-            name: pip-compile production
-            files: ^(requirements/base\.in|requirements/prod\.in)$
+            name: pip-compile
+            files: requirements\.in
             args:
                 [
-                    "requirements/base.in",
-                    "requirements/prod.in",
+                    "requirements.in",
                     "-o",
                     "requirements.txt",
-                    "--resolver",
-                    "backtracking",
-                ]
-          - id: pip-compile
-            name: pip-compile CI
-            files: ^(requirements/base\.in|requirements/ci\.in)$
-            args:
-                [
-                    "requirements/base.in",
-                    "requirements/ci.in",
-                    "-o",
-                    "requirements-ci.txt",
-                    "--resolver",
-                    "backtracking",
-                ]
-          - id: pip-compile
-            name: pip-compile development
-            files: ^(requirements/base\.in|requirements/dev\.in)$
-            args:
-                [
-                    "requirements/base.in",
-                    "requirements/ci.in",
-                    "requirements/dev.in",
-                    "-o",
-                    "requirements-dev.txt",
                     "--resolver",
                     "backtracking",
                 ]
