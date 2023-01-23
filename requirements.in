@@ -54,3 +54,4 @@ types-bleach
 types-markdown
 types-python-dateutil
 whitenoise
+djlint
