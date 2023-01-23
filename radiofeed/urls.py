@@ -14,6 +14,7 @@ urlpatterns = [
     path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.users.urls")),
     path("account/", include("allauth.urls")),
+    path("ht/", include("health_check.urls")),
     path("about/", views.about_page, name="about"),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
     path("covers/<int:size>/cover.webp", views.cover_image, name="cover_image"),
@@ -25,18 +26,8 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
-if "debug_toolbar" in settings.INSTALLED_APPS:  # pragma: no cover
+if settings.DEBUG:  # pragma: no cover
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),
-    ]
-
-
-if "django_browser_reload" in settings.INSTALLED_APPS:  # pragma: no cover
-    urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
-    ]
-
-if "health_check" in settings.INSTALLED_APPS:  # pragma: no cover
-    urlpatterns += [
-        path("ht/", include("health_check.urls")),
     ]

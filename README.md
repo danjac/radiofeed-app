@@ -34,11 +34,11 @@ A `Makefile` has been provided to help with setting up your local development en
 
 * `make build`: download and install front and backend dependencies
 * `make db`: run migrations and load sample fixtures
+* `make test`: run unit teasts
 * `make update`: update all dependencies to latest available versions
 
-The following commands are useful while working on the project in addition to the usual Django management commands:
+The following commands are useful for managing frontend assets:
 
-* `python -m pytest`: run unit tests
 * `npm run build`: compile JavaScript and CSS assets
 * `npm run watch`: compile JavaScript and CSS assets on the fly
 
