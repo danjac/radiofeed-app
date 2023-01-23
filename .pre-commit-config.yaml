@@ -17,7 +17,7 @@ repos:
           - id: detect-private-key
           - id: file-contents-sorter
             args: ["--ignore-case", "--unique"]
-            files: ^(\.gitignore|\.dockerignore|requirements[-\w]*.txt)$
+            files: ^(\.gitignore|\.dockerignore|requirements\/requirements[-\w]*.txt)$
     - repo: https://github.com/pycqa/isort
       rev: 5.11.4
       hooks:
