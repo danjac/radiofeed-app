@@ -1,8 +1,5 @@
 build: install nltk
 
-compose:
-	docker-compose up -d
-
 install:
 	python -m pip install -r requirements.txt
 	npm ci
@@ -10,6 +7,10 @@ install:
 
 nltk:
 	xargs python -m nltk.downloader <./nltk.txt
+
+compose:
+	docker-compose up -d
+
 
 db:
 	python ./manage.py migrate
