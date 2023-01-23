@@ -8,7 +8,7 @@ Radiofeed requires the following dependencies:
 
 * Python 3.10+
 * Node 16+
-* Poetry
+* pip-tools
 
 ### Additional requirements
 
@@ -24,7 +24,13 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 ## Development
 
-A `Makefile` has been provided to help with setting up a local development environment:
+You should first create a virtualenv before installing the application:
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+```
+
+A `Makefile` has been provided to help with setting up your local development environment:
 
 * `make build`: install and download front and backend dependencies
 * `make compose`: start Docker services
