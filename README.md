@@ -36,9 +36,8 @@ A `Makefile` has been provided to help with setting up your local development en
 * `make db`: run migrations and load sample fixtures
 * `make update`: update all dependencies to latest available versions
 
-The following commands are useful while working on the project:
+The following commands are useful while working on the project in addition to the usual Django management commands:
 
-* `python manage.py runserver`: run the Django development server
 * `python -m pytest`: run unit tests
 * `npm run build`: compile JavaScript and CSS assets
 * `npm run watch`: compile JavaScript and CSS assets on the fly
