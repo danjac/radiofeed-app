@@ -103,7 +103,7 @@ django-redis==5.2.0
     # via -r requirements.in
 django-widget-tweaks==1.4.12
     # via -r requirements.in
-djlint==1.19.12
+djlint==1.19.13
     # via -r requirements.in
 editorconfig==0.12.3
     # via
