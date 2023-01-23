@@ -19,7 +19,7 @@ django-object-actions
 django-permissions-policy
 django-redis
 django-widget-tweaks
-djhtml
+djlint
 faker
 flake8
 flake8-bugbear
@@ -54,4 +54,3 @@ types-bleach
 types-markdown
 types-python-dateutil
 whitenoise
-djlint
