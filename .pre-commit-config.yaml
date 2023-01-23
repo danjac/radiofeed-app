@@ -101,7 +101,7 @@ repos:
       hooks:
           - id: pip-compile
             name: pip-compile production
-            files: (base.in|production.in)
+            files: ^(requirements/base\.in|requirements/production\.in)$
             args:
                 [
                     "requirements/base.in",
