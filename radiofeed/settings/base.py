@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pathlib
-import tomllib
 
 from email.utils import getaddresses
 
@@ -9,6 +8,8 @@ import dj_database_url
 
 from decouple import AutoConfig, Csv
 from django.urls import reverse_lazy
+
+from radiofeed import __version__
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
@@ -39,12 +40,8 @@ ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv
 # Protocol used to determine absolute URIs when request is unavailable
 HTTP_PROTOCOL = "http"
 
-# Poetry should have canonical version
-with (BASE_DIR / "pyproject.toml").open("rb") as fp:
-    VERSION = tomllib.load(fp)["tool"]["poetry"]["version"]
-
 # User-Agent header for API calls from this site
-USER_AGENT = f"Radiofeed/{VERSION}"
+USER_AGENT = f"Radiofeed/{__version__}"
 
 SITE_ID = 1
 
