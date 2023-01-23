@@ -4,22 +4,24 @@ compose:
 	docker-compose up -d
 
 install:
+	pip install -r dev-requirements.txt
 	npm ci
-	poetry install
 	pre-commit install
 
 nltk:
-	xargs poetry run nltk.downloader <./nltk.txt
+	xargs python -m nltk.downloader <./nltk.txt
 
 db:
-	poetry run ./manage.py migrate
-	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
+	python ./manage.py migrate
+	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
 clean:
 	git clean -Xdf
 
 update:
-	poetry update
+	pip-compile --upgrade pyproject.toml --extra prod -o requirements.txt
+	pip-compile --upgrade pyproject.toml --extra ci -o ci-requirements.txt
+	pip-compile --upgrade pyproject.toml --extra dev -o dev-requirements.txt
 	npm run check-updates && npm install
 	pre-commit autoupdate
