@@ -5,10 +5,10 @@ import html
 from typing import Final
 
 import bleach
-import markdown
 
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
+from markdown import markdown as _markdown
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -86,10 +86,10 @@ def strip_html(value: str | None) -> str:
     return html.unescape(striptags(strip_whitespace(value)))
 
 
-def markup(value: str | None) -> str:
+def markdown(value: str | None) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := strip_whitespace(value):
-        return mark_safe(clean(markdown.markdown(value)))  # nosec
+        return mark_safe(clean(_markdown(value)))  # nosec
     return ""
 
 

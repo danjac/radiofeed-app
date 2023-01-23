@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed import markup
+from radiofeed.html import clean, markdown, strip_html
 
 
-class TestMarkup:
+class TestMarkdown:
     @pytest.mark.parametrize(
         "value,expected",
         [
@@ -19,27 +19,25 @@ class TestMarkup:
             ("<script>test</script>", "test"),
         ],
     )
-    def test_markup(self, value, expected):
-        return markup.markup(value) == expected
+    def test_markdown(self, value, expected):
+        return markdown(value) == expected
 
 
 class TestClean:
     def test_if_none(self):
-        assert markup.clean(None) == ""
+        assert clean(None) == ""
 
     def test_if_safe(self):
         text = "<p>testing with paras</p>"
-        assert markup.clean(text) == text
+        assert clean(text) == text
 
     def test_has_link_link(self):
-        cleaned = markup.clean('<a href="http://reddit.com">Reddit</a>')
+        cleaned = clean('<a href="http://reddit.com">Reddit</a>')
         assert 'target="_blank"' in cleaned
         assert 'rel="noopener noreferrer nofollow"' in cleaned
 
     def test_unsafe(self):
-        assert (
-            markup.clean("<script>alert('xss ahoy!')</script>") == "alert('xss ahoy!')"
-        )
+        assert clean("<script>alert('xss ahoy!')</script>") == "alert('xss ahoy!')"
 
 
 class TestStripHtml:
@@ -53,4 +51,4 @@ class TestStripHtml:
         ],
     )
     def test_strip_html(self, value, expected):
-        return markup.strip_html(value) == expected
+        return strip_html(value) == expected
