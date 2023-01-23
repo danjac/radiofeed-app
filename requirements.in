@@ -20,7 +20,6 @@ django-permissions-policy
 django-redis
 django-widget-tweaks
 djhtml
-djlint
 faker
 flake8
 flake8-bugbear
