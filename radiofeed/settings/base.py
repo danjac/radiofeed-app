@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import pathlib
 
 from email.utils import getaddresses
@@ -8,8 +9,6 @@ import dj_database_url
 
 from decouple import AutoConfig, Csv
 from django.urls import reverse_lazy
-
-from radiofeed import __version__
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
@@ -41,7 +40,7 @@ ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv
 HTTP_PROTOCOL = "http"
 
 # User-Agent header for API calls from this site
-USER_AGENT = f"Radiofeed/{__version__}"
+USER_AGENT = f"Radiofeed/{datetime.datetime.now().strftime('%Y-%d-%m')}"
 
 SITE_ID = 1
 
