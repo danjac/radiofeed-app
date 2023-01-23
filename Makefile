@@ -8,9 +8,6 @@ install:
 nltk:
 	xargs python -m nltk.downloader <./nltk.txt
 
-test:
-	python -m pytest
-
 db:
 	python ./manage.py migrate
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz

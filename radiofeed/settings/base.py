@@ -6,12 +6,9 @@ import pathlib
 from email.utils import getaddresses
 
 import dj_database_url
-import sentry_sdk
 
 from decouple import AutoConfig, Csv
 from django.urls import reverse_lazy
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.logging import ignore_logger
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
@@ -93,12 +90,6 @@ INSTALLED_APPS: list[str] = [
     "django_htmx",
     "django_object_actions",
     "fast_update",
-    "health_check",
-    "health_check.db",
-    "health_check.cache",
-    "health_check.contrib.migrations",
-    "health_check.contrib.psutil",
-    "health_check.contrib.redis",
     "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.feedparser",
@@ -258,40 +249,6 @@ CACHEOPS = {
     "users.*": {"ops": "all"},
 }
 
-# Mailgun
-
-# https://anymail.dev/en/v9.0/esps/mailgun/
-
-if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
-
-    INSTALLED_APPS += ["anymail"]
-
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
-
-    ANYMAIL = {
-        "MAILGUN_API_KEY": MAILGUN_API_KEY,
-        "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
-    }
-
-# Sentry
-
-# https://docs.sentry.io/platforms/python/guides/django/
-
-if SENTRY_URL := config("SENTRY_URL", default=None):
-
-    ignore_logger("django.security.DisallowedHost")
-
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.5,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )
 # Databases
 
 
