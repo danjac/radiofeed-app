@@ -22,7 +22,7 @@ backcall==0.2.0
     # via ipython
 bandit[toml]==1.7.4
     # via -r requirements.in
-bleach==5.0.1
+bleach==6.0.0
     # via -r requirements.in
 brotli==1.0.9
     # via -r requirements.in
