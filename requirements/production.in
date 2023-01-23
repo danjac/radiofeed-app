@@ -1,0 +1,6 @@
+brotli
+gunicorn
+sentry-sdk
+django-anymail
+django-health-check
+psutil

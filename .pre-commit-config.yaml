@@ -105,7 +105,6 @@ repos:
             args:
                 [
                     "requirements/base.in",
-                    "--extra",
                     "requirements/production.in",
                     "-o",
                     "requirements.txt",
