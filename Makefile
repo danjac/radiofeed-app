@@ -8,10 +8,6 @@ install:
 nltk:
 	xargs python -m nltk.downloader <./nltk.txt
 
-compose:
-	docker-compose up -d
-
-
 db:
 	python ./manage.py migrate
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz

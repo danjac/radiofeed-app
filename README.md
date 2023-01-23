@@ -32,9 +32,9 @@ python -m venv .venv && source .venv/bin/activate
 
 A `Makefile` has been provided to help with setting up your local development environment:
 
-* `make build`: install and download front and backend dependencies
-* `make compose`: start Docker services
+* `make build`: download and install front and backend dependencies
 * `make db`: run migrations and load sample fixtures
+* `make update`: update all dependencies to latest available versions
 
 The following commands are useful while working on the project:
 
