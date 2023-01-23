@@ -10,7 +10,7 @@ import markdown
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
 
-_ALLOWED_TAGS: Final = [
+_ALLOWED_TAGS: Final = {
     "a",
     "abbr",
     "acronym",
@@ -52,7 +52,7 @@ _ALLOWED_TAGS: Final = [
     "tt",
     "u",
     "ul",
-]
+}
 
 _ALLOWED_ATTRS: Final = {
     "a": ["href", "target", "title"],
