@@ -17,7 +17,7 @@ repos:
           - id: detect-private-key
           - id: file-contents-sorter
             args: ["--ignore-case", "--unique"]
-            files: ^(\.gitignore|\.dockerignore|requirements.txt|[-w]*requirements.txt)$
+            files: ^(\.gitignore|\.dockerignore|requirements[-\w]*.txt)$
     - repo: https://github.com/pycqa/isort
       rev: 5.11.4
       hooks:
@@ -101,24 +101,12 @@ repos:
       hooks:
           - id: pip-compile
             name: pip-compile production
-            files: pyproject.toml
-            args:
-                ["pyproject.toml", "--extra", "prod", "-o", "requirements.txt"]
-          - id: pip-compile
-            name: pip-compile CI
-            files: pyproject.toml
-            args:
-                ["pyproject.toml", "--extra", "ci", "-o", "ci-requirements.txt"]
-          - id: pip-compile
-            name: pip-compile development
-            files: pyproject.toml
+            files: (requirements\/*.in)
             args:
                 [
-                    "pyproject.toml",
+                    "requirements/base.in",
                     "--extra",
-                    "dev",
-                    "--extra",
-                    "ci",
+                    "requirements/production.in",
                     "-o",
-                    "dev-requirements.txt",
+                    "requirements.txt",
                 ]
