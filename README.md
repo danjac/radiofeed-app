@@ -40,10 +40,8 @@ The following commands are useful while working on the project:
 
 * `python manage.py runserver`: run the Django development server
 * `python -m pytest`: run unit tests
-* `npm run build:js`: compile JavaScript assets
-* `npm run watch:js`: compile JavaScript assets on the fly
-* `npm run build:css`: compile CSS assets (including Tailwind)
-* `npm run watch:css`: compile CSS assets (including Tailwind) on the fly
+* `npm run build`: compile JavaScript and CSS assets
+* `npm run watch`: compile JavaScript and CSS assets on the fly
 
 If you are running several of these services simultaneously you should use a multiplexer such as Tmux.
 
