@@ -1,0 +1,6 @@
+black
+django-browser-reload
+django-debug-toolbar
+djhtml
+ipython
+isort

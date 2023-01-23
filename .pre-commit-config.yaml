@@ -17,7 +17,7 @@ repos:
           - id: detect-private-key
           - id: file-contents-sorter
             args: ["--ignore-case", "--unique"]
-            files: ^(\.gitignore|\.dockerignore|requirements[-\w]*.txt)$
+            exclude: .gitignore|.dockerignore|requirements[-\w]*.txt
     - repo: https://github.com/pycqa/isort
       rev: 5.11.4
       hooks:
@@ -101,7 +101,7 @@ repos:
       hooks:
           - id: pip-compile
             name: pip-compile production
-            files: ^(requirements/base\.in|requirements/production\.in)$
+            files: ^(requirements/base\.in|requirements/prod\.in)$
             args:
                 [
                     "requirements/base.in",
@@ -112,8 +112,8 @@ repos:
                     "backtracking",
                 ]
           - id: pip-compile
-            name: pip-compile testing
-            files: ^(requirements/base\.in|requirements/testing\.in)$
+            name: pip-compile CI
+            files: ^(requirements/base\.in|requirements/ci\.in)$
             args:
                 [
                     "requirements/base.in",
@@ -124,8 +124,8 @@ repos:
                     "backtracking",
                 ]
           - id: pip-compile
-            name: pip-compile testing
-            files: ^(requirements/base\.in|requirements/development\.in)$
+            name: pip-compile development
+            files: ^(requirements/base\.in|requirements/dev\.in)$
             args:
                 [
                     "requirements/base.in",
