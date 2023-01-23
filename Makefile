@@ -21,6 +21,6 @@ clean:
 
 update:
 	pip-compile requirements.in -o requirements.txt --resolver=backtracking
-	python -m pip install -r requirements-dev.txt
+	python -m pip install -r requirements.txt
 	npm run check-updates && npm install
 	pre-commit autoupdate
