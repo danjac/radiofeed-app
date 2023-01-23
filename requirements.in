@@ -4,15 +4,18 @@ Pillow
 attrs
 bandit[toml]
 bleach
+brotli
 coverage
 dj-database-url
 django-allauth
+django-anymail
 django-browser-reload
 django-cacheops
 django-coverage-plugin
 django-debug-toolbar
 django-extensions
 django-fast-update
+django-health-check
 django-htmx
 django-model-utils
 django-object-actions
@@ -27,6 +30,7 @@ flake8-comprehensions
 flake8-debugger
 flake8-deprecated
 flake8-print
+gunicorn
 hiredis
 httpx
 ipython
@@ -35,6 +39,7 @@ mypy
 nltk
 numpy
 pandas
+psutil
 psycopg2-binary
 pytest
 pytest-cov
@@ -50,6 +55,7 @@ python-decouple
 redis
 scikit-learn
 scipy
+sentry-sdk
 types-bleach
 types-markdown
 types-python-dateutil
