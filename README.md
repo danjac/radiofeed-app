@@ -24,12 +24,6 @@ Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 ## Development
 
-You should first create a virtualenv before installing the application:
-
-```bash
-python -m venv .venv && source .venv/bin/activate
-```
-
 A `Makefile` has been provided to help with setting up your local development environment:
 
 * `make build`: install and download front and backend dependencies
