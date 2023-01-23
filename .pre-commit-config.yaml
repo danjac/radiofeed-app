@@ -105,9 +105,11 @@ repos:
             args:
                 [
                     "requirements/base.in",
-                    "requirements/production.in",
+                    "requirements/prod.in",
                     "-o",
                     "requirements.txt",
+                    "--resolver",
+                    "backtracking",
                 ]
           - id: pip-compile
             name: pip-compile testing
@@ -115,7 +117,21 @@ repos:
             args:
                 [
                     "requirements/base.in",
-                    "requirements/testing.in",
+                    "requirements/ci.in",
                     "-o",
-                    "requirements-testing.txt",
+                    "requirements-ci.txt",
+                    "--resolver",
+                    "backtracking",
+                ]
+          - id: pip-compile
+            name: pip-compile testing
+            files: ^(requirements/base\.in|requirements/development\.in)$
+            args:
+                [
+                    "requirements/base.in",
+                    "requirements/dev.in",
+                    "-o",
+                    "requirements-dev.txt",
+                    "--resolver",
+                    "backtracking",
                 ]

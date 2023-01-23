@@ -4,7 +4,7 @@ compose:
 	docker-compose up -d
 
 install:
-	pip install -r dev-requirements.txt
+	pip install -r requirements-dev.txt
 	npm ci
 	pre-commit install
 
@@ -20,8 +20,8 @@ clean:
 	git clean -Xdf
 
 update:
-	pip-compile --upgrade pyproject.toml --extra prod -o requirements.txt
-	pip-compile --upgrade pyproject.toml --extra ci -o ci-requirements.txt
-	pip-compile --upgrade pyproject.toml --extra dev -o dev-requirements.txt
+	pip-compile requirements/base.in requirements/prod.in -o requirements.txt --resolver=backtracking
+	pip-compile requirements/base.in requirements/ci.in -o requirements-dev.txt --resolver=backtracking
+	pip-compile requirements/base.in requirements/dev.in -o dev-requirements-dev.txt --resolver=backtracking
 	npm run check-updates && npm install
 	pre-commit autoupdate
