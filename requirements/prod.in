@@ -1,5 +1,6 @@
 -r base.in
 
+brotli
 django-anymail
 django-health-check
 django-permissions-policy

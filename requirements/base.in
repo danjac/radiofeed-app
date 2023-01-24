@@ -3,7 +3,6 @@ Markdown
 Pillow
 attrs
 bleach
-brotli
 coverage
 dj-database-url
 django-allauth
