@@ -12,6 +12,7 @@ django-fast-update
 django-htmx
 django-model-utils
 django-object-actions
+django-permissions-policy
 django-redis
 django-widget-tweaks
 hiredis
