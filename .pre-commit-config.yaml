@@ -111,6 +111,8 @@ repos:
                     "requirements.txt",
                     "--resolver",
                     "backtracking",
+                    "--no-header",
+                    "--no-annotate",
                 ]
           - id: pip-compile
             name: pip-compile CI
@@ -124,6 +126,8 @@ repos:
                     "requirements-ci.txt",
                     "--resolver",
                     "backtracking",
+                    "--no-header",
+                    "--no-annotate",
                 ]
           - id: pip-compile
             name: pip-compile development
@@ -139,4 +143,6 @@ repos:
                     "requirements-dev.txt",
                     "--resolver",
                     "backtracking",
+                    "--no-header",
+                    "--no-annotate",
                 ]
