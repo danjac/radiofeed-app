@@ -91,7 +91,7 @@ def active_link(
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
-    return {"content": _markdown(value)}
+    return {"content": _markdown(value or "")}
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)

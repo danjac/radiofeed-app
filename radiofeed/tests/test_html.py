@@ -9,7 +9,6 @@ class TestMarkdown:
     @pytest.mark.parametrize(
         "value,expected",
         [
-            (None, ""),
             ("", ""),
             ("   ", ""),
             ("test", "test"),
@@ -43,9 +42,8 @@ class TestStripHtml:
     @pytest.mark.parametrize(
         "value,expected",
         [
-            (None, ""),
             ("", ""),
-            ("", ""),
+            ("  ", ""),
             ("<p>this &amp; that</p>", "this & that"),
         ],
     )

@@ -56,23 +56,18 @@ _cleaner = Cleaner(
 )
 
 
-def clean(value: str | None) -> str:
+def clean(value: str) -> str:
     """Runs Bleach through value and scrubs any unwanted HTML tags and attributes."""
     return _cleaner.clean_html(value) if value else ""
 
 
-def strip_whitespace(value: str | None) -> str:
-    """Removes all trailing whitespace."""
-    return (value or "").strip()
-
-
-def strip_html(value: str | None) -> str:
+def strip_html(value: str) -> str:
     """Scrubs all HTML tags and entities from text."""
-    return html.unescape(striptags(strip_whitespace(value)))
+    return html.unescape(striptags(value.strip()))
 
 
-def markdown(value: str | None) -> str:
+def markdown(value: str) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
-    if value := strip_whitespace(value):
+    if value := value.strip():
         return mark_safe(clean(_markdown(value)))  # nosec
     return ""
