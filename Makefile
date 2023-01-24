@@ -1,7 +1,7 @@
 build: install nltk
 
 install:
-	python -m pip install -r requirements/dev.txt
+	python -m pip install -r requirements.txt
 	npm ci
 	pre-commit install
 
@@ -20,9 +20,7 @@ clean:
 	git clean -Xdf
 
 update:
-	pip-compile --upgrade requirements/prod.in -o requirements/prod.txt --resolver=backtracking
-	pip-compile --upgrade requirements/ci.in -o requirements/ci.txt --resolver=backtracking
-	pip-compile --upgrade requirements/dev.in -o requirements/dev.txt --resolver=backtracking
+	pip-compile --upgrade requirements.in -o requirements.txt --resolver=backtracking
 	python -m pip install -r requirements/dev.txt
 	npm run check-updates && npm install
 	pre-commit autoupdate
