@@ -6,9 +6,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
+COPY ./requirements/prod.txt /app/requirements/prod.txt
 
-RUN pip install -r /app/requirements.txt --no-cache-dir
+RUN pip install -r /app/requirements/prod.txt --no-cache-dir
 
 COPY ./nltk.txt /app/nltk.txt
 
