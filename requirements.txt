@@ -125,6 +125,7 @@ flake8==6.0.0
     #   flake8-debugger
     #   flake8-deprecated
     #   flake8-print
+    #   flake8-pyproject
 flake8-bugbear==23.1.20
     # via -r requirements.in
 flake8-comprehensions==3.10.1
@@ -134,6 +135,8 @@ flake8-debugger==4.1.2
 flake8-deprecated==2.0.1
     # via -r requirements.in
 flake8-print==5.0.0
+    # via -r requirements.in
+flake8-pyproject==1.2.2
     # via -r requirements.in
 funcy==1.17
     # via django-cacheops
