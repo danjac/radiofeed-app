@@ -1,3 +1,88 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "radiofeed"
+version = "0"
+dependencies = [
+    "Django",
+    "Markdown",
+    "Pillow",
+    "attrs",
+    "bleach",
+    "brotli",
+    "dj-database-url",
+    "django-allauth",
+    "django-anymail",
+    "django-browser-reload",
+    "django-cacheops",
+    "django-debug-toolbar",
+    "django-extensions",
+    "django-fast-update",
+    "django-health-check",
+    "django-htmx",
+    "django-model-utils",
+    "django-object-actions",
+    "django-permissions-policy",
+    "django-redis",
+    "django-widget-tweaks",
+    "gunicorn",
+    "hiredis",
+    "httpx",
+    "lxml",
+    "nltk",
+    "numpy",
+    "pandas",
+    "psutil",
+    "psycopg2-binary",
+    "python-dateutil",
+    "python-decouple",
+    "redis",
+    "scikit-learn",
+    "scipy",
+    "sentry-sdk",
+     "whitenoise",
+]
+
+[project.optional-dependencies]
+
+ci = [
+    "mypy",
+    "coverage",
+    "pytest",
+    "pytest-cov",
+    "pytest-django",
+    "pytest-icdiff",
+    "pytest-mock",
+    "pytest-mypy",
+    "pytest-randomly",
+    "pytest-sugar",
+    "pytest-xdist",
+    "django-coverage-plugin",
+    "bandit[toml]",
+    "types-bleach",
+    "types-markdown",
+    "types-python-dateutil",
+    "djlint",
+    "faker",
+    "flake8",
+    "flake8-bugbear",
+    "flake8-comprehensions",
+    "flake8-debugger",
+    "flake8-deprecated",
+    "flake8-print",
+    "flake8-pyproject",
+]
+
+dev = [
+
+]
+
+prod = [
+
+]
+
 [tool.isort]
 default_section="THIRDPARTY"
 known_first_party="radiofeed"
