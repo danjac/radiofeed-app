@@ -1,0 +1,8 @@
+-r base.in
+
+django-anymail
+django-health-check
+django-permissions-policy
+gunicorn
+psutil
+sentry-sdk

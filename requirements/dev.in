@@ -1,0 +1,4 @@
+-r ci.in
+
+django-browser-reload
+django-debug-toolbar
