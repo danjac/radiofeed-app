@@ -16,12 +16,14 @@ db:
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
-update: update-production update-development update-npm update-precommit
+update: update-pip update-npm update-precommit
 
-update-production:
+update-pip: update-pip-default update-pip-dev
+
+update-pip-default:
 	pip-compile --upgrade pyproject.toml -o requirements.txt --resolver=backtracking --no-header --no-annotate
 
-update-development:
+update-pip-dev:
 	pip-compile --upgrade pyproject.toml --extra dev -o requirements-dev.txt --resolver=backtracking --no-header --no-annotate
 	python -m pip install -r requirements-dev.txt
 
