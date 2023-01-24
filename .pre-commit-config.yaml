@@ -100,4 +100,6 @@ repos:
       rev: 6.12.1
       hooks:
           - id: pip-compile
-            name: pip-compile
+            name: pip-compile production
+            files: ^requirements/(base|prod)\.(in|txt)$
+            args: ["requirements/prod.in", "-o", "requirements/prod.txt"]
