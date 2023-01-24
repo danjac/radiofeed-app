@@ -101,21 +101,3 @@ repos:
       hooks:
           - id: pip-compile
             name: pip-compile
-            files: ^requirements/base\.(in|txt)$
-            args:
-                [
-                    "requirements/base.in",
-                    "-o",
-                    "requirements/base.txt",
-                    "requirements/prod.in",
-                    "-o",
-                    "requirements/prod.txt",
-                    "requirements/ci.in",
-                    "-o",
-                    "requirements/ci.txt",
-                    "requirements/dev.in",
-                    "-o",
-                    "requirements/dev.txt",
-                    "--resolver",
-                    "backtracking",
-                ]
