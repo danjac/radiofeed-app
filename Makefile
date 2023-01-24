@@ -1,20 +1,15 @@
 build: install nltk
 
-install:
+install: install-pip install-npm install-precommit
+
+install-pip:
 	python -m pip install -r requirements-dev.txt
+
+install-npm:
 	npm ci
+
+install-precommit:
 	pre-commit install
-
-nltk:
-	xargs python -m nltk.downloader <./nltk.txt
-
-test:
-	python -m pytest
-
-db:
-	python ./manage.py migrate
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
 update: update-pip update-npm update-precommit
 
@@ -32,6 +27,18 @@ update-npm:
 
 update-precommit:
 	pre-commit autoupdate
+
+nltk:
+	xargs python -m nltk.downloader <./nltk.txt
+
+test:
+	python -m pytest
+
+db:
+	python ./manage.py migrate
+	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
+
 
 clean:
 	git clean -Xdf
