@@ -43,7 +43,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-
 ci = [
     "bandit[toml]",
     "coverage",
