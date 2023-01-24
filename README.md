@@ -26,7 +26,7 @@ docker-compose up -d
 
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
-You should run you development environment inside a virtualenv e.g.:
+You should run your development environment inside a virtualenv e.g.:
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
