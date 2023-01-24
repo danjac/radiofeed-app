@@ -21,6 +21,6 @@ clean:
 
 update:
 	pip-compile-multi --upgrade
-	python -m pip install -r requirements.txt
+	python -m pip install -r requirements/dev.txt
 	npm run check-updates && npm install
 	pre-commit autoupdate
