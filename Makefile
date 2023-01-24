@@ -17,7 +17,7 @@ db:
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
 update:
-	pip-compile --upgrade pyproject.toml --extra prod -o requirements.txt --resolver=backtracking --no-header --no-annotate
+	pip-compile --upgrade pyproject.toml -o requirements.txt --resolver=backtracking --no-header --no-annotate
 	pip-compile --upgrade pyproject.toml --extra dev -o requirements-dev.txt --resolver=backtracking --no-header --no-annotate
 	python -m pip install -r requirements-dev.txt
 	npm run check-updates && npm install
