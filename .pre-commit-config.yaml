@@ -54,6 +54,7 @@ repos:
                     "flake8-debugger",
                     "flake8-deprecated",
                     "flake8-print",
+                    "flake8-pyproject",
                 ]
     - repo: https://github.com/pycqa/pydocstyle
       rev: 6.3.0

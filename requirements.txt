@@ -2,7 +2,6 @@ anyio==3.6.2
 asgiref==3.6.0
 async-timeout==4.0.2
 attrs==22.2.0
-bleach==6.0.0
 brotli==1.0.9
 certifi==2022.12.7
 cffi==1.15.1
@@ -61,7 +60,6 @@ sqlparse==0.4.3
 threadpoolctl==3.1.0
 tqdm==4.64.1
 urllib3==1.26.14
-webencodings==0.5.1
 whitenoise==6.3.0
 
 # The following packages are considered to be unsafe in a requirements file:

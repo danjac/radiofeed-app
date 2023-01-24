@@ -2,78 +2,63 @@ from __future__ import annotations
 
 import html
 
-from typing import Final
-
-import bleach
-
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
+from lxml.html.clean import Cleaner
 from markdown import markdown as _markdown
 
-_ALLOWED_TAGS: Final = {
-    "a",
-    "abbr",
-    "acronym",
-    "address",
-    "b",
-    "br",
-    "div",
-    "dl",
-    "dt",
-    "em",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "hr",
-    "i",
-    "li",
-    "ol",
-    "p",
-    "pre",
-    "q",
-    "s",
-    "small",
-    "strike",
-    "strong",
-    "span",
-    "style",
-    "sub",
-    "sup",
-    "table",
-    "tbody",
-    "td",
-    "tfoot",
-    "th",
-    "thead",
-    "tr",
-    "tt",
-    "u",
-    "ul",
-}
-
-_ALLOWED_ATTRS: Final = {
-    "a": ["href", "target", "title"],
-}
+_cleaner = Cleaner(
+    allow_tags=[
+        "a",
+        "abbr",
+        "acronym",
+        "address",
+        "b",
+        "br",
+        "div",
+        "dl",
+        "dt",
+        "em",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "hr",
+        "i",
+        "li",
+        "ol",
+        "p",
+        "pre",
+        "q",
+        "s",
+        "small",
+        "strike",
+        "strong",
+        "span",
+        "style",
+        "sub",
+        "sup",
+        "table",
+        "tbody",
+        "td",
+        "tfoot",
+        "th",
+        "thead",
+        "tr",
+        "tt",
+        "u",
+        "ul",
+    ],
+    safe_attrs_only=True,
+    add_nofollow=True,
+)
 
 
 def clean(value: str | None) -> str:
     """Runs Bleach through value and scrubs any unwanted HTML tags and attributes."""
-    return (
-        bleach.linkify(
-            bleach.clean(
-                value,
-                attributes=_ALLOWED_ATTRS,
-                tags=_ALLOWED_TAGS,
-                strip=True,
-            ),
-            [_linkify_callback],  # type: ignore
-        )
-        if value
-        else ""
-    )
+    return _cleaner.clean_html(value) if value else ""
 
 
 def strip_whitespace(value: str | None) -> str:
@@ -91,9 +76,3 @@ def markdown(value: str | None) -> str:
     if value := strip_whitespace(value):
         return mark_safe(clean(_markdown(value)))  # nosec
     return ""
-
-
-def _linkify_callback(attrs: dict, new: bool = False) -> dict:
-    attrs[(None, "target")] = "_blank"
-    attrs[(None, "rel")] = "noopener noreferrer nofollow"
-    return attrs

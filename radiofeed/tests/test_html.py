@@ -33,11 +33,10 @@ class TestClean:
 
     def test_has_link_link(self):
         cleaned = clean('<a href="http://reddit.com">Reddit</a>')
-        assert 'target="_blank"' in cleaned
-        assert 'rel="noopener noreferrer nofollow"' in cleaned
+        assert 'rel="nofollow"' in cleaned
 
     def test_unsafe(self):
-        assert clean("<script>alert('xss ahoy!')</script>") == "alert('xss ahoy!')"
+        assert clean("<script>alert('xss ahoy!')</script>") == "<div></div>"
 
 
 class TestStripHtml:

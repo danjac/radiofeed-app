@@ -5,7 +5,6 @@ async-timeout==4.0.2
 attrs==22.2.0
 backcall==0.2.0
 bandit[toml]==1.7.4
-bleach==6.0.0
 brotli==1.0.9
 certifi==2022.12.7
 cffi==1.15.1
@@ -132,7 +131,6 @@ types-python-dateutil==2.8.19.6
 typing-extensions==4.4.0
 urllib3==1.26.14
 wcwidth==0.2.6
-webencodings==0.5.1
 whitenoise==6.3.0
 
 # The following packages are considered to be unsafe in a requirements file:

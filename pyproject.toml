@@ -15,7 +15,6 @@ dependencies = [
     "Markdown",
     "Pillow",
     "attrs",
-    "bleach",
     "brotli",
     "dj-database-url",
     "django-allauth",
@@ -190,4 +189,4 @@ ignore = [
     "S101"
 ]
 max-line-length = 88
-max_complexity = 10
+max-complexity = 10
