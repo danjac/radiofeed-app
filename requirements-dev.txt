@@ -106,6 +106,7 @@ python-dateutil==2.8.2
 python-decouple==3.7
 python3-openid==3.2.0
 pytz==2022.7.1
+pywatchman==1.4.1
 pyyaml==6.0
 redis==4.4.2
 regex==2022.10.31
