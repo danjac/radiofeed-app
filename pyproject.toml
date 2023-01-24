@@ -16,37 +16,45 @@ dependencies = [
     "Pillow",
     "attrs",
     "bleach",
+    "brotli",
     "dj-database-url",
     "django-allauth",
+    "django-anymail",
     "django-cacheops",
     "django-extensions",
     "django-fast-update",
+    "django-health-check",
     "django-htmx",
     "django-model-utils",
     "django-object-actions",
     "django-permissions-policy",
     "django-redis",
     "django-widget-tweaks",
+    "gunicorn",
     "hiredis",
     "httpx",
     "lxml",
     "nltk",
     "numpy",
     "pandas",
+    "psutil",
     "psycopg2-binary",
     "python-dateutil",
     "python-decouple",
     "redis",
     "scikit-learn",
     "scipy",
+    "sentry-sdk",
     "whitenoise",
 ]
 
 [project.optional-dependencies]
-ci = [
+dev = [
     "bandit[toml]",
     "coverage",
+    "django-browser-reload",
     "django-coverage-plugin",
+    "django-debug-toolbar",
     "djlint",
     "faker",
     "flake8",
@@ -56,6 +64,7 @@ ci = [
     "flake8-deprecated",
     "flake8-print",
     "flake8-pyproject",
+    "ipython",
     "mypy",
     "pytest",
     "pytest-cov",
@@ -69,20 +78,6 @@ ci = [
     "types-bleach",
     "types-markdown",
     "types-python-dateutil",
-]
-
-dev = [
-    "django-browser-reload",
-    "django-debug-toolbar",
-]
-
-prod = [
-    "brotli",
-    "django-anymail",
-    "django-health-check",
-    "gunicorn",
-    "psutil",
-    "sentry-sdk",
 ]
 
 [tool.isort]

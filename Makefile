@@ -18,8 +18,7 @@ db:
 
 update:
 	pip-compile --upgrade pyproject.toml --extra prod -o requirements.txt --resolver=backtracking --no-header --no-annotate
-	pip-compile --upgrade pyproject.toml --extra ci -o requirements-ci.txt --resolver=backtracking --no-header --no-annotate
-	pip-compile --upgrade pyproject.toml --extra ci --extra dev -o requirements-dev.txt --resolver=backtracking --no-header --no-annotate
+	pip-compile --upgrade pyproject.toml --extra dev -o requirements-dev.txt --resolver=backtracking --no-header --no-annotate
 	python -m pip install -r requirements-dev.txt
 	npm run check-updates && npm install
 	pre-commit autoupdate
