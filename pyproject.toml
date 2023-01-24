@@ -75,7 +75,6 @@ dev = [
     "pytest-randomly",
     "pytest-sugar",
     "pytest-xdist",
-    "pywatchman",
     "types-bleach",
     "types-markdown",
     "types-python-dateutil",
