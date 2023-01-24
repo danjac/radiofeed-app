@@ -1,5 +1,6 @@
 -r base.in
 
+# test ci
 bandit[toml]
 coverage
 django-coverage-plugin

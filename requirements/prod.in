@@ -1,5 +1,6 @@
 -r base.in
 
+# multiple
 brotli
 django-anymail
 django-health-check
