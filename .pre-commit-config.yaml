@@ -123,12 +123,12 @@ repos:
                 ]
           - id: pip-compile
             name: pip-compile development
-            files: ^requirements/(base|ci|dev)\.(in|txt)$
+            files: ^requirements\.(in|txt)$
             args:
                 [
-                    "requirements/dev.in",
+                    "requirements.in",
                     "-o",
-                    "requirements/dev.txt",
+                    "requirements.txt",
                     "--resolver",
                     "backtracking",
                 ]
