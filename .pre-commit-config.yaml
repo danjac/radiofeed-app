@@ -102,12 +102,33 @@ repos:
           - id: pip-compile
             name: pip-compile production
             files: ^requirements/(base|prod)\.(in|txt)$
-            args: ["requirements/prod.in", "-o", "requirements/prod.txt"]
+            args:
+                [
+                    "requirements/prod.in",
+                    "-o",
+                    "requirements/prod.txt",
+                    "--resolver",
+                    "backtracking",
+                ]
           - id: pip-compile
             name: pip-compile CI
             files: ^requirements/(base|ci)\.(in|txt)$
-            args: ["requirements/ci.in", "-o", "requirements/ci.txt"]
+            args:
+                [
+                    "requirements/ci.in",
+                    "-o",
+                    "requirements/ci.txt",
+                    "--resolver",
+                    "backtracking",
+                ]
           - id: pip-compile
             name: pip-compile development
             files: ^requirements/(base|ci|dev)\.(in|txt)$
-            args: ["requirements/dev.in", "-o", "requirements/dev.txt"]
+            args:
+                [
+                    "requirements/dev.in",
+                    "-o",
+                    "requirements/dev.txt",
+                    "--resolver",
+                    "backtracking",
+                ]
