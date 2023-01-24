@@ -1,6 +1,4 @@
-build: install nltk
-
-install: install-pip install-npm install-precommit
+install: install-pip install-npm install-precommit install-nltk
 
 install-pip:
 	python -m pip install -r requirements-dev.txt
@@ -10,6 +8,9 @@ install-npm:
 
 install-precommit:
 	pre-commit install
+
+install-nltk:
+	xargs python -m nltk.downloader <./nltk.txt
 
 update: update-pip update-npm update-precommit
 
@@ -27,9 +28,6 @@ update-npm:
 
 update-precommit:
 	pre-commit autoupdate
-
-nltk:
-	xargs python -m nltk.downloader <./nltk.txt
 
 test:
 	python -m pytest

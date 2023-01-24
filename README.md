@@ -34,7 +34,7 @@ python -m venv .venv && source .venv/bin/activate
 
 A `Makefile` has been provided to help with setting up your local development environment:
 
-* `make build`: download and install front and backend dependencies
+* `make install`: download and install front and backend dependencies
 * `make db`: run migrations and load sample fixtures
 * `make test`: run unit tests
 * `make update`: update all dependencies to latest available versions
