@@ -96,7 +96,26 @@ repos:
       hooks:
           - id: django-upgrade
             args: [--target-version, "4.1"]
-    - repo: https://github.com/peterdemin/pip-compile-multi
-      rev: v1.3.2
+    - repo: https://github.com/jazzband/pip-tools
+      rev: 6.12.1
       hooks:
-        - id: pip-compile-multi-verify
+          - id: pip-compile
+            name: pip-compile
+            files: ^requirements\/*\.(in|txt)$
+            args:
+                [
+                    "requirements/base.in",
+                    "-o",
+                    "requirements/base.txt",
+                    "requirements/prod.in",
+                    "-o",
+                    "requirements/prod.txt",
+                    "requirements/ci.in",
+                    "-o",
+                    "requirements/ci.txt",
+                    "requirements/dev.in",
+                    "-o",
+                    "requirements/dev.txt",
+                    "--resolver",
+                    "backtracking",
+                ]
