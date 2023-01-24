@@ -39,7 +39,7 @@ A `Makefile` has been provided to help with setting up your local development en
 * `make test`: run unit tests
 * `make update`: update all dependencies to latest available versions
 
-The following commands are handy for compiling frontend [assets](assets):
+The following commands are handy for compiling frontend assets:
 
 * `npm run build`: compile JavaScript and CSS assets
 * `npm run watch`: compile JavaScript and CSS assets on the fly
