@@ -16,9 +16,6 @@ db:
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
-clean:
-	git clean -Xdf
-
 update:
 	pip-compile --upgrade pyproject.toml --extra prod -o requirements.txt --resolver=backtracking --no-header --no-annotate
 	pip-compile --upgrade pyproject.toml --extra ci -o requirements-ci.txt --resolver=backtracking --no-header --no-annotate
@@ -26,3 +23,6 @@ update:
 	python -m pip install -r requirements-dev.txt
 	npm run check-updates && npm install
 	pre-commit autoupdate
+
+clean:
+	git clean -Xdf
