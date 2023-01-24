@@ -2,7 +2,13 @@ This is the source code for a [simple, easy to use podcatcher web application](h
 
 ![desktop](/screenshots/desktop.png?raw=True)
 
-### Additional requirements
+## Development
+
+Radiofeed requires the following basic dependencies to get started:
+
+* Python 3.10+
+* Node 16+
+* [pip-tools](https://github.com/jazzband/pip-tools)
 
 For ease of local development a `docker-compose.yml` is provided which includes:
 
@@ -13,14 +19,6 @@ For ease of local development a `docker-compose.yml` is provided which includes:
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
-
-## Development
-
-Radiofeed requires the following basic dependencies to get started:
-
-* Python 3.10+
-* Node 16+
-* [pip-tools](https://github.com/jazzband/pip-tools)
 
 You should run you development environment inside a virtualenv e.g.:
 
