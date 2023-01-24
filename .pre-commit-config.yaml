@@ -101,7 +101,7 @@ repos:
       hooks:
           - id: pip-compile
             name: pip-compile
-            files: ^requirements/\.(in|txt)$
+            files: ^requirements/base\.(in|txt)$
             args:
                 [
                     "requirements/base.in",
