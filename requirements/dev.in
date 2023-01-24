@@ -1,5 +1,4 @@
 -r ci.in
 
-# test dev
 django-browser-reload
 django-debug-toolbar
