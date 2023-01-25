@@ -98,7 +98,7 @@ repos:
           - id: django-upgrade
             args: [--target-version, "4.1"]
     - repo: https://github.com/jazzband/pip-tools
-      rev: 6.12.0
+      rev: 6.12.1
       hooks:
           - id: pip-compile
             name: pip-compile production
@@ -110,6 +110,8 @@ repos:
                     "prod",
                     "-o",
                     "requirements.txt",
+                    "--resolver",
+                    "backtracking",
                     "--no-header",
                     "--no-annotate",
                 ]
@@ -123,6 +125,8 @@ repos:
                     "ci",
                     "-o",
                     "requirements-ci.txt",
+                    "--resolver",
+                    "backtracking",
                     "--no-header",
                     "--no-annotate",
                 ]
@@ -138,6 +142,8 @@ repos:
                     "dev",
                     "-o",
                     "requirements-dev.txt",
+                    "--resolver",
+                    "backtracking",
                     "--no-header",
                     "--no-annotate",
                 ]
