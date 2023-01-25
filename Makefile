@@ -14,13 +14,16 @@ install-nltk:
 
 update: update-pip update-npm update-precommit
 
-update-pip: update-pip-default update-pip-dev
+    update-pip: update-pip-prod update-pip-ci update-pip-dev
 
-update-pip-default:
-	pip-compile --upgrade pyproject.toml -o requirements.txt --resolver=backtracking --no-header --no-annotate
+update-pip-prod:
+	pip-compile --upgrade pyproject.toml --extra prod -o requirements.txt --resolver=backtracking --no-header --no-annotate
+
+update-pip-ci:
+	pip-compile --upgrade pyproject.toml --extra ci -o requirements.txt --resolver=backtracking --no-header --no-annotate
 
 update-pip-dev:
-	pip-compile --upgrade pyproject.toml --extra dev -o requirements-dev.txt --resolver=backtracking --no-header --no-annotate
+	pip-compile --upgrade pyproject.toml --extra ci --extra dev -o requirements-dev.txt --resolver=backtracking --no-header --no-annotate
 	python -m pip install -r requirements-dev.txt
 
 update-npm:

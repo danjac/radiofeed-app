@@ -15,45 +15,47 @@ dependencies = [
     "Markdown",
     "Pillow",
     "attrs",
-    "brotli",
     "dj-database-url",
     "django-allauth",
     "django-anymail",
     "django-cacheops",
     "django-extensions",
     "django-fast-update",
-    "django-health-check",
     "django-htmx",
     "django-model-utils",
     "django-object-actions",
     "django-permissions-policy",
     "django-redis",
     "django-widget-tweaks",
-    "gunicorn",
     "hiredis",
     "httpx",
     "lxml",
     "nltk",
     "numpy",
     "pandas",
-    "psutil",
     "psycopg2-binary",
     "python-dateutil",
     "python-decouple",
     "redis",
     "scikit-learn",
     "scipy",
-    "sentry-sdk",
     "whitenoise",
 ]
 
 [project.optional-dependencies]
-dev = [
+prod = [
+    "brotli",
+    "django-anymail",
+    "django-health-check",
+    "gunicorn",
+    "psutil",
+    "sentry-sdk",
+]
+
+ci = [
     "bandit[toml]",
     "coverage",
-    "django-browser-reload",
     "django-coverage-plugin",
-    "django-debug-toolbar",
     "djlint",
     "faker",
     "flake8",
@@ -63,7 +65,6 @@ dev = [
     "flake8-deprecated",
     "flake8-print",
     "flake8-pyproject",
-    "ipython",
     "mypy",
     "pytest",
     "pytest-cov",
@@ -76,6 +77,12 @@ dev = [
     "pytest-xdist",
     "types-markdown",
     "types-python-dateutil",
+]
+
+dev = [
+    "django-browser-reload",
+    "django-debug-toolbar",
+    "ipython",
 ]
 
 [tool.isort]

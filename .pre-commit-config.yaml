@@ -106,8 +106,25 @@ repos:
             args:
                 [
                     "pyproject.toml",
+                    "--extra",
+                    "prod",
                     "-o",
                     "requirements.txt",
+                    "--resolver",
+                    "backtracking",
+                    "--no-header",
+                    "--no-annotate",
+                ]
+          - id: pip-compile
+            name: pip-compile ci
+            files: pyproject.toml
+            args:
+                [
+                    "pyproject.toml",
+                    "--extra",
+                    "ci",
+                    "-o",
+                    "requirements-ci.txt",
                     "--resolver",
                     "backtracking",
                     "--no-header",
@@ -119,6 +136,8 @@ repos:
             args:
                 [
                     "pyproject.toml",
+                    "--extra",
+                    "ci",
                     "--extra",
                     "dev",
                     "-o",
