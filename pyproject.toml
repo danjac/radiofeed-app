@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "radiofeed"
-description = "Podcast aggregator app"
+description = "Podcast aggregator site"
 readme = "README.md"
 version = "0"
 license = "MIT"
