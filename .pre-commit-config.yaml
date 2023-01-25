@@ -102,7 +102,6 @@ repos:
       hooks:
           - id: poetry-check
           - id: poetry-lock
-            args: ["--no-update"]
           - id: poetry-export
             name: poetry-export production
             args:
