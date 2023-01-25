@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.html_parser import clean, markdown, strip_html
+from radiofeed.markup import clean, markdown, strip_html
 
 
 class TestMarkdown:
