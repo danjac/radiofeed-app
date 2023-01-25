@@ -38,13 +38,10 @@ A `Makefile` has been provided to help with setting up your local development en
 * `make db`: run migrations and load sample fixtures
 * `make test`: run unit tests
 * `make update`: update all dependencies to latest available versions
+* `make watch`: compile JavaScript and CSS assets on the fly
+* `make serve`: run Django development server
 
-The following commands are handy for compiling frontend assets:
-
-* `npm run build`: compile JavaScript and CSS assets
-* `npm run watch`: compile JavaScript and CSS assets on the fly
-
-If you are running several of these services simultaneously you should use a multiplexer such as Tmux.
+If you are running several of these operations simultaneously you should use a multiplexer such as Tmux.
 
 ## Deployment
 

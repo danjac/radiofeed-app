@@ -26,6 +26,15 @@ update-precommit:
 test:
 	python -m pytest
 
+shell:
+	python ./manage.py shell_plus
+
+serve:
+	python ./manage.py runserver
+
+watch:
+	npm run watch
+
 db:
 	python ./manage.py migrate
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
