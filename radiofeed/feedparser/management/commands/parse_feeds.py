@@ -5,7 +5,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 import httpx
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from radiofeed.feedparser import feed_parser, scheduler
@@ -29,9 +28,7 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with httpx.Client(
-            headers={"User-Agent": settings.USER_AGENT}, timeout=10
-        ) as client, ThreadPoolExecutor() as executor:
+        with httpx.Client(timeout=10) as client, ThreadPoolExecutor() as executor:
             executor.map(
                 lambda podcast: self._parse_feed(podcast, client),
                 scheduler.scheduled_for_update()[: options["limit"]].iterator(),

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import httpx
 
-from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import Count, QuerySet
 from django.http import HttpRequest
@@ -181,9 +180,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
         try:
-            with httpx.Client(
-                headers={"User-Agent": settings.USER_AGENT}, timeout=5
-            ) as client:
+            with httpx.Client(timeout=5) as client:
                 feed_parser.FeedParser(obj).parse(client)
 
         except FeedParserError:

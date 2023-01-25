@@ -4,10 +4,12 @@ import functools
 import hashlib
 
 from collections.abc import Iterator
+from typing import Final
 
 import attrs
 import httpx
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -30,6 +32,16 @@ from radiofeed.feedparser.models import Feed, Item
 from radiofeed.itertools import batcher
 from radiofeed.podcasts.models import Category, Podcast
 
+_ACCEPT: Final = (
+    "application/atom+xml,",
+    "application/rdf+xml,",
+    "application/rss+xml,",
+    "application/x-netcdf,",
+    "application/xml;q=0.9,",
+    "text/xml;q=0.2,",
+    "*/*;q=0.1",
+)
+
 
 @functools.lru_cache
 def get_categories() -> dict[str, Category]:
@@ -47,18 +59,6 @@ def make_content_hash(content: bytes) -> str:
 
 class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
-
-    _accept = ",".join(
-        [
-            "application/atom+xml",
-            "application/rdf+xml",
-            "application/rss+xml",
-            "application/x-netcdf",
-            "application/xml;q=0.9",
-            "text/xml;q=0.2",
-            "*/*;q=0.1",
-        ]
-    )
 
     _max_retries: int = 3
 
@@ -142,7 +142,10 @@ class FeedParser:
             raise Unavailable from e
 
     def _get_feed_headers(self) -> dict[str, str]:
-        headers = {"Accept": self._accept}
+        headers = {
+            "Accept": _ACCEPT,
+            "User-Agent": settings.USER_AGENT,
+        }
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:

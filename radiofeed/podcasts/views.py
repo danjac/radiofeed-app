@@ -4,7 +4,6 @@ import http
 
 import httpx
 
-from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
@@ -101,10 +100,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         feeds: list[itunes.Feed] = []
 
         try:
-            with httpx.Client(
-                headers={"User-Agent": settings.USER_AGENT},
-                timeout=5,
-            ) as client:
+            with httpx.Client(timeout=5) as client:
                 feeds = itunes.search(client, request.search.value)
         except httpx.HTTPError:
             messages.error(request, "Sorry, an error occurred trying to access iTunes.")

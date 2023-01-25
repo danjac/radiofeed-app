@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 import httpx
 
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -173,9 +174,18 @@ class Crawler:
 
 
 def _get_response(
-    client: httpx.Client, url: str, params: dict | None = None, **kwargs
+    client: httpx.Client,
+    url: str,
+    params: dict | None = None,
+    headers: dict | None = None,
+    **kwargs,
 ) -> httpx.Response:
-    response = client.get(url, params=params, **kwargs)
+    response = client.get(
+        url,
+        params=params,
+        headers=(headers or {}) | {"User-Agent": settings.USER_AGENT},
+        **kwargs,
+    )
     response.raise_for_status()
     return response
 
