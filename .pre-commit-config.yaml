@@ -103,7 +103,7 @@ repos:
           - id: poetry-check
             files: pyproject.toml
           - id: poetry-lock
-            files: pyproject.toml
+            files: pyproject.toml|poetry.lock
           - id: poetry-export
             name: poetry-export production
             files: pyproject.toml|poetry.lock
