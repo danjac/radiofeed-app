@@ -15,9 +15,8 @@ install-nltk:
 	xargs python -m nltk.downloader <./nltk.txt
 
 update-pip:
-	pip-compile --upgrade pyproject.toml --extra prod -o requirements.txt --no-header --no-annotate --resolver=backtracking
-	pip-compile --upgrade pyproject.toml --extra ci -o requirements-ci.txt --no-header --no-annotate --resolver=backtracking
-	pip-compile --upgrade pyproject.toml --extra ci --extra dev -o requirements-dev.txt --no-header --no-annotate --resolver=backtracking
+	pip-compile --upgrade pyproject.toml -o requirements.txt --no-header --no-annotate --resolver=backtracking
+	pip-compile --upgrade pyproject.toml --extra dev -o requirements-dev.txt --no-header --no-annotate --resolver=backtracking
 
 update-npm:
 	npm run check-updates && npm install

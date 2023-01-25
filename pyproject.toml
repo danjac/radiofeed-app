@@ -12,51 +12,50 @@ license = {text="MIT"}
 authors = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
 
 dependencies = [
-    "django",
-    "pillow",
     "attrs",
+    "brotli",
     "dj-database-url",
+    "django",
     "django-allauth",
+    "django-anymail",
     "django-cacheops",
     "django-extensions",
     "django-fast-update",
+    "django-health-check",
     "django-htmx",
     "django-model-utils",
     "django-object-actions",
     "django-permissions-policy",
     "django-redis",
     "django-widget-tweaks",
+    "gunicorn",
     "hiredis",
     "httpx",
     "lxml",
+    "markdown-it-py",
     "nltk",
     "numpy",
     "pandas",
+    "pillow",
+    "psutil",
     "psycopg2-binary",
     "python-dateutil",
     "python-decouple",
     "redis",
     "scikit-learn",
     "scipy",
+    "sentry-sdk",
     "whitenoise",
-    "markdown-it-py",
 ]
 
 [project.optional-dependencies]
 
-prod = [
-    "brotli",
-    "django-health-check",
-    "gunicorn",
-    "psutil",
-    "sentry-sdk",
-    "django-anymail",
-]
-
-ci = [
+dev = [
     "bandit[toml]",
     "coverage",
+    "django-browser-reload",
     "django-coverage-plugin",
+    "django-debug-toolbar",
     "djlint",
     "faker",
     "flake8",
@@ -66,6 +65,7 @@ ci = [
     "flake8-deprecated",
     "flake8-print",
     "flake8-pyproject",
+    "ipython",
     "mypy",
     "pytest",
     "pytest-cov",
@@ -78,12 +78,6 @@ ci = [
     "pytest-xdist",
     "types-markdown",
     "types-python-dateutil",
-]
-
-dev = [
-    "django-browser-reload",
-    "django-debug-toolbar",
-    "ipython",
 ]
 
 [tool.isort]
