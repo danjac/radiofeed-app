@@ -1,89 +1,17 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "radiofeed"
-requires-python = ">=3.10"
+description = "Podcast aggregator site"
+readme = "README.md"
 version = "0"
-license = {text = "MIT"}
-authors = [
-    {name ="Dan Jacob", email = "danjac2018@gmail.com"}
-]
-dependencies = [
-    "Django",
-    "Markdown",
-    "Pillow",
-    "attrs",
-    "dj-database-url",
-    "django-allauth",
-    "django-anymail",
-    "django-cacheops",
-    "django-extensions",
-    "django-fast-update",
-    "django-htmx",
-    "django-model-utils",
-    "django-object-actions",
-    "django-permissions-policy",
-    "django-redis",
-    "django-widget-tweaks",
-    "hiredis",
-    "httpx",
-    "lxml",
-    "nltk",
-    "numpy",
-    "pandas",
-    "psycopg2-binary",
-    "python-dateutil",
-    "python-decouple",
-    "redis",
-    "scikit-learn",
-    "scipy",
-    "whitenoise",
-]
+license = "MIT"
+authors = ["Dan Jacob <danjac2018@gmail.com>"]
 
-[project.optional-dependencies]
-prod = [
-    "brotli",
-    "django-anymail",
-    "django-health-check",
-    "gunicorn",
-    "psutil",
-    "sentry-sdk",
-]
-
-ci = [
-    "bandit[toml]",
-    "coverage",
-    "django-coverage-plugin",
-    "djlint",
-    "faker",
-    "flake8",
-    "flake8-bugbear",
-    "flake8-comprehensions",
-    "flake8-debugger",
-    "flake8-deprecated",
-    "flake8-print",
-    "flake8-pyproject",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "pytest-django",
-    "pytest-icdiff",
-    "pytest-mock",
-    "pytest-mypy",
-    "pytest-randomly",
-    "pytest-sugar",
-    "pytest-xdist",
-    "types-markdown",
-    "types-python-dateutil",
-]
-
-dev = [
-    "django-browser-reload",
-    "django-debug-toolbar",
-    "ipython",
-]
+[tool.poetry.dependencies]
+python = ">=3.10"
 
 [tool.isort]
 default_section = "THIRDPARTY"
