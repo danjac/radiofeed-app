@@ -31,6 +31,5 @@ db:
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
-
 clean:
 	git clean -Xdf
