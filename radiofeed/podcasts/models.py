@@ -17,7 +17,7 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from radiofeed.fast_count import FastCountQuerySetMixin
-from radiofeed.html import strip_html
+from radiofeed.html_parser import strip_html
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 

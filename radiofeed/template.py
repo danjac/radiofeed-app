@@ -17,7 +17,7 @@ from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 
-from radiofeed.html import markdown as _markdown
+from radiofeed import html_parser
 
 register = template.Library()
 
@@ -91,7 +91,7 @@ def active_link(
 @register.inclusion_tag("includes/markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders Markdown or HTML content."""
-    return {"content": _markdown(value or "")}
+    return {"content": html_parser.markdown(value or "")}
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
