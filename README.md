@@ -8,7 +8,7 @@ Radiofeed requires the following basic dependencies to get started:
 
 * Python 3.10+
 * Node 16+
-* [pip-tools](https://github.com/jazzband/pip-tools)
+* [Poetry](https://github.com/python-poetry)
 
 For ease of local development a `docker-compose.yml` is provided which includes:
 
