@@ -104,7 +104,15 @@ repos:
           - id: poetry-lock
           - id: poetry-export
             name: poetry-export production
-            args: ["--with", "prod", "-o", "requirements.txt"]
+            args:
+                ["--with", "prod", "-o", "requirements.txt", "--without-hashes"]
           - id: poetry-export
             name: poetry-export CI
-            args: ["--with", "ci", "-o", "requirements-ci.txt"]
+            args:
+                [
+                    "--with",
+                    "ci",
+                    "-o",
+                    "requirements-ci.txt",
+                    "--without-hashes",
+                ]
