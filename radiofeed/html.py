@@ -5,7 +5,9 @@ import html
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
 from lxml.html.clean import Cleaner
-from markdown import markdown as _markdown
+from markdown_it import MarkdownIt
+
+_markdown = MarkdownIt()
 
 _cleaner = Cleaner(
     allow_tags=[
@@ -69,5 +71,5 @@ def strip_html(value: str) -> str:
 def markdown(value: str) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := value.strip():
-        return mark_safe(clean(_markdown(value)))  # nosec
+        return mark_safe(clean(_markdown.render(value)))  # nosec
     return ""
