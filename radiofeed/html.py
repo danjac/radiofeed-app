@@ -2,60 +2,60 @@ from __future__ import annotations
 
 import html
 
+from typing import Final
+
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
 from lxml.html.clean import Cleaner
 from markdown_it import MarkdownIt
 
+_ALLOWED_TAGS: Final = {
+    "a",
+    "abbr",
+    "acronym",
+    "address",
+    "b",
+    "br",
+    "div",
+    "dl",
+    "dt",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "hr",
+    "i",
+    "li",
+    "ol",
+    "p",
+    "pre",
+    "q",
+    "s",
+    "small",
+    "strike",
+    "strong",
+    "span",
+    "style",
+    "sub",
+    "sup",
+    "table",
+    "tbody",
+    "td",
+    "tfoot",
+    "th",
+    "thead",
+    "tr",
+    "tt",
+    "u",
+    "ul",
+}
+
 _markdown = MarkdownIt()
 
-_cleaner = Cleaner(
-    allow_tags=[
-        "a",
-        "abbr",
-        "acronym",
-        "address",
-        "b",
-        "br",
-        "div",
-        "dl",
-        "dt",
-        "em",
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "hr",
-        "i",
-        "li",
-        "ol",
-        "p",
-        "pre",
-        "q",
-        "s",
-        "small",
-        "strike",
-        "strong",
-        "span",
-        "style",
-        "sub",
-        "sup",
-        "table",
-        "tbody",
-        "td",
-        "tfoot",
-        "th",
-        "thead",
-        "tr",
-        "tt",
-        "u",
-        "ul",
-    ],
-    safe_attrs_only=True,
-    add_nofollow=True,
-)
+_cleaner = Cleaner(allow_tags=_ALLOWED_TAGS, safe_attrs_only=True, add_nofollow=True)
 
 
 def clean(value: str) -> str:
