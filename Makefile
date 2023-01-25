@@ -1,7 +1,7 @@
 install: install-poetry install-npm install-precommit install-nltk
 
 install-poetry:
-	poetry install
+	poetry install -vvv
 
 install-npm:
 	npm ci
@@ -15,7 +15,7 @@ install-nltk:
 update: update-poetry update-npm update-precommit
 
 update-poetry:
-	poetry update
+	poetry update -vvv --no-cache
 
 update-npm:
 	npm run check-updates && npm install
