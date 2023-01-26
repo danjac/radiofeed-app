@@ -1,6 +1,6 @@
 install: install-poetry install-npm install-precommit install-nltk
 
-update: update-poetry install-poetry update-npm update-precommit
+update: update-poetry update-npm update-precommit
 
 install-poetry:
 	poetry install --no-root -vvv
