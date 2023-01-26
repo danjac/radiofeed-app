@@ -17,6 +17,10 @@ install-nltk:
 update-poetry:
 	poetry update --no-cache -vvv
 
+poetry-export:
+	poetry export -o requirements.txt --without-hashes -vvvv
+	poetry export -o requirements-ci.txt --with=dev --without-hashes -vvvv
+
 update-npm:
 	npm run check-updates && npm install
 
