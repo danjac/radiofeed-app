@@ -1,21 +1,19 @@
 from __future__ import annotations
 
-import itertools
-
 from datetime import datetime
 
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.factories import NotSet, resolve
+from radiofeed.factories import NotSet, counter, resolve
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
 _faker = Faker()
 
-_category_seq = (f"category-{n}" for n in itertools.count())
-_rss_seq = (f"https://media.rss.com/podcast-{n}.xml" for n in itertools.count())
+_category_seq = counter("category-{n}")
+_rss_seq = counter("https://media.rss.com/podcast-{n}.xml")
 
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:

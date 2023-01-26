@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import itertools
 import uuid
 
 from datetime import datetime
@@ -9,13 +8,13 @@ from django.utils import timezone
 from faker import Faker
 
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.factories import NotSet, resolve
+from radiofeed.factories import NotSet, counter, resolve
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
-_media_url_seq = (f"https://example.com/audio-{n}.mp3" for n in itertools.count())
+_media_url_seq = counter("https://example.com/audio-{n}.mp3")
 
 _faker = Faker()
 

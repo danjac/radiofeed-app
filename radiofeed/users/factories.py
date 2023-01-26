@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import itertools
-
 from allauth.account.models import EmailAddress
 
-from radiofeed.factories import NotSet, resolve
+from radiofeed.factories import NotSet, counter, resolve
 from radiofeed.users.models import User
 
-_username_seq = (f"user-{n}" for n in itertools.count())
-_email_seq = (f"user-{n}@example.com" for n in itertools.count())
+_username_seq = counter("user-{n}")
+_email_seq = counter("user-{n}@example.com")
 
 
 def create_user(

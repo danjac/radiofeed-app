@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+import itertools
+
+from collections.abc import Callable, Iterator
 from typing import Any, TypeVar
 
 T = TypeVar("T")
@@ -12,6 +14,11 @@ class _NotSet:
 
 
 NotSet: Any = _NotSet()
+
+
+def counter(format_str: str, varname: str = "n") -> Iterator[str]:
+    """Returns an incremented counter."""
+    return (format_str.format(**{varname: counter}) for counter in itertools.count())
 
 
 def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import itertools
 import uuid
 
 from datetime import datetime
@@ -8,11 +7,11 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.factories import NotSet, resolve
+from radiofeed.factories import NotSet, counter, resolve
 
 _faker = Faker()
 
-_media_url_seq = (f"https://example.com/audio-{n}.mp3" for n in itertools.count())
+_media_url_seq = counter("https://example.com/audio-{n}.mp3")
 
 
 def create_item(
