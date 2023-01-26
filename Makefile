@@ -1,9 +1,9 @@
-install: install-pip install-npm install-precommit install-nltk
+install: install-poetry install-npm install-precommit install-nltk
 
-update: update-pip install-pip update-npm update-precommit
+update: update-poetry install-poetry update-npm update-precommit
 
-install-pip:
-	pip install -r requirements-dev.txt
+install-poetry:
+	poetry install --no-root
 
 install-npm:
 	npm ci
@@ -14,9 +14,8 @@ install-precommit:
 install-nltk:
 	xargs python -m nltk.downloader <./nltk.txt
 
-update-pip:
-	pip-compile --upgrade pyproject.toml -o requirements.txt --no-header --no-annotate --resolver=backtracking
-	pip-compile --upgrade pyproject.toml --extra dev -o requirements-dev.txt --no-header --no-annotate --resolver=backtracking
+update-poetry:
+    poetry update --no-cache
 
 update-npm:
 	npm run check-updates && npm install
