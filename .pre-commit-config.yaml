@@ -110,7 +110,7 @@ repos:
             args:
                 [
                     "-o",
-                    "requirements-dev.txt",
+                    "requirements-ci.txt",
                     "--with",
                     "dev",
                     "--without-hashes",
