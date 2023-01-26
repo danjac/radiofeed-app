@@ -24,21 +24,21 @@ update-precommit:
 	pre-commit autoupdate
 
 test:
-	python -m pytest
+	poetry run pytest
 
 shell:
-	python ./manage.py shell_plus
+	poetry run ./manage.py shell_plus
 
 serve:
-	python ./manage.py runserver
+	poetry run ./manage.py runserver
 
 watch:
 	npm run watch
 
 db:
-	python ./manage.py migrate
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
+	poetry run ./manage.py migrate
+	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+	poetry run ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
 clean:
 	git clean -Xdf
