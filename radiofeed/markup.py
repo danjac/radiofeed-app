@@ -59,7 +59,7 @@ _cleaner = Cleaner(allow_tags=_ALLOWED_TAGS, safe_attrs_only=True, add_nofollow=
 
 
 def clean(value: str) -> str:
-    """Runs Bleach through value and scrubs any unwanted HTML tags and attributes."""
+    """Scrubs any unwanted HTML tags and attributes."""
     return _cleaner.clean_html(value) if value else ""
 
 
