@@ -3,7 +3,7 @@ install: install-poetry install-npm install-precommit install-nltk
 update: update-poetry install-poetry update-npm update-precommit
 
 install-poetry:
-	poetry install --no-root
+	poetry install --no-root -vvv
 
 install-npm:
 	npm ci
@@ -15,7 +15,7 @@ install-nltk:
 	xargs python -m nltk.downloader <./nltk.txt
 
 update-poetry:
-    poetry update --no-cache
+	poetry update --no-cache -vvv
 
 update-npm:
 	npm run check-updates && npm install

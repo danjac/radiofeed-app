@@ -97,3 +97,21 @@ repos:
       hooks:
           - id: django-upgrade
             args: [--target-version, "4.1"]
+    - repo: https://github.com/python-poetry/poetry
+      rev: "1.3.0" # add version here
+      hooks:
+          - id: poetry-check
+          - id: poetry-lock
+          - id: poetry-export
+            name: generate requirements.txt
+            args: ["-o", "requirements.txt", "--without-hashes"]
+          - id: poetry-export
+            name: generate requirements-dev.txt
+            args:
+                [
+                    "-o",
+                    "requirements-dev.txt",
+                    "--with",
+                    "dev",
+                    "--without-hashes",
+                ]
