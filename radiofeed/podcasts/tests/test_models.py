@@ -49,6 +49,10 @@ class TestPodcastManager:
         create_podcast(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
+    def test_search_no_results(self, db):
+        create_podcast(title="testing")
+        assert Podcast.objects.search("random").count() == 0
+
     def test_search_partial(self, db):
         create_podcast(title="testing")
         assert Podcast.objects.search("test").count() == 1
