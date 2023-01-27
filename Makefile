@@ -1,31 +1,31 @@
-install: install-poetry install-npm install-precommit install-nltk
+install: poetryinstall npminstall precommitinstall nltkdownload
 
-update: update-poetry update-npm update-precommit
+update: poetryupdate npmupdate precommitupdate
 
-install-poetry:
+poetryinstall:
 	poetry install --no-root -vvv
 
-install-npm:
-	npm ci
-
-install-precommit:
-	pre-commit install
-
-install-nltk:
-	cat nltk.txt | xargs -I{} python -c "import nltk; nltk.download('{}')"
-
-update-poetry:
+poetryupdate:
 	poetry update --no-cache -vvv
 
-poetry-export:
+poetryexport:
 	poetry export -o requirements.txt --without-hashes -vvvv
 	poetry export -o requirements-ci.txt --with=dev --without-hashes -vvvv
 
-update-npm:
+npminstall:
+	npm ci
+
+npmupdate:
 	npm run check-updates && npm install
 
-update-precommit:
+precommitinstall:
+	pre-commit install
+
+precommitupdate:
 	pre-commit autoupdate
+
+nltkdownload:
+	cat nltk.txt | xargs -I{} python -c "import nltk; nltk.download('{}')"
 
 test:
 	python -m pytest
