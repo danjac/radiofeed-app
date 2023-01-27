@@ -103,10 +103,10 @@ repos:
           - id: poetry-check
           - id: poetry-lock
           - id: poetry-export
-            name: generate requirements.txt
+            name: poetry-export requirements.txt
             args: ["-o", "requirements.txt", "--without-hashes"]
           - id: poetry-export
-            name: generate requirements-dev.txt
+            name: poetry-export requirements-dev.txt
             args:
                 [
                     "-o",
