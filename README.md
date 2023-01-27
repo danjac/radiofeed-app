@@ -32,14 +32,16 @@ You should run your development environment inside a virtualenv e.g.:
 python -m venv .venv && source .venv/bin/activate
 ```
 
-A `Makefile` has been provided to help with setting up your local development environment:
+A `Makefile` has been provided to help with setting up your local development environment and running commonly used commands, including:
 
 * `make install`: download and install front and backend dependencies
-* `make dbinstall`: run migrations and load sample fixtures
+* `make migrate`: run migrations
 * `make test`: run unit tests
 * `make update`: update all dependencies to latest available versions
-* `make npmwatch`: compile JavaScript and CSS assets on the fly
+* `make watch`: compile JavaScript and CSS assets on the fly
 * `make serve`: run Django development server
+* `make shell`: run Django shell on iPython
+* `make fixtures`: load fixtures of sample data
 
 If you are running several of these operations simultaneously you should use a multiplexer such as Tmux.
 

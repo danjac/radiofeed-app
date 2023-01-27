@@ -27,25 +27,27 @@ precommitupdate:
 nltkdownload:
 	cat nltk.txt | xargs -I{} python -c "import nltk; nltk.download('{}')"
 
-test:
-	python -m pytest
+migrate:
+	python ./manage.py migrate
 
-shell:
-	python ./manage.py shell_plus
+fixtures:
+	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
 serve:
 	python ./manage.py runserver
 
-dbinstall:
-	python ./manage.py migrate
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
+shell:
+	python ./manage.py shell_plus
 
-npmbuild:
+build:
 	npm run build
 
-npmwatch:
+watch:
 	npm run watch
+
+test:
+	python -m pytest
 
 clean:
 	git clean -Xdf
