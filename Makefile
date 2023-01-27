@@ -3,7 +3,7 @@ install: poetryinstall npminstall precommitinstall nltkdownload
 update: poetryupdate npmupdate precommitupdate
 
 poetryinstall:
-	poetry install --no-root -vvv
+	poetry install --no-root --no-cache -vvv
 
 poetryupdate:
 	poetry update --no-cache -vvv
