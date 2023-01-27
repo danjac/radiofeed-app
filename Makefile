@@ -36,12 +36,15 @@ shell:
 serve:
 	python ./manage.py runserver
 
-db:
+dbinstall:
 	python ./manage.py migrate
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 
-watch:
+npmbuild:
+	npm run build
+
+npmwatch:
 	npm run watch
 
 clean:
