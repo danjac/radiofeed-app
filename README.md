@@ -32,7 +32,7 @@ You should run your development environment inside a virtualenv e.g.:
 python -m venv .venv && source .venv/bin/activate
 ```
 
-A `Makefile` has been provided to help with setting up your local development environment and running commonly used commands, including:
+A `Makefile` has been provided with shortcuts to install and run your local development environment, including:
 
 * `make install`: download and install front and backend dependencies
 * `make migrate`: run migrations
