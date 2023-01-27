@@ -12,7 +12,7 @@ install-precommit:
 	pre-commit install
 
 install-nltk:
-	xargs python -m nltk.downloader <./nltk.txt
+	cat nltk.txt | xargs -I{} python -c "import nltk; nltk.download('{}')"
 
 update-poetry:
 	poetry update --no-cache -vvv
