@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import functools
 import hashlib
+import http
 
 from collections.abc import Iterator
 from typing import Final
 
 import attrs
-import httpx
+import requests
 
 from django.conf import settings
 from django.db import transaction
@@ -67,7 +68,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, client: httpx.Client):
+    def parse(self, timeout: int = 10):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -75,7 +76,7 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            response = self._get_response(client)
+            response = self._get_response(timeout)
             content_hash = make_content_hash(response.content)
 
             if content_hash == self._podcast.content_hash:
@@ -118,18 +119,25 @@ class FeedParser:
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
 
-    def _get_response(self, client: httpx.Client) -> httpx.Response:
+    def _get_response(self, timeout: int) -> requests.Response:
         try:
-            response = client.get(
+            response = requests.get(
                 self._podcast.rss,
-                follow_redirects=True,
+                timeout=timeout,
+                allow_redirects=True,
                 headers=self._get_feed_headers(),
             )
 
-            if response.is_redirect:
+            if response.status_code == http.HTTPStatus.NOT_MODIFIED:
                 raise NotModified()
 
-            if response.is_client_error:
+            if response.status_code in (
+                http.HTTPStatus.FORBIDDEN,
+                http.HTTPStatus.GONE,
+                http.HTTPStatus.METHOD_NOT_ALLOWED,
+                http.HTTPStatus.NOT_FOUND,
+                http.HTTPStatus.UNAUTHORIZED,
+            ):
                 raise Inaccessible()
 
             # check for any other http errors
@@ -137,7 +145,7 @@ class FeedParser:
 
             return response
 
-        except httpx.HTTPError as e:
+        except requests.RequestException as e:
             raise Unavailable from e
 
     def _get_feed_headers(self) -> dict[str, str]:
