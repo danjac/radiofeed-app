@@ -19,7 +19,7 @@ repos:
             args: ["--ignore-case", "--unique"]
             exclude: .gitignore|.dockerignore|requirements[-\w]*.txt
     - repo: https://github.com/pycqa/isort
-      rev: 5.11.4
+      rev: 5.12.0
       hooks:
           - id: isort
             additional_dependencies: ["toml"]
