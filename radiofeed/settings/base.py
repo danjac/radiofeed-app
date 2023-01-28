@@ -54,7 +54,7 @@ CSRF_COOKIE_HTTPONLY = True
 # Email configuration
 
 EMAIL_HOST = config("EMAIL_HOST", default="localhost")
-EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
+EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
