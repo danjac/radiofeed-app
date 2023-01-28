@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import httpx
-
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import itunes
@@ -14,10 +12,6 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         """Handle implementation."""
-        with httpx.Client(timeout=10) as client:
-
-            for feed in itunes.crawl(client):
-                style = (
-                    self.style.SUCCESS if feed.podcast is None else self.style.NOTICE
-                )
-                self.stdout.write(style(feed.title))
+        for feed in itunes.crawl():
+            style = self.style.SUCCESS if feed.podcast is None else self.style.NOTICE
+            self.stdout.write(style(feed.title))

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import httpx
 import pytest
+import requests
 
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
@@ -164,7 +164,7 @@ class TestSearchItunes:
     def test_search_exception(self, client, auth_user, mocker):
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search",
-            side_effect=httpx.HTTPError("oops"),
+            side_effect=requests.RequestException("oops"),
         )
 
         response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
