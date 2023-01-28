@@ -13,7 +13,7 @@
                             <li>
                                 <a class="{{ link.css }}"
                                     href="{{ link.url }}"
-                                    tabindex="{{ link.active|yesno:"0,-1" }}"
+                                    {% if link.active %}aria-current="page"{% endif %}
                                     title="{{ podcast.cleaned_title }} | About">
                                     About
                                 </a>
@@ -23,7 +23,7 @@
                                 <li>
                                     <a class="{{ link.css }}"
                                         href="{{ link.url }}"
-                                        tabindex="{{ link.active|yesno:"0,-1" }}"
+                                        {% if link.active %}aria-current="page"{% endif %}
                                         title="{{ podcast.cleaned_title }} | Episodes">
                                         Episodes ({{ num_episodes }})
                                     </a>
@@ -34,7 +34,7 @@
                                 <li>
                                     <a class="{{ link.css }}"
                                         href="{{ link.url }}"
-                                        tabindex="{{ link.active|yesno:"0,-1" }}"
+                                        {% if link.active %}aria-current="page"{% endif %}
                                         title="{{ podcast.cleaned_title }} | Similar">
                                         Similar
                                     </a>

@@ -13,43 +13,43 @@
                     {% active_link 'users:preferences' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            {% if link.active %}aria-current="page"{% endif %}
                             href="{{ link.url }}">Preferences</a>
                     </li>
                     {% active_link 'users:manage_podcast_feeds' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            {% if link.active %}aria-current="page"{% endif %}
                             href="{{ link.url }}">Import/Export Feeds</a>
                     </li>
                     {% active_link 'users:stats' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            {% if link.active %}aria-current="page"{% endif %}
                             href="{{ link.url }}">Statistics</a>
                     </li>
                     {% active_link 'account_email' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            {% if link.active %}aria-current="page"{% endif %}
                             href="{{ link.url }}">Email Addresses</a>
                     </li>
                     {% active_link 'account_change_password' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            {% if link.active %}aria-current="page"{% endif %}
                             href="{{ link.url }}">Change Password</a>
                     </li>
                     {% active_link 'socialaccount_connections' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            {% if link.active %}aria-current="page"{% endif %}
                             href="{{ link.url }}">Social Logins</a>
                     </li>
                     {% active_link 'users:delete_account' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
+                            {% if link.active %}aria-current="page"{% endif %}
                             href="{{ link.url }}">Delete Account</a>
                     </li>
                 </ul>
