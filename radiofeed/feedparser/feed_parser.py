@@ -68,7 +68,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, timeout: int = 10):
+    def parse(self):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -76,7 +76,7 @@ class FeedParser:
         If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
         """
         try:
-            response = self._get_response(timeout)
+            response = self._get_response()
             content_hash = make_content_hash(response.content)
 
             if content_hash == self._podcast.content_hash:
@@ -119,11 +119,11 @@ class FeedParser:
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
 
-    def _get_response(self, timeout: int) -> requests.Response:
+    def _get_response(self) -> requests.Response:
         try:
             response = requests.get(
                 self._podcast.rss,
-                timeout=timeout,
+                timeout=10,
                 allow_redirects=True,
                 headers=self._get_feed_headers(),
             )
