@@ -5,7 +5,7 @@ import io
 
 from typing import Final
 
-import httpx
+import requests
 
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -176,12 +176,12 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
         raise Http404
 
     try:
-        response = httpx.get(
+        response = requests.get(
             cover_url,
             headers={
                 "User-Agent": settings.USER_AGENT,
             },
-            follow_redirects=True,
+            allow_redirects=True,
             timeout=5,
         )
 
@@ -196,7 +196,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
         image.save(output, format="webp", optimize=True, quality=90)
         output.seek(0)
 
-    except (OSError, httpx.HTTPError):
+    except (OSError, requests.RequestException):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 

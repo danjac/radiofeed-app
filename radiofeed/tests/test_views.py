@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import urllib.parse
 
-import httpx
+import requests
 
 from django.core.signing import Signer
 from django.shortcuts import render
@@ -68,7 +68,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
@@ -84,9 +84,9 @@ class TestCoverImage:
     def test_failed_download(self, client, db, mocker):
         class MockResponse:
             def raise_for_status(self):
-                raise httpx.HTTPError("OOPS")
+                raise requests.HTTPError("OOPS")
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
     def test_failed_process(self, client, db, mocker):
@@ -96,7 +96,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", side_effect=IOError())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
