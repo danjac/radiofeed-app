@@ -84,7 +84,7 @@ class TestCoverImage:
     def test_failed_download(self, client, db, mocker):
         class MockResponse:
             def raise_for_status(self):
-                raise requests.HTTPError("OOPS")
+                raise requests.RequestException("OOPS")
 
         mocker.patch("requests.get", return_value=MockResponse())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
