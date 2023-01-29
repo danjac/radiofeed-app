@@ -28,7 +28,7 @@ class Command(BaseCommand):
         """Command handler implementation."""
         with ThreadPoolExecutor() as executor:
             executor.map(
-                lambda podcast: self._parse_feed(podcast),
+                self._parse_feed,
                 scheduler.scheduled_for_update()[: options["limit"]].iterator(),
             )
 

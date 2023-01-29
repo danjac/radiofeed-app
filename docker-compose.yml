@@ -1,9 +1,14 @@
-version: "3.8"
+version: "3.9"
 
 x-logging: &default-logging
     options:
         max-size: "10k"
         max-file: "3"
+
+x-deploy: &default-deploy
+    restart_policy:
+        condition: on-failure
+        max_attempts: 3
 
 services:
     postgres:
@@ -14,6 +19,7 @@ services:
             - pg_data:/var/lib/postgresql/data
         mem_limit: 100m
         stop_grace_period: "3s"
+        deploy: *default-deploy
         logging: *default-logging
         healthcheck:
             test: ["CMD", "pg_isready", "-U", "postgres"]
@@ -27,6 +33,7 @@ services:
         image: redis:7.0.5-bullseye
         mem_limit: 100m
         stop_grace_period: "3s"
+        deploy: *default-deploy
         logging: *default-logging
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
@@ -40,6 +47,7 @@ services:
         image: mailhog/mailhog:v1.0.1
         mem_limit: 100m
         stop_grace_period: "3s"
+        deploy: *default-deploy
         logging: *default-logging
         ports:
             - "8025:8025"
