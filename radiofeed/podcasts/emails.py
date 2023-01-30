@@ -15,9 +15,11 @@ def send_recommendations_email(
 ) -> bool:
     """Sends email to user with a list of recommended podcasts.
 
-    Recommendaitons based on their subscriptions and listening history.
+    Recommendations based on their subscriptions and listening history.
 
     Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
+
+    If there are fewer than `min_podcasts` then no email will be sent.
 
     Returns:
         `True` user has been sent recommendations email
@@ -59,7 +61,11 @@ def send_recommendations_email(
 
     site = Site.objects.get_current()
 
-    context = {"recipient": user, "site": site, "podcasts": podcasts}
+    context = {
+        "recipient": user,
+        "site": site,
+        "podcasts": podcasts,
+    }
 
     send_mail(
         f"Hi {user.username}, here are some new podcasts you might like!",
