@@ -15,7 +15,7 @@ from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from radiofeed import batcher
+from radiofeed import iterators
 from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast
 
@@ -116,7 +116,7 @@ class Crawler:
             return []
 
     def _parse_genre_url(self, url: str) -> Iterator[Feed]:
-        for feed_ids in batcher.batcher(self._parse_podcast_ids(url), 100):
+        for feed_ids in iterators.batcher(self._parse_podcast_ids(url), 100):
             yield from self._parse_feeds(feed_ids)
 
     def _parse_feeds(self, feed_ids: list[str]) -> Iterator[Feed]:
@@ -188,7 +188,7 @@ def _get_response(
 
 def _parse_feeds(url: str, params: dict | None = None) -> Iterator[Feed]:
 
-    for batch in batcher.batcher(
+    for batch in iterators.batcher(
         _build_feeds_from_json(
             _get_response(
                 url,
