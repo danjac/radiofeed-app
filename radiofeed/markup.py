@@ -58,7 +58,7 @@ _markdown = MarkdownIt()
 _cleaner = Cleaner(allow_tags=_ALLOWED_TAGS, safe_attrs_only=True, add_nofollow=True)
 
 
-def clean(value: str) -> str:
+def clean_html(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes."""
     return _cleaner.clean_html(value) if value else ""
 
@@ -71,5 +71,5 @@ def strip_html(value: str) -> str:
 def markdown(value: str) -> str:
     """Returns safe Markdown rendered string. If content is already HTML will pass as-is."""
     if value := value.strip():
-        return mark_safe(clean(_markdown.render(value)))  # nosec
+        return mark_safe(clean_html(_markdown.render(value)))  # nosec
     return ""

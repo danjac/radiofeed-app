@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.markup import clean, markdown, strip_html
+from radiofeed.markup import clean_html, markdown, strip_html
 
 
 class TestMarkdown:
@@ -22,20 +22,20 @@ class TestMarkdown:
         return markdown(value) == expected
 
 
-class TestClean:
+class TestCleanHtml:
     def test_if_none(self):
-        assert clean(None) == ""
+        assert clean_html(None) == ""
 
     def test_if_safe(self):
         text = "<p>testing with paras</p>"
-        assert clean(text) == text
+        assert clean_html(text) == text
 
     def test_has_link_link(self):
-        cleaned = clean('<a href="http://reddit.com">Reddit</a>')
-        assert 'rel="nofollow"' in cleaned
+        clean_htmled = clean_html('<a href="http://reddit.com">Reddit</a>')
+        assert 'rel="nofollow"' in clean_htmled
 
     def test_unsafe(self):
-        assert clean("<script>alert('xss ahoy!')</script>") == "<div></div>"
+        assert clean_html("<script>alert('xss ahoy!')</script>") == "<div></div>"
 
 
 class TestStripHtml:
