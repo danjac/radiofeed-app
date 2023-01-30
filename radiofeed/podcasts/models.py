@@ -16,8 +16,8 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
+from radiofeed import cleaners
 from radiofeed.fast_count import FastCountQuerySetMixin
-from radiofeed.markup import strip_html
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
@@ -207,12 +207,12 @@ class Podcast(models.Model):
     @cached_property
     def cleaned_title(self) -> str:
         """Strips HTML from title field."""
-        return strip_html(self.title)
+        return cleaners.strip_html(self.title)
 
     @cached_property
     def cleaned_description(self) -> str:
         """Strips HTML from description field."""
-        return strip_html(self.description)
+        return cleaners.strip_html(self.description)
 
     @cached_property
     def slug(self) -> str:

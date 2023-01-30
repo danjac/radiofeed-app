@@ -15,7 +15,7 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
-from radiofeed.markup import strip_html
+from radiofeed import cleaners
 
 NLTK_LANGUAGES: Final = {
     "ar": "arabic",
@@ -78,7 +78,7 @@ def get_stopwords(language: str) -> frozenset[str]:
 
 def clean_text(text: str) -> str:
     """Scrub text of any HTML tags and entities, punctuation and numbers."""
-    text = strip_html(text)
+    text = cleaners.strip_html(text)
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
     text = re.sub(r"\d+", "", text)
     return text

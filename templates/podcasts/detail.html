@@ -75,7 +75,7 @@
                     {% endif %}
                 {% endwith %}
             {% endcache %}
-            {% markdown podcast.description %}
+            {% render_html podcast.description %}
         </article>
     {% endwith %}
 {% endblock podcast_content %}

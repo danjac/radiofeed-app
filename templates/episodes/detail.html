@@ -104,7 +104,7 @@
             {% with listened=episode.listened current_time=episode.current_time %}
                 {% include "episodes/includes/history.html" %}
             {% endwith %}
-            {% markdown episode.description %}
+            {% render_html episode.description %}
         </article>
     {% endwith %}
 {% endblock content %}

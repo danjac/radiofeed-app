@@ -16,8 +16,9 @@ from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
-from radiofeed import markup
+from radiofeed import cleaners
 
 register = template.Library()
 
@@ -88,10 +89,10 @@ def active_link(
     )
 
 
-@register.inclusion_tag("includes/markdown.html")
-def markdown(value: str | None) -> dict:
-    """Renders Markdown or HTML content."""
-    return {"content": markup.markdown(value or "")}
+@register.inclusion_tag("includes/html_content.html")
+def render_html(value: str | None) -> dict:
+    """Renders cleaned HTML content."""
+    return {"content": mark_safe(cleaners.clean_html(value or ""))}  # nosec
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)

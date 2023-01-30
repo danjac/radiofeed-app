@@ -2,24 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from radiofeed.markup import clean_html, markdown, strip_html
-
-
-class TestMarkdown:
-    @pytest.mark.parametrize(
-        "value,expected",
-        [
-            ("", ""),
-            ("   ", ""),
-            ("test", "test"),
-            ("*test*", "<b>test</b>"),
-            ("<p>test</p>", "<p>test</p>"),
-            ("<p>test</p>   ", "<p>test</p>"),
-            ("<script>test</script>", "test"),
-        ],
-    )
-    def test_markdown(self, value, expected):
-        return markdown(value) == expected
+from radiofeed.cleaners import clean_html, strip_html
 
 
 class TestCleanHtml:
