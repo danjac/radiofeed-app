@@ -65,7 +65,7 @@ class Recommender:
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
-        for batch in iterators.chunked_iterator(
+        for batch in iterators.batcher(
             self._build_matches_dict(podcasts, categories).items(), 1000
         ):
 

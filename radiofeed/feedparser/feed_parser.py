@@ -250,9 +250,7 @@ class FeedParser:
 
         # update existing content
 
-        for batch in iterators.chunked_iterator(
-            self._episodes_for_update(feed, guids), 1000
-        ):
+        for batch in iterators.batcher(self._episodes_for_update(feed, guids), 1000):
             Episode.fast_update_objects.copy_update(
                 batch,
                 fields=[
@@ -274,9 +272,7 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in iterators.chunked_iterator(
-            self._episodes_for_insert(feed, guids), 100
-        ):
+        for batch in iterators.batcher(self._episodes_for_insert(feed, guids), 100):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _episodes_for_insert(
