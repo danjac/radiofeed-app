@@ -70,7 +70,7 @@ class TestAbsoluteUri:
     DETAIL_URL = "/podcasts/12345/test/"
 
     def test_no_url(self, db):
-        assert absolute_uri({}) == self.BASE_URL + "/"
+        assert absolute_uri({}) == f"{self.BASE_URL}/"
 
     def test_with_request(self, rf):
         assert absolute_uri({"request": rf.get("/")}) == "http://testserver/"

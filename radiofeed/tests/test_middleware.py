@@ -123,7 +123,7 @@ class TestPagination:
         page = Pagination(req)
 
         assert page.current == ""
-        assert str(page) == ""
+        assert not str(page)
 
 
 class TestSearch:

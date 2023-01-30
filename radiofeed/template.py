@@ -65,7 +65,7 @@ def absolute_uri(context: Context, to: str | Model = "", *args, **kwargs) -> str
         return request.build_absolute_uri(url)
 
     return urllib.parse.urljoin(
-        settings.HTTP_PROTOCOL + "://" + Site.objects.get_current().domain, url
+        f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}", url
     )
 
 
