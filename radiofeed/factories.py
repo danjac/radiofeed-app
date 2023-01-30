@@ -23,7 +23,7 @@ def counter(format_str: str, varname: str = "n") -> Iterator[str]:
 
 def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:
     """Create batch of models."""
-    return [factory(**kwargs) for i in range(0, count)]
+    return [factory(**kwargs) for _ in range(count)]
 
 
 def resolve(value: T | None, default_value: T | Callable[..., T | None]) -> T | None:

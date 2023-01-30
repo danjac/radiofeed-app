@@ -84,7 +84,7 @@ class Pagination:
         """
         qs = self.request.GET.copy()
         qs[self.param] = page_number
-        return self.request.path + "?" + qs.urlencode()
+        return f"{self.request.path}?{qs.urlencode()}"
 
 
 @dataclasses.dataclass(frozen=True)
