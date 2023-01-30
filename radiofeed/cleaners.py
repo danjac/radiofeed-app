@@ -56,7 +56,7 @@ _cleaner = Cleaner(allow_tags=_ALLOWED_TAGS, safe_attrs_only=True, add_nofollow=
 
 def clean_html(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes."""
-    return _cleaner.clean_html(value) if value else ""
+    return _cleaner.clean_html(value) if (value := value.strip()) else ""
 
 
 def strip_html(value: str) -> str:

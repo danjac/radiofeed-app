@@ -6,9 +6,6 @@ from radiofeed.cleaners import clean_html, strip_html
 
 
 class TestCleanHtml:
-    def test_if_none(self):
-        assert clean_html(None) == ""
-
     def test_if_safe(self):
         text = "<p>testing with paras</p>"
         assert clean_html(text) == text
