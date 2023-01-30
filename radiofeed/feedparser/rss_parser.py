@@ -31,8 +31,8 @@ def parse_rss(content: bytes) -> Feed:
     """
     try:
         return _parse_feed(next(_xpath_parser.iterparse(content, "rss", "channel")))
-    except StopIteration:
-        raise InvalidRSS("Document does not contain <channel /> element")
+    except StopIteration as e:
+        raise InvalidRSS("Document does not contain <channel /> element") from e
     except lxml.etree.XMLSyntaxError as e:
         raise InvalidRSS from e
 
