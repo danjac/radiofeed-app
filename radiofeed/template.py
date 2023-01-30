@@ -102,7 +102,12 @@ def cookie_notice(context: RequestContext) -> dict:
 
 @register.inclusion_tag("includes/icon.html")
 def icon(
-    name: str, style: str = "", *, size="", title: str = "", css_class: str = ""
+    name: str,
+    style: str = "",
+    *,
+    size="",
+    title: str = "",
+    css_class: str = "",
 ) -> dict:
     """Renders a FontAwesome icon."""
     return {
