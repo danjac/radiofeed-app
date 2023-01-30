@@ -1383,6 +1383,27 @@ editorconfig = ">=0.12.2"
 six = ">=1.13.0"
 
 [[package]]
+name = "linkify-it-py"
+version = "1.0.3"
+description = "Links recognition library with FULL unicode support."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "linkify-it-py-1.0.3.tar.gz", hash = "sha256:2b3f168d5ce75e3a425e34b341a6b73e116b5d9ed8dbbbf5dc7456843b7ce2ee"},
+    {file = "linkify_it_py-1.0.3-py3-none-any.whl", hash = "sha256:11e29f00150cddaa8f434153f103c14716e7e097a8fd372d9eb1ed06ed91524d"},
+]
+
+[package.dependencies]
+uc-micro-py = "*"
+
+[package.extras]
+benchmark = ["pytest", "pytest-benchmark"]
+dev = ["black", "flake8", "isort", "pre-commit"]
+doc = ["myst-parser", "sphinx", "sphinx-book-theme"]
+test = ["coverage", "pytest", "pytest-cov"]
+
+[[package]]
 name = "lxml"
 version = "4.9.2"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
@@ -1488,6 +1509,7 @@ files = [
 ]
 
 [package.dependencies]
+linkify-it-py = {version = ">=1.0,<2.0", optional = true, markers = "extra == \"linkify\""}
 mdurl = ">=0.1,<1.0"
 
 [package.extras]
@@ -2948,6 +2970,21 @@ files = [
 ]
 
 [[package]]
+name = "uc-micro-py"
+version = "1.0.1"
+description = "Micro subset of unicode data files for linkify-it-py projects."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "uc-micro-py-1.0.1.tar.gz", hash = "sha256:b7cdf4ea79433043ddfe2c82210208f26f7962c0cfbe3bacb05ee879a7fdb596"},
+    {file = "uc_micro_py-1.0.1-py3-none-any.whl", hash = "sha256:316cfb8b6862a0f1d03540f0ae6e7b033ff1fa0ddbe60c12cbe0d4cec846a69f"},
+]
+
+[package.extras]
+test = ["coverage", "pytest", "pytest-cov"]
+
+[[package]]
 name = "urllib3"
 version = "1.26.14"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -2994,4 +3031,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "da3dfefb5591b2791e5feabbde5b2a1d02f8a4fdaff58793e965786a8fd5a1bf"
+content-hash = "78b5c7467addbd5cc93fca4a8e6c7de315ec1092bfa97b8a2088e712837dfc29"

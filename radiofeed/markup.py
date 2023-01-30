@@ -53,7 +53,10 @@ _ALLOWED_TAGS: Final = {
     "ul",
 }
 
-_markdown = MarkdownIt()
+_markdown = MarkdownIt(
+    "commonmark",
+    {"linkify": True},
+).enable(["linkify"])
 
 _cleaner = Cleaner(allow_tags=_ALLOWED_TAGS, safe_attrs_only=True, add_nofollow=True)
 
