@@ -73,8 +73,8 @@ def absolute_uri(context: Context, to: str | Model = "", *args, **kwargs) -> str
 def active_link(
     context: RequestContext,
     url_name: str,
-    css="link",
-    active_css="active",
+    css: str = "link",
+    active_css: str = "active",
     *args,
     **kwargs,
 ) -> ActiveLink:
