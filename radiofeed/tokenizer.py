@@ -51,7 +51,6 @@ _CORPORATE_STOPWORDS: Final = [
     "itunes",
 ]
 
-_STOPWORDS_DIR = settings.BASE_DIR / "nltk" / "stopwords"
 
 _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
@@ -119,7 +118,7 @@ def _get_date_stopwords(language: str) -> Iterator[str]:
 
 
 def _get_extra_stopwords(language: str) -> list[str]:
-    path = _STOPWORDS_DIR / f"stopwords_{language}.txt"
+    path = settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"
 
     return (
         [
