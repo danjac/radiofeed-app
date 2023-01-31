@@ -106,7 +106,7 @@ def icon(
     name: str,
     style: str = "",
     *,
-    size="",
+    size: str = "",
     title: str = "",
     css_class: str = "",
 ) -> dict:
