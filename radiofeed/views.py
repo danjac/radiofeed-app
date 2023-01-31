@@ -22,15 +22,6 @@ from PIL import Image
 
 _COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
-_PWA_THEME_COLOR: Final = "#26323C"
-
-_PWA_ICON: Final = {
-    "src": static("img/wave.png"),
-    "type": "image/png",
-    "sizes": "512x512",
-}
-
-
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
 _cache_page = cache_page(60 * 60)
 
@@ -80,12 +71,20 @@ def service_worker(request: HttpRequest) -> HttpResponse:
 def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
     start_url = reverse("podcasts:landing_page")
+    theme_color = "#26323C"
+
     site = Site.objects.get_current()
+
+    icon = {
+        "src": static("img/wave.png"),
+        "type": "image/png",
+        "sizes": "512x512",
+    }
 
     return JsonResponse(
         {
-            "background_color": _PWA_THEME_COLOR,
-            "theme_color": _PWA_THEME_COLOR,
+            "background_color": theme_color,
+            "theme_color": theme_color,
             "description": "Podcast aggregator site",
             "dir": "ltr",
             "display": "standalone",
@@ -107,9 +106,9 @@ def manifest(request: HttpRequest) -> HttpResponse:
                 static("img/mobile.png"),
             ],
             "icons": [
-                _PWA_ICON,
-                _PWA_ICON | {"purpose": "any"},
-                _PWA_ICON | {"purpose": "maskable"},
+                icon,
+                {**icon, "purpose": "any"},
+                {**icon, "purpose": "maskable"},
             ],
             "shortcuts": [],
             "lang": "en",
