@@ -35,13 +35,12 @@ python -m venv .venv && source .venv/bin/activate
 A `Makefile` has been provided with shortcuts to install and run your local development environment, including:
 
 * `make install`: download and install front and backend dependencies
-* `make migrate`: run migrations
+* `make dbinstall`: run migrations and install sample fixtures
 * `make test`: run unit tests
 * `make update`: update all dependencies to latest available versions
 * `make watch`: compile JavaScript and CSS assets on the fly
 * `make serve`: run Django development server
 * `make shell`: run Django shell on iPython
-* `make fixtures`: load fixtures of sample data
 
 If you are running several of these operations simultaneously you should use a multiplexer such as Tmux.
 
