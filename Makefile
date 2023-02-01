@@ -1,5 +1,7 @@
 install: poetryinstall npminstall precommitinstall nltkdownload
 
+dbinstall: migrate fixtures
+
 update: poetryupdate npmupdate precommitupdate
 
 poetryinstall:
