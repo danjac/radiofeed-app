@@ -21,7 +21,7 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 If you want to use the Docker images just run:
 
 ```bash
-docker-compose up -d
+docker-compose up --build -d
 ```
 
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
