@@ -17,7 +17,6 @@ services:
             - POSTGRES_PASSWORD=password
         volumes:
             - pg_data:/var/lib/postgresql/data
-        mem_limit: 100m
         stop_grace_period: "3s"
         deploy: *default-deploy
         logging: *default-logging
@@ -31,7 +30,6 @@ services:
 
     redis:
         image: redis:7.0.5-bullseye
-        mem_limit: 100m
         stop_grace_period: "3s"
         deploy: *default-deploy
         logging: *default-logging
