@@ -100,9 +100,9 @@ testpaths = "radiofeed"
 [tool.coverage.run]
 source=["radiofeed", "templates"]
 omit=[
+    "**/migrations/*",
     "**/factories.py",
     "**/wsgi.py",
-    "*/migrations/*",
     "*/nltk/*",
     "*/settings/*",
     "*/static/*",
