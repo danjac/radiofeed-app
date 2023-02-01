@@ -35,6 +35,7 @@ migrate:
 fixtures:
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
+	python ./manage.py loaddata ./radiofeed/users/fixtures/users.json.gz
 
 serve:
 	python ./manage.py runserver
