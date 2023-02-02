@@ -11,18 +11,14 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 
 
-class BaseMiddleware:
-    """Base middleware class."""
-
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
-        self.get_response = get_response
-
-
-class CacheControlMiddleware(BaseMiddleware):
+class CacheControlMiddleware:
     """Workaround for https://github.com/bigskysoftware/htmx/issues/497.
 
     Place after HtmxMiddleware.
     """
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -33,8 +29,11 @@ class CacheControlMiddleware(BaseMiddleware):
         return response
 
 
-class PaginationMiddleware(BaseMiddleware):
+class PaginationMiddleware:
     """Adds `Pagination` instance as `request.pagination`."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -42,8 +41,11 @@ class PaginationMiddleware(BaseMiddleware):
         return self.get_response(request)
 
 
-class SearchMiddleware(BaseMiddleware):
+class SearchMiddleware:
     """Adds `Search` instance as `request.search`."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -51,8 +53,11 @@ class SearchMiddleware(BaseMiddleware):
         return self.get_response(request)
 
 
-class OrderingMiddleware(BaseMiddleware):
+class OrderingMiddleware:
     """Adds `Ordering` instance as `request.ordering`."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""

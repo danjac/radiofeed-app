@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import dataclasses
 
+from collections.abc import Callable
+
 from django.http import HttpRequest, HttpResponse
 
-from radiofeed.middleware import BaseMiddleware
 
-
-class PlayerMiddleware(BaseMiddleware):
+class PlayerMiddleware:
     """Adds `Player` instance as `request.player`."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
