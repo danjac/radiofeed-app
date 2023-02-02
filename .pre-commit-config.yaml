@@ -18,6 +18,10 @@ repos:
           - id: file-contents-sorter
             args: ["--ignore-case", "--unique"]
             exclude: .gitignore|.dockerignore|requirements[-\w]*.txt
+    - repo: https://github.com/koalaman/shellcheck-precommit
+      rev: v0.9.0
+      hooks:
+          - id: shellcheck
     - repo: https://github.com/pycqa/isort
       rev: 5.12.0
       hooks:
