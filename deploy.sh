@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# check secure
+# check all secure
 
 ./manage.py check --deploy
 
