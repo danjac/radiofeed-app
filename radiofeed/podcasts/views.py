@@ -58,7 +58,7 @@ def index(request: HttpRequest) -> HttpResponse:
         podcasts,
         "podcasts/index.html",
         "podcasts/pagination/podcasts.html",
-        extra_context={
+        {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
             "search_url": reverse("podcasts:search_podcasts"),
@@ -168,7 +168,7 @@ def episodes(
         episodes,
         "podcasts/episodes.html",
         "episodes/pagination/episodes.html",
-        extra_context={
+        {
             "podcast": podcast,
             "is_podcast_detail": True,
         },
@@ -239,7 +239,7 @@ def category_detail(
         podcasts,
         "podcasts/category_detail.html",
         "podcasts/pagination/podcasts.html",
-        extra_context={"category": category},
+        {"category": category},
     )
 
 

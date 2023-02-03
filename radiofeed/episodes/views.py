@@ -40,7 +40,7 @@ def index(request: HttpRequest) -> HttpResponse:
         episodes,
         "episodes/index.html",
         "episodes/pagination/episodes.html",
-        extra_context={
+        {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
             "search_url": reverse("episodes:search_episodes"),
