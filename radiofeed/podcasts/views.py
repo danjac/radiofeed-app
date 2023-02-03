@@ -26,7 +26,6 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
     Redirects authenticated users to podcast index page.
     """
     if request.user.is_anonymous:
-
         podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
         return render(
             request,
@@ -59,7 +58,7 @@ def index(request: HttpRequest) -> HttpResponse:
         podcasts,
         "podcasts/index.html",
         "podcasts/pagination/podcasts.html",
-        {
+        extra_context={
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
             "search_url": reverse("podcasts:search_podcasts"),
@@ -72,7 +71,6 @@ def index(request: HttpRequest) -> HttpResponse:
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
-
         return render_pagination_response(
             request,
             (
@@ -96,7 +94,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if request.search:
-
         feeds: list[itunes.Feed] = []
 
         try:
@@ -242,7 +239,7 @@ def category_detail(
         podcasts,
         "podcasts/category_detail.html",
         "podcasts/pagination/podcasts.html",
-        {"category": category},
+        extra_context={"category": category},
     )
 
 

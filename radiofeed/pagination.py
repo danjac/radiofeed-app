@@ -11,6 +11,7 @@ def render_pagination_response(
     object_list: QuerySet,
     template_name: str,
     pagination_template_name: str,
+    *,
     extra_context: dict | None = None,
     page_size: int = 30,
     pagination_target: str = "pagination",

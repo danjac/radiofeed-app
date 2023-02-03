@@ -40,7 +40,7 @@ def index(request: HttpRequest) -> HttpResponse:
         episodes,
         "episodes/index.html",
         "episodes/pagination/episodes.html",
-        {
+        extra_context={
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
             "search_url": reverse("episodes:search_episodes"),
@@ -120,7 +120,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes player. Removes episode to player session tracker."""
     if episode_id := request.player.pop():
-
         episode = get_object_or_404(
             Episode.objects.with_current_time(request.user), pk=episode_id
         )
@@ -148,7 +147,6 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     """
     if episode_id := request.player.get():
         try:
-
             request.user.audio_logs.filter(episode=episode_id).invalidated_update(
                 current_time=int(request.POST["current_time"]),
                 listened=timezone.now(),
@@ -251,7 +249,6 @@ def _render_audio_player_action(
     current_time: datetime | None,
     listened: datetime | None,
 ) -> HttpResponse:
-
     return render(
         request,
         "episodes/actions/player.html",
