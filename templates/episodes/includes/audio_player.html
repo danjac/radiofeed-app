@@ -28,12 +28,12 @@
                         <div class="sm:flex items-center w-full space-y-2 sm:space-y-0 divide-y sm:divide-y-0 sm:divide-x divide-solid divide-gray-500">
                             <div class="sm:w-1/2">
                                 <div class="flex items-center space-x-2 lg:space-x-3">
-                                    {% cover_image podcast.cover_url 100 podcast.cleaned_title url=podcast.get_absolute_url css_class="w-16 h-16" %}
+                                    {% cover_image podcast.cover_url 100 podcast.cleaned_title|add:": About" url=podcast.get_absolute_url css_class="w-16 h-16" %}
                                     <div class="h-16 flex flex-col place-content-between">
                                         <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-blue-300"
                                             href="{{ episode_url }}"
                                             hx-swap="innerHTML show:window:top"
-                                            title="{{ episode.cleaned_title }}: About">{{ episode.cleaned_title|truncatechars:120 }}
+                                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                         </a>
 
                                         <a class="block leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3 hover:text-blue-300"
