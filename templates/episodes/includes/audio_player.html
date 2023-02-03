@@ -33,13 +33,13 @@
                                         <a class="block font-bold leading-tight tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-blue-300"
                                             href="{{ episode_url }}"
                                             hx-swap="innerHTML show:window:top"
-                                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
+                                            title="{{ episode.cleaned_title }}: About">{{ episode.cleaned_title|truncatechars:120 }}
                                         </a>
 
                                         <a class="block leading-tight tracking-tight w-60 lg:w-96 text-xs lg:text-sm truncate sm:pr-3 hover:text-blue-300"
                                             href="{{ podcast.get_episodes_url }}"
                                             hx-swap="innerHTML show:window:top"
-                                            title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title|truncatechars:120 }}
+                                            title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title|truncatechars:120 }}
                                         </a>
                                     </div>
                                 </div>
