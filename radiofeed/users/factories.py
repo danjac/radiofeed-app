@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from allauth.account.models import EmailAddress
 
-from radiofeed.factories import NotSet, counter, resolve
+from radiofeed.factories import NotSet, Sequence, resolve
 from radiofeed.users.models import User
 
-_username_seq = counter("user-{n}")
-_email_seq = counter("user-{n}@example.com")
+_usernames = Sequence("user-{n}")
+_emails = Sequence("user-{n}@example.com")
 
 
 def create_user(
@@ -17,8 +17,8 @@ def create_user(
     **kwargs,
 ) -> User:
     return User.objects.create_user(
-        username=resolve(username, lambda: next(_username_seq)),
-        email=resolve(email, lambda: next(_email_seq)),
+        username=resolve(username, _usernames),
+        email=resolve(email, _emails),
         password=resolve(password, "testpass1"),
         **kwargs,
     )
@@ -33,7 +33,7 @@ def create_email_address(
 ) -> EmailAddress:
     return EmailAddress.objects.create(
         user=resolve(user, create_user),
-        email=resolve(email, lambda: next(_email_seq)),
+        email=resolve(email, _emails),
         verified=verified,
         primary=primary,
     )

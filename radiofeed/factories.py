@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from typing import Any, TypeVar
 
 T = TypeVar("T")
@@ -16,9 +16,17 @@ class _NotSet:
 NotSet: Any = _NotSet()
 
 
-def counter(format_str: str, varname: str = "n") -> Iterator[str]:
-    """Returns an incremented counter."""
-    return (format_str.format(**{varname: counter}) for counter in itertools.count())
+class Sequence:
+    """Returns an incremented sequence string."""
+
+    def __init__(self, format_str: str, varname: str = "n"):
+        self._counter = (
+            format_str.format(**{varname: counter}) for counter in itertools.count()
+        )
+
+    def __call__(self) -> str:
+        """Returns next string in sequence"""
+        return next(self._counter)
 
 
 def create_batch(factory: Callable[..., T], count: int, /, **kwargs) -> list[T]:

@@ -7,11 +7,11 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.factories import NotSet, counter, resolve
+from radiofeed.factories import NotSet, Sequence, resolve
 
 _faker = Faker()
 
-_media_url_seq = counter("https://example.com/audio-{n}.mp3")
+_media_urls = Sequence("https://example.com/audio-{n}.mp3")
 
 
 def create_item(
@@ -26,7 +26,7 @@ def create_item(
         "guid": resolve(guid, lambda: uuid.uuid4().hex),
         "title": resolve(title, _faker.text),
         "pub_date": resolve(pub_date, timezone.now),
-        "media_url": resolve(media_url, lambda: next(_media_url_seq)),
+        "media_url": resolve(media_url, _media_urls),
         "media_type": resolve(media_type, "audio/mpeg"),
         **kwargs,
     }

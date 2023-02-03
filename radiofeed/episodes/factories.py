@@ -8,15 +8,15 @@ from django.utils import timezone
 from faker import Faker
 
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.factories import NotSet, counter, resolve
+from radiofeed.factories import NotSet, Sequence, resolve
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
-_media_url_seq = counter("https://example.com/audio-{n}.mp3")
-
 _faker = Faker()
+
+_media_urls = Sequence("https://example.com/audio-{n}.mp3")
 
 
 def create_episode(
@@ -31,14 +31,13 @@ def create_episode(
     duration: str = NotSet,
     **kwargs,
 ) -> Episode:
-
     return Episode.objects.create(
         guid=resolve(guid, lambda: uuid.uuid4().hex),
         podcast=resolve(podcast, create_podcast),
         title=resolve(title, _faker.text),
         description=resolve(description, _faker.text),
         pub_date=resolve(pub_date, timezone.now),
-        media_url=resolve(media_url, lambda: next(_media_url_seq)),
+        media_url=resolve(media_url, _media_urls),
         media_type=resolve(media_type, "audio/mpeg"),
         duration=resolve(duration, "100"),
         **kwargs,
