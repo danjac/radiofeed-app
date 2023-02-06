@@ -100,7 +100,6 @@ class TestPaginationMiddleware:
 
 class TestPagination:
     def test_append_page_number_to_querystring(self, rf):
-
         req = rf.get("/search/", {"query": "test"})
         page = Pagination(req)
 
@@ -110,7 +109,6 @@ class TestPagination:
         assert "page=5" in url
 
     def test_current_page(self, rf):
-
         req = rf.get("/", {"page": "100"})
         page = Pagination(req)
 
@@ -118,7 +116,6 @@ class TestPagination:
         assert str(page) == "100"
 
     def test_current_page_empty(self, rf):
-
         req = rf.get("/")
         page = Pagination(req)
 
@@ -166,12 +163,12 @@ class TestOrdering:
         ordering = Ordering(req)
         assert str(ordering) == "desc"
 
-    def test_reverse_qs_if_asc(self, rf):
+    def test_qs_reversed_if_asc(self, rf):
         req = rf.get("/", {"order": "asc"})
         ordering = Ordering(req)
-        assert ordering.reverse_qs == "order=desc"
+        assert ordering.qs_reversed == "order=desc"
 
-    def test_reverse_qs_if_desc(self, rf):
+    def test_qs_reversed_if_desc(self, rf):
         req = rf.get("/", {"order": "desc"})
         ordering = Ordering(req)
-        assert ordering.reverse_qs == "order=asc"
+        assert ordering.qs_reversed == "order=asc"
