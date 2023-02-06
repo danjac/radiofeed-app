@@ -93,6 +93,32 @@ class Pagination:
 
 
 @dataclasses.dataclass(frozen=True)
+class Search:
+    """Handles search parameters in request."""
+
+    request: HttpRequest
+    param: str = "query"
+
+    def __str__(self) -> str:
+        """Returns search query value."""
+        return self.value
+
+    def __bool__(self) -> bool:
+        """Returns `True` if search in query and has a non-empty value."""
+        return bool(self.value)
+
+    @cached_property
+    def value(self) -> str:
+        """Returns the search query value, if any."""
+        return force_str(self.request.GET.get(self.param, "")).strip()
+
+    @cached_property
+    def qs(self) -> str:
+        """Returns encoded query string value, if any."""
+        return urlencode({self.param: self.value}) if self.value else ""
+
+
+@dataclasses.dataclass(frozen=True)
 class Ordering:
     """Handles ordering parameters in request."""
 
@@ -130,29 +156,3 @@ class Ordering:
         return urlencode(
             {self.param: self.Choices.DESC if self.is_asc else self.Choices.ASC}
         )
-
-
-@dataclasses.dataclass(frozen=True)
-class Search:
-    """Handles search parameters in request."""
-
-    request: HttpRequest
-    param: str = "query"
-
-    def __str__(self) -> str:
-        """Returns search query value."""
-        return self.value
-
-    def __bool__(self) -> bool:
-        """Returns `True` if search in query and has a non-empty value."""
-        return bool(self.value)
-
-    @cached_property
-    def value(self) -> str:
-        """Returns the search query value, if any."""
-        return force_str(self.request.GET.get(self.param, "")).strip()
-
-    @cached_property
-    def qs(self) -> str:
-        """Returns encoded query string value, if any."""
-        return urlencode({self.param: self.value}) if self.value else ""
