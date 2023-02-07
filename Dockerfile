@@ -6,6 +6,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
+ENV PIP_ROOT_USER_ACTION=ignore
+
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
