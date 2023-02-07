@@ -124,7 +124,7 @@ repos:
                 [
                     "pyproject.toml",
                     "-o",
-                    "requirements-ci.txt",
+                    "requirements-dev.txt",
                     "--extra",
                     "dev",
                     "--resolver",
