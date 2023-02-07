@@ -8,7 +8,7 @@ Radiofeed requires the following basic dependencies to get started:
 
 * Python 3.10+
 * Node 16+
-* [Poetry](https://github.com/python-poetry)
+* [pip-tools](https://github.com/jazzband/pip-tools)
 
 For ease of local development a `docker-compose.yml` is provided which includes:
 
@@ -42,7 +42,7 @@ A `Makefile` has been provided with shortcuts to install and run your local deve
 * `make serve`: run Django development server
 * `make shell`: run Django shell on iPython
 
-If you are running several of these operations simultaneously you should use a multiplexer such as Tmux.
+If you are running several of these operations simultaneously you may want to use a multiplexer such as Tmux.
 
 ## Deployment
 
