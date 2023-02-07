@@ -5,11 +5,11 @@ dbinstall: migrate fixtures
 update: pipupdate npmupdate precommitupdate
 
 pipinstall:
-	pip install -r requirements-ci.txt
+	pip install -r requirements-dev.txt
 
 pipupdate:
 	pip-compile pyproject.toml -o requirements.txt --resolver=backtracking --no-header --no-annotate --upgrade
-	pip-compile pyproject.toml -o requirements-ci.txt --extra=dev --resolver=backtracking --no-header --no-annotate --upgrade
+	pip-compile pyproject.toml -o requirements-dev.txt --extra=dev --resolver=backtracking --no-header --no-annotate --upgrade
 
 npminstall:
 	npm ci

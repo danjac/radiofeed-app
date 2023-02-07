@@ -118,8 +118,8 @@ repos:
                     "--no-annotate",
                 ]
           - id: pip-compile
-            name: requirements-ci.txt
-            files: ^(requirements-ci.txt|pyproject.toml)$
+            name: requirements-dev.txt
+            files: ^(requirements-dev.txt|pyproject.toml)$
             args:
                 [
                     "pyproject.toml",
