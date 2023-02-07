@@ -11,7 +11,7 @@ charset-normalizer==3.0.1
 click==8.1.3
 colorama==0.4.6
 coverage[toml]==7.1.0
-cryptography==39.0.0
+cryptography==39.0.1
 cssbeautifier==1.14.7
 decorator==5.1.1
 defusedxml==0.7.1
@@ -31,11 +31,11 @@ django-object-actions==4.1.0
 django-permissions-policy==4.14.0
 django-redis==5.2.0
 django-widget-tweaks==1.4.12
-djlint==1.19.13
+djlint==1.19.14
 editorconfig==0.12.3
 execnet==1.9.0
 executing==1.2.0
-faker==16.6.1
+faker==16.7.0
 filelock==3.9.0
 flake8==6.0.0
 flake8-bugbear==23.1.20
@@ -69,7 +69,7 @@ oauthlib==3.2.2
 packaging==23.0
 pandas==1.5.3
 parso==0.8.3
-pathspec==0.10.3
+pathspec==0.11.0
 pbr==5.11.1
 pexpect==4.8.0
 pickleshare==0.7.5

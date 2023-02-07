@@ -87,7 +87,7 @@ repos:
       hooks:
           - id: djhtml
     - repo: https://github.com/Riverside-Healthcare/djLint
-      rev: v1.19.13
+      rev: v1.19.14
       hooks:
           - id: djlint-django
             args: ["--lint"]
