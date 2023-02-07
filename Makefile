@@ -1,18 +1,15 @@
-install: poetryinstall npminstall precommitinstall nltkdownload
+install: pipinstall npminstall precommitinstall nltkdownload
 
 dbinstall: migrate fixtures
 
-update: poetryupdate npmupdate precommitupdate
+update: pipupdate npmupdate precommitupdate
 
-poetryinstall:
-	poetry install --no-root --no-cache -vvv
+pipinstall:
+	pip install -r requirements-ci.txt
 
-poetryupdate:
-	poetry update --no-cache -vvv
-
-poetryexport:
-	poetry export -o requirements.txt --without-hashes -vvvv
-	poetry export -o requirements-ci.txt --with=dev --without-hashes -vvvv
+pipupdate:
+	pip-compile pyproject.toml -o requirements.txt --resolver=backtracking --no-header --no-annotate --upgrade
+	pip-compile pyproject.toml -o requirements-ci.txt --extra=dev --resolver=backtracking --no-header --no-annotate --upgrade
 
 npminstall:
 	npm ci
