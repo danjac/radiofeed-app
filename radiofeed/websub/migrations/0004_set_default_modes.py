@@ -15,7 +15,7 @@ def set_default_mode(apps, schema_editor):
             "subscribed": "subscribe",
             "unsubscribed": "unsubscribe",
             "denied": "denied",
-        }
+        }[sub.status]
         for_update.append(sub)
 
     Subscription.objects.bulk_update(for_update, fields=["mode"])
