@@ -19,7 +19,10 @@ _DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 _MAX_BODY_SIZE: Final = 1024**2
 
 
-def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
+def subscribe(
+    subscription: Subscription,
+    mode: str = Subscription.Mode.SUBSCRIBE,  # type: ignore
+) -> None:
     """Subscribes podcast to provided websub hub.
 
     Raises:

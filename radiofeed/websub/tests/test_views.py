@@ -7,6 +7,7 @@ import pytest
 from django.urls import reverse
 
 from radiofeed.websub.factories import create_subscription
+from radiofeed.websub.models import Subscription
 
 
 class TestWebsubCallback:
@@ -41,7 +42,7 @@ class TestWebsubCallback:
         response = client.get(
             self.get_url(subscription),
             {
-                "hub.mode": "subscribe",
+                "hub.mode": Subscription.Mode.SUBSCRIBE,
                 "hub.challenge": "OK",
                 "hub.topic": subscription.topic,
                 "hub.lease_seconds": "2000",
@@ -52,7 +53,7 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.mode == "subscribe"
+        assert subscription.mode == Subscription.Mode.SUBSCRIBE
         assert subscription.verified
         assert subscription.expires
 
@@ -60,7 +61,7 @@ class TestWebsubCallback:
         response = client.get(
             self.get_url(subscription),
             {
-                "hub.mode": "subscribe",
+                "hub.mode": Subscription.Mode.SUBSCRIBE,
                 "hub.challenge": "OK",
                 "hub.topic": "https://wrong-topic.com/",
                 "hub.lease_seconds": "2000",
@@ -78,7 +79,7 @@ class TestWebsubCallback:
         response = client.get(
             self.get_url(subscription),
             {
-                "hub.mode": "subscribe",
+                "hub.mode": Subscription.Mode.SUBSCRIBE,
                 "hub.challenge": "OK",
                 "hub.topic": subscription.topic,
                 "hub.lease_seconds": "invalid",
