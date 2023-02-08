@@ -44,7 +44,7 @@ def websub_callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
             except FeedParserError:
                 subscription.exception = traceback.format_exc()
 
-        return HttpResponse(status_code=http.HTTPStatus.NO_CONTENT)
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
     # verification
 
