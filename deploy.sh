@@ -14,4 +14,4 @@
 
 # start server
 
-gunicorn -c ./gunicorn.conf.py radiofeed.wsgi
+gunicorn -c ./gunicorn.conf.py radiofeed.wsgi --access-logfile -
