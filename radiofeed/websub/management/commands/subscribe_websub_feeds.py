@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import contextlib
+
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
+
+import requests
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
@@ -43,5 +47,5 @@ class Command(BaseCommand):
             )
 
     def _subscribe(self, subscription: Subscription) -> None:
-        self.stdout.write(f"Subscribing feed {subscription.podcast}...")
-        subscriber.subscribe(subscription)
+        with contextlib.suppress(requests.RequestException):
+            subscriber.subscribe(subscription)

@@ -9,7 +9,6 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from model_utils.models import TimeStampedModel
 
 from radiofeed.podcasts.models import Podcast
@@ -40,8 +39,6 @@ class Subscription(TimeStampedModel):
     requested: datetime | None = models.DateTimeField(null=True, blank=True)
     status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    exception: str = models.TextField(blank=True)
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -60,15 +57,3 @@ class Subscription(TimeStampedModel):
             f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}",
             reverse("websub:callback", args=[self.pk]),
         )
-
-    def set_status_for_mode(self, mode: str) -> str:
-        """Set status based on mode and update `status_changed` timestamp."""
-        self.status = {
-            "subscribe": self.Status.SUBSCRIBED,
-            "unsubscribe": self.Status.UNSUBSCRIBED,
-            "denied": self.Status.DENIED,
-        }[
-            mode
-        ]  # type: ignore
-        self.status_changed = timezone.now()
-        return self.status

@@ -3,7 +3,6 @@ from __future__ import annotations
 import hashlib
 import hmac
 import http
-import traceback
 
 from typing import Final
 
@@ -20,7 +19,11 @@ _MAX_BODY_SIZE: Final = 1024**2
 
 
 def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
-    """Subscribes podcast to provided websub hub."""
+    """Subscribes podcast to provided websub hub.
+
+    Raises:
+        requests.RequestException: invalid request
+    """
     response = requests.get(
         subscription.hub,
         {
@@ -40,23 +43,17 @@ def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
         timeout=10,
     )
 
-    subscription.requested = timezone.now()
+    response.raise_for_status()
 
-    try:
-        response.raise_for_status()
+    now = timezone.now()
 
-        # a 202 indicates the hub will try to verify asynchronously
-        # through a GET request to the websub callback url. Otherwise we can set
-        # relevant status immediately.
-        #
+    subscription.requested = now
 
-        if response.status_code != http.HTTPStatus.ACCEPTED:
-            subscription.set_status_for_mode(mode)
+    if response.status_code != http.HTTPStatus.ACCEPTED:
+        subscription.status = get_status_for_mode(mode)
+        subscription.status_changed = now
 
-    except requests.RequestException:
-        subscription.exception = traceback.format_exc()
-    finally:
-        subscription.save()
+    subscription.save()
 
 
 def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
@@ -76,3 +73,14 @@ def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
         return False
 
     return hmac.compare_digest(signature, digest)
+
+
+def get_status_for_mode(mode: str) -> str:
+    """Return subscription status for mode."""
+    return {
+        "subscribe": Subscription.Status.SUBSCRIBED,
+        "unsubscribe": Subscription.Status.UNSUBSCRIBED,
+        "denied": Subscription.Status.DENIED,
+    }[
+        mode
+    ]  # type: ignore

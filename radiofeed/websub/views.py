@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 import http
 import logging
-import traceback
 
 from datetime import timedelta
 
@@ -31,38 +31,38 @@ def websub_callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
     2. A GET request is used for feed verification.
     """
-    subscription = get_object_or_404(
-        Subscription.objects.select_related("podcast"), pk=subscription_id
-    )
-
     # content distribution
 
     if request.method == "POST":
+        subscription = get_object_or_404(
+            Subscription.objects.select_related("podcast"), pk=subscription_id
+        )
+
         if subscriber.check_signature(request, subscription):
-            try:
+            with contextlib.suppress(FeedParserError):
                 FeedParser(subscription.podcast).parse()
-            except FeedParserError:
-                subscription.exception = traceback.format_exc()
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
     # verification
 
     try:
-        if request.GET["hub.topic"] != subscription.topic:
-            raise ValueError("topic mismatch")
+        subscription = get_object_or_404(
+            Subscription, topic=request.GET["hub.topic"], pk=subscription_id
+        )
 
-        subscription.set_status_for_mode(request.GET["hub.mode"])
+        now = timezone.now()
 
-        subscription.expires = timezone.now() + timedelta(
+        subscription.status = subscriber.get_status_for_mode(request.GET["hub.mode"])
+        subscription.status_changed = now
+
+        subscription.expires = now + timedelta(
             seconds=int(request.GET["hub.lease_seconds"])
         )
+
+        subscription.save()
 
         return HttpResponse(request.GET["hub.challenge"])
 
     except (KeyError, ValueError) as e:
-        subscription.exception = traceback.format_exc()
         raise Http404 from e
-
-    finally:
-        subscription.save()

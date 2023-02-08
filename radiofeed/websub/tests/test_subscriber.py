@@ -108,7 +108,6 @@ class TestSubscribe:
         assert subscription.requested
         assert subscription.status == Subscription.Status.SUBSCRIBED
         assert subscription.status_changed
-        assert subscription.exception == ""
 
     def test_accepted(self, mocker, subscription):
         mocker.patch(
@@ -123,7 +122,6 @@ class TestSubscribe:
         assert subscription.requested
         assert subscription.status == Subscription.Status.PENDING
         assert subscription.status_changed is None
-        assert subscription.exception == ""
 
     def test_error(self, mocker, subscription):
         mocker.patch(
@@ -131,11 +129,11 @@ class TestSubscribe:
             return_value=MockResponse(status_code=http.HTTPStatus.NOT_FOUND),
         )
 
-        subscriber.subscribe(subscription)
+        with pytest.raises(requests.HTTPError):
+            subscriber.subscribe(subscription)
 
         subscription.refresh_from_db()
 
-        assert subscription.requested
+        assert subscription.requested is None
         assert subscription.status == Subscription.Status.PENDING
         assert subscription.status_changed is None
-        assert subscription.exception
