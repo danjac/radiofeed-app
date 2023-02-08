@@ -1,4 +1,4 @@
-@import "./fontawesome.min.css";
+@import "fontawesome.min.css";
 
 @tailwind base;
 @tailwind components;
