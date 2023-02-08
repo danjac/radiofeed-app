@@ -11,6 +11,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     list_display = ("podcast", "mode", "requested", "verified", "expires")
     list_select_related = ("podcast",)
-    list_filters = ("mode",)
+    list_filter = ("mode",)
 
     raw_id_fields = ("podcast",)
