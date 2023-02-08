@@ -6,7 +6,6 @@ from django.core.management import call_command
 from django.utils import timezone
 
 from radiofeed.websub.factories import create_subscription
-from radiofeed.websub.models import Subscription
 
 
 class TestParseFeeds:
@@ -22,7 +21,7 @@ class TestParseFeeds:
         now = timezone.now()
         create_subscription(
             requested=now,
-            status=Subscription.Status.SUBSCRIBED,
+            mode="subscribe",
             expires=now - timedelta(days=1),
         )
         patched = mocker.patch(
@@ -35,7 +34,7 @@ class TestParseFeeds:
         now = timezone.now()
         create_subscription(
             requested=now,
-            status=Subscription.Status.SUBSCRIBED,
+            mode="subscribe",
             expires=now + timedelta(days=1),
         )
         patched = mocker.patch(

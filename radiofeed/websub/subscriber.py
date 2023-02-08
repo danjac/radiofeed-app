@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import http
 
+from datetime import timedelta
 from typing import Final
 
 import requests
@@ -50,8 +51,9 @@ def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
     subscription.requested = now
 
     if response.status_code != http.HTTPStatus.ACCEPTED:
-        subscription.status = get_status_for_mode(mode)
+        subscription.mode = mode
         subscription.status_changed = now
+        subscription.expires = now + timedelta(seconds=_DEFAULT_LEASE_SECONDS)
 
     subscription.save()
 
@@ -73,14 +75,3 @@ def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
         return False
 
     return hmac.compare_digest(signature, digest)
-
-
-def get_status_for_mode(mode: str) -> str:
-    """Return subscription status for mode."""
-    return {
-        "subscribe": Subscription.Status.SUBSCRIBED,
-        "unsubscribe": Subscription.Status.UNSUBSCRIBED,
-        "denied": Subscription.Status.DENIED,
-    }[
-        mode
-    ]  # type: ignore

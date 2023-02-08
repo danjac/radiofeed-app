@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 Subscription.objects.filter(
                     Q(requested__isnull=True)
                     | Q(
-                        status=Subscription.Status.SUBSCRIBED,
+                        mode="subscribe",
                         expires__lt=timezone.now(),
                     )
                 )

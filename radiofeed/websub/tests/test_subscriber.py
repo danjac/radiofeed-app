@@ -10,7 +10,6 @@ import requests
 
 from radiofeed.websub import subscriber
 from radiofeed.websub.factories import create_subscription
-from radiofeed.websub.models import Subscription
 
 
 @dataclasses.dataclass
@@ -106,7 +105,7 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.requested
-        assert subscription.status == Subscription.Status.SUBSCRIBED
+        assert subscription.mode == "subscribe"
         assert subscription.status_changed
 
     def test_accepted(self, mocker, subscription):
@@ -120,7 +119,7 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.requested
-        assert subscription.status == Subscription.Status.PENDING
+        assert not subscription.mode
         assert subscription.status_changed is None
 
     def test_error(self, mocker, subscription):
@@ -135,5 +134,5 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.requested is None
-        assert subscription.status == Subscription.Status.PENDING
+        assert not subscription.mode
         assert subscription.status_changed is None

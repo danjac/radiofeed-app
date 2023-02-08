@@ -53,7 +53,7 @@ def websub_callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
         now = timezone.now()
 
-        subscription.status = subscriber.get_status_for_mode(request.GET["hub.mode"])
+        subscription.mode = request.GET["hub.mode"]
         subscription.status_changed = now
 
         subscription.expires = now + timedelta(

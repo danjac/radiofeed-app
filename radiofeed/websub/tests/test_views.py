@@ -7,7 +7,6 @@ import pytest
 from django.urls import reverse
 
 from radiofeed.websub.factories import create_subscription
-from radiofeed.websub.models import Subscription
 
 
 class TestWebsubCallback:
@@ -53,7 +52,7 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.status == Subscription.Status.SUBSCRIBED
+        assert subscription.mode == "subscribe"
         assert subscription.status_changed
         assert subscription.expires
 
@@ -72,7 +71,7 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.status == Subscription.Status.PENDING
+        assert subscription.mode == ""
         assert subscription.status_changed is None
 
     def test_get_invalid_lease_seconds(self, client, subscription):
@@ -90,7 +89,7 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.status == Subscription.Status.PENDING
+        assert subscription.mode == ""
         assert subscription.status_changed is None
 
     def test_get_missing_mode(self, client, subscription):
@@ -107,5 +106,5 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.status == Subscription.Status.PENDING
+        assert subscription.mode == ""
         assert subscription.status_changed is None
