@@ -103,6 +103,9 @@ class Feed:
         default=None,
     )
 
+    websub_hub: str | None = attrs.field(converter=converters.url, default=None)
+    websub_topic: str | None = attrs.field(converter=converters.url, default=None)
+
     link: str | None = attrs.field(converter=converters.url, default=None)
 
     cover_url: str | None = attrs.field(converter=converters.url, default=None)

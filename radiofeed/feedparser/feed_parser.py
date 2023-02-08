@@ -31,6 +31,7 @@ from radiofeed.feedparser.exceptions import (
 )
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.websub.models import Subscription
 
 _ACCEPT: Final = (
     "application/atom+xml,"
@@ -95,7 +96,6 @@ class FeedParser:
         categories, keywords = self._extract_categories(feed)
 
         with transaction.atomic():
-
             self._podcast_update(
                 num_retries=0,
                 content_hash=content_hash,
@@ -116,6 +116,7 @@ class FeedParser:
                 ),
             )
 
+            self._websub_update(response, feed)
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
 
@@ -164,7 +165,6 @@ class FeedParser:
         active: bool = True
 
         match exc:
-
             case Duplicate() | Inaccessible():
                 # podcast should be discontinued and no longer updated
                 active = False
@@ -204,8 +204,26 @@ class FeedParser:
             updated=now, parsed=now, **fields
         )
 
-    def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
+    def _websub_update(self, response: requests.Response, feed: Feed) -> None:
+        # https://w3c.github.io/websub
 
+        # default: hub/topic in Atom links
+        hub = feed.websub_hub
+        topic = feed.websub_topic
+
+        # also check Link headers
+        if "self" in response.links and "hub" in response.links:
+            hub = hub or response.links["hub"]["url"]
+            topic = topic or response.links["self"]["url"]
+
+        if hub and topic:
+            Subscription.objects.get_or_create(
+                podcast=self._podcast,
+                hub=hub,
+                topic=topic,
+            )
+
+    def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
         categories: list[Category] = []
         keywords: str = ""
 
@@ -285,7 +303,6 @@ class FeedParser:
     def _episodes_for_update(
         self, feed: Feed, guids: dict[str, int]
     ) -> Iterator[Episode]:
-
         episode_ids = set()
 
         for item in (item for item in feed.items if item.guid in guids):

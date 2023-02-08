@@ -13,6 +13,7 @@ urlpatterns = [
     path("", include("radiofeed.episodes.urls")),
     path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.users.urls")),
+    path("", include("radiofeed.websub.urls")),
     path("account/", include("allauth.urls")),
     path("about/", views.about_page, name="about"),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
