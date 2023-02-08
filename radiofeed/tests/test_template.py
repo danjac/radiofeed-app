@@ -47,7 +47,7 @@ class TestIcon:
     def test_icon(self):
         assert icon("rss") == {
             "name": "rss",
-            "style": "fa",
+            "style": "",
             "size": "",
             "title": "",
             "css_class": "",
@@ -56,7 +56,7 @@ class TestIcon:
     def test_brand_icon(self):
         assert icon("facebook", style="brands") == {
             "name": "facebook",
-            "style": "fa-brands",
+            "style": "brands",
             "size": "",
             "title": "",
             "css_class": "",
@@ -165,7 +165,6 @@ class TestForceUrl:
 
 class TestPaginationUrl:
     def test_append_page_number_to_querystring(self, rf):
-
         req = rf.get("/search/", {"query": "test"})
         req.pagination = Pagination(req)
         url = pagination_url(RequestContext(req), 5)
