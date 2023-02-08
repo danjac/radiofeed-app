@@ -37,6 +37,7 @@ class MockResponse:
     content: bytes = b""
     headers: dict | None = None
     exception: Exception | None = None
+    links: dict = dataclasses.field(default_factory=dict)
 
     def raise_for_status(self):
         if self.exception:
@@ -44,7 +45,6 @@ class MockResponse:
 
 
 class TestFeedParser:
-
     mock_file = "rss_mock.xml"
     rss = "https://mysteriousuniverse.org/feed/podcast/"
     redirect_rss = "https://example.com/test.xml"
@@ -82,7 +82,6 @@ class TestFeedParser:
         assert headers["If-Modified-Since"]
 
     def test_parse_unhandled_exception(self, podcast, mocker):
-
         mocker.patch(
             "radiofeed.feedparser.feed_parser.FeedParser.parse",
             side_effect=ValueError(),
@@ -95,7 +94,6 @@ class TestFeedParser:
         assert podcast.active
 
     def test_parse_ok(self, mocker, db, categories):
-
         # set date to before latest
         podcast = create_podcast(
             pub_date=datetime(year=2020, month=3, day=1), num_retries=3
@@ -170,7 +168,6 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
     def test_parse_high_num_episodes(self, mocker, db, categories):
-
         podcast = create_podcast()
 
         mocker.patch(
@@ -198,7 +195,6 @@ class TestFeedParser:
         assert podcast.title == "Armstrong & Getty On Demand"
 
     def test_parse_ok_no_pub_date(self, mocker, db, categories):
-
         podcast = create_podcast(pub_date=None)
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -263,7 +259,6 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
     def test_parse_same_content(self, mocker, db, categories):
-
         content = self.get_rss_content()
         podcast = create_podcast(content_hash=make_content_hash(content))
 
@@ -289,7 +284,6 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_podcast_another_feed_same_content(self, mocker, podcast, categories):
-
         content = self.get_rss_content()
 
         create_podcast(content_hash=make_content_hash(content))
@@ -317,7 +311,6 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_complete(self, mocker, podcast, categories):
-
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
 
@@ -427,7 +420,6 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_no_podcasts(self, mocker, podcast, categories):
-
         mocker.patch(
             "requests.get",
             return_value=MockResponse(
@@ -446,7 +438,6 @@ class TestFeedParser:
         assert podcast.num_retries == 1
 
     def test_parse_no_podcasts_max_retries(self, mocker, podcast, categories):
-
         podcast.num_retries = 3
 
         mocker.patch(
@@ -467,7 +458,6 @@ class TestFeedParser:
         assert podcast.num_retries == 4
 
     def test_parse_empty_feed(self, mocker, podcast, categories):
-
         mocker.patch(
             "requests.get",
             return_value=MockResponse(
@@ -486,7 +476,6 @@ class TestFeedParser:
         assert podcast.num_retries == 1
 
     def test_parse_not_modified(self, mocker, podcast, categories):
-
         podcast.num_retries = 1
 
         mocker.patch(
@@ -523,7 +512,6 @@ class TestFeedParser:
         assert podcast.parsed
 
     def test_parse_connect_error(self, mocker, podcast, categories):
-
         mocker.patch("requests.get", side_effect=requests.ConnectionError("fail"))
 
         with pytest.raises(Unavailable):

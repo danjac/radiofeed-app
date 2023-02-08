@@ -112,6 +112,8 @@ class FeedParser:
                         self._feed_attrs.categories,
                         self._feed_attrs.complete,
                         self._feed_attrs.items,
+                        self._feed_attrs.websub_hub,
+                        self._feed_attrs.websub_topic,
                     ),
                 ),
             )

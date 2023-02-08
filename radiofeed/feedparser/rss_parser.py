@@ -59,6 +59,8 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
                 funding_url="podcast:funding/@url",
                 language="language/text()",
                 link="link/text()",
+                websub_hub="atom:link[@rel='hub']/@href",
+                websub_topic="atom:link[@rel='self']/@href",
                 owner=(
                     "itunes:author/text()",
                     "itunes:owner/itunes:name/text()",
@@ -94,8 +96,6 @@ def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
                     link="link/text()",
                     media_type=("enclosure//@type", "media:content//@type"),
                     media_url=("enclosure//@url", "media:content//@url"),
-                    websub_hub="atom:link[@rel='hub']/@href",
-                    websub_topic="atom:link[@rel='self']/@href",
                     pub_date=("pubDate/text()", "pubdate/text()"),
                     season="itunes:season/text()",
                     title="title/text()",  # type: ignore
