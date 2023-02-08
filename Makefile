@@ -10,6 +10,7 @@ pipinstall:
 pipupdate:
 	pip-compile pyproject.toml -o requirements.txt --resolver=backtracking --no-header --no-annotate --upgrade
 	pip-compile pyproject.toml -o requirements-dev.txt --extra=dev --resolver=backtracking --no-header --no-annotate --upgrade
+	pip install -r requirements-dev.txt
 
 npminstall:
 	npm ci

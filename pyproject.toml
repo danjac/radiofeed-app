@@ -51,6 +51,7 @@ dev = [
     "coverage[toml]",
     "django-browser-reload",
     "django-coverage-plugin",
+    "django-debug-toolbar",
     "djlint",
     "faker",
     "flake8",

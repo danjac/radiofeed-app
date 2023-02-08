@@ -22,6 +22,7 @@ django-anymail==9.0
 django-browser-reload==1.6.0
 django-cacheops==6.1
 django-coverage-plugin==3.0.0
+django-debug-toolbar==3.8.1
 django-extensions==3.2.1
 django-fast-update==0.2.1
 django-health-check==3.17.0
