@@ -52,7 +52,7 @@ def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
 
     if response.status_code != http.HTTPStatus.ACCEPTED:
         subscription.mode = mode
-        subscription.status_changed = now
+        subscription.verified = now
         subscription.expires = now + timedelta(seconds=_DEFAULT_LEASE_SECONDS)
 
     subscription.save()

@@ -106,7 +106,7 @@ class TestSubscribe:
 
         assert subscription.requested
         assert subscription.mode == "subscribe"
-        assert subscription.status_changed
+        assert subscription.verified
 
     def test_accepted(self, mocker, subscription):
         mocker.patch(
@@ -120,7 +120,7 @@ class TestSubscribe:
 
         assert subscription.requested
         assert not subscription.mode
-        assert subscription.status_changed is None
+        assert subscription.verified is None
 
     def test_error(self, mocker, subscription):
         mocker.patch(
@@ -135,4 +135,4 @@ class TestSubscribe:
 
         assert subscription.requested is None
         assert not subscription.mode
-        assert subscription.status_changed is None
+        assert subscription.verified is None

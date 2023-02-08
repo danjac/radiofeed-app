@@ -53,7 +53,7 @@ class TestWebsubCallback:
         subscription.refresh_from_db()
 
         assert subscription.mode == "subscribe"
-        assert subscription.status_changed
+        assert subscription.verified
         assert subscription.expires
 
     def test_get_invalid_topic(self, client, subscription):
@@ -72,7 +72,7 @@ class TestWebsubCallback:
         subscription.refresh_from_db()
 
         assert subscription.mode == ""
-        assert subscription.status_changed is None
+        assert subscription.verified is None
 
     def test_get_invalid_lease_seconds(self, client, subscription):
         response = client.get(
@@ -90,7 +90,7 @@ class TestWebsubCallback:
         subscription.refresh_from_db()
 
         assert subscription.mode == ""
-        assert subscription.status_changed is None
+        assert subscription.verified is None
 
     def test_get_missing_mode(self, client, subscription):
         response = client.get(
@@ -107,4 +107,4 @@ class TestWebsubCallback:
         subscription.refresh_from_db()
 
         assert subscription.mode == ""
-        assert subscription.status_changed is None
+        assert subscription.verified is None

@@ -29,7 +29,7 @@ class Subscription(TimeStampedModel):
 
     expires: datetime | None = models.DateTimeField(null=True, blank=True)
     requested: datetime | None = models.DateTimeField(null=True, blank=True)
-    status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
+    verified: datetime | None = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
