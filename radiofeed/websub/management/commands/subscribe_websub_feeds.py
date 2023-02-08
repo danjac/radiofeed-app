@@ -4,6 +4,8 @@ from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 
 from django.core.management.base import BaseCommand
+from django.db.models import Q
+from django.utils import timezone
 
 from radiofeed.websub import subscriber
 from radiofeed.websub.models import Subscription
@@ -28,9 +30,15 @@ class Command(BaseCommand):
         with ThreadPoolExecutor() as executor:
             executor.map(
                 self._subscribe,
-                Subscription.objects.filter(requested__isnull=True)
-                .select_related("podcast")[: options["limit"]]
-                .order_by("-created")
+                Subscription.objects.filter(
+                    Q(status=Subscription.Status.PENDING)
+                    | Q(
+                        status=Subscription.Status.SUBSCRIBED,
+                        expires__lt=timezone.now(),
+                    )
+                )
+                .select_related("podcast")
+                .order_by("expires", "-created")[: options["limit"]]
                 .iterator(),
             )
 

@@ -52,13 +52,13 @@ def websub_callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
         if request.GET["hub.topic"] != subscription.topic:
             raise ValueError("topic mismatch")
 
-        now = timezone.now()
-
         subscription.status = {
             "subscribe": Subscription.Status.SUBSCRIBED,
             "unsubscribe": Subscription.Status.UNSUBSCRIBED,
             "denied": Subscription.Status.DENIED,
         }[request.GET["hub.mode"]]
+
+        now = timezone.now()
 
         subscription.status_changed = now
         subscription.expires = now + timedelta(
