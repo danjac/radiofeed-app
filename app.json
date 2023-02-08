@@ -20,7 +20,7 @@
         },
         {
             "command": "python manage.py subscribe_websub_feeds",
-            "schedule": "30 * * * *"
+            "schedule": "*/15 * * * *"
         },
         {
             "command": "python manage.py send_recommendations_emails",
