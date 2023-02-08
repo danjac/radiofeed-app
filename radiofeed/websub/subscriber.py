@@ -40,6 +40,8 @@ def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
         timeout=10,
     )
 
+    subscription.requested = timezone.now()
+
     try:
         response.raise_for_status()
 
@@ -47,8 +49,6 @@ def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
         # through a GET request to the websub callback url. Otherwise we can set
         # relevant status immediately.
         #
-
-        subscription.requested = timezone.now()
 
         if response.status_code != http.HTTPStatus.ACCEPTED:
             subscription.set_status_for_mode(mode)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from radiofeed.websub.factories import create_subscription
+from radiofeed.websub.models import Subscription
 
 
 class TestSubscriptionModel:
@@ -18,3 +19,8 @@ class TestSubscriptionModel:
             subscription.get_callback_url()
             == f"http://example.com/websub/{subscription.id}/"
         )
+
+    def test_set_status_for_mode(self, subscription):
+        subscription.set_status_for_mode("subscribe")
+        assert subscription.status == Subscription.Status.SUBSCRIBED
+        assert subscription.status_changed
