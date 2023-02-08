@@ -33,10 +33,10 @@ def websub_callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
     """
     # content distribution
 
+    qs = Subscription.objects.filter(pk=subscription_id)
+
     if request.method == "POST":
-        subscription = get_object_or_404(
-            Subscription.objects.select_related("podcast"), pk=subscription_id
-        )
+        subscription = get_object_or_404(qs.select_related("podcast"))
 
         if subscriber.check_signature(request, subscription):
             with contextlib.suppress(FeedParserError):
@@ -47,9 +47,7 @@ def websub_callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
     # verification
 
     try:
-        subscription = get_object_or_404(
-            Subscription, topic=request.GET["hub.topic"], pk=subscription_id
-        )
+        subscription = get_object_or_404(qs.filter(topic=request.GET["hub.topic"]))
 
         now = timezone.now()
 
