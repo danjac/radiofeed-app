@@ -209,14 +209,13 @@ class FeedParser:
     def _websub_update(self, response: requests.Response, feed: Feed) -> None:
         # https://w3c.github.io/websub
 
-        # default: hub/topic in Atom links
-        hub = feed.websub_hub
-        topic = feed.websub_topic
-
-        # also check Link headers
+        # check response headers then RSS feed
         if "self" in response.links and "hub" in response.links:
-            hub = hub or response.links["hub"]["url"]
-            topic = topic or response.links["self"]["url"]
+            hub = response.links["hub"]["url"]
+            topic = response.links["self"]["url"]
+        else:
+            hub = feed.websub_hub
+            topic = feed.websub_topic
 
         if hub and topic:
             Subscription.objects.get_or_create(

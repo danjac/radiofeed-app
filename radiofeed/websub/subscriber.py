@@ -15,6 +15,7 @@ from django.utils import timezone
 
 from radiofeed.websub.models import Subscription
 
+_DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 _MAX_BODY_SIZE: Final = 1024**2
 
 
@@ -27,6 +28,7 @@ def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
             "hub.topic": subscription.topic,
             "hub.secret": subscription.secret.hex,
             "hub.callback": subscription.get_callback_url(),
+            "hub.lease_seconds": str(_DEFAULT_LEASE_SECONDS),
             # these two fields are not present in websub v4+
             # but keeping around for feeds using older hubs
             "hub.verify_token": str(subscription.pk),

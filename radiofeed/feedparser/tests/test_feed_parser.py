@@ -167,6 +167,92 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
+        websub = podcast.websub_subscriptions.first()
+        assert websub.hub == "https://pubsubhubbub.appspot.com/"
+        assert websub.topic == "https://mysteriousuniverse.org/feed/podcast/"
+
+    def test_websub_headers_in_response(self, mocker, db, categories):
+        # set date to before latest
+        podcast = create_podcast(
+            pub_date=datetime(year=2020, month=3, day=1), num_retries=3
+        )
+
+        # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
+
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
+
+        mocker.patch(
+            "requests.get",
+            return_value=MockResponse(
+                url=podcast.rss,
+                status_code=http.HTTPStatus.OK,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+                links={
+                    "hub": {"url": "https://example.com/hub/"},
+                    "self": {"url": "https://example.com/topic/"},
+                },
+            ),
+        )
+
+        FeedParser(podcast).parse()
+
+        # new episodes: 19
+        assert Episode.objects.count() == 20
+
+        # check episode updated
+        episode = Episode.objects.get(guid=episode_guid)
+        assert episode.title != episode_title
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.active
+        assert podcast.num_retries == 0
+        assert podcast.content_hash
+        assert podcast.title == "Mysterious Universe"
+
+        assert podcast.description == "Blog and Podcast specializing in offbeat news"
+        assert podcast.owner == "8th Kind"
+
+        assert (
+            podcast.extracted_text
+            == "mysterious universe blog specializing offbeat th kind science medicine science social science religion spirituality spirituality society culture philosophy mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton"
+        )
+
+        assert podcast.modified
+        assert podcast.modified.day == 1
+        assert podcast.modified.month == 7
+        assert podcast.modified.year == 2020
+
+        assert podcast.parsed
+
+        assert podcast.etag
+        assert podcast.explicit
+        assert podcast.cover_url
+
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        assert podcast.keywords == "science & medicine"
+
+        assigned_categories = [c.name for c in podcast.categories.all()]
+
+        assert "Science" in assigned_categories
+        assert "Religion & Spirituality" in assigned_categories
+        assert "Society & Culture" in assigned_categories
+        assert "Philosophy" in assigned_categories
+
+        websub = podcast.websub_subscriptions.first()
+        assert websub.hub == "https://example.com/hub/"
+        assert websub.topic == "https://example.com/topic/"
+
     def test_parse_high_num_episodes(self, mocker, db, categories):
         podcast = create_podcast()
 
