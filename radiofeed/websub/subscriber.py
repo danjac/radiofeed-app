@@ -40,20 +40,18 @@ def subscribe(subscription: Subscription, mode: str = "subscribe") -> None:
         timeout=10,
     )
 
-    now = timezone.now()
-
     try:
         response.raise_for_status()
 
         # a 202 indicates the hub will try to verify asynchronously
         # through a GET request to the websub callback url. Otherwise we can set
         # relevant status immediately.
+        #
 
-        subscription.requested = now
+        subscription.requested = timezone.now()
 
         if response.status_code != http.HTTPStatus.ACCEPTED:
-            subscription.status = mode
-            subscription.status_changed = now
+            subscription.set_status_for_mode(mode)
 
     except requests.RequestException:
         subscription.exception = traceback.format_exc()
