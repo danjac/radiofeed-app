@@ -21,7 +21,7 @@ _MAX_BODY_SIZE: Final = 1024**2
 
 def subscribe(
     subscription: Subscription,
-    mode: str = Subscription.Mode.SUBSCRIBE,  # type: ignore
+    mode: str = "subscribe",  # type: ignore
 ) -> None:
     """Subscribes podcast to provided websub hub.
 
@@ -54,9 +54,11 @@ def subscribe(
     subscription.requested = now
 
     if response.status_code != http.HTTPStatus.ACCEPTED:
-        subscription.mode = mode
-        subscription.verified = now
-        subscription.expires = now + timedelta(seconds=_DEFAULT_LEASE_SECONDS)
+        subscription.expires = (
+            now + timedelta(seconds=_DEFAULT_LEASE_SECONDS)
+            if mode == "subscribe"
+            else None
+        )
 
     subscription.save()
 

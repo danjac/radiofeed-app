@@ -7,7 +7,6 @@ import pytest
 from django.urls import reverse
 
 from radiofeed.websub.factories import create_subscription
-from radiofeed.websub.models import Subscription
 
 
 class TestWebsubCallback:
@@ -42,7 +41,7 @@ class TestWebsubCallback:
         response = client.get(
             self.get_url(subscription),
             {
-                "hub.mode": Subscription.Mode.SUBSCRIBE,
+                "hub.mode": "subscribe",
                 "hub.challenge": "OK",
                 "hub.topic": subscription.topic,
                 "hub.lease_seconds": "2000",
@@ -53,15 +52,30 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.mode == Subscription.Mode.SUBSCRIBE
-        assert subscription.verified
         assert subscription.expires
+
+    def test_get_denied(self, client, subscription):
+        response = client.get(
+            self.get_url(subscription),
+            {
+                "hub.mode": "denied",
+                "hub.challenge": "OK",
+                "hub.topic": subscription.topic,
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+
+        subscription.refresh_from_db()
+
+        assert subscription.expires is None
 
     def test_get_invalid_topic(self, client, subscription):
         response = client.get(
             self.get_url(subscription),
             {
-                "hub.mode": Subscription.Mode.SUBSCRIBE,
+                "hub.mode": "subscribe",
                 "hub.challenge": "OK",
                 "hub.topic": "https://wrong-topic.com/",
                 "hub.lease_seconds": "2000",
@@ -72,14 +86,13 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.mode == ""
-        assert subscription.verified is None
+        assert subscription.expires is None
 
     def test_get_invalid_lease_seconds(self, client, subscription):
         response = client.get(
             self.get_url(subscription),
             {
-                "hub.mode": Subscription.Mode.SUBSCRIBE,
+                "hub.mode": "subscribe",
                 "hub.challenge": "OK",
                 "hub.topic": subscription.topic,
                 "hub.lease_seconds": "invalid",
@@ -90,8 +103,7 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.mode == ""
-        assert subscription.verified is None
+        assert subscription.expires is None
 
     def test_get_missing_mode(self, client, subscription):
         response = client.get(
@@ -107,5 +119,4 @@ class TestWebsubCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.mode == ""
-        assert subscription.verified is None
+        assert subscription.expires is None

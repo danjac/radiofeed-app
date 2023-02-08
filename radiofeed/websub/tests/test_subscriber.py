@@ -10,7 +10,6 @@ import requests
 
 from radiofeed.websub import subscriber
 from radiofeed.websub.factories import create_subscription
-from radiofeed.websub.models import Subscription
 
 
 @dataclasses.dataclass
@@ -97,7 +96,7 @@ class TestCheckSignature:
 
 
 class TestSubscribe:
-    def test_ok(self, mocker, subscription):
+    def test_subscribe(self, mocker, subscription):
         mocker.patch(
             "requests.get", return_value=MockResponse(status_code=http.HTTPStatus.OK)
         )
@@ -106,8 +105,18 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.requested
-        assert subscription.mode == Subscription.Mode.SUBSCRIBE
-        assert subscription.verified
+        assert subscription.expires
+
+    def test_unsubscribe(self, mocker, subscription):
+        mocker.patch(
+            "requests.get", return_value=MockResponse(status_code=http.HTTPStatus.OK)
+        )
+
+        subscriber.subscribe(subscription, mode="unsubscribe")
+        subscription.refresh_from_db()
+
+        assert subscription.requested
+        assert subscription.expires is None
 
     def test_accepted(self, mocker, subscription):
         mocker.patch(
@@ -120,8 +129,7 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.requested
-        assert not subscription.mode
-        assert subscription.verified is None
+        assert subscription.expires is None
 
     def test_error(self, mocker, subscription):
         mocker.patch(
@@ -135,5 +143,4 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.requested is None
-        assert not subscription.mode
-        assert subscription.verified is None
+        assert subscription.expires is None

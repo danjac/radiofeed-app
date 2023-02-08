@@ -49,12 +49,10 @@ def websub_callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
     try:
         subscription = get_object_or_404(qs.filter(topic=request.GET["hub.topic"]))
 
-        now = timezone.now()
-
-        subscription.mode = request.GET["hub.mode"]
-        subscription.verified = now
-        subscription.expires = now + timedelta(
-            seconds=int(request.GET["hub.lease_seconds"])
+        subscription.expires = (
+            timezone.now() + timedelta(seconds=int(request.GET["hub.lease_seconds"]))
+            if request.GET["hub.mode"] == "subscribe"
+            else None
         )
 
         subscription.save()
