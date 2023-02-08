@@ -31,7 +31,7 @@ class Command(BaseCommand):
             executor.map(
                 self._subscribe,
                 Subscription.objects.filter(
-                    Q(status=Subscription.Status.PENDING)
+                    Q(requested__isnull=True)
                     | Q(
                         status=Subscription.Status.SUBSCRIBED,
                         expires__lt=timezone.now(),
