@@ -1,3 +1,6 @@
+@import "./brands.min.css";
+@import "./regular.min.css";
+@import "./solid.min.css";
 @import "./fontawesome.min.css";
 
 @tailwind base;

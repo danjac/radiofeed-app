@@ -113,8 +113,8 @@ def icon(
     """Renders a FontAwesome icon."""
     return {
         "name": name,
-        "style": f"fa-{style}" if style else "fa",
-        "size": f"fa-{size}" if size else "",
+        "style": style,
+        "size": size,
         "title": title,
         "css_class": css_class,
     }
