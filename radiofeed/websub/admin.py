@@ -15,7 +15,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "requested",
         "verified",
         "expires",
-        "podcast__parsed",
     )
     list_select_related = ("podcast",)
     list_filter = ("mode",)
