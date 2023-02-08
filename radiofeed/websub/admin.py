@@ -10,6 +10,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     """Admin class for Subscription model."""
 
     list_display = ("podcast", "status", "requested", "expires")
+    list_filter = ("status",)
     list_select_related = ("podcast",)
 
     raw_id_fields = ("podcast",)
