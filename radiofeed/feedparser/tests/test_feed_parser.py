@@ -180,6 +180,76 @@ class TestFeedParser:
         assert podcast.websub_requested == websub_date
         assert podcast.websub_expires == websub_date
 
+    def test_parse_from_content(self, db, categories):
+        # set date to before latest
+
+        websub_date = timezone.now() - timedelta(days=3)
+
+        podcast = create_podcast(
+            pub_date=datetime(year=2020, month=3, day=1),
+            num_retries=3,
+            websub_hub="https://pubsubhubbub.appspot.com/",
+            websub_topic="https://mysteriousuniverse.org/feed/podcast/",
+            websub_expires=websub_date,
+            websub_requested=websub_date,
+        )
+
+        # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
+
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
+
+        FeedParser(podcast).parse(self.get_rss_content())
+
+        # new episodes: 19
+        assert Episode.objects.count() == 20
+
+        # check episode updated
+        episode = Episode.objects.get(guid=episode_guid)
+        assert episode.title != episode_title
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.active
+        assert podcast.num_retries == 0
+        assert podcast.content_hash
+        assert podcast.title == "Mysterious Universe"
+
+        assert podcast.description == "Blog and Podcast specializing in offbeat news"
+        assert podcast.owner == "8th Kind"
+
+        assert (
+            podcast.extracted_text
+            == "mysterious universe blog specializing offbeat th kind science medicine science social science religion spirituality spirituality society culture philosophy mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton"
+        )
+
+        assert not podcast.modified
+        assert podcast.parsed
+
+        assert not podcast.etag
+        assert podcast.explicit
+        assert podcast.cover_url
+
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        assert podcast.keywords == "science & medicine"
+
+        assigned_categories = [c.name for c in podcast.categories.all()]
+
+        assert "Science" in assigned_categories
+        assert "Religion & Spirituality" in assigned_categories
+        assert "Society & Culture" in assigned_categories
+        assert "Philosophy" in assigned_categories
+
+        assert podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
+        assert podcast.websub_topic == "https://mysteriousuniverse.org/feed/podcast/"
+        assert podcast.websub_requested == websub_date
+        assert podcast.websub_expires == websub_date
+
     def test_websub_headers_in_response(self, mocker, db, categories):
         # set date to before latest
         podcast = create_podcast(

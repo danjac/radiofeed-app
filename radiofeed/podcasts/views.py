@@ -304,7 +304,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     if request.method == "POST":
         if subscriber.check_signature(request, podcast):
             with contextlib.suppress(FeedParserError):
-                FeedParser(podcast).parse()
+                FeedParser(podcast).parse(request.body)
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
