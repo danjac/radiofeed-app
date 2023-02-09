@@ -131,6 +131,32 @@ class SubscribedFilter(admin.SimpleListFilter):
         )
 
 
+class WebsubFilter(admin.SimpleListFilter):
+    """Filters podcasts based on websub status."""
+
+    title = "Websub"
+    parameter_name = "websub"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", "Websub"), ("no", "No Websub"))
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+        match self.value():
+            case "yes":
+                return queryset.filter(websub_hub__isnull=False)
+            case "no":
+                return queryset.filter(websub_hub__isnull=True)
+
+            case _:
+                return queryset
+
+
 @admin.register(Podcast)
 class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     """Podcast model admin."""
@@ -142,6 +168,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         PubDateFilter,
         PromotedFilter,
         SubscribedFilter,
+        WebsubFilter,
     )
 
     list_display = (
