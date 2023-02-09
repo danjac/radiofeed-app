@@ -66,6 +66,7 @@ def subscribe(
     podcast.websub_secret = secret
 
     if response.status_code != http.HTTPStatus.ACCEPTED:
+        podcast.websub_verified = now
         podcast.websub_expires = (
             now + timedelta(seconds=DEFAULT_LEASE_SECONDS)
             if mode == "subscribe"

@@ -200,6 +200,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         "websub_topic",
         "websub_secret",
         "websub_requested",
+        "websub_verified",
         "websub_expires",
     )
 

@@ -160,6 +160,7 @@ class Podcast(models.Model):
 
     websub_expires: datetime | None = models.DateTimeField(null=True, blank=True)
     websub_requested: datetime | None = models.DateTimeField(null=True, blank=True)
+    websub_verified: datetime | None = models.DateTimeField(null=True, blank=True)
 
     categories: models.QuerySet[Category] = models.ManyToManyField(
         "podcasts.Category",
