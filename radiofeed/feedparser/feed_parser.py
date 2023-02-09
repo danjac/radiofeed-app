@@ -215,18 +215,17 @@ class FeedParser:
             hub = feed.websub_hub
             topic = feed.websub_topic
 
-        requested, expires, verified, secret = None, None, None, None
-
         # do not reset websub settings if hub and topic are unchanged
-        if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
+        if hub == self._podcast.websub_hub and topic == self._podcast.rss:
             requested = self._podcast.websub_requested
             expires = self._podcast.websub_expires
             secret = self._podcast.websub_secret
             verified = self._podcast.websub_verified
+        else:
+            requested, expires, verified, secret = None, None, None, None
 
         return {
             "websub_hub": hub,
-            "websub_topic": topic,
             "websub_expires": expires,
             "websub_requested": requested,
             "websub_verified": verified,

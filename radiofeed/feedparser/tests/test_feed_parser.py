@@ -99,10 +99,10 @@ class TestFeedParser:
         websub_date = timezone.now() - timedelta(days=3)
 
         podcast = create_podcast(
+            rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
             websub_hub="https://pubsubhubbub.appspot.com/",
-            websub_topic="https://mysteriousuniverse.org/feed/podcast/",
             websub_expires=websub_date,
             websub_requested=websub_date,
         )
@@ -176,7 +176,6 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
         assert podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
-        assert podcast.websub_topic == "https://mysteriousuniverse.org/feed/podcast/"
         assert podcast.websub_requested == websub_date
         assert podcast.websub_expires == websub_date
 
@@ -259,7 +258,6 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
         assert podcast.websub_hub == "https://example.com/hub/"
-        assert podcast.websub_topic == "https://example.com/topic/"
 
     def test_parse_high_num_episodes(self, mocker, db, categories):
         podcast = create_podcast()

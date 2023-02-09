@@ -312,8 +312,8 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     #
 
     try:
-        if podcast.websub_topic != request.GET["hub.topic"]:
-            raise ValueError("Topic mismatch")
+        if podcast.rss != request.GET["hub.topic"]:
+            raise ValueError
 
         podcast.websub_verified = now = timezone.now()
 

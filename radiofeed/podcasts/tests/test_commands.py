@@ -15,7 +15,6 @@ from radiofeed.users.factories import create_user
 
 class TestSubscribeWebsubFeeds:
     hub = "https://example.com/hub/"
-    topic = "https://example.com/topic/"
 
     @pytest.fixture
     def subscribe(self, mocker):
@@ -24,7 +23,7 @@ class TestSubscribeWebsubFeeds:
         )
 
     def test_not_requested(self, db, subscribe):
-        create_podcast(websub_hub=self.hub, websub_topic=self.topic)
+        create_podcast(websub_hub=self.hub)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
 
@@ -36,7 +35,6 @@ class TestSubscribeWebsubFeeds:
         now = timezone.now()
         create_podcast(
             websub_hub=self.hub,
-            websub_topic=self.topic,
             websub_requested=now,
             websub_expires=None,
         )
@@ -47,7 +45,6 @@ class TestSubscribeWebsubFeeds:
         now = timezone.now()
         create_podcast(
             websub_hub=self.hub,
-            websub_topic=self.topic,
             websub_requested=now,
             websub_expires=now - timedelta(days=1),
         )
@@ -58,7 +55,6 @@ class TestSubscribeWebsubFeeds:
         now = timezone.now()
         create_podcast(
             websub_hub=self.hub,
-            websub_topic=self.topic,
             websub_requested=now,
             websub_expires=now + timedelta(days=1),
         )

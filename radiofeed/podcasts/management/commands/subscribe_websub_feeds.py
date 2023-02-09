@@ -40,7 +40,6 @@ class Command(BaseCommand):
                         websub_expires__lt=timezone.now(),
                     ),
                     websub_hub__isnull=False,
-                    websub_topic__isnull=False,
                 )
                 .order_by("websub_expires", "-created")[: options["limit"]]
                 .iterator(),

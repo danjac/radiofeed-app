@@ -34,7 +34,7 @@ def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
         podcast.websub_hub,
         {
             "hub.mode": mode,
-            "hub.topic": podcast.websub_topic,
+            "hub.topic": podcast.rss,
             "hub.secret": secret.hex,
             "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
             "hub.callback": urllib.parse.urljoin(

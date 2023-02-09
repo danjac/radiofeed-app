@@ -398,10 +398,6 @@ class TestUnsubscribe:
 
 class TestWebsubCallback:
     @pytest.fixture
-    def podcast(self, db):
-        return create_podcast(websub_topic="https://example.com/topic/")
-
-    @pytest.fixture
     def feed_parser(self, mocker):
         return mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
 
@@ -432,7 +428,7 @@ class TestWebsubCallback:
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.websub_topic,
+                "hub.topic": podcast.rss,
                 "hub.lease_seconds": "2000",
             },
         )
@@ -449,7 +445,7 @@ class TestWebsubCallback:
             {
                 "hub.mode": "denied",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.websub_topic,
+                "hub.topic": podcast.rss,
                 "hub.lease_seconds": "2000",
             },
         )
@@ -483,7 +479,7 @@ class TestWebsubCallback:
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.websub_topic,
+                "hub.topic": podcast.rss,
                 "hub.lease_seconds": "invalid",
             },
         )
@@ -499,7 +495,7 @@ class TestWebsubCallback:
             self.get_url(podcast),
             {
                 "hub.challenge": "OK",
-                "hub.topic": podcast.websub_topic,
+                "hub.topic": podcast.rss,
                 "hub.lease_seconds": "2000",
             },
         )
