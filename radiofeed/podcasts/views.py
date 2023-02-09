@@ -312,23 +312,22 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         if podcast.websub_topic != request.GET["hub.topic"]:
             raise ValueError("Topic mismatch")
 
-        now = timezone.now()
+        podcast.websub_verified = now = timezone.now()
 
-        if request.GET["hub.mode"] == "subscribe":
-            verified = now
-            expires = now + timedelta(
+        podcast.websub_expires = (
+            now
+            + timedelta(
                 seconds=int(
                     request.GET.get(
                         "hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS
                     )
                 )
             )
-        else:
-            verified, expires = None, None
-
-        Podcast.objects.filter(pk=podcast.pk).update(
-            websub_verified=verified, websub_expires=expires
+            if request.GET["hub.mode"] == "subscribe"
+            else None
         )
+
+        podcast.save()
 
         return HttpResponse(request.GET["hub.challenge"])
 
