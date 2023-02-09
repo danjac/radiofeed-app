@@ -5,6 +5,7 @@ import hmac
 import urllib
 import uuid
 
+from datetime import timedelta
 from typing import Final
 
 import requests
@@ -56,6 +57,10 @@ def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
 
     podcast.websub_requested = now
     podcast.websub_secret = secret
+
+    podcast.websub_expires = (
+        now + timedelta(seconds=DEFAULT_LEASE_SECONDS) if mode == "subscribe" else None
+    )
 
     podcast.save()
 
