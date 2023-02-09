@@ -236,22 +236,14 @@ CACHES: dict = {
 
 # Databases
 
-
-def configure_databases(conn_max_age: int = 360) -> dict:
-    """Build DATABASES configuration."""
-    return {
-        "default": {
-            **dj_database_url.parse(
-                DATABASE_URL,
-                conn_max_age=conn_max_age,
-                conn_health_checks=conn_max_age > 0,
-            ),
-            "ATOMIC_REQUESTS": True,
-        },
-    }
-
-
-DATABASES = configure_databases()
+DATABASES = {
+    "default": {
+        **dj_database_url.parse(
+            DATABASE_URL,
+        ),
+        "ATOMIC_REQUESTS": True,
+    },
+}
 
 # Templates
 
