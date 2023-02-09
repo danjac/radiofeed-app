@@ -4,7 +4,7 @@ import dataclasses
 import http
 import pathlib
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 import requests
@@ -95,8 +95,16 @@ class TestFeedParser:
 
     def test_parse_ok(self, mocker, db, categories):
         # set date to before latest
+
+        websub_date = timezone.now() - timedelta(days=3)
+
         podcast = create_podcast(
-            pub_date=datetime(year=2020, month=3, day=1), num_retries=3
+            pub_date=datetime(year=2020, month=3, day=1),
+            num_retries=3,
+            websub_hub="https://pubsubhubbub.appspot.com/",
+            websub_topic="https://mysteriousuniverse.org/feed/podcast/",
+            websub_expires=websub_date,
+            websub_requested=websub_date,
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -167,9 +175,10 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-        websub = podcast.websub_subscriptions.first()
-        assert websub.hub == "https://pubsubhubbub.appspot.com/"
-        assert websub.topic == "https://mysteriousuniverse.org/feed/podcast/"
+        assert podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
+        assert podcast.websub_topic == "https://mysteriousuniverse.org/feed/podcast/"
+        assert podcast.websub_requested == websub_date
+        assert podcast.websub_expires == websub_date
 
     def test_websub_headers_in_response(self, mocker, db, categories):
         # set date to before latest
@@ -249,9 +258,8 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-        websub = podcast.websub_subscriptions.first()
-        assert websub.hub == "https://example.com/hub/"
-        assert websub.topic == "https://example.com/topic/"
+        assert podcast.websub_hub == "https://example.com/hub/"
+        assert podcast.websub_topic == "https://example.com/topic/"
 
     def test_parse_high_num_episodes(self, mocker, db, categories):
         podcast = create_podcast()
