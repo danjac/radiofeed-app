@@ -310,28 +310,36 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     # verification
     try:
-        podcast = get_object_or_404(
-            _get_podcasts(), rss=request.GET["hub.topic"], pk=podcast_id
-        )
         mode = request.GET["hub.mode"]
         challenge = request.GET["hub.challenge"]
 
-        lease_seconds = int(
-            request.GET.get("hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS)
+        podcast = get_object_or_404(
+            _get_podcasts(), rss=request.GET["hub.topic"], pk=podcast_id
         )
+
+        podcast.websub_verified = now = timezone.now()
+
+        podcast.websub_expires = (
+            (
+                now
+                + timedelta(
+                    seconds=int(
+                        request.GET.get(
+                            "hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS
+                        )
+                    )
+                )
+            )
+            if mode == "subscribe"
+            else None
+        )
+
+        podcast.save()
+
+        return HttpResponse(challenge)
 
     except (KeyError, ValueError):
         return HttpResponseNotFound()
-
-    podcast.websub_verified = now = timezone.now()
-
-    podcast.websub_expires = (
-        now + timedelta(seconds=lease_seconds) if mode == "subscribe" else None
-    )
-
-    podcast.save()
-
-    return HttpResponse(challenge)
 
 
 def _get_podcast_or_404(podcast_id: int) -> Podcast:
