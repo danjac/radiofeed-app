@@ -41,10 +41,6 @@ def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
                 f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}",
                 reverse("podcasts:websub_callback", args=[podcast.pk]),
             ),
-            # these two fields are not present in websub v4+
-            # but keeping around for feeds using older hubs
-            "hub.verify_token": str(podcast.pk),
-            "hub.verify": "async",
         },
         headers={
             "User-Agent": settings.USER_AGENT,
