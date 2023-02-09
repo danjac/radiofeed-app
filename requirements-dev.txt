@@ -20,7 +20,6 @@ django==4.1.6
 django-allauth==0.52.0
 django-anymail==9.0
 django-browser-reload==1.6.0
-django-cacheops==6.1
 django-coverage-plugin==3.0.0
 django-debug-toolbar==3.8.1
 django-extensions==3.2.1
@@ -45,7 +44,6 @@ flake8-debugger==4.1.2
 flake8-deprecated==2.0.1
 flake8-print==5.0.0
 flake8-pyproject==1.2.2
-funcy==1.18
 gitdb==4.0.10
 gitpython==3.1.30
 gunicorn==20.1.0

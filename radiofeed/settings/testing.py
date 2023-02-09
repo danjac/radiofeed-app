@@ -11,8 +11,6 @@ LOGGING = None
 
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 
-CACHEOPS_ENABLED = False
-
 DATABASES = configure_databases(conn_max_age=0)
 
 TEMPLATES = configure_templates(debug=True)

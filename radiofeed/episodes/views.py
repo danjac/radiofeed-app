@@ -147,7 +147,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     """
     if episode_id := request.player.get():
         try:
-            request.user.audio_logs.filter(episode=episode_id).invalidated_update(
+            request.user.audio_logs.filter(episode=episode_id).update(
                 current_time=int(request.POST["current_time"]),
                 listened=timezone.now(),
             )

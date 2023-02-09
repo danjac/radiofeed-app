@@ -85,7 +85,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "cacheops",
     "django_extensions",
     "django_htmx",
     "django_object_actions",
@@ -233,20 +232,6 @@ CACHES: dict = {
             "PARSER_CLASS": "redis.connection.HiredisParser",
         },
     }
-}
-
-# Cacheops
-
-# https://github.com/Suor/django-cacheops
-
-CACHEOPS_REDIS = REDIS_URL
-CACHEOPS_DEFAULTS = {"timeout": 300}
-CACHEOPS_DEGRADE_ON_FAILURE = True
-
-CACHEOPS = {
-    "podcasts.*": {"ops": "all"},
-    "episodes.*": {"ops": "all"},
-    "users.*": {"ops": "all"},
 }
 
 # Databases

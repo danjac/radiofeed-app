@@ -17,7 +17,6 @@ dependencies = [
     "django",
     "django-allauth",
     "django-anymail",
-    "django-cacheops",
     "django-extensions",
     "django-fast-update",
     "django-health-check",
