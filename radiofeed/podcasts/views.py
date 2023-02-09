@@ -331,7 +331,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             else None
         )
 
-        podcast.save()
+        podcast.save(force_update=True)
 
         return HttpResponse(request.GET["hub.challenge"])
 
