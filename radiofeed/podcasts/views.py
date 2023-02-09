@@ -10,7 +10,7 @@ import requests
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -312,30 +312,28 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     #
 
     try:
+        mode = request.GET["hub.mode"]
+        challenge = request.GET["hub.challenge"]
+
+        lease_seconds = int(
+            request.GET.get("hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS)
+        )
+
         if podcast.rss != request.GET["hub.topic"]:
             raise ValueError
 
-        podcast.websub_verified = now = timezone.now()
+    except (KeyError, ValueError):
+        return HttpResponseNotFound()
 
-        podcast.websub_expires = (
-            now
-            + timedelta(
-                seconds=int(
-                    request.GET.get(
-                        "hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS
-                    )
-                )
-            )
-            if request.GET["hub.mode"] == "subscribe"
-            else None
-        )
+    podcast.websub_verified = now = timezone.now()
 
-        podcast.save()
+    podcast.websub_expires = (
+        now + timedelta(seconds=lease_seconds) if mode == "subscribe" else None
+    )
 
-        return HttpResponse(request.GET["hub.challenge"])
+    podcast.save()
 
-    except (KeyError, ValueError) as e:
-        raise Http404 from e
+    return HttpResponse(challenge)
 
 
 def _get_podcast_or_404(podcast_id: int) -> Podcast:
