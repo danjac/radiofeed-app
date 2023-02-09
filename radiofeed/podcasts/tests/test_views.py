@@ -409,7 +409,7 @@ class TestWebsubCallback:
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
     def test_post(self, client, mocker, feed_parser, podcast):
-        mocker.patch("radiofeed.websub.subscriber.check_signature", return_value=True)
+        mocker.patch("radiofeed.podcasts.subscriber.check_signature", return_value=True)
 
         response = client.post(self.get_url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
@@ -417,7 +417,9 @@ class TestWebsubCallback:
         feed_parser.assert_called()
 
     def test_post_invalid_signature(self, client, mocker, feed_parser, podcast):
-        mocker.patch("radiofeed.websub.subscriber.check_signature", return_value=False)
+        mocker.patch(
+            "radiofeed.podcasts.subscriber.check_signature", return_value=False
+        )
 
         response = client.post(self.get_url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
@@ -430,7 +432,7 @@ class TestWebsubCallback:
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.topic,
+                "hub.topic": podcast.websub_topic,
                 "hub.lease_seconds": "2000",
             },
         )
@@ -447,7 +449,7 @@ class TestWebsubCallback:
             {
                 "hub.mode": "denied",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.topic,
+                "hub.topic": podcast.websub_topic,
                 "hub.lease_seconds": "2000",
             },
         )
@@ -481,7 +483,7 @@ class TestWebsubCallback:
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.topic,
+                "hub.topic": podcast.websub_topic,
                 "hub.lease_seconds": "invalid",
             },
         )
@@ -497,7 +499,7 @@ class TestWebsubCallback:
             self.get_url(podcast),
             {
                 "hub.challenge": "OK",
-                "hub.topic": podcast.topic,
+                "hub.topic": podcast.websub_topic,
                 "hub.lease_seconds": "2000",
             },
         )
