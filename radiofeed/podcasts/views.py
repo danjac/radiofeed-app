@@ -7,7 +7,6 @@ from datetime import timedelta
 
 import requests
 
-from cacheops import invalidate_obj
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
@@ -315,8 +314,6 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     try:
         if podcast.websub_topic != request.GET["hub.topic"]:
             raise ValueError("Topic mismatch")
-
-        invalidate_obj(podcast)
 
         podcast.websub_verified = now = timezone.now()
 
