@@ -11,8 +11,8 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils import timezone
 
-from radiofeed.websub import subscriber
-from radiofeed.websub.models import Subscription
+from radiofeed.podcasts import subscriber
+from radiofeed.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
@@ -34,17 +34,18 @@ class Command(BaseCommand):
         with ThreadPoolExecutor() as executor:
             executor.map(
                 self._subscribe,
-                Subscription.objects.filter(
-                    Q(requested__isnull=True)
+                Podcast.objects.filter(
+                    Q(websub_requested__isnull=True)
                     | Q(
-                        expires__lt=timezone.now(),
-                    )
+                        websub_expires__lt=timezone.now(),
+                    ),
+                    websub_hub__isnull=False,
+                    websub_topic__isnull=False,
                 )
-                .select_related("podcast")
                 .order_by("websub_expires", "-created")[: options["limit"]]
                 .iterator(),
             )
 
-    def _subscribe(self, subscription: Subscription) -> None:
+    def _subscribe(self, podcast: Podcast) -> None:
         with contextlib.suppress(requests.RequestException):
-            subscriber.subscribe(subscription)
+            subscriber.subscribe(podcast)

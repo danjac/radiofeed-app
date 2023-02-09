@@ -94,14 +94,6 @@ class FeedParser:
 
         categories, keywords = self._extract_categories(feed)
 
-        hub, topic = self._extract_websub_links(response, feed)
-        requested, expires = None, None
-
-        # do not reset if hub and topic are unchanged
-        if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
-            requested = self._podcast.websub_requested
-            expires = self._podcast.websub_expires
-
         with transaction.atomic():
             self._podcast_update(
                 num_retries=0,
@@ -113,10 +105,7 @@ class FeedParser:
                 modified=parse_date(response.headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
-                websub_hub=hub,
-                websub_topic=topic,
-                websub_requested=requested,
-                websub_expires=expires,
+                **self._extract_websub_links(response, feed),
                 **attrs.asdict(
                     feed,
                     filter=attrs.filters.exclude(  # type: ignore
@@ -216,15 +205,31 @@ class FeedParser:
             updated=now, parsed=now, **fields
         )
 
-    def _extract_websub_links(
-        self, response: requests.Response, feed: Feed
-    ) -> tuple[str | None, str | None]:
+    def _extract_websub_links(self, response: requests.Response, feed: Feed) -> dict:
         # extract hub and topic and check if ch
 
         try:
-            return response.links["hub"]["url"], response.links["self"]["url"]
+            hub = response.links["hub"]["url"]
+            topic = response.links["self"]["url"]
         except KeyError:
-            return feed.websub_hub, feed.websub_topic
+            hub = feed.websub_hub
+            topic = feed.websub_topic
+
+        # do not reset websub settings if hub and topic are unchanged
+        if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
+            requested = self._podcast.websub_requested
+            expires = self._podcast.websub_expires
+            secret = self._podcast.websub_secret
+        else:
+            requested, expires, secret = None, None, None
+
+        return {
+            "websub_hub": hub,
+            "websub_topic": topic,
+            "websub_expires": expires,
+            "websub_requested": requested,
+            "websub_secret": secret,
+        }
 
     def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
         categories: list[Category] = []

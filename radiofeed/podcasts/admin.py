@@ -169,6 +169,11 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         "modified",
         "etag",
         "content_hash",
+        "websub_hub",
+        "websub_topic",
+        "websub_secret",
+        "websub_requested",
+        "websub_expires",
     )
 
     actions = ("parse_podcast_feeds",)
