@@ -298,10 +298,10 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     2. A GET request is used for feed verification.
     """
-    podcast = _get_podcast_or_404(podcast_id)
-
     # content distribution
     if request.method == "POST":
+        podcast = _get_podcast_or_404(podcast_id)
+
         if subscriber.check_signature(request, podcast):
             with contextlib.suppress(FeedParserError):
                 FeedParser(podcast).parse()
@@ -309,18 +309,16 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
     # verification
-    #
-
     try:
+        podcast = get_object_or_404(
+            _get_podcasts(), rss=request.GET["hub.topic"], pk=podcast_id
+        )
         mode = request.GET["hub.mode"]
         challenge = request.GET["hub.challenge"]
 
         lease_seconds = int(
             request.GET.get("hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS)
         )
-
-        if podcast.rss != request.GET["hub.topic"]:
-            raise ValueError
 
     except (KeyError, ValueError):
         return HttpResponseNotFound()
