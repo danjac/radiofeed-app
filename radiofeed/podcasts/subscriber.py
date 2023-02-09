@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import urllib
 import uuid
 
 from datetime import timedelta
@@ -11,12 +10,12 @@ from typing import Final
 import requests
 
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
+from radiofeed.template import build_absolute_uri
 
 DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 
@@ -38,9 +37,8 @@ def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
             "hub.topic": podcast.rss,
             "hub.secret": secret.hex,
             "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
-            "hub.callback": urllib.parse.urljoin(
-                f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}",
-                reverse("podcasts:websub_callback", args=[podcast.pk]),
+            "hub.callback": build_absolute_uri(
+                reverse("podcasts:websub_callback", args=[podcast.pk])
             ),
         },
         headers={

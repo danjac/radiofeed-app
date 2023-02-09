@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.core.signing import Signer
 from django.core.validators import URLValidator
 from django.db.models import Model
+from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import stringfilter
@@ -60,13 +61,9 @@ def absolute_uri(context: Context, to: str | Model = "", *args, **kwargs) -> str
         * URL pattern along with `*args` and `**kwargs`
         * Django model with `get_absolute_url()` method.
     """
-    url = resolve_url(to, *args, **kwargs) if to else "/"
-
-    if request := context.get("request", None):
-        return request.build_absolute_uri(url)
-
-    return urllib.parse.urljoin(
-        f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}", url
+    return build_absolute_uri(
+        resolve_url(to, *args, **kwargs) if to else "/",
+        request=context.get("request", None),
     )
 
 
@@ -186,3 +183,14 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
+
+
+def build_absolute_uri(url: str, request: HttpRequest | None = None) -> str:
+    """Return absolute URI to path."""
+    return (
+        request.build_absolute_uri(url)
+        if request
+        else urllib.parse.urljoin(
+            f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}", url
+        )
+    )
