@@ -82,9 +82,9 @@ class FeedParser:
         try:
             if not content:
                 response = self._get_response()
-                content = response.content
                 headers = dict(response.headers or {})
                 links = dict(response.links or {})
+                content = response.content
                 url = response.url
 
             content_hash = make_content_hash(content)
