@@ -14,6 +14,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
 
@@ -287,6 +288,7 @@ def _get_podcasts() -> QuerySet[Podcast]:
 
 @require_form_methods
 @csrf_exempt
+@never_cache
 def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Callback view as per spec https://www.w3.org/TR/websub/.
 
