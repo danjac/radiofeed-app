@@ -43,6 +43,7 @@ def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
             ),
         },
         headers={
+            "Content-Type": "application/x-www-form-urlencoded",
             "User-Agent": settings.USER_AGENT,
         },
         allow_redirects=True,
