@@ -206,8 +206,6 @@ class FeedParser:
         )
 
     def _extract_websub_links(self, response: requests.Response, feed: Feed) -> dict:
-        # extract hub and topic and check if ch
-
         try:
             hub = response.links["hub"]["url"]
             topic = response.links["self"]["url"]
@@ -215,22 +213,19 @@ class FeedParser:
             hub = feed.websub_hub
             topic = feed.websub_topic
 
-        # do not reset websub settings if hub and topic are unchanged
-        if hub == self._podcast.websub_hub and topic == self._podcast.rss:
-            requested = self._podcast.websub_requested
-            expires = self._podcast.websub_expires
-            secret = self._podcast.websub_secret
-            verified = self._podcast.websub_verified
-        else:
-            requested, expires, verified, secret = None, None, None, None
+        # if websub hub or topic have changed reset all websub settings
 
-        return {
-            "websub_hub": hub,
-            "websub_expires": expires,
-            "websub_requested": requested,
-            "websub_verified": verified,
-            "websub_secret": secret,
-        }
+        return (
+            {}
+            if hub == self._podcast.websub_hub and topic == self._podcast.rss
+            else {
+                "websub_hub": hub,
+                "websub_expires": None,
+                "websub_requested": None,
+                "websub_verified": None,
+                "websub_secret": None,
+            }
+        )
 
     def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
         categories: list[Category] = []
