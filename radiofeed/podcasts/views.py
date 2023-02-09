@@ -314,22 +314,21 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
         now = timezone.now()
 
-        podcast.websub_verified = now
-
-        podcast.websub_expires = (
-            now
-            + timedelta(
+        if request.GET["hub.mode"] == "subscribe":
+            verified = now
+            expires = now + timedelta(
                 seconds=int(
                     request.GET.get(
                         "hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS
                     )
                 )
             )
-            if request.GET["hub.mode"] == "subscribe"
-            else None
-        )
+        else:
+            verified, expires = None, None
 
-        podcast.save()
+        Podcast.objects.filter(pk=podcast.pk).update(
+            websub_verified=verified, websub_expires=expires
+        )
 
         return HttpResponse(request.GET["hub.challenge"])
 
