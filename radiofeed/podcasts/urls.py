@@ -52,4 +52,5 @@ urlpatterns = [
         views.category_detail,
         name="category_detail",
     ),
+    path("websub/<int:podcast_id>/", views.websub_callback, name="websub_callback"),
 ]

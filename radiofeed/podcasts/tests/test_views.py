@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import http
+
 import pytest
 import requests
 
@@ -250,7 +252,6 @@ class TestPodcastEpisodes:
         assert len(response.context["page_obj"].object_list) == 30
 
     def test_no_episodes(self, client, auth_user, podcast):
-
         response = client.get(self.url(podcast))
         assert_ok(response)
 
@@ -303,7 +304,6 @@ class TestCategoryList:
         assert len(response.context["categories"]) == 0
 
     def test_search(self, client, auth_user, category, faker):
-
         create_batch(create_category, 3)
 
         category = create_category(name="testing")
@@ -314,7 +314,6 @@ class TestCategoryList:
         assert len(response.context["categories"]) == 1
 
     def test_search_no_matching_podcasts(self, client, auth_user, category, faker):
-
         create_batch(create_category, 3)
 
         create_category(name="testing")
@@ -332,7 +331,6 @@ class TestCategoryDetail:
         assert response.context["category"] == category
 
     def test_search(self, client, auth_user, category, faker):
-
         create_batch(
             create_podcast, 12, title="zzzz", keywords="zzzz", categories=[category]
         )
@@ -372,7 +370,6 @@ class TestSubscribe:
         podcast,
         auth_user,
     ):
-
         create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.post(
             self.url(podcast),
@@ -397,3 +394,116 @@ class TestUnsubscribe:
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
+
+
+class TestWebsubCallback:
+    @pytest.fixture
+    def podcast(self, db):
+        return create_podcast(websub_topic="https://example.com/topic/")
+
+    @pytest.fixture
+    def feed_parser(self, mocker):
+        return mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
+
+    def get_url(self, podcast):
+        return reverse("podcasts:websub_callback", args=[podcast.id])
+
+    def test_post(self, client, mocker, feed_parser, podcast):
+        mocker.patch("radiofeed.websub.subscriber.check_signature", return_value=True)
+
+        response = client.post(self.get_url(podcast))
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
+
+        feed_parser.assert_called()
+
+    def test_post_invalid_signature(self, client, mocker, feed_parser, podcast):
+        mocker.patch("radiofeed.websub.subscriber.check_signature", return_value=False)
+
+        response = client.post(self.get_url(podcast))
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
+
+        feed_parser.assert_not_called()
+
+    def test_get(self, client, podcast):
+        response = client.get(
+            self.get_url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": "OK",
+                "hub.topic": podcast.topic,
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires
+
+    def test_get_denied(self, client, podcast):
+        response = client.get(
+            self.get_url(podcast),
+            {
+                "hub.mode": "denied",
+                "hub.challenge": "OK",
+                "hub.topic": podcast.topic,
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None
+
+    def test_get_invalid_topic(self, client, podcast):
+        response = client.get(
+            self.get_url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": "OK",
+                "hub.topic": "https://wrong-topic.com/",
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None
+
+    def test_get_invalid_lease_seconds(self, client, podcast):
+        response = client.get(
+            self.get_url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": "OK",
+                "hub.topic": podcast.topic,
+                "hub.lease_seconds": "invalid",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None
+
+    def test_get_missing_mode(self, client, podcast):
+        response = client.get(
+            self.get_url(podcast),
+            {
+                "hub.challenge": "OK",
+                "hub.topic": podcast.topic,
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None

@@ -19,7 +19,8 @@ from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
 
-_DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
+DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
+
 _MAX_BODY_SIZE: Final = 1024**2
 
 
@@ -40,7 +41,7 @@ def subscribe(
             "hub.mode": mode,
             "hub.topic": podcast.websub_topic,
             "hub.secret": secret.hex,
-            "hub.lease_seconds": str(_DEFAULT_LEASE_SECONDS),
+            "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
             "hub.callback": urllib.parse.urljoin(
                 f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}",
                 reverse("podcasts:websub_callback", args=[podcast.pk]),
@@ -66,7 +67,7 @@ def subscribe(
 
     if response.status_code != http.HTTPStatus.ACCEPTED:
         podcast.websub_expires = (
-            now + timedelta(seconds=_DEFAULT_LEASE_SECONDS)
+            now + timedelta(seconds=DEFAULT_LEASE_SECONDS)
             if mode == "subscribe"
             else None
         )
