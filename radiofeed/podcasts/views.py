@@ -316,10 +316,8 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             rss=request.GET["hub.topic"],
         )
 
-        podcast.websub_verified = now = timezone.now()
-
         podcast.websub_expires = (
-            now
+            timezone.now()
             + timedelta(
                 seconds=int(
                     request.GET.get(
@@ -331,7 +329,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             else None
         )
 
-        podcast.save()
+        podcast.save(update_fields=["websub_expires"])
 
         return HttpResponse(request.GET["hub.challenge"])
 

@@ -222,7 +222,6 @@ class FeedParser:
                 "websub_hub": hub,
                 "websub_expires": None,
                 "websub_requested": None,
-                "websub_verified": None,
                 "websub_secret": None,
             }
         )
