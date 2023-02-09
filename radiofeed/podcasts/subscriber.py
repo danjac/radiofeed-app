@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import hmac
-import http
 import urllib
 import uuid
 
-from datetime import timedelta
 from typing import Final
 
 import requests
@@ -24,10 +22,7 @@ DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 _MAX_BODY_SIZE: Final = 1024**2
 
 
-def subscribe(
-    podcast: Podcast,
-    mode: str = "subscribe",  # type: ignore
-) -> None:
+def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
     """Subscribes podcast to provided websub hub.
 
     Raises:
@@ -65,15 +60,9 @@ def subscribe(
     podcast.websub_requested = now
     podcast.websub_secret = secret
 
-    if response.status_code != http.HTTPStatus.ACCEPTED:
-        podcast.websub_verified = now
-        podcast.websub_expires = (
-            now + timedelta(seconds=DEFAULT_LEASE_SECONDS)
-            if mode == "subscribe"
-            else None
-        )
-
     podcast.save()
+
+    return response
 
 
 def check_signature(request: HttpRequest, podcast: Podcast) -> bool:

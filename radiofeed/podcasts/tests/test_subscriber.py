@@ -95,30 +95,6 @@ class TestCheckSignature:
 
 
 class TestSubscribe:
-    def test_subscribe(self, mocker, podcast):
-        mocker.patch(
-            "requests.get", return_value=MockResponse(status_code=http.HTTPStatus.OK)
-        )
-
-        subscriber.subscribe(podcast)
-        podcast.refresh_from_db()
-
-        assert podcast.websub_requested
-        assert podcast.websub_expires
-        assert podcast.websub_secret
-
-    def test_unsubscribe(self, mocker, podcast):
-        mocker.patch(
-            "requests.get", return_value=MockResponse(status_code=http.HTTPStatus.OK)
-        )
-
-        subscriber.subscribe(podcast, mode="unsubscribe")
-        podcast.refresh_from_db()
-
-        assert podcast.websub_requested
-        assert podcast.websub_secret
-        assert podcast.websub_expires is None
-
     def test_accepted(self, mocker, podcast):
         mocker.patch(
             "requests.get",
@@ -131,7 +107,6 @@ class TestSubscribe:
 
         assert podcast.websub_requested
         assert podcast.websub_secret
-        assert podcast.websub_expires is None
 
     def test_error(self, mocker, podcast):
         mocker.patch(
@@ -145,5 +120,4 @@ class TestSubscribe:
         podcast.refresh_from_db()
 
         assert podcast.websub_requested is None
-        assert podcast.websub_expires is None
         assert podcast.websub_secret is None
