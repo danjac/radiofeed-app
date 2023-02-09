@@ -30,7 +30,7 @@ def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
     """
     secret = uuid.uuid4()
 
-    response = requests.get(
+    response = requests.post(
         podcast.websub_hub,
         {
             "hub.mode": mode,

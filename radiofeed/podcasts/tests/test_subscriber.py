@@ -97,7 +97,7 @@ class TestCheckSignature:
 class TestSubscribe:
     def test_accepted(self, mocker, podcast):
         mocker.patch(
-            "requests.get",
+            "requests.post",
             return_value=MockResponse(status_code=http.HTTPStatus.ACCEPTED),
         )
 
@@ -110,7 +110,7 @@ class TestSubscribe:
 
     def test_error(self, mocker, podcast):
         mocker.patch(
-            "requests.get",
+            "requests.post",
             return_value=MockResponse(status_code=http.HTTPStatus.NOT_FOUND),
         )
 
