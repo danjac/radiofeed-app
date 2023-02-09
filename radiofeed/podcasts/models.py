@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import decimal
+import uuid
 
 from datetime import datetime, timedelta
 
@@ -150,6 +151,15 @@ class Podcast(models.Model):
 
     explicit: bool = models.BooleanField(default=False)
     promoted: bool = models.BooleanField(default=False)
+
+    # websub fields
+
+    websub_hub: str = models.URLField(max_length=2086, null=True, blank=True)
+    websub_topic: str = models.URLField(max_length=2086, null=True, blank=True)
+    websub_secret: uuid.UUID = models.UUIDField(null=True, blank=True)
+
+    websub_expires: datetime | None = models.DateTimeField(null=True, blank=True)
+    websub_requested: datetime | None = models.DateTimeField(null=True, blank=True)
 
     categories: models.QuerySet[Category] = models.ManyToManyField(
         "podcasts.Category",

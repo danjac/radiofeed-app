@@ -31,7 +31,6 @@ from radiofeed.feedparser.exceptions import (
 )
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.websub.models import Subscription
 
 _ACCEPT: Final = (
     "application/atom+xml,"
@@ -95,6 +94,14 @@ class FeedParser:
 
         categories, keywords = self._extract_categories(feed)
 
+        hub, topic = self._extract_websub_links(response, feed)
+        requested, expires = None, None
+
+        # do not reset if hub and topic are unchanged
+        if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
+            requested = self._podcast.websub_requested
+            expires = self._podcast.websub_expires
+
         with transaction.atomic():
             self._podcast_update(
                 num_retries=0,
@@ -106,6 +113,10 @@ class FeedParser:
                 modified=parse_date(response.headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
+                websub_hub=hub,
+                websub_topic=topic,
+                websub_requested=requested,
+                websub_expires=expires,
                 **attrs.asdict(
                     feed,
                     filter=attrs.filters.exclude(  # type: ignore
@@ -118,7 +129,6 @@ class FeedParser:
                 ),
             )
 
-            self._websub_update(response, feed)
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
 
@@ -206,23 +216,15 @@ class FeedParser:
             updated=now, parsed=now, **fields
         )
 
-    def _websub_update(self, response: requests.Response, feed: Feed) -> None:
-        # https://w3c.github.io/websub
+    def _extract_websub_links(
+        self, response: requests.Response, feed: Feed
+    ) -> tuple[str | None, str | None]:
+        # extract hub and topic and check if ch
 
-        # check response headers then RSS feed
-        if "self" in response.links and "hub" in response.links:
-            hub = response.links["hub"]["url"]
-            topic = response.links["self"]["url"]
-        else:
-            hub = feed.websub_hub
-            topic = feed.websub_topic
-
-        if hub and topic:
-            Subscription.objects.get_or_create(
-                podcast=self._podcast,
-                hub=hub,
-                topic=topic,
-            )
+        try:
+            return response.links["hub"]["url"], response.links["self"]["url"]
+        except KeyError:
+            return feed.websub_hub, feed.websub_topic
 
     def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
         categories: list[Category] = []
