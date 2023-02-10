@@ -103,6 +103,8 @@ class Recommender:
     ) -> Iterator[tuple[int, int, float]]:
         # build a data model of podcasts with same language and category
         #
+        logger.info("category:%s", category)
+
         rows = dict(
             podcasts.filter(
                 language=self._language,
