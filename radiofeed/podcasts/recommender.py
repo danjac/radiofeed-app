@@ -73,6 +73,7 @@ class Recommender:
                     )
                     for (podcast_id, recommended_id), scores in batch
                 ),
+                batch_size=100,
                 ignore_conflicts=True,
             )
 
