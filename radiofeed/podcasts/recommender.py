@@ -11,7 +11,7 @@ import numpy
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed import iterators, tokenizer
@@ -49,9 +49,8 @@ class Recommender:
     def __init__(self, language: str):
         self._language = language
 
-        self._vectorizer = CountVectorizer(
+        self._vectorizer = HashingVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language)),
-            max_features=1000,
         )
 
     def recommend(
