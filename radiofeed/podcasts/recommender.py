@@ -109,7 +109,9 @@ class Recommender:
             podcasts.filter(
                 language=self._language,
                 categories=category,
-            ).values_list("id", "extracted_text")
+            )
+            .values_list("id", "extracted_text")
+            .iterator()
         )
 
         if not rows:
