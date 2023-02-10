@@ -282,10 +282,6 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return _render_subscribe_action(request, podcast, False)
 
 
-def _get_podcasts() -> QuerySet[Podcast]:
-    return Podcast.objects.filter(pub_date__isnull=False)
-
-
 @require_form_methods
 @csrf_exempt
 @never_cache
@@ -335,6 +331,10 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     except (KeyError, ValueError) as e:
         raise Http404 from e
+
+
+def _get_podcasts() -> QuerySet[Podcast]:
+    return Podcast.objects.filter(pub_date__isnull=False)
 
 
 def _get_podcast_or_404(podcast_id: int) -> Podcast:
