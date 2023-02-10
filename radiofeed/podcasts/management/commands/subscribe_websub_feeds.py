@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import contextlib
-
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 
@@ -47,5 +45,12 @@ class Command(BaseCommand):
             )
 
     def _subscribe(self, podcast: Podcast) -> None:
-        with contextlib.suppress(requests.RequestException):
+        self.stdout.write(f"Sending subscription request for {podcast}...")
+
+        try:
             subscriber.subscribe(podcast)
+
+        except requests.RequestException:
+            self.stdout.write(self.style.ERROR(f"{podcast} request failed"))
+        else:
+            self.stdout.write(self.style.SUCCESS(f"{podcast} request sent"))

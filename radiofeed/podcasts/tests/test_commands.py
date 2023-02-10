@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 import pytest
+import requests
 
 from django.core.management import call_command
 from django.utils import timezone
@@ -23,6 +24,16 @@ class TestSubscribeWebsubFeeds:
         )
 
     def test_not_requested(self, db, subscribe):
+        create_podcast(websub_hub=self.hub)
+        call_command("subscribe_websub_feeds", limit=200)
+        subscribe.assert_called()
+
+    def test_exception(self, db, mocker):
+        subscribe = mocker.patch(
+            "radiofeed.podcasts.subscriber.subscribe",
+            side_effect=requests.HTTPError("oops"),
+        )
+
         create_podcast(websub_hub=self.hub)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
