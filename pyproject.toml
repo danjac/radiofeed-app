@@ -31,7 +31,6 @@ dependencies = [
     "lxml",
     "nltk",
     "numpy",
-    "pandas",
     "pillow",
     "psutil",
     "psycopg2-binary",

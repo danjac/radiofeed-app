@@ -7,7 +7,6 @@ from collections.abc import Iterator
 from datetime import timedelta
 
 import numpy
-import pandas
 
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
@@ -99,49 +98,42 @@ class Recommender:
     ) -> Iterator[tuple[int, int, float]]:
         # build a data model of podcasts with same language and category
         #
-        qs = (
+        rows = dict(
             podcasts.filter(
                 language=self._language,
                 categories=category,
-            )
-            .values("id", "extracted_text")
-            .distinct()
+            ).values_list("id", "extracted_text")
         )
 
-        for batch in iterators.batcher(qs, 1000):
-            df = pandas.DataFrame(batch)
+        if not rows:
+            return  # pragma: no cover
 
-            if df.empty:
-                return  # pragma: no cover
+        try:
+            cosine_sim = cosine_similarity(
+                self._vectorizer.fit_transform(rows.values())
+            )
+        except ValueError:  # pragma: no cover
+            return
 
-            df.drop_duplicates(inplace=True)
-
+        # find matching similar pairs
+        podcast_ids = list(rows.keys())
+        #
+        for index, podcast_id in enumerate(podcast_ids):
             try:
-                cosine_sim = cosine_similarity(
-                    self._vectorizer.fit_transform(df["extracted_text"])
+                podcast_id, recommended = self._find_similar_pairs(
+                    podcast_ids,
+                    similar=cosine_sim[index],
+                    current_id=podcast_id,
                 )
-            except ValueError:  # pragma: no cover
-                return
 
-            # find matching similar pairs
-            #
-            for index in df.index:
-                try:
-                    podcast_id, recommended = self._find_similar_pairs(
-                        df,
-                        similar=cosine_sim[index],
-                        current_id=df.loc[index, "id"],
-                    )
+                for recommended_id, similarity in recommended:
+                    yield podcast_id, recommended_id, similarity
 
-                    for recommended_id, similarity in recommended:
-                        if similarity > 0:
-                            yield podcast_id, recommended_id, similarity
-
-                except IndexError:  # pragma: no cover
-                    continue
+            except IndexError:  # pragma: no cover
+                continue
 
     def _find_similar_pairs(
-        self, df: pandas.DataFrame, similar: list[float], current_id: int
+        self, podcast_ids: list[int], similar: list[float], current_id: int
     ) -> tuple[int, Iterator[tuple[int, float]]]:
         sorted_similar = sorted(
             enumerate(similar),
@@ -149,11 +141,9 @@ class Recommender:
             reverse=True,
         )[: self._num_matches]
 
-        return (
-            current_id,
-            (
-                (df.loc[row, "id"], round(similarity, 2))
-                for row, similarity in sorted_similar
-                if df.loc[row, "id"] != current_id
-            ),
-        )
+        def _find_similar() -> Iterator[tuple[int, float]]:
+            for index, similarity in sorted_similar:
+                if similarity > 0 and (value := podcast_ids[index]) != current_id:
+                    yield value, round(similarity, 2)
+
+        return (current_id, _find_similar())
