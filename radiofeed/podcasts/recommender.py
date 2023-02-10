@@ -54,7 +54,7 @@ class Recommender:
 
         self._vectorizer = TfidfVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language)),
-            max_features=3000,
+            max_features=None,
             ngram_range=(1, 2),
         )
 
@@ -69,7 +69,6 @@ class Recommender:
         for batch in iterators.batcher(
             self._build_matches_dict(podcasts, categories).items(), 100
         ):
-            logger.info("batch: %s", batch)
             Recommendation.objects.bulk_create(
                 (
                     Recommendation(
