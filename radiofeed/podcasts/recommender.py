@@ -61,7 +61,7 @@ class Recommender:
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
         for batch in iterators.batcher(
-            self._build_matches_dict(podcasts, categories).items(), 100
+            self._build_matches_dict(podcasts, categories).items(), 1000
         ):
             Recommendation.objects.bulk_create(
                 (
