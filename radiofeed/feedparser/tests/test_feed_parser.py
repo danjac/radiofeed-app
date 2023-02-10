@@ -104,7 +104,7 @@ class TestFeedParser:
             num_retries=3,
             websub_hub="https://pubsubhubbub.appspot.com/",
             websub_expires=websub_date,
-            websub_requested=websub_date,
+            websub_mode="subscribe",
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -176,7 +176,7 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
         assert podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
-        assert podcast.websub_requested == websub_date
+        assert podcast.websub_mode == "subscribe"
         assert podcast.websub_expires == websub_date
 
     def test_websub_headers_in_response(self, mocker, db, categories):

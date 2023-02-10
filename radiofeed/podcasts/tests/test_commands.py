@@ -32,31 +32,35 @@ class TestSubscribeWebsubFeeds:
         subscribe.assert_not_called()
 
     def test_expired_none(self, db, subscribe):
-        now = timezone.now()
         create_podcast(
-            websub_hub=self.hub,
-            websub_requested=now,
-            websub_expires=None,
+            websub_hub=self.hub, websub_expires=None, websub_mode="subscribe"
         )
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_not_called()
 
     def test_expired(self, db, subscribe):
-        now = timezone.now()
         create_podcast(
             websub_hub=self.hub,
-            websub_requested=now,
-            websub_expires=now - timedelta(days=1),
+            websub_expires=timezone.now() - timedelta(days=1),
+            websub_mode="subscribe",
         )
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
 
-    def test_not_expired(self, db, subscribe):
-        now = timezone.now()
+    def test_expired_not_subscribed(self, db, subscribe):
         create_podcast(
             websub_hub=self.hub,
-            websub_requested=now,
-            websub_expires=now + timedelta(days=1),
+            websub_expires=timezone.now() - timedelta(days=1),
+            websub_mode="unsubscribe",
+        )
+        call_command("subscribe_websub_feeds", limit=200)
+        subscribe.assert_not_called()
+
+    def test_not_expired(self, db, subscribe):
+        create_podcast(
+            websub_hub=self.hub,
+            websub_expires=timezone.now() + timedelta(days=1),
+            websub_mode="subscribe",
         )
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_not_called()

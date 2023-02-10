@@ -296,7 +296,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """
     # content distribution
     if request.method == "POST":
-        podcast = _get_podcast_or_404(podcast_id)
+        podcast = _get_podcast_or_404(podcast_id, websub_mode="subscribe")
 
         if subscriber.check_signature(request, podcast):
             with contextlib.suppress(FeedParserError):
@@ -306,28 +306,29 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     # verification
     try:
-        podcast = get_object_or_404(
-            _get_podcasts(),
-            pk=podcast_id,
-            rss=request.GET["hub.topic"],
+        # check all required fields are present
+
+        mode = request.GET["hub.mode"]
+        topic = request.GET["hub.topic"]
+        challenge = request.GET["hub.challenge"]
+
+        lease_seconds = int(
+            request.GET.get("hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS)
         )
 
+        podcast = _get_podcast_or_404(podcast_id, rss=topic)
+
         podcast.websub_expires = (
-            timezone.now()
-            + timedelta(
-                seconds=int(
-                    request.GET.get(
-                        "hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS
-                    )
-                )
-            )
-            if request.GET["hub.mode"] == "subscribe"
+            timezone.now() + timedelta(seconds=lease_seconds)
+            if mode == "subscribe"
             else None
         )
 
-        podcast.save(update_fields=["websub_expires"])
+        podcast.websub_mode = mode
 
-        return HttpResponse(request.GET["hub.challenge"])
+        podcast.save()
+
+        return HttpResponse(challenge)
 
     except (KeyError, ValueError) as e:
         raise Http404 from e
@@ -337,8 +338,8 @@ def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def _get_podcast_or_404(podcast_id: int) -> Podcast:
-    return get_object_or_404(_get_podcasts(), pk=podcast_id)
+def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
+    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
 
 
 def _render_subscribe_action(

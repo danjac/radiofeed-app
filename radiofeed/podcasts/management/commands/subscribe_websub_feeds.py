@@ -35,8 +35,9 @@ class Command(BaseCommand):
             executor.map(
                 self._subscribe,
                 Podcast.objects.filter(
-                    Q(websub_requested__isnull=True)
+                    Q(websub_mode="")
                     | Q(
+                        websub_mode="subscribe",
                         websub_expires__lt=timezone.now(),
                     ),
                     websub_hub__isnull=False,

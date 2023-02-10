@@ -22,7 +22,11 @@ DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 _MAX_BODY_SIZE: Final = 1024**2
 
 
-def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
+def subscribe(
+    podcast: Podcast,
+    mode: str = "subscribe",
+    lease_seconds: int = DEFAULT_LEASE_SECONDS,
+) -> requests.Response:
     """Subscribes podcast to provided websub hub.
 
     Raises:
@@ -51,13 +55,13 @@ def subscribe(podcast: Podcast, mode: str = "subscribe") -> requests.Response:
 
     response.raise_for_status()
 
-    now = timezone.now()
-
-    podcast.websub_requested = now
+    podcast.websub_mode = mode
     podcast.websub_secret = secret
 
     podcast.websub_expires = (
-        now + timedelta(seconds=DEFAULT_LEASE_SECONDS) if mode == "subscribe" else None
+        timezone.now() + timedelta(seconds=lease_seconds)
+        if mode == "subscribe"
+        else None
     )
 
     podcast.save()

@@ -220,8 +220,8 @@ class FeedParser:
             if hub == self._podcast.websub_hub and topic == self._podcast.rss
             else {
                 "websub_hub": hub,
+                "websub_mode": "",
                 "websub_expires": None,
-                "websub_requested": None,
                 "websub_secret": None,
             }
         )

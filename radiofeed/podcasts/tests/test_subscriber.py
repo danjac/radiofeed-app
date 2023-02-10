@@ -105,7 +105,22 @@ class TestSubscribe:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_requested
+        assert podcast.websub_mode == "subscribe"
+        assert podcast.websub_expires
+        assert podcast.websub_secret
+
+    def test_unsubscribe(self, mocker, podcast):
+        mocker.patch(
+            "requests.post",
+            return_value=MockResponse(status_code=http.HTTPStatus.ACCEPTED),
+        )
+
+        subscriber.subscribe(podcast, mode="unsubscribe")
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_mode == "unsubscribe"
+        assert podcast.websub_expires is None
         assert podcast.websub_secret
 
     def test_error(self, mocker, podcast):
@@ -119,5 +134,6 @@ class TestSubscribe:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_requested is None
+        assert podcast.websub_mode == ""
+        assert podcast.websub_expires is None
         assert podcast.websub_secret is None

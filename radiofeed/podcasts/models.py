@@ -156,7 +156,7 @@ class Podcast(models.Model):
 
     websub_hub: str = models.URLField(max_length=2086, null=True, blank=True)
     websub_secret: uuid.UUID = models.UUIDField(null=True, blank=True)
-    websub_requested: datetime | None = models.DateTimeField(null=True, blank=True)
+    websub_mode: str = models.CharField(max_length=12, blank=True)
     websub_expires: datetime | None = models.DateTimeField(null=True, blank=True)
 
     categories: models.QuerySet[Category] = models.ManyToManyField(

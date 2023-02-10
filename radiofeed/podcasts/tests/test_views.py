@@ -404,7 +404,8 @@ class TestWebsubCallback:
     def get_url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
-    def test_post(self, client, mocker, feed_parser, podcast):
+    def test_post(self, client, db, mocker, feed_parser):
+        podcast = create_podcast(websub_mode="subscribe")
         mocker.patch("radiofeed.podcasts.subscriber.check_signature", return_value=True)
 
         response = client.post(self.get_url(podcast))
@@ -412,7 +413,16 @@ class TestWebsubCallback:
 
         feed_parser.assert_called()
 
-    def test_post_invalid_signature(self, client, mocker, feed_parser, podcast):
+    def test_post_not_subscribed(self, client, mocker, feed_parser, podcast):
+        mocker.patch("radiofeed.podcasts.subscriber.check_signature", return_value=True)
+
+        response = client.post(self.get_url(podcast))
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        feed_parser.assert_not_called()
+
+    def test_post_invalid_signature(self, client, db, mocker, feed_parser):
+        podcast = create_podcast(websub_mode="subscribe")
         mocker.patch(
             "radiofeed.podcasts.subscriber.check_signature", return_value=False
         )

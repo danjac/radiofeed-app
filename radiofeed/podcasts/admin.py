@@ -197,8 +197,8 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         "etag",
         "content_hash",
         "websub_hub",
+        "websub_mode",
         "websub_secret",
-        "websub_requested",
         "websub_expires",
     )
 
