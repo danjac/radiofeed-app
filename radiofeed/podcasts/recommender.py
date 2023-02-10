@@ -39,7 +39,6 @@ def recommend() -> None:
     # separate by language, so we don't get false matches
 
     for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-
         Recommender(language).recommend(podcasts, categories)
 
 
@@ -49,7 +48,6 @@ class Recommender:
     _num_matches: int = 12
 
     def __init__(self, language: str):
-
         self._language = language
 
         self._vectorizer = TfidfVectorizer(
@@ -66,9 +64,8 @@ class Recommender:
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
         for batch in iterators.batcher(
-            self._build_matches_dict(podcasts, categories).items(), 1000
+            self._build_matches_dict(podcasts, categories).items(), 100
         ):
-
             Recommendation.objects.bulk_create(
                 (
                     Recommendation(
@@ -85,7 +82,6 @@ class Recommender:
     def _build_matches_dict(
         self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
     ) -> collections.defaultdict[tuple[int, int], list[float]]:
-
         matches = collections.defaultdict(list)
 
         for category in categories:
@@ -101,7 +97,6 @@ class Recommender:
     def _match_podcasts_in_category(
         self, podcasts: QuerySet[Podcast], category: Category
     ) -> Iterator[tuple[int, int, float]]:
-
         # build a data model of podcasts with same language and category
 
         df = pandas.DataFrame(
@@ -145,7 +140,6 @@ class Recommender:
     def _find_similar_pairs(
         self, df: pandas.DataFrame, similar: list[float], current_id: int
     ) -> tuple[int, Iterator[tuple[int, float]]]:
-
         sorted_similar = sorted(
             enumerate(similar),
             key=operator.itemgetter(1),
