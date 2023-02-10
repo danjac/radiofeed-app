@@ -54,8 +54,8 @@ class Recommender:
 
         self._vectorizer = TfidfVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language)),
-            max_features=None,
             ngram_range=(1, 2),
+            min_df=0.2,
         )
 
     def recommend(
