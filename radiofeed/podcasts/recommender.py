@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections
+import logging
 import operator
 
 from collections.abc import Iterator
@@ -16,6 +17,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed import iterators, tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
+
+logger = logging.getLogger(__name__)
 
 
 def recommend() -> None:
@@ -62,9 +65,11 @@ class Recommender:
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
+        logger.info("language:%s", self._language)
         for batch in iterators.batcher(
             self._build_matches_dict(podcasts, categories).items(), 100
         ):
+            logger.info("batch: %s", batch)
             Recommendation.objects.bulk_create(
                 (
                     Recommendation(

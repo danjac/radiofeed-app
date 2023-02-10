@@ -215,6 +215,11 @@ LOGGING: dict | None = {
             "level": "CRITICAL",
             "propagate": False,
         },
+        "radiofeed.podcasts.recommender": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }
 
