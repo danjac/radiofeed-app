@@ -318,13 +318,13 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
         podcast = _get_podcast_or_404(podcast_id, rss=topic)
 
+        podcast.websub_mode = mode
+
         podcast.websub_expires = (
             timezone.now() + timedelta(seconds=lease_seconds)
             if mode == "subscribe"
             else None
         )
-
-        podcast.websub_mode = mode
 
         podcast.save()
 
