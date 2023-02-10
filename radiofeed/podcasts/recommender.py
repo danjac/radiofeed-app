@@ -126,6 +126,8 @@ class Recommender:
         except ValueError:  # pragma: no cover
             return
 
+        logger.info("cosim done")
+
         podcast_ids = list(rows.keys())
 
         for current_id, similar in zip(podcast_ids, cosine_sim):
