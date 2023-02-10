@@ -117,6 +117,8 @@ class Recommender:
         if not rows:
             return  # pragma: no cover
 
+        logger.info("building cosim...")
+
         try:
             cosine_sim = cosine_similarity(
                 self._vectorizer.fit_transform(rows.values())
