@@ -50,7 +50,7 @@ class Recommender:
         self._language = language
 
         self._vectorizer = HashingVectorizer(
-            stop_words=list(tokenizer.get_stopwords(self._language)),
+            stop_words=list(tokenizer.get_stopwords(self._language))
         )
 
     def recommend(
@@ -82,29 +82,28 @@ class Recommender:
         matches = collections.defaultdict(list)
 
         for category in categories:
-            for (
-                podcast_id,
-                recommended_id,
-                similarity,
-            ) in self._match_podcasts_in_category(podcasts, category):
-                matches[(podcast_id, recommended_id)].append(similarity)
+            for batch in iterators.batcher(
+                podcasts.filter(
+                    language=self._language,
+                    categories=category,
+                )
+                .values_list("id", "extracted_text")
+                .iterator(),
+                1000,
+            ):
+                for (
+                    podcast_id,
+                    recommended_id,
+                    similarity,
+                ) in self._match_podcasts_in_category(dict(batch), category):
+                    matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
     def _match_podcasts_in_category(
-        self, podcasts: QuerySet[Podcast], category: Category
+        self, rows: dict[int, str], category: Category
     ) -> Iterator[tuple[int, int, float]]:
         # build a data model of podcasts with same language and category
-        #
-
-        rows = dict(
-            podcasts.filter(
-                language=self._language,
-                categories=category,
-            )
-            .values_list("id", "extracted_text")
-            .iterator()
-        )
 
         if not rows:
             return  # pragma: no cover
