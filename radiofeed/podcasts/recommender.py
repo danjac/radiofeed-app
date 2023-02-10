@@ -115,35 +115,29 @@ class Recommender:
         except ValueError:  # pragma: no cover
             return
 
-        # find matching similar pairs
         podcast_ids = list(rows.keys())
-        #
-        for index, podcast_id in enumerate(podcast_ids):
-            try:
-                podcast_id, recommended = self._find_similar_pairs(
-                    podcast_ids,
-                    similar=cosine_sim[index],
-                    current_id=podcast_id,
-                )
 
-                for recommended_id, similarity in recommended:
-                    yield podcast_id, recommended_id, similarity
+        for current_id, similar in zip(podcast_ids, cosine_sim):
+            try:
+                for recommended_id, similarity in self._find_similar_pairs(
+                    current_id,
+                    podcast_ids,
+                    similar,
+                ):
+                    yield current_id, recommended_id, similarity
 
             except IndexError:  # pragma: no cover
                 continue
 
     def _find_similar_pairs(
-        self, podcast_ids: list[int], similar: list[float], current_id: int
-    ) -> tuple[int, Iterator[tuple[int, float]]]:
+        self, current_id: int, podcast_ids: list[int], similar: list[float]
+    ) -> Iterator[tuple[int, float]]:
         sorted_similar = sorted(
             enumerate(similar),
             key=operator.itemgetter(1),
             reverse=True,
         )[: self._num_matches]
 
-        def _find_similar() -> Iterator[tuple[int, float]]:
-            for index, similarity in sorted_similar:
-                if similarity > 0 and (value := podcast_ids[index]) != current_id:
-                    yield value, round(similarity, 2)
-
-        return (current_id, _find_similar())
+        for index, similarity in sorted_similar:
+            if similarity > 0 and (value := podcast_ids[index]) != current_id:
+                yield value, round(similarity, 2)
