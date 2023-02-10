@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import collections
-import logging
 import operator
 
 from collections.abc import Iterator
@@ -17,8 +16,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed import iterators, tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-
-logger = logging.getLogger(__name__)
 
 
 def recommend() -> None:
@@ -55,7 +52,7 @@ class Recommender:
         self._vectorizer = TfidfVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language)),
             ngram_range=(1, 2),
-            min_df=0.2,
+            min_df=1,
         )
 
     def recommend(
@@ -65,7 +62,6 @@ class Recommender:
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
-        logger.info("language:%s", self._language)
         for batch in iterators.batcher(
             self._build_matches_dict(podcasts, categories).items(), 100
         ):
@@ -102,7 +98,6 @@ class Recommender:
     ) -> Iterator[tuple[int, int, float]]:
         # build a data model of podcasts with same language and category
         #
-        logger.info("category:%s", category)
 
         rows = dict(
             podcasts.filter(
@@ -116,16 +111,12 @@ class Recommender:
         if not rows:
             return  # pragma: no cover
 
-        logger.info("building cosim...")
-
         try:
             cosine_sim = cosine_similarity(
                 self._vectorizer.fit_transform(rows.values())
             )
         except ValueError:  # pragma: no cover
             return
-
-        logger.info("cosim done")
 
         podcast_ids = list(rows.keys())
 
