@@ -100,12 +100,14 @@ class Recommender:
         # build a data model of podcasts with same language and category
 
         df = pandas.DataFrame(
-            podcasts.filter(
-                language=self._language,
-                categories=category,
+            list(
+                podcasts.filter(
+                    language=self._language,
+                    categories=category,
+                )
+                .values("id", "extracted_text")
+                .distinct()
             )
-            .values("id", "extracted_text")
-            .distinct()
         )
 
         if df.empty:
