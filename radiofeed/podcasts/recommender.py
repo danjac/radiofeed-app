@@ -98,46 +98,47 @@ class Recommender:
         self, podcasts: QuerySet[Podcast], category: Category
     ) -> Iterator[tuple[int, int, float]]:
         # build a data model of podcasts with same language and category
-
-        df = pandas.DataFrame(
-            list(
-                podcasts.filter(
-                    language=self._language,
-                    categories=category,
-                )
-                .values("id", "extracted_text")
-                .distinct()
+        #
+        qs = (
+            podcasts.filter(
+                language=self._language,
+                categories=category,
             )
+            .values("id", "extracted_text")
+            .distinct()
         )
 
-        if df.empty:
-            return  # pragma: no cover
+        for batch in iterators.batcher(qs, 1000):
+            df = pandas.DataFrame(batch)
 
-        df.drop_duplicates(inplace=True)
+            if df.empty:
+                return  # pragma: no cover
 
-        try:
-            cosine_sim = cosine_similarity(
-                self._vectorizer.fit_transform(df["extracted_text"])
-            )
-        except ValueError:  # pragma: no cover
-            return
+            df.drop_duplicates(inplace=True)
 
-        # find matching similar pairs
-        #
-        for index in df.index:
             try:
-                podcast_id, recommended = self._find_similar_pairs(
-                    df,
-                    similar=cosine_sim[index],
-                    current_id=df.loc[index, "id"],
+                cosine_sim = cosine_similarity(
+                    self._vectorizer.fit_transform(df["extracted_text"])
                 )
+            except ValueError:  # pragma: no cover
+                return
 
-                for recommended_id, similarity in recommended:
-                    if similarity > 0:
-                        yield podcast_id, recommended_id, similarity
+            # find matching similar pairs
+            #
+            for index in df.index:
+                try:
+                    podcast_id, recommended = self._find_similar_pairs(
+                        df,
+                        similar=cosine_sim[index],
+                        current_id=df.loc[index, "id"],
+                    )
 
-            except IndexError:  # pragma: no cover
-                continue
+                    for recommended_id, similarity in recommended:
+                        if similarity > 0:
+                            yield podcast_id, recommended_id, similarity
+
+                except IndexError:  # pragma: no cover
+                    continue
 
     def _find_similar_pairs(
         self, df: pandas.DataFrame, similar: list[float], current_id: int
