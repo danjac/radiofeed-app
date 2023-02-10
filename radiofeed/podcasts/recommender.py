@@ -110,9 +110,7 @@ class Recommender:
             return  # pragma: no cover
 
         try:
-            cosine_sim = cosine_similarity(
-                self._vectorizer.fit_transform(rows.values())
-            )
+            cosine_sim = cosine_similarity(self._vectorizer.transform(rows.values()))
         except ValueError:  # pragma: no cover
             return
 
