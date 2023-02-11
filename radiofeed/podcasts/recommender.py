@@ -96,13 +96,13 @@ class Recommender:
                     podcast_id,
                     recommended_id,
                     similarity,
-                ) in self._match_podcasts_in_category(dict(batch), category):
+                ) in self._find_similarities(dict(batch)):
                     matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
-    def _match_podcasts_in_category(
-        self, rows: dict[int, str], category: Category
+    def _find_similarities(
+        self, rows: dict[int, str]
     ) -> Iterator[tuple[int, int, float]]:
         # build a data model of podcasts with same language and category
 
