@@ -68,25 +68,25 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, content: bytes = b"", diff_update: bool = False):
+    def parse(self, content: bytes = b""):
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
 
         Args:
-            - content: RSS/Atom feed content. If empty will fetch from podcast URL source.
-            - diff_update: if `True` will only insert or update new episodes but not delete old episodes.
+            - content: RSS/Atom feed "fat ping". If empty will fetch from podcast URL source.
 
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
-        url: str = self._podcast.rss
-
-        links: dict = {}
-        headers: dict = {}
-
         try:
-            if not content:
+            if content:
+                url: str = self._podcast.rss
+                links: dict = {}
+                headers: dict = {}
+                diff_update = True
+
+            else:
                 response = self._get_response()
 
                 content = response.content
@@ -94,6 +94,8 @@ class FeedParser:
 
                 links = dict(response.links or {})
                 headers = dict(response.headers or {})
+
+                diff_update = False
 
             content_hash = make_content_hash(content)
 
