@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections
+import itertools
 import operator
 
 from collections.abc import Iterator
@@ -118,11 +119,14 @@ class Recommender:
 
         for current_id, similar in zip(podcast_ids, cosine_sim):
             try:
-                for index, similarity in sorted(
-                    enumerate(similar),
-                    key=operator.itemgetter(1),
-                    reverse=True,
-                )[: self._num_matches]:
+                for index, similarity in itertools.islice(
+                    sorted(
+                        enumerate(similar),
+                        key=operator.itemgetter(1),
+                        reverse=True,
+                    ),
+                    self._num_matches,
+                ):
                     if (
                         similarity > 0
                         and (recommended_id := podcast_ids[index]) != current_id
