@@ -118,25 +118,16 @@ class Recommender:
 
         for current_id, similar in zip(podcast_ids, cosine_sim):
             try:
-                for recommended_id, similarity in self._find_similar_pairs(
-                    current_id,
-                    podcast_ids,
-                    similar,
-                ):
-                    yield current_id, recommended_id, similarity
+                for index, similarity in sorted(
+                    enumerate(similar),
+                    key=operator.itemgetter(1),
+                    reverse=True,
+                )[: self._num_matches]:
+                    if (
+                        similarity > 0
+                        and (recommended_id := podcast_ids[index]) != current_id
+                    ):
+                        yield current_id, recommended_id, similarity
 
             except IndexError:  # pragma: no cover
                 continue
-
-    def _find_similar_pairs(
-        self, current_id: int, podcast_ids: list[int], similar: list[float]
-    ) -> Iterator[tuple[int, float]]:
-        sorted_similar = sorted(
-            enumerate(similar),
-            key=operator.itemgetter(1),
-            reverse=True,
-        )[: self._num_matches]
-
-        for index, similarity in sorted_similar:
-            if similarity > 0 and (value := podcast_ids[index]) != current_id:
-                yield value, round(similarity, 2)
