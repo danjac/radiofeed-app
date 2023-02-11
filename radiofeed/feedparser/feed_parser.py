@@ -68,7 +68,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self):
+    def parse(self, content: bytes = b""):
         """Updates Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
@@ -105,6 +105,7 @@ class FeedParser:
                 modified=parse_date(response.headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
+                websub_content=content.encode("utf-8"),
                 **self._extract_websub_links(response, feed),
                 **attrs.asdict(
                     feed,
