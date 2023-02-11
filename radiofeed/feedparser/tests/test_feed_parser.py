@@ -115,6 +115,9 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
+        # add episode to remove in update
+        extra = create_episode(podcast=podcast)
+
         mocker.patch(
             "requests.get",
             return_value=MockResponse(
@@ -131,7 +134,10 @@ class TestFeedParser:
         FeedParser(podcast).parse()
 
         # new episodes: 19
-        assert Episode.objects.count() == 20
+        assert podcast.episodes.count() == 20
+
+        # extra episode should be removed
+        assert not podcast.episodes.filter(pk=extra.id).exists()
 
         # check episode updated
         episode = Episode.objects.get(guid=episode_guid)
@@ -161,6 +167,83 @@ class TestFeedParser:
         assert podcast.parsed
 
         assert podcast.etag
+        assert podcast.explicit
+        assert podcast.cover_url
+
+        assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        assert podcast.keywords == "science & medicine"
+
+        assigned_categories = [c.name for c in podcast.categories.all()]
+
+        assert "Science" in assigned_categories
+        assert "Religion & Spirituality" in assigned_categories
+        assert "Society & Culture" in assigned_categories
+        assert "Philosophy" in assigned_categories
+
+        assert podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
+        assert podcast.websub_mode == "subscribe"
+        assert podcast.websub_expires == websub_date
+
+    def test_parse_from_content(self, mocker, db, categories):
+        # set date to before latest
+
+        websub_date = timezone.now() - timedelta(days=3)
+
+        podcast = create_podcast(
+            rss="https://mysteriousuniverse.org/feed/podcast/",
+            pub_date=datetime(year=2020, month=3, day=1),
+            num_retries=3,
+            websub_hub="https://pubsubhubbub.appspot.com/",
+            websub_expires=websub_date,
+            websub_mode="subscribe",
+        )
+
+        # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
+
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
+
+        # add another episode: check it is not removed in update
+        extra = create_episode(podcast=podcast)
+
+        # parse content
+        FeedParser(podcast).parse(self.get_rss_content())
+
+        # new episodes: 19
+        assert podcast.episodes.count() == 21
+
+        # extra should NOT be deleted
+        assert podcast.episodes.filter(pk=extra.id).exists()
+
+        # check episode updated
+        episode = Episode.objects.get(guid=episode_guid)
+        assert episode.title != episode_title
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.active
+        assert podcast.num_retries == 0
+        assert podcast.content_hash
+        assert podcast.title == "Mysterious Universe"
+
+        assert podcast.description == "Blog and Podcast specializing in offbeat news"
+        assert podcast.owner == "8th Kind"
+
+        assert (
+            podcast.extracted_text
+            == "mysterious universe blog specializing offbeat th kind science medicine science social science religion spirituality spirituality society culture philosophy mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton"
+        )
+
+        assert not podcast.modified
+        assert not podcast.etag
+
+        assert podcast.parsed
+
         assert podcast.explicit
         assert podcast.cover_url
 

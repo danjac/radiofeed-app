@@ -73,22 +73,40 @@ class FeedParser:
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
 
-        If a podcast is discontinued (e.g. there is a duplicate feed in the database, or the feed is marked as complete) then the podcast is set inactive.
+        If `content` is not empty, does not fetch from source but appends content to current feed (existing episodes are preserved).
         """
+        url: str = self._podcast.rss
+
+        links: dict = {}
+        headers: dict = {}
+
+        remove_episodes: bool = False
+
         try:
-            response = self._get_response()
-            content_hash = make_content_hash(response.content)
+            if not content:
+                response = self._get_response()
+
+                content = response.content
+                url = response.url
+
+                links = dict(response.links or {})
+                headers = dict(response.headers or {})
+
+                # fetching from canonical source, so we can definitely remove old episodes
+                remove_episodes = True
+
+            content_hash = make_content_hash(content)
 
             if content_hash == self._podcast.content_hash:
                 raise NotModified()
 
             if (
                 Podcast.objects.exclude(pk=self._podcast.pk)
-                .filter(Q(rss=response.url) | Q(content_hash=content_hash))
+                .filter(Q(rss=url) | Q(content_hash=content_hash))
                 .exists()
             ):
                 raise Duplicate()
-            feed = rss_parser.parse_rss(response.content)
+            feed = rss_parser.parse_rss(content)
         except FeedParserError as e:
             return self._handle_feed_error(e)
 
@@ -99,14 +117,13 @@ class FeedParser:
                 num_retries=0,
                 content_hash=content_hash,
                 keywords=keywords,
-                rss=response.url,
+                rss=url,
                 active=not (feed.complete),
-                etag=response.headers.get("ETag", ""),
-                modified=parse_date(response.headers.get("Last-Modified")),
+                etag=headers.get("ETag", ""),
+                modified=parse_date(headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
-                websub_content=content.decode("utf-8"),
-                **self._extract_websub_links(response, feed),
+                **self._extract_websub_links(feed, links),
                 **attrs.asdict(
                     feed,
                     filter=attrs.filters.exclude(  # type: ignore
@@ -120,7 +137,7 @@ class FeedParser:
             )
 
             self._podcast.categories.set(categories)
-            self._episode_updates(feed)
+            self._episode_updates(feed, remove_episodes)
 
     def _get_response(self) -> requests.Response:
         try:
@@ -206,10 +223,10 @@ class FeedParser:
             updated=now, parsed=now, **fields
         )
 
-    def _extract_websub_links(self, response: requests.Response, feed: Feed) -> dict:
+    def _extract_websub_links(self, feed: Feed, links: dict) -> dict:
         try:
-            hub = response.links["hub"]["url"]
-            topic = response.links["self"]["url"]
+            hub = links["hub"]["url"]
+            topic = links["self"]["url"]
         except KeyError:
             hub = feed.websub_hub
             topic = feed.websub_topic
@@ -260,11 +277,12 @@ class FeedParser:
         )
         return " ".join(tokenizer.tokenize(self._podcast.language, text))
 
-    def _episode_updates(self, feed: Feed) -> None:
+    def _episode_updates(self, feed: Feed, remove_episodes: bool) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
 
-        # remove any episodes that may have been deleted on the podcast
-        qs.exclude(guid__in={item.guid for item in feed.items}).delete()
+        if remove_episodes:
+            # remove any episodes that may have been deleted on the podcast
+            qs.exclude(guid__in={item.guid for item in feed.items}).delete()
 
         # determine new/current items based on presence of guid
 
