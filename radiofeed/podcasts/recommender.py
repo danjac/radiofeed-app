@@ -61,7 +61,10 @@ class Recommender:
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
         for batch in iterators.batcher(
-            self._build_matches_dict(podcasts, categories).items(), 1000
+            self._build_matches_dict(
+                podcasts.filter(language=self._language), categories
+            ).items(),
+            1000,
         ):
             Recommendation.objects.bulk_create(
                 (
@@ -84,10 +87,7 @@ class Recommender:
 
         for category in categories:
             for batch in iterators.batcher(
-                podcasts.filter(
-                    language=self._language,
-                    categories=category,
-                )
+                podcasts.filter(categories=category)
                 .values_list("id", "extracted_text")
                 .iterator(),
                 1000,
