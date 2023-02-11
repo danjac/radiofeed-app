@@ -105,7 +105,7 @@ class FeedParser:
                 modified=parse_date(response.headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
-                websub_content=content.encode("utf-8"),
+                websub_content=content.decode("utf-8"),
                 **self._extract_websub_links(response, feed),
                 **attrs.asdict(
                     feed,
