@@ -12,6 +12,10 @@
 
 ./manage.py clear_cache
 
+# start pgbouncer
+
+bin/start-pgbouncer
+
 # start server
 
 gunicorn -c ./gunicorn.conf.py radiofeed.wsgi --access-logfile -
