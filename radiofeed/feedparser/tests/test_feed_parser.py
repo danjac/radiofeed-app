@@ -211,7 +211,7 @@ class TestFeedParser:
         extra = create_episode(podcast=podcast)
 
         # parse content
-        FeedParser(podcast).parse(self.get_rss_content())
+        FeedParser(podcast).parse(self.get_rss_content(), diff_update=True)
 
         # new episodes: 19
         assert podcast.episodes.count() == 21

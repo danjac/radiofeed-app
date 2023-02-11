@@ -68,19 +68,22 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, content: bytes = b""):
-        """Updates Podcast instance with RSS or Atom feed source.
+    def parse(self, content: bytes = b"", diff_update: bool = False):
+        """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted accordingly.
 
-        If `content` is not empty, does not fetch from source but appends content to current feed (existing episodes are preserved).
+        Args:
+            - content: RSS/Atom feed content. If empty will fetch from podcast URL source.
+            - diff_update: if `True` will only insert or update new episodes but not delete old episodes.
+
+        Raises:
+            FeedParserError: if any errors found in fetching or parsing the feed.
         """
         url: str = self._podcast.rss
 
         links: dict = {}
         headers: dict = {}
-
-        remove_episodes: bool = False
 
         try:
             if not content:
@@ -91,9 +94,6 @@ class FeedParser:
 
                 links = dict(response.links or {})
                 headers = dict(response.headers or {})
-
-                # fetching from canonical source, so we can definitely remove old episodes
-                remove_episodes = True
 
             content_hash = make_content_hash(content)
 
@@ -137,7 +137,7 @@ class FeedParser:
             )
 
             self._podcast.categories.set(categories)
-            self._episode_updates(feed, remove_episodes)
+            self._episode_updates(feed, diff_update)
 
     def _get_response(self) -> requests.Response:
         try:
@@ -277,10 +277,10 @@ class FeedParser:
         )
         return " ".join(tokenizer.tokenize(self._podcast.language, text))
 
-    def _episode_updates(self, feed: Feed, remove_episodes: bool) -> None:
+    def _episode_updates(self, feed: Feed, diff_update: bool) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
 
-        if remove_episodes:
+        if not diff_update:
             # remove any episodes that may have been deleted on the podcast
             qs.exclude(guid__in={item.guid for item in feed.items}).delete()
 
