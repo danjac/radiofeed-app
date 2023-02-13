@@ -52,7 +52,11 @@ def send_recommendations_email(
         .values_list("recommended", flat=True)
     )
 
-    podcasts = Podcast.objects.filter(pk__in=recommended_ids).distinct()[:max_podcasts]
+    podcasts = (
+        Podcast.objects.filter(pk__in=recommended_ids)
+        .distinct()
+        .order_by("?")[:max_podcasts]
+    )
 
     if len(podcasts) < min_podcasts:
         return False
