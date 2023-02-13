@@ -22,7 +22,7 @@ django-permissions-policy==4.14.0
 django-redis==5.2.0
 django-widget-tweaks==1.4.12
 gunicorn==20.1.0
-hiredis==2.2.1
+hiredis==2.2.2
 idna==3.4
 joblib==1.2.0
 lxml==4.9.2
