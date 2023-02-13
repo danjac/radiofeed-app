@@ -35,10 +35,10 @@ djlint==1.19.14
 editorconfig==0.12.3
 execnet==1.9.0
 executing==1.2.0
-faker==16.8.1
+faker==17.0.0
 filelock==3.9.0
 flake8==6.0.0
-flake8-bugbear==23.1.20
+flake8-bugbear==23.2.13
 flake8-comprehensions==3.10.1
 flake8-debugger==4.1.2
 flake8-deprecated==2.0.1
