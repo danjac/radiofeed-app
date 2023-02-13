@@ -18,7 +18,7 @@ ADMIN_SITE_HEADER += " [PRODUCTION]"
 
 # Set HTTPS for absolute uris in allauth and our own absolute links
 
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = HTTP_PROTOCOL = "https"
+HTTP_PROTOCOL = ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 # Static files
 
@@ -85,7 +85,6 @@ PERMISSIONS_POLICY: dict[str, list] = {
 # https://anymail.dev/en/v9.0/esps/mailgun/
 
 if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
-
     INSTALLED_APPS += ["anymail"]
 
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
@@ -103,7 +102,6 @@ if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
 # https://docs.sentry.io/platforms/python/guides/django/
 
 if SENTRY_URL := config("SENTRY_URL", default=None):
-
     ignore_logger("django.security.DisallowedHost")
 
     sentry_sdk.init(
