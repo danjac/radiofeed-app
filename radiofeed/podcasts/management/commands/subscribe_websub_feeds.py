@@ -6,8 +6,6 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 
 from django.core.management.base import BaseCommand
-from django.db.models import Q
-from django.utils import timezone
 
 from radiofeed.podcasts import subscriber
 from radiofeed.podcasts.models import Podcast
@@ -32,16 +30,7 @@ class Command(BaseCommand):
         with ThreadPoolExecutor() as executor:
             executor.map(
                 self._subscribe,
-                Podcast.objects.filter(
-                    Q(websub_mode="")
-                    | Q(
-                        websub_mode="subscribe",
-                        websub_expires__lt=timezone.now(),
-                    ),
-                    websub_hub__isnull=False,
-                )
-                .order_by("websub_expires", "-created")[: options["limit"]]
-                .iterator(),
+                subscriber.get_podcasts_for_subscribe()[: options["limit"]],
             )
 
     def _subscribe(self, podcast: Podcast) -> None:

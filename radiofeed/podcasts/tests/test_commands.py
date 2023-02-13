@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from datetime import timedelta
-
 import pytest
 import requests
 
 from django.core.management import call_command
-from django.utils import timezone
 
 from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_recommendation
@@ -23,7 +20,7 @@ class TestSubscribeWebsubFeeds:
             "radiofeed.podcasts.subscriber.subscribe",
         )
 
-    def test_not_requested(self, db, subscribe):
+    def test_subscribe(self, db, subscribe):
         create_podcast(websub_hub=self.hub)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
@@ -37,44 +34,6 @@ class TestSubscribeWebsubFeeds:
         create_podcast(websub_hub=self.hub)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
-
-    def test_not_websub(self, db, subscribe, podcast):
-        call_command("subscribe_websub_feeds", limit=200)
-        subscribe.assert_not_called()
-
-    def test_expired_none(self, db, subscribe):
-        create_podcast(
-            websub_hub=self.hub, websub_expires=None, websub_mode="subscribe"
-        )
-        call_command("subscribe_websub_feeds", limit=200)
-        subscribe.assert_not_called()
-
-    def test_expired(self, db, subscribe):
-        create_podcast(
-            websub_hub=self.hub,
-            websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="subscribe",
-        )
-        call_command("subscribe_websub_feeds", limit=200)
-        subscribe.assert_called()
-
-    def test_expired_not_subscribed(self, db, subscribe):
-        create_podcast(
-            websub_hub=self.hub,
-            websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="unsubscribe",
-        )
-        call_command("subscribe_websub_feeds", limit=200)
-        subscribe.assert_not_called()
-
-    def test_not_expired(self, db, subscribe):
-        create_podcast(
-            websub_hub=self.hub,
-            websub_expires=timezone.now() + timedelta(days=1),
-            websub_mode="subscribe",
-        )
-        call_command("subscribe_websub_feeds", limit=200)
-        subscribe.assert_not_called()
 
 
 class TestCreateRecommendations:

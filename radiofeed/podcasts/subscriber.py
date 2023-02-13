@@ -10,6 +10,7 @@ from typing import Final
 import requests
 
 from django.conf import settings
+from django.db.models import Q, QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
@@ -20,6 +21,18 @@ from radiofeed.template import build_absolute_uri
 DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 
 _MAX_BODY_SIZE: Final = 1024**2
+
+
+def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
+    """Return podcasts for websub subscription requests."""
+    return Podcast.objects.filter(
+        Q(websub_mode="")
+        | Q(
+            websub_mode="subscribe",
+            websub_expires__lt=timezone.now(),
+        ),
+        websub_hub__isnull=False,
+    ).order_by("websub_expires", "-created")
 
 
 def subscribe(

@@ -5,8 +5,12 @@ import hmac
 import http
 import uuid
 
+from datetime import timedelta
+
 import pytest
 import requests
+
+from django.utils import timezone
 
 from radiofeed.podcasts import subscriber
 from radiofeed.podcasts.factories import create_podcast
@@ -19,6 +23,46 @@ class MockResponse:
     def raise_for_status(self):
         if self.status_code not in range(200, 400):
             raise requests.HTTPError("oops")
+
+
+class TestGetPodcastsForSubscribe:
+    hub = "https://example.com/"
+
+    def test_not_websub(self, db, podcast):
+        assert subscriber.get_podcasts_for_subscribe().count() == 0
+
+    def test_expired_none(self, db):
+        create_podcast(
+            websub_hub=self.hub, websub_expires=None, websub_mode="subscribe"
+        )
+        assert subscriber.get_podcasts_for_subscribe().count() == 0
+
+    def test_expired(self, db):
+        create_podcast(
+            websub_hub=self.hub,
+            websub_expires=timezone.now() - timedelta(days=1),
+            websub_mode="subscribe",
+        )
+
+        assert subscriber.get_podcasts_for_subscribe().count() == 1
+
+    def test_expired_not_subscribed(self, db):
+        create_podcast(
+            websub_hub=self.hub,
+            websub_expires=timezone.now() - timedelta(days=1),
+            websub_mode="unsubscribe",
+        )
+
+        assert subscriber.get_podcasts_for_subscribe().count() == 0
+
+    def test_not_expired(self, db):
+        create_podcast(
+            websub_hub=self.hub,
+            websub_expires=timezone.now() + timedelta(days=1),
+            websub_mode="subscribe",
+        )
+
+        assert subscriber.get_podcasts_for_subscribe().count() == 0
 
 
 class TestCheckSignature:
