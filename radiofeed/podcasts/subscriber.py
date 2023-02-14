@@ -20,8 +20,6 @@ from radiofeed.template import build_absolute_uri
 
 DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 
-_MAX_BODY_SIZE: Final = 1024**2
-
 
 def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
     """Return podcasts for websub subscription requests."""
@@ -82,10 +80,12 @@ def subscribe(
     return response
 
 
-def check_signature(request: HttpRequest, podcast: Podcast) -> bool:
+def check_signature(
+    request: HttpRequest, podcast: Podcast, max_body_size: int = 1024**2
+) -> bool:
     """Check X-Hub-Signature header against the secret in database."""
     try:
-        if int(request.headers["content-length"]) > _MAX_BODY_SIZE:
+        if int(request.headers["content-length"]) > max_body_size:
             return False
 
         algo, signature = request.headers["X-Hub-Signature"].split("=")
