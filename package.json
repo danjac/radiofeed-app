@@ -24,6 +24,6 @@
         "eslint-plugin-prettier": "^4.2.1",
         "npm-check-updates": "^16.7.5",
         "prettier": "2.8.4",
-        "tailwindcss": "^3.2.6"
+        "tailwindcss": "^3.2.7"
     }
 }
