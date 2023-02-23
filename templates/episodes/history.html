@@ -4,18 +4,17 @@
 {% endblock title %}
 {% block content %}
     <header class="mb-3 pb-3 border-b space-y-3">
-        <h1 class="flex justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl font-bold">
-            History
-        </h1>
+        <h1 class="flex justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl font-bold">History</h1>
         {% if request.search or page_obj.has_other_pages %}
             <nav>
                 <ul class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
                     <li class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
                         {% if request.search %}
                             <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                                class="link">Search All Podcasts</a>
+                               class="link">Search All Podcasts</a>
                         {% else %}
-                            <a href="{{ request.path }}?{{ request.ordering.qs_reversed }}" class="link">
+                            <a href="{{ request.path }}?{{ request.ordering.qs_reversed }}"
+                               class="link">
                                 {{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}
                             </a>
                         {% endif %}

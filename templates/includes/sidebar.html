@@ -4,48 +4,48 @@
         <ul class="space-y-3 sm:space-y-0 xl:space-y-3 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:flex xl:flex-col xl:justify-content-between">
             <li>
                 <a href="{% url 'podcasts:index' %}"
-                    accesskey="p"
-                    class="{{ SIDEBAR_CSS }}">
+                   accesskey="p"
+                   class="{{ SIDEBAR_CSS }}">
                     {% icon "rss" css_class=ICON_CSS %}
                     Podcasts
                 </a>
             </li>
             <li>
                 <a href="{% url 'episodes:index' %}"
-                    accesskey="n"
-                    class="{{ SIDEBAR_CSS }}">
+                   accesskey="n"
+                   class="{{ SIDEBAR_CSS }}">
                     {% icon "satellite-dish" css_class=ICON_CSS %}
                     New Releases
                 </a>
             </li>
             <li>
                 <a href="{% url 'podcasts:category_list' %}"
-                    accesskey="c"
-                    class="{{ SIDEBAR_CSS }}">
+                   accesskey="c"
+                   class="{{ SIDEBAR_CSS }}">
                     {% icon "tag" css_class=ICON_CSS %}
                     Categories
                 </a>
             </li>
             <li>
                 <a href="{% url 'episodes:bookmarks' %}"
-                    accesskey="b"
-                    class="{{ SIDEBAR_CSS }}">
+                   accesskey="b"
+                   class="{{ SIDEBAR_CSS }}">
                     {% icon "star" css_class=ICON_CSS %}
                     Bookmarks
                 </a>
             </li>
             <li>
                 <a href="{% url 'episodes:history' %}"
-                    accesskey="h"
-                    class="{{ SIDEBAR_CSS }}">
+                   accesskey="h"
+                   class="{{ SIDEBAR_CSS }}">
                     {% icon "history" css_class=ICON_CSS %}
                     History
                 </a>
             </li>
             <li>
                 <a href="{% url 'users:preferences' %}"
-                    accesskey="s"
-                    class="{{ SIDEBAR_CSS }}">
+                   accesskey="s"
+                   class="{{ SIDEBAR_CSS }}">
                     {% icon "cog" css_class=ICON_CSS %}
                     Settings
                 </a>
@@ -58,9 +58,9 @@
             </li>
             <li>
                 <form class="{{ SIDEBAR_CSS }}"
-                    hx-disable="true"
-                    action="{% url 'account_logout' %}"
-                    method="post">
+                      hx-disable="true"
+                      action="{% url 'account_logout' %}"
+                      method="post">
                     {% csrf_token %}
                     <button accesskey="l" class="{{ SIDEBAR_CSS }}">
                         {% icon "sign-out" css_class=ICON_CSS %}

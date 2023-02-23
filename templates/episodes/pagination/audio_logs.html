@@ -1,5 +1,4 @@
-<div class="divide-y divide-solid"
-    id="{{ pagination_target }}">
+<div class="divide-y divide-solid" id="{{ pagination_target }}">
     {% include "includes/pagination_links.html" %}
     {% for log in page_obj.object_list %}
         {% include "episodes/includes/episode.html" with episode=log.episode %}

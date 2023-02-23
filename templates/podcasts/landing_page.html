@@ -11,13 +11,13 @@
     </header>
     <div class="flex flex-wrap justify-between gap-1" hx-disable="true">
         {% cache 3600 podcasts-landing-page %}
-            {% for podcast in podcasts %}
-                {% with css_class="h-28 w-28 md:h-48 md:w-48 lg:h-52 lg:w-52 xl:h-56 xl:w-56 hover:grayscale" %}
-                    <a href="{{ podcast.get_absolute_url }}" class="{{ css_class }}">
-                        {% cover_image podcast.cover_url 300 podcast.cleaned_title css_class=css_class %}
-                    </a>
-                {% endwith %}
-            {% endfor %}
-        {% endcache %}
-    </div>
+        {% for podcast in podcasts %}
+            {% with css_class="h-28 w-28 md:h-48 md:w-48 lg:h-52 lg:w-52 xl:h-56 xl:w-56 hover:grayscale" %}
+                <a href="{{ podcast.get_absolute_url }}" class="{{ css_class }}">
+                    {% cover_image podcast.cover_url 300 podcast.cleaned_title css_class=css_class %}
+                </a>
+            {% endwith %}
+        {% endfor %}
+    {% endcache %}
+</div>
 {% endblock content %}

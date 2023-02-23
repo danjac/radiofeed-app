@@ -6,18 +6,16 @@
                     <span>Listened</span>
                     {% include "includes/date.html" with value=listened title="Listened" %}
                 </div>
-                {% if current_time and current_time > 60 %}
-                    <div title="Timestamp">{{ current_time|format_duration }}</div>
-                {% endif %}
+                {% if current_time and current_time > 60 %}<div title="Timestamp">{{ current_time|format_duration }}</div>{% endif %}
                 {% if not is_playing %}
                     <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
-                        title="Remove episode from your History"
-                        hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
-                        hx-disinherit="hx-indicator"
-                        hx-push-url="false"
-                        hx-target="#{{ target }}"
-                        hx-swap="outerHTML"
-                        hx-confirm="Are you sure you want to remove this episode from your History?">
+                            title="Remove episode from your History"
+                            hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
+                            hx-disinherit="hx-indicator"
+                            hx-push-url="false"
+                            hx-target="#{{ target }}"
+                            hx-swap="outerHTML"
+                            hx-confirm="Are you sure you want to remove this episode from your History?">
                         {% icon "trash" css_class="mr-2" %}
                         Remove
                     </button>

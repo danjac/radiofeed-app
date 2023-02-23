@@ -4,14 +4,14 @@
 {% endblock title %}
 {% block settings_content %}
     <form method="post"
-        action="{{ request.path }}"
-        class="space-y-3"
-        novalidate
-        id="preferences-form"
-        hx-target="this"
-        hx-swap="outerHTML"
-        hx-select="#preferences-form"
-        hx-post="{{ request.path }}">
+          action="{{ request.path }}"
+          class="space-y-3"
+          novalidate
+          id="preferences-form"
+          hx-target="this"
+          hx-swap="outerHTML"
+          hx-select="#preferences-form"
+          hx-post="{{ request.path }}">
         {% csrf_token %}
         {{ form }}
         <div>

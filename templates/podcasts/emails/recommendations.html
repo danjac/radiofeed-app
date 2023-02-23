@@ -7,23 +7,23 @@
     </head>
     <body style="font-family: Helvetica, sans-serif;">
         <h1 style="margin-bottom: 0.75rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            line-height: 1.75rem">
+                   font-weight: 700;
+                   font-size: 1.25rem;
+                   line-height: 1.75rem">
             Hi {{ recipient.username }}, greetings from {{ site.name }}!
         </h1>
         <p style="margin-bottom: 0.75rem;">Here are some podcasts you might find interesting:</p>
         {% for podcast in podcasts %}
             <div style="margin-bottom: 0.75rem;
-                padding-bottom: 0.75rem;
-                border-bottom: 1px solid #eee">
+                        padding-bottom: 0.75rem;
+                        border-bottom: 1px solid #eee">
                 <h2 style="margin-bottom: 0.75rem;
-                    font-weight: 600;
-                    font-size: 1.125rem;
-                    line-height: 1.75rem">
+                           font-weight: 600;
+                           font-size: 1.125rem;
+                           line-height: 1.75rem">
                     <a style="text-decoration: underline;
-                        color: #000"
-                        href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+                              color: #000"
+                       href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
                 </h2>
                 <p class="markdown">{{ podcast.cleaned_description|urlize|truncatewords:60 }}</p>
             </div>
@@ -31,7 +31,9 @@
         <p>
             {% absolute_uri 'users:preferences' as preferences_url %}
             If you do not want to receive any more notifications, just uncheck the "Send email notifications"
-            option on your <a style="text-decoration: underline; color: #000;" href="{% absolute_uri 'users:preferences' %}">Settings</a> page.
+            option on your <a style="text-decoration: underline;
+           color: #000"
+    href="{% absolute_uri 'users:preferences' %}">Settings</a> page.
         </p>
     </body>
 </html>

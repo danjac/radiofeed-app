@@ -11,15 +11,15 @@
             Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
         </p>
         <form method="post"
-            action="{% url 'account_confirm_email' confirmation.key %}"
-            hx-disable="true"
-            novalidate>
+              action="{% url 'account_confirm_email' confirmation.key %}"
+              hx-disable="true"
+              novalidate>
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center">
                 <button class="inline-flex items-center btn btn-primary"
-                    name="action_add"
-                    value="true">
+                        name="action_add"
+                        value="true">
                     {% icon "check" css_class="mr-2" %}
                     Confirm E-Mail
                 </button>

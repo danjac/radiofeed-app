@@ -1,23 +1,23 @@
 {% load static %}
 {% with site_name=request.site.name %}
     <header class="sticky top-0 z-20 w-full text-white bg-violet-900"
-        :class="scrolling ? 'drop-shadow-xl': ''"
-        x-data="{showMenu: false, scrolling: false}"
-        @scroll.window="scrolling = window.pageYOffset > 0"
-        @htmx:before-request.window="showMenu=false">
+            :class="scrolling ? 'drop-shadow-xl': ''"
+            x-data="{showMenu: false, scrolling: false}"
+            @scroll.window="scrolling = window.pageYOffset > 0"
+            @htmx:before-request.window="showMenu=false">
         {% url 'podcasts:search_podcasts' as search_url %}
         <nav class="flex items-center justify-between p-2">
             <div class="flex items-center flex-shrink-0">
                 <a class="inline-flex items-center text-lg font-bold md:text-xl xl:text-2xl"
-                    href="{% if user.is_authenticated %}{% url 'podcasts:index' %}{% else %}{% url 'podcasts:landing_page' %}{% endif %}"
-                    title="{{ site_name }}: Home Page">
+                   href="{% if user.is_authenticated %}{% url 'podcasts:index' %}{% else %}{% url 'podcasts:landing_page' %}{% endif %}"
+                   title="{{ site_name }}: Home Page">
                     <img src="{% static 'img/wave-white.png' %}"
-                        height="100"
-                        width="100"
-                        alt="{{ site_name }}"
-                        class="w-6 h-6 lg:h-8 lg:w-8 mr-3"
-                        title="{{ site_name }}"
-                        aria-hidden="true">
+                         height="100"
+                         width="100"
+                         alt="{{ site_name }}"
+                         class="w-6 h-6 lg:h-8 lg:w-8 mr-3"
+                         title="{{ site_name }}"
+                         aria-hidden="true">
                     {{ site_name }}
                 </a>
             </div>
@@ -25,33 +25,33 @@
                 {% if user.is_authenticated %}
                     <li>
                         <a href="{% url 'users:preferences' %}"
-                            title="Settings for {{ user.username }}"
-                            class="flex items-center font-bold">
+                           title="Settings for {{ user.username }}"
+                           class="flex items-center font-bold">
                             {{ user.username|slice:12 }}
                         </a>
                     </li>
                     <li class="flex items-center xl:hidden">
                         <button class="focus:outline-none transform transition"
-                            title="Toggle Menu"
-                            x-cloak
-                            x-show.transition="!showMenu"
-                            @click="showMenu=true">
+                                title="Toggle Menu"
+                                x-cloak
+                                x-show.transition="!showMenu"
+                                @click="showMenu=true">
                             {% icon "bars" size="xl" title="Toggle Menu" %}
                         </button>
                         <button class="focus:outline-none transform transition"
-                            title="Toggle Menu"
-                            x-cloak
-                            x-show.transition="showMenu"
-                            @click="showMenu=false"
-                            @keyup.escape.window="showMenu=false">
+                                title="Toggle Menu"
+                                x-cloak
+                                x-show.transition="showMenu"
+                                @click="showMenu=false"
+                                @keyup.escape.window="showMenu=false">
                             {% icon "chevron-down" size="xl" title="Toggle Menu" %}
                         </button>
                     </li>
                 {% else %}
                     <li>
                         <a href="{% url 'about' %}"
-                            title="About this Site"
-                            class="flex items-center font-bold space-x-2 hover:text-blue-300">
+                           title="About this Site"
+                           class="flex items-center font-bold space-x-2 hover:text-blue-300">
                             {% icon "info-circle" size="xl" %}
                             <span class="hidden md:inline-block">About</span>
                         </a>
@@ -61,14 +61,14 @@
         </nav>
         {% if user.is_authenticated %}
             <div class="absolute left-0 z-50 w-full py-6 bg-white shadow-xl xl:hidden dark:bg-black"
-                x-cloak
-                x-show.transition="showMenu"
-                x-transition:enter="transition ease-out duration-75"
-                x-transition:enter-start="transform opacity-0 scale-95"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-75"
-                x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95">
+                 x-cloak
+                 x-show.transition="showMenu"
+                 x-transition:enter="transition ease-out duration-75"
+                 x-transition:enter-start="transform opacity-0 scale-95"
+                 x-transition:enter-end="transform opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-75"
+                 x-transition:leave-start="transform opacity-100 scale-100"
+                 x-transition:leave-end="transform opacity-0 scale-95">
                 {% include "includes/sidebar.html" %}
             </div>
         {% endif %}

@@ -14,29 +14,29 @@
                         <li>
                             {% if previous_episode %}
                                 <a class="link"
-                                    href="{{ previous_episode.get_absolute_url }}"
-                                    aria-label="{{ previous_episode.cleaned_title }}"
-                                    title="{{ previous_episode.cleaned_title }}">
+                                   href="{{ previous_episode.get_absolute_url }}"
+                                   aria-label="{{ previous_episode.cleaned_title }}"
+                                   title="{{ previous_episode.cleaned_title }}">
                                     Previous
                                 </a>
                             {% else %}
                                 <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                                    title="No More Episodes"
-                                    aria-label="No More Episodes">Previous</span>
+                                      title="No More Episodes"
+                                      aria-label="No More Episodes">Previous</span>
                             {% endif %}
                         </li>
                         <li>
                             {% if next_episode %}
                                 <a class="link"
-                                    href="{{ next_episode.get_absolute_url }}"
-                                    aria-label="{{ next_episode.cleaned_title }}"
-                                    title="{{ next_episode.cleaned_title }}">
+                                   href="{{ next_episode.get_absolute_url }}"
+                                   aria-label="{{ next_episode.cleaned_title }}"
+                                   title="{{ next_episode.cleaned_title }}">
                                     Next
                                 </a>
                             {% else %}
                                 <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
-                                    title="No More Episodes"
-                                    aria-label="No More Episodes">Next</span>
+                                      title="No More Episodes"
+                                      aria-label="No More Episodes">Next</span>
                             {% endif %}
                         </li>
                     </ul>
@@ -46,8 +46,8 @@
         <article class="space-y-3">
             <h2 class="text-base lg:text-lg">
                 <a href="{{ podcast.get_episodes_url }}"
-                    title="See all episodes for {{ podcast.cleaned_title }}"
-                    class="link">
+                   title="See all episodes for {{ podcast.cleaned_title }}"
+                   class="link">
                     {{ podcast.cleaned_title }}
                 </a>
             </h2>
@@ -63,20 +63,16 @@
                     {% include "episodes/actions/bookmark.html" %}
                     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                         <a download
-                            title="Download audio file to your device"
-                            href="{{ episode.media_url }}"
-                            class="link">
-                            Download
-                        </a>
+                           title="Download audio file to your device"
+                           href="{{ episode.media_url }}"
+                           class="link">Download</a>
                         {% with link=episode.get_link|force_url %}
                             {% if link %}
                                 <a href="{{ link }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="link"
-                                    title="Link to Website">
-                                    Website
-                                </a>
+                                   target="_blank"
+                                   rel="noopener"
+                                   class="link"
+                                   title="Link to Website">Website</a>
                             {% endif %}
                         {% endwith %}
                     </div>
@@ -88,14 +84,12 @@
                     {% if file_size %}<div title="Size">{{ file_size }}</div>{% endif %}
                 {% endwith %}
                 {% with duration=episode.duration_in_seconds %}
-                    {% if duration %}
-                        <span title="Duration">{{ duration|format_duration }}</span>
-                    {% endif %}
+                    {% if duration %}<span title="Duration">{{ duration|format_duration }}</span>{% endif %}
                 {% endwith %}
                 {% with explicit=episode.is_explicit %}
                     {% if explicit %}
                         <div title="May contain adult themes and language. Listener discretion advised."
-                            class="flex items-center text-red-600 dark:text-red-500 space-x-2">
+                             class="flex items-center text-red-600 dark:text-red-500 space-x-2">
                             {% icon "warning" %} <span class="inline-block">Explicit</span>
                         </div>
                     {% endif %}

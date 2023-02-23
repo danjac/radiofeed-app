@@ -5,56 +5,55 @@
 {% block content %}
     {% if user.is_authenticated %}
         <header class="mb-3 pb-3 border-b space-y-6">
-            <h1 class="max-w-max text-lg lg:text-xl xl:text-2xl break-words font-bold">
-                Settings for {{ user.username }}
-            </h1>
+            <h1 class="max-w-max text-lg lg:text-xl xl:text-2xl break-words font-bold">Settings for {{ user.username }}</h1>
             <nav>
                 <ul class="flex items-center space-x-6 justify-between overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none">
                     {% active_link 'users:preferences' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            {% if link.active %}aria-current="page"{% endif %}
-                            href="{{ link.url }}">Preferences</a>
+                           {% if link.active %}aria-current="page"{% endif %}
+                           href="{{ link.url }}">Preferences</a>
                     </li>
                     {% active_link 'users:manage_podcast_feeds' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            {% if link.active %}aria-current="page"{% endif %}
-                            href="{{ link.url }}">Import/Export Feeds</a>
+                           {% if link.active %}aria-current="page"{% endif %}
+                           href="{{ link.url }}">Import/Export Feeds</a>
                     </li>
                     {% active_link 'users:stats' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            {% if link.active %}aria-current="page"{% endif %}
-                            href="{{ link.url }}">Statistics</a>
+                           {% if link.active %}aria-current="page"{% endif %}
+                           href="{{ link.url }}">Statistics</a>
                     </li>
                     {% active_link 'account_email' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            {% if link.active %}aria-current="page"{% endif %}
-                            href="{{ link.url }}">Email Addresses</a>
+                           {% if link.active %}aria-current="page"{% endif %}
+                           href="{{ link.url }}">Email Addresses</a>
                     </li>
                     {% active_link 'account_change_password' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            {% if link.active %}aria-current="page"{% endif %}
-                            href="{{ link.url }}">Change Password</a>
+                           {% if link.active %}aria-current="page"{% endif %}
+                           href="{{ link.url }}">Change Password</a>
                     </li>
                     {% active_link 'socialaccount_connections' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            {% if link.active %}aria-current="page"{% endif %}
-                            href="{{ link.url }}">Social Logins</a>
+                           {% if link.active %}aria-current="page"{% endif %}
+                           href="{{ link.url }}">Social Logins</a>
                     </li>
                     {% active_link 'users:delete_account' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            {% if link.active %}aria-current="page"{% endif %}
-                            href="{{ link.url }}">Delete Account</a>
+                           {% if link.active %}aria-current="page"{% endif %}
+                           href="{{ link.url }}">Delete Account</a>
                     </li>
                 </ul>
             </nav>
         </header>
     {% endif %}
-    {% block settings_content %}{% endblock settings_content %}
+    {% block settings_content %}
+    {% endblock settings_content %}
 {% endblock content %}

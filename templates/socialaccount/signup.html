@@ -1,5 +1,7 @@
 {% extends "base.html" %}
-{% block title %}| Signup{% endblock title %}
+{% block title %}
+    | Signup
+{% endblock title %}
 {% block content %}
     {% with provider_name=account.get_provider.name site_name=site.name %}
         <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">Sign Up</h1>
@@ -9,10 +11,10 @@
             {{ site_name }}. As a final step, please complete the following form:
         </p>
         <form method="post"
-            action="{{ request.path }}"
-            class="p-3 border w-full sm:w-3/4 md:w-1/2"
-            hx-disable="true"
-            novalidate>
+              action="{{ request.path }}"
+              class="p-3 border w-full sm:w-3/4 md:w-1/2"
+              hx-disable="true"
+              novalidate>
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center justify-end">

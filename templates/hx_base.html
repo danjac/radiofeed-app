@@ -1,10 +1,12 @@
 {% spaceless %}
     <title>
         {{ request.site.name }}
-        {% block title %}{% endblock title %}
+        {% block title %}
+        {% endblock title %}
     </title>
     {% if messages %}
         {% include "includes/messages.html" with hx_oob=True %}
     {% endif %}
-    {% block content %}{% endblock content %}
+    {% block content %}
+    {% endblock content %}
 {% endspaceless %}

@@ -7,14 +7,14 @@
         <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
         <div>
             <form method="post"
-                hx-disable="true"
-                action="{% url 'users:delete_account' %}"
-                onSubmit="return confirm('Are you sure?')">
+                  hx-disable="true"
+                  action="{% url 'users:delete_account' %}"
+                  onSubmit="return confirm('Are you sure?')">
                 {% csrf_token %}
                 <div>
                     <button class="btn btn-danger inline-flex items-center"
-                        name="confirm-delete"
-                        value="true">
+                            name="confirm-delete"
+                            value="true">
                         {% icon "trash" css_class="mr-2" %}
                         Yes, delete my account
                     </button>

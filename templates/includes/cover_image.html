@@ -15,13 +15,14 @@
             hx-trigger="click consume"
         {% endif %}
         {% if cover_url %}
-            x-data="{# fmt:off #}{
+            {# djlint:off #}
+            x-data="{
             isLoaded: false,
             src: '{{ cover_url|escapejs }}',
-            placeholder: '{{ placeholder|escapejs }}'
-        }{# fmt:on #}"
+            placeholder: '{{ placeholder|escapejs }}'}"
+            {# djlint:on #}
             @load.once="isLoaded=true;"
             @error.once="src=placeholder;isLoaded=true;"
             :src="isLoaded ? src : placeholder"
         {% endif %}>
-{% endspaceless %}
+    {% endspaceless %}

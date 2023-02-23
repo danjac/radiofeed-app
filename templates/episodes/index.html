@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block title %}
     | New Releases
-    {% if has_subscriptions %}
-        | {{ promoted|yesno:"Promotions,Subscriptions" }}
-    {% endif %}
+    {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
 {% endblock title %}
 {% block content %}
     <header class="mb-3 pb-3 border-b">

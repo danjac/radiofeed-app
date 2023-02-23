@@ -10,9 +10,10 @@
                 <li class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
                     {% if request.search %}
                         <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                            class="link">Search All Podcasts</a>
+                           class="link">Search All Podcasts</a>
                     {% else %}
-                        <a href="{{ request.path }}?{{ request.ordering.qs_reversed }}" class="link">
+                        <a href="{{ request.path }}?{{ request.ordering.qs_reversed }}"
+                           class="link">
                             {{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}
                         </a>
                     {% endif %}
@@ -24,6 +25,6 @@
         </nav>
     {% endif %}
     {% cache 600 podcast-episodes request.get_full_path %}
-        {% include pagination_template %}
-    {% endcache %}
+    {% include pagination_template %}
+{% endcache %}
 {% endblock podcast_content %}

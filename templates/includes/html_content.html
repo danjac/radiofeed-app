@@ -1,14 +1,15 @@
 {% if content %}
     <div class="break-words prose dark:prose-invert prose-sm lg:prose-base prose-h1:text-base lg:prose-h1:text-lg prose-h2:text-sm lg:prose-h2:text-base prose-h3:text-sm lg:prose-h3:text-base prose-h4:text-sm lg:prose-h4:text-base"
         hx-disable="true"
-        x-init="{# fmt:off #}
+        {# djlint:off #}
+        x-init="
         $el.querySelectorAll('style').forEach(el => { el.remove(); });
         $el.querySelectorAll('p,div,li').forEach(el => {
             if (!el.innerText.trim()) {
                 el.parentNode.removeChild(el);
             }
         });
-        {# fmt:on #}">
+        "{# djlint:on #}>
         {{ content }}
     </div>
 {% endif %}

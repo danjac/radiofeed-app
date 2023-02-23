@@ -1,21 +1,21 @@
 {% with target=episode.get_bookmark_target %}
     <div class="flex items-center"
-        id="{{ target }}"
-        hx-push-url="false"
-        hx-target="this"
-        hx-swap="outerHTML"
-        hx-disinherit="hx-indicator">
+         id="{{ target }}"
+         hx-push-url="false"
+         hx-target="this"
+         hx-swap="outerHTML"
+         hx-disinherit="hx-indicator">
         {% if is_bookmarked %}
             <button title="Remove Bookmark"
-                class="inline-flex items-center btn btn-default btn-outline"
-                hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
+                    class="inline-flex items-center btn btn-default btn-outline"
+                    hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
                 {% icon "star" css_class="mr-2" %}
                 Bookmark
             </button>
         {% else %}
             <button title="Bookmark"
-                class="inline-flex items-center btn btn-default"
-                hx-post="{% url 'episodes:add_bookmark' episode.id %}">
+                    class="inline-flex items-center btn btn-default"
+                    hx-post="{% url 'episodes:add_bookmark' episode.id %}">
                 {% icon "star" "regular" css_class="mr-2" %}
                 Bookmark
             </button>

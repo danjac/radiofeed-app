@@ -11,15 +11,15 @@
         <a class="underline link" href="{{ login_url }}">sign in</a>.
     </p>
     <form method="post"
-        action="{{ request.path }}"
-        class="space-y-3"
-        hx-disable="true"
-        novalidate>
+          action="{{ request.path }}"
+          class="space-y-3"
+          hx-disable="true"
+          novalidate>
         {% csrf_token %}
         {% if redirect_field_value %}
             <input type="hidden"
-                name="{{ redirect_field_name }}"
-                value="{{ redirect_field_value }}"/>
+                   name="{{ redirect_field_name }}"
+                   value="{{ redirect_field_value }}"/>
         {% endif %}
         {{ form }}
         <div>
