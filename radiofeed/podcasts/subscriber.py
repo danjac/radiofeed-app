@@ -30,7 +30,7 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
             websub_expires__lt=timezone.now(),
         ),
         websub_hub__isnull=False,
-    ).order_by("websub_expires", "-created")
+    ).order_by("websub_expires", "parsed")
 
 
 def subscribe(
