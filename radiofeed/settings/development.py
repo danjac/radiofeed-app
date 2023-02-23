@@ -16,8 +16,8 @@ DATABASES = configure_databases(conn_max_age=0)
 TEMPLATES = configure_templates(debug=True)
 
 ADMIN_SITE_HEADER += " [LOCAL]"
-# INTERNAL_IPS required for debug toolbar
 
+# INTERNAL_IPS required for debug toolbar
 INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS += [
