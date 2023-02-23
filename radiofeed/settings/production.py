@@ -30,11 +30,8 @@ HTTP_PROTOCOL = ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 # http://whitenoise.evans.io/en/stable/django.html
 
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Secure settings

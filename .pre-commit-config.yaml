@@ -100,7 +100,7 @@ repos:
       rev: "1.13.0"
       hooks:
           - id: django-upgrade
-            args: [--target-version, "4.2"]
+            args: [--target-version, "4.1"]
     - repo: https://github.com/jazzband/pip-tools
       rev: 6.12.2
       hooks:
