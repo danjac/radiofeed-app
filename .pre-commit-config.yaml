@@ -91,6 +91,11 @@ repos:
       hooks:
           - id: djlint-django
             args: ["--lint"]
+
+    - repo: https://github.com/hadolint/hadolint
+      rev: v2.12.0
+      hooks:
+          - id: hadolint
     - repo: https://github.com/asottile/pyupgrade
       rev: v3.3.1
       hooks:
