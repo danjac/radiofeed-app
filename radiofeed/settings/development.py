@@ -1,15 +1,7 @@
 from __future__ import annotations
 
-from radiofeed.settings.base import *  # noqa
-from radiofeed.settings.base import (
-    ADMIN_SITE_HEADER,
-    INSTALLED_APPS,
-    MIDDLEWARE,
-    configure_databases,
-    configure_templates,
-)
-
-DEBUG = True
+from radiofeed.settings.base import INSTALLED_APPS, MIDDLEWARE
+from radiofeed.settings.local import *  # noqa
 
 # INTERNAL_IPS required for debug toolbar
 
@@ -25,9 +17,3 @@ MIDDLEWARE += [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
-
-ADMIN_SITE_HEADER += " [DEVELOPMENT]"
-
-DATABASES = configure_databases(conn_max_age=0)
-
-TEMPLATES = configure_templates(debug=True)

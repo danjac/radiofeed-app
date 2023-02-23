@@ -237,7 +237,7 @@ CACHES: dict = {
 # Databases
 
 
-def configure_databases(conn_max_age: int = 360) -> dict:
+def configure_databases(*, conn_max_age: int) -> dict:
     """Build DATABASES configuration."""
     return {
         "default": {
@@ -251,12 +251,10 @@ def configure_databases(conn_max_age: int = 360) -> dict:
     }
 
 
-DATABASES = configure_databases()
-
 # Templates
 
 
-def configure_templates(debug: bool = False) -> list[dict]:
+def configure_templates(*, debug: bool = False) -> list[dict]:
     """Build TEMPLATES configuration."""
     return [
         {
@@ -281,6 +279,3 @@ def configure_templates(debug: bool = False) -> list[dict]:
             },
         }
     ]
-
-
-TEMPLATES = configure_templates()

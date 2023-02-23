@@ -12,7 +12,13 @@ from radiofeed.settings.base import (
     EMAIL_HOST,
     INSTALLED_APPS,
     config,
+    configure_databases,
+    configure_templates,
 )
+
+DATABASES = configure_databases(conn_max_age=360)
+
+TEMPLATES = configure_templates(debug=False)
 
 ADMIN_SITE_HEADER += " [PRODUCTION]"
 
@@ -24,7 +30,11 @@ HTTP_PROTOCOL = ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 # http://whitenoise.evans.io/en/stable/django.html
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Secure settings
