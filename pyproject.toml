@@ -57,6 +57,7 @@ dev = [
     "flake8-comprehensions",
     "flake8-debugger",
     "flake8-deprecated",
+    "flake8-implicit-str-concat",
     "flake8-print",
     "flake8-pyproject",
     "ipython",
