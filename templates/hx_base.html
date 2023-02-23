@@ -7,6 +7,7 @@
     {% if messages %}
         {% include "includes/messages.html" with hx_oob=True %}
     {% endif %}
-    {% block content %}
-    {% endblock content %}
+    {# djlint:off #}
+    {% block content %}{% endblock content %}
+    {# djlint:on #}
 {% endspaceless %}
