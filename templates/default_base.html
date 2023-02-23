@@ -4,8 +4,9 @@
     <html lang="en">
         <head>
             <title>{{ request.site.name }}
-                {% block title %}
-                {% endblock title %}
+                {# djlint:off #}
+                {% block title %}{% endblock title %}
+                {# djlint:on #}
             </title>
             <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}" />
             <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}" />
@@ -47,8 +48,9 @@
                         <main class="w-full xl:block md:mx-auto xl:w-4/5"
                               id="content"
                               hx-history-elt>
-                            {% block content %}
-                            {% endblock content %}
+                            {# djlint:off #}
+                            {% block content %}{% endblock content %}
+                            {# djlint:on #}
                         </main>
                     </div>
                     {% cookie_notice %}

@@ -54,6 +54,7 @@
             </nav>
         </header>
     {% endif %}
-    {% block settings_content %}
-    {% endblock settings_content %}
+    {# djlint:off #}
+    {% block settings_content %}{% endblock settings_content %}
+    {# djlint:on #}
 {% endblock content %}

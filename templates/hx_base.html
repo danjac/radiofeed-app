@@ -1,8 +1,9 @@
 {% spaceless %}
     <title>
         {{ request.site.name }}
-        {% block title %}
-        {% endblock title %}
+        {# djlint:off #}
+        {% block title %}{% endblock title %}
+        {# djlint:on #}
     </title>
     {% if messages %}
         {% include "includes/messages.html" with hx_oob=True %}
