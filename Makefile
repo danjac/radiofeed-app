@@ -25,7 +25,7 @@ precommitupdate:
 	pre-commit autoupdate
 
 nltkdownload:
-	cat nltk.txt | xargs -I{} python -c "import nltk; nltk.download('{}')"
+	xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 migrate:
 	python ./manage.py migrate
