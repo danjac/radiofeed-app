@@ -1,6 +1,5 @@
 version: "3.9"
 
-
 x-logging: &default-logging
     options:
         max-size: "10k"
