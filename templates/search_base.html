@@ -1,32 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-    <header class="mb-3 pb-3 border-b space-y-3">
-        <h1 class="flex items-center justify-center sm:justify-start mb-3 text-lg lg:text-xl xl:text-2xl font-bold">
+    <header class="pb-3 mb-3 border-b space-y-3">
+        <h1 class="flex items-center justify-center mb-3 text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
             Search {{ request.site.name }}
         </h1>
-        <nav class="sm:flex justify-between">
-            <ul class="flex items-center mb-3 sm:mb-0 space-x-6 justify-center sm:justify-start overflow-x-auto md:overflow-none whitespace-nowrap md:whitespace-none">
+        <nav class="justify-between sm:flex">
+            <ul class="flex items-center justify-center mb-3 overflow-x-auto sm:mb-0 space-x-6 sm:justify-start md:overflow-none whitespace-nowrap md:whitespace-none">
                 {% with search_qs="?"|add:request.search.qs %}
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
-                            title="Search Podcasts"
-                            href="{{ link.url|add:search_qs }}">Podcasts</a>
+                           title="Search Podcasts"
+                           href="{{ link.url|add:search_qs }}">Podcasts</a>
                     </li>
                     {% active_link 'episodes:search_episodes' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
-                            title="Search Episodes"
-                            href="{{ link.url|add:search_qs }}">Episodes</a>
+                           title="Search Episodes"
+                           href="{{ link.url|add:search_qs }}">Episodes</a>
                     </li>
                     {% active_link 'podcasts:search_itunes' as link %}
                     <li>
                         <a class="{{ link.css }}"
-                            tabindex="{{ link.active|yesno:"0,-1" }}"
-                            title="Search iTunes"
-                            href="{{ link.url|add:search_qs }}">iTunes</a>
+                           title="Search iTunes"
+                           href="{{ link.url|add:search_qs }}">iTunes</a>
                     </li>
                 {% endwith %}
             </ul>
@@ -35,5 +32,6 @@
             </ul>
         </nav>
     </header>
-    {% block search_content %}{% endblock search_content %}
+    {% block search_content %}
+    {% endblock search_content %}
 {% endblock content %}
