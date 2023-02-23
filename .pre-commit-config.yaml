@@ -83,7 +83,7 @@ repos:
             files: \.(|js|css)$
             exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/rtts/djhtml
-      rev: v2.0.0
+      rev: 3.0.0
       hooks:
           - id: djhtml
     - repo: https://github.com/Riverside-Healthcare/djLint
