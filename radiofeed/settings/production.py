@@ -49,24 +49,6 @@ SECURE_HSTS_SECONDS = 15768001  # 6 months
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
 
-# Health checks
-# https://github.com/revsys/django-health-check
-
-INSTALLED_APPS += [
-    "health_check",
-    "health_check.db",
-    "health_check.cache",
-    "health_check.contrib.migrations",
-    "health_check.contrib.psutil",
-    "health_check.contrib.redis",
-]
-
-# psutil settings
-HEALTH_CHECK = {
-    "DISK_USAGE_MAX": 90,  # percent
-    "MEMORY_MIN": 100,  # in MB
-}
-
 # Permissions Policy
 
 # https://pypi.org/project/django-permissions-policy/

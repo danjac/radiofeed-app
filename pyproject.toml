@@ -19,7 +19,6 @@ dependencies = [
     "django-anymail",
     "django-extensions",
     "django-fast-update",
-    "django-health-check",
     "django-htmx",
     "django-model-utils",
     "django-object-actions",

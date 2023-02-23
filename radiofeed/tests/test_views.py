@@ -31,6 +31,11 @@ class TestRobots:
         assert_ok(client.get(reverse("robots")))
 
 
+class TestHealthCheck:
+    def test_get(self, db, client):
+        assert_ok(client.get(reverse("health_check")))
+
+
 class TestSecurty:
     def test_get(self, db, client):
         assert_ok(client.get(reverse("security")))
