@@ -18,8 +18,7 @@ RUN pip install -r /app/requirements.txt --no-cache-dir
 
 COPY ./nltk.txt /app/nltk.txt
 
-# RUN cat nltk.txt | xargs -I{} python -c "import nltk; nltk.download('{}')"
-RUN python -c "import nltk; nltk.download('{}')" < nltk.txt
+RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 COPY . /app
 
