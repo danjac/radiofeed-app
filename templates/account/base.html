@@ -4,8 +4,9 @@
         <div class="flex items-center justify-center">
             <div>
             {% endif %}
-            {% block account_content %}
-            {% endblock account_content %}
+            {# djlint:off #}
+            {% block account_content %}{% endblock account_content %}
+            {# djlint:on #}
             {% if user.is_anonymous %}
             </div>
         </div>
