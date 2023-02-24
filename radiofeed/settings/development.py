@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from radiofeed.settings.base import *  # noqa
 from radiofeed.settings.base import (
-    ADMIN_SITE_HEADER,
     INSTALLED_APPS,
     MIDDLEWARE,
+    configure_admin_site_header,
     configure_databases,
     configure_templates,
 )
@@ -15,7 +15,7 @@ DATABASES = configure_databases(conn_max_age=0)
 
 TEMPLATES = configure_templates(debug=True)
 
-ADMIN_SITE_HEADER += " [LOCAL]"
+ADMIN_SITE_HEADER = configure_admin_site_header("LOCAL")
 
 # INTERNAL_IPS required for debug toolbar
 INTERNAL_IPS = ["127.0.0.1"]
