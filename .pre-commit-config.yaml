@@ -107,24 +107,15 @@ repos:
           - id: poetry-check
           - id: poetry-lock
           - id: poetry-export
-            args:
-                [
-                    "-f",
-                    "requirements.txt",
-                    "-o",
-                    "requirements.txt",
-                    "--without-hashes",
-                ]
+            args: ["-o", "requirements.txt", "--without-hashes"]
             verbose: true
           - id: poetry-export
             args:
                 [
-                    "-f",
-                    "requirements.txt",
                     "-o",
                     "requirements-ci.txt",
                     "--with",
-                    "ci",
+                    "dev",
                     "--without-hashes",
                 ]
             verbose: true
