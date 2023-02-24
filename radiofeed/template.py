@@ -186,7 +186,7 @@ def force_url(url: str) -> str:
 
 
 def build_absolute_uri(url: str, request: HttpRequest | None = None) -> str:
-    """Return absolute URI to path."""
+    """Return absolute URI to path. If request is unavailable, uses current Site instance to generate the URL."""
     return (
         request.build_absolute_uri(url)
         if request
