@@ -64,7 +64,7 @@ class TestIcon:
 
 
 class TestAbsoluteUri:
-    BASE_URL = "http://example.com"
+    BASE_URL = "https://example.com"
 
     SEARCH_URL = "/podcasts/search/"
     DETAIL_URL = "/podcasts/12345/test/"
@@ -74,10 +74,6 @@ class TestAbsoluteUri:
 
     def test_with_request(self, rf):
         assert absolute_uri({"request": rf.get("/")}) == "http://testserver/"
-
-    def test_https(self, db, settings):
-        settings.HTTP_PROTOCOL = "https"
-        assert absolute_uri({}) == "https://example.com/"
 
     def test_static_url(self, db):
         url = absolute_uri({}, self.SEARCH_URL)

@@ -13,7 +13,6 @@ BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 config = AutoConfig(search_path=BASE_DIR)
 
-
 DEBUG = False
 
 SECRET_KEY = config(
@@ -36,7 +35,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
 # Protocol used to determine absolute URIs when request is unavailable
-HTTP_PROTOCOL = "http"
+HTTP_PROTOCOL = "https"
 
 # User-Agent header for API calls from this site
 USER_AGENT = config("USER_AGENT", "Radiofeed/0.0.0")

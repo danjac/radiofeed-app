@@ -22,10 +22,6 @@ TEMPLATES = configure_templates(debug=False)
 
 ADMIN_SITE_HEADER = configure_admin_site_header("PRODUCTION")
 
-# Set HTTPS for absolute uris in allauth and our own absolute links
-
-HTTP_PROTOCOL = ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
-
 # Static files
 
 # http://whitenoise.evans.io/en/stable/django.html
