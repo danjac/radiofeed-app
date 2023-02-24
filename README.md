@@ -32,6 +32,8 @@ You should run your development environment inside a virtualenv e.g.:
 python -m venv .venv && source .venv/bin/activate
 ```
 
+Poetry should create the virtualenv for you automatically.
+
 A `Makefile` has been provided with shortcuts to install and run your local development environment, including:
 
 * `make install`: download and install front and backend dependencies
