@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from radiofeed.settings.common import configure_databases, configure_templates
+from radiofeed.settings.databases import configure_databases
+from radiofeed.settings.templates import configure_templates
 
 DEBUG = True
 
