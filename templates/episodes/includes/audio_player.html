@@ -61,17 +61,25 @@
                                                     @click="skipBack"
                                                     class="{{ BUTTON_CSS }} inline-block"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% icon "backward-step" "solid" size="lg" title=t_skip_back %}
+                                                {% icon "backward-step" "solid" size="lg" %}
                                             </button>
-                                            <button title="Play" class="{{ BUTTON_CSS }}" @click="togglePlayPause">
-                                                <span x-show="!isPlaying" x-cloak>{% icon "play-circle" "regular" size="2xl" title=t_play %}</span>
-                                                <span x-show="isPlaying" x-cloak>{% icon "pause-circle" "regular" size="2xl" title=t_pause %}</span>
+                                            <button title="Play"
+                                                    class="{{ BUTTON_CSS }}"
+                                                    @click="togglePlayPause"
+                                                    x-show="!isPlaying">
+                                                {% icon "play-circle" "regular" size="2xl" %}
+                                            </button>
+                                            <button title="Pause"
+                                                    class="{{ BUTTON_CSS }}"
+                                                    @click="togglePlayPause"
+                                                    x-show="isPlaying">
+                                                {% icon "pause-circle" "regular" size="2xl" %}
                                             </button>
                                             <button title="Skip Forward 10 Seconds"
                                                     @click="skipForward"
                                                     class="{{ BUTTON_CSS }} inline-block"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% icon "forward-step" "solid" size="lg" title=t_skip_forward %}
+                                                {% icon "forward-step" "solid" size="lg" %}
                                             </button>
                                         </div>
                                     {% endwith %}
