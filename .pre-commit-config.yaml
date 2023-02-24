@@ -122,9 +122,9 @@ repos:
                     "-f",
                     "requirements.txt",
                     "-o",
-                    "requirements-dev.txt",
+                    "requirements-ci.txt",
                     "--with",
-                    "dev",
+                    "ci",
                     "--without-hashes",
                 ]
             verbose: true
