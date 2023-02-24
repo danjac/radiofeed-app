@@ -2,12 +2,7 @@ from __future__ import annotations
 
 from split_settings.tools import include
 
-include(
-    "base.py",
-    "admin.py",
-    "email.py",
-    "local.py",
-)
+include("defaults.py", "local.py")
 
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 

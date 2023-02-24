@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from email.utils import getaddresses
 
-from radiofeed.settings.base import Csv, config
+from decouple import Csv
+
+from radiofeed.settings.base import config
 
 ADMINS = getaddresses(config("ADMINS", default="", cast=Csv()))
 

@@ -9,6 +9,8 @@ EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
+# Email sender addresses
+
 SERVER_EMAIL = config("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
 

@@ -2,19 +2,10 @@ from __future__ import annotations
 
 from split_settings.tools import include
 
-from radiofeed.settings.admin import admin_site_header
 from radiofeed.settings.base import INSTALLED_APPS, MIDDLEWARE
 
-include(
-    "base.py",
-    "admin.py",
-    "email.py",
-    "cache.py",
-    "local.py",
-    "logging.py",
-)
+include("defaults.py", "local.py")
 
-ADMIN_SITE_HEADER = admin_site_header("LOCAL")
 
 # INTERNAL_IPS required for debug toolbar
 INTERNAL_IPS = ["127.0.0.1"]
