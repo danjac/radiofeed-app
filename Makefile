@@ -1,16 +1,14 @@
-install: pipinstall npminstall precommitinstall nltkdownload
+install: pyinstall npminstall precommitinstall nltkdownload
 
 dbinstall: migrate fixtures
 
-update: pipupdate npmupdate precommitupdate
+update: pyupdate npmupdate precommitupdate
 
-pipinstall:
-	pip install -r requirements-dev.txt
+pyinstall:
+	poetry install
 
-pipupdate:
-	pip-compile pyproject.toml -o requirements.txt --resolver=backtracking --no-header --no-annotate --upgrade
-	pip-compile pyproject.toml -o requirements-dev.txt --extra=dev --resolver=backtracking --no-header --no-annotate --upgrade
-	pip install -r requirements-dev.txt
+pyupdate:
+	poetry update
 
 npminstall:
 	npm ci
