@@ -10,5 +10,4 @@ include(
     "email.py",
     "cache.py",
     "logging.py",
-    "templates.py",
 )
