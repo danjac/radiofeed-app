@@ -2,10 +2,6 @@ from __future__ import annotations
 
 import pathlib
 
-from email.utils import getaddresses
-
-import dj_database_url
-
 from decouple import AutoConfig, Csv
 from django.urls import reverse_lazy
 
@@ -21,12 +17,6 @@ SECRET_KEY = config(
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
-DATABASE_URL = config(
-    "DATABASE_URL",
-    default="postgresql://postgres:password@localhost:5432/postgres",
-)
-
-REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
 
 # prevent deprecation warnings
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -50,20 +40,6 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
-# Email configuration
-
-EMAIL_HOST = config("EMAIL_HOST", default="localhost")
-EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-ADMINS = getaddresses(config("ADMINS", default="", cast=Csv()))
-
-SERVER_EMAIL = config("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
-
-# email shown in about page etc
-CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
 ROOT_URLCONF = "radiofeed.urls"
 
@@ -121,10 +97,6 @@ MIDDLEWARE: list[str] = [
 
 # admin settings
 
-ADMIN_URL = config("ADMIN_URL", default="admin/")
-
-ADMIN_SITE_HEADER = config("ADMIN_SITE_HEADER", default="Radiofeed Admin")
-
 # Authentication
 
 AUTH_USER_MODEL = "users.User"
@@ -180,101 +152,3 @@ USE_TZ = True
 
 STATIC_URL = config("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
-
-# Templates
-
-# https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
-
-FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
-
-# Logging
-
-LOGGING: dict | None = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {"class": "logging.StreamHandler"},
-        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
-    },
-    "loggers": {
-        "root": {
-            "handlers": ["console"],
-            "level": "INFO",
-        },
-        "django.server": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "django.security.DisallowedHost": {
-            "handlers": ["null"],
-            "propagate": False,
-        },
-        "django.request": {
-            "level": "CRITICAL",
-            "propagate": False,
-        },
-    },
-}
-
-# Caches
-
-CACHES: dict = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # Mimicing memcache behavior.
-            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
-            "IGNORE_EXCEPTIONS": True,
-            "PARSER_CLASS": "redis.connection.HiredisParser",
-        },
-    }
-}
-
-# Databases
-
-
-def configure_databases(*, conn_max_age: int) -> dict:
-    """Build DATABASES configuration."""
-    return {
-        "default": {
-            **dj_database_url.parse(
-                DATABASE_URL,
-                conn_max_age=conn_max_age,
-                conn_health_checks=conn_max_age > 0,
-            ),
-            "ATOMIC_REQUESTS": True,
-        },
-    }
-
-
-# Templates
-
-
-def configure_templates(*, debug: bool = False) -> list[dict]:
-    """Build TEMPLATES configuration."""
-    return [
-        {
-            "BACKEND": "django.template.backends.django.DjangoTemplates",
-            "DIRS": [BASE_DIR / "templates"],
-            "APP_DIRS": True,
-            "OPTIONS": {
-                "debug": debug,
-                "context_processors": [
-                    "django.template.context_processors.debug",
-                    "django.template.context_processors.request",
-                    "django.contrib.auth.context_processors.auth",
-                    "django.template.context_processors.i18n",
-                    "django.template.context_processors.media",
-                    "django.template.context_processors.static",
-                    "django.template.context_processors.tz",
-                    "django.contrib.messages.context_processors.messages",
-                ],
-                "builtins": [
-                    "radiofeed.template",
-                ],
-            },
-        }
-    ]

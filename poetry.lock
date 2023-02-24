@@ -798,6 +798,18 @@ redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
+name = "django-split-settings"
+version = "1.2.0"
+description = "Organize Django settings into multiple files and directories. Easily override and modify settings. Use wildcards and optional settings files."
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "django-split-settings-1.2.0.tar.gz", hash = "sha256:31415a618256b54c5cee8662cbaa72a890683b8b7465d64ba88fdd3affdd6c60"},
+    {file = "django_split_settings-1.2.0-py3-none-any.whl", hash = "sha256:4b3be146776d49c61bd9dcf89fad40edb1544f13ab27a87a0b1aecf5a0d636f4"},
+]
+
+[[package]]
 name = "django-widget-tweaks"
 version = "1.4.12"
 description = "Tweak the form field rendering in templates, not in python-level form definitions."
@@ -2833,4 +2845,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "02f88c9fcb6b0e80d407dda52906526f6525c0bf41b5e96d68d366e3ee71c770"
+content-hash = "dd59d96d23710c28b8571d0deda86c81818a1b8e1979b7268888e497045ebbc5"
