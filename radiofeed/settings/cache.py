@@ -2,12 +2,10 @@ from __future__ import annotations
 
 from radiofeed.settings.base import config
 
-REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
-
-CACHES: dict = {
+CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
+        "LOCATION": config("REDIS_URL", default="redis://localhost:6379/0"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             # Mimicing memcache behavior.

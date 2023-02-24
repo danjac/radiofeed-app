@@ -7,7 +7,13 @@ from radiofeed.settings.base import BASE_DIR, config
 from radiofeed.settings.databases import configure_databases
 from radiofeed.settings.templates import configure_templates
 
-include("defaults.py")
+include(
+    "base.py",
+    "admin.py",
+    "cache.py",
+    "email.py",
+    "logging.py",
+)
 
 DEBUG = False
 
