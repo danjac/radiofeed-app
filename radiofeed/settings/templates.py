@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from radiofeed.settings.base import BASE_DIR
 
-FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
-
 
 def configure_templates(*, debug: bool = False) -> list[dict]:
     """Build TEMPLATES configuration."""

@@ -29,8 +29,9 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
-
 ROOT_URLCONF = "radiofeed.urls"
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # Installed apps
 
