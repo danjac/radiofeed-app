@@ -1,33 +1,30 @@
 from __future__ import annotations
 
-from split_settings.tools import include
+import sentry_sdk
 
-from radiofeed.settings.admin import admin_site_header
-from radiofeed.settings.base import BASE_DIR, config
-from radiofeed.settings.databases import configure_databases
-from radiofeed.settings.templates import configure_templates
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import ignore_logger
 
-include(
-    "base.py",
-    "admin.py",
-    "cache.py",
-    "email.py",
-    "logging.py",
+from radiofeed.settings.base import *  # noqa
+from radiofeed.settings.base import (
+    ADMIN_SITE_HEADER,
+    BASE_DIR,
+    EMAIL_HOST,
+    INSTALLED_APPS,
+    config,
+    configure_databases,
+    configure_templates,
 )
-
-DEBUG = False
-
-SECRET_KEY = config("SECRET_KEY")
 
 DATABASES = configure_databases(conn_max_age=360)
 
 TEMPLATES = configure_templates(debug=False)
 
-ADMIN_SITE_HEADER = admin_site_header("PRODUCTION")
+ADMIN_SITE_HEADER += " [PRODUCTION]"
 
 # Set HTTPS for absolute uris in allauth and our own absolute links
 
-HTTP_PROTOCOL = "https"
+HTTP_PROTOCOL = ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 # Static files
 
@@ -37,7 +34,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-#
 # Secure settings
 
 # https://docs.djangoproject.com/en/4.1/topics/security/
@@ -71,3 +67,37 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "payment": [],
     "usb": [],
 }
+
+
+# Mailgun
+
+# https://anymail.dev/en/v9.0/esps/mailgun/
+
+if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
+    INSTALLED_APPS += ["anymail"]
+
+    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+
+    ANYMAIL = {
+        "MAILGUN_API_KEY": MAILGUN_API_KEY,
+        "MAILGUN_API_URL": MAILGUN_API_URL,
+        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
+    }
+
+# Sentry
+
+# https://docs.sentry.io/platforms/python/guides/django/
+
+if SENTRY_URL := config("SENTRY_URL", default=None):
+    ignore_logger("django.security.DisallowedHost")
+
+    sentry_sdk.init(
+        dsn=SENTRY_URL,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0.5,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )
