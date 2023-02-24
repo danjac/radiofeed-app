@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import pathlib
 
 from email.utils import getaddresses
@@ -40,7 +39,7 @@ ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv
 HTTP_PROTOCOL = "http"
 
 # User-Agent header for API calls from this site
-USER_AGENT = f"Radiofeed/{datetime.datetime.now().strftime('%Y-%d-%m')}"
+USER_AGENT = config("USER_AGENT", "Radiofeed/0.0.0")
 
 SITE_ID = 1
 
