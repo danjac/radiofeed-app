@@ -105,7 +105,7 @@ def cover_image(
     title: str,
     url: str = "",
     css_class: str = "",
-):
+) -> dict:
     """Renders a cover image with proxy URL."""
     placeholder = static(f"img/placeholder-{size}.webp")
 
