@@ -1,4 +1,4 @@
-{% load static %}
+{% load static heroicons %}
 {% with site_name=request.site.name %}
     <header class="sticky top-0 z-20 w-full text-white bg-violet-900"
             :class="scrolling ? 'drop-shadow-xl': ''"
@@ -15,7 +15,7 @@
                          height="100"
                          width="100"
                          alt="{{ site_name }}"
-                         class="w-6 h-6 lg:h-8 lg:w-8 mr-3"
+                         class="w-6 h-6 mr-3 lg:h-8 lg:w-8"
                          title="{{ site_name }}"
                          aria-hidden="true">
                     {{ site_name }}
@@ -36,7 +36,7 @@
                                 x-cloak
                                 x-show.transition="!showMenu"
                                 @click="showMenu=true">
-                            {% icon "bars" size="xl" title="Toggle Menu" %}
+                            {% heroicon_outline "bars" size=30 title="Toggle Menu" %}
                         </button>
                         <button class="focus:outline-none transform transition"
                                 title="Toggle Menu"
@@ -44,7 +44,7 @@
                                 x-show.transition="showMenu"
                                 @click="showMenu=false"
                                 @keyup.escape.window="showMenu=false">
-                            {% icon "chevron-down" size="xl" title="Toggle Menu" %}
+                            {% heroicon_outline "chevron-down" size=30 title="Toggle Menu" %}
                         </button>
                     </li>
                 {% else %}
@@ -52,7 +52,7 @@
                         <a href="{% url 'about' %}"
                            title="About this Site"
                            class="flex items-center font-bold space-x-2 hover:text-blue-300">
-                            {% icon "info-circle" size="xl" %}
+                            {% heroicon_outline "information-circle" size=30 title="Toggle Menu" %}
                             <span class="hidden md:inline-block">About</span>
                         </a>
                     </li>
