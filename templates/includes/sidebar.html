@@ -1,12 +1,12 @@
-{% load cache %}
+{% load cache heroicons %}
 {% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
-    <nav class="pl-3 xl:pl-0 xl:pt-12 text-base md:text-lg lg:text-xl">
+    <nav class="pl-3 text-base xl:pl-0 xl:pt-12 md:text-lg lg:text-xl">
         <ul class="space-y-3 sm:space-y-0 xl:space-y-3 sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 xl:flex xl:flex-col xl:justify-content-between">
             <li>
                 <a href="{% url 'podcasts:index' %}"
                    accesskey="p"
                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "rss" css_class=ICON_CSS %}
+                    {% heroicon_outline "rss" class=ICON_CSS %}
                     Podcasts
                 </a>
             </li>
@@ -14,7 +14,7 @@
                 <a href="{% url 'episodes:index' %}"
                    accesskey="n"
                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "satellite-dish" css_class=ICON_CSS %}
+                    {% heroicon_outline "sparkles" class=ICON_CSS %}
                     New Releases
                 </a>
             </li>
@@ -22,7 +22,7 @@
                 <a href="{% url 'podcasts:category_list' %}"
                    accesskey="c"
                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "tag" css_class=ICON_CSS %}
+                    {% heroicon_outline "tag" class=ICON_CSS %}
                     Categories
                 </a>
             </li>
@@ -30,7 +30,7 @@
                 <a href="{% url 'episodes:bookmarks' %}"
                    accesskey="b"
                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "star" css_class=ICON_CSS %}
+                    {% heroicon_outline "star" class=ICON_CSS %}
                     Bookmarks
                 </a>
             </li>
@@ -38,7 +38,7 @@
                 <a href="{% url 'episodes:history' %}"
                    accesskey="h"
                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "history" css_class=ICON_CSS %}
+                    {% heroicon_outline "list-bullet" class=ICON_CSS %}
                     History
                 </a>
             </li>
@@ -46,13 +46,13 @@
                 <a href="{% url 'users:preferences' %}"
                    accesskey="s"
                    class="{{ SIDEBAR_CSS }}">
-                    {% icon "cog" css_class=ICON_CSS %}
+                    {% heroicon_outline "cog-6-tooth" class=ICON_CSS %}
                     Settings
                 </a>
             </li>
             <li>
                 <a href="{% url 'about' %}" accesskey="a" class="{{ SIDEBAR_CSS }}">
-                    {% icon "info-circle" css_class=ICON_CSS %}
+                    {% heroicon_outline "information-circle" class=ICON_CSS %}
                     About
                 </a>
             </li>
@@ -63,7 +63,7 @@
                       method="post">
                     {% csrf_token %}
                     <button accesskey="l" class="{{ SIDEBAR_CSS }}">
-                        {% icon "sign-out" css_class=ICON_CSS %}
+                        {% heroicon_outline "arrow-left-on-rectangle" class=ICON_CSS %}
                         Logout
                     </button>
                 </form>
