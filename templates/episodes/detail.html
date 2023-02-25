@@ -60,8 +60,8 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% cover_image episode.get_cover_url 200 podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
-                    {% include "episodes/actions/player.html" %}
-                    {% include "episodes/actions/bookmark.html" %}
+                    {% include "episodes/includes/audio_player_toggle.html" %}
+                    {% include "episodes/includes/bookmark_toggle.html" %}
                     <div class="flex flex-wrap items-center font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                         <a download
                            title="Download audio file to your device"

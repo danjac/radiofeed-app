@@ -251,7 +251,7 @@ def _render_audio_player_action(
 ) -> HttpResponse:
     return render(
         request,
-        "episodes/actions/player.html",
+        "episodes/includes/audio_player_toggle.html",
         {
             "episode": episode,
             "start_player": start_player,
@@ -267,7 +267,7 @@ def _render_bookmark_action(
 ) -> HttpResponse:
     return render(
         request,
-        "episodes/actions/bookmark.html",
+        "episodes/includes/bookmark_toggle.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,
