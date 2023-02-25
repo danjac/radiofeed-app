@@ -1,4 +1,5 @@
 {% extends "account/settings_base.html" %}
+{% load heroicons %}
 {% block title %}
     {{ block.super }} | Import/Export Feeds
 {% endblock title %}
@@ -12,9 +13,9 @@
                       class="pb-3"
                       hx-disable="true">
                     {% csrf_token %}
-                    <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
-                        <button class="flex sm:inline-flex items-center justify-center btn btn-default">
-                            {% icon "download" css_class="mr-2" %}
+                    <div class="items-center sm:flex space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
+                        <button class="flex items-center justify-center sm:inline-flex btn btn-default">
+                            {% heroicon_mini "arrow-down-tray" class="mr-2" %}
                             Download OPML
                         </button>
                     </div>
@@ -40,7 +41,7 @@
                     {{ form }}
                     <div>
                         <button class="inline-flex items-center btn btn-default">
-                            {% icon "upload" css_class="mr-2" %}
+                            {% heroicon_mini "arrow-up-tray" class="mr-2" %}
                             Upload OPML
                         </button>
                     </div>

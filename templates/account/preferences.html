@@ -1,4 +1,5 @@
 {% extends "account/settings_base.html" %}
+{% load heroicons %}
 {% block title %}
     {{ block.super }} | Preferences
 {% endblock title %}
@@ -16,7 +17,7 @@
         {{ form }}
         <div>
             <button class="inline-flex items-center btn btn-primary">
-                {% icon "check" css_class="mr-2" %}
+                {% heroicon_mini "check" class="mr-2" %}
                 Save Changes
             </button>
         </div>

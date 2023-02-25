@@ -1,3 +1,4 @@
+{% load heroicons %}
 {% with target=episode.get_bookmark_target %}
     <div class="flex items-center"
          id="{{ target }}"
@@ -9,14 +10,14 @@
             <button title="Remove Bookmark"
                     class="inline-flex items-center btn btn-default btn-outline"
                     hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
-                {% icon "star" css_class="mr-2" %}
+                {% heroicon_mini "bookmark-slash" class="mr-2" %}
                 Bookmark
             </button>
         {% else %}
             <button title="Bookmark"
                     class="inline-flex items-center btn btn-default"
                     hx-post="{% url 'episodes:add_bookmark' episode.id %}">
-                {% icon "star" "regular" css_class="mr-2" %}
+                {% heroicon_mini "bookmark" class="mr-2" %}
                 Bookmark
             </button>
         {% endif %}

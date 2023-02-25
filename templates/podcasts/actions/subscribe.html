@@ -1,3 +1,4 @@
+{% load heroicons %}
 {% with target=podcast.get_subscribe_target %}
     <div id="{{ target }}"
          hx-target="this"
@@ -8,14 +9,14 @@
             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                     title="Unsubscribe from this Podcast"
                     hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
-                {% icon "eye-slash" css_class="mr-2" %}
+                {% heroicon_outline "eye-slash" size=20 class="mr-2" %}
                 Unsubscribe
             </button>
         {% else %}
             <button class="inline-flex items-center btn btn-primary btn-lg"
                     title="Subscribe to this Podcast"
                     hx-post="{% url 'podcasts:subscribe' podcast.id %}">
-                {% icon "eye" css_class="mr-2" %}
+                {% heroicon_outline "eye" size=20 class="mr-2" %}
                 Subscribe
             </button>
         {% endif %}

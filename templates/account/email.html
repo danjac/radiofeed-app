@@ -1,4 +1,5 @@
 {% extends "account/settings_base.html" %}
+{% load heroicons %}
 {% block title %}
     {{ block.super }} | E-mail Addresses
 {% endblock title %}
@@ -6,7 +7,7 @@
     {% with emailaddresses=user.emailaddress_set.all num_addresses=user.emailaddress_set.count %}
         {% if num_addresses %}
             <p class="mb-3">The following e-mail addresses are associated with your account:</p>
-            <form class="space-y-3 mb-3"
+            <form class="mb-3 space-y-3"
                   hx-disable="true"
                   method="post"
                   id="email-addresses"
@@ -23,7 +24,7 @@
                                    value="{{ emailaddress.email }}"/>
                             <span>{{ emailaddress.email }}</span>
                             {% if emailaddress.verified %}
-                                {% icon "check" css_class="text-green-600" title=_("Verified") %}
+                                {% heroicon_mini "check" class="text-green-600" title=_("Verified") %}
                             {% endif %}
                         </label>
                     </div>
@@ -33,33 +34,33 @@
                         <button class="inline-flex items-center btn btn-primary"
                                 name="action_primary"
                                 value="1">
-                            {% icon "hand-point-up" css_class="mr-2" %}
+                            {% heroicon_mini "hand-thumb-up" class="mr-2" %}
                             Primary
                         </button>
                         <button class="inline-flex items-center btn btn-danger"
                                 name="action_remove"
                                 value="1">
-                            {% icon "trash" css_class="mr-2" %}
+                            {% heroicon_mini "trash" class="mr-2" %}
                             Remove
                         </button>
                     {% endif %}
                     <button class="inline-flex items-center btn btn-default"
                             name="action_send"
                             value="1">
-                        {% icon "envelope" css_class="mr-2" %}
+                        {% heroicon_mini "envelope" class="mr-2" %}
                         Re-Verify
                     </button>
                 </div>
             </form>
         {% else %}
-            <p class="border-b pb-3 mb-3">
+            <p class="pb-3 mb-3 border-b">
                 <strong>Warning:</strong>
                 You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.
             </p>
         {% endif %}
     {% endwith %}
     {% if can_add_email %}
-        <h2 class="font-semibold mb-3 mt-6">Add New E-mail Address</h2>
+        <h2 class="mt-6 mb-3 font-semibold">Add New E-mail Address</h2>
         <form method="post"
               action="{{ request.path }}"
               class="space-y-3"
@@ -71,7 +72,7 @@
                 <button class="inline-flex items-center btn btn-primary"
                         name="action_add"
                         value="true">
-                    {% icon "plus" css_class="mr-2" %}
+                    {% heroicon_mini "plus" class="mr-2" %}
                     Add E-Mail
                 </button>
             </div>

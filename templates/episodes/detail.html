@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load heroicons %}
 {% block title %}
     | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
 {% block content %}
     {% with podcast=episode.podcast next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
-        <header class="mb-3 border-b pb-3 space-y-6">
-            <h1 class="font-bold text-lg lg:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
+        <header class="pb-3 mb-3 border-b space-y-6">
+            <h1 class="text-lg font-bold lg:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
             {% if next_episode or previous_episode %}
                 <nav>
                     <ul class="flex justify-between"
@@ -20,7 +21,7 @@
                                     Previous
                                 </a>
                             {% else %}
-                                <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                                <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                                       title="No More Episodes"
                                       aria-label="No More Episodes">Previous</span>
                             {% endif %}
@@ -34,7 +35,7 @@
                                     Next
                                 </a>
                             {% else %}
-                                <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+                                <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                                       title="No More Episodes"
                                       aria-label="No More Episodes">Next</span>
                             {% endif %}
@@ -53,7 +54,7 @@
             </h2>
             {% with metadata=episode.get_episode_metadata %}
                 {% if metadata %}
-                    <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">{{ metadata }}</div>
+                    <div class="flex items-center font-semibold text-gray-800 space-x-3 dark:text-gray-300">{{ metadata }}</div>
                 {% endif %}
             {% endwith %}
             <div class="flex items-center space-x-3 sm:space-x-6">
@@ -61,7 +62,7 @@
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
                     {% include "episodes/actions/player.html" %}
                     {% include "episodes/actions/bookmark.html" %}
-                    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
+                    <div class="flex flex-wrap items-center font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                         <a download
                            title="Download audio file to your device"
                            href="{{ episode.media_url }}"
@@ -90,7 +91,7 @@
                     {% if explicit %}
                         <div title="May contain adult themes and language. Listener discretion advised."
                              class="flex items-center text-red-600 dark:text-red-500 space-x-2">
-                            {% icon "warning" %} <span class="inline-block">Explicit</span>
+                            {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
                         </div>
                     {% endif %}
                 {% endwith %}

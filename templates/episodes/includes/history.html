@@ -1,3 +1,4 @@
+{% load heroicons %}
 {% with target=episode.get_history_target %}
     <div id="{{ target }}"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
         {% if listened %}
@@ -16,7 +17,7 @@
                             hx-target="#{{ target }}"
                             hx-swap="outerHTML"
                             hx-confirm="Are you sure you want to remove this episode from your History?">
-                        {% icon "trash" css_class="mr-2" %}
+                        {% heroicon_mini "trash" class="mr-2" %}
                         Remove
                     </button>
                 {% endif %}
