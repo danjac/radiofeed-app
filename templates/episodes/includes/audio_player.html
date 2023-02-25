@@ -45,7 +45,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex flex-col h-16 sm:w-1/2 place-content-end sm:pl-3 space-y-3">
+                            <div class="flex flex-col h-16 sm:w-1/2 place-content-end sm:pl-3 space-y-2 sm:space-y-3">
                                 <div class="grid grid-cols-3 place-content-between">
                                     <div x-text="counters.current"
                                          title="Current Time"
@@ -62,25 +62,25 @@
                                                     @click="skipBack"
                                                     class="{{ BUTTON_CSS }}"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "backward" %}
+                                                {% heroicon_outline "backward" size=30 %}
                                             </button>
                                             <button title="Play"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="!isPlaying">
-                                                {% heroicon_outline "play-circle" size=30 %}
+                                                {% heroicon_outline "play-circle" size=36 %}
                                             </button>
                                             <button title="Pause"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="isPlaying">
-                                                {% heroicon_outline "pause-circle" size=30 %}
+                                                {% heroicon_outline "pause-circle" size=36 %}
                                             </button>
                                             <button title="Skip Forward 10 Seconds"
                                                     @click="skipForward"
                                                     class="{{ BUTTON_CSS }}"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "forward" %}
+                                                {% heroicon_outline "forward" size=30 %}
                                             </button>
                                         </div>
                                     {% endwith %}
