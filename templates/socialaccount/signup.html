@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load heroicons %}
 {% block title %}
     | Signup
 {% endblock title %}
@@ -19,7 +20,7 @@
             {{ form }}
             <div class="flex items-center justify-end">
                 <button class="inline-flex items-center btn btn-primary">
-                    {% icon "plus" css_class="mr-2" %}
+                    {% heroicon_mini "plus" class="mr-2" %}
                     Sign Up
                 </button>
             </div>
