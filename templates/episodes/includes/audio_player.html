@@ -59,8 +59,8 @@
                                              x-show="isLoaded"
                                              x-cloak>
                                             <button title="Skip Back 10 Seconds"
-                                                    @click="skipBack"
                                                     class="{{ BUTTON_CSS }}"
+                                                    @click="skipBack"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
                                                 {% heroicon_outline "backward" size=30 %}
                                             </button>
@@ -77,8 +77,8 @@
                                                 {% heroicon_outline "pause-circle" size=36 %}
                                             </button>
                                             <button title="Skip Forward 10 Seconds"
-                                                    @click="skipForward"
                                                     class="{{ BUTTON_CSS }}"
+                                                    @click="skipForward"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
                                                 {% heroicon_outline "forward" size=30 %}
                                             </button>
