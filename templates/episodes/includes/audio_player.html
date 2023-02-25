@@ -54,33 +54,33 @@
                                     </div>
                                     <div class="flex items-center justify-center opacity-75 animate-pulse space-x-6"
                                          x-show="!isLoaded">Loading...</div>
-                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-300" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                         <div class="flex items-center justify-center space-x-6"
                                              x-show="isLoaded"
                                              x-cloak>
                                             <button title="Skip Back 10 Seconds"
                                                     @click="skipBack"
-                                                    class="{{ BUTTON_CSS }} inline-block"
+                                                    class="{{ BUTTON_CSS }}"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "backward" size=30 %}
+                                                {% heroicon_outline "backward" %}
                                             </button>
                                             <button title="Play"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="!isPlaying">
-                                                {% heroicon_outline "play-circle" size=35 %}
+                                                {% heroicon_outline "play-circle" size=30 %}
                                             </button>
                                             <button title="Pause"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="isPlaying">
-                                                {% heroicon_outline "pause-circle" size=35 %}
+                                                {% heroicon_outline "pause-circle" size=30 %}
                                             </button>
                                             <button title="Skip Forward 10 Seconds"
                                                     @click="skipForward"
-                                                    class="{{ BUTTON_CSS }} inline-block"
+                                                    class="{{ BUTTON_CSS }}"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "forward" size=30 %}
+                                                {% heroicon_outline "forward" %}
                                             </button>
                                         </div>
                                     {% endwith %}
