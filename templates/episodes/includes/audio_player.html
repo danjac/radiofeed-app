@@ -1,3 +1,4 @@
+{% load heroicons %}
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if episode %}
         {% if is_playing %}
@@ -61,25 +62,25 @@
                                                     @click="skipBack"
                                                     class="{{ BUTTON_CSS }} inline-block"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% icon "backward-step" "solid" size="lg" %}
+                                                {% heroicon_outline "backward" size=30 %}
                                             </button>
                                             <button title="Play"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="!isPlaying">
-                                                {% icon "play-circle" "regular" size="2xl" %}
+                                                {% heroicon_outline "play-circle" size=35 %}
                                             </button>
                                             <button title="Pause"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="isPlaying">
-                                                {% icon "pause-circle" "regular" size="2xl" %}
+                                                {% heroicon_outline "pause-circle" size=35 %}
                                             </button>
                                             <button title="Skip Forward 10 Seconds"
                                                     @click="skipForward"
                                                     class="{{ BUTTON_CSS }} inline-block"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% icon "forward-step" "solid" size="lg" %}
+                                                {% heroicon_outline "forward" size=30 %}
                                             </button>
                                         </div>
                                     {% endwith %}

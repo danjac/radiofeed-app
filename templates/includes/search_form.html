@@ -1,3 +1,4 @@
+{% load heroicons %}
 <form action="{{ search_url|default:request.path }}"
       method="get"
       class="relative bg-transparent"
@@ -17,12 +18,12 @@
            class="mr-2 text-gray-900 focus:outline-none focus:shadow-outline dark:text-gray-100"
            x-show="search"
            x-cloak>
-            {% icon "xmark" title="Clear Search" %}
+            {% heroicon_outline "x-mark" title="Clear Search" %}
         </a>
         <button type="submit"
                 title="Search"
                 class="text-gray-900 focus:outline-none focus:shadow-outline dark:text-gray-100">
-            {% icon "search" title="Search" %}
+            {% heroicon_outline "magnifying-glass" title="Search" %}
         </button>
     </div>
 </form>

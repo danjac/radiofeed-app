@@ -648,14 +648,14 @@ postal = ["cryptography"]
 
 [[package]]
 name = "django-browser-reload"
-version = "1.6.0"
+version = "1.7.0"
 description = "Automatically reload your browser in development."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django-browser-reload-1.6.0.tar.gz", hash = "sha256:9ca69c71796f53868bdc7421f120d147f7a64faa0d5d8c06970ba3f8061af63c"},
-    {file = "django_browser_reload-1.6.0-py3-none-any.whl", hash = "sha256:31b8b2d51e8faa5878f21e6b60b8f43e1123907c6e082e9e967962ba63958829"},
+    {file = "django_browser_reload-1.7.0-py3-none-any.whl", hash = "sha256:0d7cc4308ebbdf9b5637e28ee7b41ae28d4fcdf350d55ce007515b44cd10291b"},
+    {file = "django_browser_reload-1.7.0.tar.gz", hash = "sha256:712d0a4d6caa6833c8c205d4ce177b474feb45583cd6ee684c9ea7b71dd921b6"},
 ]
 
 [package.dependencies]
@@ -723,14 +723,14 @@ Django = ">=3.2,<4.2"
 
 [[package]]
 name = "django-htmx"
-version = "1.13.0"
+version = "1.14.0"
 description = "Extensions for using Django with htmx."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django-htmx-1.13.0.tar.gz", hash = "sha256:848c3e195b8757656626c8a099f9be59c6d30f468f1d54e69f0f2a48f0a14928"},
-    {file = "django_htmx-1.13.0-py3-none-any.whl", hash = "sha256:781a59376d769aa28302619e73d37d481a125ab155d9fdd7fb17f10e7d25f352"},
+    {file = "django_htmx-1.14.0-py3-none-any.whl", hash = "sha256:393e2a4a963aff691b3973c898dbca1363139d7c7bf2e8cc4c605e2ad808a779"},
+    {file = "django_htmx-1.14.0.tar.gz", hash = "sha256:b689a8d6f7052a96a373411ec55ba81c1ddffb4d66b1f5ab4d6e3d28420842fd"},
 ]
 
 [package.dependencies]
@@ -765,14 +765,14 @@ files = [
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.14.0"
+version = "4.15.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django-permissions-policy-4.14.0.tar.gz", hash = "sha256:923db75e74b1e363c84f2a7723c4af6fd78a5baa6c7fbdb0850e5b38d88e0a06"},
-    {file = "django_permissions_policy-4.14.0-py3-none-any.whl", hash = "sha256:a0f20a2c56409126c67bb4f85ef0e51625aec6a0a02b912fda70b466fcf2c0ed"},
+    {file = "django_permissions_policy-4.15.0-py3-none-any.whl", hash = "sha256:e80b535b771ebf166fc1452254ce07772affac9b7960975b3909510760d653ac"},
+    {file = "django_permissions_policy-4.15.0.tar.gz", hash = "sha256:43f72a66c40b68c8de47ac9390a8f31994551daeaef196c9d20761b38ab324ca"},
 ]
 
 [package.dependencies]
@@ -1103,6 +1103,25 @@ eventlet = ["eventlet (>=0.24.1)"]
 gevent = ["gevent (>=1.4.0)"]
 setproctitle = ["setproctitle"]
 tornado = ["tornado (>=0.2)"]
+
+[[package]]
+name = "heroicons"
+version = "2.2.0"
+description = "Use heroicons in your Django and Jinja templates."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "heroicons-2.2.0-py3-none-any.whl", hash = "sha256:c725fcdedd6666db49608a94f33fb7a9bbb6d194797cef492ddfa07592f7b391"},
+    {file = "heroicons-2.2.0.tar.gz", hash = "sha256:5325378056f8edef0c02b858873af10e74d528cab831a23d39875f5a9786df2e"},
+]
+
+[package.dependencies]
+django = {version = ">=2.2", optional = true, markers = "extra == \"django\""}
+
+[package.extras]
+django = ["django (>=2.2)"]
+jinja = ["jinja2 (>=2.8)"]
 
 [[package]]
 name = "hiredis"
@@ -2817,14 +2836,14 @@ files = [
 
 [[package]]
 name = "whitenoise"
-version = "6.3.0"
+version = "6.4.0"
 description = "Radically simplified static file serving for WSGI applications"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "whitenoise-6.3.0-py3-none-any.whl", hash = "sha256:cf8ecf56d86ba1c734fdb5ef6127312e39e92ad5947fef9033dc9e43ba2777d9"},
-    {file = "whitenoise-6.3.0.tar.gz", hash = "sha256:fe0af31504ab08faa1ec7fc02845432096e40cc1b27e6a7747263d7b30fb51fa"},
+    {file = "whitenoise-6.4.0-py3-none-any.whl", hash = "sha256:599dc6ca57e48929dfeffb2e8e187879bfe2aed0d49ca419577005b7f2cc930b"},
+    {file = "whitenoise-6.4.0.tar.gz", hash = "sha256:a02d6660ad161ff17e3042653c8e3f5ecbb2a2481a006bde125b9efb9a30113a"},
 ]
 
 [package.extras]
@@ -2833,4 +2852,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "7a1c91ec98558a8960496847d7126551ede4002d9c515a1119149e72e862f823"
+content-hash = "e8477cabb61e6cf356169a544f261a868129d8c65ac3118aeee87c77ae525eec"
