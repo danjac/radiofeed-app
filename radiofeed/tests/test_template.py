@@ -15,7 +15,6 @@ from radiofeed.template import (
     cover_image,
     force_url,
     format_duration,
-    icon,
     pagination_url,
     render_html,
 )
@@ -41,26 +40,6 @@ class PageObj:
     has_previous: bool = False
     next_page_number: int = 0
     previous_page_number: int = 0
-
-
-class TestIcon:
-    def test_icon(self):
-        assert icon("rss") == {
-            "name": "rss",
-            "style": "",
-            "size": "",
-            "title": "",
-            "css_class": "",
-        }
-
-    def test_brand_icon(self):
-        assert icon("facebook", style="brands") == {
-            "name": "facebook",
-            "style": "brands",
-            "size": "",
-            "title": "",
-            "css_class": "",
-        }
 
 
 class TestAbsoluteUri:

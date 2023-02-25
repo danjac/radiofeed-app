@@ -98,25 +98,6 @@ def cookie_notice(context: RequestContext) -> dict:
     return {"accept_cookies": "accept-cookies" in context.request.COOKIES}
 
 
-@register.inclusion_tag("includes/icon.html")
-def icon(
-    name: str,
-    style: str = "",
-    *,
-    size: str = "",
-    title: str = "",
-    css_class: str = "",
-) -> dict:
-    """Renders a FontAwesome icon."""
-    return {
-        "name": name,
-        "style": style,
-        "size": size,
-        "title": title,
-        "css_class": css_class,
-    }
-
-
 @register.inclusion_tag("includes/cover_image.html")
 def cover_image(
     cover_url: str,
