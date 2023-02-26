@@ -14,6 +14,7 @@ _ALLOWED_TAGS: Final = {
     "address",
     "b",
     "br",
+    "code",
     "div",
     "dl",
     "dt",
