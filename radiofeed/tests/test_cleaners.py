@@ -6,13 +6,23 @@ from radiofeed.cleaners import clean_html, strip_html
 
 
 class TestCleanHtml:
+    def test_empty(self):
+        assert clean_html("") == ""
+
     def test_if_safe(self):
         text = "<p>testing with paras</p>"
         assert clean_html(text) == text
 
-    def test_has_link_link(self):
-        clean_htmled = clean_html('<a href="http://reddit.com">Reddit</a>')
-        assert 'rel="nofollow"' in clean_htmled
+    def test_has_link(self):
+        cleaned = clean_html('<a href="http://reddit.com">Reddit</a>')
+        assert 'rel="nofollow"' in cleaned
+
+    def test_has_url(self):
+        cleaned = clean_html("http://reddit.com")
+        assert (
+            '<a href="http://reddit.com" rel="nofollow">http://reddit.com</a>'
+            in cleaned
+        )
 
     def test_unsafe(self):
         assert clean_html("<script>alert('xss ahoy!')</script>") == "<div></div>"

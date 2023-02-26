@@ -5,7 +5,7 @@ import html
 from typing import Final
 
 from django.template.defaultfilters import striptags
-from lxml.html.clean import Cleaner
+from lxml.html.clean import Cleaner, autolink_html
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -56,7 +56,20 @@ _cleaner = Cleaner(allow_tags=_ALLOWED_TAGS, safe_attrs_only=True, add_nofollow=
 
 def clean_html(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes."""
-    return _cleaner.clean_html(value) if (value := value.strip()) else ""
+    return (
+        _cleaner.clean_html(
+            autolink_html(
+                value,
+                avoid_elements=[
+                    "textarea",
+                    "pre",
+                    "code",
+                ],
+            )
+        )
+        if (value := value.strip())
+        else ""
+    )
 
 
 def strip_html(value: str) -> str:
