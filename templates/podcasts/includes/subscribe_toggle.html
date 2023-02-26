@@ -4,22 +4,19 @@
          hx-target="this"
          hx-push-url="false"
          hx-swap="outerHTML"
-         hx-disinherit="hx-indicator"
-         x-data="{showIcon: true}">
+         hx-disinherit="hx-indicator">
         {% if is_subscribed %}
             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                     title="Unsubscribe from this Podcast"
-                    @click="showIcon=false"
                     hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
-                {% heroicon_mini "eye-slash" class="mr-2" x_show="showIcon" %}
+                {% heroicon_mini "eye-slash" class="mr-2" %}
                 Unsubscribe
             </button>
         {% else %}
             <button class="inline-flex items-center btn btn-primary btn-lg"
                     title="Subscribe to this Podcast"
-                    @click="showIcon=false"
                     hx-post="{% url 'podcasts:subscribe' podcast.id %}">
-                {% heroicon_mini "eye" class="mr-2" x_show="showIcon" %}
+                {% heroicon_mini "eye" class="mr-2" %}
                 Subscribe
             </button>
         {% endif %}

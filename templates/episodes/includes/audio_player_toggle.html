@@ -4,22 +4,19 @@
          hx-push-url="false"
          hx-target="this"
          hx-disinherit="hx-indicator"
-         hx-swap="outerHTML"
-         x-data="{showIcon: true}">
+         hx-swap="outerHTML">
         {% if is_playing %}
             <button title="Close Player"
                     class="inline-flex items-center btn btn-primary btn-outline btn-lg"
-                    @click="showIcon=false"
                     hx-post="{% url 'episodes:close_player' %}">
-                {% heroicon_mini "stop-circle" class="mr-2" x_show="showIcon" %}
+                {% heroicon_mini "stop-circle" class="mr-2" %}
                 Close
             </button>
         {% else %}
             <button title="Open episode in Player"
                     class="inline-flex items-center btn btn-primary btn-lg"
-                    @click="showIcon=false"
                     hx-post="{% url 'episodes:start_player' episode.id %}">
-                {% heroicon_mini "play-circle" class="mr-2" x_show="showIcon" %}
+                {% heroicon_mini "play-circle" class="mr-2" %}
                 Play
             </button>
         {% endif %}
