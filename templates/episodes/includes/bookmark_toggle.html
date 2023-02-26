@@ -5,19 +5,22 @@
          hx-push-url="false"
          hx-target="this"
          hx-swap="outerHTML"
-         hx-disinherit="hx-indicator">
+         hx-disinherit="hx-indicator"
+         x-data="{showIcon: true}">
         {% if is_bookmarked %}
             <button title="Remove Bookmark"
-                    class="inline-flex items-center btn btn-default btn-outline group"
+                    class="inline-flex items-center btn btn-default btn-outline"
+                    @click="showIcon=false"
                     hx-post="{% url 'episodes:remove_bookmark' episode.id %}">
-                {% heroicon_mini "bookmark-slash" class="mr-2 group-focus:hidden" %}
+                {% heroicon_mini "bookmark-slash" class="mr-2" x_show="showIcon" %}
                 Bookmark
             </button>
         {% else %}
             <button title="Bookmark"
-                    class="inline-flex items-center btn btn-default group"
+                    class="inline-flex items-center btn btn-default"
+                    @click="showIcon=false"
                     hx-post="{% url 'episodes:add_bookmark' episode.id %}">
-                {% heroicon_mini "bookmark" class="mr-2 group-focus:hidden" %}
+                {% heroicon_mini "bookmark" class="mr-2" x_show="showIcon" %}
                 Bookmark
             </button>
         {% endif %}
