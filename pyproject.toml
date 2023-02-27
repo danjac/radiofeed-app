@@ -48,7 +48,7 @@ heroicons = {extras = ["django"], version = "^2.2.0"}
 bandit = {extras = ["toml"], version = "^1.7.4"}
 coverage = {extras = ["toml"], version = "^7.2.0"}
 django-coverage-plugin = "^3.0.0"
-djlint = "^1.19.15"
+djlint = "^1.19.16"
 faker = "^17.0.0"
 flake8 = "^6.0.0"
 flake8-bugbear = "^23.2.13"
