@@ -251,7 +251,7 @@ def _render_audio_player_action(
 ) -> HttpResponse:
     return render(
         request,
-        "episodes/includes/audio_player_toggle.html",
+        "episodes/includes/play_toggle.html",
         {
             "episode": episode,
             "start_player": start_player,
