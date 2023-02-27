@@ -267,7 +267,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
     messages.success(request, "You are now subscribed to this podcast")
-    return _render_subscribe_action(request, podcast, True)
+    return _render_subscribe_toggle(request, podcast, True)
 
 
 @require_POST
@@ -279,7 +279,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
 
     messages.info(request, "You are no longer subscribed to this podcast")
-    return _render_subscribe_action(request, podcast, False)
+    return _render_subscribe_toggle(request, podcast, False)
 
 
 @require_form_methods
@@ -342,7 +342,7 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
 
 
-def _render_subscribe_action(
+def _render_subscribe_toggle(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
     return render(
