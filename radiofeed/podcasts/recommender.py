@@ -3,11 +3,10 @@ from __future__ import annotations
 import collections
 import itertools
 import operator
+import statistics
 
 from collections.abc import Iterator
 from datetime import timedelta
-
-import numpy
 
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
@@ -72,7 +71,7 @@ class Recommender:
                     Recommendation(
                         podcast_id=podcast_id,
                         recommended_id=recommended_id,
-                        similarity=numpy.median(scores),
+                        similarity=statistics.median(scores),
                         frequency=len(scores),
                     )
                     for (podcast_id, recommended_id), scores in batch
