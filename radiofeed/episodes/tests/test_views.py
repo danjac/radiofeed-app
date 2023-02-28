@@ -377,12 +377,12 @@ class TestBookmarks:
 
 
 class TestAddBookmark:
-    def get_url(self, episode):
+    def url(self, episode):
         return reverse("episodes:add_bookmark", args=[episode.id])
 
     def test_post(self, client, auth_user, episode):
         response = client.post(
-            self.get_url(episode),
+            self.url(episode),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
             HTTP_HX_REQUEST="true",
         )
@@ -391,14 +391,14 @@ class TestAddBookmark:
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     def test_no_js(self, client, auth_user, episode):
-        response = client.post(self.get_url(episode))
+        response = client.post(self.url(episode))
         assertRedirects(response, episode.get_absolute_url())
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     def test_already_bookmarked(self, transactional_db, client, auth_user, episode):
         create_bookmark(episode=episode, user=auth_user)
         response = client.post(
-            self.get_url(episode),
+            self.url(episode),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
             HTTP_HX_REQUEST="true",
         )
@@ -407,13 +407,13 @@ class TestAddBookmark:
 
 
 class TestRemoveBookmark:
-    def get_url(self, episode):
+    def url(self, episode):
         return reverse("episodes:remove_bookmark", args=[episode.id])
 
     def test_post(self, client, auth_user, episode):
         create_bookmark(user=auth_user, episode=episode)
         response = client.post(
-            self.get_url(episode),
+            self.url(episode),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
             HTTP_HX_REQUEST="true",
         )
@@ -422,7 +422,7 @@ class TestRemoveBookmark:
 
     def test_no_js(self, client, auth_user, episode):
         create_bookmark(user=auth_user, episode=episode)
-        response = client.post(self.get_url(episode))
+        response = client.post(self.url(episode))
         assertRedirects(response, episode.get_absolute_url())
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -479,6 +479,15 @@ class TestRemoveAudioLog:
                 HTTP_HX_REQUEST="true",
             )
         )
+
+        assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
+        assert AudioLog.objects.filter(user=auth_user).count() == 1
+
+    def test_no_js(self, client, auth_user, episode):
+        create_audio_log(user=auth_user, episode=episode)
+        create_audio_log(user=auth_user)
+
+        assertRedirects(client.post(self.url(episode)), episode.get_absolute_url())
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1

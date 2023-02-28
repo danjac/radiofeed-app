@@ -187,10 +187,10 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         request.user.audio_logs.filter(episode=episode).delete()
         messages.info(request, "Removed from History")
 
-    return render(
-        request,
-        "episodes/includes/history.html",
-        {"episode": episode},
+    return (
+        render(request, "episodes/includes/history.html", {"episode": episode})
+        if request.htmx
+        else redirect(episode.get_absolute_url())
     )
 
 

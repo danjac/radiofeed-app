@@ -390,13 +390,13 @@ class TestSubscribe:
 
 
 class TestUnsubscribe:
-    def get_url(self, podcast):
+    def url(self, podcast):
         return reverse("podcasts:unsubscribe", args=[podcast.id])
 
     def test_unsubscribe(self, client, auth_user, podcast):
         create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.post(
-            self.get_url(podcast),
+            self.url(podcast),
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
             HTTP_HX_REQUEST="true",
         )
@@ -407,7 +407,7 @@ class TestUnsubscribe:
 
     def test_no_js(self, client, auth_user, podcast):
         create_subscription(subscriber=auth_user, podcast=podcast)
-        response = client.post(self.get_url(podcast))
+        response = client.post(self.url(podcast))
         assertRedirects(response, podcast.get_absolute_url())
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -419,14 +419,14 @@ class TestWebsubCallback:
     def feed_parser(self, mocker):
         return mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
 
-    def get_url(self, podcast):
+    def url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
     def test_post(self, client, db, mocker, feed_parser):
         podcast = create_podcast(websub_mode="subscribe")
         mocker.patch("radiofeed.podcasts.subscriber.check_signature", return_value=True)
 
-        response = client.post(self.get_url(podcast))
+        response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
 
         feed_parser.assert_called()
@@ -434,7 +434,7 @@ class TestWebsubCallback:
     def test_post_not_subscribed(self, client, mocker, feed_parser, podcast):
         mocker.patch("radiofeed.podcasts.subscriber.check_signature", return_value=True)
 
-        response = client.post(self.get_url(podcast))
+        response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         feed_parser.assert_not_called()
@@ -445,14 +445,14 @@ class TestWebsubCallback:
             "radiofeed.podcasts.subscriber.check_signature", return_value=False
         )
 
-        response = client.post(self.get_url(podcast))
+        response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
 
         feed_parser.assert_not_called()
 
     def test_get(self, client, podcast):
         response = client.get(
-            self.get_url(podcast),
+            self.url(podcast),
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
@@ -469,7 +469,7 @@ class TestWebsubCallback:
 
     def test_get_denied(self, client, podcast):
         response = client.get(
-            self.get_url(podcast),
+            self.url(podcast),
             {
                 "hub.mode": "denied",
                 "hub.challenge": "OK",
@@ -486,7 +486,7 @@ class TestWebsubCallback:
 
     def test_get_invalid_topic(self, client, podcast):
         response = client.get(
-            self.get_url(podcast),
+            self.url(podcast),
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
@@ -503,7 +503,7 @@ class TestWebsubCallback:
 
     def test_get_invalid_lease_seconds(self, client, podcast):
         response = client.get(
-            self.get_url(podcast),
+            self.url(podcast),
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
@@ -520,7 +520,7 @@ class TestWebsubCallback:
 
     def test_get_missing_mode(self, client, podcast):
         response = client.get(
-            self.get_url(podcast),
+            self.url(podcast),
             {
                 "hub.challenge": "OK",
                 "hub.topic": podcast.rss,

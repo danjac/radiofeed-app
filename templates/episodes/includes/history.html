@@ -9,17 +9,23 @@
                 </div>
                 {% if current_time and current_time > 60 %}<div title="Timestamp">{{ current_time|format_duration }}</div>{% endif %}
                 {% if not is_playing %}
-                    <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
-                            title="Remove episode from your History"
-                            hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
-                            hx-disinherit="hx-indicator"
-                            hx-push-url="false"
-                            hx-target="#{{ target }}"
-                            hx-swap="outerHTML"
-                            hx-confirm="Are you sure you want to remove this episode from your History?">
-                        {% heroicon_mini "trash" class="mr-2" %}
-                        Remove
-                    </button>
+                    {% url "episodes:remove_audio_log" episode.id as action_url %}
+                    <form class="inline-flex items-center"
+                          action="{{ action_url }}"
+                          method="post">
+                        {% csrf_token %}
+                        <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
+                                title="Remove episode from your History"
+                                hx-post="{{ action_url }}"
+                                hx-disinherit="hx-indicator"
+                                hx-push-url="false"
+                                hx-target="#{{ target }}"
+                                hx-swap="outerHTML"
+                                hx-confirm="Are you sure you want to remove this episode from your History?">
+                            {% heroicon_mini "trash" class="mr-2" %}
+                            Remove
+                        </button>
+                    </form>
                 {% endif %}
             </div>
         {% endif %}
