@@ -6,7 +6,7 @@ import pytest
 import requests
 
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertRedirects
 
 from radiofeed.asserts import assert_conflict, assert_not_found, assert_ok
 from radiofeed.episodes.factories import create_episode
@@ -381,16 +381,34 @@ class TestSubscribe:
             podcast=podcast, subscriber=auth_user
         ).exists()
 
+    def test_no_js(self, client, podcast, auth_user):
+        response = client.post(self.url(podcast))
+        assertRedirects(response, podcast.get_absolute_url())
+        assert Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
+
 
 class TestUnsubscribe:
+    def get_url(self, podcast):
+        return reverse("podcasts:unsubscribe", args=[podcast.id])
+
     def test_unsubscribe(self, client, auth_user, podcast):
         create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.post(
-            reverse("podcasts:unsubscribe", args=[podcast.id]),
+            self.get_url(podcast),
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
             HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
+        assert not Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
+
+    def test_no_js(self, client, auth_user, podcast):
+        create_subscription(subscriber=auth_user, podcast=podcast)
+        response = client.post(self.get_url(podcast))
+        assertRedirects(response, podcast.get_absolute_url())
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()

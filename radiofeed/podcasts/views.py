@@ -345,11 +345,13 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
 def _render_subscribe_toggle(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    return render(
-        request,
-        "podcasts/includes/subscribe_toggle.html",
-        {
-            "podcast": podcast,
-            "is_subscribed": is_subscribed,
-        },
-    )
+    if request.htmx:
+        return render(
+            request,
+            "podcasts/includes/subscribe_toggle.html",
+            {
+                "podcast": podcast,
+                "is_subscribed": is_subscribed,
+            },
+        )
+    return redirect(podcast.get_absolute_url())
