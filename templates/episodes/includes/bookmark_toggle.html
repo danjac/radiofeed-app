@@ -1,17 +1,20 @@
 {% load heroicons %}
-{% with target=episode.get_bookmark_target %}
-    <div class="flex items-center"
-         id="{{ target }}"
-         hx-push-url="false"
-         hx-target="this"
-         hx-swap="outerHTML"
-         hx-disinherit="hx-indicator"
-         x-data="{isLoading: false}">
+{% url is_bookmarked|yesno:"episodes:remove_bookmark,episodes:add_bookmark" episode.id as action_url %}
+<form id="{{ target }}"
+      action="{{ action_url }}"
+      method="post"
+      hx-push-url="false"
+      hx-target="this"
+      hx-swap="outerHTML"
+      hx-disinherit="hx-indicator"
+      x-data="{isLoading: false}">
+    {% csrf_token %}
+    {% with target=episode.get_bookmark_target %}
         {% if is_bookmarked %}
             <button title="Remove Bookmark"
                     class="inline-flex items-center btn btn-default btn-outline"
                     @click="isLoading=true"
-                    hx-post="{% url 'episodes:remove_bookmark' episode.id %}"
+                    hx-post="{{ action_url }}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark-slash" class="mr-2" x_show="!isLoading" %}
                 <span x-text="isLoading ? 'Loading...' : 'Bookmark'">Bookmark</span>
@@ -20,14 +23,14 @@
             <button title="Bookmark"
                     class="inline-flex items-center btn btn-default"
                     @click="isLoading=true"
-                    hx-post="{% url 'episodes:add_bookmark' episode.id %}"
+                    hx-post="{{ action_url }}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark" class="mr-2" x_show="!isLoading" %}
                 <span x-text="isLoading ? 'Loading...' : 'Bookmark'">Bookmark</span>
             </button>
         {% endif %}
-    </div>
-    {% if request.htmx.target == target %}
-        {% include "includes/messages.html" with hx_oob=True %}
-    {% endif %}
-{% endwith %}
+    {% endwith %}
+</form>
+{% if request.htmx.target == target %}
+    {% include "includes/messages.html" with hx_oob=True %}
+{% endif %}

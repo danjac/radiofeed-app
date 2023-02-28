@@ -5,7 +5,7 @@ from datetime import timedelta
 import pytest
 
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains, assertNotContains
+from pytest_django.asserts import assertContains, assertNotContains, assertRedirects
 
 from radiofeed.asserts import (
     assert_bad_request,
@@ -282,7 +282,6 @@ class TestClosePlayer:
         auth_user,
         player_episode,
     ):
-
         log = create_audio_log(
             user=auth_user,
             current_time=2000,
@@ -310,7 +309,6 @@ class TestPlayerTimeUpdate:
         return create_audio_log(user=auth_user, episode=player_episode)
 
     def test_is_running(self, client, auth_user, log):
-
         response = client.post(
             self.url,
             {"current_time": "1030"},
@@ -322,7 +320,6 @@ class TestPlayerTimeUpdate:
         assert log.current_time == 1030
 
     def test_player_not_running(self, client, auth_user, episode):
-
         response = client.post(
             self.url,
             {"current_time": "1030"},
@@ -330,12 +327,10 @@ class TestPlayerTimeUpdate:
         assert_no_content(response)
 
     def test_missing_data(self, client, auth_user, player_episode):
-
         response = client.post(self.url)
         assert_bad_request(response)
 
     def test_invalid_data(self, client, auth_user, player_episode):
-
         response = client.post(self.url, {"current_time": "xyz"})
         assert_bad_request(response)
 
@@ -360,14 +355,12 @@ class TestBookmarks:
         assert len(response.context["page_obj"].object_list) == 30
 
     def test_empty(self, client, auth_user):
-
         response = client.get(self.url)
 
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
 
     def test_search(self, client, auth_user):
-
         podcast = create_podcast(title="zzzz", keywords="zzzzz")
 
         for _ in range(3):
@@ -384,10 +377,12 @@ class TestBookmarks:
 
 
 class TestAddBookmark:
-    def test_post(self, client, auth_user, episode):
+    def get_url(self, episode):
+        return reverse("episodes:add_bookmark", args=[episode.id])
 
+    def test_post(self, client, auth_user, episode):
         response = client.post(
-            reverse("episodes:add_bookmark", args=[episode.id]),
+            self.get_url(episode),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
             HTTP_HX_REQUEST="true",
         )
@@ -395,10 +390,15 @@ class TestAddBookmark:
         assert_ok(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
-    def test_already_bookmark(self, transactional_db, client, auth_user, episode):
+    def test_no_js(self, client, auth_user, episode):
+        response = client.post(self.get_url(episode))
+        assertRedirects(response, episode.get_absolute_url())
+        assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
+
+    def test_already_bookmarked(self, transactional_db, client, auth_user, episode):
         create_bookmark(episode=episode, user=auth_user)
         response = client.post(
-            reverse("episodes:add_bookmark", args=[episode.id]),
+            self.get_url(episode),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
             HTTP_HX_REQUEST="true",
         )
@@ -407,14 +407,23 @@ class TestAddBookmark:
 
 
 class TestRemoveBookmark:
+    def get_url(self, episode):
+        return reverse("episodes:remove_bookmark", args=[episode.id])
+
     def test_post(self, client, auth_user, episode):
         create_bookmark(user=auth_user, episode=episode)
         response = client.post(
-            reverse("episodes:remove_bookmark", args=[episode.id]),
+            self.get_url(episode),
             HTTP_HX_TARGET=episode.get_bookmark_target(),
             HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
+        assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
+
+    def test_no_js(self, client, auth_user, episode):
+        create_bookmark(user=auth_user, episode=episode)
+        response = client.post(self.get_url(episode))
+        assertRedirects(response, episode.get_absolute_url())
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -441,7 +450,6 @@ class TestHistory:
         assert len(response.context["page_obj"].object_list) == 30
 
     def test_search(self, client, auth_user):
-
         podcast = create_podcast(title="zzzz", keywords="zzzzz")
 
         for _ in range(3):

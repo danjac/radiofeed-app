@@ -265,11 +265,13 @@ def _render_play_toggle(
 def _render_bookmark_toggle(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
-    return render(
-        request,
-        "episodes/includes/bookmark_toggle.html",
-        {
-            "episode": episode,
-            "is_bookmarked": is_bookmarked,
-        },
-    )
+    if request.htmx:
+        return render(
+            request,
+            "episodes/includes/bookmark_toggle.html",
+            {
+                "episode": episode,
+                "is_bookmarked": is_bookmarked,
+            },
+        )
+    return redirect(episode.get_absolute_url())
