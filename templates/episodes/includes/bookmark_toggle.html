@@ -14,7 +14,7 @@
                     hx-post="{% url 'episodes:remove_bookmark' episode.id %}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark-slash" class="mr-2" x_show="!isLoading" %}
-                Bookmark
+                <span x-text="isLoading ? 'Loading...' : 'Bookmark'">Bookmark</span>
             </button>
         {% else %}
             <button title="Bookmark"
@@ -23,7 +23,7 @@
                     hx-post="{% url 'episodes:add_bookmark' episode.id %}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark" class="mr-2" x_show="!isLoading" %}
-                Bookmark
+                <span x-text="isLoading ? 'Loading...' : 'Bookmark'">Bookmark</span>
             </button>
         {% endif %}
     </div>

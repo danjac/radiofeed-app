@@ -13,7 +13,7 @@
                     hx-post="{% url 'episodes:close_player' %}"
                     hx-trigger="click once">
                 {% heroicon_mini "stop-circle" class="mr-2" x_show="!isLoading" %}
-                Close
+                <span x-text="isLoading ? 'Loading...' : 'Close'">Close</span>
             </button>
         {% else %}
             <button title="Open episode in Player"
@@ -22,7 +22,7 @@
                     hx-post="{% url 'episodes:start_player' episode.id %}"
                     hx-trigger="click once">
                 {% heroicon_mini "play-circle" class="mr-2" x_show="!isLoading" %}
-                Play
+                <span x-text="isLoading ? 'Loading...' : 'Play'">Play</span>
             </button>
         {% endif %}
     </div>
