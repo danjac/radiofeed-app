@@ -7,7 +7,7 @@
           hx-push-url="false"
           hx-target="this"
           hx-swap="outerHTML"
-          hx-disinherit="hx-indicator"
+          hx-indicator="this"
           x-data="{isLoading: false}">
         {% csrf_token %}
         {% if is_bookmarked %}
