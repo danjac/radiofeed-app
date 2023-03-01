@@ -3,7 +3,6 @@
     <div id="{{ target }}"
          hx-push-url="false"
          hx-target="this"
-         hx-disinherit="hx-indicator"
          hx-swap="outerHTML"
          x-data="{isLoading: false}">
         {% if is_playing %}
@@ -13,16 +12,18 @@
                     hx-post="{% url 'episodes:close_player' %}"
                     hx-trigger="click once">
                 {% heroicon_mini "stop-circle" class="mr-2" x_show="!isLoading" %}
-                <span x-text="isLoading ? 'Loading...' : 'Close'">Close</span>
+                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
+                Close
             </button>
         {% else %}
-            <button title="Open episode in Player"
+            <button title="Open Episode in Player"
                     class="inline-flex items-center btn btn-primary btn-lg"
                     @click="isLoading=true"
                     hx-post="{% url 'episodes:start_player' episode.id %}"
                     hx-trigger="click once">
                 {% heroicon_mini "play-circle" class="mr-2" x_show="!isLoading" %}
-                <span x-text="isLoading ? 'Loading...' : 'Play'">Play</span>
+                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
+                Play
             </button>
         {% endif %}
     </div>

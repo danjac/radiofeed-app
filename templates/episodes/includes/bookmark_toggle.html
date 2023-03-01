@@ -6,7 +6,6 @@
       hx-push-url="false"
       hx-target="this"
       hx-swap="outerHTML"
-      hx-disinherit="hx-indicator"
       x-data="{isLoading: false}">
     {% csrf_token %}
     {% with target=episode.get_bookmark_target %}
@@ -17,7 +16,8 @@
                     hx-post="{{ action_url }}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark-slash" class="mr-2" x_show="!isLoading" %}
-                <span x-text="isLoading ? 'Loading...' : 'Bookmark'">Bookmark</span>
+                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
+                Bookmark
             </button>
         {% else %}
             <button title="Bookmark"
@@ -26,7 +26,8 @@
                     hx-post="{{ action_url }}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark" class="mr-2" x_show="!isLoading" %}
-                <span x-text="isLoading ? 'Loading...' : 'Bookmark'">Bookmark</span>
+                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
+                Bookmark
             </button>
         {% endif %}
     {% endwith %}
