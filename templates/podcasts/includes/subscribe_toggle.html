@@ -6,7 +6,7 @@
           method="post"
           hx-target="this"
           hx-push-url="false"
-          hx-indicator="none"
+          hx-disinherit="hx-indicator"
           hx-swap="outerHTML"
           x-data="{isLoading: false}">
         {% csrf_token %}

@@ -19,7 +19,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 /* HTMX */
 
-.hx-indicator {
+#hx-indicator {
     display: none;
     position: fixed;
     top: 0;
@@ -31,7 +31,7 @@ input[type="search"]::-webkit-search-results-decoration {
     transform: translate3d(0, 0, 0);
 }
 
-.htmx-request {
+#hx-indicator.htmx-request {
     display: block !important;
 }
 

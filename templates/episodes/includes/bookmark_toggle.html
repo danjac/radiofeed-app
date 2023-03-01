@@ -6,8 +6,8 @@
           method="post"
           hx-push-url="false"
           hx-target="this"
-          hx-indicator="none"
           hx-swap="outerHTML"
+          hx-disinherit="hx-indicator"
           x-data="{isLoading: false}">
         {% csrf_token %}
         {% if is_bookmarked %}

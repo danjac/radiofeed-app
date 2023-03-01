@@ -17,10 +17,10 @@
                         {% csrf_token %}
                         <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
                                 title="Remove episode from your History"
+                                hx-target="#{{ target }}"
                                 hx-post="{{ action_url }}"
                                 hx-indicator="none"
                                 hx-push-url="false"
-                                hx-target="#{{ target }}"
                                 hx-swap="outerHTML"
                                 hx-confirm="Are you sure you want to remove this episode from your History?"
                                 @click="isLoading=true">

@@ -3,7 +3,7 @@
     <div id="{{ target }}"
          hx-push-url="false"
          hx-target="this"
-         hx-indicator="none"
+         hx-disinherit="hx-indicator"
          hx-swap="outerHTML"
          x-data="{isLoading: false}">
         {% if is_playing %}
