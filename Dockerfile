@@ -20,10 +20,8 @@ COPY ./nltk.txt /app/nltk.txt
 
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
-COPY ./static /app/static
+COPY . /app
 
 RUN python manage.py collectstatic --no-input --traceback --settings=radiofeed.settings.production
-
-COPY . /app
 
 CMD ["./deploy.sh"]
