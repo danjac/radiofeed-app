@@ -1,14 +1,14 @@
 {% load heroicons %}
-{% url is_subscribed|yesno:'podcasts:unsubscribe,podcasts:subscribe' podcast.id as action_url %}
-<form id="{{ target }}"
-      action="{{ action_url }}"
-      method="post"
-      hx-target="this"
-      hx-push-url="false"
-      hx-swap="outerHTML"
-      x-data="{isLoading: false}">
-    {% csrf_token %}
-    {% with target=podcast.get_subscribe_target %}
+{% with target=podcast.get_subscribe_target %}
+    {% url is_subscribed|yesno:'podcasts:unsubscribe,podcasts:subscribe' podcast.id as action_url %}
+    <form id="{{ target }}"
+          action="{{ action_url }}"
+          method="post"
+          hx-target="this"
+          hx-push-url="false"
+          hx-swap="outerHTML"
+          x-data="{isLoading: false}">
+        {% csrf_token %}
         {% if is_subscribed %}
             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                     title="Unsubscribe from this Podcast"
@@ -30,8 +30,8 @@
                 Subscribe
             </button>
         {% endif %}
-    {% endwith %}
-</form>
+    </form>
+{% endwith %}
 {% if request.htmx.target == target %}
     {% include "includes/messages.html" with hx_oob=True %}
 {% endif %}
