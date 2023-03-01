@@ -12,17 +12,20 @@
                     {% url "episodes:remove_audio_log" episode.id as action_url %}
                     <form class="inline-flex items-center"
                           action="{{ action_url }}"
-                          method="post">
+                          method="post"
+                          x-data="{isLoading: false}">
                         {% csrf_token %}
                         <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
                                 title="Remove episode from your History"
                                 hx-post="{{ action_url }}"
-                                hx-disinherit="hx-indicator"
+                                hx-indicator="none"
                                 hx-push-url="false"
                                 hx-target="#{{ target }}"
                                 hx-swap="outerHTML"
-                                hx-confirm="Are you sure you want to remove this episode from your History?">
-                            {% heroicon_mini "trash" class="mr-2" %}
+                                hx-confirm="Are you sure you want to remove this episode from your History?"
+                                @click="isLoading=true">
+                            {% heroicon_mini "trash" class="mr-2" x_show="!isLoading" %}
+                            {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
                             Remove
                         </button>
                     </form>

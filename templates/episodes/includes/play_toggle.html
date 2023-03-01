@@ -3,6 +3,7 @@
     <div id="{{ target }}"
          hx-push-url="false"
          hx-target="this"
+         hx-indicator="none"
          hx-swap="outerHTML"
          x-data="{isLoading: false}">
         {% if is_playing %}
