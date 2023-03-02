@@ -30,6 +30,7 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
             websub_expires__lt=timezone.now(),
         ),
         websub_hub__isnull=False,
+        num_websub_retries__lt=3,
     ).order_by(F("websub_expires").asc(nulls_first=True))
 
 
@@ -64,18 +65,23 @@ def subscribe(
         timeout=10,
     )
 
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
 
-    podcast.websub_mode = mode
-    podcast.websub_secret = secret
+        podcast.websub_mode = mode
+        podcast.websub_secret = secret
 
-    podcast.websub_expires = (
-        timezone.now() + timedelta(seconds=lease_seconds)
-        if mode == "subscribe"
-        else None
-    )
+        podcast.websub_expires = (
+            timezone.now() + timedelta(seconds=lease_seconds)
+            if mode == "subscribe"
+            else None
+        )
 
-    podcast.save()
+    except requests.RequestException:
+        podcast.num_websub_retries += 1
+        raise
+    finally:
+        podcast.save()
 
     return response
 

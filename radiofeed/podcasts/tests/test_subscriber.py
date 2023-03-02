@@ -46,6 +46,16 @@ class TestGetPodcastsForSubscribe:
 
         assert subscriber.get_podcasts_for_subscribe().count() == 1
 
+    def test_too_many_errors(self, db):
+        create_podcast(
+            websub_hub=self.hub,
+            websub_expires=timezone.now() - timedelta(days=1),
+            websub_mode="subscribe",
+            num_websub_retries=3,
+        )
+
+        assert subscriber.get_podcasts_for_subscribe().count() == 0
+
     def test_expired_not_subscribed(self, db):
         create_podcast(
             websub_hub=self.hub,
@@ -181,3 +191,5 @@ class TestSubscribe:
         assert podcast.websub_mode == ""
         assert podcast.websub_expires is None
         assert podcast.websub_secret is None
+
+        assert podcast.num_websub_retries == 1

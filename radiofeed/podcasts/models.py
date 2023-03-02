@@ -159,6 +159,8 @@ class Podcast(models.Model):
     websub_mode: str = models.CharField(max_length=12, blank=True)
     websub_expires: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    num_websub_retries: int = models.PositiveSmallIntegerField(default=0)
+
     categories: models.QuerySet[Category] = models.ManyToManyField(
         "podcasts.Category",
         blank=True,
