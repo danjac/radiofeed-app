@@ -25,7 +25,7 @@
                                 hx-confirm="Are you sure you want to remove this episode from your History?"
                                 @click="isLoading=true">
                             {% heroicon_mini "trash" class="mr-2" x_show="!isLoading" %}
-                            {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
+                            {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
                             Remove
                         </button>
                     </form>

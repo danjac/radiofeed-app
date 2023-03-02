@@ -17,7 +17,7 @@
                     hx-post="{{ action_url }}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark-slash" class="mr-2" x_show="!isLoading" %}
-                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
+                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
                 Bookmark
             </button>
         {% else %}
@@ -27,7 +27,7 @@
                     hx-post="{{ action_url }}"
                     hx-trigger="click once">
                 {% heroicon_mini "bookmark" class="mr-2" x_show="!isLoading" %}
-                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" %}
+                {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
                 Bookmark
             </button>
         {% endif %}
