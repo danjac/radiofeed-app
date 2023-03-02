@@ -200,6 +200,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         "websub_mode",
         "websub_secret",
         "websub_expires",
+        "num_websub_retries",
     )
 
     actions = ("parse_podcast_feeds",)
