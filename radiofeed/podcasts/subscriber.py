@@ -10,7 +10,7 @@ from typing import Final
 import requests
 
 from django.conf import settings
-from django.db.models import Q, QuerySet
+from django.db.models import F, Q, QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
@@ -30,7 +30,7 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
             websub_expires__lt=timezone.now(),
         ),
         websub_hub__isnull=False,
-    ).order_by("websub_expires", "parsed")
+    ).order_by(F("websub_expires").asc(nulls_first=True))
 
 
 def subscribe(
