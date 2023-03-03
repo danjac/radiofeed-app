@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -o errexit
+
 # check all secure
 
 ./manage.py check --deploy
