@@ -20,8 +20,8 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
+from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.feedparser.feed_parser import FeedParser
 from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes, subscriber
 from radiofeed.podcasts.models import Category, Podcast, Subscription
@@ -300,7 +300,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
         if subscriber.check_signature(request, podcast):
             with contextlib.suppress(FeedParserError):
-                FeedParser(podcast).parse()
+                feed_parser.parse_feed(podcast)
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
