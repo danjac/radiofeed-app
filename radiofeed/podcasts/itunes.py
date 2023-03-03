@@ -31,7 +31,10 @@ _ITUNES_LOCATIONS: Final = (
 
 _APPLE_NAMESPACE: Final = "http://www.apple.com/itms/"
 
-_xpath_parser = XPathParser({"apple": _APPLE_NAMESPACE})
+
+@functools.cache
+def _xpath_parser() -> XPathParser:
+    return XPathParser({"apple": _APPLE_NAMESPACE})
 
 
 @dataclasses.dataclass(frozen=True)
@@ -153,11 +156,12 @@ class Crawler:
             return []
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
-        for element in _xpath_parser.iterparse(
+        parser = _xpath_parser()
+        for element in parser.iterparse(
             content, f"{{{_APPLE_NAMESPACE}}}html", "/apple:html"
         ):
             try:
-                yield from _xpath_parser.iter(element, "//a//@href")
+                yield from parser.iter(element, "//a//@href")
             finally:
                 element.clear()
 
