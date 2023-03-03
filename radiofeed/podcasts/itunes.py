@@ -32,11 +32,6 @@ _ITUNES_LOCATIONS: Final = (
 _APPLE_NAMESPACE: Final = "http://www.apple.com/itms/"
 
 
-@functools.cache
-def _xpath_parser() -> XPathParser:
-    return XPathParser({"apple": _APPLE_NAMESPACE})
-
-
 @dataclasses.dataclass(frozen=True)
 class Feed:
     """Encapsulates iTunes API result.
@@ -240,3 +235,8 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
 @functools.cache
 def _itunes_podcast_id() -> re.Pattern:
     return re.compile(r"id(?P<id>\d+)")
+
+
+@functools.cache
+def _xpath_parser() -> XPathParser:
+    return XPathParser({"apple": _APPLE_NAMESPACE})

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+
 from collections.abc import Iterator
 
 import lxml.etree  # nosec
@@ -7,17 +9,6 @@ import lxml.etree  # nosec
 from radiofeed.feedparser.exceptions import InvalidRSS
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.feedparser.xpath_parser import XPathParser
-
-_xpath_parser = XPathParser(
-    {
-        "atom": "http://www.w3.org/2005/Atom",
-        "content": "http://purl.org/rss/1.0/modules/content/",
-        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-        "media": "http://search.yahoo.com/mrss/",
-        "podcast": "https://podcastindex.org/namespace/1.0",
-    }
-)
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -29,27 +20,28 @@ def parse_rss(content: bytes) -> Feed:
     Raises:
         InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid or empty
     """
+    parser = _xpath_parser()
     try:
-        return _parse_feed(next(_xpath_parser.iterparse(content, "rss", "channel")))
+        return _parse_feed(parser, next(parser.iterparse(content, "rss", "channel")))
     except StopIteration as e:
         raise InvalidRSS("Document does not contain <channel /> element") from e
     except lxml.etree.XMLSyntaxError as e:
         raise InvalidRSS from e
 
 
-def _parse_feed(channel: lxml.etree.Element) -> Feed:
+def _parse_feed(parser: XPathParser, channel: lxml.etree.Element) -> Feed:
     """Parse a RSS XML feed."""
     try:
         return Feed(
-            items=list(_parse_items(channel)),
-            categories=_xpath_parser.aslist(
+            items=list(_parse_items(parser, channel)),
+            categories=parser.aslist(
                 channel,
                 "//googleplay:category/@text",
                 "//itunes:category/@text",
                 "//media:category/@label",
                 "//media:category/text()",
             ),
-            **_xpath_parser.asdict(
+            **parser.asdict(
                 channel,
                 complete="itunes:complete/text()",
                 cover_url=("itunes:image/@href", "image/url/text()"),
@@ -74,12 +66,12 @@ def _parse_feed(channel: lxml.etree.Element) -> Feed:
         channel.clear()
 
 
-def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
-    for item in _xpath_parser.findall(channel, "item"):
+def _parse_items(parser: XPathParser, channel: lxml.etree.Element) -> Iterator[Item]:
+    for item in parser.findall(channel, "item"):
         try:
             yield Item(
-                categories=_xpath_parser.aslist(item, "category/text()"),
-                **_xpath_parser.asdict(
+                categories=parser.aslist(item, "category/text()"),
+                **parser.asdict(
                     item,
                     cover_url="itunes:image/@href",
                     description=(
@@ -105,3 +97,17 @@ def _parse_items(channel: lxml.etree.Element) -> Iterator[Item]:
             continue
         finally:
             item.clear()
+
+
+@functools.cache
+def _xpath_parser() -> XPathParser:
+    return XPathParser(
+        {
+            "atom": "http://www.w3.org/2005/Atom",
+            "content": "http://purl.org/rss/1.0/modules/content/",
+            "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+            "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+            "media": "http://search.yahoo.com/mrss/",
+            "podcast": "https://podcastindex.org/namespace/1.0",
+        }
+    )
