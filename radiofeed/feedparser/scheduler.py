@@ -35,7 +35,7 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     )
 
 
-def scheduled_for_update() -> QuerySet[Podcast]:
+def get_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns all active podcasts scheduled for feed update.
 
     1) Any newly added feeds

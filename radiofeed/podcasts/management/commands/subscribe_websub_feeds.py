@@ -30,7 +30,7 @@ class Command(BaseCommand):
         with ThreadPoolExecutor() as executor:
             executor.map(
                 self._subscribe,
-                subscriber.get_podcasts_for_subscribe()[: options["limit"]],
+                subscriber.get_podcasts_for_subscribe()[: options["limit"]].iterator(),
             )
 
     def _subscribe(self, podcast: Podcast) -> None:

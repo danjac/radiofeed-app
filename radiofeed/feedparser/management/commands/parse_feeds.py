@@ -29,7 +29,7 @@ class Command(BaseCommand):
         with ThreadPoolExecutor() as executor:
             executor.map(
                 self._parse_feed,
-                scheduler.scheduled_for_update()[: options["limit"]].iterator(),
+                scheduler.get_podcasts_for_update()[: options["limit"]].iterator(),
             )
 
     def _parse_feed(self, podcast: Podcast) -> None:

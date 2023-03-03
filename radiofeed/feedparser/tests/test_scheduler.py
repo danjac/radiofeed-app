@@ -25,7 +25,6 @@ class TestNextScheduledUpdate:
         assert (scheduler.next_scheduled_update(podcast) - now).total_seconds() < 10
 
     def test_parsed_gt_max(self):
-
         now = timezone.now()
         podcast = Podcast(
             pub_date=now - timedelta(days=5),
@@ -53,7 +52,6 @@ class TestNextScheduledUpdate:
         assert (scheduler.next_scheduled_update(podcast) - now).total_seconds() < 10
 
     def test_pub_date_in_future(self):
-
         now = timezone.now()
         podcast = Podcast(
             pub_date=now - timedelta(days=5),
@@ -63,7 +61,6 @@ class TestNextScheduledUpdate:
         assert (scheduler.next_scheduled_update(podcast) - now).days == 2
 
     def test_pub_date_lt_min(self):
-
         now = timezone.now()
         podcast = Podcast(
             pub_date=now - timedelta(hours=3),
@@ -75,7 +72,7 @@ class TestNextScheduledUpdate:
         ).total_seconds() / 3600 == pytest.approx(2)
 
 
-class TestScheduledForUpdate:
+class TestGetPodcastsForUpdate:
     @pytest.mark.parametrize(
         "active,parsed,pub_date,frequency,exists",
         [
@@ -96,8 +93,9 @@ class TestScheduledForUpdate:
             (True, timedelta(days=30), timedelta(days=90), timedelta(days=30), True),
         ],
     )
-    def test_schedule(self, db, mocker, active, parsed, pub_date, frequency, exists):
-
+    def test_get_podcasts_for_update(
+        self, db, mocker, active, parsed, pub_date, frequency, exists
+    ):
         create_podcast(
             active=active,
             parsed=timezone.now() - parsed if parsed else None,
@@ -105,7 +103,7 @@ class TestScheduledForUpdate:
             frequency=frequency,
         )
 
-        assert scheduler.scheduled_for_update().exists() == exists
+        assert scheduler.get_podcasts_for_update().exists() == exists
 
 
 class TestReschedule:
@@ -151,7 +149,6 @@ class TestSchedule:
         assert scheduler.schedule(feed).days == 33
 
     def test_median_empty(self):
-
         pub_date = timezone.now() - timedelta(days=3)
 
         items = [Item(**create_item(pub_date=pub_date)) for _ in range(12)]
@@ -161,12 +158,10 @@ class TestSchedule:
         assert scheduler.schedule(feed).days == 3
 
     def test_no_outliers(self):
-
         items = []
         last = timezone.now()
 
         for day in [7] * 12:
-
             pub_date = last - timedelta(days=day)
             items.append(Item(**create_item(pub_date=pub_date)))
             last = pub_date
@@ -176,12 +171,10 @@ class TestSchedule:
         assert scheduler.schedule(feed).days == pytest.approx(7)
 
     def test_variation(self):
-
         items = []
         last = timezone.now()
 
         for day in [4, 3, 4, 2, 5, 2, 4, 4, 3, 4, 4, 4, 6, 5, 7, 7, 7, 7, 3]:
-
             pub_date = last - timedelta(days=day)
             items.append(Item(**create_item(pub_date=pub_date)))
             last = pub_date
@@ -191,12 +184,10 @@ class TestSchedule:
         assert scheduler.schedule(feed).days == pytest.approx(4)
 
     def test_regular_pattern(self):
-
         items = []
         last = timezone.now()
 
         for day in [3, 4] * 12:
-
             pub_date = last - timedelta(days=day)
             items.append(Item(**create_item(pub_date=pub_date)))
             last = pub_date
