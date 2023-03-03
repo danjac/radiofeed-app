@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import functools
 import itertools
 import re
 
@@ -18,8 +19,6 @@ from django.utils.http import urlsafe_base64_encode
 from radiofeed import iterators
 from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast
-
-_ITUNES_PODCAST_ID_RE: Final = re.compile(r"id(?P<id>\d+)")
 
 _ITUNES_LOCATIONS: Final = (
     "de",
@@ -120,7 +119,6 @@ class Crawler:
             yield from self._parse_feeds(feed_ids)
 
     def _parse_feeds(self, feed_ids: list[str]) -> Iterator[Feed]:
-
         try:
             _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
@@ -164,7 +162,7 @@ class Crawler:
                 element.clear()
 
     def _parse_podcast_id(self, url: str) -> str | None:
-        if match := _ITUNES_PODCAST_ID_RE.search(urlparse(url).path.split("/")[-1]):
+        if match := _itunes_podcast_id().search(urlparse(url).path.split("/")[-1]):
             return match.group("id")
         return None
 
@@ -187,7 +185,6 @@ def _get_response(
 
 
 def _parse_feeds(url: str, params: dict | None = None) -> Iterator[Feed]:
-
     for batch in iterators.batcher(
         _build_feeds_from_json(
             _get_response(
@@ -198,7 +195,6 @@ def _parse_feeds(url: str, params: dict | None = None) -> Iterator[Feed]:
         ),
         100,
     ):
-
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
         podcasts = Podcast.objects.filter(
@@ -235,3 +231,8 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
             )
         except KeyError:
             continue
+
+
+@functools.cache
+def _itunes_podcast_id() -> re.Pattern:
+    return re.compile(r"id(?P<id>\d+)")
