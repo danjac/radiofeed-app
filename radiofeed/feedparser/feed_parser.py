@@ -52,6 +52,11 @@ def get_categories() -> dict[str, Category]:
     }
 
 
+def parse_feed(podcast: Podcast) -> None:
+    """Updates a Podcast instance with its RSS or Atom feed source."""
+    FeedParser(podcast).parse()
+
+
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
     return hashlib.sha256(content).hexdigest()

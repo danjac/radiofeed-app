@@ -210,7 +210,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
         try:
-            feed_parser.FeedParser(obj).parse()
+            feed_parser.parse_feed(obj)
 
         except FeedParserError:
             self.message_user(

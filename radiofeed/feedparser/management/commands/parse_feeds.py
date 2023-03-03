@@ -36,7 +36,7 @@ class Command(BaseCommand):
         self.stdout.write(f"Parsing feed {podcast}...")
 
         try:
-            feed_parser.FeedParser(podcast).parse()
+            feed_parser.parse_feed(podcast)
 
         except FeedParserError:
             self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
