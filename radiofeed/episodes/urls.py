@@ -26,7 +26,7 @@ urlpatterns = [
         name="close_player",
     ),
     path(
-        "player/timeupdate/",
+        "player/timeupdate/<int:episode_id>/",
         views.player_time_update,
         name="player_time_update",
     ),

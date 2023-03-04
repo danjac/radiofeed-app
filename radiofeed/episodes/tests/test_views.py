@@ -305,15 +305,16 @@ class TestClosePlayer:
 
 
 class TestPlayerTimeUpdate:
-    url = reverse_lazy("episodes:player_time_update")
-
     @pytest.fixture
     def log(self, auth_user, episode):
         return create_audio_log(user=auth_user, episode=episode, is_playing=True)
 
+    def url(self, episode):
+        return reverse("episodes:player_time_update", args=[episode.id])
+
     def test_is_running(self, client, auth_user, log):
         response = client.post(
-            self.url,
+            self.url(log.episode),
             {"current_time": "1030"},
         )
         assert_no_content(response)
@@ -324,17 +325,17 @@ class TestPlayerTimeUpdate:
 
     def test_player_not_running(self, client, auth_user, episode):
         response = client.post(
-            self.url,
+            self.url(episode),
             {"current_time": "1030"},
         )
         assert_no_content(response)
 
     def test_missing_data(self, client, auth_user, log):
-        response = client.post(self.url)
+        response = client.post(self.url(log.episode))
         assert_bad_request(response)
 
     def test_invalid_data(self, client, auth_user, log):
-        response = client.post(self.url, {"current_time": "xyz"})
+        response = client.post(self.url(log.episode), {"current_time": "xyz"})
         assert_bad_request(response)
 
 

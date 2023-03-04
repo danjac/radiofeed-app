@@ -147,7 +147,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @require_auth
-def player_time_update(request: HttpRequest) -> HttpResponse:
+def player_time_update(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
@@ -156,7 +156,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
     try:
-        request.user.audio_logs.filter(is_playing=True).update(
+        request.user.audio_logs.filter(episode__pk=episode_id).update(
             current_time=int(request.POST["current_time"]),
             listened=timezone.now(),
         )

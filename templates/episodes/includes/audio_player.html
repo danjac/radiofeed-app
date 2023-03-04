@@ -10,7 +10,7 @@
                 startPlayer={{ start_player|yesno:'true,false' }},
                 currentTime={{ current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
-                timeUpdateUrl='{% url 'episodes:player_time_update' %}',
+                timeUpdateUrl='{% url 'episodes:player_time_update' episode.id %}',
             )"
                     {# djlint:on #}
                     @keydown.window="shortcuts">
