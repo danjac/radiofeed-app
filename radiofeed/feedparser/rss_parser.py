@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import functools
-
 from collections.abc import Iterator
 
 import lxml.etree  # nosec
@@ -20,7 +18,7 @@ def parse_rss(content: bytes) -> Feed:
     Raises:
         InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid or empty
     """
-    return _rss_parser().parse(content)
+    return _rss_parser.parse(content)
 
 
 class RSSParser:
@@ -122,6 +120,4 @@ class RSSParser:
                 item.clear()
 
 
-@functools.cache
-def _rss_parser() -> RSSParser:
-    return RSSParser()
+_rss_parser = RSSParser()
