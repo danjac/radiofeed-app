@@ -124,25 +124,20 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @require_auth
-def close_player(request: HttpRequest) -> HttpResponse:
-    """Closes player. Removes episode to player session tracker."""
-    if (
-        audio_log := request.user.audio_logs.filter(is_playing=True)
-        .select_related("episode")
-        .first()
-    ):
-        audio_log.is_playing = False
-        audio_log.save()
+def close_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+    """Closes audio player."""
+    audio_log = get_object_or_404(request.user.audio_logs, episode__pk=episode_id)
 
-        return _render_play_toggle(
-            request,
-            audio_log.episode,
-            start_player=False,
-            current_time=audio_log.current_time,
-            listened=audio_log.listened,
-        )
+    audio_log.is_playing = False
+    audio_log.save()
 
-    return HttpResponse()
+    return _render_play_toggle(
+        request,
+        audio_log.episode,
+        start_player=False,
+        current_time=audio_log.current_time,
+        listened=audio_log.listened,
+    )
 
 
 @require_POST

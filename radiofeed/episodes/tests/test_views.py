@@ -27,12 +27,6 @@ from radiofeed.podcasts.factories import create_podcast, create_subscription
 episodes_url = reverse_lazy("episodes:index")
 
 
-@pytest.fixture
-def player_episode(client, episode):
-    create_audio_log(episode=episode, is_playing=True)
-    return episode
-
-
 class TestNewEpisodes:
     def test_no_episodes(self, client, auth_user):
         response = client.get(episodes_url)
@@ -269,31 +263,26 @@ class TestStartPlayer:
 
 
 class TestClosePlayer:
-    url = reverse_lazy("episodes:close_player")
+    def url(self, episode):
+        return reverse("episodes:close_player", args=[episode.pk])
 
-    def test_player_empty(self, client, auth_user):
-        response = client.post(
-            self.url,
-            HTTP_HX_REQUEST="true",
-        )
-        assert_ok(response)
+    def test_player_empty(self, client, auth_user, episode):
+        response = client.post(self.url(episode), HTTP_HX_REQUEST="true")
+        assert_not_found(response)
 
     def test_close(
         self,
         client,
         auth_user,
-        player_episode,
+        episode,
     ):
         log = create_audio_log(
-            user=auth_user,
-            current_time=2000,
-            episode=player_episode,
-            is_playing=True,
+            user=auth_user, current_time=2000, episode=episode, is_playing=True
         )
 
         response = client.post(
-            self.url,
-            HTTP_HX_TARGET=player_episode.get_player_target(),
+            self.url(log.episode),
+            HTTP_HX_TARGET=log.episode.get_player_target(),
             HTTP_HX_REQUEST="true",
         )
         assert_ok(response)

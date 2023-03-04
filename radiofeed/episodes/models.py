@@ -211,15 +211,15 @@ class Episode(models.Model):
 
     def get_player_target(self) -> str:
         """Play button HTMX target."""
-        return f"player-actions-{self.id}"
+        return f"player-actions-{self.pk}"
 
     def get_bookmark_target(self) -> str:
         """Add/remove bookmark button HTMX target."""
-        return f"bookmark-actions-{self.id}"
+        return f"bookmark-actions-{self.pk}"
 
     def get_history_target(self) -> str:
         """Listening history episode detail HTMX target."""
-        return f"episode-timestamps-{self.id}"
+        return f"episode-timestamps-{self.pk}"
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
