@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import http
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib import messages
 from django.db import IntegrityError
@@ -97,7 +97,7 @@ def episode_detail(
 @require_POST
 @require_auth
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
-    """Starts player. Creates new audio log if necessary and adds episode to player session tracker."""
+    """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"), pk=episode_id
     )
@@ -113,12 +113,16 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         },
     )
 
-    return _render_play_toggle(
+    return render(
         request,
-        episode,
-        start_player=True,
-        current_time=audio_log.current_time,
-        listened=audio_log.listened,
+        "episodes/includes/play_toggle.html",
+        {
+            "episode": episode,
+            "current_time": audio_log.current_time,
+            "listened": audio_log.listened,
+            "start_player": True,
+            "is_playing": True,
+        },
     )
 
 
@@ -126,17 +130,23 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def close_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Closes audio player."""
-    audio_log = get_object_or_404(request.user.audio_logs, episode__pk=episode_id)
+    audio_log = get_object_or_404(
+        request.user.audio_logs.select_related("episode"),
+        episode__pk=episode_id,
+    )
 
     audio_log.is_playing = False
     audio_log.save()
 
-    return _render_play_toggle(
+    return render(
         request,
-        audio_log.episode,
-        start_player=False,
-        current_time=audio_log.current_time,
-        listened=audio_log.listened,
+        "episodes/includes/play_toggle.html",
+        {
+            "episode": audio_log.episode,
+            "current_time": audio_log.current_time,
+            "listened": audio_log.listened,
+            "is_playing": False,
+        },
     )
 
 
@@ -253,27 +263,6 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from Bookmarks")
     return _render_bookmark_toggle(request, episode, False)
-
-
-def _render_play_toggle(
-    request: HttpRequest,
-    episode: Episode,
-    *,
-    start_player: bool,
-    current_time: datetime | None,
-    listened: datetime | None,
-) -> HttpResponse:
-    return render(
-        request,
-        "episodes/includes/play_toggle.html",
-        {
-            "episode": episode,
-            "start_player": start_player,
-            "is_playing": start_player,
-            "current_time": current_time,
-            "listened": listened,
-        },
-    )
 
 
 def _render_bookmark_toggle(
