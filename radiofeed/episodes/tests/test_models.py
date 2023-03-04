@@ -51,15 +51,12 @@ class TestEpisodeModel:
     link = "https://example.com"
 
     def test_get_next_episode_if_none(self, episode):
-
         assert episode.get_next_episode() is None
 
     def test_get_previous_episode_if_none(self, episode):
-
         assert episode.get_previous_episode() is None
 
     def test_get_next_episode_not_same_podcast(self, episode):
-
         create_episode(
             pub_date=episode.pub_date + datetime.timedelta(days=2),
         )
@@ -67,7 +64,6 @@ class TestEpisodeModel:
         assert episode.get_next_episode() is None
 
     def test_get_previous_episode_not_same_podcast(self, episode):
-
         create_episode(
             pub_date=episode.pub_date - datetime.timedelta(days=2),
         )
@@ -75,7 +71,6 @@ class TestEpisodeModel:
         assert episode.get_previous_episode() is None
 
     def test_get_next_episode(self, episode):
-
         next_episode = create_episode(
             podcast=episode.podcast,
             pub_date=episode.pub_date + datetime.timedelta(days=2),
@@ -84,7 +79,6 @@ class TestEpisodeModel:
         assert episode.get_next_episode() == next_episode
 
     def test_get_previous_episode(self, episode):
-
         previous_episode = create_episode(
             podcast=episode.podcast,
             pub_date=episode.pub_date - datetime.timedelta(days=2),
@@ -96,27 +90,23 @@ class TestEpisodeModel:
         assert Episode(link=self.link).get_link() == self.link
 
     def test_get_link_if_podcast(self):
-
         assert (
             Episode(link=None, podcast=Podcast(link=self.link)).get_link() == self.link
         )
 
     def test_get_link_if_none(self):
-
         assert Episode(link=None, podcast=Podcast(link=None)).get_link() is None
 
     def test_episode_explicit(self):
         assert Episode(explicit=True).is_explicit() is True
 
     def test_podcast_explicit(self):
-
         assert (
             Episode(explicit=False, podcast=Podcast(explicit=True)).is_explicit()
             is True
         )
 
     def test_not_explicit(self):
-
         assert (
             Episode(explicit=False, podcast=Podcast(explicit=False)).is_explicit()
             is False
@@ -210,8 +200,18 @@ class TestEpisodeModel:
         assert not episode.is_bookmarked(user)
 
     def test_is_bookmarked_true(self, user, episode):
-        fave = create_bookmark(user=user, episode=episode)
-        assert fave.episode.is_bookmarked(fave.user)
+        bookmark = create_bookmark(user=user, episode=episode)
+        assert bookmark.episode.is_bookmarked(bookmark.user)
+
+    def test_is_playing_anonymous(self, anonymous_user, episode):
+        assert not episode.is_playing(anonymous_user)
+
+    def test_is_playing_false(self, user, episode):
+        assert not episode.is_playing(user)
+
+    def test_is_playing_true(self, user, episode):
+        log = create_audio_log(user=user, episode=episode, is_playing=True)
+        assert log.episode.is_playing(log.user)
 
     @pytest.mark.parametrize(
         "episode_type,number,season,expected",

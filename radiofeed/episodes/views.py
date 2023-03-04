@@ -83,7 +83,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_playing": episode.id in request.player,
+            "is_playing": episode.is_playing(request.user),
             "is_bookmarked": episode.is_bookmarked(request.user),
         },
     )
@@ -97,21 +97,23 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         Episode.objects.select_related("podcast"), pk=episode_id
     )
 
-    log, _ = request.user.audio_logs.update_or_create(
+    # close all other current playing episodes
+    request.user.audio_logs.update(is_playing=False)
+
+    audio_log, _ = request.user.audio_logs.update_or_create(
         episode=episode,
         defaults={
             "listened": timezone.now(),
+            "is_playing": True,
         },
     )
-
-    request.player.set(episode.id)
 
     return _render_play_toggle(
         request,
         episode,
         start_player=True,
-        current_time=log.current_time,
-        listened=log.listened,
+        current_time=audio_log.current_time,
+        listened=audio_log.listened,
     )
 
 
@@ -119,17 +121,20 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes player. Removes episode to player session tracker."""
-    if episode_id := request.player.pop():
-        episode = get_object_or_404(
-            Episode.objects.with_current_time(request.user), pk=episode_id
-        )
+    if (
+        audio_log := request.user.audio_logs.filter(is_playing=True)
+        .select_related("episode")
+        .first()
+    ):
+        audio_log.is_playing = False
+        audio_log.save()
 
         return _render_play_toggle(
             request,
-            episode,
+            audio_log.episode,
             start_player=False,
-            current_time=episode.current_time,
-            listened=episode.listened,
+            current_time=audio_log.current_time,
+            listened=audio_log.listened,
         )
 
     return HttpResponse()
@@ -145,15 +150,14 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     Returns:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
-    if episode_id := request.player.get():
-        try:
-            request.user.audio_logs.filter(episode=episode_id).update(
-                current_time=int(request.POST["current_time"]),
-                listened=timezone.now(),
-            )
+    try:
+        request.user.audio_logs.filter(is_playing=True).update(
+            current_time=int(request.POST["current_time"]),
+            listened=timezone.now(),
+        )
 
-        except (KeyError, ValueError):
-            return HttpResponseBadRequest()
+    except (KeyError, ValueError):
+        return HttpResponseBadRequest()
 
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
@@ -162,16 +166,20 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @require_auth
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    logs = request.user.audio_logs.select_related("episode", "episode__podcast")
+    audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
 
     if request.search:
-        logs = logs.search(request.search.value).order_by("-rank", "-listened")
+        audio_logs = audio_logs.search(request.search.value).order_by(
+            "-rank", "-listened"
+        )
     else:
-        logs = logs.order_by("-listened" if request.ordering.is_desc else "listened")
+        audio_logs = audio_logs.order_by(
+            "-listened" if request.ordering.is_desc else "listened"
+        )
 
     return render_pagination_response(
         request,
-        logs,
+        audio_logs,
         "episodes/history.html",
         "episodes/pagination/audio_logs.html",
     )
@@ -181,16 +189,22 @@ def history(request: HttpRequest) -> HttpResponse:
 @require_auth
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
-    episode = get_object_or_404(Episode, pk=episode_id)
+    audio_log = get_object_or_404(
+        request.user.audio_logs.select_related("episode"),
+        episode__pk=episode_id,
+        is_playing=False,
+    )
 
-    if episode.id not in request.player:
-        request.user.audio_logs.filter(episode=episode).delete()
-        messages.info(request, "Removed from History")
+    audio_log.delete()
+
+    messages.info(request, "Removed from History")
 
     return (
-        render(request, "episodes/includes/history.html", {"episode": episode})
+        render(
+            request, "episodes/includes/history.html", {"episode": audio_log.episode}
+        )
         if request.htmx
-        else redirect(episode.get_absolute_url())
+        else redirect(audio_log.episode.get_absolute_url())
     )
 
 

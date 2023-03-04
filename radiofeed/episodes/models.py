@@ -154,9 +154,19 @@ class Episode(models.Model):
 
     def is_bookmarked(self, user: User | AnonymousUser) -> bool:
         """Check if episode has been bookmarked by this user."""
-        if user.is_anonymous:
-            return False
-        return Bookmark.objects.filter(user=user, episode=self).exists()
+        return (
+            Bookmark.objects.filter(user=user, episode=self).exists()
+            if user.is_authenticated
+            else False
+        )
+
+    def is_playing(self, user: User | AnonymousUser) -> bool:
+        """Check if this episode is currently playing."""
+        return (
+            AudioLog.objects.filter(user=user, episode=self, is_playing=True).exists()
+            if user.is_authenticated
+            else False
+        )
 
     @cached_property
     def cleaned_title(self) -> str:
@@ -276,7 +286,6 @@ class Bookmark(TimeStampedModel):
     objects = BookmarkQuerySet.as_manager()
 
     class Meta:
-
         constraints = [
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s_user_episode",
@@ -313,6 +322,8 @@ class AudioLog(TimeStampedModel):
 
     listened: datetime = models.DateTimeField()
     current_time: int = models.IntegerField(default=0)
+
+    is_playing: bool = models.BooleanField(default=False)
 
     objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()  # pyright: ignore
 

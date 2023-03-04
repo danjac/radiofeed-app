@@ -11,6 +11,7 @@ from radiofeed.asserts import (
     assert_bad_request,
     assert_conflict,
     assert_no_content,
+    assert_not_found,
     assert_ok,
 )
 from radiofeed.episodes.factories import (
@@ -18,7 +19,6 @@ from radiofeed.episodes.factories import (
     create_bookmark,
     create_episode,
 )
-from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -28,14 +28,8 @@ episodes_url = reverse_lazy("episodes:index")
 
 @pytest.fixture
 def player_episode(client, episode):
-    session = client.session
-    session[Player.session_key] = episode.id
-    session.save()
+    create_audio_log(episode=episode, is_playing=True)
     return episode
-
-
-def is_player_episode(client, episode):
-    return client.session.get(Player.session_key) == episode.id
 
 
 class TestNewEpisodes:
@@ -233,11 +227,12 @@ class TestStartPlayer:
             ),
         )
 
-        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-        assert is_player_episode(client, episode)
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
 
     def test_another_episode_in_player(self, client, auth_user, episode):
-        client.session[Player.session_key] = create_episode().id
+        log = create_audio_log(user=auth_user, is_playing=True)
 
         assert_ok(
             client.post(
@@ -247,8 +242,12 @@ class TestStartPlayer:
             ),
         )
 
-        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-        assert is_player_episode(client, episode)
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
+
+        log.refresh_from_db()
+        assert not log.is_playing
 
     def test_resume(self, client, auth_user, episode):
         log = create_audio_log(user=auth_user, episode=episode, current_time=2000)
@@ -263,7 +262,7 @@ class TestStartPlayer:
         log.refresh_from_db()
 
         assert log.current_time == 2000
-        assert is_player_episode(client, episode)
+        assert log.is_playing
 
 
 class TestClosePlayer:
@@ -286,6 +285,7 @@ class TestClosePlayer:
             user=auth_user,
             current_time=2000,
             episode=player_episode,
+            is_playing=True,
         )
 
         response = client.post(
@@ -298,15 +298,15 @@ class TestClosePlayer:
         log.refresh_from_db()
 
         assert log.current_time == 2000
-        assert not is_player_episode(client, log.episode)
+        assert not log.is_playing
 
 
 class TestPlayerTimeUpdate:
     url = reverse_lazy("episodes:player_time_update")
 
     @pytest.fixture
-    def log(self, auth_user, player_episode):
-        return create_audio_log(user=auth_user, episode=player_episode)
+    def log(self, auth_user, episode):
+        return create_audio_log(user=auth_user, episode=episode, is_playing=True)
 
     def test_is_running(self, client, auth_user, log):
         response = client.post(
@@ -326,11 +326,11 @@ class TestPlayerTimeUpdate:
         )
         assert_no_content(response)
 
-    def test_missing_data(self, client, auth_user, player_episode):
+    def test_missing_data(self, client, auth_user, log):
         response = client.post(self.url)
         assert_bad_request(response)
 
-    def test_invalid_data(self, client, auth_user, player_episode):
+    def test_invalid_data(self, client, auth_user, log):
         response = client.post(self.url, {"current_time": "xyz"})
         assert_bad_request(response)
 
@@ -492,14 +492,14 @@ class TestRemoveAudioLog:
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
 
-    def test_is_playing(self, client, auth_user, player_episode):
+    def test_is_playing(self, client, auth_user, episode):
         """Do not remove log if episode is currently playing"""
-        log = create_audio_log(user=auth_user, episode=player_episode)
+        log = create_audio_log(user=auth_user, episode=episode, is_playing=True)
 
-        assert_ok(
+        assert_not_found(
             client.post(
                 self.url(log.episode),
-                HTTP_HX_TARGET=player_episode.get_history_target(),
+                HTTP_HX_TARGET=log.episode.get_history_target(),
                 HTTP_HX_REQUEST="true",
             ),
         )
