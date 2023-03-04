@@ -83,7 +83,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_playing": episode.is_playing(request.user),
+            "is_playing": episode.is_playing,
             "is_bookmarked": episode.is_bookmarked(request.user),
         },
     )

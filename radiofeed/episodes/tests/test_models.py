@@ -24,20 +24,33 @@ class TestEpisodeManager:
 
         assert episode.current_time == 0
         assert not episode.listened
+        assert not episode.is_playing
 
-    def test_with_current_time_if_not_played(self, user):
+    def test_with_current_time_no_log(self, user):
         create_episode()
         episode = Episode.objects.with_current_time(user).first()
 
         assert not episode.current_time
         assert not episode.listened
+        assert not episode.is_playing
 
-    def test_with_current_time_if_played(self, user):
+    def test_with_current_time_has_log(self, user):
         log = create_audio_log(user=user, current_time=20, listened=timezone.now())
         episode = Episode.objects.with_current_time(user).first()
 
         assert episode.current_time == 20
         assert episode.listened == log.listened
+        assert not episode.is_playing
+
+    def test_with_current_time_has_playing_log(self, user):
+        log = create_audio_log(
+            user=user, current_time=20, listened=timezone.now(), is_playing=True
+        )
+        episode = Episode.objects.with_current_time(user).first()
+
+        assert episode.current_time == 20
+        assert episode.listened == log.listened
+        assert episode.is_playing
 
     def test_search(self, db):
         create_episode(title="testing")
@@ -203,16 +216,6 @@ class TestEpisodeModel:
     def test_is_bookmarked_true(self, user, episode):
         bookmark = create_bookmark(user=user, episode=episode)
         assert bookmark.episode.is_bookmarked(bookmark.user)
-
-    def test_is_playing_anonymous(self, anonymous_user, episode):
-        assert not episode.is_playing(anonymous_user)
-
-    def test_is_playing_false(self, user, episode):
-        assert not episode.is_playing(user)
-
-    def test_is_playing_true(self, user, episode):
-        log = create_audio_log(user=user, episode=episode, is_playing=True)
-        assert log.episode.is_playing(log.user)
 
     @pytest.mark.parametrize(
         "episode_type,number,season,expected",

@@ -39,6 +39,7 @@ class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
             return self.annotate(
                 current_time=models.Value(0, output_field=models.IntegerField()),
                 listened=models.Value(None, output_field=models.DateTimeField()),
+                is_playing=models.Value(False, output_field=models.BooleanField()),
             )
 
         logs = user.audio_logs.filter(episode=models.OuterRef("pk"))
@@ -46,6 +47,7 @@ class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
         return self.annotate(
             current_time=models.Subquery(logs.values("current_time")),
             listened=models.Subquery(logs.values("listened")),
+            is_playing=models.Subquery(logs.values("is_playing")),
         )
 
 
@@ -156,14 +158,6 @@ class Episode(models.Model):
         """Check if episode has been bookmarked by this user."""
         return (
             Bookmark.objects.filter(user=user, episode=self).exists()
-            if user.is_authenticated
-            else False
-        )
-
-    def is_playing(self, user: User | AnonymousUser) -> bool:
-        """Check if this episode is currently playing."""
-        return (
-            AudioLog.objects.filter(user=user, episode=self, is_playing=True).exists()
             if user.is_authenticated
             else False
         )
