@@ -333,6 +333,12 @@ class AudioLog(TimeStampedModel):
                 name="unique_%(app_label)s_%(class)s_user_episode",
                 fields=["user", "episode"],
             ),
+            # only allow one log playing per user
+            models.UniqueConstraint(
+                name="unique_%(app_label)s_%(class)s_is_playing",
+                fields=["user", "is_playing"],
+                condition=models.Q(is_playing=True),
+            ),
         ]
         indexes = [
             models.Index(fields=["-listened"]),
