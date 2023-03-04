@@ -5,6 +5,7 @@ from datetime import timedelta
 import pytest
 
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from pytest_django.asserts import assertContains, assertNotContains, assertRedirects
 
 from radiofeed.asserts import (
@@ -161,7 +162,9 @@ class TestEpisodeDetail:
         prev_episode,
         next_episode,
     ):
-        create_audio_log(episode=episode, user=auth_user, current_time=900)
+        create_audio_log(
+            episode=episode, user=auth_user, current_time=900, listened=timezone.now()
+        )
 
         response = client.get(episode.get_absolute_url())
         assert_ok(response)

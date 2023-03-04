@@ -96,9 +96,7 @@
                     {% endif %}
                 {% endwith %}
             </div>
-            {% with listened=episode.listened current_time=episode.current_time %}
-                {% include "episodes/includes/history.html" %}
-            {% endwith %}
+            {% include "episodes/includes/history.html" %}
             {% render_html episode.description %}
         </article>
     {% endwith %}

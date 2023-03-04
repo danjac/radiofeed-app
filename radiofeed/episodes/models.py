@@ -6,7 +6,6 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
@@ -27,28 +26,6 @@ from radiofeed.users.models import User
 
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Episode model."""
-
-    def with_current_time(
-        self, user: User | AnonymousUser
-    ) -> models.QuerySet[Episode]:  # pyright: ignore
-        """Adds `current_time`, `remaining` and `listened` annotations.
-
-        Both will be None if user is anonymous or there is no listening history.
-        """
-        if user.is_anonymous:
-            return self.annotate(
-                current_time=models.Value(0, output_field=models.IntegerField()),
-                listened=models.Value(None, output_field=models.DateTimeField()),
-                is_playing=models.Value(False, output_field=models.BooleanField()),
-            )
-
-        logs = user.audio_logs.filter(episode=models.OuterRef("pk"))
-
-        return self.annotate(
-            current_time=models.Subquery(logs.values("current_time")),
-            listened=models.Subquery(logs.values("listened")),
-            is_playing=models.Subquery(logs.values("is_playing")),
-        )
 
 
 class Episode(models.Model):
@@ -153,14 +130,6 @@ class Episode(models.Model):
     def get_cover_url(self) -> str | None:
         """Returns cover image URL or podcast cover image if former not provided."""
         return self.cover_url or self.podcast.cover_url
-
-    def is_bookmarked(self, user: User | AnonymousUser) -> bool:
-        """Check if episode has been bookmarked by this user."""
-        return (
-            Bookmark.objects.filter(user=user, episode=self).exists()
-            if user.is_authenticated
-            else False
-        )
 
     @cached_property
     def cleaned_title(self) -> str:

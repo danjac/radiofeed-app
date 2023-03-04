@@ -74,19 +74,24 @@ def episode_detail(
 ) -> HttpResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
-        Episode.objects.with_current_time(request.user).select_related("podcast"),
+        Episode.objects.select_related("podcast"),
         pk=episode_id,
     )
 
-    return render(
-        request,
-        "episodes/detail.html",
-        {
-            "episode": episode,
-            "is_playing": episode.is_playing,
-            "is_bookmarked": episode.is_bookmarked(request.user),
-        },
-    )
+    context = {
+        "episode": episode,
+        "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
+    }
+
+    if audio_log := request.user.audio_logs.filter(episode=episode).first():
+        context = {
+            **context,
+            "listened": audio_log.listened,
+            "current_time": audio_log.current_time,
+            "is_playing": audio_log.is_playing,
+        }
+
+    return render(request, "episodes/detail.html", context)
 
 
 @require_POST

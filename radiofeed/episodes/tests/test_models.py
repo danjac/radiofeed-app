@@ -5,7 +5,6 @@ import datetime
 import pytest
 
 from django.db import IntegrityError
-from django.utils import timezone
 
 from radiofeed.episodes.factories import (
     create_audio_log,
@@ -18,40 +17,6 @@ from radiofeed.podcasts.models import Podcast
 
 
 class TestEpisodeManager:
-    def test_with_current_time_if_anonymous(self, db, anonymous_user):
-        create_episode()
-        episode = Episode.objects.with_current_time(anonymous_user).first()
-
-        assert episode.current_time == 0
-        assert not episode.listened
-        assert not episode.is_playing
-
-    def test_with_current_time_no_log(self, user):
-        create_episode()
-        episode = Episode.objects.with_current_time(user).first()
-
-        assert not episode.current_time
-        assert not episode.listened
-        assert not episode.is_playing
-
-    def test_with_current_time_has_log(self, user):
-        log = create_audio_log(user=user, current_time=20, listened=timezone.now())
-        episode = Episode.objects.with_current_time(user).first()
-
-        assert episode.current_time == 20
-        assert episode.listened == log.listened
-        assert not episode.is_playing
-
-    def test_with_current_time_has_playing_log(self, user):
-        log = create_audio_log(
-            user=user, current_time=20, listened=timezone.now(), is_playing=True
-        )
-        episode = Episode.objects.with_current_time(user).first()
-
-        assert episode.current_time == 20
-        assert episode.listened == log.listened
-        assert episode.is_playing
-
     def test_search(self, db):
         create_episode(title="testing")
         assert Episode.objects.search("testing").count() == 1
@@ -206,16 +171,6 @@ class TestEpisodeModel:
     def test_get_cover_url_if_none(self, db):
         episode = create_episode(podcast=create_podcast(cover_url=None))
         assert episode.get_cover_url() is None
-
-    def test_is_bookmarked_anonymous(self, anonymous_user, episode):
-        assert not episode.is_bookmarked(anonymous_user)
-
-    def test_is_bookmarked_false(self, user, episode):
-        assert not episode.is_bookmarked(user)
-
-    def test_is_bookmarked_true(self, user, episode):
-        bookmark = create_bookmark(user=user, episode=episode)
-        assert bookmark.episode.is_bookmarked(bookmark.user)
 
     @pytest.mark.parametrize(
         "episode_type,number,season,expected",
