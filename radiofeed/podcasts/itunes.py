@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import dataclasses
-import functools
 import itertools
 import re
 
@@ -29,7 +28,12 @@ _ITUNES_LOCATIONS: Final = (
     "us",
 )
 
+_ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
+
+
 _APPLE_NAMESPACE: Final = "http://www.apple.com/itms/"
+
+_xpath_parser = XPathParser({"apple": _APPLE_NAMESPACE})
 
 
 @dataclasses.dataclass(frozen=True)
@@ -151,17 +155,16 @@ class Crawler:
             return []
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
-        parser = _xpath_parser()
-        for element in parser.iterparse(
+        for element in _xpath_parser.iterparse(
             content, f"{{{_APPLE_NAMESPACE}}}html", "/apple:html"
         ):
             try:
-                yield from parser.iter(element, "//a//@href")
+                yield from _xpath_parser.iter(element, "//a//@href")
             finally:
                 element.clear()
 
     def _parse_podcast_id(self, url: str) -> str | None:
-        if match := _itunes_podcast_id().search(urlparse(url).path.split("/")[-1]):
+        if match := _ITUNES_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
             return match.group("id")
         return None
 
@@ -230,13 +233,3 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
             )
         except KeyError:
             continue
-
-
-@functools.cache
-def _itunes_podcast_id() -> re.Pattern:
-    return re.compile(r"id(?P<id>\d+)")
-
-
-@functools.cache
-def _xpath_parser() -> XPathParser:
-    return XPathParser({"apple": _APPLE_NAMESPACE})

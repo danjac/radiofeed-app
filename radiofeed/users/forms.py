@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 import itertools
 
 from collections.abc import Iterator
@@ -12,6 +11,8 @@ from django import forms
 from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
+
+_xpath_parser = XPathParser()
 
 
 class UserPreferencesForm(forms.ModelForm):
@@ -77,20 +78,13 @@ class OpmlUploadForm(forms.Form):
     def _parse_opml(self) -> Iterator[str]:
         self.cleaned_data["opml"].seek(0)
 
-        parser = _xpath_parser()
-
         try:
-            for element in parser.iterparse(
+            for element in _xpath_parser.iterparse(
                 self.cleaned_data["opml"].read(), "opml", "body"
             ):
                 try:
-                    yield from parser.iter(element, "//outline//@xmlUrl")
+                    yield from _xpath_parser.iter(element, "//outline//@xmlUrl")
                 finally:
                     element.clear()
         except lxml.etree.XMLSyntaxError:
             return
-
-
-@functools.cache
-def _xpath_parser() -> XPathParser:
-    return XPathParser()
