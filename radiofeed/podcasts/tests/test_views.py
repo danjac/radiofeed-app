@@ -416,30 +416,30 @@ class TestUnsubscribe:
 
 class TestWebsubCallback:
     @pytest.fixture
-    def feed_parser(self, mocker):
-        return mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
+    def mock_parse_feed(self, mocker):
+        return mocker.patch("radiofeed.feedparser.feed_parser.parse_feed.delay")
 
     def url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
-    def test_post(self, client, db, mocker, feed_parser):
+    def test_post(self, client, db, mocker, mock_parse_feed):
         podcast = create_podcast(websub_mode="subscribe")
         mocker.patch("radiofeed.podcasts.subscriber.check_signature", return_value=True)
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
 
-        feed_parser.assert_called()
+        mock_parse_feed.assert_called()
 
-    def test_post_not_subscribed(self, client, mocker, feed_parser, podcast):
+    def test_post_not_subscribed(self, client, mocker, podcast, mock_parse_feed):
         mocker.patch("radiofeed.podcasts.subscriber.check_signature", return_value=True)
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
-        feed_parser.assert_not_called()
+        mock_parse_feed.assert_not_called()
 
-    def test_post_invalid_signature(self, client, db, mocker, feed_parser):
+    def test_post_invalid_signature(self, client, db, mocker, mock_parse_feed):
         podcast = create_podcast(websub_mode="subscribe")
         mocker.patch(
             "radiofeed.podcasts.subscriber.check_signature", return_value=False
@@ -448,7 +448,7 @@ class TestWebsubCallback:
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
 
-        feed_parser.assert_not_called()
+        mock_parse_feed.assert_not_called()
 
     def test_get(self, client, podcast):
         response = client.get(

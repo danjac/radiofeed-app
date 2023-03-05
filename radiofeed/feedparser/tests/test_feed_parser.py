@@ -25,6 +25,7 @@ from radiofeed.feedparser.feed_parser import (
     FeedParser,
     get_categories,
     make_content_hash,
+    parse_feed,
 )
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
@@ -184,6 +185,38 @@ class TestFeedParser:
         assert podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
         assert podcast.websub_mode == "subscribe"
         assert podcast.websub_expires == websub_date
+
+    def test_parse_feed(self, mocker, db, categories):
+        podcast = create_podcast(
+            rss="https://mysteriousuniverse.org/feed/podcast/",
+            pub_date=datetime(year=2020, month=3, day=1),
+            num_retries=3,
+        )
+
+        mocker.patch(
+            "requests.get",
+            return_value=MockResponse(
+                url=podcast.rss,
+                status_code=http.HTTPStatus.OK,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+
+        parse_feed(podcast.id)
+
+        assert podcast.episodes.count() == 20
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.active
+        assert podcast.num_retries == 0
+        assert podcast.content_hash
+        assert podcast.title == "Mysterious Universe"
 
     def test_websub_headers_in_response(self, mocker, db, categories):
         # set date to before latest
