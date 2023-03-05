@@ -8,7 +8,6 @@ from django_object_actions import DjangoObjectActions
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import feed_parser, scheduler
-from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -209,18 +208,11 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        try:
-            feed_parser.parse_feed(obj)
+        feed_parser.parse_feed.delay(obj.id)
 
-        except FeedParserError:
-            self.message_user(
-                request, "Podcast has not been updated", level=messages.ERROR
-            )
-
-        else:
-            self.message_user(
-                request, "Podcast has been updated", level=messages.SUCCESS
-            )
+        self.message_user(
+            request, "Podcast has been queued for update", level=messages.SUCCESS
+        )
 
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast):

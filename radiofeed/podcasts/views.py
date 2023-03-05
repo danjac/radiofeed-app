@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import http
 
 from datetime import timedelta
@@ -21,7 +20,6 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import feed_parser
-from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes, subscriber
 from radiofeed.podcasts.models import Category, Podcast, Subscription
@@ -299,8 +297,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         podcast = _get_podcast_or_404(podcast_id, websub_mode="subscribe")
 
         if subscriber.check_signature(request, podcast):
-            with contextlib.suppress(FeedParserError):
-                feed_parser.parse_feed(podcast)
+            feed_parser.parse_feed.delay(podcast_id)
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 

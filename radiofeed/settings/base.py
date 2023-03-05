@@ -236,12 +236,9 @@ CACHES: dict = {
 # RQ
 # https://github.com/rq/django-rq
 
-RQ_QUEUES = {
-    "default": {
-        "URL": REDIS_URL,
-        "DEFAULT_TIMEOUT": 360,
-    }
-}
+RQ_QUEUES = {"default": {"USE_REDIS_CACHE": "default"}}
+
+RQ_SHOW_ADMIN_LINK = True
 
 
 def configure_admin_site_header(environment: str) -> str:

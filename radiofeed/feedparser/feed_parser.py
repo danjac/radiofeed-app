@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
+from django_rq import job
 
 from radiofeed import iterators, tokenizer
 from radiofeed.episodes.models import Episode
@@ -52,9 +53,10 @@ def get_categories() -> dict[str, Category]:
     }
 
 
-def parse_feed(podcast: Podcast) -> None:
-    """Updates a Podcast instance with its RSS or Atom feed source."""
-    FeedParser(podcast).parse()
+@job
+def parse_feed(podcast_id: int) -> None:
+    """Job to parse a podcast feed."""
+    FeedParser(Podcast.objects.get(pk=podcast_id)).parse()
 
 
 def make_content_hash(content: bytes) -> str:

@@ -39,6 +39,9 @@ serve:
 shell:
 	python ./manage.py shell_plus
 
+rq:
+	python ./manage.py rqworker
+
 build:
 	npm run build
 
