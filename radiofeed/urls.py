@@ -14,6 +14,7 @@ urlpatterns = [
     path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.users.urls")),
     path("account/", include("allauth.urls")),
+    path("rq/", include("django_rq.urls")),
     path("about/", views.about_page, name="about"),
     path("health-check/", views.health_check, name="health_check"),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),

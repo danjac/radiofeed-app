@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import functools
 import hashlib
 import http
@@ -56,7 +57,8 @@ def get_categories() -> dict[str, Category]:
 @job
 def parse_feed(podcast_id: int) -> None:
     """Job to parse a podcast feed."""
-    FeedParser(Podcast.objects.get(pk=podcast_id)).parse()
+    with contextlib.suppress(FeedParserError):
+        FeedParser(Podcast.objects.get(pk=podcast_id)).parse()
 
 
 def make_content_hash(content: bytes) -> str:
