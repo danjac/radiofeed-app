@@ -42,6 +42,7 @@ A `Makefile` has been provided with shortcuts to install and run your local deve
 * `make update`: update all dependencies to latest available versions
 * `make watch`: compile JavaScript and CSS assets on the fly
 * `make serve`: run Django development server
+* `make rq`: run Django RQ worker
 * `make shell`: run Django shell on iPython
 
 If you are running several of these operations simultaneously you may want to use a multiplexer such as Tmux.
