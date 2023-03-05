@@ -86,6 +86,7 @@ INSTALLED_APPS: list[str] = [
     "django_extensions",
     "django_htmx",
     "django_object_actions",
+    "django_rq",
     "fast_update",
     "heroicons",
     "widget_tweaks",
@@ -229,6 +230,16 @@ CACHES: dict = {
             "IGNORE_EXCEPTIONS": True,
             "PARSER_CLASS": "redis.connection.HiredisParser",
         },
+    }
+}
+
+# RQ
+# https://github.com/rq/django-rq
+
+RQ_QUEUES = {
+    "default": {
+        "URL": REDIS_URL,
+        "DEFAULT_TIMEOUT": 360,
     }
 }
 
