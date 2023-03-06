@@ -117,6 +117,7 @@ MIDDLEWARE: list[str] = [
     "radiofeed.middleware.OrderingMiddleware",
     "radiofeed.middleware.PaginationMiddleware",
     "radiofeed.middleware.SearchMiddleware",
+    "radiofeed.episodes.middleware.PlayerMiddleware",
 ]
 
 # admin settings
