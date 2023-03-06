@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.template.context import RequestContext
 
 from radiofeed.episodes.factories import create_audio_log
+from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.templatetags.audio_player import audio_player
 
 
@@ -11,13 +12,18 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = user
         req.session = {}
+        req.player = Player(req)
         assert audio_player(RequestContext(req)) == {}
 
     def test_is_playing(self, rf, user, episode):
-        log = create_audio_log(episode=episode, user=user, is_playing=True)
+        log = create_audio_log(episode=episode, user=user)
 
         req = rf.get("/")
         req.user = user
+        req.session = {}
+
+        req.player = Player(req)
+        req.player.set(log.episode.id)
 
         assert audio_player(RequestContext(req)) == {
             "request": req,
@@ -25,11 +31,3 @@ class TestAudioPlayer:
             "current_time": log.current_time,
             "is_playing": True,
         }
-
-    def test_is_not_playing(self, rf, user, episode):
-        create_audio_log(episode=episode, user=user, is_playing=False)
-
-        req = rf.get("/")
-        req.user = user
-
-        assert audio_player(RequestContext(req)) == {}
