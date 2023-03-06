@@ -57,12 +57,10 @@ def create_audio_log(
     user: User = NotSet,
     listened: datetime = NotSet,
     current_time: int = NotSet,
-    is_playing: bool = NotSet,
 ) -> AudioLog:
     return AudioLog.objects.create(
         episode=resolve(episode, create_episode),
         user=resolve(user, create_user),
         listened=resolve(listened, timezone.now),
         current_time=resolve(current_time, 1000),
-        is_playing=resolve(is_playing, False),
     )

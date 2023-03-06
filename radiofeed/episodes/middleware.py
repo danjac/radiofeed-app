@@ -26,13 +26,13 @@ class Player:
     request: HttpRequest
     session_key: str = "player_episode"
 
-    def __contains__(self, episode_id: int) -> bool:
-        """Checks if episode matching ID is in player."""
-        return self.get() == episode_id
-
     def get(self) -> int | None:
         """Returns primary key of episode in player, if any in session."""
         return self.request.session.get(self.session_key)
+
+    def has(self, episode_id: int) -> bool:
+        """Checks if episode matching ID is in player."""
+        return self.get() == episode_id
 
     def set(self, episode_id: int) -> None:
         """Adds episode PK to player in session."""

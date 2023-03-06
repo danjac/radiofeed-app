@@ -6,7 +6,7 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -88,7 +88,7 @@ def episode_detail(
             **context,
             "listened": audio_log.listened,
             "current_time": audio_log.current_time,
-            "is_playing": audio_log.is_playing,
+            "is_playing": request.player.has(episode.id),
         }
 
     return render(request, "episodes/detail.html", context)
@@ -198,10 +198,13 @@ def history(request: HttpRequest) -> HttpResponse:
 @require_auth
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
+    # cannot remove episode if in player
+    if request.player.has(episode_id):
+        raise Http404
+
     audio_log = get_object_or_404(
         request.user.audio_logs.select_related("episode"),
         episode__pk=episode_id,
-        is_playing=False,
     )
 
     audio_log.delete()
@@ -210,7 +213,9 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return (
         render(
-            request, "episodes/includes/history.html", {"episode": audio_log.episode}
+            request,
+            "episodes/includes/history.html",
+            {"episode": audio_log.episode},
         )
         if request.htmx
         else redirect(audio_log.episode.get_absolute_url())

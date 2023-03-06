@@ -4,8 +4,6 @@ import datetime
 
 import pytest
 
-from django.db import IntegrityError
-
 from radiofeed.episodes.factories import (
     create_audio_log,
     create_bookmark,
@@ -215,19 +213,3 @@ class TestAudioLogManager:
         episode = create_episode(title="testing")
         create_audio_log(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
-
-
-class TestAudioLogModel:
-    def test_only_one_playing_episode_per_user(self, transactional_db):
-        first = create_audio_log(is_playing=True)
-
-        with pytest.raises(IntegrityError):
-            create_audio_log(is_playing=True, user=first.user)
-
-    def test_only_one_playing_episode_other_not_playing(self, transactional_db):
-        first = create_audio_log(is_playing=True)
-        create_audio_log(is_playing=False, user=first.user)
-
-    def test_only_one_playing_episode_other_user(self, db):
-        create_audio_log(is_playing=True)
-        create_audio_log(is_playing=True)
