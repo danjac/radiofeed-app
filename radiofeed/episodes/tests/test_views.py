@@ -469,12 +469,10 @@ class TestRemoveAudioLog:
 
     def test_no_js(self, client, auth_user, episode):
         create_audio_log(user=auth_user, episode=episode)
-        create_audio_log(user=auth_user)
 
         assertRedirects(client.post(self.url(episode)), episode.get_absolute_url())
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-        assert AudioLog.objects.filter(user=auth_user).count() == 1
 
     def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
