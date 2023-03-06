@@ -81,6 +81,7 @@ def episode_detail(
     context = {
         "episode": episode,
         "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
+        "is_playing": request.player.has(episode.id),
     }
 
     if audio_log := request.user.audio_logs.filter(episode=episode).first():
@@ -88,7 +89,6 @@ def episode_detail(
             **context,
             "listened": audio_log.listened,
             "current_time": audio_log.current_time,
-            "is_playing": request.player.has(episode.id),
         }
 
     return render(request, "episodes/detail.html", context)
