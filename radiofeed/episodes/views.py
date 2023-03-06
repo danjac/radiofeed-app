@@ -102,16 +102,14 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         Episode.objects.select_related("podcast"), pk=episode_id
     )
 
-    # close all other current playing episodes
-    request.user.audio_logs.update(is_playing=False)
-
     audio_log, _ = request.user.audio_logs.update_or_create(
         episode=episode,
         defaults={
             "listened": timezone.now(),
-            "is_playing": True,
         },
     )
+
+    request.player.set(episode.id)
 
     return render(
         request,
@@ -128,31 +126,31 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @require_auth
-def close_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
-    audio_log = get_object_or_404(
-        request.user.audio_logs.select_related("episode"),
-        episode__pk=episode_id,
-    )
+    if episode_id := request.player.pop():
+        audio_log = get_object_or_404(
+            request.user.audio_logs.select_related("episode"),
+            episode__pk=episode_id,
+        )
 
-    audio_log.is_playing = False
-    audio_log.save()
+        return render(
+            request,
+            "episodes/includes/play_toggle.html",
+            {
+                "episode": audio_log.episode,
+                "current_time": audio_log.current_time,
+                "listened": audio_log.listened,
+                "is_playing": False,
+            },
+        )
 
-    return render(
-        request,
-        "episodes/includes/play_toggle.html",
-        {
-            "episode": audio_log.episode,
-            "current_time": audio_log.current_time,
-            "listened": audio_log.listened,
-            "is_playing": False,
-        },
-    )
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 @require_POST
 @require_auth
-def player_time_update(request: HttpRequest, episode_id: int) -> HttpResponse:
+def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
@@ -160,14 +158,15 @@ def player_time_update(request: HttpRequest, episode_id: int) -> HttpResponse:
     Returns:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
-    try:
-        request.user.audio_logs.filter(episode__pk=episode_id).update(
-            current_time=int(request.POST["current_time"]),
-            listened=timezone.now(),
-        )
+    if episode_id := request.player.get():
+        try:
+            request.user.audio_logs.filter(episode__pk=episode_id).update(
+                current_time=int(request.POST["current_time"]),
+                listened=timezone.now(),
+            )
 
-    except (KeyError, ValueError):
-        return HttpResponseBadRequest()
+        except (KeyError, ValueError):
+            return HttpResponseBadRequest()
 
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 

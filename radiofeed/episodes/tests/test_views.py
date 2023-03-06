@@ -20,6 +20,7 @@ from radiofeed.episodes.factories import (
     create_bookmark,
     create_episode,
 )
+from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -209,9 +210,6 @@ class TestEpisodeDetail:
 
 
 class TestStartPlayer:
-    # we have a number of savepoints here adding to query count
-    num_savepoints = 3
-
     def url(self, episode):
         return reverse("episodes:start_player", args=[episode.id])
 
@@ -224,12 +222,16 @@ class TestStartPlayer:
             ),
         )
 
-        assert AudioLog.objects.filter(
-            user=auth_user, episode=episode, is_playing=True
-        ).exists()
+        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
+
+        assert client.session[Player.session_key] == episode.id
 
     def test_another_episode_in_player(self, client, auth_user, episode):
-        log = create_audio_log(user=auth_user, is_playing=True)
+        log = create_audio_log(user=auth_user)
+
+        session = client.session
+        session[Player.session_key] = log.episode_id
+        session.save()
 
         assert_ok(
             client.post(
@@ -239,15 +241,17 @@ class TestStartPlayer:
             ),
         )
 
-        assert AudioLog.objects.filter(
-            user=auth_user, episode=episode, is_playing=True
-        ).exists()
+        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        log.refresh_from_db()
-        assert not log.is_playing
+        assert client.session[Player.session_key] == episode.id
 
     def test_resume(self, client, auth_user, episode):
         log = create_audio_log(user=auth_user, episode=episode, current_time=2000)
+
+        session = client.session
+        session[Player.session_key] = log.episode_id
+        session.save()
+
         assert_ok(
             client.post(
                 self.url(episode),
@@ -259,16 +263,16 @@ class TestStartPlayer:
         log.refresh_from_db()
 
         assert log.current_time == 2000
-        assert log.is_playing
+
+        assert client.session[Player.session_key] == episode.id
 
 
 class TestClosePlayer:
-    def url(self, episode):
-        return reverse("episodes:close_player", args=[episode.pk])
+    url = reverse_lazy("episodes:close_player")
 
     def test_player_empty(self, client, auth_user, episode):
-        response = client.post(self.url(episode), HTTP_HX_REQUEST="true")
-        assert_not_found(response)
+        response = client.post(self.url, HTTP_HX_REQUEST="true")
+        assert_no_content(response)
 
     def test_close(
         self,
@@ -276,34 +280,39 @@ class TestClosePlayer:
         auth_user,
         episode,
     ):
-        log = create_audio_log(
-            user=auth_user, current_time=2000, episode=episode, is_playing=True
-        )
+        log = create_audio_log(user=auth_user, current_time=2000, episode=episode)
+
+        session = client.session
+        session[Player.session_key] = log.episode_id
+        session.save()
 
         response = client.post(
-            self.url(log.episode),
+            self.url,
             HTTP_HX_TARGET=log.episode.get_player_target(),
             HTTP_HX_REQUEST="true",
         )
+
         assert_ok(response)
 
-        log.refresh_from_db()
-
-        assert log.current_time == 2000
-        assert not log.is_playing
+        assert log.episode_id not in client.session
 
 
 class TestPlayerTimeUpdate:
+    url = reverse_lazy("episodes:player_time_update")
+
     @pytest.fixture
-    def log(self, auth_user, episode):
-        return create_audio_log(user=auth_user, episode=episode, is_playing=True)
+    def log(self, auth_user, client, episode):
+        log = create_audio_log(user=auth_user, episode=episode)
 
-    def url(self, episode):
-        return reverse("episodes:player_time_update", args=[episode.id])
+        session = client.session
+        session[Player.session_key] = episode.id
+        session.save()
 
-    def test_is_running(self, client, auth_user, log):
+        return log
+
+    def test_is_running(self, client, log):
         response = client.post(
-            self.url(log.episode),
+            self.url,
             {"current_time": "1030"},
         )
         assert_no_content(response)
@@ -314,17 +323,17 @@ class TestPlayerTimeUpdate:
 
     def test_player_not_running(self, client, auth_user, episode):
         response = client.post(
-            self.url(episode),
+            self.url,
             {"current_time": "1030"},
         )
         assert_no_content(response)
 
     def test_missing_data(self, client, auth_user, log):
-        response = client.post(self.url(log.episode))
+        response = client.post(self.url)
         assert_bad_request(response)
 
     def test_invalid_data(self, client, auth_user, log):
-        response = client.post(self.url(log.episode), {"current_time": "xyz"})
+        response = client.post(self.url, {"current_time": "xyz"})
         assert_bad_request(response)
 
 

@@ -16,17 +16,17 @@ urlpatterns = [
         name="episode_detail",
     ),
     path(
-        "player/<int:episode_id>/start/",
+        "player/start/<int:episode_id>/",
         views.start_player,
         name="start_player",
     ),
     path(
-        "player/<int:episode_id>/close/",
+        "player/close/",
         views.close_player,
         name="close_player",
     ),
     path(
-        "player/<int:episode_id>/timeupdate/",
+        "player/timeupdate/",
         views.player_time_update,
         name="player_time_update",
     ),
