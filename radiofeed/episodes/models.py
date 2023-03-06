@@ -286,8 +286,6 @@ class AudioLog(TimeStampedModel):
     listened: datetime = models.DateTimeField()
     current_time: int = models.IntegerField(default=0)
 
-    is_playing: bool = models.BooleanField(default=False)
-
     objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()  # pyright: ignore
 
     class Meta:
@@ -295,12 +293,6 @@ class AudioLog(TimeStampedModel):
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s_user_episode",
                 fields=["user", "episode"],
-            ),
-            # only allow one log playing per user
-            models.UniqueConstraint(
-                name="unique_%(app_label)s_%(class)s_is_playing",
-                fields=["user", "is_playing"],
-                condition=models.Q(is_playing=True),
             ),
         ]
         indexes = [
