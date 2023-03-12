@@ -36,59 +36,43 @@
         display: none;
     }
 
-    .form-control input[type="text"],
-    .form-control input[type="email"],
-    .form-control input[type="file"],
-    .form-control input[type="password"] {
+    .form-control:not(.is-checkbox) input {
         font-size: theme("fontSize.sm");
         padding: theme("spacing.1");
         width: theme("width.64");
     }
 
-    .form-control input[type="checkbox"] {
-        margin-right: theme("spacing.3");
-    }
-
-    .form-control input[type="file"] {
+    .form-control.is-file input {
         border: solid theme("borderWidth.DEFAULT") inherit;
         border-radius: theme("borderRadius.DEFAULT");
         color: theme("colors.gray.900");
     }
 
     .has-errors input,
-    .has-errors input[type="file"] {
+    .form-control.is-file.has-errors input {
         border: solid theme("borderWidth.DEFAULT") theme("borderColor.red.800");
     }
 
     @media screen(md) {
-        .form-control input[type="text"],
-        .form-control input[type="email"],
-        .form-control input[type="file"],
-        .form-control input[type="password"] {
+        .form-control:not(.is-checkbox) input {
             font-size: theme("fontSize.base");
         }
     }
 
     @media (prefers-color-scheme: dark) {
-        .form-control input {
+        .form-control:not(.is-checkbox) input {
             background-color: theme("backgroundColor.gray.900");
         }
 
-        .form-control input[type="file"] {
+        .form-control.is-file input {
             color: theme("colors.white");
         }
 
         .has-errors input,
-        .has-errors input[type="file"] {
+        .form-control.is-file.has-errors input {
             border: solid theme("borderWidth.DEFAULT")
                 theme("borderColor.red.500");
         }
-    }
-
-    input[type="file"] {
-        padding: theme("padding.2") theme("padding.1");
-        border: solid theme("borderWidth.DEFAULT");
-        width: theme("width.64");
     }
 
     /* RANGE INPUT */
