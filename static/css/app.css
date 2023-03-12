@@ -41,7 +41,7 @@
     .form-control input[type="file"],
     .form-control input[type="password"] {
         font-size: theme("fontSize.sm");
-        padding: theme("padding.1");
+        padding: theme("spacing.1");
         width: theme("width.64");
     }
 
