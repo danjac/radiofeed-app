@@ -338,6 +338,7 @@
 
 @layer utilities {
     @media (prefers-color-scheme: dark) {
+        hr,
         .divide-x > * + *,
         .divide-y > * + *,
         .border,
