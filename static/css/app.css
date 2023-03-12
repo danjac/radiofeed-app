@@ -37,11 +37,10 @@
     }
 
     .form-control input[type="text"],
-    .form-control[type="email"],
-    .form-control[type="password"] {
+    .form-control input[type="email"],
+    .form-control input[type="password"] {
         padding: theme("padding.1");
         font-size: theme("fontSize.sm");
-        line-height: theme("fontSize.sm");
         width: theme("width.64");
     }
 
@@ -64,7 +63,6 @@
     @media screen(md) {
         .form-control input {
             font-size: theme("fontSize.base");
-            line-height: theme("fontSize.base");
         }
     }
 
