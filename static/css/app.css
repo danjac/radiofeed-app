@@ -38,9 +38,10 @@
 
     .form-control input[type="text"],
     .form-control input[type="email"],
+    .form-control input[type="file"],
     .form-control input[type="password"] {
-        padding: theme("padding.1");
         font-size: theme("fontSize.sm");
+        padding: theme("padding.1");
         width: theme("width.64");
     }
 
@@ -49,7 +50,6 @@
     }
 
     .form-control input[type="file"] {
-        padding: theme("padding.1");
         border: solid theme("borderWidth.DEFAULT") inherit;
         border-radius: theme("borderRadius.DEFAULT");
         color: theme("colors.gray.900");
@@ -61,7 +61,10 @@
     }
 
     @media screen(md) {
-        .form-control input {
+        .form-control input[type="text"],
+        .form-control input[type="email"],
+        .form-control input[type="file"],
+        .form-control input[type="password"] {
             font-size: theme("fontSize.base");
         }
     }
