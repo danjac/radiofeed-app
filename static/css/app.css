@@ -8,15 +8,6 @@
     display: none !important;
 }
 
-/* FORMS */
-
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
-    display: none;
-}
-
 /* HTMX */
 
 #hx-indicator {
@@ -36,6 +27,69 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 @layer components {
+    /* FORMS */
+
+    input[type="search"]::-webkit-search-decoration,
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-results-button,
+    input[type="search"]::-webkit-search-results-decoration {
+        display: none;
+    }
+
+    .form-control input[type="text"],
+    .form-control[type="email"],
+    .form-control[type="password"] {
+        padding: theme("padding.1");
+        font-size: theme("fontSize.sm");
+        line-height: theme("fontSize.sm");
+        width: theme("width.64");
+    }
+
+    .form-control input[type="checkbox"] {
+        margin-right: theme("spacing.3");
+    }
+
+    .form-control input[type="file"] {
+        padding: theme("padding.1");
+        border: solid theme("borderWidth.DEFAULT") inherit;
+        border-radius: theme("borderRadius.DEFAULT");
+        color: theme("colors.gray.900");
+    }
+
+    .has-errors input,
+    .has-errors input[type="file"] {
+        border: solid theme("borderWidth.DEFAULT") theme("borderColor.red.800");
+    }
+
+    @media screen(md) {
+        .form-control input {
+            font-size: theme("fontSize.base");
+            line-height: theme("fontSize.base");
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .form-control input {
+            background-color: theme("backgroundColor.gray.900");
+        }
+
+        .form-control input[type="file"] {
+            color: theme("colors.white");
+        }
+
+        .has-errors input,
+        .has-errors input[type="file"] {
+            border: solid theme("borderWidth.DEFAULT")
+                theme("borderColor.red.500");
+        }
+    }
+
+    input[type="file"] {
+        padding: theme("padding.2") theme("padding.1");
+        border: solid theme("borderWidth.DEFAULT");
+        width: theme("width.64");
+    }
+
     /* RANGE INPUT */
 
     input[type="range"] {

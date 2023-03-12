@@ -89,7 +89,6 @@ INSTALLED_APPS: list[str] = [
     "django_rq",
     "fast_update",
     "heroicons",
-    "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",

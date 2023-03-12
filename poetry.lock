@@ -804,18 +804,6 @@ sentry = ["raven (>=6.1.0)"]
 testing = ["mock (>=2.0.0)"]
 
 [[package]]
-name = "django-widget-tweaks"
-version = "1.4.12"
-description = "Tweak the form field rendering in templates, not in python-level form definitions."
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "django-widget-tweaks-1.4.12.tar.gz", hash = "sha256:9bfc5c705684754a83cc81da328b39ad1b80f32bd0f4340e2a810cbab4b0c00e"},
-    {file = "django_widget_tweaks-1.4.12-py3-none-any.whl", hash = "sha256:fe6b17d5d595c63331f300917980db2afcf71f240ab9341b954aea8f45d25b9a"},
-]
-
-[[package]]
 name = "djlint"
 version = "1.19.16"
 description = "HTML Template Linter and Formatter"
@@ -2919,4 +2907,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "b4fcb534a87cb380f0c25619f710cab7228ac6c838be0ec0ed0a6297956506d6"
+content-hash = "fc6190ac48009eb17601e7f14275610a584881e819bcb95e71cc02cc2c207982"
