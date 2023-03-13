@@ -29,29 +29,16 @@
 @layer components {
     /* FORMS */
 
-    input[type="search"]::-webkit-search-decoration,
-    input[type="search"]::-webkit-search-cancel-button,
-    input[type="search"]::-webkit-search-results-button,
-    input[type="search"]::-webkit-search-results-decoration {
-        display: none;
-    }
-
     .form-control:not(.is-checkbox) input {
         background-color: inherit;
         color: inherit;
-        font-size: theme("fontSize.sm");
+        font-size: inherit;
         padding: theme("spacing.1");
         width: theme("width.64");
     }
 
     .has-errors input {
         border: solid theme("borderWidth.DEFAULT") theme("borderColor.red.800");
-    }
-
-    @media screen(md) {
-        .form-control:not(.is-checkbox) input {
-            font-size: theme("fontSize.base");
-        }
     }
 
     @media (prefers-color-scheme: dark) {
@@ -61,7 +48,16 @@
         }
     }
 
-    /* RANGE INPUT */
+    /* search inputs */
+
+    input[type="search"]::-webkit-search-decoration,
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-results-button,
+    input[type="search"]::-webkit-search-results-decoration {
+        display: none;
+    }
+
+    /* range inputs */
 
     input[type="range"] {
         --thumbSize: theme("spacing.4");
