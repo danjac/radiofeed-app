@@ -63,12 +63,11 @@ def send_recommendations_email(
 
     user.recommended_podcasts.add(*podcasts)
 
-    site = Site.objects.get_current()
-
     context = {
         "recipient": user,
-        "site": site,
         "podcasts": podcasts,
+        "site": Site.objects.get_current(),
+        "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
     }
 
     send_mail(

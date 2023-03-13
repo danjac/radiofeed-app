@@ -10,13 +10,13 @@ from typing import Final
 import requests
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.db.models import F, Q, QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
-from radiofeed.template import build_absolute_uri
 
 DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 
@@ -46,6 +46,10 @@ def subscribe(
     """
     secret = uuid.uuid4()
 
+    site = Site.objects.get_current()
+    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+    callback_url = reverse("podcasts:websub_callback", args=[podcast.pk])
+
     response = requests.post(
         podcast.websub_hub,
         {
@@ -53,9 +57,7 @@ def subscribe(
             "hub.topic": podcast.rss,
             "hub.secret": secret.hex,
             "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
-            "hub.callback": build_absolute_uri(
-                reverse("podcasts:websub_callback", args=[podcast.pk])
-            ),
+            "hub.callback": f"{protocol}://{site.domain}{callback_url}",
         },
         headers={
             "Content-Type": "application/x-www-form-urlencoded",

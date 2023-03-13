@@ -34,9 +34,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
 
-# Protocol used to determine absolute URIs when request is unavailable
-HTTP_PROTOCOL = "https"
-
 # User-Agent header for API calls from this site
 USER_AGENT = config("USER_AGENT", "Radiofeed/0.0.0")
 

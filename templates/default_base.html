@@ -14,7 +14,7 @@
                   type="text/css"
                   href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}">
             <link rel="manifest" href="{% url 'manifest' %}">
-            <link rel=”canonical“ href="{% absolute_uri %}">
+            <link rel=”canonical“ href="https://{{ request.site.domain }}/">
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport"

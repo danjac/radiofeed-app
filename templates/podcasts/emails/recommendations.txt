@@ -8,11 +8,11 @@ Here are some podcasts you might find interesting:
 
     {{ podcast.cleaned_description|truncatewords:60 }}
 
-    {% absolute_uri podcast %}
+    {{ protocol }}://{{ site.domain }}{{ podcast.get_absolute_url }}
 
 {% endfor %}
 
 If you do not want to receive any more notifications, just uncheck the "Send email notifications"
 option on your Settings page:
 
-{% absolute_uri 'users:preferences' %}
+{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}

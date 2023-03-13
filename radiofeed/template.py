@@ -4,15 +4,11 @@ import math
 import urllib.parse
 
 from django import template
-from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.signing import Signer
 from django.core.validators import URLValidator
-from django.db.models import Model
-from django.http import HttpRequest
 from django.shortcuts import resolve_url
-from django.template.context import Context, RequestContext
+from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
@@ -43,21 +39,6 @@ def pagination_url(context: RequestContext, page_number: int) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context: Context, to: str | Model = "", *args, **kwargs) -> str:
-    """Generate absolute URI.
-
-    `to` argument can be :
-        * a URL string
-        * URL pattern along with `*args` and `**kwargs`
-        * Django model with `get_absolute_url()` method.
-    """
-    return build_absolute_uri(
-        resolve_url(to, *args, **kwargs) if to else "/",
-        request=context.get("request", None),
-    )
-
-
-@register.simple_tag(takes_context=True)
 def active_link(
     context: RequestContext,
     url_name: str,
@@ -68,7 +49,7 @@ def active_link(
 ) -> dict:
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
-    dct = {"active": True, "css": css, "url": url}
+    dct = {"active": False, "css": css, "url": url}
 
     return (
         {**dct, "active": True, "css": f"{css} {active_css}"}
@@ -155,14 +136,3 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
-
-
-def build_absolute_uri(url: str, request: HttpRequest | None = None) -> str:
-    """Return absolute URI to path. If request is unavailable, uses current Site instance to generate the URL."""
-    return (
-        request.build_absolute_uri(url)
-        if request
-        else urllib.parse.urljoin(
-            f"{settings.HTTP_PROTOCOL}://{Site.objects.get_current().domain}", url
-        )
-    )

@@ -10,7 +10,6 @@ from django.urls import reverse, reverse_lazy
 
 from radiofeed.middleware import Pagination
 from radiofeed.template import (
-    absolute_uri,
     active_link,
     cover_image,
     force_url,
@@ -40,31 +39,6 @@ class PageObj:
     has_previous: bool = False
     next_page_number: int = 0
     previous_page_number: int = 0
-
-
-class TestAbsoluteUri:
-    BASE_URL = "https://example.com"
-
-    SEARCH_URL = "/podcasts/search/"
-    DETAIL_URL = "/podcasts/12345/test/"
-
-    def test_no_url(self, db):
-        assert absolute_uri({}) == f"{self.BASE_URL}/"
-
-    def test_with_request(self, rf):
-        assert absolute_uri({"request": rf.get("/")}) == "http://testserver/"
-
-    def test_static_url(self, db):
-        url = absolute_uri({}, self.SEARCH_URL)
-        assert url == self.BASE_URL + self.SEARCH_URL
-
-    def test_resolved_url(self, db):
-        url = absolute_uri({}, "podcasts:podcast_detail", podcast_id=12345, slug="test")
-        assert url == self.BASE_URL + self.DETAIL_URL
-
-    def test_model(self, podcast):
-        url = absolute_uri({}, podcast)
-        assert url == self.BASE_URL + podcast.get_absolute_url()
 
 
 class TestFormatDuration:
