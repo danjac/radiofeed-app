@@ -14,8 +14,7 @@
         <form method="post"
               action="{{ request.path }}"
               class="p-3 border w-full sm:w-3/4 md:w-1/2"
-              hx-disable="true"
-              novalidate>
+              hx-disable="true">
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center justify-end">

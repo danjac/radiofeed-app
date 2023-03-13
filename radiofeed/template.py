@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
 import math
 import urllib.parse
 
@@ -24,15 +23,6 @@ from radiofeed import cleaners
 register = template.Library()
 
 _validate_url = URLValidator(["http", "https"])
-
-
-@dataclasses.dataclass(frozen=True)
-class ActiveLink:
-    """Url info including active link state."""
-
-    url: str
-    css: str
-    active: bool = False
 
 
 @register.simple_tag(takes_context=True)
@@ -75,14 +65,15 @@ def active_link(
     active_css: str = "active",
     *args,
     **kwargs,
-) -> ActiveLink:
+) -> dict:
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
+    dct = {"active": True, "css": css, "url": url}
 
     return (
-        ActiveLink(url=url, css=f"{css} {active_css}", active=True)
+        {**dct, "active": True, "css": f"{css} {active_css}"}
         if context.request.path == url
-        else ActiveLink(url=url, css=css, active=False)
+        else dct
     )
 
 

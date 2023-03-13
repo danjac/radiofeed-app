@@ -12,8 +12,7 @@
         </p>
         <form method="post"
               action="{% url 'account_confirm_email' confirmation.key %}"
-              hx-disable="true"
-              novalidate>
+              hx-disable="true">
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center">

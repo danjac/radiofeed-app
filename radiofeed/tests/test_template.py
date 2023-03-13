@@ -6,7 +6,7 @@ import pytest
 
 from django.template.context import RequestContext
 from django.template.loader import get_template
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from radiofeed.middleware import Pagination
 from radiofeed.template import (
@@ -84,23 +84,26 @@ class TestFormatDuration:
 
 
 class TestActiveLink:
-    episodes_url = "episodes:index"
+    episodes_url = reverse_lazy("episodes:index")
 
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
-        link = active_link(RequestContext(req), self.episodes_url)
-        assert link.url == reverse(self.episodes_url)
-        assert link.css == "link"
-        assert not link.active
+
+        assert active_link(RequestContext(req), self.episodes_url) == {
+            "url": self.episodes_url,
+            "css": "link",
+            "active": False,
+        }
 
     def test_active_link_match(self, rf):
-        url = reverse(self.episodes_url)
-        req = rf.get(url)
-        link = active_link(RequestContext(req), self.episodes_url)
-        assert link.url == reverse(self.episodes_url)
-        assert link.css == "link active"
-        assert link.active
+        req = rf.get(self.episodes_url)
+
+        assert active_link(RequestContext(req), self.episodes_url) == {
+            "url": self.episodes_url,
+            "css": "link active",
+            "active": True,
+        }
 
 
 class TestRenderHtml:
