@@ -9,18 +9,18 @@
                 {# djlint:on #}
             </title>
             <meta charset="UTF-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport"
-                  content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-            <meta name="copyright" content="Dan Jacob {% now "Y" %}" />
+                  content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta name="copyright" content="Dan Jacob {% now "Y" %}">
             <meta name="robots" content="nofollow" />
-            <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}" />
+            <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
             <link rel="apple-touch-icon image_src"
-                  href="{% static 'img/apple-touch-icon.png' %}"/>
+                  href="{% static 'img/apple-touch-icon.png' %}">
             <link href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}"
                   rel="stylesheet"
                   type="text/css"
-                  media="screen"/>
+                  media="screen">
         </head>
         <body class="mx-auto font-sans text-sm antialiased container-xl dark:bg-zinc-900 dark:text-white md:text-base scroll-smooth">
             {% url 'podcasts:index' as home_url %}
