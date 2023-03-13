@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
 import enum
 
 from collections.abc import Callable
@@ -65,13 +64,13 @@ class OrderingMiddleware:
         return self.get_response(request)
 
 
-@dataclasses.dataclass(frozen=True)
 class Pagination:
     """Handles pagination parameters in request."""
 
-    request: HttpRequest
-
     param: str = "page"
+
+    def __init__(self, request: HttpRequest):
+        self.request = request
 
     def __str__(self) -> str:
         """Returns current page."""
@@ -92,12 +91,13 @@ class Pagination:
         return f"{self.request.path}?{qs.urlencode()}"
 
 
-@dataclasses.dataclass(frozen=True)
 class Search:
     """Handles search parameters in request."""
 
-    request: HttpRequest
     param: str = "query"
+
+    def __init__(self, request: HttpRequest):
+        self.request = request
 
     def __str__(self) -> str:
         """Returns search query value."""
@@ -118,7 +118,6 @@ class Search:
         return urlencode({self.param: self.value}) if self.value else ""
 
 
-@dataclasses.dataclass(frozen=True)
 class Ordering:
     """Handles ordering parameters in request."""
 
@@ -126,10 +125,11 @@ class Ordering:
         ASC = enum.auto()
         DESC = enum.auto()
 
-    request: HttpRequest
-
     param: str = "order"
     default: str = Choices.DESC
+
+    def __init__(self, request: HttpRequest):
+        self.request = request
 
     def __str__(self) -> str:
         """Returns ordering value."""

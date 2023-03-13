@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
-
 from collections.abc import Callable
 
 from django.http import HttpRequest, HttpResponse
@@ -19,12 +17,13 @@ class PlayerMiddleware:
         return self.get_response(request)
 
 
-@dataclasses.dataclass(frozen=True)
 class Player:
     """Tracks current player episode in session."""
 
-    request: HttpRequest
     session_key: str = "player_episode"
+
+    def __init__(self, request: HttpRequest):
+        self.request = request
 
     def get(self) -> int | None:
         """Returns primary key of episode in player, if any in session."""
