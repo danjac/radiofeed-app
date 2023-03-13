@@ -37,7 +37,6 @@ _ALLOWED_TAGS: Final = {
     "strike",
     "strong",
     "span",
-    "style",
     "sub",
     "sup",
     "table",

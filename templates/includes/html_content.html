@@ -3,7 +3,6 @@
         hx-disable="true"
         {# djlint:off #}
         x-init="
-        $el.querySelectorAll('style').forEach(el => { el.remove(); });
         $el.querySelectorAll('p,div,li').forEach(el => {
             if (!el.innerText.trim()) {
                 el.parentNode.removeChild(el);
