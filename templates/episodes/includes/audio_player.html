@@ -15,14 +15,14 @@
                 @keydown.window="shortcuts">
                 {{ episode.get_media_metadata|json_script:"player-metadata" }}
                 <audio x-ref="audio"
-                       preload="metadata"
+                       preload="none"
                        @loadedmetadata="loaded"
                        @ended="ended"
                        @timeupdate="timeUpdate"
                        @play="play"
                        @pause="pause"
                        @error.prevent="error">
-                    <source src="{{ episode.media_url }}" type="{{ episode.media_type }}" />
+                    <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
                 </audio>
                 <div class="fixed bottom-0 z-10 w-full p-2 font-semibold text-white opacity-100 bg-gradient-to-b from-violet-900 to-black transform ease-in-out duration-1000 translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                     <div class="items-center w-full sm:flex space-y-2 sm:space-y-0 divide-y sm:divide-y-0 sm:divide-x divide-solid divide-gray-500">
