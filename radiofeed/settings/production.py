@@ -17,9 +17,9 @@ from radiofeed.settings.base import (
     configure_templates,
 )
 
-MIDDLEWARE = [
+MIDDLEWARE += [
     "csp.middleware.CSPMiddleware",
-] + MIDDLEWARE
+]
 
 DATABASES = configure_databases(conn_max_age=360)
 
@@ -69,14 +69,6 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "usb": [],
 }
 
-# https://django-csp.readthedocs.io/en/latest/configuration.html
-
-
-CSP_IMG_SRC = ("'self'",)
-
-CSP_STYLE_SRC = ("'self'",)
-
-CSP_SCRIPT_SRC = ("'self'",)
 
 # Mailgun
 
