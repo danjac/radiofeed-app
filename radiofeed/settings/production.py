@@ -10,16 +10,11 @@ from radiofeed.settings.base import (
     BASE_DIR,
     EMAIL_HOST,
     INSTALLED_APPS,
-    MIDDLEWARE,
     config,
     configure_admin_site_header,
     configure_databases,
     configure_templates,
 )
-
-MIDDLEWARE += [
-    "csp.middleware.CSPMiddleware",
-]
 
 DATABASES = configure_databases(conn_max_age=360)
 
