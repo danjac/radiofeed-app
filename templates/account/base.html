@@ -1,14 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    {% if user.is_anonymous %}
-        <div class="flex items-center justify-center">
-            <div>
-            {% endif %}
-            {# djlint:off #}
+    {# djlint:off #}
             {% block account_content %}{% endblock account_content %}
-            {# djlint:on #}
-            {% if user.is_anonymous %}
-            </div>
-        </div>
-    {% endif %}
+    {# djlint:on #}
 {% endblock content %}

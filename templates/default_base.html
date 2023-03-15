@@ -45,9 +45,7 @@
                                 {% include "includes/sidebar.html" %}
                             </aside>
                         {% endif %}
-                        <main class="w-full mx-auto {% if user.is_authenticated %} xl:block xl:w-4/5{% endif %}"
-                              id="content"
-                              hx-history-elt>
+                        <main class="w-full mx-auto xl:block xl:w-4/5" id="content" hx-history-elt>
                             {# djlint:off #}
                             {% block content %}{% endblock content %}
                             {# djlint:on #}

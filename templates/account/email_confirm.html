@@ -4,7 +4,9 @@
     | Confirm E-mail Address
 {% endblock title %}
 {% block content %}
-    <h1 class="font-bold mb-3 text-lg md:text-xl xl:text-2xl">Confirm E-mail Address</h1>
+    <h1 class="flex items-center justify-center mb-6 text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
+        Confirm E-mail Address
+    </h1>
     {% if confirmation %}
         {% user_display confirmation.email_address.user as user_display %}
         <p class="mb-3">
