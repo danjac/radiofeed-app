@@ -4,8 +4,10 @@ import html
 
 from typing import Final
 
+import nh3
+
 from django.template.defaultfilters import striptags
-from lxml.html.clean import Cleaner, autolink_html
+from markdown_it import MarkdownIt
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -51,20 +53,17 @@ _ALLOWED_TAGS: Final = {
     "ul",
 }
 
-_cleaner = Cleaner(allow_tags=_ALLOWED_TAGS, safe_attrs_only=True, add_nofollow=True)
+_md = MarkdownIt("commonmark", {"linkify": True}).enable("linkify")
 
 
 def clean_html(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes."""
     return (
-        _cleaner.clean_html(
-            autolink_html(
-                value,
-                avoid_elements=[
-                    "textarea",
-                    "pre",
-                    "code",
-                ],
+        (
+            nh3.clean(
+                _md.render(value),
+                tags=_ALLOWED_TAGS,
+                link_rel="noopener noreferrer nofollow",
             )
         )
         if (value := value.strip())
