@@ -7,7 +7,6 @@ from typing import Final
 import nh3
 
 from django.template.defaultfilters import striptags
-from markdown_it import MarkdownIt
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -53,15 +52,13 @@ _ALLOWED_TAGS: Final = {
     "ul",
 }
 
-_md = MarkdownIt("commonmark", {"linkify": True}).enable("linkify")
-
 
 def clean_html(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes."""
     return (
         (
             nh3.clean(
-                _md.render(value),
+                value,
                 tags=_ALLOWED_TAGS,
                 link_rel="noopener noreferrer nofollow",
             )

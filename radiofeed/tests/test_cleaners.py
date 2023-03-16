@@ -17,13 +17,6 @@ class TestCleanHtml:
         cleaned = clean_html('<a href="http://reddit.com">Reddit</a>')
         assert 'rel="noopener noreferrer nofollow"' in cleaned
 
-    def test_has_url(self):
-        cleaned = clean_html("http://reddit.com")
-        assert (
-            '<a href="http://reddit.com" rel="noopener noreferrer nofollow">http://reddit.com</a>'
-            in cleaned
-        )
-
     def test_unsafe(self):
         assert clean_html("<script>alert('xss ahoy!')</script>") == ""
 
