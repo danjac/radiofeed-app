@@ -61,7 +61,7 @@ def clean_html(value: str) -> str:
     return (
         (
             nh3.clean(
-                _md.render(value),
+                value if nh3.is_html(value) else _md.render(value),
                 tags=_ALLOWED_TAGS,
                 link_rel="noopener noreferrer nofollow",
             )
