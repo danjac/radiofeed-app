@@ -4,7 +4,6 @@ import http
 
 from datetime import timedelta
 
-from django.contrib import messages
 from django.db import IntegrityError
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
@@ -209,8 +208,6 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     audio_log.delete()
 
-    messages.info(request, "Removed from History")
-
     return (
         render(
             request,
@@ -254,7 +251,6 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
-    messages.success(request, "Added to Bookmarks")
     return _render_bookmark_toggle(request, episode, True)
 
 
@@ -265,7 +261,6 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
     request.user.bookmarks.filter(episode=episode).delete()
 
-    messages.info(request, "Removed from Bookmarks")
     return _render_bookmark_toggle(request, episode, False)
 
 
