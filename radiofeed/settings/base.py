@@ -22,17 +22,17 @@ SECRET_KEY = config(
 
 DATABASE_URL = config(
     "DATABASE_URL",
-    default="postgresql://postgres:password@localhost:5432/postgres",
+    default="postgresql://postgres:password@127.0.0.1:5432/postgres",
 )
 
-REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/0")
 
 # prevent deprecation warnings
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="localhost", cast=Csv())
+ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="127.0.0.1", cast=Csv())
 
 # User-Agent header for API calls from this site
 USER_AGENT = config("USER_AGENT", "Radiofeed/0.0.0")
@@ -48,7 +48,7 @@ CSRF_COOKIE_HTTPONLY = True
 
 # Email configuration
 
-EMAIL_HOST = config("EMAIL_HOST", default="localhost")
+EMAIL_HOST = config("EMAIL_HOST", default="127.0.0.1")
 EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
