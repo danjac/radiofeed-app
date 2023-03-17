@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import contextlib
 import http
 
 from datetime import timedelta
 
 import requests
 
+from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
@@ -102,8 +102,11 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     if request.search:
         feeds: list[itunes.Feed] = []
 
-        with contextlib.suppress(requests.RequestException):
+        try:
             feeds = itunes.search(request.search.value)
+        except requests.RequestException:
+            messages.error(request, "Sorry, an error occurred trying to access iTunes.")
+
         return render(
             request,
             "podcasts/itunes_search.html",
@@ -261,6 +264,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     except IntegrityError:
         return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
+    messages.success(request, "You are now subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, True)
 
 
@@ -272,6 +276,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
 
+    messages.info(request, "You are no longer subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, False)
 
 
