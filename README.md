@@ -41,7 +41,7 @@ A `Makefile` has been provided with shortcuts to install and run your local deve
 * `make test`: run unit tests
 * `make update`: update all dependencies to latest available versions
 * `make watch`: compile JavaScript and CSS assets on the fly
-* `make serve`: run Django development server
+* `make serve`: run Django development server (on 127.0.0.1:8000)
 * `make rq`: run Django RQ worker
 * `make shell`: run Django shell on iPython
 
