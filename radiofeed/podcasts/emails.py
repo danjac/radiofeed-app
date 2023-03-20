@@ -78,6 +78,7 @@ def send_recommendations_email(
         html_message=loader.render_to_string(
             "podcasts/emails/recommendations.html", context
         ),
+        fail_silently=False,
     )
 
     return True

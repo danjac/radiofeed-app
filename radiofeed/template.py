@@ -70,18 +70,10 @@ def cookie_notice(context: RequestContext) -> dict:
     return {"accept_cookies": "accept-cookies" in context.request.COOKIES}
 
 
-@register.inclusion_tag("includes/cover_image.html")
-def cover_image(
-    cover_url: str,
-    size: int,
-    title: str,
-    url: str = "",
-    css_class: str = "",
-) -> dict:
-    """Renders a cover image with proxy URL."""
-    placeholder = static(f"img/placeholder-{size}.webp")
-
-    proxy_url = (
+@register.simple_tag
+def cover_image_url(cover_url: str, size: int) -> str:
+    """Returns signed cover image URL."""
+    return (
         reverse(
             "cover_image",
             kwargs={
@@ -94,8 +86,20 @@ def cover_image(
         else ""
     )
 
+
+@register.inclusion_tag("includes/cover_image.html")
+def cover_image(
+    cover_url: str,
+    size: int,
+    title: str,
+    url: str = "",
+    css_class: str = "",
+) -> dict:
+    """Renders a cover image with proxy URL."""
+    placeholder = static(f"img/placeholder-{size}.webp")
+
     return {
-        "cover_url": proxy_url,
+        "cover_url": cover_image_url(cover_url, size),
         "placeholder": placeholder,
         "title": title,
         "size": size,

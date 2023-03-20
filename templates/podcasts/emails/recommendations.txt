@@ -1,3 +1,4 @@
+{% autoescape off %}
 Hi {{ recipient.username }}, greetings from {{ site.name }}!
 
 Here are some podcasts you might find interesting:
@@ -16,3 +17,5 @@ If you do not want to receive any more notifications, just uncheck the "Send ema
 option on your Settings page:
 
 {{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}
+
+{% endautoescape %}
