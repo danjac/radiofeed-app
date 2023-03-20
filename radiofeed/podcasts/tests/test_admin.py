@@ -16,7 +16,6 @@ from radiofeed.podcasts.admin import (
     PromotedFilter,
     PubDateFilter,
     SubscribedFilter,
-    WebsubFilter,
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Category, Podcast
@@ -113,29 +112,6 @@ class TestPubDateFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert no_pub_date not in qs
-
-
-class TestWebsubFilter:
-    @pytest.fixture
-    def websub_podcast(self):
-        return create_podcast(websub_hub="https://example.com")
-
-    def test_none(self, podcasts, podcast_admin, req, websub_podcast):
-        f = WebsubFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    def test_no(self, podcasts, podcast_admin, req, websub_podcast):
-        f = WebsubFilter(req, {"websub": "no"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert websub_podcast not in qs
-
-    def test_yes(self, podcasts, podcast_admin, req, websub_podcast):
-        f = WebsubFilter(req, {"websub": "yes"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert websub_podcast in qs
 
 
 class TestPromotedFilter:
