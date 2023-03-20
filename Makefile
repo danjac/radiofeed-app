@@ -10,6 +10,10 @@ pyinstall:
 pyupdate:
 	poetry update
 
+pyexport:
+	poetry export -o requirements.txt --without-hashes
+	poetry export -o requirements-ci.txt --with=dev --without-hashes
+
 npminstall:
 	npm ci
 
