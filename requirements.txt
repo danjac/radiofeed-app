@@ -10,7 +10,7 @@ colorama==0.4.6 ; python_version >= "3.10" and python_version < "3.12" and platf
 cryptography==39.0.2 ; python_version >= "3.10" and python_version < "3.12"
 defusedxml==0.7.1 ; python_version >= "3.10" and python_version < "3.12"
 dj-database-url==1.2.0 ; python_version >= "3.10" and python_version < "3.12"
-django-allauth==0.52.0 ; python_version >= "3.10" and python_version < "3.12"
+django-allauth==0.53.1 ; python_version >= "3.10" and python_version < "3.12"
 django-anymail==9.1 ; python_version >= "3.10" and python_version < "3.12"
 django-extensions==3.2.1 ; python_version >= "3.10" and python_version < "3.12"
 django-fast-update==0.2.1 ; python_version >= "3.10" and python_version < "3.12"
