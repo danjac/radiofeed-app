@@ -116,15 +116,12 @@ class FeedParser:
                 modified=parse_date(response.headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
-                **self._extract_websub_links(response, feed),
                 **attrs.asdict(
                     feed,
                     filter=attrs.filters.exclude(  # type: ignore
                         self._feed_attrs.categories,
                         self._feed_attrs.complete,
                         self._feed_attrs.items,
-                        self._feed_attrs.websub_hub,
-                        self._feed_attrs.websub_topic,
                     ),
                 ),
             )
@@ -214,27 +211,6 @@ class FeedParser:
 
         Podcast.objects.filter(pk=self._podcast.id).update(
             updated=now, parsed=now, **fields
-        )
-
-    def _extract_websub_links(self, response: requests.Response, feed: Feed) -> dict:
-        try:
-            hub = response.links["hub"]["url"]
-            topic = response.links["self"]["url"]
-        except KeyError:
-            hub = feed.websub_hub
-            topic = feed.websub_topic
-
-        # if websub hub or topic have changed reset all websub settings
-
-        return (
-            {}
-            if hub == self._podcast.websub_hub and topic == self._podcast.rss
-            else {
-                "websub_hub": hub,
-                "websub_mode": "",
-                "websub_expires": None,
-                "websub_secret": None,
-            }
         )
 
     def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
