@@ -83,7 +83,6 @@ INSTALLED_APPS: list[str] = [
     "django_extensions",
     "django_htmx",
     "django_object_actions",
-    "django_rq",
     "fast_update",
     "heroicons",
     "radiofeed.episodes",
@@ -229,13 +228,6 @@ CACHES: dict = {
         },
     }
 }
-
-# RQ
-# https://github.com/rq/django-rq
-
-RQ_QUEUES = {"default": {"USE_REDIS_CACHE": "default"}}
-
-RQ_SHOW_ADMIN_LINK = True
 
 
 def configure_admin_site_header(environment: str) -> str:
