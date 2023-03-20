@@ -9,9 +9,13 @@ class TestCleanHtml:
     def test_empty(self):
         assert clean_html("") == ""
 
-    def test_if_safe(self):
+    def test_include_allowed_tag(self):
         text = "<p>testing with paras</p>"
         assert clean_html(text) == text
+
+    def test_remove_attrs(self):
+        text = "<p onload='alert(\"hi\")'>testing with paras</p>"
+        assert clean_html(text) == "<p>testing with paras</p>"
 
     def test_has_link(self):
         cleaned = clean_html('<a href="http://reddit.com">Reddit</a>')
