@@ -78,7 +78,7 @@ class TestPodcastAdmin:
         assert ordering == []
 
     def test_parse_podcast_feed_ok(self, mocker, podcast, podcast_admin, req):
-        patched = mocker.patch("radiofeed.feedparser.feed_parser.parse_feed.delay")
+        patched = mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()
 

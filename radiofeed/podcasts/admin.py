@@ -176,7 +176,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        feed_parser.parse_feed.delay(obj.id)
+        feed_parser.FeedParser(obj).parse()
 
         self.message_user(
             request, "Podcast has been queued for update", level=messages.SUCCESS

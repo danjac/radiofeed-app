@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import functools
 import hashlib
 import http
@@ -17,7 +16,6 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
 
 from radiofeed import iterators, tokenizer
 from radiofeed.episodes.models import Episode
@@ -52,13 +50,6 @@ def get_categories() -> dict[str, Category]:
         category.lowercase_name: category
         for category in Category.objects.annotate(lowercase_name=Lower("name"))
     }
-
-
-@job
-def parse_feed(podcast_id: int) -> None:
-    """Job to parse a podcast feed."""
-    with contextlib.suppress(FeedParserError):
-        FeedParser(Podcast.objects.get(pk=podcast_id)).parse()
 
 
 def make_content_hash(content: bytes) -> str:
