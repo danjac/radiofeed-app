@@ -10,8 +10,7 @@
                 <h2 class="flex-wrap text-base font-semibold lg:text-lg">
                     {% if link %}
                         <a href="{{ link }}"
-                           target="_blank"
-                           rel="noopener"
+                           rel="noopener nofollow"
                            title="Podcast Owner"
                            class="link">{{ podcast.owner }}</a>
                     {% else %}
@@ -26,7 +25,7 @@
                     <nav class="flex items-center space-x-3">
                         {% if link and link != podcast.rss %}
                             <div>
-                                <a href="{{ link }}" class="link" target="_blank" rel="noopener">Website</a>
+                                <a href="{{ link }}" class="link" rel="noopener nofollow">Website</a>
                             </div>
                         {% endif %}
                         <div>
@@ -53,9 +52,7 @@
             {% with funding_url=podcast.funding_url|force_url %}
                 {% if funding_url %}
                     <div class="flex-wrap font-semibold">
-                        <a href="{{ funding_url }}" target="_blank" rel="noopener">
-                            {{ podcast.funding_text|default:'Support this podcast' }}
-                        </a>
+                        <a href="{{ funding_url }}" rel="noopener nofollow">{{ podcast.funding_text|default:'Support this podcast' }}</a>
                     </div>
                 {% endif %}
             {% endwith %}
