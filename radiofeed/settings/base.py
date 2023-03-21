@@ -125,6 +125,10 @@ ADMIN_SITE_HEADER = config("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 AUTH_USER_MODEL = "users.User"
 
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 
 AUTHENTICATION_BACKENDS = [
