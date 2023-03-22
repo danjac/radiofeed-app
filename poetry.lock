@@ -866,14 +866,14 @@ tests = ["asttokens", "littleutils", "pytest", "rich"]
 
 [[package]]
 name = "faker"
-version = "18.2.0"
+version = "18.3.0"
 description = "Faker is a Python package that generates fake data for you."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Faker-18.2.0-py3-none-any.whl", hash = "sha256:20272ff42eaa3fd0a83d1c4ad27a6c0a58ebded4e48411a635b31643087d4bd6"},
-    {file = "Faker-18.2.0.tar.gz", hash = "sha256:daf4fc907cdc009bfde011db845d9847e0293baa701c49607bac1184f11e5d95"},
+    {file = "Faker-18.3.0-py3-none-any.whl", hash = "sha256:2deeee8fed3d1b8ae5f87d172d4569ddc859aab8693f7cd68eddc5d20400563a"},
+    {file = "Faker-18.3.0.tar.gz", hash = "sha256:e7c058e1f360f245f265625b32d3189d7229398ad80a8b6bac459891745de052"},
 ]
 
 [package.dependencies]
@@ -1010,13 +1010,13 @@ pycodestyle = "*"
 
 [[package]]
 name = "flake8-pyproject"
-version = "1.2.2"
+version = "1.2.3"
 description = "Flake8 plug-in loading the configuration from pyproject.toml"
 category = "dev"
 optional = false
 python-versions = ">= 3.6"
 files = [
-    {file = "flake8_pyproject-1.2.2-py3-none-any.whl", hash = "sha256:52d412219e7db6227faa654675b1435947b11d49b453f3eced760f19bdd6f06a"},
+    {file = "flake8_pyproject-1.2.3-py3-none-any.whl", hash = "sha256:6249fe53545205af5e76837644dc80b4c10037e73a0e5db87ff562d75fb5bd4a"},
 ]
 
 [package.dependencies]
