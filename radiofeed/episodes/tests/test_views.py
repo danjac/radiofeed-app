@@ -299,16 +299,32 @@ class TestPlayerTimeUpdate:
 
         log = AudioLog.objects.first()
 
-        log.refresh_from_db()
-
         assert log.current_time == 1030
 
-    def test_player_not_running(self, client, auth_user, episode):
+    def test_player_log_missing(self, client, auth_user, episode):
+        session = client.session
+        session[Player.session_key] = episode.id
+        session.save()
+
         response = client.post(
             self.url,
             {"current_time": "1030"},
         )
         assert_no_content(response)
+        log = AudioLog.objects.first()
+
+        assert log.current_time == 1030
+        assert log.episode == episode
+
+    def test_player_not_in_session(self, client, auth_user, episode):
+        response = client.post(
+            self.url,
+            {"current_time": "1030"},
+        )
+
+        assert_no_content(response)
+
+        assert not AudioLog.objects.exists()
 
     def test_missing_data(self, client, auth_user, player_episode):
         response = client.post(self.url)

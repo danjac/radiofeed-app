@@ -160,13 +160,17 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     """
     if episode_id := request.player.get():
         try:
-            request.user.audio_logs.filter(episode__pk=episode_id).update(
-                current_time=int(request.POST["current_time"]),
-                listened=timezone.now(),
-            )
-
+            current_time = int(request.POST["current_time"])
         except (KeyError, ValueError):
             return HttpResponseBadRequest()
+
+        request.user.audio_logs.update_or_create(
+            episode=get_object_or_404(Episode, pk=episode_id),
+            defaults={
+                "current_time": current_time,
+                "listened": timezone.now(),
+            },
+        )
 
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
