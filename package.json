@@ -19,7 +19,7 @@
         "@tailwindcss/line-clamp": "^0.4.2",
         "@tailwindcss/typography": "^0.5.9",
         "concurrently": "^7.6.0",
-        "esbuild": "^0.17.12",
+        "esbuild": "^0.17.14",
         "eslint": "^8.36.0",
         "eslint-plugin-prettier": "^4.2.1",
         "npm-check-updates": "^16.8.0",
