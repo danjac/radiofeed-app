@@ -29,7 +29,7 @@ repos:
             additional_dependencies: ["toml"]
             args: [--settings-path, "pyproject.toml"]
     - repo: https://github.com/ambv/black
-      rev: 23.1.0
+      rev: 23.3.0
       hooks:
           - id: black
             args: [--target-version, "py311", --line-length, "88"]
