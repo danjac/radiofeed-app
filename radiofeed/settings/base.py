@@ -32,7 +32,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ALLOWED_HOSTS: list[str] = config("ALLOWED_HOSTS", default="127.0.0.1", cast=Csv())
+ALLOWED_HOSTS: list[str] = config(
+    "ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv()
+)
 
 # User-Agent header for API calls from this site
 USER_AGENT = config("USER_AGENT", "Radiofeed/0.0.0")
