@@ -28,12 +28,13 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("podcasts:index")
 
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
     return render(
         request,
         "podcasts/landing_page.html",
         {
-            "podcasts": podcasts,
+            "podcasts": _get_podcasts()
+            .filter(promoted=True)
+            .order_by("-pub_date")[:limit],
         },
     )
 
