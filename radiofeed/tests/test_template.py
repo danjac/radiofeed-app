@@ -15,7 +15,7 @@ from radiofeed.template import (
     force_url,
     format_duration,
     pagination_url,
-    render_html,
+    render_html_content,
 )
 
 
@@ -80,7 +80,7 @@ class TestActiveLink:
         }
 
 
-class TestRenderHtml:
+class TestRenderHtmlContent:
     @pytest.mark.parametrize(
         "value,expected",
         [
@@ -94,7 +94,7 @@ class TestRenderHtml:
         ],
     )
     def test_render(self, value, expected):
-        return render_html(value) == {"content": expected}
+        return render_html_content(value) == {"content": expected}
 
 
 class TestForceUrl:

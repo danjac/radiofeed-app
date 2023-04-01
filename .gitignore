@@ -29,11 +29,11 @@
 .vscode/
 :
 :w
+codealike.json
 __pycache__
 celerybeat-schedule
 celerybeat.pid
 db
-db/audiotrails-volume
 dist/
 hosts
 logs
