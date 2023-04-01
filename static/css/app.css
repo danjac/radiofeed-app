@@ -311,6 +311,8 @@
         }
     }
 
+    /* MESSAGES */
+
     .message-success {
         background-color: theme("colors.green.600");
     }
@@ -333,6 +335,8 @@
 }
 
 @layer utilities {
+    /* BORDERS */
+
     @media (prefers-color-scheme: dark) {
         hr,
         .divide-x > * + *,
