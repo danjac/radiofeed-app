@@ -235,11 +235,6 @@ CACHES: dict = {
 }
 
 
-def configure_admin_site_header(environment: str) -> str:
-    """Add environment suffix to admin header."""
-    return f"{ADMIN_SITE_HEADER} [{environment}]"
-
-
 # Databases
 
 

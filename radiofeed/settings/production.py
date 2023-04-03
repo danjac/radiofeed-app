@@ -7,11 +7,11 @@ from sentry_sdk.integrations.logging import ignore_logger
 
 from radiofeed.settings.base import *  # noqa
 from radiofeed.settings.base import (
+    ADMIN_SITE_HEADER,
     BASE_DIR,
     EMAIL_HOST,
     INSTALLED_APPS,
     config,
-    configure_admin_site_header,
     configure_databases,
     configure_templates,
 )
@@ -20,7 +20,7 @@ DATABASES = configure_databases(conn_max_age=360)
 
 TEMPLATES = configure_templates(debug=False)
 
-ADMIN_SITE_HEADER = configure_admin_site_header("PRODUCTION")
+ADMIN_SITE_HEADER = f"{ADMIN_SITE_HEADER} [PRODUCTION]"
 
 # Static files
 
