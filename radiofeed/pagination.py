@@ -19,7 +19,7 @@ def render_pagination_response(
 
     Conditionally renders to selected pagination template if matching HTMX target.
 
-    Requires `PaginationMiddleware` in MIDDLEWARE.
+    Requires `radiofeed.middleware.PaginationMiddleware` in MIDDLEWARE.
     """
     page = Paginator(object_list, page_size).get_page(request.pagination.current)
 
