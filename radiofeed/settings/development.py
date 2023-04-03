@@ -21,12 +21,12 @@ ADMIN_SITE_HEADER = f"{ADMIN_SITE_HEADER} [DEVELOPMENT]"
 INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS += [
-    # "debug_toolbar",
+    "debug_toolbar",
     "django_browser_reload",
     "whitenoise.runserver_nostatic",
 ]
 
 MIDDLEWARE += [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
