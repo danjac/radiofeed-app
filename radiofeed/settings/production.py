@@ -26,7 +26,11 @@ ADMIN_SITE_HEADER = configure_admin_site_header("PRODUCTION")
 
 # http://whitenoise.evans.io/en/stable/django.html
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
