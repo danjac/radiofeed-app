@@ -85,7 +85,6 @@ INSTALLED_APPS: list[str] = [
     "django_extensions",
     "django_htmx",
     "django_object_actions",
-    "fast_update",
     "heroicons",
     "radiofeed.episodes",
     "radiofeed.feedparser",
