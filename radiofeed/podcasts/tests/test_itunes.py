@@ -163,7 +163,6 @@ class TestSearch:
         assert not Podcast.objects.exists()
 
     def test_ok(self, db, mock_good_response):
-        from django.conf import settings
 
         feeds = list(itunes.search("test"))
         assert len(feeds) == 1
