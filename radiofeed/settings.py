@@ -103,6 +103,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
+ROOT_URLCONF = "radiofeed.urls"
+
 ALLOWED_HOSTS: list[str] = config(
     "ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv()
 )
@@ -134,7 +136,6 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST
 # email shown in about page etc
 CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
-ROOT_URLCONF = "radiofeed.urls"
 
 # Installed apps
 
