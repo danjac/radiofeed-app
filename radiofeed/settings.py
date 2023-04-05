@@ -23,7 +23,6 @@ DJANGO_ENV: Environment = config("DJANGO_ENV", default="development")
 
 DEBUG = DJANGO_ENV == "development"
 
-
 SECRET_KEY = config(
     "SECRET_KEY",
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
@@ -389,10 +388,10 @@ match DJANGO_ENV:
         SECURE_SSL_REDIRECT = True
 
     case "testing":
+        CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+
         EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
         PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
         LOGGING = None
-
-        CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}

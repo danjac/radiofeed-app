@@ -98,17 +98,17 @@ DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = "-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing"
 testpaths = "radiofeed"
 env = [
-    "DJANGO_MODE=testing"
+    "DJANGO_ENV=testing"
 ]
 
 [tool.coverage.run]
 source=["radiofeed", "templates"]
 omit=[
-    "**/migrations/*",
+    "**/settings.py",
     "**/factories.py",
     "**/wsgi.py",
+    "**/migrations/*",
     "*/nltk/*",
-    "*/settings/*",
     "*/static/*",
     "*/tests/*",
 ]

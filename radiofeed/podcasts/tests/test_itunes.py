@@ -81,7 +81,6 @@ def mock_invalid_response(mocker):
 class TestCrawl:
     def test_crawl(self, db, mocker):
         def _mock_get(url, *args, **kwargs):
-
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
@@ -101,7 +100,6 @@ class TestCrawl:
 
     def test_crawl_with_parse_genre_error(self, db, mocker):
         def _mock_get(url, *args, **kwargs):
-
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
@@ -121,7 +119,6 @@ class TestCrawl:
 
     def test_crawl_with_parse_feeds_error(self, db, mocker):
         def _mock_get(url, *args, **kwargs):
-
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(exception=requests.RequestException("oops"))
 
@@ -141,7 +138,6 @@ class TestCrawl:
 
     def test_crawl_with_podcasts_url_error(self, db, mocker):
         def _mock_get(url, *args, **kwargs):
-
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
@@ -162,12 +158,12 @@ class TestCrawl:
 
 class TestSearch:
     def test_not_ok(self, db, mock_bad_response):
-
         with pytest.raises(requests.RequestException):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 
     def test_ok(self, db, mock_good_response):
+        from django.conf import settings
 
         feeds = list(itunes.search("test"))
         assert len(feeds) == 1
@@ -178,7 +174,6 @@ class TestSearch:
         assert not feeds
 
     def test_is_not_cached(self, db, mock_good_response, locmem_cache):
-
         feeds = itunes.search("test")
 
         assert len(feeds) == 1
@@ -187,7 +182,6 @@ class TestSearch:
         assert cache.get(itunes.search_cache_key("test")) == feeds
 
     def test_is_cached(self, db, mock_good_response, locmem_cache):
-
         cache.set(
             itunes.search_cache_key("test"),
             [
