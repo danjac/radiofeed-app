@@ -307,7 +307,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # Logging
 
-LOGGING: dict = {
+LOGGING: dict | None = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
@@ -371,6 +371,7 @@ match DJANGO_ENV:
     case "production":
         SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
         SECURE_SSL_REDIRECT = True
+
         STORAGES = {
             "staticfiles": {
                 "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -378,3 +379,10 @@ match DJANGO_ENV:
         }
 
         STATIC_ROOT = BASE_DIR / "staticfiles"
+
+    case "testing":
+        CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+
+        LOGGING = None
+
+        PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
