@@ -179,6 +179,26 @@ if config("USE_HTTPS", default=True, cast=bool):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
 
+# Permissions Policy
+
+# https://pypi.org/project/django-permissions-policy/
+
+PERMISSIONS_POLICY: dict[str, list] = {
+    "accelerometer": [],
+    "ambient-light-sensor": [],
+    "camera": [],
+    "document-domain": [],
+    "encrypted-media": [],
+    "fullscreen": [],
+    "geolocation": [],
+    "gyroscope": [],
+    "magnetometer": [],
+    "microphone": [],
+    "payment": [],
+    "usb": [],
+}
+
+
 # Email configuration
 
 EMAIL_HOST = config("EMAIL_HOST", default="127.0.0.1")
@@ -334,6 +354,7 @@ LOGGING: dict | None = (
         },
     }
 )
+
 # Sentry
 
 # https://docs.sentry.io/platforms/python/guides/django/
@@ -349,25 +370,6 @@ if SENTRY_URL := config("SENTRY_URL", default=None):
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
-
-# Permissions Policy
-
-# https://pypi.org/project/django-permissions-policy/
-
-PERMISSIONS_POLICY: dict[str, list] = {
-    "accelerometer": [],
-    "ambient-light-sensor": [],
-    "camera": [],
-    "document-domain": [],
-    "encrypted-media": [],
-    "fullscreen": [],
-    "geolocation": [],
-    "gyroscope": [],
-    "magnetometer": [],
-    "microphone": [],
-    "payment": [],
-    "usb": [],
-}
 
 # Debug toolbar
 
