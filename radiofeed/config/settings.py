@@ -82,15 +82,17 @@ MIDDLEWARE: list[str] = [
 
 # Databases
 
+DATABASE_URL = config(
+    "DATABASE_URL",
+    default="postgresql://postgres:password@127.0.0.1:5432/postgres",
+)
+
 CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=0)
 
 DATABASES = {
     "default": {
         **dj_database_url.parse(
-            config(
-                "DATABASE_URL",
-                default="postgresql://postgres:password@127.0.0.1:5432/postgres",
-            ),
+            DATABASE_URL,
             conn_max_age=CONN_MAX_AGE,
             conn_health_checks=CONN_MAX_AGE > 0,
         ),
@@ -100,10 +102,11 @@ DATABASES = {
 
 # Caches
 
+REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/0")
 
 CACHES: dict = {
     "BACKEND": "django_redis.cache.RedisCache",
-    "LOCATION": config("REDIS_URL", default="redis://127.0.0.1:6379/0"),
+    "LOCATION": REDIS_URL,
     "OPTIONS": {
         "CLIENT_CLASS": "django_redis.client.DefaultClient",
         # Mimicing memcache behavior.
