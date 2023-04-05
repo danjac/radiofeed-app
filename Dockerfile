@@ -22,4 +22,8 @@ RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 COPY . /app
 
-RUN python manage.py collectstatic --no-input --traceback --settings=radiofeed.settings.production
+ENV DJANGO_SETTINGS_MODULE=radiofeed.settings
+
+ENV DJANGO_MODE=production
+
+RUN python manage.py collectstatic --no-input --traceback --settings=radiofeed.settings
