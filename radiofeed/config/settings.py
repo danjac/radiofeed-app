@@ -3,7 +3,6 @@ from __future__ import annotations
 import pathlib
 
 from email.utils import getaddresses
-from typing import Literal
 
 import dj_database_url
 import sentry_sdk
@@ -13,15 +12,11 @@ from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
-Environment = Literal["development", "production", "testing"]
-
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 config = AutoConfig(search_path=BASE_DIR)
 
-DJANGO_ENV: Environment = config("DJANGO_ENV", default="development")
-
-DEBUG = DJANGO_ENV == "development"
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 SECRET_KEY = config(
     "SECRET_KEY",
@@ -82,19 +77,15 @@ MIDDLEWARE: list[str] = [
 
 # Databases
 
-DATABASE_URL = config(
-    "DATABASE_URL",
-    default="postgresql://postgres:password@127.0.0.1:5432/postgres",
-)
-
-
 CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=0)
-
 
 DATABASES = {
     "default": {
         **dj_database_url.parse(
-            DATABASE_URL,
+            config(
+                "DATABASE_URL",
+                default="postgresql://postgres:password@127.0.0.1:5432/postgres",
+            ),
             conn_max_age=CONN_MAX_AGE,
             conn_health_checks=CONN_MAX_AGE > 0,
         ),
@@ -104,12 +95,13 @@ DATABASES = {
 
 # Caches
 
-REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/0")
 
 CACHES: dict = {
-    "default": {
+    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+    if config("DISABLE_CACHE", default=False, cast=bool)
+    else {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
+        "LOCATION": config("REDIS_URL", default="redis://127.0.0.1:6379/0"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             # Mimicing memcache behavior.
@@ -120,10 +112,7 @@ CACHES: dict = {
     }
 }
 
-
 # Templates
-
-TEMPLATE_DEBUG = DJANGO_ENV in ("development", "testing")
 
 TEMPLATES = [
     {
@@ -131,7 +120,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
-            "debug": TEMPLATE_DEBUG,
+            "debug": config("TEMPLATE_DEBUG", default=False, cast=bool),
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -173,12 +162,46 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Secure settings
+
+# https://docs.djangoproject.com/en/4.1/topics/security/
+
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_SECONDS = 15768001  # 6 months
+
+if config("USE_HTTPS", default=True, cast=bool):
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+
 # Email configuration
 
 EMAIL_HOST = config("EMAIL_HOST", default="127.0.0.1")
 EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# Mailgun
+
+# https://anymail.dev/en/v9.0/esps/mailgun/
+
+if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
+    INSTALLED_APPS += ["anymail"]
+
+    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+
+    ANYMAIL = {
+        "MAILGUN_API_KEY": MAILGUN_API_KEY,
+        "MAILGUN_API_URL": MAILGUN_API_URL,
+        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
+    }
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 ADMINS = getaddresses(config("ADMINS", default="", cast=Csv()))
 
@@ -188,14 +211,11 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST
 # email shown in about page etc
 CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
-
 # admin settings
 
 ADMIN_URL = config("ADMIN_URL", default="admin/")
 
-ADMIN_SITE_HEADER = (
-    config("ADMIN_SITE_HEADER", default="Radiofeed Admin") + f" [{DJANGO_ENV.upper()}]"
-)
+ADMIN_SITE_HEADER = config("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 # Authentication
 
@@ -220,6 +240,10 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# optimization for testing
+if config("USE_MD5_PASSWORD_HASHER", default=False, cast=bool):
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
 
@@ -257,6 +281,20 @@ USE_TZ = True
 STATIC_URL = config("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+if config("USE_COLLECTSTATIC", default=True, cast=bool):
+    # http://whitenoise.evans.io/en/stable/django.html
+
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+
+else:
+    INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
+
 # Templates
 
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
@@ -265,50 +303,37 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # Logging
 
-LOGGING: dict | None = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {"class": "logging.StreamHandler"},
-        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
-    },
-    "loggers": {
-        "root": {
-            "handlers": ["console"],
-            "level": "INFO",
+LOGGING: dict | None = (
+    None
+    if config("DISABLE_LOGGING", default=False, cast=bool)
+    else {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "handlers": {
+            "console": {"class": "logging.StreamHandler"},
+            "null": {"level": "DEBUG", "class": "logging.NullHandler"},
         },
-        "django.server": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
+        "loggers": {
+            "root": {
+                "handlers": ["console"],
+                "level": "INFO",
+            },
+            "django.server": {
+                "handlers": ["console"],
+                "level": "INFO",
+                "propagate": False,
+            },
+            "django.security.DisallowedHost": {
+                "handlers": ["null"],
+                "propagate": False,
+            },
+            "django.request": {
+                "level": "CRITICAL",
+                "propagate": False,
+            },
         },
-        "django.security.DisallowedHost": {
-            "handlers": ["null"],
-            "propagate": False,
-        },
-        "django.request": {
-            "level": "CRITICAL",
-            "propagate": False,
-        },
-    },
-}
-# Mailgun
-
-# https://anymail.dev/en/v9.0/esps/mailgun/
-
-if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
-    INSTALLED_APPS += ["anymail"]
-
-    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
-
-    ANYMAIL = {
-        "MAILGUN_API_KEY": MAILGUN_API_KEY,
-        "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
     }
-
+)
 # Sentry
 
 # https://docs.sentry.io/platforms/python/guides/django/
@@ -344,56 +369,26 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "usb": [],
 }
 
-# Environment overrides
+# Debug toolbar
 
-match DJANGO_ENV:
-    case "development":
-        INSTALLED_APPS += [
-            "debug_toolbar",
-            "django_browser_reload",
-            "whitenoise.runserver_nostatic",
-        ]
+if config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
 
-        MIDDLEWARE += [
-            "django_browser_reload.middleware.BrowserReloadMiddleware",
-            "debug_toolbar.middleware.DebugToolbarMiddleware",
-        ]
-        # INTERNAL_IPS required for debug toolbar
-        INTERNAL_IPS = ["127.0.0.1"]
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+    # INTERNAL_IPS required for debug toolbar
+    INTERNAL_IPS = ["127.0.0.1"]
 
-    case "production":
-        # Static files
+# Browser reload
 
-        # http://whitenoise.evans.io/en/stable/django.html
+if config("USE_BROWSER_RELOAD", default=False, cast=bool):
+    INSTALLED_APPS += [
+        "django_browser_reload",
+    ]
 
-        STORAGES = {
-            "staticfiles": {
-                "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-            },
-        }
-
-        STATIC_ROOT = BASE_DIR / "staticfiles"
-
-        # Secure settings
-
-        # https://docs.djangoproject.com/en/4.1/topics/security/
-
-        SESSION_COOKIE_SECURE = True
-        CSRF_COOKIE_SECURE = True
-
-        SECURE_BROWSER_XSS_FILTER = True
-        SECURE_CONTENT_TYPE_NOSNIFF = True
-        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-        SECURE_HSTS_PRELOAD = True
-        SECURE_HSTS_SECONDS = 15768001  # 6 months
-        SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-        SECURE_SSL_REDIRECT = True
-
-    case "testing":
-        CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-
-        EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-
-        PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
-        LOGGING = None
+    MIDDLEWARE += [
+        "django_browser_reload.middleware.BrowserReloadMiddleware",
+    ]

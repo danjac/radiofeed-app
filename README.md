@@ -24,6 +24,8 @@ If you want to use the Docker images just run:
 docker-compose up --build -d
 ```
 
+You should then copy `.env.example` to `.env`.
+
 Current tested versions are PostgresSQL 14+ and Redis 6.2+.
 
 You should run your development environment inside a virtualenv e.g.:
@@ -52,7 +54,6 @@ The following environment variables should be set in your production installatio
 
 ```
 DJANGO_SETTINGS_MODULE=radiofeed.settings
-DJANGO_ENV=production
 ALLOWED_HOSTS=radiofeed.app
 DATABASE_URL=<database-url>
 CONN_MAX_AGE=360
