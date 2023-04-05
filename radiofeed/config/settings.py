@@ -3,6 +3,7 @@ from __future__ import annotations
 import pathlib
 
 from email.utils import getaddresses
+from typing import Literal
 
 import dj_database_url
 import sentry_sdk
@@ -12,11 +13,15 @@ from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
+Environment = Literal["development", "production", "testing"]
+
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 config = AutoConfig(search_path=BASE_DIR)
 
-DEBUG = config("DEBUG", default=False, cast=bool)
+DJANGO_ENV: Environment = config("DJANGO_ENV", default="development")
+
+DEBUG = DJANGO_ENV == "development"
 
 SECRET_KEY = config(
     "SECRET_KEY",
@@ -116,7 +121,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
-            "debug": config("TEMPLATE_DEBUG", default=False, cast=bool),
+            "debug": DJANGO_ENV in ("development", "testing"),
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -170,10 +175,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_SECONDS = 15768001  # 6 months
-
-if config("USE_HTTPS", default=True, cast=bool):
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
 
 # Permissions Policy
 
@@ -293,20 +294,6 @@ USE_TZ = True
 STATIC_URL = config("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# http://whitenoise.evans.io/en/stable/django.html
-
-if config("USE_COLLECTSTATIC", default=True, cast=bool):
-    STORAGES = {
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
-
-    STATIC_ROOT = BASE_DIR / "staticfiles"
-
-else:
-    INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
-
 # Templates
 
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
@@ -359,26 +346,30 @@ if SENTRY_URL := config("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
-# Debug toolbar
+# Environment overrides
 
-if config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
-    INSTALLED_APPS += [
-        "debug_toolbar",
-    ]
+match DJANGO_ENV:
+    case "development":
+        INSTALLED_APPS += [
+            "debug_toolbar",
+            "django_browser_reload",
+            "whitenoise.runserver_nostatic",
+        ]
 
-    MIDDLEWARE += [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
-    # INTERNAL_IPS required for debug toolbar
-    INTERNAL_IPS = ["127.0.0.1"]
+        MIDDLEWARE += [
+            "debug_toolbar.middleware.DebugToolbarMiddleware",
+            "django_browser_reload.middleware.BrowserReloadMiddleware",
+        ]
+        # INTERNAL_IPS required for debug toolbar
+        INTERNAL_IPS = ["127.0.0.1"]
 
-# Browser reload
+    case "production":
+        SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+        SECURE_SSL_REDIRECT = True
+        STORAGES = {
+            "staticfiles": {
+                "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            },
+        }
 
-if config("USE_BROWSER_RELOAD", default=False, cast=bool):
-    INSTALLED_APPS += [
-        "django_browser_reload",
-    ]
-
-    MIDDLEWARE += [
-        "django_browser_reload.middleware.BrowserReloadMiddleware",
-    ]
+        STATIC_ROOT = BASE_DIR / "staticfiles"

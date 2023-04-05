@@ -98,9 +98,7 @@ DJANGO_SETTINGS_MODULE="radiofeed.config.settings"
 addopts = "-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing"
 testpaths = "radiofeed"
 env = [
-    "TEMPLATE_DEBUG=true",
-    "USE_COLLECTSTATIC=false",
-    "USE_HTTPS=false",
+    "DJANGO_ENV=testing"
 ]
 
 [tool.coverage.run]
