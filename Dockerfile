@@ -26,4 +26,4 @@ ENV DJANGO_SETTINGS_MODULE=radiofeed.settings
 
 ENV DJANGO_MODE=production
 
-RUN python manage.py collectstatic --no-input --traceback --settings=radiofeed.settings
+RUN python manage.py collectstatic --no-input --traceback
