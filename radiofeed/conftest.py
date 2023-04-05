@@ -19,13 +19,13 @@ from radiofeed.users.factories import create_user
 
 # `pytest` automatically calls this function once when tests are run.
 def pytest_configure():
-    settings.LOGGING = None
-
-    settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
     }
+
+    settings.LOGGING = None
+
+    settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 
 @pytest.fixture(scope="session")
