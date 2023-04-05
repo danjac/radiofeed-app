@@ -348,18 +348,18 @@ PERMISSIONS_POLICY: dict[str, list] = {
 
 match DJANGO_ENV:
     case "development":
+        INSTALLED_APPS += [
+            "debug_toolbar",
+            "django_browser_reload",
+            "whitenoise.runserver_nostatic",
+        ]
+
         MIDDLEWARE += [
             "django_browser_reload.middleware.BrowserReloadMiddleware",
             "debug_toolbar.middleware.DebugToolbarMiddleware",
         ]
         # INTERNAL_IPS required for debug toolbar
         INTERNAL_IPS = ["127.0.0.1"]
-
-        INSTALLED_APPS += [
-            "debug_toolbar",
-            "django_browser_reload",
-            "whitenoise.runserver_nostatic",
-        ]
 
     case "production":
         # Static files
