@@ -3,29 +3,101 @@ from __future__ import annotations
 import pathlib
 
 from email.utils import getaddresses
+from typing import Literal
 
 import dj_database_url
+import sentry_sdk
 
 from decouple import AutoConfig, Csv
 from django.urls import reverse_lazy
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import ignore_logger
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
+Environment = Literal["development", "production", "testing"]
+
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
 config = AutoConfig(search_path=BASE_DIR)
 
-DEBUG = False
+DJANGO_ENV: Environment = config("DJANGO_ENV", default="development")
+
+DEBUG = DJANGO_ENV == "development"
+
 
 SECRET_KEY = config(
     "SECRET_KEY",
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
+# Databases
+
 DATABASE_URL = config(
     "DATABASE_URL",
     default="postgresql://postgres:password@127.0.0.1:5432/postgres",
 )
 
+
+CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=0)
+
+
+DATABASES = {
+    "default": {
+        **dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=CONN_MAX_AGE,
+            conn_health_checks=CONN_MAX_AGE > 0,
+        ),
+        "ATOMIC_REQUESTS": True,
+    },
+}
+
+# Caches
+
 REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/0")
+
+CACHES: dict = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # Mimicing memcache behavior.
+            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
+            "IGNORE_EXCEPTIONS": True,
+            "PARSER_CLASS": "redis.connection.HiredisParser",
+        },
+    }
+}
+
+
+# Templates
+
+TEMPLATE_DEBUG = DJANGO_ENV in ("development", "testing")
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "debug": TEMPLATE_DEBUG,
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+            ],
+            "builtins": [
+                "radiofeed.template",
+            ],
+        },
+    }
+]
+
 
 # prevent deprecation warnings
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -120,7 +192,9 @@ MIDDLEWARE: list[str] = [
 
 ADMIN_URL = config("ADMIN_URL", default="admin/")
 
-ADMIN_SITE_HEADER = config("ADMIN_SITE_HEADER", default="Radiofeed Admin")
+ADMIN_SITE_HEADER = (
+    config("ADMIN_SITE_HEADER", default="Radiofeed Admin") + f" [{DJANGO_ENV.upper()}]"
+)
 
 # Authentication
 
@@ -217,66 +291,108 @@ LOGGING: dict | None = {
         },
     },
 }
+# Mailgun
 
-# Caches
+# https://anymail.dev/en/v9.0/esps/mailgun/
 
-CACHES: dict = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # Mimicing memcache behavior.
-            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
-            "IGNORE_EXCEPTIONS": True,
-            "PARSER_CLASS": "redis.connection.HiredisParser",
-        },
+if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
+    INSTALLED_APPS += ["anymail"]
+
+    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+
+    ANYMAIL = {
+        "MAILGUN_API_KEY": MAILGUN_API_KEY,
+        "MAILGUN_API_URL": MAILGUN_API_URL,
+        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
     }
+
+# Sentry
+
+# https://docs.sentry.io/platforms/python/guides/django/
+
+if SENTRY_URL := config("SENTRY_URL", default=None):
+    ignore_logger("django.security.DisallowedHost")
+
+    sentry_sdk.init(
+        dsn=SENTRY_URL,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0.5,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )
+
+# Permissions Policy
+
+# https://pypi.org/project/django-permissions-policy/
+
+PERMISSIONS_POLICY: dict[str, list] = {
+    "accelerometer": [],
+    "ambient-light-sensor": [],
+    "camera": [],
+    "document-domain": [],
+    "encrypted-media": [],
+    "fullscreen": [],
+    "geolocation": [],
+    "gyroscope": [],
+    "magnetometer": [],
+    "microphone": [],
+    "payment": [],
+    "usb": [],
 }
 
+# Environment overrides
 
-# Databases
+match DJANGO_ENV:
+    case "development":
+        MIDDLEWARE += [
+            "django_browser_reload.middleware.BrowserReloadMiddleware",
+            "debug_toolbar.middleware.DebugToolbarMiddleware",
+        ]
+        # INTERNAL_IPS required for debug toolbar
+        INTERNAL_IPS = ["127.0.0.1"]
 
+        INSTALLED_APPS += [
+            "debug_toolbar",
+            "django_browser_reload",
+            "whitenoise.runserver_nostatic",
+        ]
 
-def configure_databases(*, conn_max_age: int) -> dict:
-    """Build DATABASES configuration."""
-    return {
-        "default": {
-            **dj_database_url.parse(
-                DATABASE_URL,
-                conn_max_age=conn_max_age,
-                conn_health_checks=conn_max_age > 0,
-            ),
-            "ATOMIC_REQUESTS": True,
-        },
-    }
+    case "production":
+        # Static files
 
+        # http://whitenoise.evans.io/en/stable/django.html
 
-# Templates
-
-
-def configure_templates(*, debug: bool = False) -> list[dict]:
-    """Build TEMPLATES configuration."""
-    return [
-        {
-            "BACKEND": "django.template.backends.django.DjangoTemplates",
-            "DIRS": [BASE_DIR / "templates"],
-            "APP_DIRS": True,
-            "OPTIONS": {
-                "debug": debug,
-                "context_processors": [
-                    "django.template.context_processors.debug",
-                    "django.template.context_processors.request",
-                    "django.contrib.auth.context_processors.auth",
-                    "django.template.context_processors.i18n",
-                    "django.template.context_processors.media",
-                    "django.template.context_processors.static",
-                    "django.template.context_processors.tz",
-                    "django.contrib.messages.context_processors.messages",
-                ],
-                "builtins": [
-                    "radiofeed.template",
-                ],
+        STORAGES = {
+            "staticfiles": {
+                "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
             },
         }
-    ]
+
+        STATIC_ROOT = BASE_DIR / "staticfiles"
+
+        # Secure settings
+
+        # https://docs.djangoproject.com/en/4.1/topics/security/
+
+        SESSION_COOKIE_SECURE = True
+        CSRF_COOKIE_SECURE = True
+
+        SECURE_BROWSER_XSS_FILTER = True
+        SECURE_CONTENT_TYPE_NOSNIFF = True
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+        SECURE_HSTS_PRELOAD = True
+        SECURE_HSTS_SECONDS = 15768001  # 6 months
+        SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+        SECURE_SSL_REDIRECT = True
+
+    case "testing":
+        EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+        PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+        LOGGING = None
+
+        CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}

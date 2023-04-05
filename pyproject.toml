@@ -73,6 +73,7 @@ types-urllib3 = "^1.26.25.7"
 django-browser-reload = "^1.6.0"
 ipython = "^8.10.0"
 django-debug-toolbar = "^4.0.0"
+pytest-env = "^0.8.1"
 
 [tool.isort]
 default_section = "THIRDPARTY"
@@ -93,9 +94,12 @@ multi_line_output = 3
 add_imports = "from __future__ import annotations"
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "radiofeed.settings.testing"
+DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = "-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing"
 testpaths = "radiofeed"
+env = [
+    "DJANGO_MODE=testing"
+]
 
 [tool.coverage.run]
 source=["radiofeed", "templates"]
