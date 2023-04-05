@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.http import HttpResponse
@@ -14,6 +15,17 @@ from radiofeed.podcasts.factories import (
     create_subscription,
 )
 from radiofeed.users.factories import create_user
+
+
+# `pytest` automatically calls this function once when tests are run.
+def pytest_configure():
+    settings.LOGGING = None
+
+    settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+    settings.CACHES = {
+        "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+    }
 
 
 @pytest.fixture(scope="session")

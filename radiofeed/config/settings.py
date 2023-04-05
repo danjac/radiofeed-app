@@ -97,19 +97,15 @@ DATABASES = {
 
 
 CACHES: dict = {
-    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
-    if config("DISABLE_CACHE", default=False, cast=bool)
-    else {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config("REDIS_URL", default="redis://127.0.0.1:6379/0"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # Mimicing memcache behavior.
-            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
-            "IGNORE_EXCEPTIONS": True,
-            "PARSER_CLASS": "redis.connection.HiredisParser",
-        },
-    }
+    "BACKEND": "django_redis.cache.RedisCache",
+    "LOCATION": config("REDIS_URL", default="redis://127.0.0.1:6379/0"),
+    "OPTIONS": {
+        "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        # Mimicing memcache behavior.
+        # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
+        "IGNORE_EXCEPTIONS": True,
+        "PARSER_CLASS": "redis.connection.HiredisParser",
+    },
 }
 
 # Templates
@@ -261,10 +257,6 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# optimization for testing
-if config("USE_MD5_PASSWORD_HASHER", default=False, cast=bool):
-    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
 LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
 
 LOGIN_URL = "account_login"
@@ -304,7 +296,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # http://whitenoise.evans.io/en/stable/django.html
 
 if config("USE_COLLECTSTATIC", default=True, cast=bool):
-
     STORAGES = {
         "staticfiles": {
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -324,37 +315,33 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # Logging
 
-LOGGING: dict | None = (
-    None
-    if config("DISABLE_LOGGING", default=False, cast=bool)
-    else {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "handlers": {
-            "console": {"class": "logging.StreamHandler"},
-            "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+LOGGING: dict = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+    },
+    "loggers": {
+        "root": {
+            "handlers": ["console"],
+            "level": "INFO",
         },
-        "loggers": {
-            "root": {
-                "handlers": ["console"],
-                "level": "INFO",
-            },
-            "django.server": {
-                "handlers": ["console"],
-                "level": "INFO",
-                "propagate": False,
-            },
-            "django.security.DisallowedHost": {
-                "handlers": ["null"],
-                "propagate": False,
-            },
-            "django.request": {
-                "level": "CRITICAL",
-                "propagate": False,
-            },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
         },
-    }
-)
+        "django.security.DisallowedHost": {
+            "handlers": ["null"],
+            "propagate": False,
+        },
+        "django.request": {
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+    },
+}
 
 # Sentry
 
