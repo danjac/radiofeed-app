@@ -28,6 +28,58 @@ SECRET_KEY = config(
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
+# Installed apps
+
+INSTALLED_APPS: list[str] = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.messages",
+    "django.contrib.postgres",
+    "django.contrib.sessions",
+    "django.contrib.sitemaps",
+    "django.contrib.sites",
+    "django.contrib.staticfiles",
+    "django.forms",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "django_extensions",
+    "django_htmx",
+    "django_object_actions",
+    "heroicons",
+    "radiofeed.episodes",
+    "radiofeed.feedparser",
+    "radiofeed.podcasts",
+    "radiofeed.users",
+]
+
+
+# Middleware
+
+MIDDLEWARE: list[str] = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django_permissions_policy.PermissionsPolicyMiddleware",
+    "django.contrib.sites.middleware.CurrentSiteMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.common.BrokenLinkEmailsMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
+    "radiofeed.middleware.CacheControlMiddleware",
+    "radiofeed.middleware.OrderingMiddleware",
+    "radiofeed.middleware.PaginationMiddleware",
+    "radiofeed.middleware.SearchMiddleware",
+    "radiofeed.episodes.middleware.PlayerMiddleware",
+]
+
+
 # Databases
 
 DATABASE_URL = config(
@@ -136,57 +188,6 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST
 # email shown in about page etc
 CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
-
-# Installed apps
-
-INSTALLED_APPS: list[str] = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.messages",
-    "django.contrib.postgres",
-    "django.contrib.sessions",
-    "django.contrib.sitemaps",
-    "django.contrib.sites",
-    "django.contrib.staticfiles",
-    "django.forms",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
-    "django_extensions",
-    "django_htmx",
-    "django_object_actions",
-    "heroicons",
-    "radiofeed.episodes",
-    "radiofeed.feedparser",
-    "radiofeed.podcasts",
-    "radiofeed.users",
-]
-
-
-# Middleware
-
-MIDDLEWARE: list[str] = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django_permissions_policy.PermissionsPolicyMiddleware",
-    "django.contrib.sites.middleware.CurrentSiteMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.common.BrokenLinkEmailsMiddleware",
-    "django_htmx.middleware.HtmxMiddleware",
-    "radiofeed.middleware.CacheControlMiddleware",
-    "radiofeed.middleware.OrderingMiddleware",
-    "radiofeed.middleware.PaginationMiddleware",
-    "radiofeed.middleware.SearchMiddleware",
-    "radiofeed.episodes.middleware.PlayerMiddleware",
-]
 
 # admin settings
 
