@@ -351,7 +351,7 @@ if SENTRY_URL := config("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
-# Environment overrides
+# Environment setup
 
 match DJANGO_ENV:
     case "development":
