@@ -296,7 +296,7 @@ LOGGING = {
 # Permissions Policy
 # https://pypi.org/project/django-permissions-policy/
 
-PERMISSIONS_POLICY: dict[list] = {
+PERMISSIONS_POLICY: dict[str, list] = {
     "accelerometer": [],
     "ambient-light-sensor": [],
     "camera": [],
