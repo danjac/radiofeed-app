@@ -4,21 +4,36 @@ import pathlib
 
 from email.utils import getaddresses
 
-import dj_database_url
+import environ
 import sentry_sdk
 
-from decouple import AutoConfig, Csv
 from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
+# default flags
+env = environ.Env(
+    DEBUG=(bool, False),
+    TEMPLATE_DEBUG=(bool, False),
+    USE_BROWSER_RELOAD=(bool, False),
+    USE_DEBUG_TOOLBAR=(bool, False),
+    USE_COLLECTSTATIC=(bool, True),
+    USE_SECURE_SETTINGS=(bool, True),
+)
+
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
-config = AutoConfig(search_path=BASE_DIR)
+environ.Env.read_env(BASE_DIR / ".env")
 
-DEBUG: bool = config("DEBUG", default=False, cast=bool)
+DEBUG = env("DEBUG")
+TEMPLATE_DEBUG = env("TEMPLATE_DEBUG")
 
-SECRET_KEY = config(
+USE_BROWSER_RELOAD = env("USE_BROWSER_RELOAD")
+USE_DEBUG_TOOLBAR = env("USE_DEBUG_TOOLBAR")
+USE_COLLECTSTATIC = env("USE_COLLECTSTATIC")
+USE_SECURE_SETTINGS = env("USE_SECURE_SETTINGS")
+
+SECRET_KEY = env.str(
     "SECRET_KEY",
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
@@ -72,32 +87,22 @@ MIDDLEWARE: list[str] = [
 
 # Databases
 
-DATABASE_URL = config(
-    "DATABASE_URL",
-    default="postgresql://postgres:password@127.0.0.1:5432/postgres",
-)
-
-CONN_MAX_AGE = config("CONN_MAX_AGE", cast=int, default=0)
+CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=0)
 
 DATABASES = {
     "default": {
-        **dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=CONN_MAX_AGE,
-            conn_health_checks=CONN_MAX_AGE > 0,
-        ),
+        **env.db(default="postgresql://postgres:password@127.0.0.1:5432/postgres"),
         "ATOMIC_REQUESTS": True,
-    },
+        "CONN_MAX_AGE": CONN_MAX_AGE,
+        "CONN_HEALTH_CHECKS": CONN_MAX_AGE > 0,
+    }
 }
 
 # Caches
 
-REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/0")
-
-CACHES: dict = {
+CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
+        **env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             # Mimicing memcache behavior.
@@ -108,6 +113,7 @@ CACHES: dict = {
     }
 }
 
+
 # Templates
 
 TEMPLATES = [
@@ -116,7 +122,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
-            "debug": config("TEMPLATE_DEBUG", default=False, cast=bool),
+            "debug": TEMPLATE_DEBUG,
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -142,12 +148,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ROOT_URLCONF = "radiofeed.config.urls"
 
-ALLOWED_HOSTS: list[str] = config(
-    "ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv()
-)
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 # User-Agent header for API calls from this site
-USER_AGENT = config("USER_AGENT", "Radiofeed/0.0.0")
+USER_AGENT = env.str("USER_AGENT", default="Radiofeed/0.0.0")
 
 SITE_ID = 1
 
@@ -158,54 +162,20 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
-# Secure settings
-# https://docs.djangoproject.com/en/4.1/topics/security/
-
-if config("USE_SECURE_SETTINGS", default=True, cast=bool):
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_HSTS_SECONDS = 15768001  # 6 months
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
-
-# Permissions Policy
-# https://pypi.org/project/django-permissions-policy/
-
-PERMISSIONS_POLICY: dict[str, list] = {
-    "accelerometer": [],
-    "ambient-light-sensor": [],
-    "camera": [],
-    "document-domain": [],
-    "encrypted-media": [],
-    "fullscreen": [],
-    "geolocation": [],
-    "gyroscope": [],
-    "magnetometer": [],
-    "microphone": [],
-    "payment": [],
-    "usb": [],
-}
-
-
 # Email configuration
 
-EMAIL_HOST = config("EMAIL_HOST", default="127.0.0.1")
-EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
+EMAIL_HOST = env.str("EMAIL_HOST", default="127.0.0.1")
+EMAIL_PORT = env.int("EMAIL_PORT", default=1025)
 
 # Mailgun
 # https://anymail.dev/en/v9.0/esps/mailgun/
 
-if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
+if MAILGUN_API_KEY := env.str("MAILGUN_API_KEY", default=None):
     INSTALLED_APPS += ["anymail"]
 
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
-    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+    MAILGUN_API_URL = env.url("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
 
     ANYMAIL = {
         "MAILGUN_API_KEY": MAILGUN_API_KEY,
@@ -215,19 +185,19 @@ if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-ADMINS = getaddresses(config("ADMINS", default="", cast=Csv()))
+ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
-SERVER_EMAIL = config("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
+SERVER_EMAIL = env.str("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
 
 # email shown in about page etc
-CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
+CONTACT_EMAIL = env.str("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
 # admin settings
 
-ADMIN_URL = config("ADMIN_URL", default="admin/")
+ADMIN_URL = env.str("ADMIN_URL", default="admin/")
 
-ADMIN_SITE_HEADER = config("ADMIN_SITE_HEADER", default="Radiofeed Admin")
+ADMIN_SITE_HEADER = env.str("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 # Authentication
 
@@ -286,23 +256,9 @@ USE_TZ = True
 
 # Static files
 
-STATIC_URL = config("STATIC_URL", default="/static/")
+STATIC_URL = env.str("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Whitenoise
-# https://whitenoise.readthedocs.io/en/latest/django.html
-
-if config("USE_COLLECTSTATIC", default=True, cast=bool):
-    STORAGES = {
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
-
-
-else:
-    INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
 
 # Templates
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
@@ -342,7 +298,7 @@ LOGGING: dict | None = {
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
-if SENTRY_URL := config("SENTRY_URL", default=None):
+if SENTRY_URL := env.str("SENTRY_URL", default=None):
     ignore_logger("django.security.DisallowedHost")
 
     sentry_sdk.init(
@@ -357,7 +313,7 @@ if SENTRY_URL := config("SENTRY_URL", default=None):
 # Debug toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/
 
-if config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
+if USE_DEBUG_TOOLBAR:
     INSTALLED_APPS += ["debug_toolbar"]
 
     MIDDLEWARE += [
@@ -369,9 +325,57 @@ if config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
 # Browser reload
 # https://github.com/adamchainz/django-browser-reload
 
-if config("USE_BROWSER_RELOAD", default=False, cast=bool):
+if USE_BROWSER_RELOAD:
     INSTALLED_APPS += ["django_browser_reload"]
 
     MIDDLEWARE += [
         "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]
+
+# Secure settings
+# https://docs.djangoproject.com/en/4.1/topics/security/
+
+if USE_SECURE_SETTINGS:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_SECONDS = 15768001  # 6 months
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+
+    # Permissions Policy
+    # https://pypi.org/project/django-permissions-policy/
+
+    PERMISSIONS_POLICY: dict[str, list] = {
+        "accelerometer": [],
+        "ambient-light-sensor": [],
+        "camera": [],
+        "document-domain": [],
+        "encrypted-media": [],
+        "fullscreen": [],
+        "geolocation": [],
+        "gyroscope": [],
+        "magnetometer": [],
+        "microphone": [],
+        "payment": [],
+        "usb": [],
+    }
+
+
+# Whitenoise
+# https://whitenoise.readthedocs.io/en/latest/django.html
+
+if USE_COLLECTSTATIC:
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
+
+else:
+    INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
