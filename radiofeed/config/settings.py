@@ -290,6 +290,9 @@ STATIC_URL = config("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Whitenoise
+# https://whitenoise.readthedocs.io/en/latest/django.html
+
 if config("USE_COLLECTSTATIC", default=True, cast=bool):
     STORAGES = {
         "staticfiles": {
