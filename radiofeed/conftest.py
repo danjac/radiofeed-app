@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.http import HttpResponse
