@@ -293,6 +293,25 @@ LOGGING: dict | None = {
     },
 }
 
+# Permissions Policy
+# https://pypi.org/project/django-permissions-policy/
+
+PERMISSIONS_POLICY: dict[str, list] = {
+    "accelerometer": [],
+    "ambient-light-sensor": [],
+    "camera": [],
+    "document-domain": [],
+    "encrypted-media": [],
+    "fullscreen": [],
+    "geolocation": [],
+    "gyroscope": [],
+    "magnetometer": [],
+    "microphone": [],
+    "payment": [],
+    "usb": [],
+}
+
+
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
@@ -322,24 +341,6 @@ if USE_SECURE_SETTINGS:
     SECURE_HSTS_SECONDS = 15768001  # 6 months
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
-
-    # Permissions Policy
-    # https://pypi.org/project/django-permissions-policy/
-
-    PERMISSIONS_POLICY: dict[str, list] = {
-        "accelerometer": [],
-        "ambient-light-sensor": [],
-        "camera": [],
-        "document-domain": [],
-        "encrypted-media": [],
-        "fullscreen": [],
-        "geolocation": [],
-        "gyroscope": [],
-        "magnetometer": [],
-        "microphone": [],
-        "payment": [],
-        "usb": [],
-    }
 
 
 # Debug toolbar
