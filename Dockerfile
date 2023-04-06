@@ -10,10 +10,6 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 ENV PIP_ROOT_USER_ACTION=ignore
 
-ENV DJANGO_SETTINGS_MODULE=radiofeed.config.settings
-
-ENV DJANGO_ENV=production
-
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
@@ -26,4 +22,4 @@ RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 COPY . /app
 
-RUN python manage.py collectstatic --no-input --traceback
+RUN python manage.py collectstatic --no-input --traceback --settings=radiofeed.config.settings

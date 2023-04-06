@@ -16,6 +16,16 @@ from radiofeed.podcasts.factories import (
 from radiofeed.users.factories import create_user
 
 
+@pytest.fixture(autouse=True)
+def settings_overrides(settings):
+    """Default settings for all tests."""
+    settings.CACHES = {
+        "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+    }
+    settings.LOGGING = None
+    settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+
 @pytest.fixture(scope="session")
 def faker():
     faker = Faker()

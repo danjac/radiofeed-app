@@ -19,9 +19,7 @@ BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 config = AutoConfig(search_path=BASE_DIR)
 
-DJANGO_ENV: Environment = config("DJANGO_ENV", default="development")
-
-DEBUG = DJANGO_ENV == "development"
+DEBUG: bool = config("DEBUG", default=False, cast=bool)
 
 SECRET_KEY = config(
     "SECRET_KEY",
@@ -126,7 +124,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
-            "debug": DJANGO_ENV in ("development", "testing"),
+            "debug": config("TEMPLATE_DEBUG", default=False, cast=bool),
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -168,18 +166,21 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-
 # Secure settings
 
 # https://docs.djangoproject.com/en/4.1/topics/security/
 
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_HSTS_SECONDS = 15768001  # 6 months
+if config("USE_SECURE_SETTINGS", default=True, cast=bool):
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_SECONDS = 15768001  # 6 months
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
 
 # Permissions Policy
 
@@ -299,6 +300,18 @@ USE_TZ = True
 STATIC_URL = config("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+if config("USE_COLLECTSTATIC", default=True, cast=bool):
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+
+else:
+    INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
+
 # Templates
 
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
@@ -351,38 +364,18 @@ if SENTRY_URL := config("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
-# Environment setup
+if config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
+    INSTALLED_APPS += ["debug_toolbar"]
 
-match DJANGO_ENV:
-    case "development":
-        INSTALLED_APPS += [
-            "debug_toolbar",
-            "django_browser_reload",
-            "whitenoise.runserver_nostatic",
-        ]
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+    # INTERNAL_IPS required for debug toolbar
+    INTERNAL_IPS = ["127.0.0.1"]
 
-        MIDDLEWARE += [
-            "debug_toolbar.middleware.DebugToolbarMiddleware",
-            "django_browser_reload.middleware.BrowserReloadMiddleware",
-        ]
-        # INTERNAL_IPS required for debug toolbar
-        INTERNAL_IPS = ["127.0.0.1"]
+if config("USE_BROWSER_RELOAD", default=False, cast=bool):
+    INSTALLED_APPS += ["django_browser_reload"]
 
-    case "production":
-        SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-        SECURE_SSL_REDIRECT = True
-
-        STORAGES = {
-            "staticfiles": {
-                "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-            },
-        }
-
-        STATIC_ROOT = BASE_DIR / "staticfiles"
-
-    case "testing":
-        CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-
-        LOGGING = None
-
-        PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+    MIDDLEWARE += [
+        "django_browser_reload.middleware.BrowserReloadMiddleware",
+    ]
