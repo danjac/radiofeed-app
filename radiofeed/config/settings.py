@@ -102,17 +102,15 @@ DATABASES = {
 
 CACHES = {
     "default": {
-        **env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0"),
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env.str("REDIS_URL", default="redis://127.0.0.1:6379/0"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # Mimicing memcache behavior.
-            # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
             "IGNORE_EXCEPTIONS": True,
             "PARSER_CLASS": "redis.connection.HiredisParser",
         },
     }
 }
-
 
 # Templates
 
@@ -310,28 +308,6 @@ if SENTRY_URL := env.str("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
-# Debug toolbar
-# https://django-debug-toolbar.readthedocs.io/en/latest/
-
-if USE_DEBUG_TOOLBAR:
-    INSTALLED_APPS += ["debug_toolbar"]
-
-    MIDDLEWARE += [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
-    # INTERNAL_IPS required for debug toolbar
-    INTERNAL_IPS = ["127.0.0.1"]
-
-# Browser reload
-# https://github.com/adamchainz/django-browser-reload
-
-if USE_BROWSER_RELOAD:
-    INSTALLED_APPS += ["django_browser_reload"]
-
-    MIDDLEWARE += [
-        "django_browser_reload.middleware.BrowserReloadMiddleware",
-    ]
-
 # Secure settings
 # https://docs.djangoproject.com/en/4.1/topics/security/
 
@@ -365,6 +341,28 @@ if USE_SECURE_SETTINGS:
         "usb": [],
     }
 
+
+# Debug toolbar
+# https://django-debug-toolbar.readthedocs.io/en/latest/
+
+if USE_DEBUG_TOOLBAR:
+    INSTALLED_APPS += ["debug_toolbar"]
+
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+    # INTERNAL_IPS required for debug toolbar
+    INTERNAL_IPS = ["127.0.0.1"]
+
+# Browser reload
+# https://github.com/adamchainz/django-browser-reload
+
+if USE_BROWSER_RELOAD:
+    INSTALLED_APPS += ["django_browser_reload"]
+
+    MIDDLEWARE += [
+        "django_browser_reload.middleware.BrowserReloadMiddleware",
+    ]
 
 # Whitenoise
 # https://whitenoise.readthedocs.io/en/latest/django.html
