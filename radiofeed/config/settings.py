@@ -173,7 +173,7 @@ if MAILGUN_API_KEY := env.str("MAILGUN_API_KEY", default=None):
 
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
-    MAILGUN_API_URL = env.url("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+    MAILGUN_API_URL = env.str("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
 
     ANYMAIL = {
         "MAILGUN_API_KEY": MAILGUN_API_KEY,
