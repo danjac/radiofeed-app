@@ -32,7 +32,7 @@ jobs:
                   python-version: "3.11.1"
                   cache: pip
 
-            - name: Install psycopg2 prerequisites
+            - name: Install psycopg prerequisites
               run: sudo apt-get install libpq-dev
 
             - name: Install Python dependencies
