@@ -26,8 +26,6 @@ SECRET_KEY = config(
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
-# Installed apps
-
 INSTALLED_APPS: list[str] = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -52,9 +50,6 @@ INSTALLED_APPS: list[str] = [
     "radiofeed.podcasts",
     "radiofeed.users",
 ]
-
-
-# Middleware
 
 MIDDLEWARE: list[str] = [
     "django.middleware.security.SecurityMiddleware",
@@ -167,7 +162,6 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
 # Secure settings
-
 # https://docs.djangoproject.com/en/4.1/topics/security/
 
 if config("USE_SECURE_SETTINGS", default=True, cast=bool):
@@ -183,7 +177,6 @@ if config("USE_SECURE_SETTINGS", default=True, cast=bool):
     SECURE_SSL_REDIRECT = True
 
 # Permissions Policy
-
 # https://pypi.org/project/django-permissions-policy/
 
 PERMISSIONS_POLICY: dict[str, list] = {
@@ -208,7 +201,6 @@ EMAIL_HOST = config("EMAIL_HOST", default="127.0.0.1")
 EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
 
 # Mailgun
-
 # https://anymail.dev/en/v9.0/esps/mailgun/
 
 if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
@@ -313,7 +305,6 @@ else:
     INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
 
 # Templates
-
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
@@ -349,7 +340,6 @@ LOGGING: dict | None = {
 }
 
 # Sentry
-
 # https://docs.sentry.io/platforms/python/guides/django/
 
 if SENTRY_URL := config("SENTRY_URL", default=None):
@@ -364,6 +354,9 @@ if SENTRY_URL := config("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
+# Debug toolbar
+# https://django-debug-toolbar.readthedocs.io/en/latest/
+
 if config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
     INSTALLED_APPS += ["debug_toolbar"]
 
@@ -372,6 +365,9 @@ if config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
     ]
     # INTERNAL_IPS required for debug toolbar
     INTERNAL_IPS = ["127.0.0.1"]
+
+# Browser reload
+# https://github.com/adamchainz/django-browser-reload
 
 if config("USE_BROWSER_RELOAD", default=False, cast=bool):
     INSTALLED_APPS += ["django_browser_reload"]
