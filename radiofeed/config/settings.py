@@ -288,6 +288,7 @@ USE_TZ = True
 
 STATIC_URL = config("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 if config("USE_COLLECTSTATIC", default=True, cast=bool):
     STORAGES = {
@@ -296,7 +297,6 @@ if config("USE_COLLECTSTATIC", default=True, cast=bool):
         },
     }
 
-    STATIC_ROOT = BASE_DIR / "staticfiles"
 
 else:
     INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
