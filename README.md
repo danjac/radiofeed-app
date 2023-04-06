@@ -53,11 +53,10 @@ If you are running several of these operations simultaneously you may want to us
 The following environment variables should be set in your production installation (changing `radiofeed.app` for your domain).
 
 ```
-DJANGO_SETTINGS_MODULE=radiofeed.settings
-DJANGO_ENV=production
+DJANGO_SETTINGS_MODULE=radiofeed.config.settings
 ALLOWED_HOSTS=radiofeed.app
-DATABASE_URL=<database-url>
 CONN_MAX_AGE=360
+DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
 ADMINS=me@radiofeed.app
