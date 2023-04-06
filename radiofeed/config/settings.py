@@ -3,7 +3,6 @@ from __future__ import annotations
 import pathlib
 
 from email.utils import getaddresses
-from typing import Literal
 
 import dj_database_url
 import sentry_sdk
@@ -12,8 +11,6 @@ from decouple import AutoConfig, Csv
 from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
-
-Environment = Literal["development", "production", "testing"]
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
