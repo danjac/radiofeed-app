@@ -265,7 +265,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # Logging
 
-LOGGING: dict | None = {
+LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
