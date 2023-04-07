@@ -22,4 +22,4 @@ RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 COPY . /app
 
-RUN python manage.py collectstatic --no-input --traceback --settings=radiofeed.config.settings
+RUN python manage.py collectstatic --no-input --traceback
