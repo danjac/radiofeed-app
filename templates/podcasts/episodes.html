@@ -5,15 +5,17 @@
 {% endblock title %}
 {% block podcast_content %}
     {% if request.search or page_obj.has_other_pages %}
-        <nav>
-            <ul class="items-center justify-between sm:flex">
-                <li class="flex items-center justify-center mb-3 sm:justify-start sm:mb-0">
+        <nav class="mb-3">
+            <ul class="sm:flex items-center justify-between pb-3 border-b">
+                <li class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
                     {% if request.search %}
                         <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                            class="link">Search All Podcasts</a>
                     {% else %}
                         <a href="{{ request.path }}?{{ request.ordering.qs_reversed }}"
-                           class="link">{{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}</a>
+                           class="link">
+                            {{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}
+                        </a>
                     {% endif %}
                 </li>
                 <li class="flex items-center justify-center sm:justify-end">

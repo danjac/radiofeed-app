@@ -617,14 +617,14 @@ postal = ["cryptography"]
 
 [[package]]
 name = "django-browser-reload"
-version = "1.8.0"
+version = "1.7.0"
 description = "Automatically reload your browser in development."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_browser_reload-1.8.0-py3-none-any.whl", hash = "sha256:6db7e6c5807fff87e421b53926c50cfa3de0115e438f3c2de6103d3069557adb"},
-    {file = "django_browser_reload-1.8.0.tar.gz", hash = "sha256:054ef5ce8b80f46e0beda1a3c847becdff51272cad6f2bda607e201a7afe7425"},
+    {file = "django_browser_reload-1.7.0-py3-none-any.whl", hash = "sha256:0d7cc4308ebbdf9b5637e28ee7b41ae28d4fcdf350d55ce007515b44cd10291b"},
+    {file = "django_browser_reload-1.7.0.tar.gz", hash = "sha256:712d0a4d6caa6833c8c205d4ce177b474feb45583cd6ee684c9ea7b71dd921b6"},
 ]
 
 [package.dependencies]

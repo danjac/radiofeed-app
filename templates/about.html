@@ -4,10 +4,10 @@
 {% endblock title %}
 {% block content %}
     {% with site_name=request.site.name %}
-        <h1 class="flex flex-wrap justify-center pb-3 mb-3 text-lg font-bold border-b sm:justify-start lg:text-xl xl:text-2xl">
+        <h1 class="flex flex-wrap mb-6 pb-3 justify-center sm:justify-start border-b text-lg lg:text-xl xl:text-2xl font-bold">
             About {{ site_name }}
         </h1>
-        <div class="break-words prose dark:prose-invert prose-sm md:prose-base">
+        <div class="prose dark:prose-invert prose-sm md:prose-base break-words">
             <section>
                 <h2 class="!text-base md:!text-lg xl:!text-xl">About Us</h2>
                 <p>
