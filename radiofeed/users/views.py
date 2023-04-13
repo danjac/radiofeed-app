@@ -20,7 +20,6 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
     form = UserPreferencesForm(request.POST or None, instance=request.user)
 
     if request.method == "POST" and form.is_valid():
-
         form.save()
 
         messages.success(request, "Your preferences have been saved")
@@ -41,7 +40,6 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form = OpmlUploadForm(request.POST, request.FILES)
     if form.is_valid():
-
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,

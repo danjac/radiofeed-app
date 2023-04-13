@@ -1,8 +1,12 @@
 {% extends "account/settings_base.html" %}
 {% load heroicons %}
 {% block title %}
-    {{ block.super }} | E-mail Addresses
+    {{ block.super }} | Email Addresses
 {% endblock title %}
+{% block settings_dropdown_title %}
+    {% heroicon_mini "envelope" class="mr-3" %}
+    Email Addresses
+{% endblock settings_dropdown_title %}
 {% block settings_content %}
     <div class="space-y-3">
         {% with emailaddresses=user.emailaddress_set.all num_addresses=user.emailaddress_set.count %}
@@ -22,7 +26,7 @@
                                        type="radio"
                                        name="email"
                                        {% if emailaddress.primary or num_addresses == 1 %}checked="checked"{% endif %}
-                                       value="{{ emailaddress.email }}"/>
+                                       value="{{ emailaddress.email }}" />
                                 <span>{{ emailaddress.email }}</span>
                                 {% if emailaddress.verified %}
                                     {% heroicon_mini "check" class="text-green-600" title=_("Verified") %}

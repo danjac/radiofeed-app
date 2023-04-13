@@ -3,6 +3,10 @@
 {% block title %}
     {{ block.super }} | Social Logins
 {% endblock title %}
+{% block settings_dropdown_title %}
+    {% heroicon_mini "user-group" class="mr-3" %}
+    Social Logins
+{% endblock settings_dropdown_title %}
 {% block settings_content %}
     {% if form.accounts %}
         <p>You can sign in to your account using any of the following third party accounts:</p>
@@ -20,7 +24,7 @@
                                    type="radio"
                                    name="account"
                                    class="inline-block mr-3"
-                                   value="{{ base_account.id }}"/>
+                                   value="{{ base_account.id }}" />
                             <div class="{{ base_account.provider }} {{ account.get_brand.id }}">
                                 {{ account.get_brand.name }}
                                 {{ account }}
