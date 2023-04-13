@@ -68,7 +68,6 @@ class TestAccount:
         assert get_template("account/verification_sent.html").render({}, request=req)
 
     def test_email(self, auth_req):
-
         create_email_address(user=auth_req.user, primary=True)
         create_email_address(user=auth_req.user, primary=False)
 
@@ -81,7 +80,6 @@ class TestAccount:
         )
 
     def test_email_no_emails(self, auth_req):
-
         assert get_template("account/email.html").render(
             {
                 "user": auth_req.user,
@@ -111,8 +109,8 @@ class TestAccount:
     def test_account_inactive(self, req):
         assert get_template("account/account_inactive.html").render({}, request=req)
 
-    def test_password_change(self, req):
-        assert get_template("account/password_change.html").render({}, request=req)
+    def test_password_change(self, auth_req):
+        assert get_template("account/password_change.html").render({}, request=auth_req)
 
     def test_password_reset(self, auth_req):
         assert get_template("account/password_reset.html").render(
@@ -145,7 +143,6 @@ class TestAccount:
         )
 
     def test_password_reset_from_key_no_form(self, req, mocker):
-
         assert get_template("account/password_reset_from_key.html").render(
             {}, request=req
         )
