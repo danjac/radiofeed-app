@@ -24,7 +24,7 @@
                         </span>
                         {% heroicon_mini "chevron-down" class="ml-3" %}
                     </button>
-                    <div class="absolute z-10 w-56 my-2 bg-white rounded shadow dark:bg-gray-900 sm:right-1 dark:border"
+                    <div class="absolute z-20 w-56 my-2 bg-white rounded shadow dark:bg-gray-900 sm:right-1 dark:border"
                          x-cloak
                          x-show="showDropdown">
                         <ul class="py-1 list-none" aria-labelledby="settings-dropdown-btn">
@@ -34,6 +34,13 @@
                                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
                                     {% heroicon_mini "adjustments-horizontal" class="mr-2" %}
                                 Preferences</a>
+                            </li>
+                            <li>
+                                {% active_link 'users:stats' as link %}
+                                <a href="{{ link.url }}"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
+                                    {% heroicon_mini "chart-bar" class="mr-2" %}
+                                Statistics</a>
                             </li>
                             <li>
                                 {% active_link 'users:manage_podcast_feeds' as link %}
