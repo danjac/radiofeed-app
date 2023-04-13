@@ -26,7 +26,8 @@
                     </button>
                     <div class="absolute z-20 w-56 my-2 bg-white rounded shadow dark:bg-gray-900 sm:right-1 dark:border"
                          x-cloak
-                         x-show="showDropdown">
+                         x-show="showDropdown"
+                         x-transition.scape.origin.top>
                         <ul class="py-1 list-none" aria-labelledby="settings-dropdown-btn">
                             <li>
                                 {% active_link 'users:preferences' as link %}
