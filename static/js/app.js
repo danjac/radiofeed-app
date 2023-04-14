@@ -5,6 +5,4 @@ import "./player";
 // set global Alpine instance
 window.Alpine = Alpine;
 
-window.htmx = htmx;
-
 Alpine.start();
