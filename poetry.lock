@@ -771,14 +771,14 @@ hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
 name = "djlint"
-version = "1.22.0"
+version = "1.23.0"
 description = "HTML Template Linter and Formatter"
 category = "dev"
 optional = false
 python-versions = ">=3.8.0,<4.0.0"
 files = [
-    {file = "djlint-1.22.0-py3-none-any.whl", hash = "sha256:73da7348d88d44851f740135dea8a3f8a832293449b467ba666f928d5d8acf86"},
-    {file = "djlint-1.22.0.tar.gz", hash = "sha256:cad56f0ce10b1963033e6d3d9497577d78151388b82790208e651a719fda00c8"},
+    {file = "djlint-1.23.0-py3-none-any.whl", hash = "sha256:1fca84f80763d909538384e5e2a2e5ab41dd32851ccba90a0432980f19b8de59"},
+    {file = "djlint-1.23.0.tar.gz", hash = "sha256:b59f7364f5f4fe88f8a9d3b14580c473f4ed669e88b730ce6012f0c9be81b3db"},
 ]
 
 [package.dependencies]
