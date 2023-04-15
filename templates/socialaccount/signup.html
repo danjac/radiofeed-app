@@ -13,9 +13,14 @@
         </p>
         <form method="post"
               action="{{ request.path }}"
-              class="p-3 border w-full sm:w-3/4 md:w-1/2"
+              class="space-y-3"
               hx-disable="true">
             {% csrf_token %}
+            {% if redirect_field_value %}
+                <input type="hidden"
+                       name="{{ redirect_field_name }}"
+                       value="{{ redirect_field_value }}" />
+            {% endif %}
             {{ form }}
             <div class="flex items-center justify-end">
                 <button class="inline-flex items-center btn btn-primary">
