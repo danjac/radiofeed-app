@@ -694,6 +694,20 @@ files = [
 Django = ">=3.2"
 
 [[package]]
+name = "django-fast-update"
+version = "0.2.2"
+description = "Faster db updates for Django using UPDATE FROM VALUES sql variants."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-fast-update-0.2.2.tar.gz", hash = "sha256:fb80371f3c6a4b59c25aa21311ae9b4207c2a8fed95a0960f827bc4b4b64b55d"},
+]
+
+[package.dependencies]
+Django = ">=3.2,<=4.2"
+
+[[package]]
 name = "django-htmx"
 version = "1.14.0"
 description = "Extensions for using Django with htmx."
@@ -2896,4 +2910,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "f0e3a85c89cc162b2da9b6b3661a2a830c3b8c59c200394df953d9bf02d8863b"
+content-hash = "a963f5b4cfde7300a5b26e523045437a0c6371430aa613349911cef229d9e1f6"

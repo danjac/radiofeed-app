@@ -14,6 +14,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
+from fast_update.query import FastUpdateQuerySet
 from model_utils.models import TimeStampedModel
 
 from radiofeed import cleaners
@@ -23,7 +24,7 @@ from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
-class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
+class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
 

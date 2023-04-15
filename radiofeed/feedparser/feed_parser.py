@@ -249,8 +249,8 @@ class FeedParser:
 
         # update existing content
 
-        for batch in iterators.batcher(self._episodes_for_update(feed, guids), 100):
-            Episode.objects.bulk_update(
+        for batch in iterators.batcher(self._episodes_for_update(feed, guids), 1000):
+            Episode.objects.fast_update(
                 batch,
                 fields=[
                     "cover_url",
