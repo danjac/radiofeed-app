@@ -5,7 +5,9 @@
 {% endblock title %}
 {% block content %}
     {% with provider_name=account.get_provider.name site_name=site.name %}
-        <h1 class="mb-3 font-bold text-lg lg:text-xl xl:text-2xl">Sign Up</h1>
+        <h1 class="flex items-center justify-center mb-3 text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl pb-3 border-b">
+            Sign Up
+        </h1>
         <p class="mb-3">
             You are about to
             use your {{ provider_name }} account to login to
