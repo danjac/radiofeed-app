@@ -207,9 +207,6 @@ ADMIN_SITE_HEADER = env.str("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 AUTH_USER_MODEL = "users.User"
 
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 
@@ -231,9 +228,13 @@ LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
 
 LOGIN_URL = "account_login"
 
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
