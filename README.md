@@ -71,6 +71,8 @@ Some settings such as `DATABASE_URL` may be set automatically by certain PAAS pr
 
 You should ensure the `SECRET_KEY` is sufficiently random: run the `generate_secret_key` custom Django command to create a suitable random string.
 
+In some server configurations your load balancer (e.g. Nginx) may set the `strict-transport-security` headers by default. If not, you can set the environment variable `USE_HSTS=true`.
+
 In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_. Make sure it ends in a forward slash, e.g. _some-random-path/_.
 
 A Dockerfile is provided for standard container deployments e.g. on Dokku.

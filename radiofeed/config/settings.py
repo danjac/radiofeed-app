@@ -18,7 +18,8 @@ env = environ.Env(
     USE_BROWSER_RELOAD=(bool, False),
     USE_DEBUG_TOOLBAR=(bool, False),
     USE_COLLECTSTATIC=(bool, True),
-    USE_SECURE_SETTINGS=(bool, True),
+    USE_HSTS=(bool, False),
+    USE_HTTPS=(bool, True),
 )
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
@@ -31,7 +32,9 @@ TEMPLATE_DEBUG = env("TEMPLATE_DEBUG")
 USE_BROWSER_RELOAD = env("USE_BROWSER_RELOAD")
 USE_DEBUG_TOOLBAR = env("USE_DEBUG_TOOLBAR")
 USE_COLLECTSTATIC = env("USE_COLLECTSTATIC")
-USE_SECURE_SETTINGS = env("USE_SECURE_SETTINGS")
+USE_HSTS = env("USE_HSTS")
+USE_HTTPS = env("USE_HTTPS")
+
 
 SECRET_KEY = env.str(
     "SECRET_KEY",
@@ -159,6 +162,9 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # Email configuration
 
@@ -330,17 +336,17 @@ if SENTRY_URL := env.str("SENTRY_URL", default=None):
 # Secure settings
 # https://docs.djangoproject.com/en/4.1/topics/security/
 
-if USE_SECURE_SETTINGS:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
+if USE_HTTPS:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+
+if USE_HSTS:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_HSTS_SECONDS = 15768001  # 6 months
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = True
 
 
 # Debug toolbar

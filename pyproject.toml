@@ -99,7 +99,7 @@ testpaths = "radiofeed"
 env = [
     "TEMPLATE_DEBUG=true",
     "USE_COLLECTSTATIC=false",
-    "USE_SECURE_SETTINGS=false",
+    "USE_HTTPS=false",
 ]
 
 [tool.coverage.run]
