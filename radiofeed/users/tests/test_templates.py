@@ -26,10 +26,14 @@ class TestSocialAccount:
     """Test overridden allauth account templates."""
 
     def test_signup(self, req):
-        assert get_template("socialaccount/signup.html").render({}, request=req)
+        assert get_template("socialaccount/signup.html").render(
+            {"redirect_field_value": "/"}, request=req
+        )
 
     def test_login(self, req):
-        assert get_template("socialaccount/login.html").render({}, request=req)
+        assert get_template("socialaccount/login.html").render(
+            {"redirect_field_value": "/"}, request=req
+        )
 
     def test_authentication_error(self, req):
         assert get_template("socialaccount/authentication_error.html").render(
