@@ -340,13 +340,17 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 if USE_HTTPS:
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_PROXY_SSL_HEADER = env.tuple(
+        "SECURE_PROXY_SSL_HEADER", default=("HTTP_X_FORWARDED_PROTO", "https")
+    )
     SECURE_SSL_REDIRECT = True
 
 if USE_HSTS:
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_HSTS_SECONDS = 15768001  # 6 months
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
+        "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
+    )
+    SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=True)
+    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=15768001)
 
 
 # Debug toolbar
@@ -359,7 +363,7 @@ if USE_DEBUG_TOOLBAR:
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
     # INTERNAL_IPS required for debug toolbar
-    INTERNAL_IPS = ["127.0.0.1"]
+    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
 # Browser reload
 # https://github.com/adamchainz/django-browser-reload
