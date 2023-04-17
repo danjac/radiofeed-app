@@ -46,8 +46,6 @@ A `Makefile` has been provided with shortcuts to install and run your local deve
 * `make serve`: run Django development server (on 127.0.0.1:8000)
 * `make shell`: run Django shell on iPython
 
-If you are running several of these operations simultaneously you may want to use a multiplexer such as Tmux.
-
 ## Deployment
 
 The following environment variables should be set in your production installation (changing `radiofeed.app` for your domain).
