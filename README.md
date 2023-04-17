@@ -24,7 +24,7 @@ If you want to use the Docker images just run:
 docker-compose up --build -d
 ```
 
-Current tested versions are PostgresSQL 14+ and Redis 6.2+.
+Current tested versions are PostgreSQL 14+ and Redis 6.2+.
 
 Next copy `.env.example` to `.env`. The default settings should work with the Docker services provided, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
 
