@@ -3,6 +3,8 @@ from __future__ import annotations
 import math
 import urllib.parse
 
+from typing import TypedDict
+
 from django import template
 from django.core.exceptions import ValidationError
 from django.core.signing import Signer
@@ -19,6 +21,14 @@ from radiofeed import cleaners
 register = template.Library()
 
 _validate_url = URLValidator(["http", "https"])
+
+
+class ActiveLink(TypedDict):
+    """Provides details on whether a link is currently active, along with its URL and CSS."""
+
+    url: str
+    css: str
+    active: bool
 
 
 @register.simple_tag(takes_context=True)
@@ -46,15 +56,14 @@ def active_link(
     active_css: str = "active",
     *args,
     **kwargs,
-) -> dict:
+) -> ActiveLink:
     """Returns url with active link info."""
     url = resolve_url(url_name, *args, **kwargs)
-    dct = {"active": False, "css": css, "url": url}
 
     return (
-        {**dct, "active": True, "css": f"{css} {active_css}"}
+        ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url
-        else dct
+        else ActiveLink(active=False, css=css, url=url)
     )
 
 
