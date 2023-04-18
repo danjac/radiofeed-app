@@ -348,6 +348,8 @@ if USE_HTTPS:
     )
     SECURE_SSL_REDIRECT = True
 
+# make sure to enable this if your load balancer is not using HSTS in production, otherwise leave disabled.
+
 if USE_HSTS:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
         "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
