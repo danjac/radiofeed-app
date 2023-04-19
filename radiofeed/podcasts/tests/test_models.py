@@ -21,6 +21,11 @@ class TestRecommendationManager:
         assert Recommendation.objects.count() == 0
 
 
+class TestRecommendationModel:
+    def test_str(self):
+        assert str(Recommendation(id=100)) == "Recommendation #100"
+
+
 class TestCategoryManager:
     @pytest.fixture
     def category(self, db):
