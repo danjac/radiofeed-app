@@ -43,7 +43,7 @@ class Category(models.Model):
         related_name="children",
     )
 
-    objects: models.Manager[Category] = CategoryQuerySet.as_manager()  # pyright: ignore
+    objects: models.Manager[Category] = CategoryQuerySet.as_manager()
 
     class Meta:
         verbose_name_plural = "categories"
@@ -53,20 +53,26 @@ class Category(models.Model):
         """Returns category name."""
         return self.name
 
+    def get_absolute_url(self) -> str:
+        """Absolute URL to a category."""
+        return reverse("podcasts:category_detail", args=[self.pk, self.slug])
+
     @property
     def slug(self) -> str:
         """Returns slugified name."""
         return slugify(self.name, allow_unicode=False)
 
-    def get_absolute_url(self) -> str:
-        """Absolute URL to a category."""
-        return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
-
-class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
+class PodcastQuerySet(
+    FastCountQuerySetMixin,
+    SearchQuerySetMixin,
+    models.QuerySet,
+):
     """Custom QuerySet of Podcast model."""
 
-    def search(self, search_term: str) -> models.QuerySet[Podcast]:  # pyright: ignore
+    def search(
+        self, search_term: str
+    ) -> models.QuerySet[Podcast]:  # pyright: ignore # noqa
         """Does standard full text search, prioritizing exact search results.
 
         Annotates `exact_match` to indicate such results.
@@ -306,3 +312,7 @@ class Recommendation(models.Model):
                 fields=["podcast", "recommended"],
             ),
         ]
+
+    def __str__(self) -> str:
+        """Returns ID of recommendation."""
+        return f"Recommendation #{self.pk}"
