@@ -3,7 +3,6 @@ from __future__ import annotations
 import dataclasses
 
 import pytest
-
 from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy

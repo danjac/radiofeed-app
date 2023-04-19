@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Any
 
 import attrs
-
 from django.utils import timezone
 
 from radiofeed.feedparser import converters, validators

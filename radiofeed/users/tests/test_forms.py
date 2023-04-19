@@ -3,7 +3,6 @@ from __future__ import annotations
 import pathlib
 
 import pytest
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from radiofeed.podcasts.factories import create_podcast

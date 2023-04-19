@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-
 from zoneinfo import ZoneInfo
 
 from radiofeed.feedparser.date_parser import parse_date

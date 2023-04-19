@@ -7,13 +7,11 @@ import datetime
 import django.contrib.postgres.search
 import django.core.validators
 import django.db.models.deletion
-
 from django.conf import settings
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("podcasts", "0008_alter_recommendation_podcast_and_more"),

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 import requests
-
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertRedirects
 

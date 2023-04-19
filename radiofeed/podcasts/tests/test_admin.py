@@ -4,7 +4,6 @@ from datetime import timedelta
 from unittest import mock
 
 import pytest
-
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 

@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import django.db.models.functions.text
-
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("podcasts", "0009_alter_category_name_alter_category_name_en_and_more"),
     ]

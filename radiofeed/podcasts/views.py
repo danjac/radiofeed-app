@@ -3,7 +3,6 @@ from __future__ import annotations
 import http
 
 import requests
-
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet

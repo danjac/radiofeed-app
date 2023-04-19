@@ -75,23 +75,23 @@ ipython = "^8.10.0"
 django-debug-toolbar = "^4.0.0"
 pytest-env = "^0.8.1"
 
-[tool.isort]
-default_section = "THIRDPARTY"
-known_first_party = "radiofeed"
-sections = [
-    "FUTURE",
-    "STDLIB",
-    "THIRDPARTY",
-    "FIRSTPARTY",
-    "LOCALFOLDER"
-]
-lines_between_types = 1
-group_by_package = true
-order_by_type = true
-line_length = 88
-include_trailing_comma = true
-multi_line_output = 3
-add_imports = "from __future__ import annotations"
+#[tool.isort]
+#default_section = "THIRDPARTY"
+#known_first_party = "radiofeed"
+#sections = [
+    #"FUTURE",
+    #"STDLIB",
+    #"THIRDPARTY",
+    #"FIRSTPARTY",
+    #"LOCALFOLDER"
+#]
+#lines_between_types = 1
+#group_by_package = true
+#order_by_type = true
+#line_length = 88
+#include_trailing_comma = true
+#multi_line_output = 3
+#add_imports = "from __future__ import annotations"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.config.settings"
@@ -193,11 +193,22 @@ max-line-length = 88
 max-complexity = 10
 
 [tool.ruff]
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    "W",
+    # isort
+    "I001"
+]
 ignore = [
     "E501",
     "E701",
     "D100",
     "Q000",
-    "S101"
-
+    "S101",
 ]
+
+[tool.ruff.isort]
+known-first-party = ["radiofeed"]

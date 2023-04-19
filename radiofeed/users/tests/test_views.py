@@ -3,7 +3,6 @@ from __future__ import annotations
 import pathlib
 
 import pytest
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
@@ -41,7 +40,6 @@ class TestUserPreferences:
 
 class TestUserStats:
     def test_stats(self, client, auth_user):
-
         create_subscription(subscriber=auth_user)
         create_audio_log(user=auth_user)
         create_bookmark(user=auth_user)
@@ -50,7 +48,6 @@ class TestUserStats:
         assert_ok(response)
 
     def test_stats_plural(self, client, auth_user):
-
         create_batch(create_audio_log, 3, user=auth_user)
         create_batch(create_bookmark, 3, user=auth_user)
         create_batch(create_subscription, 3, subscriber=auth_user)
@@ -95,7 +92,6 @@ class TestImportPodcastFeeds:
         ).exists()
 
     def test_post_podcast_not_in_db(self, client, auth_user, upload_file):
-
         assert_ok(
             client.post(
                 self.url,
@@ -127,7 +123,6 @@ class TestImportPodcastFeeds:
         assert Subscription.objects.filter(subscriber=auth_user).exists()
 
     def test_post_is_empty(self, client, auth_user, mocker, upload_file):
-
         assert_ok(
             client.post(
                 self.url,
@@ -140,7 +135,6 @@ class TestImportPodcastFeeds:
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
     def test_invalid_form(self, client, auth_user, mocker):
-
         assert_ok(
             client.post(
                 self.url,
@@ -154,7 +148,6 @@ class TestImportPodcastFeeds:
 
 
 class TestExportPodcastFeeds:
-
     url = reverse_lazy("users:export_podcast_feeds")
 
     def test_export_opml(self, client, subscription):

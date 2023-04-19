@@ -3,13 +3,11 @@ from __future__ import annotations
 import dataclasses
 import itertools
 import re
-
 from collections.abc import Iterator
 from typing import Final
 from urllib.parse import urlparse
 
 import requests
-
 from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes

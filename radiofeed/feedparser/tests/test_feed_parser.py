@@ -3,12 +3,10 @@ from __future__ import annotations
 import dataclasses
 import http
 import pathlib
-
 from datetime import datetime
 
 import pytest
 import requests
-
 from django.utils import timezone
 
 from radiofeed.episodes.factories import create_episode

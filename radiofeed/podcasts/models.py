@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import decimal
-
 from datetime import datetime, timedelta
 
 from django.conf import settings

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import datetime
 import re
-
 from collections.abc import Iterator
 from datetime import date, timedelta
 from functools import lru_cache
@@ -11,10 +10,10 @@ from typing import Final
 from django.conf import settings
 from django.utils import timezone, translation
 from django.utils.formats import date_format
+
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
-
 from radiofeed import cleaners
 
 NLTK_LANGUAGES: Final = {
@@ -105,7 +104,6 @@ def tokenize(language: str, text: str) -> list[str]:
 def _get_date_stopwords(language: str) -> Iterator[str]:
     now = timezone.now()
     with translation.override(language):
-
         for month in range(1, 13):
             dt = datetime.date(now.year, month, 1)
             yield _format_date(dt, "b")

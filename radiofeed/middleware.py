@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import enum
-
 from collections.abc import Callable
 from urllib.parse import urlencode
 

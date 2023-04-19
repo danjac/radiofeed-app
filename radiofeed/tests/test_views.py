@@ -3,7 +3,6 @@ from __future__ import annotations
 import urllib.parse
 
 import requests
-
 from django.core.signing import Signer
 from django.shortcuts import render
 from django.urls import reverse

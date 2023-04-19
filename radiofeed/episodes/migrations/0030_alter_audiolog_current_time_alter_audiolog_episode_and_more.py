@@ -4,13 +4,11 @@ from __future__ import annotations
 
 import django.contrib.postgres.search
 import django.db.models.deletion
-
 from django.conf import settings
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("podcasts", "0009_alter_category_name_alter_category_name_en_and_more"),

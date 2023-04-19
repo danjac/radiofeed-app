@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from django.contrib.admin.sites import AdminSite
 
 from radiofeed.episodes.admin import EpisodeAdmin

@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import datetime
 import io
-
 from typing import Final
 
 import requests
-
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.signing import BadSignature, Signer

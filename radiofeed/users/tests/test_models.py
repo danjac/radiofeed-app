@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from allauth.account.models import EmailAddress
 
 from radiofeed.users.factories import create_user
@@ -26,7 +25,6 @@ class TestUserManager:
         assert User.objects.email_notification_recipients().exists() == exists
 
     def test_create_user(self, db):
-
         password = User.objects.make_random_password()
 
         user = User.objects.create_user(
@@ -35,7 +33,6 @@ class TestUserManager:
         assert user.check_password(password)
 
     def test_create_superuser(self, db):
-
         password = User.objects.make_random_password()
 
         user = User.objects.create_superuser(
@@ -45,12 +42,10 @@ class TestUserManager:
         assert user.is_staff
 
     def test_for_email_matching_email_field(self, db):
-
         user = create_user(email=self.email)
         assert User.objects.for_email(self.email).first() == user
 
     def test_for_email_matching_email_address_instance(self, user):
-
         EmailAddress.objects.create(user=user, email=self.email)
         assert User.objects.for_email(self.email).first() == user
 

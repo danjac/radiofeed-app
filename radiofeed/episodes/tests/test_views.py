@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import timedelta
 
 import pytest
-
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from pytest_django.asserts import assertContains, assertNotContains, assertRedirects

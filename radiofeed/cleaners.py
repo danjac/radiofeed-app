@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import functools
 import html
-
 from typing import Final
 
 import nh3
-
 from django.template.defaultfilters import striptags
 from markdown_it import MarkdownIt
 

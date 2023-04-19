@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import itertools
-
 from collections.abc import Iterator
 
 import lxml  # nosec
-
 from django import forms
 
 from radiofeed.feedparser.xpath_parser import XPathParser

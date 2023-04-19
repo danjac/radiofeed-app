@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, Final
 
 import attrs
-
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 

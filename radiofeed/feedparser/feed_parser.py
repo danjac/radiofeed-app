@@ -3,13 +3,11 @@ from __future__ import annotations
 import functools
 import hashlib
 import http
-
 from collections.abc import Iterator
 from typing import Final
 
 import attrs
 import requests
-
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Q

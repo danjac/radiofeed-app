@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import functools
 import http
-
 from collections.abc import Callable
 from typing import Concatenate, ParamSpec
 

@@ -4,7 +4,6 @@ import pathlib
 
 import pytest
 import requests
-
 from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
@@ -163,7 +162,6 @@ class TestSearch:
         assert not Podcast.objects.exists()
 
     def test_ok(self, db, mock_good_response):
-
         feeds = list(itunes.search("test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()

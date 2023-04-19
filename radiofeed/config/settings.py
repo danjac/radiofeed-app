@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import pathlib
-
 from email.utils import getaddresses
 
 import environ
 import sentry_sdk
-
 from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger

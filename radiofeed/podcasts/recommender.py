@@ -4,7 +4,6 @@ import collections
 import itertools
 import operator
 import statistics
-
 from collections.abc import Iterator
 from datetime import timedelta
 

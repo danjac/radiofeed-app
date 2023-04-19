@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import http
-
 from datetime import timedelta
 
 from django.contrib import messages

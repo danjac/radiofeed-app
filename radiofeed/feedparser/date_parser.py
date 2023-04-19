@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-
 from datetime import date, datetime
 
 from dateutil import parser as date_parser

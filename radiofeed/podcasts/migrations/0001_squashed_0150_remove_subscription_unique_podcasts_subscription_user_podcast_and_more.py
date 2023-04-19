@@ -11,13 +11,11 @@ import django.db.models.deletion
 import django.db.models.functions.text
 import django.utils.timezone
 import model_utils.fields
-
 from django.conf import settings
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
