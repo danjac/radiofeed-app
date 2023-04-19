@@ -194,9 +194,11 @@ max-complexity = 10
 
 [tool.ruff]
 select = [
+    # Bugbear
+    "B",
     # Pyflakes
     "F",
-    # Pycodestyle
+    # Pycodestyle (error+warning)
     "E",
     "W",
     # isort

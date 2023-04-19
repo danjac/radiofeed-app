@@ -115,7 +115,7 @@ class Recommender:
 
         podcast_ids = list(rows.keys())
 
-        for current_id, similar in zip(podcast_ids, cosine_sim):
+        for current_id, similar in zip(podcast_ids, cosine_sim, strict=True):
             try:
                 for index, similarity in itertools.islice(
                     sorted(

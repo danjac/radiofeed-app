@@ -149,7 +149,9 @@ class Episode(models.Model):
             return sum(
                 (int(part) * multiplier)
                 for (part, multiplier) in zip(
-                    reversed(self.duration.split(":")[:3]), (1, 60, 3600)
+                    reversed(self.duration.split(":")[:3]),
+                    (1, 60, 3600),
+                    strict=True,
                 )
             )
         except ValueError:
