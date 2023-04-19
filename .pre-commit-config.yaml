@@ -26,44 +26,6 @@ repos:
       rev: "v0.0.261"
       hooks:
           - id: ruff
-    #- repo: https://github.com/ambv/black
-    #rev: 23.3.0
-    #hooks:
-    #- id: black
-    #args: [--target-version, "py311", --line-length, "88"]
-    #language_version: python3.11
-    #- repo: https://github.com/PyCQA/autoflake
-    #rev: v2.1.1
-    #hooks:
-    #- id: autoflake
-    #args:
-    #[
-    #-r,
-    #--in-place,
-    #--remove-unused-variables,
-    #--remove-all-unused-imports,
-    #--ignore-init-module-imports,
-    #"radiofeed",
-    #]
-    #- repo: https://github.com/pycqa/flake8
-    #rev: 6.0.0
-    #hooks:
-    #- id: flake8
-    #additional_dependencies:
-    #[
-    #"flake8-bugbear",
-    #"flake8-comprehensions",
-    #"flake8-debugger",
-    #"flake8-deprecated",
-    #"flake8-print",
-    #"flake8-pyproject",
-    #]
-    #- repo: https://github.com/pycqa/pydocstyle
-    #rev: 6.3.0
-    #hooks:
-    #- id: pydocstyle
-    #additional_dependencies: ["toml"]
-    #exclude: tests/|migrations/|factories.py|apps.py|conftest.py
     - repo: https://github.com/MarcoGorelli/absolufy-imports
       rev: v0.3.1
       hooks:
