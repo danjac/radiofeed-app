@@ -191,3 +191,13 @@ ignore = [
 ]
 max-line-length = 88
 max-complexity = 10
+
+[tool.ruff]
+ignore = [
+    "E501",
+    "E701",
+    "D100",
+    "Q000",
+    "S101"
+
+]
