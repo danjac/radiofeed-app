@@ -249,7 +249,8 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active.
 
     Returns:
-        returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise returns the subscribe action as HTMX snippet.
+        returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise
+        returns the subscribe action as HTMX snippet.
     """
     podcast = _get_podcast_or_404(podcast_id)
 

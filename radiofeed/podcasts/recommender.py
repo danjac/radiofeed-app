@@ -18,11 +18,13 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 
 def recommend() -> None:
-    """Generates Recommendation instances based on podcast similarity, grouped by language and category.
+    """Generates Recommendation instances based on podcast similarity, grouped by
+    language and category.
 
     Any existing recommendations are first deleted.
 
-    Only podcasts matching certain languages and updated within the past 90 days are included.
+    Only podcasts matching certain languages and updated within the past 90 days are
+    included.
     """
     podcasts = (
         Podcast.objects.filter(
@@ -41,7 +43,8 @@ def recommend() -> None:
 
 
 class Recommender:
-    """Creates recommendations for given language, based around text content and common categories."""
+    """Creates recommendations for given language, based around text content and common
+    categories."""
 
     _num_matches: int = 12
 

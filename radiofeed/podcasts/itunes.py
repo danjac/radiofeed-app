@@ -76,7 +76,8 @@ def search_cache_key(search_term: str) -> str:
 
 
 def crawl() -> Iterator[Feed]:
-    """Crawls iTunes podcast catalog and creates new Podcast instances from any new feeds found."""
+    """Crawls iTunes podcast catalog and creates new Podcast instances from any new
+    feeds found."""
     for location in _ITUNES_LOCATIONS:
         yield from Crawler(location).crawl()
 
@@ -93,7 +94,8 @@ class Crawler:
         self._feed_ids: set[str] = set()
 
     def crawl(self) -> Iterator[Feed]:
-        """Crawls through location and finds new feeds, adding any new podcasts to the database."""
+        """Crawls through location and finds new feeds, adding any new podcasts to the
+        database."""
         for url in self._parse_genre_urls():
             yield from self._parse_genre_url(url)
 

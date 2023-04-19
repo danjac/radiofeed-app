@@ -81,7 +81,8 @@ class Pagination:
         return self.request.GET.get(self.param, "")
 
     def url(self, page_number: int) -> str:
-        """Inserts the page query string parameter with the provided page number into the current query string.
+        """Inserts the page query string parameter with the provided page number into
+        the current query string.
 
         Preserves the original request path and any other query string parameters.
         """
@@ -151,7 +152,8 @@ class Ordering:
 
     @cached_property
     def qs_reversed(self) -> str:
-        """Returns ascending query string parameter/value if current url descending and vice versa."""
+        """Returns ascending query string parameter/value if current url descending
+        and vice versa."""
         return urlencode(
             {self.param: self.Choices.DESC if self.is_asc else self.Choices.ASC}
         )

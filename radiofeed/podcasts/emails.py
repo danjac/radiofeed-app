@@ -17,7 +17,8 @@ def send_recommendations_email(
 
     Recommendations based on their subscriptions and listening history.
 
-    Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
+    Recommended podcasts are saved to the database, so the user is not recommended the
+    same podcasts more than once.
 
     If there are fewer than `min_podcasts` then no email will be sent.
 
