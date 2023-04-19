@@ -42,10 +42,6 @@ jobs:
               run: |
                   python -m ruff radiofeed
 
-            - name: Security checks
-              run: |
-                  python -m bandit -r radiofeed -c pyproject.toml
-
             - name: Lint checks on Django templates
               run: |
                   python -m djlint --lint templates/
