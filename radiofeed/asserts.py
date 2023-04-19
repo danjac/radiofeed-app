@@ -8,12 +8,12 @@ from django.http import HttpResponse
 
 def assert_hx_redirect(response: HttpResponse, url: str) -> None:
     """Asserts HX-Redirect header matches url."""
-    assert "HX-Redirect" in response and response["HX-Redirect"] == url, url  # nosec
+    assert "HX-Redirect" in response and response["HX-Redirect"] == url, url
 
 
 def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
     """Assert response status matches."""
-    assert response.status_code == status, response.content  # nosec
+    assert response.status_code == status, response.content
 
 
 (
