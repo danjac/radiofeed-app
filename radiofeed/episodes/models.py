@@ -151,7 +151,7 @@ class Episode(models.Model):
                 for (part, multiplier) in zip(
                     reversed(self.duration.split(":")[:3]),
                     (1, 60, 3600),
-                    strict=True,
+                    strict=False,
                 )
             )
         except ValueError:
