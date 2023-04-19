@@ -16,7 +16,8 @@ def parse_rss(content: bytes) -> Feed:
         content: the body of the RSS or Atom feed
 
     Raises:
-        InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid or empty
+        InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid
+        or empty.
     """
     return _rss_parser.parse(content)
 
@@ -40,7 +41,8 @@ class RSSParser:
         """Parses RSS feed.
 
         Raises:
-            InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid or empty
+            InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid
+            or empty.
         """
         try:
             return self._parse_feed(

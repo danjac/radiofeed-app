@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import io
 from collections.abc import Iterable, Iterator
 from typing import Any, TypeAlias
@@ -10,7 +11,8 @@ Namespaces: TypeAlias = dict[str, str]
 
 
 class XPathParser:
-    """Does efficient XPath lookups to find elements and text/attribute values in elements."""
+    """Does efficient XPath lookups to find elements and text/attribute values in
+    elements."""
 
     def __init__(self, namespaces: Namespaces | None = None):
         self._namespaces = namespaces or {}
@@ -40,16 +42,15 @@ class XPathParser:
             yield from self._xpath(path)(element)
 
     def iter(self, element: lxml.etree.Element, *paths: str) -> Iterator[str]:
-        """Iterates through xpaths and returns any non-empty text or attribute values matching the path.
+        """Iterates through xpaths and returns any non-empty text or attribute values
+        matching the path.
 
         All strings are stripped of extra whitespace. Should skip any unicode errors.
         """
-        try:
+        with contextlib.suppress(UnicodeDecodeError):
             for value in self.findall(element, *paths):
                 if isinstance(value, str) and (cleaned := value.strip()):
                     yield cleaned
-        except UnicodeDecodeError:
-            pass
 
     def first(self, element: lxml.etree.Element, *paths: str) -> str | None:
         """Returns first matching text or attribute value.

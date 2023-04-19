@@ -69,7 +69,8 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
 
 
 def schedule(feed: Feed) -> timedelta:
-    """Estimates frequency of episodes in feed, based on the minimum of time intervals between individual episodes."""
+    """Estimates frequency of episodes in feed, based on the minimum of time intervals
+    between individual episodes."""
     try:
         frequency = min(
             a - b
