@@ -40,7 +40,7 @@ jobs:
 
             - name: Code quality checks
               run: |
-                  python -m flake8 radiofeed
+                  python -m ruff radiofeed
 
             - name: Security checks
               run: |
