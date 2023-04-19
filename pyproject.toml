@@ -206,6 +206,8 @@ select = [
     "DJ",
     # Flake8-Print
     "T20",
+    # Flake8-Bandit
+    "S",
     # Pyflakes
     "F",
     # Pycodestyle (error+warning)

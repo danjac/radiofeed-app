@@ -69,7 +69,7 @@ def active_link(
 @register.inclusion_tag("includes/html_content.html")
 def render_html_content(value: str | None) -> dict:
     """Renders cleaned HTML content."""
-    return {"content": mark_safe(cleaners.clean_html(value or ""))}  # nosec
+    return {"content": mark_safe(cleaners.clean_html(value or ""))}  # noqa
 
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
