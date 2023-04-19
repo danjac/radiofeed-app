@@ -83,9 +83,10 @@ class PodcastQuerySet(
         qs = super().search(search_term)
 
         if exact_matches := set(
-                self.alias(title_lower=models.functions.Lower("title")).filter(
-                    title_lower=force_str(search_term).casefold()).values_list("pk",
-                                                                               flat=True)):
+            self.alias(title_lower=models.functions.Lower("title"))
+            .filter(title_lower=force_str(search_term).casefold())
+            .values_list("pk", flat=True)
+        ):
             qs = qs | self.filter(pk__in=exact_matches)
             return qs.annotate(
                 exact_match=models.Case(
