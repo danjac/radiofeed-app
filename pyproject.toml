@@ -156,9 +156,66 @@ skips = ["B410"]
 [tool.djlint]
 ignore = "H030,H031,H017,H021"
 
-[tool.pydocstyle]
+#[tool.pydocstyle]
+#ignore = [
+    #"D100",
+    #"D104",
+    #"D106",
+    #"D107",
+    #"D203",
+    #"D204",
+    #"D213",
+    #"D215",
+    #"D400",
+    #"D401",
+    #"D404",
+    #"D406",
+    #"D407",
+    #"D408",
+    #"D409",
+    #"D413",
+#]
+
+#[tool.flake8]
+#ignore = [
+    #"E203",
+    #"E266",
+    #"E501",
+    #"W503",
+    #"E231",
+    #"E701",
+    #"C812",
+    #"D100",
+    #"Q000",
+    #"S101"
+#]
+#max-line-length = 88
+#max-complexity = 10
+
+[tool.ruff]
+target-version = "py311"
+
+select = [
+    # Flake8-Bugbear
+    "B",
+    # Flake8-Comprehensions
+    "C4",
+    # Flake8-Debugger
+    "D10",
+    # Flake8-Print
+    "T20",
+    # Pyflakes
+    "F",
+    # Pycodestyle (error+warning)
+    "E",
+    "W",
+    # isort
+    "I001"
+]
 ignore = [
     "D100",
+    "D101",
+    "D102",
     "D104",
     "D106",
     "D107",
@@ -174,43 +231,17 @@ ignore = [
     "D408",
     "D409",
     "D413",
-]
-
-[tool.flake8]
-ignore = [
-    "E203",
-    "E266",
-    "E501",
-    "W503",
-    "E231",
-    "E701",
-    "C812",
-    "D100",
-    "Q000",
-    "S101"
-]
-max-line-length = 88
-max-complexity = 10
-
-[tool.ruff]
-select = [
-    # Bugbear
-    "B",
-    # Pyflakes
-    "F",
-    # Pycodestyle (error+warning)
-    "E",
-    "W",
-    # isort
-    "I001"
-]
-ignore = [
     "E501",
     "E701",
-    "D100",
     "Q000",
     "S101",
 ]
+[tool.ruff.per-file-ignores]
+# ignore pydocstyle rules for tests and migrations
+"**/conftest.py" = ["D101", "D102", "D103"]
+"**/factories.py" = ["D101", "D102", "D103"]
+"**/migrations/**.py" = ["D101", "D102", "D103"]
+"**/tests/**.py" = ["D101", "D102", "D103"]
 
 [tool.ruff.isort]
 known-first-party = ["radiofeed"]
