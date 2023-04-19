@@ -69,7 +69,8 @@ class FeedParser:
     def parse(self):
         """Syncs Podcast instance with RSS or Atom feed source.
 
-        Podcast details are updated and episodes created, updated or deleted accordingly.
+        Podcast details are updated and episodes created, updated or deleted
+        accordingly.
 
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.

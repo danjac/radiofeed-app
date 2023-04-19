@@ -38,5 +38,6 @@ class Player:
         self.request.session[self.session_key] = episode_id
 
     def pop(self) -> int | None:
-        """Returns primary key of episode in player, if any in session, and removes the episode ID from the session."""
+        """Returns primary key of episode in player, if any in session, and removes
+        the episode ID from the session."""
         return self.request.session.pop(self.session_key, None)

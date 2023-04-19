@@ -7,12 +7,14 @@ from django.db import models
 class UserQuerySet(models.QuerySet):
     """Custom QuerySet for User model."""
 
-    def email_notification_recipients(self) -> models.QuerySet[User]:  # pyright: ignore
-        """Returns all active users who have enabled email notifications in their settings."""
+    def email_notification_recipients(self) -> models.QuerySet[User]:
+        """Returns all active users who have enabled email notifications in their
+        settings."""
         return self.filter(is_active=True, send_email_notifications=True)
 
-    def for_email(self, email: str) -> models.QuerySet[User]:  # pyright: ignore
-        """Returns users matching this email address, including both primary and secondary email addresses."""
+    def for_email(self, email: str) -> models.QuerySet[User]:
+        """Returns users matching this email address, including both primary and
+        secondary email addresses."""
         return self.filter(
             models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
         )

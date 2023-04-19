@@ -162,7 +162,8 @@ class Episode(models.Model):
         return self.explicit or self.podcast.explicit
 
     def get_episode_metadata(self) -> str:
-        """Returns the episode season/episode/type as a single string, e.g. "Episode 3 Season 4", "Trailer", etc."""
+        """Returns the episode season/episode/type as a single string, e.g.
+        "Episode 3 Season 4", "Trailer", etc."""
         episode_type = (
             self.episode_type.capitalize()
             if self.episode_type and self.episode_type.casefold() != "full"

@@ -24,7 +24,7 @@ from radiofeed.users.models import User
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term: str) -> models.QuerySet[Category]:  # pyright: ignore
+    def search(self, search_term: str) -> models.QuerySet[Category]:
         """Does a simple search for categories."""
         if value := force_str(search_term):
             return self.filter(name__icontains=value)
@@ -83,10 +83,9 @@ class PodcastQuerySet(
         qs = super().search(search_term)
 
         if exact_matches := set(
-            self.alias(title_lower=models.functions.Lower("title"))
-            .filter(title_lower=force_str(search_term).casefold())
-            .values_list("pk", flat=True)
-        ):
+                self.alias(title_lower=models.functions.Lower("title")).filter(
+                    title_lower=force_str(search_term).casefold()).values_list("pk",
+                                                                               flat=True)):
             qs = qs | self.filter(pk__in=exact_matches)
             return qs.annotate(
                 exact_match=models.Case(

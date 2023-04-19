@@ -19,10 +19,12 @@ class FastCounter(Protocol):
 
 
 class FastCountQuerySetMixin(T_QuerySet):
-    """Provides faster alternative to COUNT for very large tables, using PostgreSQL retuple SELECT.
+    """Provides faster alternative to COUNT for very large tables, using PostgreSQL
+    retuple SELECT.
 
     Attributes:
-        fast_count_row_limit (int): max number of rows before switching from SELECT COUNT to reltuples.
+        fast_count_row_limit (int): max number of rows before switching from SELECT
+        COUNT to reltuples.
     """
 
     fast_count_row_limit: int = 1000
@@ -30,7 +32,8 @@ class FastCountQuerySetMixin(T_QuerySet):
     def fast_count(self: T_QuerySet) -> int:
         """Does optimized COUNT.
 
-        If query contains WHERE, DISTINCT or GROUP BY, or number of rows under `fast_count_row_limit`, returns standard SELECT COUNT.
+        If query contains WHERE, DISTINCT or GROUP BY, or number of rows under
+        `fast_count_row_limit`, returns standard SELECT COUNT.
 
         Returns:
             number of rows

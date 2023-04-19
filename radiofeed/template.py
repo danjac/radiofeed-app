@@ -23,7 +23,8 @@ _validate_url = URLValidator(["http", "https"])
 
 
 class ActiveLink(TypedDict):
-    """Provides details on whether a link is currently active, along with its URL and CSS."""
+    """Provides details on whether a link is currently active, along with its
+    URL and CSS."""
 
     url: str
     css: str
@@ -32,7 +33,8 @@ class ActiveLink(TypedDict):
 
 @register.simple_tag(takes_context=True)
 def pagination_url(context: RequestContext, page_number: int) -> str:
-    """Inserts the "page" query string parameter with the provided page number into the template.
+    """Inserts the "page" query string parameter with the provided page number into
+    the template.
 
     Preserves the original request path and any other query string parameters.
 
@@ -74,7 +76,8 @@ def render_html_content(value: str | None) -> dict:
 
 @register.inclusion_tag("includes/cookie_notice.html", takes_context=True)
 def cookie_notice(context: RequestContext) -> dict:
-    """Renders GDPR cookie notice. Notice should be hidden once user has clicked "Accept Cookies" button."""
+    """Renders GDPR cookie notice. Notice should be hidden once user has clicked
+    "Accept Cookies" button."""
     return {"accept_cookies": "accept-cookies" in context.request.COOKIES}
 
 

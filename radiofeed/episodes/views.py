@@ -19,7 +19,8 @@ from radiofeed.pagination import render_pagination_response
 @require_safe
 @require_auth
 def index(request: HttpRequest) -> HttpResponse:
-    """List latest episodes from subscriptions if any, else latest episodes from promoted podcasts."""
+    """List latest episodes from subscriptions if any, else latest episodes from
+    promoted podcasts."""
     subscribed = set(request.user.subscriptions.values_list("podcast", flat=True))
     promoted = "promoted" in request.GET or not subscribed
 

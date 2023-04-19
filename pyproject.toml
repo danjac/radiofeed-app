@@ -180,8 +180,6 @@ select = [
 ]
 ignore = [
     "D100",
-    "D101",
-    "D102",
     "D104",
     "D106",
     "D107",
@@ -197,7 +195,7 @@ ignore = [
     "D408",
     "D409",
     "D413",
-    "E501",
+    # "E501",
     "E701",
     "Q000",
     "S101",
@@ -206,7 +204,8 @@ ignore = [
 # ignore pydocstyle rules for tests and migrations
 "**/conftest.py" = ["D101", "D102", "D103"]
 "**/factories.py" = ["D101", "D102", "D103"]
-"**/migrations/**.py" = ["D101", "D102", "D103"]
+"**/apps.py" = ["D101", "D102", "D103"]
+"**/migrations/**.py" = ["D101", "D102", "D103", "E501"]
 "**/tests/**.py" = ["D101", "D102", "D103"]
 
 [tool.ruff.isort]

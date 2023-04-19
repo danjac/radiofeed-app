@@ -10,9 +10,11 @@ from radiofeed.types import T_QuerySet
 
 
 class SearchQuerySetMixin(T_QuerySet):
-    """Provides standard search interface for models supporting search vector and ranking.
+    """Provides standard search interface for models supporting search vector
+    and ranking.
 
-    Adds a `search` method to automatically resolve simple PostgreSQL search vector queries.
+    Adds a `search` method to automatically resolve simple PostgreSQL
+    search vector queries.
 
     Attributes:
         search_vectors: SearchVector fields and ranks (if multiple)
