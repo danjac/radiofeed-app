@@ -11,7 +11,7 @@ jobs:
 
         services:
             postgres:
-                image: postgres:14.1
+                image: postgres:15.0-bullseye
                 env:
                     POSTGRES_USER: postgres
                     POSTGRES_PASSWORD: postgres
