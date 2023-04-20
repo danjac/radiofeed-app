@@ -16,7 +16,7 @@
                             @click="showDropdown = !showDropdown"
                             @click.outside="showDropdown=false"
                             @keyup.escape.window="showDropdown=false"
-                            class="flex items-center py-2 pl-3 pr-4 link sm:justify-end md:hover:bg-transparent md:p-0">
+                            class="flex items-center px-2 py-1 border rounded-lg link sm:justify-end md:hover:bg-transparent focus:outline-none focus:ring ">
                         <span class="inline-flex items-center">
                             {% block settings_dropdown_title %}
                                 {% heroicon_mini "adjustments-horizontal" class="mr-3" %}
