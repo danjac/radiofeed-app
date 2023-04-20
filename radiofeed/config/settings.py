@@ -215,7 +215,7 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator" # noqa
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"  # noqa
     },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
@@ -346,7 +346,7 @@ if USE_HTTPS:
     )
     SECURE_SSL_REDIRECT = True
 
-# make sure to enable this if your load balancer is not using HSTS in production,
+# make sure to enable USE_HSTS if your load balancer is not using HSTS in production,
 # otherwise leave disabled.
 
 if USE_HSTS:
