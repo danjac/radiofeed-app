@@ -1438,26 +1438,28 @@ files = [
 
 [[package]]
 name = "nh3"
-version = "0.2.9"
+version = "0.2.10"
 description = "Ammonia HTML sanitizer Python binding"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "nh3-0.2.9-cp37-abi3-macosx_10_7_x86_64.whl", hash = "sha256:3a5ed086a794d369f945843afc797103f2277cffb6fc17c0fd49a1eb81c30706"},
-    {file = "nh3-0.2.9-cp37-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:8928026fecdd641ca05dc38731de2f215469f1ede52ca973db2625be371befd9"},
-    {file = "nh3-0.2.9-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5c5f49a6664fd829d4c717a4df9264b1342ed3692af30b387c4214575db19c09"},
-    {file = "nh3-0.2.9-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:abaca948e1a83b96fc7c5f8dc021e321d6c21ec15af8e3ba2dc3b3615bc0d1a7"},
-    {file = "nh3-0.2.9-cp37-abi3-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:dc2606d4ae082972825331039826c2af2fe6d874177581f4eb520d4704fada58"},
-    {file = "nh3-0.2.9-cp37-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:c79e1692b65d6160cbbc599f01ac15e49d9be8408cd26e5f76928db1432a6c9a"},
-    {file = "nh3-0.2.9-cp37-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:96f009c489d87d6668866273973cf56dc341512214ab9543b4f75283858d146d"},
-    {file = "nh3-0.2.9-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3f7c7e9300f105df9823f8881bb6f786c8e17aa1761e7272fc349785a7f7523b"},
-    {file = "nh3-0.2.9-cp37-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:9d7907074de1659a91fdd662055e175ffd43c8811107edcd58b74b16cb8c0c84"},
-    {file = "nh3-0.2.9-cp37-abi3-musllinux_1_2_i686.whl", hash = "sha256:16ff439069cea3cce468a73cf7c7353b6e626014286fc204c8fcd99e14a8f66c"},
-    {file = "nh3-0.2.9-cp37-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:359ee983e2409f1cf75558d8652d239082fa5821354bdcf67d8415249eae68bd"},
-    {file = "nh3-0.2.9-cp37-abi3-win32.whl", hash = "sha256:a0ab36ed99a63fad4c9867e575fdb41903eda1894027329527b3fff2f5595928"},
-    {file = "nh3-0.2.9-cp37-abi3-win_amd64.whl", hash = "sha256:c8330040b0ddba450f54efaeaca41d25ef01e933781ecae8c93d613d05f06c5a"},
-    {file = "nh3-0.2.9.tar.gz", hash = "sha256:869fadb17926c1140de322d65ae2f35bf8908f4229b6f32321daf8ca3dbdafd1"},
+    {file = "nh3-0.2.10-cp37-abi3-macosx_10_7_x86_64.whl", hash = "sha256:41649beaddc2c4f122fe06ae33ad20e29141d2ee782e0e339a83870347973200"},
+    {file = "nh3-0.2.10-cp37-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:d4171c4b08cea9f7c22c98d6b83b0f8a321bae57352e2795d31e7f5526788027"},
+    {file = "nh3-0.2.10-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:82843a01b56b3fa12089c0535de8b2c1655cd64fbe5972581f123dc49063c73d"},
+    {file = "nh3-0.2.10-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:2d3986a0ba2940704e05061d499cf44668640beda0ea2b5f72fc853530c282a4"},
+    {file = "nh3-0.2.10-cp37-abi3-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:bc19c581a1001d7a12ce040f7d7f3f6955b9202aea03bb9e874b862ab0c89815"},
+    {file = "nh3-0.2.10-cp37-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:d4bc2e52806bcad5049a0b3c6b722518174480b6a1481080cca9dbe2eab34817"},
+    {file = "nh3-0.2.10-cp37-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:6344d4e9b3ab1bbdda821fca42b2027f407a879b7d63dd4cc1ed8876150411e4"},
+    {file = "nh3-0.2.10-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4e5dcd9eeec574664e563bfa15fa458d755eceb974fa050340ec34975c224716"},
+    {file = "nh3-0.2.10-cp37-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:ce3c1b3fb5d29544167d6234f03a9278128922960cd5f5608c530e4deb90b2dd"},
+    {file = "nh3-0.2.10-cp37-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:a1bfa864132b9d276a003c2ad891299bb05bf9ba97a159ac81844a0510b2f956"},
+    {file = "nh3-0.2.10-cp37-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:9999c8166cc40b80af3e1520e3ba1dfca86b30e4605004453612fc15cfc3dc54"},
+    {file = "nh3-0.2.10-cp37-abi3-musllinux_1_2_i686.whl", hash = "sha256:5a0eaa4bae15e40fc7a82dcdba29258732c67cad151fc309909e98f9e8b1c3aa"},
+    {file = "nh3-0.2.10-cp37-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:bc71967a59c8c096ba1741959db9e8ebc7ea9913f9694acd0cd914c31591ef35"},
+    {file = "nh3-0.2.10-cp37-abi3-win32.whl", hash = "sha256:778b6a33d5740217056af902e87644074102b5a6ed092ea9314a39bbca0d93b8"},
+    {file = "nh3-0.2.10-cp37-abi3-win_amd64.whl", hash = "sha256:b076483e94ef4837358d4c449a621a2ac26360921829f8ff8c6322cdd11c6379"},
+    {file = "nh3-0.2.10.tar.gz", hash = "sha256:e9af8e84886c3191dabcd62a8de4d14f407d1072cba103c15da5389be6678bd9"},
 ]
 
 [[package]]
