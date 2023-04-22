@@ -297,7 +297,7 @@ def _render_subscribe_toggle(
                     request=request,
                 ),
                 loader.render_to_string(
-                    "_messages.html",
+                    "messages.html",
                     {
                         "hx_oob": True,
                     },

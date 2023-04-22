@@ -205,7 +205,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
                     request=request,
                 ),
                 loader.render_to_string(
-                    "_messages.html",
+                    "messages.html",
                     {
                         "hx_oob": True,
                     },
@@ -279,7 +279,7 @@ def _render_bookmark_toggle(
                     request=request,
                 ),
                 loader.render_to_string(
-                    "_messages.html",
+                    "messages.html",
                     {
                         "hx_oob": True,
                     },
