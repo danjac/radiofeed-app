@@ -13,9 +13,7 @@
                            class="link">Search All Podcasts</a>
                     {% else %}
                         <a href="{{ request.path }}?{{ request.ordering.qs_reversed }}"
-                           class="link">
-                            {{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}
-                        </a>
+                           class="link">{{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}</a>
                     {% endif %}
                 </li>
                 <li class="flex items-center justify-center sm:justify-end">
@@ -24,7 +22,17 @@
             </ul>
         </nav>
     {% endif %}
-    {% cache 600 podcast-episodes request.get_full_path %}
-    {% include pagination_template %}
-{% endcache %}
+    {% block pagination %}
+        {% cache 600 podcast-episodes request.get_full_path %}
+        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+            {% include "includes/pagination_links.html" %}
+            {% for episode in page_obj.object_list %}
+                {% include "episodes/includes/episode.html" %}
+            {% empty %}
+                {% include "includes/empty.html" %}
+            {% endfor %}
+            {% include "includes/pagination_links.html" %}
+        </div>
+    {% endcache %}
+{% endblock pagination %}
 {% endblock podcast_content %}

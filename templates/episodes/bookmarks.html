@@ -3,20 +3,18 @@
     | Bookmarks
 {% endblock title %}
 {% block content %}
-    <header class="mb-3 pb-3 border-b space-y-3">
-        <h1 class="flex justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl font-bold">Bookmarks</h1>
+    <header class="pb-3 mb-3 border-b space-y-3">
+        <h1 class="flex justify-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">Bookmarks</h1>
         {% if request.search or page_obj.has_other_pages %}
             <nav>
-                <ul class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
-                    <li class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
+                <ul class="items-center justify-between sm:flex space-y-2 sm:space-y-0">
+                    <li class="flex items-center justify-center mb-3 sm:justify-start sm:mb-0">
                         {% if request.search %}
                             <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                                class="link">Search All Podcasts</a>
                         {% else %}
                             <a href="{{ request.path }}?{{ request.ordering.qs_reversed }}"
-                               class="link">
-                                {{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}
-                            </a>
+                               class="link">{{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}</a>
                         {% endif %}
                     </li>
                     <li class="flex items-center justify-center sm:justify-end">
@@ -26,5 +24,15 @@
             </nav>
         {% endif %}
     </header>
-    {% include pagination_template %}
+    {% block pagination %}
+        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+            {% include "includes/pagination_links.html" %}
+            {% for bookmark in page_obj.object_list %}
+                {% include "episodes/includes/episode.html" with episode=bookmark.episode %}
+            {% empty %}
+                {% include "includes/empty.html" %}
+            {% endfor %}
+            {% include "includes/pagination_links.html" %}
+        </div>
+    {% endblock pagination %}
 {% endblock content %}

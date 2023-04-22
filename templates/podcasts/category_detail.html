@@ -6,13 +6,13 @@
 {% block content %}
     {% with search_placeholder="Search: "|add:category.name %}
         {% if request.search %}
-            <header class="space-y-3 mb-3 pb-3 border-b">
-                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl">
+            <header class="pb-3 mb-3 border-b space-y-3">
+                <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
                     {{ category.name }} Podcasts
                 </h1>
                 <nav>
-                    <ul class="space-y-3 sm:space-y-0 sm:flex items-center justify-center sm:justify-between">
-                        <li class="sm:mb-0 flex items-center justify-center sm:justify-start">
+                    <ul class="items-center justify-center space-y-3 sm:space-y-0 sm:flex sm:justify-between">
+                        <li class="flex items-center justify-center sm:mb-0 sm:justify-start">
                             <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
                                title="Search Podcasts"
                                class="link">Search All Categories</a>
@@ -24,8 +24,8 @@
                 </nav>
             </header>
         {% else %}
-            <header class="sm:flex items-center justify-between space-y-3 sm:space-y-0 mb-3 pb-3 border-b">
-                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+            <header class="items-center justify-between pb-3 mb-3 border-b sm:flex space-y-3 sm:space-y-0">
+                <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     {{ category.name }} Podcasts
                 </h1>
                 <nav class="flex items-center justify-center sm:justify-end">
@@ -36,7 +36,17 @@
             </header>
         {% endif %}
     {% endwith %}
-    {% cache 600 category-podcasts request.get_full_path %}
-    {% include pagination_template %}
-{% endcache %}
+    {% block pagination %}
+        {% cache 600 category-podcasts request.get_full_path %}
+        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+            {% include "includes/pagination_links.html" %}
+            {% for podcast in page_obj.object_list %}
+                {% include "podcasts/includes/podcast.html" %}
+            {% empty %}
+                {% include "includes/empty.html" %}
+            {% endfor %}
+            {% include "includes/pagination_links.html" %}
+        </div>
+    {% endcache %}
+{% endblock pagination %}
 {% endblock content %}
