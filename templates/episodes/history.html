@@ -28,7 +28,7 @@
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
             {% include "includes/pagination_links.html" %}
             {% for audio_log in page_obj.object_list %}
-                {% include "episodes/includes/episode.html" with episode=audio_log.episode %}
+                {% include "episodes/episode.html" with episode=audio_log.episode %}
             {% empty %}
                 {% include "includes/empty.html" %}
             {% endfor %}
