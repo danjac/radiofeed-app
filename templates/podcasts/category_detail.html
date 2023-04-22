@@ -39,13 +39,13 @@
     {% block pagination %}
         {% cache 600 category-podcasts request.get_full_path %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "pagination_links.html" %}
+            {% include "pagination/links.html" %}
             {% for podcast in page_obj.object_list %}
                 {% include "podcasts/podcast.html" %}
             {% empty %}
-                {% include "empty.html" %}
+                {% include "pagination/empty.html" %}
             {% endfor %}
-            {% include "pagination_links.html" %}
+            {% include "pagination/links.html" %}
         </div>
     {% endcache %}
 {% endblock pagination %}

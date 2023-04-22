@@ -26,13 +26,13 @@
     </header>
     {% block pagination %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "pagination_links.html" %}
+            {% include "pagination/links.html" %}
             {% for bookmark in page_obj.object_list %}
                 {% include "episodes/episode.html" with episode=bookmark.episode %}
             {% empty %}
-                {% include "empty.html" %}
+                {% include "pagination/empty.html" %}
             {% endfor %}
-            {% include "pagination_links.html" %}
+            {% include "pagination/links.html" %}
         </div>
     {% endblock pagination %}
 {% endblock content %}
