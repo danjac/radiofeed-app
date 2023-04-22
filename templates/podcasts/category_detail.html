@@ -36,9 +36,7 @@
             </header>
         {% endif %}
     {% endwith %}
-    {% block pagination %}
-        {% cache 600 category-podcasts request.get_full_path %}
-        {% include pagination_template %}
-    {% endcache %}
-{% endblock pagination %}
+    {% cache 600 category-podcasts request.get_full_path %}
+    {% include pagination_template %}
+{% endcache %}
 {% endblock content %}

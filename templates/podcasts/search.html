@@ -4,9 +4,7 @@
     | Search | Podcasts
 {% endblock title %}
 {% block search_content %}
-    {% block pagination %}
-        {% cache 600 podcasts-search request.get_full_path %}
-        {% include pagination_template %}
-    {% endcache %}
-{% endblock pagination %}
+    {% cache 600 podcasts-search request.get_full_path %}
+    {% include pagination_template %}
+{% endcache %}
 {% endblock search_content %}
