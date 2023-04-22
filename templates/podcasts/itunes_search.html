@@ -15,9 +15,7 @@
                             <a title="{{ feed.title }}"
                                class="link font-bold"
                                rel="noopener nofollow"
-                               href="{{ feed.url }}">
-                                {{ feed.title|truncatechars:180 }}
-                            </a>
+                               href="{{ feed.url }}">{{ feed.title|truncatechars:180 }}</a>
                         </h2>
                         <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
                             <span class="animate-pulse">Adding podcast to database...</span>
@@ -26,7 +24,7 @@
                 </article>
             {% endif %}
         {% empty %}
-            {% include "includes/empty.html" %}
+            {% include "empty.html" %}
         {% endfor %}
     </div>
 {% endblock search_content %}

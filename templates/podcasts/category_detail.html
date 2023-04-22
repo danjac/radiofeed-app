@@ -18,7 +18,7 @@
                                class="link">Search All Categories</a>
                         </li>
                         <li class="flex items-center justify-center sm:justify-end">
-                            {% include "includes/search_form.html" with placeholder=search_placeholder %}
+                            {% include "search_form.html" with placeholder=search_placeholder %}
                         </li>
                     </ul>
                 </nav>
@@ -30,7 +30,7 @@
                 </h1>
                 <nav class="flex items-center justify-center sm:justify-end">
                     <ul>
-                        <li>{% include "includes/search_form.html" with placeholder=search_placeholder %}</li>
+                        <li>{% include "search_form.html" with placeholder=search_placeholder %}</li>
                     </ul>
                 </nav>
             </header>
@@ -39,13 +39,13 @@
     {% block pagination %}
         {% cache 600 category-podcasts request.get_full_path %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "includes/pagination_links.html" %}
+            {% include "pagination_links.html" %}
             {% for podcast in page_obj.object_list %}
                 {% include "podcasts/includes/podcast.html" %}
             {% empty %}
-                {% include "includes/empty.html" %}
+                {% include "empty.html" %}
             {% endfor %}
-            {% include "includes/pagination_links.html" %}
+            {% include "pagination_links.html" %}
         </div>
     {% endcache %}
 {% endblock pagination %}

@@ -21,7 +21,7 @@
                         {% endif %}
                     </li>
                     <li class="flex items-center justify-center sm:justify-end space-x-3">
-                        {% include "includes/search_form.html" with placeholder="Search: Podcasts" %}
+                        {% include "search_form.html" with placeholder="Search: Podcasts" %}
                     </li>
                 </ul>
             </nav>
@@ -29,20 +29,20 @@
             <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
                 <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">Podcasts</h1>
                 <div class="flex items-center justify-center sm:justify-end space-x-3">
-                    {% include "includes/search_form.html" with placeholder="Search: Podcasts" %}
+                    {% include "search_form.html" with placeholder="Search: Podcasts" %}
                 </div>
             </div>
         {% endif %}
     </header>
     {% block pagination %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "includes/pagination_links.html" %}
+            {% include "pagination_links.html" %}
             {% for podcast in page_obj.object_list %}
                 {% include "podcasts/includes/podcast.html" %}
             {% empty %}
-                {% include "includes/empty.html" %}
+                {% include "empty.html" %}
             {% endfor %}
-            {% include "includes/pagination_links.html" %}
+            {% include "pagination_links.html" %}
         </div>
     {% endblock pagination %}
 {% endblock content %}

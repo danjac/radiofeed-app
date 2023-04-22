@@ -12,7 +12,7 @@
         <tbody class="divide-y space-y-3">
             <tr class="flex justify-between pt-4">
                 <td class="w-1/2">Joined</td>
-                <td class="w-1/2 font-bold text-right">{% include "includes/date.html" with value=user.date_joined %}</td>
+                <td class="w-1/2 font-bold text-right">{% include "date.html" with value=user.date_joined %}</td>
             </tr>
             {% with subscribed=user.subscriptions.count %}
                 {% if subscribed %}

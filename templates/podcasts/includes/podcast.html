@@ -8,12 +8,10 @@
             <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-bold line-clamp-2 lg:line-clamp-1"
                 title="{{ podcast.cleaned_title }}">
                 <a class="link group-hover:text-blue-600 dark:group-hover:text-blue-300"
-                   href="{{ podcast_url }}">
-                    {{ podcast.cleaned_title|truncatechars:180 }}
-                </a>
+                   href="{{ podcast_url }}">{{ podcast.cleaned_title|truncatechars:180 }}</a>
             </h2>
             <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
-                {% include "includes/date.html" with value=podcast.pub_date title="Latest Episode" %}
+                {% include "date.html" with value=podcast.pub_date title="Latest Episode" %}
             </h3>
         </div>
     </article>
