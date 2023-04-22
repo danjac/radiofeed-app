@@ -27,7 +27,6 @@ class TestAudioPlayer:
 
         assert audio_player(RequestContext(req)) == {
             "request": req,
-            "episode": log.episode,
-            "current_time": log.current_time,
+            "audio_log": log,
             "is_playing": True,
         }

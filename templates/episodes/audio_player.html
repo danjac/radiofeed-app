@@ -1,13 +1,13 @@
 {% load heroicons %}
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
-    {% if episode %}
-        {% if is_playing %}
+    {% if audio_log and is_playing %}
+        {% with episode=audio_log.episode %}
             <div class="h-40 sm:h-28"
                 {# djlint:off #}
                 x-data="
             player(
                 startPlayer={{ start_player|yesno:'true,false' }},
-                currentTime={{ current_time|default:0 }},
+                currentTime={{ audio_log.current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
             )"
@@ -105,6 +105,6 @@
                     </div>
                 </div>
             </div>
-        {% endif %}
+        {% endwith %}
     {% endif %}
 </div>

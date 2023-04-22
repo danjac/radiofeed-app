@@ -78,20 +78,16 @@ def episode_detail(
         pk=episode_id,
     )
 
-    context = {
-        "episode": episode,
-        "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
-        "is_playing": request.player.has(episode.id),
-    }
-
-    if audio_log := request.user.audio_logs.filter(episode=episode).first():
-        context = {
-            **context,
-            "listened": audio_log.listened,
-            "current_time": audio_log.current_time,
-        }
-
-    return render(request, "episodes/detail.html", context)
+    return render(
+        request,
+        "episodes/detail.html",
+        {
+            "episode": episode,
+            "audio_log": request.user.audio_logs.filter(episode=episode).first(),
+            "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
+            "is_playing": request.player.has(episode.id),
+        },
+    )
 
 
 @require_POST
@@ -116,8 +112,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         "episodes/player_toggle.html",
         {
             "episode": episode,
-            "current_time": audio_log.current_time,
-            "listened": audio_log.listened,
+            "audio_log": audio_log,
             "is_playing": True,
             "start_player": True,
         },
@@ -138,8 +133,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             "episodes/player_toggle.html",
             {
                 "episode": audio_log.episode,
-                "current_time": audio_log.current_time,
-                "listened": audio_log.listened,
+                "audio_log": audio_log,
                 "is_playing": False,
             },
         )
