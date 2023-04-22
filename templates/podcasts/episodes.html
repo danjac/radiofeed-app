@@ -23,14 +23,6 @@
         </nav>
     {% endif %}
     {% cache 600 podcast-episodes request.get_full_path %}
-    <div class="divide-y divide-solid" id="{{ pagination_target }}">
-        {% include "pagination/links.html" %}
-        {% for episode in page_obj.object_list %}
-            {% include "episodes/episode.html" %}
-        {% empty %}
-            {% include "pagination/empty.html" %}
-        {% endfor %}
-        {% include "pagination/links.html" %}
-    </div>
+    {% include pagination_template %}
 {% endcache %}
 {% endblock podcast_content %}
