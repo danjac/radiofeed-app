@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST, require_safe
 from render_block import render_block_to_string
 
 from radiofeed.decorators import require_auth
-from radiofeed.episodes.models import Episode
+from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.pagination import render_pagination_response
 
 
@@ -111,17 +111,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render(
-        request,
-        "episodes/includes/play_toggle.html",
-        {
-            "episode": episode,
-            "current_time": audio_log.current_time,
-            "listened": audio_log.listened,
-            "start_player": True,
-            "is_playing": True,
-        },
-    )
+    return _render_player(request, audio_log, is_playing=True)
 
 
 @require_POST
@@ -134,16 +124,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             episode__pk=episode_id,
         )
 
-        return render(
-            request,
-            "episodes/includes/play_toggle.html",
-            {
-                "episode": audio_log.episode,
-                "current_time": audio_log.current_time,
-                "listened": audio_log.listened,
-                "is_playing": False,
-            },
-        )
+        return _render_player(request, audio_log, is_playing=False)
 
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
@@ -307,3 +288,44 @@ def _render_bookmark_toggle(
             ]
         )
     return redirect(episode.get_absolute_url())
+
+
+def _render_player(
+    request: HttpRequest, audio_log: AudioLog, is_playing: bool
+) -> HttpResponse:
+    context = {
+        "episode": audio_log.episode,
+        "current_time": audio_log.current_time,
+        "listened": audio_log.listened,
+        "is_playing": is_playing,
+    }
+
+    return HttpResponse(
+        [
+            render_block_to_string(
+                "episodes/detail.html",
+                "play_toggle",
+                context=context,
+                request=request,
+            ),
+            render_block_to_string(
+                "episodes/detail.html",
+                "history",
+                context={
+                    **context,
+                    "hx_oob": True,
+                },
+                request=request,
+            ),
+            loader.render_to_string(
+                "episodes/includes/audio_player.html",
+                context={
+                    **context,
+                    "episode": audio_log.episode,
+                    "start_player": is_playing,
+                    "hx_oob": True,
+                },
+                request=request,
+            ),
+        ]
+    )

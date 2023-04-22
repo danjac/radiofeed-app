@@ -158,7 +158,7 @@
             </div>
             {% block history %}
                 {% with target=episode.get_history_target %}
-                    <div id="{{ target }}">
+                    <div id="{{ target }}"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
                         {% if listened %}
                             <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
                                 <div class="flex items-center space-x-1">
