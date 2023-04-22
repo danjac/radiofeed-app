@@ -14,9 +14,7 @@
                     x-transition:enter-end="transform opacity-100"
                     x-transition:leave="transition ease-out duration-500"
                     x-transition:leave-start="transform opacity-100"
-                    x-transition:leave-end="transform opacity-0">
-                    {{ message.message }}
-                </li>
+                    x-transition:leave-end="transform opacity-0">{{ message.message }}</li>
             {% endfor %}
         </ul>
     {% endif %}
