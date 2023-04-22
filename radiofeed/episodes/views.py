@@ -312,19 +312,19 @@ def _render_player(
                 "episodes/detail.html",
                 "history",
                 context={
-                    **context,
                     "hx_oob": True,
-                },
+                }
+                | context,
                 request=request,
             ),
             loader.render_to_string(
                 "episodes/includes/audio_player.html",
                 context={
-                    **context,
                     "episode": audio_log.episode,
                     "start_player": is_playing,
                     "hx_oob": True,
-                },
+                }
+                | context,
                 request=request,
             ),
         ]
