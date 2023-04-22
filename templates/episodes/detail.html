@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
-                {% include "date.html" with value=episode.pub_date title=_("Release Date") %}
+                {% include "date.html" with value=episode.pub_date title="Release Date" %}
                 {% with file_size=episode.get_file_size %}
                     {% if file_size %}<div title="Size">{{ file_size }}</div>{% endif %}
                 {% endwith %}
