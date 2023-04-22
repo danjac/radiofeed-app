@@ -212,15 +212,28 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from History")
 
-    return (
-        render(
-            request,
-            "episodes/includes/history.html",
-            {"episode": audio_log.episode},
+    if request.htmx:
+        return HttpResponse(
+            [
+                render_block_to_string(
+                    "episodes/detail.html",
+                    "history",
+                    {
+                        "episode": audio_log.episode,
+                    },
+                    request=request,
+                ),
+                loader.render_to_string(
+                    "includes/messages.html",
+                    {
+                        "hx_oob": True,
+                    },
+                    request=request,
+                ),
+            ]
         )
-        if request.htmx
-        else redirect(audio_log.episode.get_absolute_url())
-    )
+
+    return redirect(audio_log.episode.get_absolute_url())
 
 
 @require_safe
