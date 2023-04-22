@@ -54,74 +54,8 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% cover_image episode.get_cover_url 200 podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
-                    {% block play_toggle %}
-                        {% with target=episode.get_player_target %}
-                            <div id="{{ target }}"
-                                 hx-push-url="false"
-                                 hx-target="this"
-                                 hx-indicator="this"
-                                 hx-swap="outerHTML"
-                                 x-data="{isLoading: false}">
-                                {% if is_playing %}
-                                    <button title="Close Player"
-                                            class="inline-flex items-center btn btn-primary btn-outline btn-lg"
-                                            @click="isLoading=true"
-                                            hx-post="{% url 'episodes:close_player' %}"
-                                            hx-trigger="click once">
-                                        {% heroicon_mini "stop-circle" class="mr-2" x_show="!isLoading" %}
-                                        {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
-                                        Close
-                                    </button>
-                                {% else %}
-                                    <button title="Open Episode in Player"
-                                            class="inline-flex items-center btn btn-primary btn-lg"
-                                            @click="isLoading=true"
-                                            hx-post="{% url 'episodes:start_player' episode.pk %}"
-                                            hx-trigger="click once">
-                                        {% heroicon_mini "play-circle" class="mr-2" x_show="!isLoading" %}
-                                        {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
-                                        Play
-                                    </button>
-                                {% endif %}
-                            </div>
-                        {% endwith %}
-                    {% endblock play_toggle %}
-                    {% block bookmark_toggle %}
-                        {% with target=episode.get_bookmark_target %}
-                            {% url is_bookmarked|yesno:"episodes:remove_bookmark,episodes:add_bookmark" episode.id as action_url %}
-                            <form id="{{ target }}"
-                                  action="{{ action_url }}"
-                                  method="post"
-                                  hx-push-url="false"
-                                  hx-target="this"
-                                  hx-swap="outerHTML"
-                                  hx-indicator="this"
-                                  x-data="{isLoading: false}">
-                                {% csrf_token %}
-                                {% if is_bookmarked %}
-                                    <button title="Remove Bookmark"
-                                            class="inline-flex items-center btn btn-default btn-outline"
-                                            @click="isLoading=true"
-                                            hx-post="{{ action_url }}"
-                                            hx-trigger="click once">
-                                        {% heroicon_mini "bookmark-slash" class="mr-2" x_show="!isLoading" %}
-                                        {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
-                                        Bookmark
-                                    </button>
-                                {% else %}
-                                    <button title="Bookmark"
-                                            class="inline-flex items-center btn btn-default"
-                                            @click="isLoading=true"
-                                            hx-post="{{ action_url }}"
-                                            hx-trigger="click once">
-                                        {% heroicon_mini "bookmark" class="mr-2" x_show="!isLoading" %}
-                                        {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
-                                        Bookmark
-                                    </button>
-                                {% endif %}
-                            </form>
-                        {% endwith %}
-                    {% endblock bookmark_toggle %}
+                    {% include "episodes/player_toggle.html" %}
+                    {% include "episodes/bookmark_toggle.html" %}
                     <div class="flex flex-wrap items-center font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                         <a download
                            title="Download audio file to your device"
@@ -156,43 +90,7 @@
                     {% endif %}
                 {% endwith %}
             </div>
-            {% block history %}
-                {% with target=episode.get_history_target %}
-                    <div id="{{ target }}"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
-                        {% if listened %}
-                            <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
-                                <div class="flex items-center space-x-1">
-                                    <span>Listened</span>
-                                    {% include "date.html" with value=listened title="Listened" %}
-                                </div>
-                                {% if current_time and current_time > 60 %}<div title="Timestamp">{{ current_time|format_duration }}</div>{% endif %}
-                                {% if not is_playing %}
-                                    {% url "episodes:remove_audio_log" episode.id as action_url %}
-                                    <form class="inline-flex items-center"
-                                          action="{{ action_url }}"
-                                          method="post"
-                                          x-data="{isLoading: false}">
-                                        {% csrf_token %}
-                                        <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
-                                                title="Remove episode from your History"
-                                                hx-target="#{{ target }}"
-                                                hx-post="{{ action_url }}"
-                                                hx-indicator="this"
-                                                hx-push-url="false"
-                                                hx-swap="outerHTML"
-                                                hx-confirm="Are you sure you want to remove this episode from your History?"
-                                                @click="isLoading=true">
-                                            {% heroicon_mini "trash" class="mr-2" x_show="!isLoading" %}
-                                            {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
-                                            Remove
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endwith %}
-            {% endblock history %}
+            {% include "episodes/audio_log.html" %}
             {% render_html_content episode.description %}
         </article>
     {% endwith %}

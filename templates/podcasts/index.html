@@ -5,14 +5,14 @@
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
 {% endblock title %}
 {% block content %}
-    <header class="mb-3 pb-3 border-b space-y-3">
+    <header class="pb-3 mb-3 border-b space-y-3">
         {% url 'podcasts:index' as index_url %}
         {% if has_subscriptions %}
-            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">
+            <h1 class="flex items-center justify-center mb-3 text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
                 Podcasts: {{ promoted|yesno:"Promotions,Subscriptions" }}
             </h1>
             <nav>
-                <ul class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
+                <ul class="items-center justify-between sm:flex space-y-2 sm:space-y-0">
                     <li class="flex items-center justify-center sm:justify-start">
                         {% if promoted %}
                             <a href="{{ index_url }}" class="link">Subscriptions</a>
@@ -26,23 +26,13 @@
                 </ul>
             </nav>
         {% else %}
-            <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
-                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">Podcasts</h1>
+            <div class="items-center justify-between sm:flex space-y-2 sm:space-y-0">
+                <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Podcasts</h1>
                 <div class="flex items-center justify-center sm:justify-end space-x-3">
                     {% include "search_form.html" with placeholder="Search: Podcasts" %}
                 </div>
             </div>
         {% endif %}
     </header>
-    {% block pagination %}
-        <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "pagination/links.html" %}
-            {% for podcast in page_obj.object_list %}
-                {% include "podcasts/podcast.html" %}
-            {% empty %}
-                {% include "pagination/empty.html" %}
-            {% endfor %}
-            {% include "pagination/links.html" %}
-        </div>
-    {% endblock pagination %}
+    {% include pagination_template %}
 {% endblock content %}

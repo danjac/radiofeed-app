@@ -8,10 +8,8 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
-from render_block import render_block_to_string
 
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
@@ -59,6 +57,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/index.html",
+        "podcasts/pagination/podcasts.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -84,6 +83,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 )
             ),
             "podcasts/search.html",
+            "podcasts/pagination/podcasts.html",
         )
 
     return redirect("podcasts:index")
@@ -167,6 +167,7 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
+        "episodes/pagination/episodes.html",
         {
             "podcast": podcast,
             "is_podcast_detail": True,
@@ -237,6 +238,7 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
+        "podcasts/pagination/podcasts.html",
         {"category": category},
     )
 
@@ -285,24 +287,12 @@ def _render_subscribe_toggle(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
     if request.htmx:
-        return HttpResponse(
-            [
-                render_block_to_string(
-                    "podcasts/detail.html",
-                    "subscribe_toggle",
-                    {
-                        "podcast": podcast,
-                        "is_subscribed": is_subscribed,
-                    },
-                    request=request,
-                ),
-                loader.render_to_string(
-                    "messages.html",
-                    {
-                        "hx_oob": True,
-                    },
-                    request=request,
-                ),
-            ]
+        return render(
+            request,
+            "podcasts/subscribe_toggle.html",
+            {
+                "podcast": podcast,
+                "is_subscribed": is_subscribed,
+            },
         )
     return redirect(podcast.get_absolute_url())
