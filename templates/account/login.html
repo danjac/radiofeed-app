@@ -19,7 +19,7 @@
         {% if redirect_field_value %}
             <input type="hidden"
                    name="{{ redirect_field_name }}"
-                   value="{{ redirect_field_value }}"/>
+                   value="{{ redirect_field_value }}" />
         {% endif %}
         {{ form }}
         <div class="flex items-center">
@@ -32,5 +32,5 @@
             </button>
         </div>
     </form>
-    {% include "account/includes/social_logins.html" %}
+    {% include "account/social_logins.html" %}
 {% endblock content %}
