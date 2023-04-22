@@ -5,9 +5,11 @@
         {% block title %}{% endblock title %}
         {# djlint:on #}
     </title>
-    {% if messages %}
-        {% include "includes/messages.html" with hx_oob=True %}
-    {% endif %}
+    {% block messages %}
+        {% if messages %}
+            {% include "includes/messages.html" with hx_oob=True %}
+        {% endif %}
+    {% endblock messages %}
     {# djlint:off #}
     {% block content %}{% endblock content %}
     {# djlint:on #}

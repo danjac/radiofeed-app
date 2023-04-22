@@ -784,6 +784,24 @@ redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
+name = "django-render-block"
+version = "0.9.2"
+description = "Render a particular block from a template to a string."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-render-block-0.9.2.tar.gz", hash = "sha256:3dde0d2abde9381685659d2ed0761b8bddf7741c48eaadec9e5b50a6c7850247"},
+    {file = "django_render_block-0.9.2-py3-none-any.whl", hash = "sha256:1768832be78476c36627b3e3a8e7d9eb0e2bc46b84daf2c51958e2f674173c40"},
+]
+
+[package.dependencies]
+django = ">=2.2"
+
+[package.extras]
+dev = ["Jinja2 (>=2.8)"]
+
+[[package]]
 name = "djlint"
 version = "1.23.3"
 description = "HTML Template Linter and Formatter"
@@ -2777,4 +2795,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "ae7b9319b557ad6ba20ca9815710f45755d5eeef0e674760ec292dd171c77dab"
+content-hash = "9399ab3dc00ace60760ccc309fcec77b4f36d85adf8f5d4930776720c3781eb5"
