@@ -318,7 +318,7 @@ def _render_player(
                 request=request,
             ),
             loader.render_to_string(
-                "episodes/includes/audio_player.html",
+                "episodes/audio_player.html",
                 context={
                     "episode": audio_log.episode,
                     "start_player": is_playing,
