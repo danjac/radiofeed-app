@@ -7,9 +7,11 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template import loader
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
+from render_block import render_block_to_string
 
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
@@ -271,12 +273,24 @@ def _render_bookmark_toggle(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
     if request.htmx:
-        return render(
-            request,
-            "episodes/includes/bookmark_toggle.html",
-            {
-                "episode": episode,
-                "is_bookmarked": is_bookmarked,
-            },
+        return HttpResponse(
+            [
+                render_block_to_string(
+                    "episodes/detail.html",
+                    "bookmark_toggle",
+                    {
+                        "episode": episode,
+                        "is_bookmarked": is_bookmarked,
+                    },
+                    request=request,
+                ),
+                loader.render_to_string(
+                    "includes/messages.html",
+                    {
+                        "hx_oob": True,
+                    },
+                    request=request,
+                ),
+            ]
         )
     return redirect(episode.get_absolute_url())
