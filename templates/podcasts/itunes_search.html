@@ -6,7 +6,7 @@
     <div class="divide-y divide-solid">
         {% for feed in feeds %}
             {% if feed.podcast and feed.podcast.pub_date %}
-                {% include "podcasts/podcast.html" with podcast=feed.podcast %}
+                {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
             {% else %}
                 <article class="flex items-center space-x-3 py-2">
                     {% cover_image feed.image 100 feed.title css_class="h-16 w-16" %}
