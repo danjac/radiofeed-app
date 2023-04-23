@@ -1,4 +1,31 @@
-{% include "forms/errors.html" with errors=form.non_field_errors %}
+{% if form.non_field_errors %}
+    <ul class="font-semibold text-red-800 dark:text-red-600">
+        {{ form.non_field_errors|unordered_list }}
+    </ul>
+{% endif %}
 {% for field in form %}
-    {% include "forms/field.html" %}
+    {% if field.is_hidden %}
+        {{ field }}
+    {% else %}
+        {% with widget_type=field.field.widget.input_type %}
+            <div class="space-y-3 form-control is-{{ widget_type }}{% if field.errors %} has-errors{% endif %}">
+                {% if widget_type == "checkbox" %}
+                    <label class="flex items-center w-full space-x-3 font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}">
+                        {{ field }}
+                        <span>{{ field.label }}</span>
+                    </label>
+                {% else %}
+                    <label class="block font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}"
+                           for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                {% endif %}
+                {% if field.errors %}
+                    <ul class="font-semibold text-red-800 dark:text-red-600">
+                        {{ form.errors|unordered_list }}
+                    </ul>
+                {% endif %}
+                {% if field.help_text %}<p class="text-gray-600 dark:text-gray-300">{{ field.help_text }}</p>{% endif %}
+            </div>
+        {% endwith %}
+    {% endif %}
 {% endfor %}
