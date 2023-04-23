@@ -187,43 +187,64 @@ class TestPaginationLinks:
         assert rendered.count("No More Pages") == 0
 
 
-class TestFormFields:
+class MockForm:
+    fields = []
+    non_field_errors = []
+
+    def __iter__(self):
+        return iter(self.fields)
+
+
+class TestDefaultForm:
     @pytest.fixture
     def tmpl(self):
-        return get_template("forms/_field.html")
+        return get_template("django/forms/default.html")
 
-    def test_is_hidden(self, tmpl, mocker):
+    @pytest.fixture
+    def form(self):
+        return MockForm()
+
+    def test_is_hidden(self, tmpl, mocker, form):
         field = mocker.Mock()
         field.is_hidden = True
-        assert tmpl.render({"field": field}, request=req)
+        form.fields = [field]
+        assert tmpl.render({"form": form}, request=req)
 
-    def test_textinput(self, tmpl, mocker):
+    def test_textinput(self, tmpl, mocker, form):
         field = mocker.Mock()
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
         field.errors = []
-        assert tmpl.render({"field": field}, request=req)
+        form.fields = [field]
+        assert tmpl.render({"form": form}, request=req)
 
-    def test_checkboxinput(self, tmpl, mocker):
+    def test_checkboxinput(self, tmpl, mocker, form):
         field = mocker.Mock()
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
         field.errors = []
-        assert tmpl.render({"field": field}, request=req)
+        form.fields = [field]
+        assert tmpl.render({"form": form}, request=req)
 
-    def test_fileinput(self, tmpl, mocker):
+    def test_fileinput(self, tmpl, mocker, form):
         field = mocker.Mock()
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
         field.errors = []
-        assert tmpl.render({"field": field}, request=req)
+        form.fields = [field]
+        assert tmpl.render({"form": form}, request=req)
 
-    def test_errors(self, tmpl, mocker):
+    def test_errors(self, tmpl, mocker, form):
         field = mocker.Mock()
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
         field.errors = ["error"]
-        assert tmpl.render({"field": field}, request=req)
+        form.fields = [field]
+        assert tmpl.render({"form": form}, request=req)
+
+    def test_non_field_errors(self, tmpl, mocker, form):
+        form.non_field_errors = ["error!"]
+        assert tmpl.render({"form": form}, request=req)
 
 
 class TestCoverImage:
