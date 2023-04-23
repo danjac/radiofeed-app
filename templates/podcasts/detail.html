@@ -72,7 +72,7 @@
                 {% endif %}
             {% endwith %}
         {% endcache %}
-        {% render_html_content podcast.description %}
+        {% markdown podcast.description %}
     </article>
 {% endwith %}
 {% endblock podcast_content %}

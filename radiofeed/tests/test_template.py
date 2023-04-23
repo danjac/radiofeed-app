@@ -13,8 +13,8 @@ from radiofeed.template import (
     cover_image,
     force_url,
     format_duration,
+    markdown,
     pagination_url,
-    render_html_content,
 )
 
 
@@ -79,7 +79,7 @@ class TestActiveLink:
         }
 
 
-class TestRenderHtmlContent:
+class TestMarkdown:
     @pytest.mark.parametrize(
         "value,expected",
         [
@@ -92,8 +92,8 @@ class TestRenderHtmlContent:
             ("<script>test</script>", "test"),
         ],
     )
-    def test_render(self, value, expected):
-        return render_html_content(value) == {"content": expected}
+    def test_markdown(self, value, expected):
+        return markdown(value) == {"content": expected}
 
 
 class TestForceUrl:

@@ -68,9 +68,9 @@ def active_link(
     )
 
 
-@register.inclusion_tag("html_content.html")
-def render_html_content(value: str | None) -> dict:
-    """Renders cleaned HTML content."""
+@register.inclusion_tag("_markdown.html")
+def markdown(value: str | None) -> dict:
+    """Renders cleaned HTML/Markdown content."""
     return {"content": mark_safe(cleaners.clean_html(value or ""))}  # noqa
 
 
