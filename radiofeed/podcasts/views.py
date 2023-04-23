@@ -167,7 +167,7 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
-        "episodes/pagination/episodes.html",
+        "episodes/_episodes.html",
         {
             "podcast": podcast,
             "is_podcast_detail": True,

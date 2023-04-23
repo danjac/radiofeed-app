@@ -1,7 +1,7 @@
 <div class="divide-y divide-solid" id="{{ pagination_target }}">
     {% include "pagination/links.html" %}
     {% for episode in page_obj.object_list %}
-        {% include "episodes/episode.html" %}
+        {% include "episodes/_episode.html" %}
     {% empty %}
         {% include "pagination/empty.html" %}
     {% endfor %}

@@ -39,7 +39,7 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/pagination/episodes.html",
+        "episodes/_episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": bool(subscribed),
@@ -61,7 +61,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
                 .order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
-            "episodes/pagination/episodes.html",
+            "episodes/_episodes.html",
         )
 
     return redirect("episodes:index")
@@ -109,7 +109,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return render(
         request,
-        "episodes/player_toggle.html",
+        "episodes/_player_toggle.html",
         {
             "episode": episode,
             "audio_log": audio_log,
@@ -130,7 +130,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
         )
         return render(
             request,
-            "episodes/player_toggle.html",
+            "episodes/_player_toggle.html",
             {
                 "episode": audio_log.episode,
                 "audio_log": audio_log,
@@ -185,7 +185,7 @@ def history(request: HttpRequest) -> HttpResponse:
         request,
         audio_logs,
         "episodes/history.html",
-        "episodes/pagination/audio_logs.html",
+        "episodes/_audio_logs.html",
     )
 
 
@@ -209,7 +209,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     if request.htmx:
         return render(
             request,
-            "episodes/audio_log.html",
+            "episodes/_audio_log.html",
             {
                 "episode": audio_log.episode,
             },
@@ -235,7 +235,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/pagination/bookmarks.html",
+        "episodes/_bookmarks.html",
     )
 
 
@@ -271,7 +271,7 @@ def _render_bookmark_toggle(
     if request.htmx:
         return render(
             request,
-            "episodes/bookmark_toggle.html",
+            "episodes/_bookmark_toggle.html",
             {
                 "episode": episode,
                 "is_bookmarked": is_bookmarked,

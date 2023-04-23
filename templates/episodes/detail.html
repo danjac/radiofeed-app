@@ -54,8 +54,8 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% cover_image episode.get_cover_url 200 podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
-                    {% include "episodes/player_toggle.html" %}
-                    {% include "episodes/bookmark_toggle.html" %}
+                    {% include "episodes/_player_toggle.html" %}
+                    {% include "episodes/_bookmark_toggle.html" %}
                     <div class="flex flex-wrap items-center font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                         <a download
                            title="Download audio file to your device"
@@ -90,7 +90,7 @@
                     {% endif %}
                 {% endwith %}
             </div>
-            {% include "episodes/audio_log.html" %}
+            {% include "episodes/_audio_log.html" %}
             {% render_html_content episode.description %}
         </article>
     {% endwith %}
