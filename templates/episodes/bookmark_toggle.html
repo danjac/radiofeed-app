@@ -33,6 +33,6 @@
         {% endif %}
     </form>
     {% if request.htmx.target == target %}
-        {% include "messages.html" with hx_oob=True %}
+        {% include "_messages.html" with hx_oob=True %}
     {% endif %}
 {% endwith %}

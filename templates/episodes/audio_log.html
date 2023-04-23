@@ -5,7 +5,7 @@
             <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
                 <div class="flex items-center space-x-1">
                     <span>Listened</span>
-                    {% include "date.html" with value=audio_log.listened title="Listened" %}
+                    {% include "_date.html" with value=audio_log.listened title="Listened" %}
                 </div>
                 {% with current_time=audio_log.current_time %}
                     {% if current_time and current_time > 60 %}<div title="Timestamp">{{ current_time|format_duration }}</div>{% endif %}
@@ -36,6 +36,6 @@
         {% endif %}
     </div>
     {% if request.htmx.target == target %}
-        {% include "messages.html" with hx_oob=True %}
+        {% include "_messages.html" with hx_oob=True %}
     {% endif %}
 {% endwith %}

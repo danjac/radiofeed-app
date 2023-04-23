@@ -74,7 +74,7 @@ def render_html_content(value: str | None) -> dict:
     return {"content": mark_safe(cleaners.clean_html(value or ""))}  # noqa
 
 
-@register.inclusion_tag("cookie_notice.html", takes_context=True)
+@register.inclusion_tag("_cookie_notice.html", takes_context=True)
 def cookie_notice(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
     "Accept Cookies" button."""
@@ -98,7 +98,7 @@ def cover_image_url(cover_url: str, size: int) -> str:
     )
 
 
-@register.inclusion_tag("cover_image.html")
+@register.inclusion_tag("_cover_image.html")
 def cover_image(
     cover_url: str,
     size: int,

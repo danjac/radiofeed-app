@@ -127,7 +127,7 @@ class TestPaginationUrl:
 class TestNavbar:
     @pytest.fixture
     def tmpl(self):
-        return get_template("navbar.html")
+        return get_template("_navbar.html")
 
     def test_authenticated(self, tmpl, auth_req):
         rendered = tmpl.render({}, request=auth_req)
