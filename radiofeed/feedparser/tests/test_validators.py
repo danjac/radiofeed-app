@@ -15,7 +15,6 @@ class TestRequired:
         ],
     )
     def test_required(self, value, raises):
-
         if raises:
             with pytest.raises(ValueError):
                 validators.required(None, None, value)

@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("podcasts", "0003_alter_podcast_http_status_alter_podcast_num_retries"),
     ]

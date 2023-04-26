@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("podcasts", "0012_remove_podcast_parse_result"),
     ]

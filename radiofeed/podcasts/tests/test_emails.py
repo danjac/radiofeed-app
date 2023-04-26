@@ -12,7 +12,6 @@ class TestRecommendations:
         assert len(mailoutbox) == 0
 
     def test_sufficient_recommendations(self, user, mailoutbox):
-
         first = create_subscription(subscriber=user).podcast
         second = create_subscription(subscriber=user).podcast
         third = create_subscription(subscriber=user).podcast
@@ -28,7 +27,6 @@ class TestRecommendations:
         assert user.recommended_podcasts.count() == 3
 
     def test_already_recommended(self, user, mailoutbox):
-
         subscribed = create_subscription(subscriber=user).podcast
         recommended = create_recommendation(podcast=subscribed).podcast
         user.recommended_podcasts.add(recommended)

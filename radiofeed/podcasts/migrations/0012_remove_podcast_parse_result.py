@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("podcasts", "0011_remove_podcast_http_status"),
     ]

@@ -43,7 +43,7 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
-                f"{new_feeds} podcast feed{pluralize(new_feeds)} added to your collection", # noqa
+                f"{new_feeds} podcast feed{pluralize(new_feeds)} added to your collection",  # noqa
             )
         else:
             messages.info(request, "No new podcasts found in uploaded file")

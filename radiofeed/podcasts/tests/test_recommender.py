@@ -50,7 +50,6 @@ class TestRecommend:
         assert recommendations.count() == 0
 
     def test_create_podcast_recommendations(self, db):
-
         cat_1 = create_category(name="Science")
         cat_2 = create_category(name="Philosophy")
         cat_3 = create_category(name="Culture")

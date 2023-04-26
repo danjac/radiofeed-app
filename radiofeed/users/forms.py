@@ -26,8 +26,7 @@ class UserPreferencesForm(forms.ModelForm):
         }
 
         help_texts = {
-            "send_email_notifications":
-            "I'd like to receive notications of new content and recommendations."
+            "send_email_notifications": "I'd like to receive notications of new content and recommendations."
         }
 
 

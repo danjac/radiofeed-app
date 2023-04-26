@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("podcasts", "0010_podcast_podcasts_podcast_lwr_title_idx"),
     ]

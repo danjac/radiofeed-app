@@ -24,7 +24,6 @@ class TestXPathParser:
         assert XPathParser().aslist(channel, "title/text()") == ["Mysterious Universe"]
 
     def test_asdict(self, channel):
-
         assert XPathParser(
             {
                 "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
