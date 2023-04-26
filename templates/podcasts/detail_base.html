@@ -16,9 +16,7 @@
                             <a class="{{ link.css }}"
                                href="{{ link.url }}"
                                {% if link.active %}aria-current="page"{% endif %}
-                               title="{{ podcast.cleaned_title }} | About">
-                                About
-                            </a>
+                               title="{{ podcast.cleaned_title }} | About">About</a>
                         </li>
                         {% if num_episodes %}
                             {% active_link podcast.get_episodes_url as link %}
@@ -26,9 +24,7 @@
                                 <a class="{{ link.css }}"
                                    href="{{ link.url }}"
                                    {% if link.active %}aria-current="page"{% endif %}
-                                   title="{{ podcast.cleaned_title }} | Episodes">
-                                    Episodes ({{ num_episodes }})
-                                </a>
+                                   title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
                             </li>
                         {% endif %}
                         {% if has_similar %}
@@ -37,9 +33,7 @@
                                 <a class="{{ link.css }}"
                                    href="{{ link.url }}"
                                    {% if link.active %}aria-current="page"{% endif %}
-                                   title="{{ podcast.cleaned_title }} | Similar">
-                                    Similar
-                                </a>
+                                   title="{{ podcast.cleaned_title }} | Similar">Similar</a>
                             </li>
                         {% endif %}
                     </ul>
