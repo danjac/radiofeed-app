@@ -76,6 +76,7 @@ env = [
     "TEMPLATE_DEBUG=true",
     "USE_COLLECTSTATIC=false",
     "USE_HTTPS=false",
+    "USE_MD5_PASSWORD_HASHER=true",
 ]
 
 [tool.coverage.run]

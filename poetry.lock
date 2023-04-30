@@ -1126,14 +1126,14 @@ files = [
 
 [[package]]
 name = "ipython"
-version = "8.13.0"
+version = "8.13.1"
 description = "IPython: Productive Interactive Computing"
 category = "dev"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "ipython-8.13.0-py3-none-any.whl", hash = "sha256:a0a8a30376cee8019c6e22bc0ab4320762f5f5e4d7abed0ea3ee4b95e3982ad5"},
-    {file = "ipython-8.13.0.tar.gz", hash = "sha256:8d56026b882958db8eab089654f0c045d1237622313a1506da136fb0cce4270f"},
+    {file = "ipython-8.13.1-py3-none-any.whl", hash = "sha256:1c80d08f04144a1994cda25569eab07fbdc4989bd8d8793e3a4ff643065ccb51"},
+    {file = "ipython-8.13.1.tar.gz", hash = "sha256:9c8487ac18f330c8a683fc50ab6d7bc0fcf9ef1d7a9f6ce7926938261067b81f"},
 ]
 
 [package.dependencies]
@@ -2443,14 +2443,14 @@ test = ["asv", "gmpy2", "mpmath", "pooch", "pytest", "pytest-cov", "pytest-timeo
 
 [[package]]
 name = "sentry-sdk"
-version = "1.21.0"
+version = "1.21.1"
 description = "Python client for Sentry (https://sentry.io)"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sentry-sdk-1.21.0.tar.gz", hash = "sha256:36a1ca082a3065a8a05aafa4b1e3d74e9459d41fbb0bea8a5364caca68626341"},
-    {file = "sentry_sdk-1.21.0-py2.py3-none-any.whl", hash = "sha256:82faf9e2c9eb77401a7a187094b126ca25c2a3a478de6704612f48b3346f7a84"},
+    {file = "sentry-sdk-1.21.1.tar.gz", hash = "sha256:99c15556a23621be9f18c2955f7ce63321713bf1c0ad396b27b61399bac5f458"},
+    {file = "sentry_sdk-1.21.1-py2.py3-none-any.whl", hash = "sha256:092888f3abf7a2ea78f0bfcefc3e0465caee2b6f0efb26f538ccc60f95dca179"},
 ]
 
 [package.dependencies]
@@ -2666,14 +2666,14 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.28.11.17"
+version = "2.29.0.0"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-requests-2.28.11.17.tar.gz", hash = "sha256:0d580652ce903f643f8c3b494dd01d29367ea57cea0c7ad7f65cf3169092edb0"},
-    {file = "types_requests-2.28.11.17-py3-none-any.whl", hash = "sha256:cc1aba862575019306b2ed134eb1ea994cab1c887a22e18d3383e6dd42e9789b"},
+    {file = "types-requests-2.29.0.0.tar.gz", hash = "sha256:c86f4a955d943d2457120dbe719df24ef0924e11177164d10a0373cf311d7b4d"},
+    {file = "types_requests-2.29.0.0-py3-none-any.whl", hash = "sha256:4cf6e323e856c779fbe8815bb977a5bf5d6c5034713e4c17ff2a9a20610f5b27"},
 ]
 
 [package.dependencies]

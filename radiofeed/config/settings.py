@@ -18,6 +18,7 @@ env = environ.Env(
     USE_COLLECTSTATIC=(bool, True),
     USE_HSTS=(bool, False),
     USE_HTTPS=(bool, True),
+    USE_MD5_PASSWORD_HASHER=(bool, False),
 )
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
@@ -32,6 +33,7 @@ USE_DEBUG_TOOLBAR = env("USE_DEBUG_TOOLBAR")
 USE_COLLECTSTATIC = env("USE_COLLECTSTATIC")
 USE_HSTS = env("USE_HSTS")
 USE_HTTPS = env("USE_HTTPS")
+USE_MD5_PASSWORD_HASHER = env("USE_MD5_PASSWORD_HASHER")
 
 
 SECRET_KEY = env.str(
@@ -392,3 +394,9 @@ if USE_COLLECTSTATIC:
 
 else:
     INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
+
+
+# Use MD5 password hasher for faster tests
+
+if USE_MD5_PASSWORD_HASHER:
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
