@@ -21,7 +21,7 @@ env = environ.Env(
     USE_MD5_PASSWORD_HASHER=(bool, False),
 )
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parent.parent
 
 environ.Env.read_env(BASE_DIR / ".env")
 
@@ -147,7 +147,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ROOT_URLCONF = "radiofeed.config.urls"
+ROOT_URLCONF = "radiofeed.urls"
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
