@@ -58,6 +58,7 @@ if DEBUG:
     INSTALLED_APPS += [
         "debug_toolbar",
         "django_browser_reload",
+        "whitenoise.runserver_nostatic",
     ]
 
 
@@ -285,9 +286,6 @@ if PRODUCTION:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
-
-else:
-    INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
 
 # Templates
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
