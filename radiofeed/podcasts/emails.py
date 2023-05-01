@@ -68,7 +68,7 @@ def send_recommendations_email(
         "recipient": user,
         "podcasts": podcasts,
         "site": Site.objects.get_current(),
-        "protocol": "https" if settings.USE_HTTPS else "http",
+        "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
     }
 
     send_mail(
