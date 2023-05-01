@@ -26,13 +26,8 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
-if "debug_toolbar" in settings.INSTALLED_APPS:  # pragma: no cover
+if settings.DEBUG:
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),
-    ]
-
-
-if "django_browser_reload" in settings.INSTALLED_APPS:  # pragma: no cover
-    urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
     ]
