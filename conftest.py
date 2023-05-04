@@ -6,10 +6,12 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from faker import Faker
 
-from radiofeed.episodes.factories import create_episode
 from radiofeed.users.factories import create_user
 
-pytest_plugins = ["radiofeed.podcasts.fixtures"]
+pytest_plugins = [
+    "radiofeed.podcasts.fixtures",
+    "radiofeed.episodes.fixtures",
+]
 
 
 @pytest.fixture(autouse=True)
@@ -64,8 +66,3 @@ def staff_user(db, client):
     user = create_user(is_staff=True)
     client.force_login(user)
     return user
-
-
-@pytest.fixture
-def episode(db):
-    return create_episode()
