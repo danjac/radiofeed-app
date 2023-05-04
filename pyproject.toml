@@ -69,7 +69,7 @@ pytest-env = "^0.8.1"
 ruff = "^0.0.263"
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.settings"
+DJANGO_SETTINGS_MODULE="config.settings"
 addopts = "-v -x --ff --reuse-db -p no:warnings --tb=short --mypy --cov --no-cov-on-fail --cov-fail-under=100 --cov-report=term-missing"
 testpaths = "radiofeed"
 env = [
