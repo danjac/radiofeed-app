@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import math
 import urllib.parse
 from typing import TypedDict

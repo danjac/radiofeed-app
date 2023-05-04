@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from radiofeed.factories import create_batch
 from radiofeed.fast_count import FastCountPaginator
 from radiofeed.podcasts.factories import create_podcast

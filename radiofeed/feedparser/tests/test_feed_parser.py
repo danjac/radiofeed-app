@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import dataclasses
 import http
 import pathlib

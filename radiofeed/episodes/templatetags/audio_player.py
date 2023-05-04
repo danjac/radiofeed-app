@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django import template
 from django.template.context import RequestContext
 

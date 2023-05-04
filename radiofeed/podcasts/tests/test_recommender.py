@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from radiofeed.podcasts.factories import (
     create_category,
     create_podcast,

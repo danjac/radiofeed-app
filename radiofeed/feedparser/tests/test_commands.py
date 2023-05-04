@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.core.management import call_command
 
 from radiofeed.feedparser.exceptions import Duplicate

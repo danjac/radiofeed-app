@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pytest
 
 from radiofeed.cleaners import clean_html, strip_html

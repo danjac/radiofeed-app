@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from allauth.account.models import EmailAddress
 
 from radiofeed.factories import NotSet, Sequence, resolve

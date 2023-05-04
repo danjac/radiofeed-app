@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 class FeedParserError(ValueError):
     """Base feed parser exception."""
 

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from radiofeed.tokenizer import clean_text, get_stopwords, tokenize
 
 

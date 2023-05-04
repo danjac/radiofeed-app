@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 pytest_plugins = [
     "radiofeed.fixtures",
     "radiofeed.episodes.fixtures",

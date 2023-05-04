@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pytest
 from django.template.loader import get_template
 

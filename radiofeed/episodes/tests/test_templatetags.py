@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.template.context import RequestContext
 
 from radiofeed.episodes.factories import create_audio_log

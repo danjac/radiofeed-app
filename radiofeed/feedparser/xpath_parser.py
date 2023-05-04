@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import contextlib
 import io
 from collections.abc import Iterable, Iterator
