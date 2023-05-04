@@ -7,12 +7,9 @@ from django.http import HttpResponse
 from faker import Faker
 
 from radiofeed.episodes.factories import create_episode
-from radiofeed.podcasts.factories import (
-    create_category,
-    create_podcast,
-    create_subscription,
-)
 from radiofeed.users.factories import create_user
+
+pytest_plugins = ["radiofeed.podcasts.fixtures"]
 
 
 @pytest.fixture(autouse=True)
@@ -70,20 +67,5 @@ def staff_user(db, client):
 
 
 @pytest.fixture
-def podcast(db):
-    return create_podcast()
-
-
-@pytest.fixture
 def episode(db):
     return create_episode()
-
-
-@pytest.fixture
-def category(db):
-    return create_category()
-
-
-@pytest.fixture
-def subscription(auth_user, podcast):
-    return create_subscription(podcast=podcast, subscriber=auth_user)
