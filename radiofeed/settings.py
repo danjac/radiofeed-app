@@ -372,25 +372,17 @@ if SENTRY_URL := env.str("SENTRY_URL", default=None):
 # https://github.com/adamchainz/django-browser-reload
 
 if USE_BROWSER_RELOAD:
-    INSTALLED_APPS += [
-        "django_browser_reload",
-    ]
+    INSTALLED_APPS += ["django_browser_reload"]
 
-    MIDDLEWARE += [
-        "django_browser_reload.middleware.BrowserReloadMiddleware",
-    ]
+    MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
 
 # Debug toolbar
 # https://github.com/jazzband/django-debug-toolbar
 
 if USE_DEBUG_TOOLBAR:
-    INSTALLED_APPS += [
-        "debug_toolbar",
-    ]
+    INSTALLED_APPS += ["debug_toolbar"]
 
-    MIDDLEWARE += [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
     # INTERNAL_IPS required for debug toolbar
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
