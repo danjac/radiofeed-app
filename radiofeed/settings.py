@@ -9,20 +9,31 @@ from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
-# default flags
+# Default flags
 env = environ.Env(
     DEBUG=(bool, False),
-    TESTING=(bool, False),
+    TEMPLATE_DEBUG=(bool, False),
+    USE_BROWSER_RELOAD=(bool, False),
+    USE_COLLECTSTATIC=(bool, True),
+    USE_DEBUG_TOOLBAR=(bool, False),
+    USE_HSTS=(bool, False),
+    USE_HTTPS=(bool, True),
 )
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parent.parent
 
 environ.Env.read_env(BASE_DIR / ".env")
 
-DEBUG = env("DEBUG")
-TESTING = env("TESTING")
+# Development settings
 
-PRODUCTION = not (DEBUG) and not (TESTING)
+DEBUG = env("DEBUG")
+TEMPLATE_DEBUG = env("TEMPLATE_DEBUG")
+
+USE_DEBUG_TOOLBAR = env("USE_DEBUG_TOOLBAR")
+USE_BROWSER_RELOAD = env("USE_BROWSER_RELOAD")
+USE_COLLECTSTATIC = env("USE_COLLECTSTATIC")
+USE_HSTS = env("USE_HSTS")
+USE_HTTPS = env("USE_HTTPS")
 
 SECRET_KEY = env.str(
     "SECRET_KEY",
@@ -48,18 +59,12 @@ INSTALLED_APPS: list[str] = [
     "django_htmx",
     "django_object_actions",
     "heroicons",
+    "whitenoise.runserver_nostatic",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
     "radiofeed.users",
 ]
-
-if DEBUG:
-    INSTALLED_APPS += [
-        "debug_toolbar",
-        "django_browser_reload",
-        "whitenoise.runserver_nostatic",
-    ]
 
 
 MIDDLEWARE: list[str] = [
@@ -82,12 +87,6 @@ MIDDLEWARE: list[str] = [
     "radiofeed.middleware.SearchMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",
 ]
-
-if DEBUG:
-    MIDDLEWARE += [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-        "django_browser_reload.middleware.BrowserReloadMiddleware",
-    ]
 
 # Databases
 
@@ -124,7 +123,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
-            "debug": DEBUG or TESTING,
+            "debug": TEMPLATE_DEBUG,
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -151,10 +150,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ROOT_URLCONF = "radiofeed.urls"
 
 ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
-
-if DEBUG:
-    # INTERNAL_IPS required for debug toolbar
-    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
 # User-Agent header for API calls from this site
 USER_AGENT = env.str("USER_AGENT", default="Radiofeed/0.0.0")
@@ -228,10 +223,6 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-# Use MD5 password hasher for faster tests
-
-if TESTING:
-    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
 
@@ -280,12 +271,13 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://whitenoise.readthedocs.io/en/latest/django.html
 #
 
-if PRODUCTION:
+if USE_COLLECTSTATIC:
     STORAGES = {
         "staticfiles": {
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+
 
 # Templates
 # https://docs.djangoproject.com/en/1.11/ref/forms/renderers/
@@ -298,7 +290,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-if PRODUCTION:
+if USE_HTTPS:
     SECURE_PROXY_SSL_HEADER = env.tuple(
         "SECURE_PROXY_SSL_HEADER", default=("HTTP_X_FORWARDED_PROTO", "https")
     )
@@ -307,7 +299,7 @@ if PRODUCTION:
 # make sure to enable USE_HSTS if your load balancer is not using HSTS in production,
 # otherwise leave disabled.
 
-if env.bool("USE_HSTS", default=False):
+if USE_HSTS:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
         "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
     )
@@ -377,3 +369,30 @@ if SENTRY_URL := env.str("SENTRY_URL", default=None):
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
+
+# Django browser reload
+# https://github.com/adamchainz/django-browser-reload
+
+if USE_BROWSER_RELOAD:
+    INSTALLED_APPS += [
+        "django_browser_reload",
+    ]
+
+    MIDDLEWARE += [
+        "django_browser_reload.middleware.BrowserReloadMiddleware",
+    ]
+
+# Debug toolbar
+# https://github.com/jazzband/django-debug-toolbar
+
+if USE_DEBUG_TOOLBAR:
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
+
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
+
+    # INTERNAL_IPS required for debug toolbar
+    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
