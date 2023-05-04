@@ -1,7 +1,6 @@
 import pytest
 from django.core.cache import cache
 from django.http import HttpResponse
-from faker import Faker
 
 
 @pytest.fixture(autouse=True)
@@ -12,13 +11,6 @@ def settings_overrides(settings):
     }
     settings.LOGGING = None
     settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
-
-@pytest.fixture(scope="session")
-def faker():
-    faker = Faker()
-    yield faker
-    faker.unique.clear()
 
 
 @pytest.fixture
