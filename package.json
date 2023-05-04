@@ -11,10 +11,10 @@
     },
     "dependencies": {
         "alpinejs": "^3.12.0",
-        "htmx.org": "^1.9.1"
+        "htmx.org": "^1.9.2"
     },
     "devDependencies": {
-        "@babel/eslint-parser": "^7.21.3",
+        "@babel/eslint-parser": "^7.21.8",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
         "concurrently": "^8.0.1",
