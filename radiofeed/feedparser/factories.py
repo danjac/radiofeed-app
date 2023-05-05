@@ -25,7 +25,7 @@ def create_item(
             media_url,
             lambda: _faker.unique.url() + _faker.unique.file_name("audio"),
         ),
-        "media_type": resolve(media_type, "audio/mpeg"),
+        "media_type": resolve(media_type, _faker.mime_type("audio")),
         **kwargs,
     }
 
