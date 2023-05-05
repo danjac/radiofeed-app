@@ -3,19 +3,18 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.factories import NotSet, Sequence, resolve
+from radiofeed.factories import NotSet, resolve
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
 
 _faker = Faker()
 
-_categories = Sequence("category-{n}")
-_rss_feeds = Sequence("https://media.rss.com/podcast-{n}.xml")
-
 
 def create_category(*, name: str = NotSet, **kwargs) -> Category:
-    return Category.objects.create(name=resolve(name, _categories), **kwargs)
+    return Category.objects.create(
+        name=resolve(name, _faker.unique.domain_word), **kwargs
+    )
 
 
 def create_podcast(
@@ -29,7 +28,7 @@ def create_podcast(
     **kwargs,
 ) -> Podcast:
     podcast = Podcast.objects.create(
-        rss=resolve(rss, _rss_feeds),
+        rss=resolve(rss, _faker.unique.url),
         title=resolve(title, _faker.text),
         description=resolve(description, _faker.text),
         pub_date=resolve(pub_date, timezone.now),

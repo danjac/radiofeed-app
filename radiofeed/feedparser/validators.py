@@ -29,6 +29,7 @@ _AUDIO_MIMETYPES: Final = frozenset(
         "audio/x-aac",
         "audio/x-aiff",
         "audio/x-aiff",
+        "audio/x-flac",
         "audio/x-hx-aac-adts",
         "audio/x-m4a",
         "audio/x-m4a",

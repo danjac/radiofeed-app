@@ -1,10 +1,10 @@
 from allauth.account.models import EmailAddress
+from faker import Faker
 
-from radiofeed.factories import NotSet, Sequence, resolve
+from radiofeed.factories import NotSet, resolve
 from radiofeed.users.models import User
 
-_usernames = Sequence("user-{n}")
-_emails = Sequence("user-{n}@example.com")
+_faker = Faker()
 
 
 def create_user(
@@ -15,8 +15,8 @@ def create_user(
     **kwargs,
 ) -> User:
     return User.objects.create_user(
-        username=resolve(username, _usernames),
-        email=resolve(email, _emails),
+        username=resolve(username, _faker.unique.user_name),
+        email=resolve(email, _faker.unique.email),
         password=resolve(password, "testpass1"),
         **kwargs,
     )
@@ -31,7 +31,7 @@ def create_email_address(
 ) -> EmailAddress:
     return EmailAddress.objects.create(
         user=resolve(user, create_user),
-        email=resolve(email, _emails),
+        email=resolve(email, _faker.unique.email),
         verified=verified,
         primary=primary,
     )
