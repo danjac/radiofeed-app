@@ -23,12 +23,7 @@ def create_item(
         "pub_date": resolve(pub_date, timezone.now),
         "media_url": resolve(
             media_url,
-            lambda: "/".join(
-                (
-                    _faker.unique.url(),
-                    _faker.unique.file_name("audio"),
-                ),
-            ),
+            lambda: _faker.unique.url() + _faker.unique.file_name("audio"),
         ),
         "media_type": resolve(media_type, "audio/mpeg"),
         **kwargs,
