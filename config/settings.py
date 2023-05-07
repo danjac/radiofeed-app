@@ -167,7 +167,6 @@ CSRF_COOKIE_SECURE = True
 # Email configuration
 
 EMAIL_HOST = env.str("EMAIL_HOST", default="127.0.0.1")
-EMAIL_PORT = env.int("EMAIL_PORT", default=1025)
 
 # Mailgun
 # https://anymail.dev/en/v9.0/esps/mailgun/
@@ -186,6 +185,14 @@ if MAILGUN_API_KEY := env.str("MAILGUN_API_KEY", default=None):
     }
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+    EMAIL_PORT = env.int("EMAIL_PORT", default=1025)
+
+    EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default=None)
+    EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default=None)
+
+    EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=False)
+    EMAIL_USE_SSL = env.bool("EMAIL_USE_TLS", default=False)
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
