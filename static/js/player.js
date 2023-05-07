@@ -19,7 +19,7 @@ document.addEventListener("alpine:init", () => {
             timer: null,
             counters: {
                 current: "00:00:00",
-                total: "00:00:00",
+                remaining: "00:00:00",
             },
             init() {
                 if ("mediaSession" in navigator) {
@@ -36,10 +36,13 @@ document.addEventListener("alpine:init", () => {
                         `${percent}%`,
                     );
                     this.counters.current = this.formatCounter(value);
+                    this.counters.remaining = this.formatCounter(
+                        this.duration - value,
+                    );
                 });
 
                 this.$watch("duration", value => {
-                    this.counters.total = this.formatCounter(value);
+                    this.counters.remaining = this.formatCounter(value);
                 });
 
                 this.$refs.audio.load();
