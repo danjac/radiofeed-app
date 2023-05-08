@@ -48,7 +48,7 @@ bandit = {extras = ["toml"], version = "^1.7.4"}
 coverage = {extras = ["toml"], version = "^7.2.0"}
 django-coverage-plugin = "^3.0.0"
 djlint = "^1.19.15"
-faker = "^18.2.0"
+faker = "^18.7.0"
 mypy = "^1.0.1"
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
