@@ -557,14 +557,14 @@ files = [
 
 [[package]]
 name = "django"
-version = "4.2"
+version = "4.2.1"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Django-4.2-py3-none-any.whl", hash = "sha256:ad33ed68db9398f5dfb33282704925bce044bef4261cd4fb59e4e7f9ae505a78"},
-    {file = "Django-4.2.tar.gz", hash = "sha256:c36e2ab12824e2ac36afa8b2515a70c53c7742f0d6eaefa7311ec379558db997"},
+    {file = "Django-4.2.1-py3-none-any.whl", hash = "sha256:066b6debb5ac335458d2a713ed995570536c8b59a580005acb0732378d5eb1ee"},
+    {file = "Django-4.2.1.tar.gz", hash = "sha256:7efa6b1f781a6119a10ac94b4794ded90db8accbe7802281cd26f8664ffed59c"},
 ]
 
 [package.dependencies]
@@ -695,17 +695,17 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-fast-update"
-version = "0.2.2"
+version = "0.2.3"
 description = "Faster db updates for Django using UPDATE FROM VALUES sql variants."
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-fast-update-0.2.2.tar.gz", hash = "sha256:fb80371f3c6a4b59c25aa21311ae9b4207c2a8fed95a0960f827bc4b4b64b55d"},
+    {file = "django-fast-update-0.2.3.tar.gz", hash = "sha256:76ad711a1dc193e20233458d584e51ad6d354663b8952ada768eec1d997abc3c"},
 ]
 
 [package.dependencies]
-Django = ">=3.2,<=4.2"
+Django = ">=3.2"
 
 [[package]]
 name = "django-htmx"
@@ -785,14 +785,14 @@ hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
 name = "djlint"
-version = "1.25.0"
+version = "1.25.1"
 description = "HTML Template Linter and Formatter"
 category = "dev"
 optional = false
 python-versions = ">=3.8.0,<4.0.0"
 files = [
-    {file = "djlint-1.25.0-py3-none-any.whl", hash = "sha256:5d4ca41b40e8986773043eb7b857654154da91337df7c6c9aeeca256d5f0459a"},
-    {file = "djlint-1.25.0.tar.gz", hash = "sha256:1b9e5265e51c224ef5c6b8d434151293943ddae8602fb544063f33039738d17c"},
+    {file = "djlint-1.25.1-py3-none-any.whl", hash = "sha256:a17e5637f91c1378fe38fffc3cb8738c4efacb76c6eb909ec24e44dc6aa69391"},
+    {file = "djlint-1.25.1.tar.gz", hash = "sha256:179fde940f08facc4ab7cd099a79bb4aaeda231eb20888c68ab54b8240a8c5f4"},
 ]
 
 [package.dependencies]
@@ -802,6 +802,7 @@ cssbeautifier = ">=1.14.4,<2.0.0"
 html-tag-names = ">=0.1.2,<0.2.0"
 html-void-elements = ">=0.1.0,<0.2.0"
 jsbeautifier = ">=1.14.4,<2.0.0"
+json5 = ">=0.9.11,<0.10.0"
 pathspec = ">=0.11.0,<0.12.0"
 PyYAML = ">=6.0,<7.0"
 regex = ">=2023.0.0,<2024.0.0"
@@ -1209,6 +1210,21 @@ files = [
 [package.dependencies]
 editorconfig = ">=0.12.2"
 six = ">=1.13.0"
+
+[[package]]
+name = "json5"
+version = "0.9.11"
+description = "A Python implementation of the JSON5 data format."
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "json5-0.9.11-py2.py3-none-any.whl", hash = "sha256:1aa54b80b5e507dfe31d12b7743a642e2ffa6f70bf73b8e3d7d1d5fba83d99bd"},
+    {file = "json5-0.9.11.tar.gz", hash = "sha256:4f1e196acc55b83985a51318489f345963c7ba84aa37607e49073066c562e99b"},
+]
+
+[package.extras]
+dev = ["hypothesis"]
 
 [[package]]
 name = "linkify-it-py"
@@ -2185,18 +2201,18 @@ files = [
 
 [[package]]
 name = "redis"
-version = "4.5.4"
+version = "4.5.5"
 description = "Python client for Redis database and key-value store"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "redis-4.5.4-py3-none-any.whl", hash = "sha256:2c19e6767c474f2e85167909061d525ed65bea9301c0770bb151e041b7ac89a2"},
-    {file = "redis-4.5.4.tar.gz", hash = "sha256:73ec35da4da267d6847e47f68730fdd5f62e2ca69e3ef5885c6a78a9374c3893"},
+    {file = "redis-4.5.5-py3-none-any.whl", hash = "sha256:77929bc7f5dab9adf3acba2d3bb7d7658f1e0c2f1cafe7eb36434e751c471119"},
+    {file = "redis-4.5.5.tar.gz", hash = "sha256:dc87a0bdef6c8bfe1ef1e1c40be7034390c2ae02d92dcd0c7ca1729443899880"},
 ]
 
 [package.dependencies]
-async-timeout = {version = ">=4.0.2", markers = "python_version <= \"3.11.2\""}
+async-timeout = {version = ">=4.0.2", markers = "python_full_version <= \"3.11.2\""}
 
 [package.extras]
 hiredis = ["hiredis (>=1.0.0)"]
@@ -2471,14 +2487,14 @@ test = ["asv", "gmpy2", "mpmath", "pooch", "pytest", "pytest-cov", "pytest-timeo
 
 [[package]]
 name = "sentry-sdk"
-version = "1.22.1"
+version = "1.22.2"
 description = "Python client for Sentry (https://sentry.io)"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sentry-sdk-1.22.1.tar.gz", hash = "sha256:052dff5069c6f0d836ee014323576824a9b40836fc003fb12489a1f19c60a3c9"},
-    {file = "sentry_sdk-1.22.1-py2.py3-none-any.whl", hash = "sha256:c6c6946f8c927adb00af1c5ab6921df38775b2199b9003816d5935a1310352d5"},
+    {file = "sentry-sdk-1.22.2.tar.gz", hash = "sha256:5932c092c6e6035584eb74d77064e4bce3b7935dfc4a331349719a40db265840"},
+    {file = "sentry_sdk-1.22.2-py2.py3-none-any.whl", hash = "sha256:cf89a5063ef84278d186aceaed6fb595bfe67d099298e537634a323664265669"},
 ]
 
 [package.dependencies]

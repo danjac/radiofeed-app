@@ -44,7 +44,7 @@ repos:
             files: \.(|js|css)$
             exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/Riverside-Healthcare/djLint
-      rev: v1.25.0
+      rev: v1.25.1
       hooks:
           - id: djlint-django
             args: ["--lint", "--reformat"]
@@ -53,7 +53,7 @@ repos:
       hooks:
           - id: hadolint-docker
     - repo: https://github.com/asottile/pyupgrade
-      rev: v3.3.2
+      rev: v3.4.0
       hooks:
           - id: pyupgrade
             args: [--py311-plus]
