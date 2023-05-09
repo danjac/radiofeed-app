@@ -202,18 +202,10 @@ DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOS
 # email shown in about page etc
 CONTACT_EMAIL = env.str("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
-# admin settings
-
-ADMIN_URL = env.str("ADMIN_URL", default="admin/")
-
-ADMIN_SITE_HEADER = env.str("ADMIN_SITE_HEADER", default="Radiofeed Admin")
-
-# Authentication
+# authentication settings
+# https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 
 AUTH_USER_MODEL = "users.User"
-
-
-# https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -242,7 +234,6 @@ ACCOUNT_PREVENT_ENUMERATION = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
-
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [
@@ -254,6 +245,12 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
+
+# admin settings
+
+ADMIN_URL = env.str("ADMIN_URL", default="admin/")
+
+ADMIN_SITE_HEADER = env.str("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 # Internationalization/Localization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
