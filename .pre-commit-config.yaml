@@ -44,7 +44,7 @@ repos:
             files: \.(|js|css)$
             exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/Riverside-Healthcare/djLint
-      rev: v1.25.1
+      rev: v1.26.0
       hooks:
           - id: djlint-django
             args: ["--lint", "--reformat"]

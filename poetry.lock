@@ -785,14 +785,14 @@ hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
 name = "djlint"
-version = "1.25.1"
+version = "1.26.0"
 description = "HTML Template Linter and Formatter"
 category = "dev"
 optional = false
 python-versions = ">=3.8.0,<4.0.0"
 files = [
-    {file = "djlint-1.25.1-py3-none-any.whl", hash = "sha256:a17e5637f91c1378fe38fffc3cb8738c4efacb76c6eb909ec24e44dc6aa69391"},
-    {file = "djlint-1.25.1.tar.gz", hash = "sha256:179fde940f08facc4ab7cd099a79bb4aaeda231eb20888c68ab54b8240a8c5f4"},
+    {file = "djlint-1.26.0-py3-none-any.whl", hash = "sha256:70433268642bb034452a6b5b1c127fbaedf8d1a11deb5f10d858668085c9671a"},
+    {file = "djlint-1.26.0.tar.gz", hash = "sha256:becdb7fd37950c65cbb01813ed12faee1feb5ec7bce8be6062411dde621f8ec7"},
 ]
 
 [package.dependencies]
@@ -868,14 +868,14 @@ tests = ["asttokens", "littleutils", "pytest", "rich"]
 
 [[package]]
 name = "faker"
-version = "18.6.2"
+version = "18.7.0"
 description = "Faker is a Python package that generates fake data for you."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Faker-18.6.2-py3-none-any.whl", hash = "sha256:6385386ba8d5aa255bec72f5392c2b795fcec8bebf975a9953488948d54bce35"},
-    {file = "Faker-18.6.2.tar.gz", hash = "sha256:ef61bbf266d30819e83bab4a6c74a0f5979ce4d19d4c9305719dd26cb7d8d51c"},
+    {file = "Faker-18.7.0-py3-none-any.whl", hash = "sha256:38dbc3b80e655d7301e190426ab30f04b6b7f6ca4764c5dd02772ffde0fa6dcd"},
+    {file = "Faker-18.7.0.tar.gz", hash = "sha256:f02c6d3fdb5bc781f80b440cf2bdec336ed47ecfb8d620b20c3d4188ed051831"},
 ]
 
 [package.dependencies]
