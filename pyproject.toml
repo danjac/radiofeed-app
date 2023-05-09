@@ -16,7 +16,6 @@ python = ">=3.10,<3.12"
 attrs = "^23.1.0"
 brotli = "^1.0.9"
 django-allauth = "^0.54.0"
-django-anymail = "^9.0"
 django-extensions = "^3.2.1"
 django-htmx = "^1.13.0"
 django-model-utils = "^4.3.1"
@@ -42,6 +41,7 @@ django = "^4.2"
 psycopg = {extras = ["binary"], version = "^3.1.8"}
 django-environ = "^0.10.0"
 django-fast-update = "^0.2.2"
+django-anymail = "^10.0"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
