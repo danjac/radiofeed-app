@@ -13,11 +13,13 @@ from radiofeed.podcasts.models import Podcast
 
 
 class TestEpisodeManager:
-    def test_search(self, db):
+    @pytest.mark.django_db
+    def test_search(self):
         create_episode(title="testing")
         assert Episode.objects.search("testing").count() == 1
 
-    def test_search_empty(self, db):
+    @pytest.mark.django_db
+    def test_search_empty(self):
         create_episode(title="testing")
         assert Episode.objects.search("").count() == 0
 
@@ -25,12 +27,15 @@ class TestEpisodeManager:
 class TestEpisodeModel:
     link = "https://example.com"
 
+    @pytest.mark.django_db
     def test_get_next_episode_if_none(self, episode):
         assert episode.get_next_episode() is None
 
+    @pytest.mark.django_db
     def test_get_previous_episode_if_none(self, episode):
         assert episode.get_previous_episode() is None
 
+    @pytest.mark.django_db
     def test_get_next_episode_not_same_podcast(self, episode):
         create_episode(
             pub_date=episode.pub_date + datetime.timedelta(days=2),
@@ -38,6 +43,7 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() is None
 
+    @pytest.mark.django_db
     def test_get_previous_episode_not_same_podcast(self, episode):
         create_episode(
             pub_date=episode.pub_date - datetime.timedelta(days=2),
@@ -45,6 +51,7 @@ class TestEpisodeModel:
 
         assert episode.get_previous_episode() is None
 
+    @pytest.mark.django_db
     def test_get_next_episode(self, episode):
         next_episode = create_episode(
             podcast=episode.podcast,
@@ -53,6 +60,7 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() == next_episode
 
+    @pytest.mark.django_db
     def test_get_previous_episode(self, episode):
         previous_episode = create_episode(
             podcast=episode.podcast,
@@ -142,7 +150,8 @@ class TestEpisodeModel:
     def test_get_file_size_if_none(self):
         assert Episode(length=None).get_file_size() is None
 
-    def test_get_media_metadata(self, db):
+    @pytest.mark.django_db
+    def test_get_media_metadata(self):
         cover_url = "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/9b63d479-4382-4198-8e63-aac7013964ff/e5ebd302-9d49-4c56-a234-aac701396502/image.jpg?t=1568401263\u0026size=Large"
         episode = create_episode(podcast=create_podcast(cover_url=cover_url))
         data = episode.get_media_metadata()
@@ -155,16 +164,19 @@ class TestEpisodeModel:
             "type": "image/jpeg",
         }
 
+    @pytest.mark.django_db
     def test_get_cover_url_if_episode_cover(self, podcast):
         episode = create_episode(
             podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
         )
         assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
 
+    @pytest.mark.django_db
     def test_get_cover_url_if_podcast_cover(self, episode):
         assert episode.get_cover_url() == "https://example.com/cover.jpg"
 
-    def test_get_cover_url_if_none(self, db):
+    @pytest.mark.django_db
+    def test_get_cover_url_if_none(self):
         episode = create_episode(podcast=create_podcast(cover_url=None))
         assert episode.get_cover_url() is None
 
@@ -200,14 +212,16 @@ class TestEpisodeModel:
 
 
 class TestBookmarkManager:
-    def test_search(self, db):
+    @pytest.mark.django_db
+    def test_search(self):
         episode = create_episode(title="testing")
         create_bookmark(episode=episode)
         assert Bookmark.objects.search("testing").count() == 1
 
 
 class TestAudioLogManager:
-    def test_search(self, db):
+    @pytest.mark.django_db
+    def test_search(self):
         episode = create_episode(title="testing")
         create_audio_log(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1

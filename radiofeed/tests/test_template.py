@@ -127,6 +127,7 @@ class TestNavbar:
     def tmpl(self):
         return get_template("_navbar.html")
 
+    @pytest.mark.django_db
     def test_authenticated(self, tmpl, auth_req):
         rendered = tmpl.render({}, request=auth_req)
         assert auth_req.user.username in rendered

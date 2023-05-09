@@ -15,10 +15,12 @@ from radiofeed.users.models import User
 class TestUserPreferences:
     url = reverse_lazy("users:preferences")
 
+    @pytest.mark.django_db
     def test_get(self, client, auth_user):
         response = client.get(self.url)
         assert_ok(response)
 
+    @pytest.mark.django_db
     def test_post(self, client, auth_user):
         response = client.post(
             self.url,
@@ -37,6 +39,7 @@ class TestUserPreferences:
 
 
 class TestUserStats:
+    @pytest.mark.django_db
     def test_stats(self, client, auth_user):
         create_subscription(subscriber=auth_user)
         create_audio_log(user=auth_user)
@@ -45,6 +48,7 @@ class TestUserStats:
         response = client.get(reverse("users:stats"))
         assert_ok(response)
 
+    @pytest.mark.django_db
     def test_stats_plural(self, client, auth_user):
         create_batch(create_audio_log, 3, user=auth_user)
         create_batch(create_bookmark, 3, user=auth_user)
@@ -55,6 +59,7 @@ class TestUserStats:
 
 
 class TestManagePodcastFeeds:
+    @pytest.mark.django_db
     def test_get(self, client, auth_user):
         assert_ok(client.get(reverse("users:manage_podcast_feeds")))
 
@@ -71,6 +76,7 @@ class TestImportPodcastFeeds:
             content_type="text/xml",
         )
 
+    @pytest.mark.django_db
     def test_post_has_new_feeds(self, client, auth_user, upload_file):
         podcast = create_podcast(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
@@ -89,6 +95,7 @@ class TestImportPodcastFeeds:
             subscriber=auth_user, podcast=podcast
         ).exists()
 
+    @pytest.mark.django_db
     def test_post_podcast_not_in_db(self, client, auth_user, upload_file):
         assert_ok(
             client.post(
@@ -101,7 +108,8 @@ class TestImportPodcastFeeds:
 
         assert Subscription.objects.filter(subscriber=auth_user).count() == 0
 
-    def test_post_has_no_new_feeds(self, client, auth_user, mocker, upload_file):
+    @pytest.mark.django_db
+    def test_post_has_no_new_feeds(self, client, auth_user, upload_file):
         create_subscription(
             podcast=create_podcast(
                 rss="https://feeds.99percentinvisible.org/99percentinvisible"
@@ -120,7 +128,8 @@ class TestImportPodcastFeeds:
 
         assert Subscription.objects.filter(subscriber=auth_user).exists()
 
-    def test_post_is_empty(self, client, auth_user, mocker, upload_file):
+    @pytest.mark.django_db
+    def test_post_is_empty(self, client, auth_user, upload_file):
         assert_ok(
             client.post(
                 self.url,
@@ -132,7 +141,8 @@ class TestImportPodcastFeeds:
 
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
-    def test_invalid_form(self, client, auth_user, mocker):
+    @pytest.mark.django_db
+    def test_invalid_form(self, client, auth_user):
         assert_ok(
             client.post(
                 self.url,
@@ -148,6 +158,7 @@ class TestImportPodcastFeeds:
 class TestExportPodcastFeeds:
     url = reverse_lazy("users:export_podcast_feeds")
 
+    @pytest.mark.django_db
     def test_export_opml(self, client, subscription):
         response = client.post(self.url)
         assert_ok(response)
@@ -157,17 +168,20 @@ class TestExportPodcastFeeds:
 class TestDeleteAccount:
     url = reverse_lazy("users:delete_account")
 
+    @pytest.mark.django_db
     def test_get(self, client, auth_user):
         # make sure we don't accidentally delete account on get request
         response = client.get(self.url)
         assert_ok(response)
         assert User.objects.exists()
 
+    @pytest.mark.django_db
     def test_post_unconfirmed(self, client, auth_user):
         response = client.post(self.url)
         assert_ok(response)
         assert User.objects.exists()
 
+    @pytest.mark.django_db
     def test_post_confirmed(self, client, auth_user):
         response = client.post(self.url, {"confirm-delete": True})
         assert response.url == reverse("podcasts:landing_page")

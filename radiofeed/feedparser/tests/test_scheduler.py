@@ -90,8 +90,9 @@ class TestGetPodcastsForUpdate:
             (True, timedelta(days=30), timedelta(days=90), timedelta(days=30), True),
         ],
     )
+    @pytest.mark.django_db
     def test_get_podcasts_for_update(
-        self, db, mocker, active, parsed, pub_date, frequency, exists
+        self, mocker, active, parsed, pub_date, frequency, exists
     ):
         create_podcast(
             active=active,

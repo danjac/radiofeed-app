@@ -8,12 +8,12 @@ from radiofeed.podcasts.factories import (
 
 
 @pytest.fixture
-def podcast(db):
+def podcast():
     return create_podcast()
 
 
 @pytest.fixture
-def category(db):
+def category():
     return create_category()
 
 

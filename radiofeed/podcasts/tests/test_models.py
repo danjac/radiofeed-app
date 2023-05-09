@@ -13,7 +13,8 @@ from radiofeed.users.factories import create_user
 
 
 class TestRecommendationManager:
-    def test_bulk_delete(self, db):
+    @pytest.mark.django_db
+    def test_bulk_delete(self):
         create_batch(create_recommendation, 3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
@@ -26,12 +27,14 @@ class TestRecommendationModel:
 
 class TestCategoryManager:
     @pytest.fixture
-    def category(self, db):
+    def category(self):
         return create_category(name="testing")
 
+    @pytest.mark.django_db
     def test_search_empty(self, category):
         assert Category.objects.search("").count() == 0
 
+    @pytest.mark.django_db
     def test_search(self, category):
         assert Category.objects.search("testing").count() == 1
 
@@ -47,30 +50,36 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
-    def test_search(self, db):
+    @pytest.mark.django_db
+    def test_search(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
-    def test_search_no_results(self, db):
+    @pytest.mark.django_db
+    def test_search_no_results(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("random").count() == 0
 
-    def test_search_partial(self, db):
+    @pytest.mark.django_db
+    def test_search_partial(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("test").count() == 1
 
-    def test_search_if_empty(self, db):
+    @pytest.mark.django_db
+    def test_search_if_empty(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("").count() == 0
 
-    def test_search_title_fallback(self, db):
+    @pytest.mark.django_db
+    def test_search_title_fallback(self):
         # usually "the" would be removed by stemmer
         create_podcast(title="the")
         podcasts = Podcast.objects.search("the")
         assert podcasts.count() == 1
         assert podcasts.first().exact_match == 1
 
-    def test_compare_exact_and_partial_matches_in_search(self, db):
+    @pytest.mark.django_db
+    def test_compare_exact_and_partial_matches_in_search(self):
         create_podcast(title="the testing")
         create_podcast(title="testing")
 
@@ -110,20 +119,24 @@ class TestPodcastModel:
         podcast = Podcast(description="<b>Test &amp; Code")
         assert podcast.cleaned_description == "Test & Code"
 
+    def test_get_subscribe_target(self):
+        return Podcast(id=12345).get_subscribe_target() == "subscribe-actions-12345"
+
+    @pytest.mark.django_db
     def test_is_subscribed_anonymous(self, podcast):
         assert not podcast.is_subscribed(AnonymousUser())
 
+    @pytest.mark.django_db
     def test_is_subscribed_false(self, podcast):
         assert not podcast.is_subscribed(create_user())
 
+    @pytest.mark.django_db
     def test_is_subscribed_true(self, subscription):
         assert subscription.podcast.is_subscribed(subscription.subscriber)
 
+    @pytest.mark.django_db
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()
         assert url == reverse(
             "podcasts:latest_episode", args=[podcast.id, podcast.slug]
         )
-
-    def test_get_subscribe_target(self):
-        return Podcast(id=12345).get_subscribe_target() == "subscribe-actions-12345"

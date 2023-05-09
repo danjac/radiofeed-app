@@ -22,18 +22,20 @@ class TestOpmlUploadForm:
         return form
 
     @pytest.fixture
-    def podcast(self, db):
+    def podcast(self):
         return create_podcast(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
+    @pytest.mark.django_db
     def test_subscribe_to_feeds(self, form, user, podcast):
         assert form.subscribe_to_feeds(user) == 1
         assert (
             Subscription.objects.filter(subscriber=user, podcast=podcast).count() == 1
         )
 
-    def test_subscribe_to_feeds_parser_error(self, user, podcast, mocker):
+    @pytest.mark.django_db
+    def test_subscribe_to_feeds_parser_error(self, user, podcast):
         form = OpmlUploadForm()
         form.cleaned_data = {
             "opml": SimpleUploadedFile("feeds.opml", b"", content_type="text/xml")
