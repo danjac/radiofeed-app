@@ -52,19 +52,7 @@ class Command(BaseCommand):
             start=start_num,
         )
 
-        for post in stream:
-            if (
-                self._allowed_op_id(post["id"])
-                and set(post["required_posting_auths"]) & allowed_accounts
-            ):
-                data = json.loads(post["json"])
-
-                urls = set(data.get("iris", [])) | set(data.get("urls", []))
-
-                if url := data.get("url"):
-                    urls.add(url)
-
-                self._parse_feeds(urls, rewind_from)
+        self._parse_feeds(self._parse_stream(allowed_accounts, stream), rewind_from)
 
     def _allowed_op_id(self, op_id: str) -> bool:
         return any(op_id.startswith(watched_id) for watched_id in WATCHED_OPERATION_IDS)
