@@ -76,7 +76,6 @@ class Command(BaseCommand):
         )
 
     def _parse_feeds(self, urls: set[str], rewind_from: datetime) -> None:
-        self.stdout.write(f"Parsing {len(urls)} urls")
         for podcast in Podcast.objects.filter(
             Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
             rss__in=urls,
