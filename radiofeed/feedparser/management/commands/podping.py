@@ -43,16 +43,18 @@ class Command(BaseCommand):
 
         rewind_from = timezone.now() - timedelta(minutes=kwargs["rewind"])
 
-        start_num = blockchain.get_estimated_block_num(rewind_from)
-
-        stream = blockchain.stream(
-            opNames=["custom_json"],
-            raw_ops=False,
-            threading=False,
-            start=start_num,
+        self._parse_feeds(
+            self._parse_stream(
+                allowed_accounts,
+                blockchain.stream(
+                    opNames=["custom_json"],
+                    raw_ops=False,
+                    threading=False,
+                    start=blockchain.get_estimated_block_num(rewind_from),
+                ),
+            ),
+            rewind_from,
         )
-
-        self._parse_feeds(self._parse_stream(allowed_accounts, stream), rewind_from)
 
     def _allowed_op_id(self, op_id: str) -> bool:
         return any(op_id.startswith(watched_id) for watched_id in WATCHED_OPERATION_IDS)
