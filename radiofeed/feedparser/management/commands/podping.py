@@ -1,6 +1,5 @@
 import json
 from argparse import ArgumentParser
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
 import beem
@@ -77,20 +76,14 @@ class Command(BaseCommand):
         )
 
     def _parse_feeds(self, urls: set[str], rewind_from: datetime) -> None:
-        with ThreadPoolExecutor() as executor:
-            executor.map(
-                self._parse_feed,
-                Podcast.objects.filter(
-                    Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
-                    rss__in=urls,
-                ).iterator(),
-            )
+        for podcast in Podcast.objects.filter(
+            Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
+            rss__in=urls,
+        ):
+            try:
+                feed_parser.FeedParser(podcast).parse()
 
-    def _parse_feed(self, podcast: Podcast) -> None:
-        try:
-            feed_parser.FeedParser(podcast).parse()
-
-        except FeedParserError:
-            self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
-        else:
-            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
+            except FeedParserError:
+                self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
+            else:
+                self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
