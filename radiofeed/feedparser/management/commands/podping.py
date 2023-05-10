@@ -1,5 +1,7 @@
 import json
 from argparse import ArgumentParser
+from collections.abc import Iterator
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
 import beem
@@ -49,19 +51,7 @@ class Command(BaseCommand):
             start=start_num,
         )
 
-        for post in stream:
-            if (
-                self._allowed_op_id(post["id"])
-                and set(post["required_posting_auths"]) & allowed_accounts
-            ):
-                data = json.loads(post.get("json")) or {}
-
-                urls = set(data.get("iris", [])) | set(data.get("urls", []))
-
-                if url := data.get("url"):
-                    urls.add(url)
-
-                self._parse_feeds(urls, rewind_from)
+        self._parse_feeds(self._parse_stream(allowed_accounts, stream), rewind_from)
 
     def _allowed_op_id(self, op_id: str) -> bool:
         return any(op_id.startswith(watched_id) for watched_id in WATCHED_OPERATION_IDS)
@@ -75,15 +65,37 @@ class Command(BaseCommand):
             ).get_following()
         )
 
-    def _parse_feeds(self, urls: set[str], rewind_from: datetime) -> None:
-        for podcast in Podcast.objects.filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
-            rss__in=urls,
-        ):
-            try:
-                feed_parser.FeedParser(podcast).parse()
+    def _parse_stream(
+        self, allowed_accounts: set[str], stream: Iterator[dict]
+    ) -> Iterator[str]:
+        for post in stream:
+            if (
+                self._allowed_op_id(post["id"])
+                and set(post["required_posting_auths"]) & allowed_accounts
+            ):
+                data = json.loads(post["json"])
 
-            except FeedParserError:
-                self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
-            else:
-                self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
+                yield from data.get("iris", [])
+                yield from data.get("urls", [])
+
+                if url := data.get("url"):
+                    yield url
+
+    def _parse_feeds(self, urls: Iterator[str], rewind_from: datetime) -> None:
+        with ThreadPoolExecutor() as executor:
+            executor.map(
+                self._parse_feed,
+                Podcast.objects.filter(
+                    Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
+                    rss__in=urls,
+                ).iterator(),
+            )
+
+    def _parse_feed(self, podcast: Podcast) -> None:
+        try:
+            feed_parser.FeedParser(podcast).parse()
+
+        except FeedParserError:
+            self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
+        else:
+            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
