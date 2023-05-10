@@ -1,5 +1,7 @@
 import json
 from argparse import ArgumentParser
+from collections.abc import Iterator
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
 import beem
@@ -11,6 +13,7 @@ from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
+from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
 ACCOUNT_NAME = "podping"
@@ -75,15 +78,38 @@ class Command(BaseCommand):
             ).get_following()
         )
 
-    def _parse_feeds(self, urls: set[str], rewind_from: datetime) -> None:
-        for podcast in Podcast.objects.filter(
-            Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
-            rss__in=urls,
-        ):
-            try:
-                feed_parser.FeedParser(podcast).parse()
+    def _parse_stream(
+        self, allowed_accounts: set[str], stream: Iterator[dict]
+    ) -> Iterator[str]:
+        for post in stream:
+            if (
+                self._allowed_op_id(post["id"])
+                and set(post["required_posting_auths"]) & allowed_accounts
+            ):
+                data = json.loads(post["json"])
 
-            except FeedParserError:
-                self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
-            else:
-                self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
+                yield from data.get("iris", [])
+                yield from data.get("urls", [])
+
+                if url := data.get("url"):
+                    yield url
+
+    def _parse_feeds(self, urls: Iterator[str], rewind_from: datetime) -> None:
+        for batch in batcher(urls, 100):
+            with ThreadPoolExecutor() as executor:
+                executor.map(
+                    self._parse_feed,
+                    Podcast.objects.filter(
+                        Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
+                        rss__in=batch,
+                    ),
+                )
+
+    def _parse_feed(self, podcast: Podcast) -> None:
+        try:
+            feed_parser.FeedParser(podcast).parse()
+
+        except FeedParserError:
+            self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
+        else:
+            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
