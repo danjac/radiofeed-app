@@ -9,7 +9,6 @@ import beem
 from beem.account import Account
 from beem.blockchain import Blockchain
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser
@@ -50,8 +49,6 @@ class Command(BaseCommand):
 
         blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive())
 
-        rewind_from = timedelta(minutes=kwargs["rewind"])
-
         self._parse_feeds(
             self._parse_stream(
                 allowed_accounts,
@@ -60,11 +57,10 @@ class Command(BaseCommand):
                     raw_ops=False,
                     threading=False,
                     start=blockchain.get_estimated_block_num(
-                        timezone.now() - rewind_from
+                        timezone.now() - timedelta(minutes=kwargs["rewind"])
                     ),
                 ),
             ),
-            rewind_from,
         )
 
     def _get_allowed_accounts(self) -> set[str]:
@@ -97,18 +93,13 @@ class Command(BaseCommand):
     def _parse_feeds(
         self,
         urls: Iterator[str],
-        rewind_from: timedelta,
         batch_size: int = 100,
     ) -> None:
         for batch in batcher(urls, batch_size):
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     self._parse_feed,
-                    Podcast.objects.filter(
-                        Q(parsed__isnull=True)
-                        | Q(parsed__lt=timezone.now() - rewind_from),
-                        rss__in=batch,
-                    ),
+                    Podcast.objects.filter(rss__in=set(batch)),
                 )
 
     def _parse_feed(self, podcast: Podcast) -> None:
