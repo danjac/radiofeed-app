@@ -84,8 +84,13 @@ class Command(BaseCommand):
                 if url := data.get("url"):
                     yield url
 
-    def _parse_feeds(self, urls: Iterator[str], rewind_from: datetime) -> None:
-        for batch in batcher(urls, 100):
+    def _parse_feeds(
+        self,
+        urls: Iterator[str],
+        rewind_from: datetime,
+        batch_size: int = 100,
+    ) -> None:
+        for batch in batcher(urls, batch_size):
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     self._parse_feed,
