@@ -2,7 +2,8 @@ import json
 from argparse import ArgumentParser
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timedelta
+from datetime import timedelta
+from typing import Final, TypedDict
 
 import beem
 from beem.account import Account
@@ -16,9 +17,17 @@ from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
-ACCOUNT_NAME = "podping"
-MASTER_NODE = "https://api.hive.blog"
-WATCHED_OPERATION_IDS = ["podping", "pp_"]
+ACCOUNT_NAME: Final = "podping"
+MASTER_NODE: Final = "https://api.hive.blog"
+WATCHED_OPERATION_IDS: Final = ("podping", "pp_")
+
+
+class Post(TypedDict):
+    """Post in blockchain stream."""
+
+    id: str
+    json: str
+    required_posting_auths: list[str]
 
 
 class Command(BaseCommand):
@@ -41,7 +50,7 @@ class Command(BaseCommand):
 
         blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive())
 
-        rewind_from = timezone.now() - timedelta(minutes=kwargs["rewind"])
+        rewind_from = timedelta(minutes=kwargs["rewind"])
 
         self._parse_feeds(
             self._parse_stream(
@@ -50,14 +59,13 @@ class Command(BaseCommand):
                     opNames=["custom_json"],
                     raw_ops=False,
                     threading=False,
-                    start=blockchain.get_estimated_block_num(rewind_from),
+                    start=blockchain.get_estimated_block_num(
+                        timezone.now() - rewind_from
+                    ),
                 ),
             ),
             rewind_from,
         )
-
-    def _allowed_op_id(self, op_id: str) -> bool:
-        return any(op_id.startswith(watched_id) for watched_id in WATCHED_OPERATION_IDS)
 
     def _get_allowed_accounts(self) -> set[str]:
         return set(
@@ -69,13 +77,10 @@ class Command(BaseCommand):
         )
 
     def _parse_stream(
-        self, allowed_accounts: set[str], stream: Iterator[dict]
+        self, allowed_accounts: set[str], stream: Iterator[Post]
     ) -> Iterator[str]:
         for post in stream:
-            if (
-                self._allowed_op_id(post["id"])
-                and set(post["required_posting_auths"]) & allowed_accounts
-            ):
+            if self._allowed_post(allowed_accounts, post):
                 data = json.loads(post["json"])
 
                 yield from data.get("iris", [])
@@ -84,10 +89,15 @@ class Command(BaseCommand):
                 if url := data.get("url"):
                     yield url
 
+    def _allowed_post(self, allowed_accounts: set[str], post: Post) -> bool:
+        return any(
+            post["id"].startswith(watched_id) for watched_id in WATCHED_OPERATION_IDS
+        ) and bool(set(post["required_posting_auths"]) & allowed_accounts)
+
     def _parse_feeds(
         self,
         urls: Iterator[str],
-        rewind_from: datetime,
+        rewind_from: timedelta,
         batch_size: int = 100,
     ) -> None:
         for batch in batcher(urls, batch_size):
@@ -95,7 +105,8 @@ class Command(BaseCommand):
                 executor.map(
                     self._parse_feed,
                     Podcast.objects.filter(
-                        Q(parsed__isnull=True) | Q(parsed__lt=rewind_from),
+                        Q(parsed__isnull=True)
+                        | Q(parsed__lt=timezone.now() - rewind_from),
                         rss__in=batch,
                     ),
                 )

@@ -1,7 +1,9 @@
 import json
+from datetime import timedelta
 
 import pytest
 from django.core.management import call_command
+from django.utils import timezone
 
 from radiofeed.feedparser.exceptions import Duplicate
 from radiofeed.podcasts.factories import create_podcast
@@ -46,6 +48,20 @@ class TestPodping:
         self._mock_stream(mocker, {"urls": [podcast.rss]})
         call_command("podping")
         mock_parse_ok.assert_called()
+
+    @pytest.mark.django_db
+    def test_parsed_more_than_15_min_ago(self, mocker, mock_parse_ok, mock_account):
+        podcast = create_podcast(parsed=timezone.now() - timedelta(minutes=30))
+        self._mock_stream(mocker, {"urls": [podcast.rss]})
+        call_command("podping")
+        mock_parse_ok.assert_called()
+
+    @pytest.mark.django_db
+    def test_parsed_less_than_15_min_ago(self, mocker, mock_parse_ok, mock_account):
+        podcast = create_podcast(parsed=timezone.now() - timedelta(minutes=12))
+        self._mock_stream(mocker, {"urls": [podcast.rss]})
+        call_command("podping")
+        mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db
     def test_single_url(self, mocker, podcast, mock_parse_ok, mock_account):
