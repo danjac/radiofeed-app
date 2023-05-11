@@ -26,7 +26,7 @@ django-object-actions==4.1.0 ; python_version >= "3.10" and python_version < "3.
 django-permissions-policy==4.15.0 ; python_version >= "3.10" and python_version < "3.12"
 django-redis==5.2.0 ; python_version >= "3.10" and python_version < "3.12"
 django==4.2.1 ; python_version >= "3.10" and python_version < "3.12"
-djlint==1.27.1 ; python_version >= "3.10" and python_version < "3.12"
+djlint==1.27.2 ; python_version >= "3.10" and python_version < "3.12"
 ecdsa==0.18.0 ; python_version >= "3.10" and python_version < "3.12"
 editorconfig==0.12.3 ; python_version >= "3.10" and python_version < "3.12"
 gunicorn==20.1.0 ; python_version >= "3.10" and python_version < "3.12"
