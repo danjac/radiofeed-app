@@ -589,7 +589,7 @@ tox = ["tox"]
 name = "cssbeautifier"
 version = "1.14.7"
 description = "CSS unobfuscator and beautifier."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 files = [
@@ -872,7 +872,7 @@ hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 name = "djlint"
 version = "1.27.1"
 description = "HTML Template Linter and Formatter"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.8.0,<4.0.0"
 files = [
@@ -917,7 +917,7 @@ gmpy2 = ["gmpy2"]
 name = "editorconfig"
 version = "0.12.3"
 description = "EditorConfig File Locator and Interpreter for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 files = [
@@ -1174,7 +1174,7 @@ files = [
 name = "html-tag-names"
 version = "0.1.2"
 description = "List of known HTML tag names"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
@@ -1186,7 +1186,7 @@ files = [
 name = "html-void-elements"
 version = "0.1.0"
 description = "List of HTML void tag names."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
@@ -1304,7 +1304,7 @@ files = [
 name = "jsbeautifier"
 version = "1.14.7"
 description = "JavaScript unobfuscator and beautifier."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 files = [
@@ -1319,7 +1319,7 @@ six = ">=1.13.0"
 name = "json5"
 version = "0.9.11"
 description = "A Python implementation of the JSON5 data format."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 files = [
@@ -1695,7 +1695,7 @@ testing = ["docopt", "pytest (<6.0.0)"]
 name = "pathspec"
 version = "0.11.1"
 description = "Utility library for gitignore style pattern matching of file paths."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -2330,7 +2330,7 @@ files = [
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -2941,7 +2941,7 @@ files = [
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -3128,4 +3128,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "9221c604e3600af63efce3efcd733e7309fc5a84b77d88277fd1a2e7ffd493be"
+content-hash = "3f3119a6396f6d212248b426a44cb430316efe9b88d2121d38709e66d8940ba1"

@@ -43,12 +43,12 @@ django-environ = "^0.10.0"
 django-fast-update = "^0.2.2"
 django-anymail = "^10.0"
 beem = "^0.24.26"
+djlint = "^1.27.1"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
 coverage = {extras = ["toml"], version = "^7.2.0"}
 django-coverage-plugin = "^3.0.0"
-djlint = "^1.19.15"
 faker = "^18.2.0"
 mypy = "^1.0.1"
 pytest = "^7.2.1"
@@ -139,7 +139,7 @@ reportGeneralTypeIssues = false
 reportMissingTypeStubs = false
 
 [tool.djlint]
-ignore = "H030,H031,H017,H021"
+ignore = "H030,H031,H037,H017,H021"
 
 [tool.ruff]
 target-version = "py311"
