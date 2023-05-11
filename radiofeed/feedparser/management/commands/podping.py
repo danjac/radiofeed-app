@@ -43,7 +43,7 @@ class Command(BaseCommand):
             default=15,
         )
 
-    def handle(self, *args, **kwargs) -> None:
+    def handle(self, **options) -> None:
         """Main command method."""
         allowed_accounts = self._get_allowed_accounts()
 
@@ -57,7 +57,7 @@ class Command(BaseCommand):
                     raw_ops=False,
                     threading=False,
                     start=blockchain.get_estimated_block_num(
-                        timezone.now() - timedelta(minutes=kwargs["rewind"])
+                        timezone.now() - timedelta(minutes=options["rewind"])
                     ),
                 ),
             ),
