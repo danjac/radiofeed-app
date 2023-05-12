@@ -98,9 +98,8 @@ class Command(BaseCommand):
         self,
         urls: Iterator[str],
         rewind_from: timedelta,
-        batch_size: int = 100,
     ) -> None:
-        for batch in batcher(urls, batch_size):
+        for batch in batcher(urls, 30):
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     self._parse_feed,
