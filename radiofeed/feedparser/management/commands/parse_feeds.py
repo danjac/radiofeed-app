@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
+from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
 
@@ -24,11 +25,14 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with ThreadPoolExecutor() as executor:
-            executor.map(
-                self._parse_feed,
-                scheduler.get_podcasts_for_update()[: options["limit"]].iterator(),
-            )
+        for podcasts in batcher(
+            scheduler.get_podcasts_for_update()[: options["limit"]].iterator(), 100
+        ):
+            with ThreadPoolExecutor() as executor:
+                executor.map(
+                    self._parse_feed,
+                    podcasts,
+                )
 
     def _parse_feed(self, podcast: Podcast) -> None:
         self.stdout.write(f"Parsing feed {podcast}...")
