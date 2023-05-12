@@ -26,17 +26,12 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
         for podcasts in batcher(
-            scheduler.get_podcasts_for_update()[: options["limit"]].iterator(), 30
+            scheduler.get_podcasts_for_update()[: options["limit"]], 30
         ):
             with ThreadPoolExecutor() as executor:
-                executor.map(
-                    self._parse_feed,
-                    podcasts,
-                )
+                executor.map(self._parse_feed, podcasts)
 
     def _parse_feed(self, podcast: Podcast) -> None:
-        self.stdout.write(f"Parsing feed {podcast}...")
-
         try:
             feed_parser.FeedParser(podcast).parse()
 
