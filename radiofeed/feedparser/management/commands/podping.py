@@ -99,7 +99,7 @@ class Command(BaseCommand):
         urls: Iterator[str],
         rewind_from: timedelta,
     ) -> None:
-        for batch in batcher(urls, 30):
+        for batch in batcher(urls, 100):
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     self._parse_feed,
