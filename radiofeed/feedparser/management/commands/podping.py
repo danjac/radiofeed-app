@@ -1,4 +1,5 @@
 import json
+import re
 from argparse import ArgumentParser
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
@@ -16,9 +17,7 @@ from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
-ALLOWED_OPERATION_IDS: Final = [
-    "pp_podcast_update",
-]
+_OPERATION_ID_RE: Final = re.compile(r"^pp_(.*)_(.*)|podping$")
 
 
 class Command(BaseCommand):
@@ -68,7 +67,11 @@ class Command(BaseCommand):
                     yield url
 
     def _allowed_post(self, post: dict) -> bool:
-        return "id" in post and "json" in post and post["id"] in ALLOWED_OPERATION_IDS
+        return (
+            "id" in post
+            and "json" in post
+            and _OPERATION_ID_RE.match(post["id"]) is not None
+        )
 
     def _parse_feeds(
         self,
