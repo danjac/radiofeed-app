@@ -24,52 +24,51 @@ def mock_parse_fail(mocker):
 
 
 class TestPodping:
-    @pytest.fixture
-    def mock_account(self, mocker):
-        yield mocker.patch(
-            "beem.account.Account.get_following",
-            return_value=["podping.test"],
-        )
-
-    def _mock_stream(self, mocker, json_data):
+    def _mock_stream(self, mocker, json_data, op_id="pp_podcast_update"):
         return mocker.patch(
             "beem.blockchain.Blockchain.stream",
             return_value=[
                 {
-                    "id": "pp_podcast_update",
+                    "id": op_id,
                     "json": json.dumps(json_data),
                 }
             ],
         )
 
     @pytest.mark.django_db
-    def test_ok(self, mocker, podcast, mock_parse_ok, mock_account):
+    def test_ok(self, mocker, podcast, mock_parse_ok):
         self._mock_stream(mocker, {"urls": [podcast.rss]})
         call_command("podping")
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db
-    def test_parsed_more_than_15_min_ago(self, mocker, mock_parse_ok, mock_account):
+    def test_invalid_op_id(self, mocker, podcast, mock_parse_ok):
+        self._mock_stream(mocker, {"urls": [podcast.rss]}, "sm-incorrect")
+        call_command("podping")
+        mock_parse_ok.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_parsed_more_than_15_min_ago(self, mocker, mock_parse_ok):
         podcast = create_podcast(parsed=timezone.now() - timedelta(minutes=30))
         self._mock_stream(mocker, {"urls": [podcast.rss]})
         call_command("podping")
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db
-    def test_parsed_less_than_15_min_ago(self, mocker, mock_parse_ok, mock_account):
+    def test_parsed_less_than_15_min_ago(self, mocker, mock_parse_ok):
         podcast = create_podcast(parsed=timezone.now() - timedelta(minutes=12))
         self._mock_stream(mocker, {"urls": [podcast.rss]})
         call_command("podping")
         mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db
-    def test_single_url(self, mocker, podcast, mock_parse_ok, mock_account):
+    def test_single_url(self, mocker, podcast, mock_parse_ok):
         self._mock_stream(mocker, {"url": podcast.rss})
         call_command("podping")
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db
-    def test_fail(self, mocker, podcast, mock_parse_fail, mock_account):
+    def test_fail(self, mocker, podcast, mock_parse_fail):
         self._mock_stream(mocker, {"urls": [podcast.rss]})
         call_command("podping")
         mock_parse_fail.assert_called()

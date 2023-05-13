@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
     def _parse_stream(self, stream: Iterator[dict]) -> Iterator[str]:
         for post in stream:
-            if self._allowed_post(post):
+            if _OPERATION_ID_RE.match(post["id"]):
                 data = json.loads(post["json"])
 
                 yield from data.get("iris", [])
@@ -65,13 +65,6 @@ class Command(BaseCommand):
 
                 if url := data.get("url"):
                     yield url
-
-    def _allowed_post(self, post: dict) -> bool:
-        return (
-            "id" in post
-            and "json" in post
-            and _OPERATION_ID_RE.match(post["id"]) is not None
-        )
 
     def _parse_feeds(
         self,
