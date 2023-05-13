@@ -188,6 +188,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     raw_id_fields = ("recipients",)
 
     readonly_fields = (
+        "podping",
         "parsed",
         "pub_date",
         "frequency",
