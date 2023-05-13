@@ -30,13 +30,13 @@
                             {% with podcast=episode.podcast %}
                                 <div class="flex items-center space-x-2 lg:space-x-3">
                                     {% cover_image podcast.cover_url 100 podcast.cleaned_title url=podcast.get_absolute_url css_class="w-16 h-16" %}
-                                    <div class="flex flex-col h-16 place-content-between">
-                                        <a class="block font-bold leading-none tracking-tight break-words line-clamp-2 sm:pr-3 hover:text-blue-300"
+                                    <div class="flex flex-col h-14 place-content-between lg:h-16">
+                                        <a class="font-bold leading-none tracking-tight break-words w-60 lg:w-auto lg:leading-tight line-clamp-2 hover:text-blue-300"
                                            href="{{ episode.get_absolute_url }}"
                                            hx-swap="innerHTML show:window:top"
                                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                         </a>
-                                        <a class="block text-xs leading-none tracking-tight truncate w-60 lg:w-96 lg:text-sm sm:pr-3 hover:text-blue-300"
+                                        <a class="text-xs leading-none tracking-tight truncate w-60 lg:w-96 lg:text-sm hover:text-blue-300"
                                            href="{{ podcast.get_episodes_url }}"
                                            hx-swap="innerHTML show:window:top"
                                            title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title|truncatechars:120 }}
