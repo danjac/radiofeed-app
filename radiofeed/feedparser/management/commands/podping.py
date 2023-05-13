@@ -3,10 +3,9 @@ from argparse import ArgumentParser
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
-from typing import Final, TypedDict
+from typing import Final
 
 import beem
-from beem.account import Account
 from beem.blockchain import Blockchain
 from django.core.management.base import BaseCommand
 from django.db.models import Q
@@ -17,17 +16,9 @@ from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
-ACCOUNT_NAME: Final = "podping"
-MASTER_NODE: Final = "https://api.hive.blog"
-WATCHED_OPERATION_IDS: Final = ("podping", "pp_")
-
-
-class Post(TypedDict):
-    """Post in blockchain stream."""
-
-    id: str
-    json: str
-    required_posting_auths: list[str]
+ALLOWED_OPERATION_IDS: Final = [
+    "pp_podcast_update",
+]
 
 
 class Command(BaseCommand):
@@ -46,7 +37,6 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Main command method."""
-        allowed_accounts = self._get_allowed_accounts()
 
         blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive())
 
@@ -54,7 +44,6 @@ class Command(BaseCommand):
 
         self._parse_feeds(
             self._parse_stream(
-                allowed_accounts,
                 blockchain.stream(
                     opNames=["custom_json"],
                     raw_ops=False,
@@ -67,20 +56,9 @@ class Command(BaseCommand):
             rewind_from,
         )
 
-    def _get_allowed_accounts(self) -> set[str]:
-        return set(
-            Account(
-                ACCOUNT_NAME,
-                blockchain_instance=beem.Hive(MASTER_NODE),
-                lazy=True,
-            ).get_following()
-        )
-
-    def _parse_stream(
-        self, allowed_accounts: set[str], stream: Iterator[Post]
-    ) -> Iterator[str]:
+    def _parse_stream(self, stream: Iterator[dict]) -> Iterator[str]:
         for post in stream:
-            if self._allowed_post(allowed_accounts, post):
+            if self._allowed_post(post):
                 data = json.loads(post["json"])
 
                 yield from data.get("iris", [])
@@ -89,10 +67,8 @@ class Command(BaseCommand):
                 if url := data.get("url"):
                     yield url
 
-    def _allowed_post(self, allowed_accounts: set[str], post: Post) -> bool:
-        return any(
-            post["id"].startswith(watched_id) for watched_id in WATCHED_OPERATION_IDS
-        ) and bool(set(post["required_posting_auths"]) & allowed_accounts)
+    def _allowed_post(self, post: dict) -> bool:
+        return "id" in post and "json" in post and post["id"] in ALLOWED_OPERATION_IDS
 
     def _parse_feeds(
         self,

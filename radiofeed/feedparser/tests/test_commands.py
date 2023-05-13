@@ -36,8 +36,7 @@ class TestPodping:
             "beem.blockchain.Blockchain.stream",
             return_value=[
                 {
-                    "id": "pp_1234",
-                    "required_posting_auths": ["podping.test"],
+                    "id": "pp_podcast_update",
                     "json": json.dumps(json_data),
                 }
             ],
