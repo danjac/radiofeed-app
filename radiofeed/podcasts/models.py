@@ -131,6 +131,8 @@ class Podcast(models.Model):
 
     num_retries: int = models.PositiveSmallIntegerField(default=0)
 
+    podping: bool = models.BooleanField(default=False)
+
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
     funding_url: str | None = models.URLField(max_length=2083, null=True, blank=True)

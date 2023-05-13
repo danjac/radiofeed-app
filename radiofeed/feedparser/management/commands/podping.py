@@ -112,7 +112,7 @@ class Command(BaseCommand):
 
     def _parse_feed(self, podcast: Podcast) -> None:
         try:
-            feed_parser.FeedParser(podcast).parse()
+            feed_parser.FeedParser(podcast).parse(podping=True)
 
         except FeedParserError:
             self.stdout.write(self.style.ERROR(f"{podcast} not updated"))

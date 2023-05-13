@@ -64,11 +64,13 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self):
+    def parse(self, **extra_attrs):
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
         accordingly.
+
+        If `extra_attrs` these will be set on podcast if successful update.
 
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
@@ -112,6 +114,7 @@ class FeedParser:
                         self._feed_attrs.items,
                     ),
                 ),
+                **extra_attrs,
             )
 
             self._podcast.categories.set(categories)
