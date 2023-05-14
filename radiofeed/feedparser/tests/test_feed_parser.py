@@ -139,6 +139,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
+        assert not podcast.podping
         assert podcast.active
         assert podcast.num_retries == 0
         assert podcast.content_hash
@@ -175,7 +176,7 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
     @pytest.mark.django_db
-    def test_parse_ok_with_extra_attrs(self, mocker, categories):
+    def test_parse_ok_with_podping(self, mocker, categories):
         # set date to before latest
 
         podcast = create_podcast(
@@ -375,6 +376,36 @@ class TestFeedParser:
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
+
+        assert not podcast.podping
+        assert podcast.active
+        assert podcast.modified is None
+        assert podcast.parsed
+
+    @pytest.mark.django_db
+    def test_parse_same_content_with_podping(self, mocker, categories):
+        content = self.get_rss_content()
+        podcast = create_podcast(content_hash=make_content_hash(content))
+
+        mocker.patch(
+            "requests.get",
+            return_value=MockResponse(
+                url=podcast.rss,
+                status_code=http.HTTPStatus.OK,
+                content=content,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+
+        with pytest.raises(NotModified):
+            FeedParser(podcast).parse(podping=True)
+
+        podcast.refresh_from_db()
+
+        assert podcast.podping
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed

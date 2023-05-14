@@ -64,13 +64,13 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, **extra_attrs):
+    def parse(self, **fields):
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
         accordingly.
 
-        If `extra_attrs` these will be set on podcast if successful update.
+        If any `fields` these will be set on podcast on each update (successful or not).
 
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
@@ -91,7 +91,7 @@ class FeedParser:
                 raise Duplicate()
             feed = rss_parser.parse_rss(response.content)
         except FeedParserError as e:
-            return self._handle_feed_error(e)
+            return self._handle_feed_error(e, **fields)
 
         categories, keywords = self._extract_categories(feed)
 
@@ -114,7 +114,7 @@ class FeedParser:
                         self._feed_attrs.items,
                     ),
                 ),
-                **extra_attrs,
+                **fields,
             )
 
             self._podcast.categories.set(categories)
@@ -160,7 +160,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _handle_feed_error(self, exc: FeedParserError) -> None:
+    def _handle_feed_error(self, exc: FeedParserError, **fields) -> None:
         num_retries: int = self._podcast.num_retries
         active: bool = True
 
@@ -191,7 +191,7 @@ class FeedParser:
         )
 
         self._podcast_update(
-            active=active, num_retries=num_retries, frequency=frequency
+            active=active, num_retries=num_retries, frequency=frequency, **fields
         )
 
         # re-raise original exception
