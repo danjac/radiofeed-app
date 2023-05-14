@@ -98,6 +98,7 @@ class FeedParser:
         with transaction.atomic():
             self._podcast_update(
                 num_retries=0,
+                parser_error=None,
                 content_hash=content_hash,
                 keywords=keywords,
                 rss=response.url,
@@ -191,7 +192,11 @@ class FeedParser:
         )
 
         self._podcast_update(
-            active=active, num_retries=num_retries, frequency=frequency, **fields
+            active=active,
+            num_retries=num_retries,
+            frequency=frequency,
+            parser_error=exc.parser_error,
+            **fields,
         )
 
         # re-raise original exception

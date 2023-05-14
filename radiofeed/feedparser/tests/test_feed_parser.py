@@ -139,7 +139,8 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
-        assert not podcast.podping
+        assert podcast.podping is False
+        assert podcast.parser_error is None
         assert podcast.active
         assert podcast.num_retries == 0
         assert podcast.content_hash
@@ -223,8 +224,9 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.podping
+        assert podcast.podping is True
 
+        assert podcast.parser_error is None
         assert podcast.rss
         assert podcast.active
         assert podcast.num_retries == 0
@@ -284,6 +286,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.parser_error is None
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
@@ -325,6 +328,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.parser_error is None
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
@@ -377,7 +381,9 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert not podcast.podping
+        assert podcast.parser_error == Podcast.ParserError.NOT_MODIFIED
+
+        assert podcast.podping is False
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
@@ -405,7 +411,9 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.podping
+        assert podcast.parser_error == Podcast.ParserError.NOT_MODIFIED
+
+        assert podcast.podping is True
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
@@ -434,7 +442,9 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert not podcast.active
+        assert podcast.parser_error == Podcast.ParserError.DUPLICATE
+
+        assert podcast.active is False
         assert podcast.modified is None
         assert podcast.parsed
 
@@ -471,7 +481,8 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
-        assert not podcast.active
+        assert podcast.active is False
+        assert podcast.parser_error is None
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -517,6 +528,8 @@ class TestFeedParser:
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
         podcast.refresh_from_db()
+
+        assert podcast.parser_error is None
 
         assert podcast.rss == self.redirect_rss
         assert podcast.active
@@ -565,6 +578,9 @@ class TestFeedParser:
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
+
+        assert podcast.parser_error == Podcast.ParserError.INVALID_RSS
+
         assert podcast.active
         assert podcast.parsed
         assert podcast.num_retries == 1
@@ -586,7 +602,10 @@ class TestFeedParser:
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
-        assert not podcast.active
+
+        assert podcast.parser_error == Podcast.ParserError.INVALID_RSS
+
+        assert podcast.active is False
         assert podcast.parsed
         assert podcast.num_retries == 4
 
@@ -605,6 +624,9 @@ class TestFeedParser:
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
+
+        assert podcast.parser_error == Podcast.ParserError.INVALID_RSS
+
         assert podcast.active
         assert podcast.parsed
         assert podcast.num_retries == 1
@@ -625,6 +647,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.parser_error == Podcast.ParserError.NOT_MODIFIED
+
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
@@ -644,6 +668,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.parser_error == Podcast.ParserError.INACCESSIBLE
+
         assert not podcast.active
         assert podcast.parsed
 
@@ -655,6 +681,8 @@ class TestFeedParser:
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
+
+        assert podcast.parser_error == Podcast.ParserError.UNAVAILABLE
 
         assert podcast.active
         assert podcast.parsed
@@ -671,6 +699,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert not podcast.active
+        assert podcast.parser_error == Podcast.ParserError.UNAVAILABLE
+
+        assert podcast.active is False
         assert podcast.parsed
         assert podcast.num_retries == 4

@@ -100,6 +100,13 @@ class PodcastQuerySet(
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
+    class ParserError(models.TextChoices):
+        DUPLICATE = "duplicate", "Duplicate"
+        INACCESSIBLE = "inaccessible", "Inaccessible"
+        INVALID_RSS = "invalid_rss", "Invalid RSS"
+        NOT_MODIFIED = "not_modified", "Not Modified"
+        UNAVAILABLE = "unavailable", "Unavailable"
+
     rss: str = models.URLField(unique=True, max_length=500)
 
     active: bool = models.BooleanField(
@@ -108,11 +115,18 @@ class Podcast(models.Model):
     )
 
     etag: str = models.TextField(blank=True)
-    title: str = models.TextField()
+    title: str = models.TextField(blank=True)
 
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
+
+    parser_error: str | None = models.CharField(
+        max_length=30,
+        choices=ParserError.choices,
+        null=True,
+        blank=True,
+    )
 
     frequency: timedelta = models.DurationField(
         default=timedelta(hours=24),
