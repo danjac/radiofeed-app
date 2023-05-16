@@ -122,10 +122,7 @@ class Podcast(models.Model):
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     parser_error: str | None = models.CharField(
-        max_length=30,
-        choices=ParserError.choices,
-        null=True,
-        blank=True,
+        max_length=30, choices=ParserError.choices, null=True
     )
 
     frequency: timedelta = models.DurationField(

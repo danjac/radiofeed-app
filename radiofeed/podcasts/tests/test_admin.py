@@ -9,6 +9,7 @@ from radiofeed.factories import create_batch
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
+    ParserErrorFilter,
     PodcastAdmin,
     PodpingFilter,
     PromotedFilter,
@@ -190,18 +191,55 @@ class TestPodpingFilter:
         assert podping not in qs
 
 
-class TestSubscribedFilter:
+class TestParserErrorFilter:
+    @pytest.fixture
+    def duplicate(self):
+        return create_podcast(parser_error=Podcast.ParserError.DUPLICATE)
+
     @pytest.mark.django_db
-    def test_subscribed_filter_none(self, podcasts, podcast_admin, req):
-        create_subscription()
+    def test_all(self, podcasts, podcast_admin, req, duplicate):
+        f = ParserErrorFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req, duplicate):
+        f = ParserErrorFilter(req, {"parser_error": "none"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert duplicate not in qs
+
+    @pytest.mark.django_db
+    def test_duplicate(self, podcasts, podcast_admin, req, duplicate):
+        f = ParserErrorFilter(
+            req, {"parser_error": Podcast.ParserError.DUPLICATE}, Podcast, podcast_admin
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert duplicate in qs
+
+
+class TestSubscribedFilter:
+    @pytest.fixture
+    def subscribed(self):
+        return create_subscription().podcast
+
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req, subscribed):
         f = SubscribedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
-    def test_subscribed_filter_true(self, podcasts, podcast_admin, req):
-        subscribed = create_subscription().podcast
+    def test_true(self, podcasts, podcast_admin, req, subscribed):
         f = SubscribedFilter(req, {"subscribed": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
+
+    @pytest.mark.django_db
+    def test_false(self, podcasts, podcast_admin, req, subscribed):
+        f = SubscribedFilter(req, {"subscribed": "no"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert subscribed not in qs

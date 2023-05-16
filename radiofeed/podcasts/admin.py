@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from django.contrib import admin, messages
-from django.db.models import Count, QuerySet
+from django.db.models import Count, Exists, OuterRef, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import feed_parser, scheduler
-from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
 @admin.register(Category)
@@ -84,6 +84,30 @@ class PodpingFilter(admin.SimpleListFilter):
                 return queryset
 
 
+class ParserErrorFilter(admin.SimpleListFilter):
+    """Filters based on parser error."""
+
+    title = "Parser Error"
+    parameter_name = "parser_error"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("none", "None"),) + tuple(Podcast.ParserError.choices)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
+        """Returns filtered queryset."""
+
+        match self.value():
+            case "none":
+                return queryset.filter(parser_error__isnull=True)
+            case value if value in Podcast.ParserError:  # type: ignore
+                return queryset.filter(parser_error=value)
+            case _:
+                return queryset
+
+
 class PubDateFilter(admin.SimpleListFilter):
     """Filters podcasts based on last pub date."""
 
@@ -147,13 +171,20 @@ class SubscribedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        return (
-            queryset.annotate(subscribers=Count("subscriptions")).filter(
-                subscribers__gt=0
-            )
-            if self.value() == "yes"
-            else queryset
-        )
+
+        exists = Exists(Subscription.objects.filter(podcast=OuterRef("pk")))
+
+        match self.value():
+            case "yes":
+                return queryset.annotate(has_subscribers=exists).filter(
+                    has_subscribers=True
+                )
+            case "no":
+                return queryset.annotate(has_subscribers=exists).filter(
+                    has_subscribers=False
+                )
+            case _:
+                return queryset
 
 
 @admin.register(Podcast)
@@ -164,6 +195,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
+        ParserErrorFilter,
         PodpingFilter,
         PubDateFilter,
         PromotedFilter,
