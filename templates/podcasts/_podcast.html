@@ -4,7 +4,7 @@
              hx-get="{{ podcast_url }}"
              hx-push-url="true">
         <div>{% cover_image podcast.cover_url 100 podcast.cleaned_title css_class="h-16 w-16 group-hover:grayscale" %}</div>
-        <div class="flex flex-col place-content-between h-14">
+        <div class="flex flex-col place-content-between h-16">
             <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-bold line-clamp-2 lg:line-clamp-1"
                 title="{{ podcast.cleaned_title }}">
                 <a class="link group-hover:text-blue-600 dark:group-hover:text-blue-300"
