@@ -236,10 +236,3 @@ class TestSubscribedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
-
-    @pytest.mark.django_db
-    def test_false(self, podcasts, podcast_admin, req, subscribed):
-        f = SubscribedFilter(req, {"subscribed": "no"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert subscribed not in qs

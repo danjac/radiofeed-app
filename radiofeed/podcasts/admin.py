@@ -172,19 +172,14 @@ class SubscribedFilter(admin.SimpleListFilter):
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
 
-        exists = Exists(Subscription.objects.filter(podcast=OuterRef("pk")))
+        if self.value() == "yes":
+            return queryset.annotate(
+                has_subscribers=Exists(
+                    Subscription.objects.filter(podcast=OuterRef("pk"))
+                )
+            ).filter(has_subscribers=True)
 
-        match self.value():
-            case "yes":
-                return queryset.annotate(has_subscribers=exists).filter(
-                    has_subscribers=True
-                )
-            case "no":
-                return queryset.annotate(has_subscribers=exists).filter(
-                    has_subscribers=False
-                )
-            case _:
-                return queryset
+        return queryset
 
 
 @admin.register(Podcast)
