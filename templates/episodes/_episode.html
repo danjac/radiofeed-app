@@ -1,24 +1,22 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-    <article class="group flex items-center space-x-3 py-2 cursor-pointer"
+    <article class="flex items-center py-2 cursor-pointer group space-x-3"
              role="link"
              hx-get="{{ episode_url }}"
              hx-push-url="true">
-        <div>
-            {% with size=100 css_class="h-16 w-16 group-hover:grayscale" %}
-                {% if is_podcast_detail %}
-                    {% cover_image episode.get_cover_url size episode.cleaned_title css_class=css_class %}
-                {% else %}
-                    {% cover_image podcast.cover_url size podcast.cleaned_title css_class=css_class %}
-                {% endif %}
-            {% endwith %}
-        </div>
-        <div class="flex flex-col place-content-between h-16">
-            <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-bold line-clamp-2 lg:line-clamp-1"
+        {% with size=100 css_class="h-16 w-16 group-hover:grayscale" %}
+            {% if is_podcast_detail %}
+                {% cover_image episode.get_cover_url size episode.cleaned_title css_class=css_class %}
+            {% else %}
+                {% cover_image podcast.cover_url size podcast.cleaned_title css_class=css_class %}
+            {% endif %}
+        {% endwith %}
+        <div class="flex flex-col h-16 place-content-between">
+            <h2 class="font-bold leading-tight tracking-tight break-words line-clamp-2"
                 title="{{ episode.cleaned_title }}">
                 <a class="link group-hover:text-blue-600 dark:group-hover:text-blue-300"
                    href="{{ episode_url }}">{{ episode.cleaned_title|truncatechars:180 }}</a>
             </h2>
-            <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
+            <h3 class="text-xs leading-tight tracking-tight truncate w-60 lg:w-96 lg:text-sm">
                 {% if is_podcast_detail %}
                     {% include "_date.html" with value=episode.pub_date title="Release Date" %}
                 {% else %}
