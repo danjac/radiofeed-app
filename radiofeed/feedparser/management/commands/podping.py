@@ -78,6 +78,7 @@ class Command(BaseCommand):
                     Podcast.objects.filter(
                         Q(parsed__isnull=True)
                         | Q(parsed__lt=timezone.now() - rewind_from),
+                        active=True,
                         rss__in=set(batch),
                     ),
                 )
