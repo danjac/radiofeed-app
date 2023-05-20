@@ -263,3 +263,13 @@ class TestWebsubFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert websub_podcast in qs
+
+    @pytest.mark.django_db
+    def test_subscribe(self, podcasts, podcast_admin, req, websub_podcast):
+        subscribed = create_podcast(
+            websub_mode="subscribe", websub_hub=websub_podcast.websub_hub
+        )
+        f = WebsubFilter(req, {"websub": "subscribe"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert subscribed in qs

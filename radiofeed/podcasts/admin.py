@@ -192,7 +192,11 @@ class WebsubFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "Websub"), ("no", "No Websub"))
+        return (
+            ("yes", "Websub"),
+            ("no", "No Websub"),
+            ("subscribed", "Subscribe"),
+        )
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
@@ -203,6 +207,11 @@ class WebsubFilter(admin.SimpleListFilter):
                 return queryset.filter(websub_hub__isnull=False)
             case "no":
                 return queryset.filter(websub_hub__isnull=True)
+            case "subscribe":
+                return queryset.filter(
+                    websub_hub__isnull=False,
+                    websub_mode="subscribe",
+                )
 
             case _:
                 return queryset
