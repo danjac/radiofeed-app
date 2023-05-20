@@ -71,7 +71,7 @@ class Command(BaseCommand):
     ) -> None:
         with ThreadPoolExecutor() as executor:
             executor.map(
-                feed_parser.parse_feed,
+                lambda podcast: feed_parser.parse_feed(podcast, podping=True),
                 Podcast.objects.filter(
                     Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - rewind_from),
                     active=True,
