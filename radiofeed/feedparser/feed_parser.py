@@ -1,3 +1,4 @@
+import contextlib
 import functools
 import hashlib
 import http
@@ -51,6 +52,12 @@ def get_categories() -> dict[str, Category]:
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
     return hashlib.sha256(content).hexdigest()
+
+
+def parse_feed(podcast: Podcast) -> None:
+    """Shortcut function to parse podcast feed."""
+    with contextlib.suppress(FeedParserError):
+        FeedParser(podcast).parse()
 
 
 class FeedParser:

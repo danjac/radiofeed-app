@@ -286,7 +286,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        feed_parser.FeedParser(obj).parse()
+        feed_parser.parse_feed(obj)
         self.message_user(request, "Podcast has been updated", level=messages.SUCCESS)
 
     @admin.display(description="Estimated Next Update")

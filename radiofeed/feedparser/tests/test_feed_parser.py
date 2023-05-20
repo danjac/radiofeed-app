@@ -21,6 +21,7 @@ from radiofeed.feedparser.feed_parser import (
     FeedParser,
     get_categories,
     make_content_hash,
+    parse_feed,
 )
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
@@ -38,6 +39,20 @@ class MockResponse:
     def raise_for_status(self):
         if self.exception:
             raise self.exception
+
+
+class TestParseFeed:
+    @pytest.mark.django_db
+    def test_ok(self, mocker, podcast):
+        mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
+        parse_feed(podcast)
+
+    @pytest.mark.django_db
+    def test_exception(self, mocker, podcast):
+        mocker.patch(
+            "radiofeed.feedparser.feed_parser.FeedParser.parse", side_effect=NotModified
+        )
+        parse_feed(podcast)
 
 
 class TestFeedParser:

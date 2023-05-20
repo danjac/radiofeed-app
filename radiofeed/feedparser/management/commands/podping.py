@@ -1,4 +1,3 @@
-import contextlib
 import json
 import re
 from argparse import ArgumentParser
@@ -14,8 +13,6 @@ from django.db.models import Q
 from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser
-from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
 _OPERATION_ID_RE: Final = re.compile(r"^pp_(.*)_(.*)|podping$")
@@ -72,19 +69,12 @@ class Command(BaseCommand):
         urls: Iterator[str],
         rewind_from: timedelta,
     ) -> None:
-        for batch in batcher(urls, 100):
-            with ThreadPoolExecutor() as executor:
-                executor.map(
-                    self._parse_feed,
-                    Podcast.objects.filter(
-                        Q(parsed__isnull=True)
-                        | Q(parsed__lt=timezone.now() - rewind_from),
-                        active=True,
-                        rss__in=set(batch),
-                    ),
-                )
-
-    def _parse_feed(self, podcast: Podcast) -> None:
-        self.stdout.write(f"Parse feed: {podcast}")
-        with contextlib.suppress(FeedParserError):
-            feed_parser.FeedParser(podcast).parse()
+        with ThreadPoolExecutor() as executor:
+            executor.map(
+                feed_parser.parse_feed,
+                Podcast.objects.filter(
+                    Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - rewind_from),
+                    active=True,
+                    rss__in=set(urls),
+                ),
+            )

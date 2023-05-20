@@ -453,7 +453,7 @@ class TestWebsubCallback:
 
     @pytest.fixture
     def feed_parser(self, mocker):
-        return mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
+        return mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
 
     @pytest.mark.django_db
     def test_post(self, client, db, mocker, feed_parser):

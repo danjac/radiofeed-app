@@ -12,14 +12,14 @@ from radiofeed.podcasts.factories import create_podcast
 @pytest.fixture
 def mock_parse_ok(mocker):
     yield mocker.patch(
-        "radiofeed.feedparser.feed_parser.FeedParser.parse",
+        "radiofeed.feedparser.feed_parser.parse_feed",
     )
 
 
 @pytest.fixture
 def mock_parse_fail(mocker):
     yield mocker.patch(
-        "radiofeed.feedparser.feed_parser.FeedParser.parse", side_effect=Duplicate()
+        "radiofeed.feedparser.feed_parser.parse_feed", side_effect=Duplicate()
     )
 
 
