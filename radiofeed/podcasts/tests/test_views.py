@@ -1,3 +1,5 @@
+import http
+
 import pytest
 import requests
 from django.urls import reverse, reverse_lazy
@@ -443,3 +445,130 @@ class TestUnsubscribe:
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
+
+
+class TestWebsubCallback:
+    def url(self, podcast):
+        return reverse("podcasts:websub_callback", args=[podcast.id])
+
+    @pytest.fixture
+    def feed_parser(self, mocker):
+        return mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
+
+    @pytest.mark.django_db
+    def test_post(self, client, db, mocker, feed_parser):
+        podcast = create_podcast(websub_mode="subscribe")
+        mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
+
+        response = client.post(self.url(podcast))
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
+
+        feed_parser.assert_called()
+
+    @pytest.mark.django_db
+    def test_post_not_subscribed(self, client, mocker, feed_parser, podcast):
+        mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
+
+        response = client.post(self.url(podcast))
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        feed_parser.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_post_invalid_signature(self, client, db, mocker, feed_parser):
+        podcast = create_podcast(websub_mode="subscribe")
+        mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=False)
+
+        response = client.post(self.url(podcast))
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
+
+        feed_parser.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_get(self, client, podcast):
+        response = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": "OK",
+                "hub.topic": podcast.rss,
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires
+
+    @pytest.mark.django_db
+    def test_get_denied(self, client, podcast):
+        response = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "denied",
+                "hub.challenge": "OK",
+                "hub.topic": podcast.rss,
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None
+
+    @pytest.mark.django_db
+    def test_get_invalid_topic(self, client, podcast):
+        response = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": "OK",
+                "hub.topic": "https://wrong-topic.com/",
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None
+
+    @pytest.mark.django_db
+    def test_get_invalid_lease_seconds(self, client, podcast):
+        response = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": "OK",
+                "hub.topic": podcast.rss,
+                "hub.lease_seconds": "invalid",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None
+
+    @pytest.mark.django_db
+    def test_get_missing_mode(self, client, podcast):
+        response = client.get(
+            self.url(podcast),
+            {
+                "hub.challenge": "OK",
+                "hub.topic": podcast.rss,
+                "hub.lease_seconds": "2000",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_expires is None

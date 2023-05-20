@@ -106,6 +106,21 @@ class TestCheckSignature:
         assert websub.check_signature(req, podcast)
 
     @pytest.mark.django_db
+    def test_secret_is_none(self, rf):
+        podcast = create_podcast(websub_secret=None)
+
+        sig = hmac.new(uuid.uuid4().hex.encode("utf-8"), self.body, "sha1").hexdigest()
+
+        req = rf.post(
+            "/",
+            self.body,
+            content_type=self.content_type,
+            HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+        )
+
+        assert not websub.check_signature(req, podcast)
+
+    @pytest.mark.django_db
     def test_signature_mismatch(self, rf, podcast):
         sig = hmac.new(uuid.uuid4().hex.encode("utf-8"), self.body, "sha1").hexdigest()
 
