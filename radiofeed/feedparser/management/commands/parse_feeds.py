@@ -1,3 +1,4 @@
+import contextlib
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 
@@ -32,10 +33,6 @@ class Command(BaseCommand):
                 executor.map(self._parse_feed, podcasts)
 
     def _parse_feed(self, podcast: Podcast) -> None:
-        try:
+        self.stdout.write(f"Parse feed: {podcast}")
+        with contextlib.suppress(FeedParserError):
             feed_parser.FeedParser(podcast).parse()
-
-        except FeedParserError:
-            self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
-        else:
-            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))

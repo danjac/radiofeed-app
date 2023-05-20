@@ -1,3 +1,4 @@
+import contextlib
 import json
 import re
 from argparse import ArgumentParser
@@ -84,10 +85,6 @@ class Command(BaseCommand):
                 )
 
     def _parse_feed(self, podcast: Podcast) -> None:
-        try:
-            feed_parser.FeedParser(podcast).parse(podping=True)
-
-        except FeedParserError:
-            self.stdout.write(self.style.ERROR(f"{podcast} not updated"))
-        else:
-            self.stdout.write(self.style.SUCCESS(f"{podcast} updated"))
+        self.stdout.write(f"Parse feed: {podcast}")
+        with contextlib.suppress(FeedParserError):
+            feed_parser.FeedParser(podcast).parse()
