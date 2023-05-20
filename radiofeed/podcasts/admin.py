@@ -4,6 +4,7 @@ from django.contrib import admin, messages
 from django.db.models import Count, Exists, OuterRef, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
+from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.fast_count import FastCountAdminMixin
@@ -195,22 +196,35 @@ class WebsubFilter(admin.SimpleListFilter):
         return (
             ("yes", "Websub"),
             ("no", "No Websub"),
-            ("subscribe", "Subscribe"),
+            ("pending", "Pending"),
+            ("subscribed", "Subscribed"),
+            ("expired", "Expired"),
         )
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
+        now = timezone.now()
+
         match self.value():
             case "yes":
                 return queryset.filter(websub_hub__isnull=False)
             case "no":
                 return queryset.filter(websub_hub__isnull=True)
-            case "subscribe":
+            case "pending":
+                return queryset.filter(websub_hub__isnull=False, websub_mode="")
+            case "subscribed":
                 return queryset.filter(
                     websub_hub__isnull=False,
                     websub_mode="subscribe",
+                    websub_expires__gte=now,
+                )
+            case "expired":
+                return queryset.filter(
+                    websub_hub__isnull=False,
+                    websub_mode="subscribe",
+                    websub_expires__lt=now,
                 )
 
             case _:

@@ -240,36 +240,59 @@ class TestSubscribedFilter:
 
 
 class TestWebsubFilter:
-    @pytest.fixture
-    def websub_podcast(self):
-        return create_podcast(websub_hub="https://example.com")
+    hub = "https://example.com"
 
     @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req, websub_podcast):
+    def test_none(self, podcasts, podcast_admin, req):
+        create_podcast(websub_hub=self.hub)
         f = WebsubFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
-    def test_no(self, podcasts, podcast_admin, req, websub_podcast):
+    def test_no(self, podcasts, podcast_admin, req):
+        websub = create_podcast(websub_hub=self.hub)
         f = WebsubFilter(req, {"websub": "no"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
-        assert websub_podcast not in qs
+        assert websub not in qs
 
     @pytest.mark.django_db
-    def test_yes(self, podcasts, podcast_admin, req, websub_podcast):
+    def test_yes(self, podcasts, podcast_admin, req):
+        websub = create_podcast(websub_hub=self.hub)
         f = WebsubFilter(req, {"websub": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert websub_podcast in qs
+        assert websub in qs
 
     @pytest.mark.django_db
-    def test_subscribe(self, podcasts, podcast_admin, req, websub_podcast):
+    def test_pending(self, podcasts, podcast_admin, req):
+        pending = create_podcast(websub_hub=self.hub, websub_mode="")
+        f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert pending in qs
+
+    @pytest.mark.django_db
+    def test_subscribed(self, podcasts, podcast_admin, req):
         subscribed = create_podcast(
-            websub_mode="subscribe", websub_hub=websub_podcast.websub_hub
+            websub_mode="subscribe",
+            websub_hub=self.hub,
+            websub_expires=timezone.now() + timedelta(days=3),
         )
-        f = WebsubFilter(req, {"websub": "subscribe"}, Podcast, podcast_admin)
+        f = WebsubFilter(req, {"websub": "subscribed"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert subscribed in qs
+
+    @pytest.mark.django_db
+    def test_expired(self, podcasts, podcast_admin, req):
+        expired = create_podcast(
+            websub_mode="subscribe",
+            websub_hub=self.hub,
+            websub_expires=timezone.now() - timedelta(days=3),
+        )
+        f = WebsubFilter(req, {"websub": "expired"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert expired in qs
