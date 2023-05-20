@@ -1,4 +1,6 @@
+import contextlib
 import http
+from datetime import timedelta
 
 import requests
 from django.contrib import messages
@@ -7,12 +9,17 @@ from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import require_auth
+from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
+from radiofeed.feedparser.exceptions import FeedParserError
+from radiofeed.feedparser.feed_parser import FeedParser
 from radiofeed.pagination import render_pagination_response
-from radiofeed.podcasts import itunes
+from radiofeed.podcasts import itunes, websub
 from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
@@ -271,6 +278,63 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     messages.info(request, "You are no longer subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, False)
+
+
+@require_form_methods
+@csrf_exempt
+@never_cache
+def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    """Callback view as per spec https://www.w3.org/TR/websub/.
+
+    Handles GET and POST requests:
+
+    1. A POST request is used for content distribution and indicates podcast should be updated with new content.
+
+    2. A GET request is used for feed verification.
+    """
+    # content distribution
+    if request.method == "POST":
+        podcast = _get_podcast_or_404(
+            podcast_id,
+            websub_mode="subscribe",
+            active=True,
+            podping=False,
+        )
+
+        if websub.check_signature(request, podcast):
+            with contextlib.suppress(FeedParserError):
+                FeedParser(podcast).parse()
+
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+
+    # verification
+    try:
+        # check all required fields are present
+
+        mode = request.GET["hub.mode"]
+        topic = request.GET["hub.topic"]
+        challenge = request.GET["hub.challenge"]
+
+        lease_seconds = int(
+            request.GET.get("hub.lease_seconds", websub.DEFAULT_LEASE_SECONDS)
+        )
+
+        podcast = _get_podcast_or_404(podcast_id, rss=topic)
+
+        podcast.websub_mode = mode
+
+        podcast.websub_expires = (
+            timezone.now() + timedelta(seconds=lease_seconds)
+            if mode == "subscribe"
+            else None
+        )
+
+        podcast.save()
+
+        return HttpResponse(challenge)
+
+    except (KeyError, ValueError) as e:
+        raise Http404 from e
 
 
 def _get_podcasts() -> QuerySet[Podcast]:

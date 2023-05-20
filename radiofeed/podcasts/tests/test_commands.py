@@ -1,10 +1,36 @@
 import pytest
+import requests
 from django.core.management import call_command
 
 from radiofeed.factories import create_batch
-from radiofeed.podcasts.factories import create_recommendation
+from radiofeed.podcasts.factories import create_podcast, create_recommendation
 from radiofeed.podcasts.itunes import Feed
 from radiofeed.users.factories import create_user
+
+
+class TestSubscribeWebsubFeeds:
+    hub = "https://example.com/hub/"
+
+    @pytest.fixture
+    def subscribe(self, mocker):
+        return mocker.patch(
+            "radiofeed.podcasts.websub.subscribe",
+        )
+
+    def test_subscribe(self, db, subscribe):
+        create_podcast(websub_hub=self.hub)
+        call_command("subscribe_websub_feeds", limit=200)
+        subscribe.assert_called()
+
+    def test_exception(self, db, mocker):
+        subscribe = mocker.patch(
+            "radiofeed.podcasts.websub.subscribe",
+            side_effect=requests.HTTPError("oops"),
+        )
+
+        create_podcast(websub_hub=self.hub)
+        call_command("subscribe_websub_feeds", limit=200)
+        subscribe.assert_called()
 
 
 class TestCreateRecommendations:
