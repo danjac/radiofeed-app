@@ -54,10 +54,10 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def parse_feed(podcast: Podcast) -> None:
+def parse_feed(podcast: Podcast, **kwargs) -> None:
     """Shortcut function to parse podcast feed."""
     with contextlib.suppress(FeedParserError):
-        FeedParser(podcast).parse()
+        FeedParser(podcast).parse(**kwargs)
 
 
 class FeedParser:
