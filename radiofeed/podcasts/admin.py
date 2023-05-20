@@ -195,7 +195,7 @@ class WebsubFilter(admin.SimpleListFilter):
         return (
             ("yes", "Websub"),
             ("no", "No Websub"),
-            ("subscribed", "Subscribe"),
+            ("subscribe", "Subscribe"),
         )
 
     def queryset(
