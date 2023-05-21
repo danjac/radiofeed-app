@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser
+from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
 _OPERATION_ID_RE: Final = re.compile(r"^pp_(.*)_(.*)|podping$")
@@ -40,7 +41,10 @@ class Command(BaseCommand):
         nodelist.update_nodes()
 
         blockchain = Blockchain(
-            blockchain_instance=beem.Hive(node=nodelist.get_hive_nodes())
+            blockchain_instance=beem.Hive(
+                node=nodelist.get_hive_nodes(),
+                debug=True,
+            ),
         )
 
         rewind_from = timedelta(minutes=options["rewind"])
@@ -75,12 +79,14 @@ class Command(BaseCommand):
         urls: Iterator[str],
         rewind_from: timedelta,
     ) -> None:
-        with ThreadPoolExecutor() as executor:
-            executor.map(
-                lambda podcast: feed_parser.parse_feed(podcast, podping=True),
-                Podcast.objects.filter(
-                    Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - rewind_from),
-                    active=True,
-                    rss__in=set(urls),
-                ),
-            )
+        for batch in batcher(urls, 100):
+            with ThreadPoolExecutor() as executor:
+                executor.map(
+                    lambda podcast: feed_parser.parse_feed(podcast, podping=True),
+                    Podcast.objects.filter(
+                        Q(parsed__isnull=True)
+                        | Q(parsed__lt=timezone.now() - rewind_from),
+                        active=True,
+                        rss__in=set(batch),
+                    ),
+                )
