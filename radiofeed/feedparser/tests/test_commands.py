@@ -25,6 +25,11 @@ def mock_parse_fail(mocker):
 
 class TestPodping:
     def _mock_stream(self, mocker, json_data, op_id="pp_podcast_update"):
+        mocker.patch("beem.nodelist.NodeList.update_nodes")
+        mocker.patch(
+            "beem.nodelist.NodeList.get_hive_nodes",
+            return_value=["https://api.hive.blog"],
+        )
         return mocker.patch(
             "beem.blockchain.Blockchain.stream",
             return_value=[

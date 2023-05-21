@@ -8,6 +8,7 @@ from typing import Final
 
 import beem
 from beem.blockchain import Blockchain
+from beem.nodelist import NodeList
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils import timezone
@@ -16,12 +17,6 @@ from radiofeed.feedparser import feed_parser
 from radiofeed.podcasts.models import Podcast
 
 _OPERATION_ID_RE: Final = re.compile(r"^pp_(.*)_(.*)|podping$")
-_NODES = [
-    "https://api.hive.blog",
-    "https://api.deathwing.me",
-    "https://api.openhive.network",
-    "https://rpc.ausbit.dev",
-]
 
 
 class Command(BaseCommand):
@@ -41,7 +36,12 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Main command method."""
 
-        blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive(node=_NODES))
+        nodelist = NodeList()
+        nodelist.update_nodes()
+
+        blockchain = Blockchain(
+            blockchain_instance=beem.Hive(node=nodelist.get_hive_nodes())
+        )
 
         rewind_from = timedelta(minutes=options["rewind"])
 
