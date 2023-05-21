@@ -1,5 +1,4 @@
 import json
-import logging
 import re
 from argparse import ArgumentParser
 from collections.abc import Iterator
@@ -57,14 +56,14 @@ class Command(BaseCommand):
                 start=blockchain.get_estimated_block_num(timezone.now() - rewind_from),
             ),
             rewind_from,
-        ),
+        )
 
     def _parse_stream(self, stream: Iterator[dict], rewind_from: timedelta) -> None:
         for post in stream:
             if _OPERATION_ID_RE.match(post["id"]):
                 data = json.loads(post["json"])
 
-                urls = set()
+                urls: set[str] = set()
 
                 urls = urls | set(data.get("iris", []))
                 urls = urls | set(data.get("urls", []))
@@ -73,16 +72,20 @@ class Command(BaseCommand):
                     urls.add(url)
 
                 if urls:
-                    logging.info("Podping urls: %s", urls)
-                    with ThreadPoolExecutor() as executor:
-                        executor.map(
-                            lambda podcast: feed_parser.parse_feed(
-                                podcast, podping=True
-                            ),
-                            Podcast.objects.filter(
-                                Q(parsed__isnull=True)
-                                | Q(parsed__lt=timezone.now() - rewind_from),
-                                active=True,
-                                rss__in=urls,
-                            ),
-                        )
+                    self._parse_feeds(urls, rewind_from)
+
+    def _parse_feeds(self, urls: set[str], rewind_from: timedelta) -> None:
+        self.stdout.write(f"Podping urls: {urls}")
+        with ThreadPoolExecutor() as executor:
+            executor.map(
+                self._parse_feed,
+                Podcast.objects.filter(
+                    Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - rewind_from),
+                    active=True,
+                    rss__in=urls,
+                ).iterator(),
+            )
+
+    def _parse_feed(self, podcast: Podcast) -> None:
+        self.stdout.write(f"Podcast: {podcast}")
+        feed_parser.parse_feed(podcast, podping=True)
