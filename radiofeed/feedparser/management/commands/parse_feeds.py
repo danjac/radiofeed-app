@@ -4,6 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 from django.core.management.base import BaseCommand
 
 from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.iterators import batcher
+from radiofeed.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
@@ -22,8 +24,13 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with ThreadPoolExecutor() as executor:
-            executor.map(
-                feed_parser.parse_feed,
-                scheduler.get_podcasts_for_update()[: options["limit"]].iterator(),
-            )
+        for podcasts in batcher(
+            scheduler.get_podcasts_for_update()[: options["limit"]].iterator(),
+            30,
+        ):
+            with ThreadPoolExecutor() as executor:
+                executor.map(self._parse_feed, podcasts)
+
+    def _parse_feed(self, podcast: Podcast) -> None:
+        self.stdout.write(f"Parse feed: {podcast}")
+        feed_parser.parse_feed(podcast)
