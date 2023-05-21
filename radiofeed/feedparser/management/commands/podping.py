@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from argparse import ArgumentParser
 from collections.abc import Iterator
@@ -14,7 +15,6 @@ from django.db.models import Q
 from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser
-from radiofeed.iterators import batcher
 from radiofeed.podcasts.models import Podcast
 
 _OPERATION_ID_RE: Final = re.compile(r"^pp_(.*)_(.*)|podping$")
@@ -49,44 +49,40 @@ class Command(BaseCommand):
 
         rewind_from = timedelta(minutes=options["rewind"])
 
-        self._parse_feeds(
-            self._parse_stream(
-                blockchain.stream(
-                    opNames=["custom_json"],
-                    raw_ops=False,
-                    threading=False,
-                    start=blockchain.get_estimated_block_num(
-                        timezone.now() - rewind_from
-                    ),
-                ),
+        self._parse_stream(
+            blockchain.stream(
+                opNames=["custom_json"],
+                raw_ops=False,
+                threading=False,
+                start=blockchain.get_estimated_block_num(timezone.now() - rewind_from),
             ),
             rewind_from,
-        )
+        ),
 
-    def _parse_stream(self, stream: Iterator[dict]) -> Iterator[str]:
+    def _parse_stream(self, stream: Iterator[dict], rewind_from: timedelta) -> None:
         for post in stream:
             if _OPERATION_ID_RE.match(post["id"]):
                 data = json.loads(post["json"])
 
-                yield from data.get("iris", [])
-                yield from data.get("urls", [])
+                urls = set()
+
+                urls = urls | set(data.get("iris", []))
+                urls = urls | set(data.get("urls", []))
 
                 if url := data.get("url"):
-                    yield url
+                    urls.add(url)
 
-    def _parse_feeds(
-        self,
-        urls: Iterator[str],
-        rewind_from: timedelta,
-    ) -> None:
-        for batch in batcher(urls, 100):
-            with ThreadPoolExecutor() as executor:
-                executor.map(
-                    lambda podcast: feed_parser.parse_feed(podcast, podping=True),
-                    Podcast.objects.filter(
-                        Q(parsed__isnull=True)
-                        | Q(parsed__lt=timezone.now() - rewind_from),
-                        active=True,
-                        rss__in=set(batch),
-                    ),
-                )
+                if urls:
+                    logging.info("Podping urls: %s", urls)
+                    with ThreadPoolExecutor() as executor:
+                        executor.map(
+                            lambda podcast: feed_parser.parse_feed(
+                                podcast, podping=True
+                            ),
+                            Podcast.objects.filter(
+                                Q(parsed__isnull=True)
+                                | Q(parsed__lt=timezone.now() - rewind_from),
+                                active=True,
+                                rss__in=urls,
+                            ),
+                        )
