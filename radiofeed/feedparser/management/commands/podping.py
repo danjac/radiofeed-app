@@ -87,5 +87,5 @@ class Command(BaseCommand):
             )
 
     def _parse_feed(self, podcast: Podcast) -> None:
-        self.stdout.write(f"Podcast: {podcast}")
+        self.stdout.write(f"Parse feed: {podcast}")
         feed_parser.parse_feed(podcast, podping=True)
