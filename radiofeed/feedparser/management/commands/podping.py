@@ -16,6 +16,12 @@ from radiofeed.feedparser import feed_parser
 from radiofeed.podcasts.models import Podcast
 
 _OPERATION_ID_RE: Final = re.compile(r"^pp_(.*)_(.*)|podping$")
+_NODES = [
+    "https://api.hive.blog",
+    "https://api.deathwing.me",
+    "https://api.openhive.network",
+    "https://rpc.ausbit.dev",
+]
 
 
 class Command(BaseCommand):
@@ -35,7 +41,7 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Main command method."""
 
-        blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive())
+        blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive(node=_NODES))
 
         rewind_from = timedelta(minutes=options["rewind"])
 
