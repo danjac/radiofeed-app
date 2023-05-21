@@ -27,9 +27,9 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
             websub_mode="subscribe",
             websub_expires__lt=timezone.now(),
         ),
+        active=True,
         websub_hub__isnull=False,
         num_websub_retries__lt=3,
-        podping=False,
     ).order_by(F("websub_expires").asc(nulls_first=True))
 
 

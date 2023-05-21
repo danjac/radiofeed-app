@@ -4,9 +4,6 @@
     "formation": {
         "web": {
             "quantity": 1
-        },
-        "podping": {
-            "quantity": 1
         }
     },
     "cron": [

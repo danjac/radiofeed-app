@@ -296,7 +296,6 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             podcast_id,
             websub_mode="subscribe",
             active=True,
-            podping=False,
         )
 
         if websub.check_signature(request, podcast):

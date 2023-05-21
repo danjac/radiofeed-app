@@ -71,25 +71,22 @@ class TestNextScheduledUpdate:
 
 class TestGetPodcastsForUpdate:
     @pytest.mark.parametrize(
-        "active,parsed,pub_date,frequency,podping,exists",
+        "active,parsed,pub_date,frequency,exists",
         [
-            (True, None, None, timedelta(hours=24), False, True),
-            (True, None, None, timedelta(hours=24), True, False),
-            (False, None, None, timedelta(hours=24), False, False),
+            (True, None, None, timedelta(hours=24), True),
+            (False, None, None, timedelta(hours=24), False),
             (
                 True,
                 timedelta(seconds=1200),
                 timedelta(days=3),
                 timedelta(hours=24),
                 False,
-                False,
             ),
             (
                 True,
                 timedelta(hours=3),
                 timedelta(days=3),
                 timedelta(hours=24),
-                False,
                 True,
             ),
             (
@@ -97,7 +94,6 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=3),
                 timedelta(days=3),
                 timedelta(hours=24),
-                False,
                 True,
             ),
             (
@@ -105,7 +101,6 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=3),
                 timedelta(days=3),
                 timedelta(hours=24),
-                False,
                 False,
             ),
             (
@@ -113,7 +108,6 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=3),
                 timedelta(hours=3),
                 timedelta(hours=24),
-                False,
                 False,
             ),
             (
@@ -121,7 +115,6 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=15),
                 timedelta(days=15),
                 timedelta(days=30),
-                False,
                 True,
             ),
             (
@@ -129,18 +122,14 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=30),
                 timedelta(days=90),
                 timedelta(days=30),
-                False,
                 True,
             ),
         ],
     )
     @pytest.mark.django_db
-    def test_get_podcasts_for_update(
-        self, active, parsed, pub_date, frequency, podping, exists
-    ):
+    def test_get_podcasts_for_update(self, active, parsed, pub_date, frequency, exists):
         create_podcast(
             active=active,
-            podping=podping,
             parsed=timezone.now() - parsed if parsed else None,
             pub_date=timezone.now() - pub_date if pub_date else None,
             frequency=frequency,

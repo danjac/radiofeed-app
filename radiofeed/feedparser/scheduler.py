@@ -55,7 +55,6 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
                 parsed__lt=now - _MIN_FREQUENCY,
             ),
             active=True,
-            podping=False,
         )
         .order_by(
             F("subscribers").desc(),
