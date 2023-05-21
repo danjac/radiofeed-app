@@ -5,7 +5,6 @@ from django.core.management.base import BaseCommand
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.iterators import batcher
-from radiofeed.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
@@ -29,8 +28,4 @@ class Command(BaseCommand):
             30,
         ):
             with ThreadPoolExecutor() as executor:
-                executor.map(self._parse_feed, podcasts)
-
-    def _parse_feed(self, podcast: Podcast) -> None:
-        self.stdout.write(f"Parse feed: {podcast}")
-        feed_parser.parse_feed(podcast)
+                executor.map(feed_parser.parse_feed, podcasts)
