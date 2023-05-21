@@ -59,32 +59,6 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class PodpingFilter(admin.SimpleListFilter):
-    """Filters podping podcasts."""
-
-    title = "Podping"
-    parameter_name = "podping"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (
-            ("yes", "Yes"),
-            ("no", "No"),
-        )
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
-        """Returns filtered queryset."""
-        match self.value():
-            case "yes":
-                return queryset.filter(podping=True)
-            case "no":
-                return queryset.filter(podping=False)
-            case _:
-                return queryset
-
-
 class ParserErrorFilter(admin.SimpleListFilter):
     """Filters based on parser error."""
 
@@ -240,7 +214,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         ParserErrorFilter,
-        PodpingFilter,
         PubDateFilter,
         PromotedFilter,
         SubscribedFilter,
@@ -266,7 +239,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     readonly_fields = (
         "pub_date",
-        "podping",
         "parsed",
         "frequency",
         "next_scheduled_update",

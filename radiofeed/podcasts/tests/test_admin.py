@@ -11,7 +11,6 @@ from radiofeed.podcasts.admin import (
     CategoryAdmin,
     ParserErrorFilter,
     PodcastAdmin,
-    PodpingFilter,
     PromotedFilter,
     PubDateFilter,
     SubscribedFilter,
@@ -165,31 +164,6 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert inactive in qs
-
-
-class TestPodpingFilter:
-    @pytest.mark.django_db
-    def test_any(self, podcasts, podcast_admin, req):
-        create_podcast(podping=True)
-        f = PodpingFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    @pytest.mark.django_db
-    def test_true(self, podcasts, podcast_admin, req):
-        podping = create_podcast(podping=True)
-        f = PodpingFilter(req, {"podping": "yes"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podping in qs
-
-    @pytest.mark.django_db
-    def test_false(self, podcasts, podcast_admin, req):
-        podping = create_podcast(podping=True)
-        f = PodpingFilter(req, {"podping": "no"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert podping not in qs
 
 
 class TestParserErrorFilter:
