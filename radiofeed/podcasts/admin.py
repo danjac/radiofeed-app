@@ -59,26 +59,24 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class ParserErrorFilter(admin.SimpleListFilter):
+class ParserResultFilter(admin.SimpleListFilter):
     """Filters based on parser error."""
 
-    title = "Parser Error"
-    parameter_name = "parser_error"
+    title = "Parser Result"
+    parameter_name = "parser_result"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("none", "None"),) + tuple(Podcast.ParserError.choices)
+        return Podcast.ParserResult.choices
 
     def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
         """Returns filtered queryset."""
 
         match self.value():
-            case "none":
-                return queryset.filter(parser_error__isnull=True)
-            case value if value in Podcast.ParserError:  # type: ignore
-                return queryset.filter(parser_error=value)
+            case value if value in Podcast.ParserResult:  # type: ignore
+                return queryset.filter(parser_result=value)
             case _:
                 return queryset
 
@@ -213,7 +211,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        ParserErrorFilter,
+        ParserResultFilter,
         PubDateFilter,
         PromotedFilter,
         SubscribedFilter,
@@ -242,7 +240,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
         "parsed",
         "frequency",
         "next_scheduled_update",
-        "parser_error",
+        "parser_result",
         "modified",
         "etag",
         "content_hash",

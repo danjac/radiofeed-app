@@ -103,7 +103,7 @@ class FeedParser:
         except FeedParserError as e:
             _logger.debug(
                 "parse feed %s: %s",
-                e.parser_error,
+                e.parser_result,
                 self._podcast,
             )
             return self._handle_feed_error(e, **fields)
@@ -113,7 +113,6 @@ class FeedParser:
         with transaction.atomic():
             self._podcast_update(
                 num_retries=0,
-                parser_error=None,
                 content_hash=content_hash,
                 keywords=keywords,
                 rss=response.url,
@@ -122,6 +121,7 @@ class FeedParser:
                 modified=parse_date(response.headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
+                parser_result=Podcast.ParserResult.SUCCESS,
                 **self._extract_websub_links(response, feed),
                 **attrs.asdict(
                     feed,
@@ -215,7 +215,7 @@ class FeedParser:
             active=active,
             num_retries=num_retries,
             frequency=frequency,
-            parser_error=exc.parser_error,
+            parser_result=exc.parser_result,
             **fields,
         )
 
