@@ -102,7 +102,7 @@ class FeedParser:
             feed = rss_parser.parse_rss(response.content)
         except FeedParserError as e:
             _logger.debug(
-                "parse feed %s:%s",
+                "parse feed %s: %s",
                 e.parser_error,
                 self._podcast,
             )
@@ -139,7 +139,7 @@ class FeedParser:
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
 
-        _logger.debug("parse feed ok:%s", self._podcast)
+        _logger.debug("parse feed ok: %s", self._podcast)
 
     def _get_response(self) -> requests.Response:
         try:
