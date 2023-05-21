@@ -2,6 +2,7 @@ import contextlib
 import functools
 import hashlib
 import http
+import logging
 from collections.abc import Iterator
 from typing import Final
 
@@ -38,6 +39,8 @@ _ACCEPT: Final = (
     "text/xml;q=0.2,"
     "*/*;q=0.1"
 )
+
+_logger = logging.getLogger(__name__)
 
 
 @functools.lru_cache
@@ -98,6 +101,11 @@ class FeedParser:
                 raise Duplicate()
             feed = rss_parser.parse_rss(response.content)
         except FeedParserError as e:
+            _logger.debug(
+                "parse feed %s:%s",
+                e.parser_error,
+                self._podcast,
+            )
             return self._handle_feed_error(e, **fields)
 
         categories, keywords = self._extract_categories(feed)
@@ -130,6 +138,8 @@ class FeedParser:
 
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
+
+        _logger.debug("parse feed ok:%s", self._podcast)
 
     def _get_response(self) -> requests.Response:
         try:

@@ -48,17 +48,17 @@ class Command(BaseCommand):
 
         rewind_from = timedelta(minutes=options["rewind"])
 
-        self._parse_stream(
+        for urls in self._parse_stream(
             blockchain.stream(
                 opNames=["custom_json"],
                 raw_ops=False,
                 threading=False,
                 start=blockchain.get_estimated_block_num(timezone.now() - rewind_from),
             ),
-            rewind_from,
-        )
+        ):
+            self._parse_feeds(urls, rewind_from)
 
-    def _parse_stream(self, stream: Iterator[dict], rewind_from: timedelta) -> None:
+    def _parse_stream(self, stream: Iterator[dict]) -> Iterator[set[str]]:
         for post in stream:
             if _OPERATION_ID_RE.match(post["id"]):
                 data = json.loads(post["json"])
@@ -71,11 +71,10 @@ class Command(BaseCommand):
                 if url := data.get("url"):
                     urls.add(url)
 
-                if urls:
-                    self._parse_feeds(urls, rewind_from)
+                yield urls
 
     def _parse_feeds(self, urls: set[str], rewind_from: timedelta) -> None:
-        self.stdout.write(f"Podping urls: {urls}")
+        self.stdout.write(f"podping urls: {urls}")
         with ThreadPoolExecutor() as executor:
             executor.map(
                 self._parse_feed,
@@ -87,5 +86,4 @@ class Command(BaseCommand):
             )
 
     def _parse_feed(self, podcast: Podcast) -> None:
-        self.stdout.write(f"Parse feed: {podcast}")
         feed_parser.parse_feed(podcast, podping=True)
