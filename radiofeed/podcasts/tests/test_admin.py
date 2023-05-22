@@ -9,7 +9,7 @@ from radiofeed.factories import create_batch
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
-    ParserResultFilter,
+    ParserErrorFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
@@ -166,22 +166,22 @@ class TestActiveFilter:
         assert inactive in qs
 
 
-class TestParserResultFilter:
+class TestParserErrorFilter:
     @pytest.fixture
     def duplicate(self):
-        return create_podcast(parser_result=Podcast.ParserResult.DUPLICATE)
+        return create_podcast(parser_error=Podcast.ParserError.DUPLICATE)
 
     @pytest.mark.django_db
     def test_all(self, podcasts, podcast_admin, req, duplicate):
-        f = ParserResultFilter(req, {}, Podcast, podcast_admin)
+        f = ParserErrorFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
     def test_duplicate(self, podcasts, podcast_admin, req, duplicate):
-        f = ParserResultFilter(
+        f = ParserErrorFilter(
             req,
-            {"parser_result": Podcast.ParserResult.DUPLICATE},
+            {"parser_error": Podcast.ParserError.DUPLICATE},
             Podcast,
             podcast_admin,
         )

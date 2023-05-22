@@ -101,13 +101,12 @@ class PodcastQuerySet(
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
-    class ParserResult(models.TextChoices):
+    class ParserError(models.TextChoices):
         DUPLICATE = "duplicate", "Duplicate"
         INACCESSIBLE = "inaccessible", "Inaccessible"
         INVALID_RSS = "invalid_rss", "Invalid RSS"
         NOT_MODIFIED = "not_modified", "Not Modified"
         UNAVAILABLE = "unavailable", "Unavailable"
-        SUCCESS = "success", "Success"
 
     rss: str = models.URLField(unique=True, max_length=500)
 
@@ -123,8 +122,11 @@ class Podcast(models.Model):
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    parser_result: str = models.CharField(
-        max_length=30, choices=ParserResult.choices, default=ParserResult.SUCCESS
+    parser_error: str = models.CharField(
+        max_length=30,
+        choices=ParserError.choices,
+        null=True,
+        blank=True,
     )
 
     frequency: timedelta = models.DurationField(
