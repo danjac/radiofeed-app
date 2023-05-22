@@ -62,7 +62,7 @@ class ActiveFilter(admin.SimpleListFilter):
 class ParserErrorFilter(admin.SimpleListFilter):
     """Filters based on parser error."""
 
-    title = "Parser Result"
+    title = "Parser Error"
     parameter_name = "parser_error"
 
     def lookups(
