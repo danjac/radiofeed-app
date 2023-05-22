@@ -31,7 +31,7 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
         websub_hub__isnull=False,
         num_websub_retries__lt=3,
     ).order_by(
-        F("websub_expires").asc(nulls_first=False),
+        F("websub_expires").asc(nulls_first=True),
     )
 
 
