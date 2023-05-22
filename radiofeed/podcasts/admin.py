@@ -84,7 +84,7 @@ class ParserErrorFilter(admin.SimpleListFilter):
 class PubDateFilter(admin.SimpleListFilter):
     """Filters podcasts based on last pub date."""
 
-    title = "Release Date"
+    title = "Pub Date"
     parameter_name = "pub_date"
 
     def lookups(
