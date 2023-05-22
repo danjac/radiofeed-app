@@ -71,15 +71,43 @@ class TestNextScheduledUpdate:
 
 class TestGetPodcastsForUpdate:
     @pytest.mark.parametrize(
-        "active,parsed,pub_date,frequency,exists",
+        ",".join(
+            [
+                "active",
+                "parsed",
+                "pub_date",
+                "frequency",
+                "websub_mode",
+                "websub_expires",
+                "exists",
+            ]
+        ),
         [
-            (True, None, None, timedelta(hours=24), True),
-            (False, None, None, timedelta(hours=24), False),
+            (
+                True,
+                None,
+                None,
+                timedelta(hours=24),
+                "",
+                None,
+                True,
+            ),
+            (
+                False,
+                None,
+                None,
+                timedelta(hours=24),
+                "",
+                None,
+                False,
+            ),
             (
                 True,
                 timedelta(seconds=1200),
                 timedelta(days=3),
                 timedelta(hours=24),
+                "",
+                None,
                 False,
             ),
             (
@@ -87,6 +115,8 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=3),
                 timedelta(days=3),
                 timedelta(hours=24),
+                "",
+                None,
                 True,
             ),
             (
@@ -94,6 +124,8 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=3),
                 timedelta(days=3),
                 timedelta(hours=24),
+                "",
+                None,
                 True,
             ),
             (
@@ -101,6 +133,8 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=3),
                 timedelta(days=3),
                 timedelta(hours=24),
+                "",
+                None,
                 False,
             ),
             (
@@ -108,6 +142,8 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=3),
                 timedelta(hours=3),
                 timedelta(hours=24),
+                "",
+                None,
                 False,
             ),
             (
@@ -115,6 +151,8 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=15),
                 timedelta(days=15),
                 timedelta(days=30),
+                "",
+                None,
                 True,
             ),
             (
@@ -122,16 +160,57 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=30),
                 timedelta(days=90),
                 timedelta(days=30),
+                "",
+                None,
                 True,
+            ),
+            (
+                True,
+                timedelta(days=30),
+                timedelta(days=90),
+                timedelta(days=30),
+                "subscribe",
+                None,
+                True,
+            ),
+            (
+                True,
+                timedelta(days=30),
+                timedelta(days=90),
+                timedelta(days=30),
+                "subscribe",
+                timedelta(days=-3),
+                True,
+            ),
+            (
+                True,
+                timedelta(days=30),
+                timedelta(days=90),
+                timedelta(days=30),
+                "subscribe",
+                timedelta(days=3),
+                False,
             ),
         ],
     )
     @pytest.mark.django_db
-    def test_get_podcasts_for_update(self, active, parsed, pub_date, frequency, exists):
+    def test_get_podcasts_for_update(
+        self,
+        active,
+        parsed,
+        pub_date,
+        frequency,
+        websub_mode,
+        websub_expires,
+        exists,
+    ):
+        now = timezone.now()
         create_podcast(
             active=active,
-            parsed=timezone.now() - parsed if parsed else None,
-            pub_date=timezone.now() - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
+            websub_expires=now + websub_expires if websub_expires else None,
+            websub_mode=websub_mode,
             frequency=frequency,
         )
 

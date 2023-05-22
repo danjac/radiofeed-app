@@ -56,6 +56,10 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
             ),
             active=True,
         )
+        .exclude(
+            websub_mode="subscribe",
+            websub_expires__gt=now,
+        )
         .order_by(
             F("subscribers").desc(),
             F("promoted").desc(),
