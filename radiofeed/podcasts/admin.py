@@ -9,6 +9,7 @@ from django_object_actions import DjangoObjectActions
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.podcasts import websub
 from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
@@ -191,7 +192,7 @@ class WebsubFilter(admin.SimpleListFilter):
                         websub_expires__lt=timezone.now(),
                     ),
                     websub_hub__isnull=False,
-                    num_websub_retries__lt=3,
+                    num_websub_retries__lt=websub.MAX_NUM_RETRIES,
                 )
 
             case "subscribed":

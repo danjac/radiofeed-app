@@ -18,6 +18,8 @@ from radiofeed.podcasts.models import Podcast
 
 DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 
+MAX_NUM_RETRIES: Final = 3
+
 
 def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
     """Return podcasts for websub subscription requests."""
@@ -29,7 +31,7 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
         ),
         active=True,
         websub_hub__isnull=False,
-        num_websub_retries__lt=3,
+        num_websub_retries__lt=MAX_NUM_RETRIES,
     ).order_by(
         F("websub_expires").asc(nulls_first=True),
     )
