@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import admin, messages
-from django.db.models import Count, Exists, OuterRef, QuerySet
+from django.db.models import Count, Exists, OuterRef, Q, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
 from django.utils import timezone
@@ -170,7 +170,6 @@ class WebsubFilter(admin.SimpleListFilter):
             ("no", "No Websub"),
             ("pending", "Pending"),
             ("subscribed", "Subscribed"),
-            ("expired", "Expired"),
         )
 
     def queryset(
@@ -185,20 +184,22 @@ class WebsubFilter(admin.SimpleListFilter):
             case "no":
                 return queryset.filter(websub_hub__isnull=True)
             case "pending":
-                return queryset.filter(websub_hub__isnull=False, websub_mode="")
+                return queryset.filter(
+                    Q(websub_mode="")
+                    | Q(
+                        websub_mode="subscribe",
+                        websub_expires__lt=timezone.now(),
+                    ),
+                    websub_hub__isnull=False,
+                    num_websub_retries__lt=3,
+                )
+
             case "subscribed":
                 return queryset.filter(
                     websub_hub__isnull=False,
                     websub_mode="subscribe",
                     websub_expires__gte=now,
                 )
-            case "expired":
-                return queryset.filter(
-                    websub_hub__isnull=False,
-                    websub_mode="subscribe",
-                    websub_expires__lt=now,
-                )
-
             case _:
                 return queryset
 
