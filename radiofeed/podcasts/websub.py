@@ -57,26 +57,26 @@ def subscribe(
     scheme = "https" if settings.USE_HTTPS else "http"
     site = Site.objects.get_current()
 
-    response = requests.post(
-        podcast.websub_hub,
-        {
-            "hub.mode": mode,
-            "hub.topic": podcast.rss,
-            "hub.secret": secret.hex,
-            "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
-            "hub.callback": f"{scheme}://{site.domain}{callback_url}",
-            # required for some older implementations, e.g. pushpress
-            "hub.verify": "async",
-        },
-        headers={
-            "Content-Type": "application/x-www-form-urlencoded",
-            "User-Agent": settings.USER_AGENT,
-        },
-        allow_redirects=True,
-        timeout=10,
-    )
-
     try:
+        response = requests.post(
+            podcast.websub_hub,
+            {
+                "hub.mode": mode,
+                "hub.topic": podcast.rss,
+                "hub.secret": secret.hex,
+                "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
+                "hub.callback": f"{scheme}://{site.domain}{callback_url}",
+                # required for some older implementations, e.g. pushpress
+                "hub.verify": "async",
+            },
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+                "User-Agent": settings.USER_AGENT,
+            },
+            allow_redirects=True,
+            timeout=10,
+        )
+
         response.raise_for_status()
 
         podcast.websub_mode = mode

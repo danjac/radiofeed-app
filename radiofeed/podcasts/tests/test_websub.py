@@ -9,12 +9,10 @@ from datetime import timedelta
 import pytest
 import requests
 from django.utils import timezone
-from faker import Faker
+from requests.exceptions import ReadTimeout
 
 from radiofeed.podcasts import websub
 from radiofeed.podcasts.factories import create_podcast
-
-_faker = Faker()
 
 
 @dataclasses.dataclass
@@ -228,6 +226,24 @@ class TestSubscribe:
         assert websub_podcast.websub_mode == "unsubscribe"
         assert websub_podcast.websub_expires is None
         assert websub_podcast.websub_secret
+
+    @pytest.mark.django_db
+    def test_timeout(self, mocker, websub_podcast):
+        mocker.patch(
+            "requests.post",
+            side_effect=ReadTimeout,
+        )
+
+        with pytest.raises(requests.ReadTimeout):
+            websub.subscribe(websub_podcast)
+
+        websub_podcast.refresh_from_db()
+
+        assert websub_podcast.websub_mode == ""
+        assert websub_podcast.websub_expires is None
+        assert websub_podcast.websub_secret is None
+
+        assert websub_podcast.num_websub_retries == 1
 
     @pytest.mark.django_db
     def test_error(self, mocker, websub_podcast):
