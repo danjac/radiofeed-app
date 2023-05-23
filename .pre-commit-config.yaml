@@ -44,7 +44,7 @@ repos:
             files: \.(|js|css)$
             exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/Riverside-Healthcare/djLint
-      rev: v1.28.0
+      rev: v1.29.0
       hooks:
           - id: djlint-django
             args: ["--lint", "--reformat"]
@@ -63,7 +63,7 @@ repos:
           - id: django-upgrade
             args: [--target-version, "4.2"]
     - repo: https://github.com/python-poetry/poetry
-      rev: "1.4.0"
+      rev: "1.5.0"
       hooks:
           - id: poetry-check
           - id: poetry-lock
