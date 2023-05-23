@@ -66,8 +66,6 @@ def subscribe(
                 "hub.secret": secret.hex,
                 "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
                 "hub.callback": f"{scheme}://{site.domain}{callback_url}",
-                # required for some older implementations, e.g. pushpress
-                "hub.verify": "async",
             },
             headers={
                 "Content-Type": "application/x-www-form-urlencoded",
