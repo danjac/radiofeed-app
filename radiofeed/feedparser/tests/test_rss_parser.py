@@ -35,7 +35,7 @@ class TestParseRss:
         assert feed.title == "Mysterious Universe"
 
     @pytest.mark.parametrize(
-        "filename,title,num_items",
+        ("filename", "title", "num_items"),
         [
             ("rss_missing_enc_length.xml", "The Vanilla JS Podcast", 71),
             (

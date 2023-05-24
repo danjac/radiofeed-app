@@ -9,7 +9,7 @@ class TestUserManager:
     email = "tester@gmail.com"
 
     @pytest.mark.parametrize(
-        "active,send_email_notifications,exists",
+        ("active", "send_email_notifications", "exists"),
         [
             (True, True, True),
             (True, False, False),

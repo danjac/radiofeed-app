@@ -181,7 +181,7 @@ class TestEpisodeModel:
         assert episode.get_cover_url() is None
 
     @pytest.mark.parametrize(
-        "episode_type,number,season,expected",
+        ("episode_type", "number", "season", "expected"),
         [
             ("full", None, None, ""),
             ("trailer", None, None, "Trailer"),

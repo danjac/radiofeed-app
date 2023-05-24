@@ -5,7 +5,7 @@ from radiofeed.feedparser import validators
 
 class TestRequired:
     @pytest.mark.parametrize(
-        "value,raises",
+        ("value", "raises"),
         [
             ("ok", False),
             ("", True),
@@ -22,7 +22,7 @@ class TestRequired:
 
 class TestUrl:
     @pytest.mark.parametrize(
-        "value,raises",
+        ("value", "raises"),
         [
             ("http://example.com", False),
             ("https://example.com", False),

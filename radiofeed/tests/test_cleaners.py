@@ -25,7 +25,7 @@ class TestCleanHtml:
 
 class TestStripHtml:
     @pytest.mark.parametrize(
-        "value,expected",
+        ("value", "expected"),
         [
             ("", ""),
             ("  ", ""),

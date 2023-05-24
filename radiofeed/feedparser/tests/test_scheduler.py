@@ -71,16 +71,14 @@ class TestNextScheduledUpdate:
 
 class TestGetPodcastsForUpdate:
     @pytest.mark.parametrize(
-        ",".join(
-            [
-                "active",
-                "parsed",
-                "pub_date",
-                "frequency",
-                "websub_mode",
-                "websub_expires",
-                "exists",
-            ]
+        (
+            "active",
+            "parsed",
+            "pub_date",
+            "frequency",
+            "websub_mode",
+            "websub_expires",
+            "exists",
         ),
         [
             (

@@ -40,7 +40,7 @@ class PageObj:
 
 class TestFormatDuration:
     @pytest.mark.parametrize(
-        "duration,expected",
+        ("duration", "expected"),
         [
             (None, ""),
             (0, ""),
@@ -79,7 +79,7 @@ class TestActiveLink:
 
 class TestMarkdown:
     @pytest.mark.parametrize(
-        "value,expected",
+        ("value", "expected"),
         [
             (None, ""),
             ("", ""),
@@ -99,7 +99,7 @@ class TestForceUrl:
     full_url = "https://" + base_url
 
     @pytest.mark.parametrize(
-        "value,expected",
+        ("value", "expected"),
         [
             (None, ""),
             ("", ""),

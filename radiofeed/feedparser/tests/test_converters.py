@@ -44,7 +44,7 @@ class TestUrl:
 
 class TestDuration:
     @pytest.mark.parametrize(
-        "value,expected",
+        ("value", "expected"),
         [
             (None, ""),
             ("", ""),
