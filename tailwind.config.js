@@ -38,4 +38,11 @@ module.exports = {
         require("@tailwindcss/forms"),
         require("@tailwindcss/typography"),
     ],
+    theme: {
+        extend: {
+            spacing: {
+                128: "32rem",
+            },
+        },
+    },
 };

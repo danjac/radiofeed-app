@@ -35,7 +35,7 @@
                                            href="{{ episode.get_absolute_url }}"
                                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
                                         </a>
-                                        <a class="text-xs leading-tight tracking-tight truncate w-60 lg:w-96 lg:text-sm hover:text-blue-300"
+                                        <a class="text-xs leading-tight tracking-tight truncate w-60 lg:w-96 xl:w-128 lg:text-sm hover:text-blue-300"
                                            href="{{ podcast.get_episodes_url }}"
                                            title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title|truncatechars:120 }}
                                         </a>
