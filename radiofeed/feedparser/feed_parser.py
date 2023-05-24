@@ -57,10 +57,11 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def parse_feed(podcast: Podcast, **kwargs) -> None:
+def parse_feed(podcast_id: int) -> None:
     """Shortcut function to parse podcast feed."""
+    podcast = Podcast.objects.get(pk=podcast_id)
     with contextlib.suppress(FeedParserError):
-        FeedParser(podcast).parse(**kwargs)
+        FeedParser(podcast).parse()
 
 
 class FeedParser:
@@ -74,7 +75,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, **fields):
+    def parse(self):
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
@@ -106,7 +107,7 @@ class FeedParser:
                 e.parser_error,
                 self._podcast,
             )
-            return self._handle_feed_error(e, **fields)
+            return self._handle_feed_error(e)
 
         categories, keywords = self._extract_categories(feed)
 
@@ -133,7 +134,6 @@ class FeedParser:
                         self._feed_attrs.websub_topic,
                     ),
                 ),
-                **fields,
             )
 
             self._podcast.categories.set(categories)

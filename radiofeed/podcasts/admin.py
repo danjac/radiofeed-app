@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
+from django_rq import enqueue
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import feed_parser, scheduler
@@ -259,7 +260,7 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        feed_parser.parse_feed(obj)
+        enqueue(feed_parser.parse_feed, obj.pk)
         self.message_user(request, "Podcast has been updated", level=messages.SUCCESS)
 
     @admin.display(description="Estimated Next Update")

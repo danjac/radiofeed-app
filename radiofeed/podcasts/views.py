@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
+from django_rq import enqueue
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
@@ -299,7 +300,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         )
 
         if websub.check_signature(request, podcast):
-            feed_parser.parse_feed(podcast)
+            enqueue(feed_parser.parse_feed, podcast.pk)
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 

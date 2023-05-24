@@ -45,14 +45,14 @@ class TestParseFeed:
     @pytest.mark.django_db
     def test_ok(self, mocker, podcast):
         mocker.patch("radiofeed.feedparser.feed_parser.FeedParser.parse")
-        parse_feed(podcast)
+        parse_feed(podcast.pk)
 
     @pytest.mark.django_db
     def test_exception(self, mocker, podcast):
         mocker.patch(
             "radiofeed.feedparser.feed_parser.FeedParser.parse", side_effect=NotModified
         )
-        parse_feed(podcast)
+        parse_feed(podcast.pk)
 
 
 class TestFeedParser:

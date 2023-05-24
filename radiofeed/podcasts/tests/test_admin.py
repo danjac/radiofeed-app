@@ -84,6 +84,11 @@ class TestPodcastAdmin:
 
     @pytest.mark.django_db
     def test_parse_podcast_feed_ok(self, mocker, podcast, podcast_admin, req):
+        def _mock_enqueue(fn, *args, **kwargs):
+            fn(*args, **kwargs)
+
+        mocker.patch("radiofeed.podcasts.admin.enqueue", _mock_enqueue)
+
         patched = mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
         podcast_admin.parse_podcast_feed(req, podcast)
         patched.assert_called()

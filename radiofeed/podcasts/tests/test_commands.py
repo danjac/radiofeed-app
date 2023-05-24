@@ -12,17 +12,31 @@ class TestSubscribeWebsubFeeds:
     hub = "https://example.com/hub/"
 
     @pytest.fixture
+    def mock_queue(self, mocker):
+        class _MockQueue:
+            def enqueue(self, fn, *args, **kwargs):
+                fn(*args, **kwargs)
+
+        return mocker.patch("django_rq.get_queue", return_value=_MockQueue())
+
+    @pytest.fixture
     def subscribe(self, mocker):
         return mocker.patch(
             "radiofeed.podcasts.websub.subscribe",
         )
 
-    def test_subscribe(self, db, subscribe):
+    @pytest.fixture
+    def podcast_with_hub(self):
+        return create_podcast(websub_hub=self.hub)
+
+    @pytest.mark.django_db
+    def test_subscribe(self, mock_queue, subscribe):
         create_podcast(websub_hub=self.hub)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
 
-    def test_exception(self, db, mocker):
+    @pytest.mark.django_db
+    def test_exception(self, mock_queue, mocker):
         subscribe = mocker.patch(
             "radiofeed.podcasts.websub.subscribe",
             side_effect=requests.HTTPError("oops"),

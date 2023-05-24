@@ -755,6 +755,26 @@ redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
+name = "django-rq"
+version = "2.8.1"
+description = "An app that provides django integration for RQ (Redis Queue)"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-rq-2.8.1.tar.gz", hash = "sha256:ff053aa4d1b1e1acc47c99b4a21b514de8745894c00d1e6f4abc8b37d35d66d6"},
+    {file = "django_rq-2.8.1-py2.py3-none-any.whl", hash = "sha256:f5d649dc57b5564011460b2b69c8a60a4f5f10ee8692b51d1dfc17035b1039b8"},
+]
+
+[package.dependencies]
+django = ">=2.0"
+redis = ">=3"
+rq = ">=1.14"
+
+[package.extras]
+sentry = ["raven (>=6.1.0)"]
+testing = ["mock (>=2.0.0)"]
+
+[[package]]
 name = "djlint"
 version = "1.29.0"
 description = "HTML Template Linter and Formatter"
@@ -2280,6 +2300,21 @@ pygments = ">=2.13.0,<3.0.0"
 jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
+name = "rq"
+version = "1.14.1"
+description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "rq-1.14.1-py2.py3-none-any.whl", hash = "sha256:37e003db1da205e08db6cc4653b7c6ccfd9292000954240308abfce2ebde43ba"},
+    {file = "rq-1.14.1.tar.gz", hash = "sha256:5fb86038922ddd76eb2d9aa0adeec6dcf64f159dbbe730b26358b1417120dd44"},
+]
+
+[package.dependencies]
+click = ">=5.0.0"
+redis = ">=3.5.0"
+
+[[package]]
 name = "ruff"
 version = "0.0.267"
 description = "An extremely fast Python linter, written in Rust."
@@ -2701,4 +2736,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "00a7173f1aed65e8c4c1efda00cfa0b3d039caec0c61436bee5bacbef19c004c"
+content-hash = "f01e2d758429e7cf081b9d056ff651e0975c43ead6f4b183bc68ebef254beacf"

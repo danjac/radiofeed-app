@@ -448,6 +448,13 @@ class TestUnsubscribe:
 
 
 class TestWebsubCallback:
+    @pytest.fixture
+    def mock_enqueue(self, mocker):
+        def _mock_enqueue(fn, *args, **kwargs):
+            fn(*args, **kwargs)
+
+        return mocker.patch("radiofeed.podcasts.views.enqueue", _mock_enqueue)
+
     def url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
@@ -456,7 +463,7 @@ class TestWebsubCallback:
         return mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
 
     @pytest.mark.django_db
-    def test_post(self, client, db, mocker, feed_parser):
+    def test_post(self, client, mocker, mock_enqueue, feed_parser):
         podcast = create_podcast(websub_mode="subscribe")
         mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
 
@@ -466,7 +473,9 @@ class TestWebsubCallback:
         feed_parser.assert_called()
 
     @pytest.mark.django_db
-    def test_post_not_subscribed(self, client, mocker, feed_parser, podcast):
+    def test_post_not_subscribed(
+        self, client, mocker, mock_enqueue, feed_parser, podcast
+    ):
         mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
 
         response = client.post(self.url(podcast))
@@ -475,7 +484,7 @@ class TestWebsubCallback:
         feed_parser.assert_not_called()
 
     @pytest.mark.django_db
-    def test_post_invalid_signature(self, client, db, mocker, feed_parser):
+    def test_post_invalid_signature(self, client, mocker, mock_enqueue, feed_parser):
         podcast = create_podcast(websub_mode="subscribe")
         mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=False)
 

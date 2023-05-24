@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
-from concurrent.futures import ThreadPoolExecutor
 
 from django.core.management.base import BaseCommand
+from django_rq import enqueue
 
 from radiofeed.feedparser import feed_parser, scheduler
 
@@ -22,8 +22,7 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-        with ThreadPoolExecutor() as executor:
-            executor.map(
-                feed_parser.parse_feed,
-                scheduler.get_podcasts_for_update()[: options["limit"]].iterator(),
-            )
+        for podcast_id in scheduler.get_podcasts_for_update().values_list(
+            "pk", flat=True
+        )[: options["limit"]]:
+            enqueue(feed_parser.parse_feed, podcast_id)

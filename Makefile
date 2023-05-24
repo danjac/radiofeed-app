@@ -40,6 +40,9 @@ fixtures:
 serve:
 	python ./manage.py runserver
 
+worker:
+	python ./manage.py rqworker high default low
+
 shell:
 	python ./manage.py shell_plus
 
