@@ -160,7 +160,7 @@ class TestGetPodcastsForUpdate:
                 "",
                 None,
                 True,
-                True,
+                False,
             ),
             (
                 True,

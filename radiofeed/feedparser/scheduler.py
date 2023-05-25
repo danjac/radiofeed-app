@@ -60,13 +60,17 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
                     parsed__lt=now - _MIN_FREQUENCY,
                 ),
             )
-            | Q(queued__isnull=False),
+            | Q(
+                queued__isnull=False,
+                websub_mode="subscribe",
+                websub_expires__lt=now,
+            ),
             active=True,
         )
         .exclude(
+            queued__isnull=True,
             websub_mode="subscribe",
             websub_expires__gt=now,
-            queued__isnull=True,
         )
         .order_by(
             F("queued").desc(nulls_last=True),
