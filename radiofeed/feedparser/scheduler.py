@@ -69,7 +69,7 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
             queued__isnull=True,
         )
         .order_by(
-            F("queued").desc(nulls_first=False),
+            F("queued").desc(nulls_last=True),
             F("subscribers").desc(),
             F("promoted").desc(),
             F("parsed").asc(nulls_first=True),
