@@ -38,13 +38,13 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     1) Any newly added feeds
     2) Any not checked for at least 15 days
     3) Any with last pub date since their `frequency` value
-    4) Any podcasts marked "immediate"
+    4) Any queued podcasts
 
     Results are ordered by their last checked date and prioritized
     if subscribed or promoted.
 
     Podcasts which are subscribed to a websub hub should not be scheduled
-    unless marked "immediate".
+    unless marked queued.
     """
     now = timezone.now()
 
@@ -60,16 +60,16 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
                     parsed__lt=now - _MIN_FREQUENCY,
                 ),
             )
-            | Q(immediate=True),
+            | Q(queued__isnull=False),
             active=True,
         )
         .exclude(
             websub_mode="subscribe",
             websub_expires__gt=now,
-            immediate=False,
+            queued__isnull=True,
         )
         .order_by(
-            F("immediate").desc(),
+            F("queued").desc(nulls_first=False),
             F("subscribers").desc(),
             F("promoted").desc(),
             F("parsed").asc(nulls_first=True),

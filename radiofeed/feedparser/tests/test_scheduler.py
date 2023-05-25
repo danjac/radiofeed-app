@@ -78,7 +78,7 @@ class TestGetPodcastsForUpdate:
             "frequency",
             "websub_mode",
             "websub_expires",
-            "immediate",
+            "queued",
             "exists",
         ),
         [
@@ -243,7 +243,7 @@ class TestGetPodcastsForUpdate:
         frequency,
         websub_mode,
         websub_expires,
-        immediate,
+        queued,
         exists,
     ):
         now = timezone.now()
@@ -254,7 +254,7 @@ class TestGetPodcastsForUpdate:
             websub_expires=now + websub_expires if websub_expires else None,
             websub_mode=websub_mode,
             frequency=frequency,
-            immediate=immediate,
+            queued=now if queued else None,
         )
 
         assert scheduler.get_podcasts_for_update().exists() == exists

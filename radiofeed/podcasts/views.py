@@ -301,7 +301,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             websub.check_signature(request, podcast.websub_secret)
 
             # queue podast for immediate update
-            podcast.immediate = True
+            podcast.queued = timezone.now()
             podcast.save()
 
         except websub.InvalidSignature as e:

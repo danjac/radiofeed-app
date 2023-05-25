@@ -109,23 +109,25 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class ImmediateFilter(admin.SimpleListFilter):
+class QueuedFilter(admin.SimpleListFilter):
     """Filters podcasts immediate status."""
 
-    title = "Immediate"
-    parameter_name = "immediate"
+    title = "Queued"
+    parameter_name = "queued"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "Immediate"),)
+        return (("yes", "Queued"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        return queryset.filter(immediate=True) if self.value() == "yes" else queryset
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
 
 
 class PromotedFilter(admin.SimpleListFilter):
@@ -238,7 +240,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        ImmediateFilter,
+        QueuedFilter,
         ParserErrorFilter,
         PubDateFilter,
         PromotedFilter,
@@ -266,6 +268,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     readonly_fields = (
         "pub_date",
         "parsed",
+        "queued",
         "frequency",
         "next_scheduled_update",
         "parser_error",
@@ -278,10 +281,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "websub_expires",
         "num_websub_retries",
     )
-
-    actions = ("parse_podcast_feeds",)
-
-    change_actions = ("parse_podcast_feed",)
 
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast):

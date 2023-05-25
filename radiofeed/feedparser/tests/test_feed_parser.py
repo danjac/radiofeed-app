@@ -109,7 +109,8 @@ class TestFeedParser:
     def test_parse_ok(self, mocker, categories):
         # set date to before latest
 
-        websub_date = timezone.now() - timedelta(days=3)
+        now = timezone.now()
+        websub_date = now - timedelta(days=3)
         websub_hub = "https://pubsubhubbub.appspot.com/"
 
         podcast = create_podcast(
@@ -119,7 +120,7 @@ class TestFeedParser:
             websub_hub=websub_hub,
             websub_expires=websub_date,
             websub_mode="subscribe",
-            immediate=True,
+            queued=now,
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -161,7 +162,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
-        assert podcast.immediate is False
+        assert podcast.queued is None
         assert podcast.parser_error is None
         assert podcast.active
         assert podcast.num_retries == 0
@@ -624,7 +625,7 @@ class TestFeedParser:
     @pytest.mark.django_db
     def test_parse_not_modified(self, mocker, podcast, categories):
         podcast.num_retries = 1
-        podcast.immediate = True
+        podcast.queued = timezone.now()
 
         mocker.patch(
             "requests.get",
@@ -641,7 +642,7 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.NOT_MODIFIED
 
         assert podcast.active
-        assert podcast.immediate is False
+        assert podcast.queued is None
         assert podcast.modified is None
         assert podcast.parsed
         assert podcast.num_retries == 0

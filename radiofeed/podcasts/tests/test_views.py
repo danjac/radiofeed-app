@@ -460,7 +460,7 @@ class TestWebsubCallback:
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
         podcast.refresh_from_db()
-        assert podcast.immediate
+        assert podcast.queued is not None
 
     @pytest.mark.django_db
     def test_post_not_subscribed(self, client, mocker, podcast):
@@ -469,7 +469,7 @@ class TestWebsubCallback:
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
         podcast.refresh_from_db()
-        assert not podcast.immediate
+        assert podcast.queued is None
 
     @pytest.mark.django_db
     def test_post_invalid_signature(self, client, mocker):
@@ -482,7 +482,7 @@ class TestWebsubCallback:
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         podcast.refresh_from_db()
-        assert not podcast.immediate
+        assert podcast.queued is None
 
     @pytest.mark.django_db
     def test_get(self, client, podcast):

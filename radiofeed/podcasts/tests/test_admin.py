@@ -9,11 +9,11 @@ from radiofeed.factories import create_batch
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
-    ImmediateFilter,
     ParserErrorFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
+    QueuedFilter,
     SubscribedFilter,
     WebsubFilter,
 )
@@ -136,21 +136,21 @@ class TestPromotedFilter:
         assert qs.first() == promoted
 
 
-class TestImmediateFilter:
+class TestQueuedFilter:
     @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
-        create_podcast(immediate=False)
-        f = ImmediateFilter(req, {}, Podcast, podcast_admin)
+        create_podcast(queued=timezone.now())
+        f = QueuedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
     def test_true(self, podcasts, podcast_admin, req):
-        immediate = create_podcast(immediate=True)
-        f = ImmediateFilter(req, {"immediate": "yes"}, Podcast, podcast_admin)
+        queued = create_podcast(queued=timezone.now())
+        f = QueuedFilter(req, {"queued": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert qs.first() == immediate
+        assert qs.first() == queued
 
 
 class TestActiveFilter:
