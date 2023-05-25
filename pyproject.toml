@@ -68,7 +68,7 @@ pytest-env = "^0.8.1"
 ruff = "^0.0.267"
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="config.settings"
+DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = [
     "-v",
     "-x",
