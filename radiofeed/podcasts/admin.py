@@ -109,6 +109,25 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset
 
 
+class ImmediateFilter(admin.SimpleListFilter):
+    """Filters podcasts immediate status."""
+
+    title = "Immediate"
+    parameter_name = "immediate"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", "Immediate"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+        return queryset.filter(immediate=True) if self.value() == "yes" else queryset
+
+
 class PromotedFilter(admin.SimpleListFilter):
     """Filters podcasts promoted status."""
 
@@ -219,6 +238,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
+        ImmediateFilter,
         ParserErrorFilter,
         PubDateFilter,
         PromotedFilter,
