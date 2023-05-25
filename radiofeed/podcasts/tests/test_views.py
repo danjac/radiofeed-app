@@ -16,6 +16,7 @@ from radiofeed.podcasts.factories import (
     create_subscription,
 )
 from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.websub import InvalidSignature
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -454,7 +455,7 @@ class TestWebsubCallback:
     @pytest.mark.django_db
     def test_post(self, client, mocker):
         podcast = create_podcast(websub_mode="subscribe")
-        mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
+        mocker.patch("radiofeed.podcasts.websub.check_signature")
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
@@ -463,7 +464,7 @@ class TestWebsubCallback:
 
     @pytest.mark.django_db
     def test_post_not_subscribed(self, client, mocker, podcast):
-        mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
+        mocker.patch("radiofeed.podcasts.websub.check_signature")
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
@@ -473,10 +474,12 @@ class TestWebsubCallback:
     @pytest.mark.django_db
     def test_post_invalid_signature(self, client, mocker):
         podcast = create_podcast(websub_mode="subscribe")
-        mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=False)
+        mocker.patch(
+            "radiofeed.podcasts.websub.check_signature", side_effect=InvalidSignature
+        )
 
         response = client.post(self.url(podcast))
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         podcast.refresh_from_db()
         assert not podcast.immediate

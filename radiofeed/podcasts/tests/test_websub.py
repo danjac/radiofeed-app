@@ -85,92 +85,77 @@ class TestCheckSignature:
     content_type = "application/xml"
 
     @pytest.fixture
-    def podcast(self, db):
-        return create_podcast(websub_secret=uuid.uuid4())
+    def secret(self):
+        return uuid.uuid4()
 
-    @pytest.mark.django_db
-    def test_ok(self, rf, podcast):
-        sig = hmac.new(
-            podcast.websub_secret.hex.encode("utf-8"), self.body, "sha1"
-        ).hexdigest()
+    @pytest.fixture
+    def signature(self, secret):
+        return hmac.new(secret.hex.encode("utf-8"), self.body, "sha1").hexdigest()
 
+    def test_ok(self, rf, secret, signature):
         req = rf.post(
             "/",
             self.body,
             content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
         )
 
-        assert websub.check_signature(req, podcast)
+        websub.check_signature(req, secret)
 
-    @pytest.mark.django_db
-    def test_secret_is_none(self, rf):
-        podcast = create_podcast(websub_secret=None)
-
-        sig = hmac.new(uuid.uuid4().hex.encode("utf-8"), self.body, "sha1").hexdigest()
-
+    def test_secret_is_none(self, rf, signature):
         req = rf.post(
             "/",
             self.body,
             content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
         )
 
-        assert not websub.check_signature(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, None)
 
-    @pytest.mark.django_db
-    def test_signature_mismatch(self, rf, podcast):
-        sig = hmac.new(uuid.uuid4().hex.encode("utf-8"), self.body, "sha1").hexdigest()
-
+    def test_signature_mismatch(self, rf, signature):
         req = rf.post(
             "/",
             self.body,
             content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
         )
 
-        assert not websub.check_signature(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, uuid.uuid4())
 
-    @pytest.mark.django_db
-    def test_content_length_too_large(self, rf, podcast):
-        sig = hmac.new(
-            podcast.websub_secret.hex.encode("utf-8"), self.body, "sha1"
-        ).hexdigest()
-
+    def test_content_length_too_large(self, rf, secret, signature):
         req = rf.post(
             "/",
             self.body,
             content_type=self.content_type,
             CONTENT_LENGTH=2000000000,
-            HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
         )
 
-        assert not websub.check_signature(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, secret)
 
-    @pytest.mark.django_db
-    def test_hub_signature_header_missing(self, rf, podcast):
+    def test_hub_signature_header_missing(self, rf, secret):
         req = rf.post(
             "/",
             self.body,
             content_type=self.content_type,
         )
 
-        assert not websub.check_signature(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, secret)
 
-    @pytest.mark.django_db
-    def test_invalid_algo(self, rf, podcast):
-        sig = hmac.new(
-            podcast.websub_secret.hex.encode("utf-8"), self.body, "sha1"
-        ).hexdigest()
-
+    def test_invalid_algo(self, rf, secret, signature):
         req = rf.post(
             "/",
             self.body,
             content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1111={sig}",
+            HTTP_X_HUB_SIGNATURE=f"sha1111={signature}",
         )
 
-        assert not websub.check_signature(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, secret)
 
 
 class TestSubscribe:

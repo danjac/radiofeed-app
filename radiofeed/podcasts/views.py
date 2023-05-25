@@ -297,10 +297,15 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             active=True,
         )
 
-        if websub.check_signature(request, podcast):
+        try:
+            websub.check_signature(request, podcast.websub_secret)
+
             # queue podast for immediate update
             podcast.immediate = True
             podcast.save()
+
+        except websub.InvalidSignature as e:
+            raise Http404 from e
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
