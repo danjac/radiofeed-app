@@ -225,24 +225,24 @@ class TestWebsubFilter:
     hub = "https://example.com"
 
     @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req):
+    def test_all(self, podcasts, podcast_admin, req):
         create_podcast(websub_hub=self.hub)
         f = WebsubFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
-    def test_no(self, podcasts, podcast_admin, req):
+    def test_none(self, podcasts, podcast_admin, req):
         websub = create_podcast(websub_hub=self.hub)
-        f = WebsubFilter(req, {"websub": "no"}, Podcast, podcast_admin)
+        f = WebsubFilter(req, {"websub": "none"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert websub not in qs
 
     @pytest.mark.django_db
-    def test_yes(self, podcasts, podcast_admin, req):
+    def test_any(self, podcasts, podcast_admin, req):
         websub = create_podcast(websub_hub=self.hub)
-        f = WebsubFilter(req, {"websub": "yes"}, Podcast, podcast_admin)
+        f = WebsubFilter(req, {"websub": "any"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert websub in qs

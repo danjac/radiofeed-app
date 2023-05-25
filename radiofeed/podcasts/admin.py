@@ -187,8 +187,8 @@ class WebsubFilter(admin.SimpleListFilter):
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (
-            ("yes", "Websub"),
-            ("no", "No Websub"),
+            ("any", "Any"),
+            ("none", "None"),
             ("pending", "Pending"),
             ("subscribed", "Subscribed"),
             ("failed", "Failed"),
@@ -201,9 +201,9 @@ class WebsubFilter(admin.SimpleListFilter):
         now = timezone.now()
 
         match self.value():
-            case "yes":
+            case "any":
                 return queryset.filter(websub_hub__isnull=False)
-            case "no":
+            case "none":
                 return queryset.filter(websub_hub__isnull=True)
             case "pending":
                 return queryset.filter(
