@@ -154,6 +154,16 @@ class TestGetPodcastsForUpdate:
             ),
             (
                 True,
+                timedelta(hours=3),
+                timedelta(hours=3),
+                timedelta(hours=24),
+                "",
+                None,
+                True,
+                True,
+            ),
+            (
+                True,
                 timedelta(days=15),
                 timedelta(days=15),
                 timedelta(days=30),

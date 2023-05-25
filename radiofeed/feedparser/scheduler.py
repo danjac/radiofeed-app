@@ -50,14 +50,17 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     return (
         Podcast.objects.alias(subscribers=Count("subscriptions"))
         .filter(
-            Q(parsed__isnull=True)
-            | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - _MAX_FREQUENCY)
-            | Q(
-                pub_date__lt=now - F("frequency"),
-                parsed__lt=now - _MIN_FREQUENCY,
-            ),
-            active=True,
+            Q(
+                Q(parsed__isnull=True)
+                | Q(pub_date__isnull=True)
+                | Q(parsed__lt=now - _MAX_FREQUENCY)
+                | Q(
+                    pub_date__lt=now - F("frequency"),
+                    parsed__lt=now - _MIN_FREQUENCY,
+                ),
+                active=True,
+            )
+            | Q(immediate=True)
         )
         .exclude(
             websub_mode="subscribe",
