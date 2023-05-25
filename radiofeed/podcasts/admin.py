@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from django.contrib import admin, messages
+from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, Q, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
 from django.utils import timezone
-from django_object_actions import DjangoObjectActions
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
@@ -213,7 +212,7 @@ class WebsubFilter(admin.SimpleListFilter):
 
 
 @admin.register(Podcast)
-class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
+class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Podcast model admin."""
 
     date_hierarchy = "pub_date"
@@ -263,26 +262,6 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     actions = ("parse_podcast_feeds",)
 
     change_actions = ("parse_podcast_feed",)
-
-    def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
-        """Runs feed parser on single podcast."""
-
-        if obj.active:
-            # queue podast for immediate update
-            obj.immediate = True
-            obj.save()
-
-            self.message_user(
-                request,
-                "Podcast feed has been queued for update",
-                level=messages.SUCCESS,
-            )
-        else:
-            self.message_user(
-                request,
-                "Podcast feed cannot be scheduled because it is inactive",
-                level=messages.ERROR,
-            )
 
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast):

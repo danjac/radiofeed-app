@@ -83,19 +83,6 @@ class TestPodcastAdmin:
         assert ordering == []
 
     @pytest.mark.django_db
-    def test_parse_podcast_feed_ok(self, podcast, podcast_admin, req):
-        podcast_admin.parse_podcast_feed(req, podcast)
-        podcast.refresh_from_db()
-        assert podcast.immediate
-
-    @pytest.mark.django_db
-    def test_parse_podcast_feed_inactive(self, podcast, podcast_admin, req):
-        podcast = create_podcast(active=False)
-        podcast_admin.parse_podcast_feed(req, podcast)
-        podcast.refresh_from_db()
-        assert not podcast.immediate
-
-    @pytest.mark.django_db
     def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
         mocker.patch(
             "radiofeed.podcasts.admin.scheduler.next_scheduled_update",

@@ -712,17 +712,6 @@ files = [
 Django = ">=3.2"
 
 [[package]]
-name = "django-object-actions"
-version = "4.1.0"
-description = "A Django app for adding object tools for models in the admin"
-optional = false
-python-versions = ">=3.7,<4.0"
-files = [
-    {file = "django_object_actions-4.1.0-py3-none-any.whl", hash = "sha256:9c14fa5239df94091edf1221f83b7e9db1518c0c1cdd37497d9b34680b242172"},
-    {file = "django_object_actions-4.1.0.tar.gz", hash = "sha256:b09360c1569e60d467428aee5c38d4d27c1924b9fe585c53947366274e8940c6"},
-]
-
-[[package]]
 name = "django-permissions-policy"
 version = "4.15.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
@@ -2701,4 +2690,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "00a7173f1aed65e8c4c1efda00cfa0b3d039caec0c61436bee5bacbef19c004c"
+content-hash = "b0995ea18fe5ecd08f9dded6e966f954b25356116d983fd1dcdb21bda46fb654"

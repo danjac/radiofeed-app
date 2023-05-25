@@ -55,7 +55,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.socialaccount.providers.google",
     "django_extensions",
     "django_htmx",
-    "django_object_actions",
     "heroicons",
     "whitenoise.runserver_nostatic",
     "radiofeed.episodes",
