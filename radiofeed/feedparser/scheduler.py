@@ -63,7 +63,7 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
             | Q(
                 queued__isnull=False,
                 websub_mode="subscribe",
-                websub_expires__lt=now,
+                websub_expires__gt=now,
             ),
             active=True,
         )
