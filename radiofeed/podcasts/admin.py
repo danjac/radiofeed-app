@@ -171,6 +171,7 @@ class WebsubFilter(admin.SimpleListFilter):
             ("no", "No Websub"),
             ("pending", "Pending"),
             ("subscribed", "Subscribed"),
+            ("failed", "Failed"),
         )
 
     def queryset(
@@ -201,6 +202,12 @@ class WebsubFilter(admin.SimpleListFilter):
                     websub_mode="subscribe",
                     websub_expires__gte=now,
                 )
+            case "failed":
+                return queryset.filter(
+                    websub_hub__isnull=False,
+                    num_websub_retries__gte=websub.MAX_NUM_RETRIES,
+                )
+
             case _:
                 return queryset
 

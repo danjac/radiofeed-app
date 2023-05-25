@@ -263,7 +263,7 @@ class TestWebsubFilter:
         assert subscribed in qs
 
     @pytest.mark.django_db
-    def test_max_retries(self, podcasts, podcast_admin, req):
+    def test_pending_max_retries(self, podcasts, podcast_admin, req):
         create_podcast(
             websub_mode="",
             websub_hub=self.hub,
@@ -272,6 +272,17 @@ class TestWebsubFilter:
         f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 0
+
+    @pytest.mark.django_db
+    def test_failed_max_retries(self, podcasts, podcast_admin, req):
+        create_podcast(
+            websub_mode="",
+            websub_hub=self.hub,
+            num_websub_retries=3,
+        )
+        f = WebsubFilter(req, {"websub": "failed"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
 
     @pytest.mark.django_db
     def test_pending_expired(self, podcasts, podcast_admin, req):
