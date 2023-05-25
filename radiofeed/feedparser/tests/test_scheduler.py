@@ -222,6 +222,16 @@ class TestGetPodcastsForUpdate:
                 True,
                 True,
             ),
+            (
+                False,
+                timedelta(days=30),
+                timedelta(days=90),
+                timedelta(days=30),
+                "subscribe",
+                timedelta(days=3),
+                True,
+                False,
+            ),
         ],
     )
     @pytest.mark.django_db

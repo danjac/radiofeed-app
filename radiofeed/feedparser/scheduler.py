@@ -58,9 +58,9 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
                     pub_date__lt=now - F("frequency"),
                     parsed__lt=now - _MIN_FREQUENCY,
                 ),
-                active=True,
             )
-            | Q(immediate=True)
+            | Q(immediate=True),
+            active=True,
         )
         .exclude(
             websub_mode="subscribe",

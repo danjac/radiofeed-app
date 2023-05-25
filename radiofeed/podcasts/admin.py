@@ -260,13 +260,22 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
 
-        # queue podast for immediate update
-        obj.immediate = True
-        obj.save(update_fields=["immediate"])
+        if obj.active:
+            # queue podast for immediate update
+            obj.immediate = True
+            obj.save()
 
-        self.message_user(
-            request, "Podcast has been queued for update", level=messages.SUCCESS
-        )
+            self.message_user(
+                request,
+                "Podcast feed has been queued for update",
+                level=messages.SUCCESS,
+            )
+        else:
+            self.message_user(
+                request,
+                "Podcast feed cannot be scheduled because it is inactive",
+                level=messages.ERROR,
+            )
 
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast):

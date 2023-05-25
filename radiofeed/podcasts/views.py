@@ -300,7 +300,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         if websub.check_signature(request, podcast):
             # queue podast for immediate update
             podcast.immediate = True
-            podcast.save(update_fields=["immediate"])
+            podcast.save()
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
