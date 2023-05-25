@@ -2,7 +2,7 @@ import multiprocessing
 
 # https://docs.gunicorn.org/en/stable/configure.html#configuration-file
 
-wsgi_app = "config.wsgi"
+wsgi_app = "radiofeed.wsgi"
 
 accesslog = "-"
 
