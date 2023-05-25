@@ -41,6 +41,9 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
 
     Results are ordered by their last checked date and prioritized
     if subscribed or promoted.
+
+    Podcasts which are subscribed to a websub hub should not be scheduled
+    unless marked "immediate".
     """
     now = timezone.now()
 
@@ -59,8 +62,10 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
         .exclude(
             websub_mode="subscribe",
             websub_expires__gt=now,
+            immediate=False,
         )
         .order_by(
+            F("immediate").desc(),
             F("subscribers").desc(),
             F("promoted").desc(),
             F("parsed").asc(nulls_first=True),

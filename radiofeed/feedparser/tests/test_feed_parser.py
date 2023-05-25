@@ -119,6 +119,7 @@ class TestFeedParser:
             websub_hub=websub_hub,
             websub_expires=websub_date,
             websub_mode="subscribe",
+            immediate=True,
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -160,6 +161,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
+        assert podcast.immediate is False
         assert podcast.parser_error is None
         assert podcast.active
         assert podcast.num_retries == 0
@@ -622,6 +624,7 @@ class TestFeedParser:
     @pytest.mark.django_db
     def test_parse_not_modified(self, mocker, podcast, categories):
         podcast.num_retries = 1
+        podcast.immediate = True
 
         mocker.patch(
             "requests.get",
@@ -638,6 +641,7 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.NOT_MODIFIED
 
         assert podcast.active
+        assert podcast.immediate is False
         assert podcast.modified is None
         assert podcast.parsed
         assert podcast.num_retries == 0

@@ -84,9 +84,9 @@ class TestPodcastAdmin:
 
     @pytest.mark.django_db
     def test_parse_podcast_feed_ok(self, mocker, podcast, podcast_admin, req):
-        patched = mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
         podcast_admin.parse_podcast_feed(req, podcast)
-        patched.assert_called()
+        podcast.refresh_from_db()
+        assert podcast.immediate
 
     @pytest.mark.django_db
     def test_next_scheduled_update(self, mocker, podcast, podcast_admin):

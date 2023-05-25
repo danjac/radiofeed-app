@@ -451,38 +451,35 @@ class TestWebsubCallback:
     def url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
-    @pytest.fixture
-    def feed_parser(self, mocker):
-        return mocker.patch("radiofeed.feedparser.feed_parser.parse_feed")
-
     @pytest.mark.django_db
-    def test_post(self, client, db, mocker, feed_parser):
+    def test_post(self, client, mocker):
         podcast = create_podcast(websub_mode="subscribe")
         mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
-
-        feed_parser.assert_called()
+        podcast.refresh_from_db()
+        assert podcast.immediate
 
     @pytest.mark.django_db
-    def test_post_not_subscribed(self, client, mocker, feed_parser, podcast):
+    def test_post_not_subscribed(self, client, mocker, podcast):
         mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=True)
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
-
-        feed_parser.assert_not_called()
+        podcast.refresh_from_db()
+        assert not podcast.immediate
 
     @pytest.mark.django_db
-    def test_post_invalid_signature(self, client, db, mocker, feed_parser):
+    def test_post_invalid_signature(self, client, mocker):
         podcast = create_podcast(websub_mode="subscribe")
         mocker.patch("radiofeed.podcasts.websub.check_signature", return_value=False)
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
 
-        feed_parser.assert_not_called()
+        podcast.refresh_from_db()
+        assert not podcast.immediate
 
     @pytest.mark.django_db
     def test_get(self, client, podcast):

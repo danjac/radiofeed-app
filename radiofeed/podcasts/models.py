@@ -122,6 +122,11 @@ class Podcast(models.Model):
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    immediate: bool = models.BooleanField(
+        default=False,
+        help_text="Podcast feed should be queued for update immediately",
+    )
+
     parser_error: str = models.CharField(
         max_length=30,
         choices=ParserError.choices,

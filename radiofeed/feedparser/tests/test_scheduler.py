@@ -78,6 +78,7 @@ class TestGetPodcastsForUpdate:
             "frequency",
             "websub_mode",
             "websub_expires",
+            "immediate",
             "exists",
         ),
         [
@@ -88,6 +89,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=24),
                 "",
                 None,
+                False,
                 True,
             ),
             (
@@ -97,6 +99,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=24),
                 "",
                 None,
+                False,
                 False,
             ),
             (
@@ -107,6 +110,7 @@ class TestGetPodcastsForUpdate:
                 "",
                 None,
                 False,
+                False,
             ),
             (
                 True,
@@ -115,6 +119,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=24),
                 "",
                 None,
+                False,
                 True,
             ),
             (
@@ -124,6 +129,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=24),
                 "",
                 None,
+                False,
                 True,
             ),
             (
@@ -134,6 +140,7 @@ class TestGetPodcastsForUpdate:
                 "",
                 None,
                 False,
+                False,
             ),
             (
                 True,
@@ -142,6 +149,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(hours=24),
                 "",
                 None,
+                False,
                 False,
             ),
             (
@@ -151,6 +159,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=30),
                 "",
                 None,
+                False,
                 True,
             ),
             (
@@ -160,6 +169,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=30),
                 "",
                 None,
+                False,
                 True,
             ),
             (
@@ -169,6 +179,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=30),
                 "subscribe",
                 None,
+                False,
                 True,
             ),
             (
@@ -178,6 +189,7 @@ class TestGetPodcastsForUpdate:
                 timedelta(days=30),
                 "subscribe",
                 timedelta(days=-3),
+                False,
                 True,
             ),
             (
@@ -188,6 +200,17 @@ class TestGetPodcastsForUpdate:
                 "subscribe",
                 timedelta(days=3),
                 False,
+                False,
+            ),
+            (
+                True,
+                timedelta(days=30),
+                timedelta(days=90),
+                timedelta(days=30),
+                "subscribe",
+                timedelta(days=3),
+                True,
+                True,
             ),
         ],
     )
@@ -200,6 +223,7 @@ class TestGetPodcastsForUpdate:
         frequency,
         websub_mode,
         websub_expires,
+        immediate,
         exists,
     ):
         now = timezone.now()
@@ -210,6 +234,7 @@ class TestGetPodcastsForUpdate:
             websub_expires=now + websub_expires if websub_expires else None,
             websub_mode=websub_mode,
             frequency=frequency,
+            immediate=immediate,
         )
 
         assert scheduler.get_podcasts_for_update().exists() == exists

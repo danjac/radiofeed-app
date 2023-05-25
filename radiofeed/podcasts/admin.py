@@ -8,7 +8,7 @@ from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
 from radiofeed.fast_count import FastCountAdminMixin
-from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.feedparser import scheduler
 from radiofeed.podcasts import websub
 from radiofeed.podcasts.models import Category, Podcast, Subscription
 
@@ -259,8 +259,14 @@ class PodcastAdmin(DjangoObjectActions, FastCountAdminMixin, admin.ModelAdmin):
 
     def parse_podcast_feed(self, request: HttpRequest, obj: Podcast) -> None:
         """Runs feed parser on single podcast."""
-        feed_parser.parse_feed(obj)
-        self.message_user(request, "Podcast has been updated", level=messages.SUCCESS)
+
+        # queue podast for immediate update
+        obj.immediate = True
+        obj.save(update_fields=["immediate"])
+
+        self.message_user(
+            request, "Podcast has been queued for update", level=messages.SUCCESS
+        )
 
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast):
