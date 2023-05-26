@@ -301,7 +301,9 @@ class FeedParser:
                 yield self._make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
-    def _extract_websub_links(self, response: requests.Response, feed: Feed) -> dict:
+    def _extract_websub_links(
+        self, response: requests.Response, feed: Feed
+    ) -> dict[str, str | None]:
         # links can be in HTTP headers or XML body
         try:
             hub = response.links["hub"]["url"]
