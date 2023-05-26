@@ -1,4 +1,5 @@
 import http
+import uuid
 
 import pytest
 import requests
@@ -452,15 +453,30 @@ class TestWebsubCallback:
     def url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
+    @pytest.fixture
+    def websub_podcast(self):
+        return create_podcast(websub_mode="subscribe", websub_secret=uuid.uuid4())
+
     @pytest.mark.django_db
-    def test_post(self, client, mocker):
-        podcast = create_podcast(websub_mode="subscribe")
+    def test_post(self, client, mocker, websub_podcast):
         mocker.patch("radiofeed.podcasts.websub.check_signature")
 
-        response = client.post(self.url(podcast))
+        response = client.post(self.url(websub_podcast))
         assert response.status_code == http.HTTPStatus.NO_CONTENT
-        podcast.refresh_from_db()
-        assert podcast.queued is not None
+        websub_podcast.refresh_from_db()
+        assert websub_podcast.queued is not None
+
+    @pytest.mark.django_db
+    def test_post_invalid_signature(self, client, mocker, websub_podcast):
+        mocker.patch(
+            "radiofeed.podcasts.websub.check_signature", side_effect=InvalidSignature
+        )
+
+        response = client.post(self.url(websub_podcast))
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        websub_podcast.refresh_from_db()
+        assert websub_podcast.queued is None
 
     @pytest.mark.django_db
     def test_post_not_subscribed(self, client, mocker, podcast):
@@ -468,19 +484,6 @@ class TestWebsubCallback:
 
         response = client.post(self.url(podcast))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
-        podcast.refresh_from_db()
-        assert podcast.queued is None
-
-    @pytest.mark.django_db
-    def test_post_invalid_signature(self, client, mocker):
-        podcast = create_podcast(websub_mode="subscribe")
-        mocker.patch(
-            "radiofeed.podcasts.websub.check_signature", side_effect=InvalidSignature
-        )
-
-        response = client.post(self.url(podcast))
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
-
         podcast.refresh_from_db()
         assert podcast.queued is None
 
