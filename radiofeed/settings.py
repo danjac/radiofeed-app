@@ -352,11 +352,6 @@ LOGGING = {
             "level": "CRITICAL",
             "propagate": False,
         },
-        "radiofeed.feedparser.feed_parser": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
     },
 }
 

@@ -9,13 +9,13 @@ class TestParseFeeds:
     @pytest.fixture
     def mock_parse_ok(self, mocker):
         yield mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed",
+            "radiofeed.feedparser.feed_parser.FeedParser.parse",
         )
 
     @pytest.fixture
     def mock_parse_fail(self, mocker):
         yield mocker.patch(
-            "radiofeed.feedparser.feed_parser.parse_feed", side_effect=Duplicate()
+            "radiofeed.feedparser.feed_parser.FeedParser.parse", side_effect=Duplicate()
         )
 
     @pytest.mark.django_db

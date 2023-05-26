@@ -1,8 +1,6 @@
-import contextlib
 import functools
 import hashlib
 import http
-import logging
 from collections.abc import Iterator
 from typing import Final
 
@@ -40,8 +38,6 @@ _ACCEPT: Final = (
     "*/*;q=0.1"
 )
 
-_logger = logging.getLogger(__name__)
-
 
 @functools.lru_cache
 def get_categories() -> dict[str, Category]:
@@ -55,12 +51,6 @@ def get_categories() -> dict[str, Category]:
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
     return hashlib.sha256(content).hexdigest()
-
-
-def parse_feed(podcast: Podcast, **kwargs) -> None:
-    """Shortcut function to parse podcast feed."""
-    with contextlib.suppress(FeedParserError):
-        FeedParser(podcast).parse(**kwargs)
 
 
 class FeedParser:
@@ -101,11 +91,6 @@ class FeedParser:
                 raise Duplicate()
             feed = rss_parser.parse_rss(response.content)
         except FeedParserError as e:
-            _logger.debug(
-                "parse feed %s: %s",
-                e.parser_error,
-                self._podcast,
-            )
             return self._handle_feed_error(e)
 
         categories, keywords = self._extract_categories(feed)
@@ -137,8 +122,6 @@ class FeedParser:
 
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
-
-        _logger.debug("parse feed ok: %s", self._podcast)
 
     def _get_response(self) -> requests.Response:
         try:
