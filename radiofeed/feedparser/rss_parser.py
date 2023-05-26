@@ -73,8 +73,14 @@ class RSSParser:
                     funding_url="podcast:funding/@url",
                     language="language/text()",
                     link="link/text()",
-                    websub_hub="atom:link[@rel='hub']/@href",
-                    websub_topic="atom:link[@rel='self']/@href",
+                    websub_hub=(
+                        "atom:link[@rel='hub']/@href",
+                        "link[@rel='hub']/@href",
+                    ),
+                    websub_topic=(
+                        "atom:link[@rel='self']/@href",
+                        "link[@rel='self']/@href",
+                    ),
                     owner=(
                         "itunes:author/text()",
                         "itunes:owner/itunes:name/text()",
