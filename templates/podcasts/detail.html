@@ -1,8 +1,5 @@
 {% extends "podcasts/detail_base.html" %}
 {% load cache heroicons %}
-{% block title %}
-    {{ block.super }} | About
-{% endblock title %}
 {% block podcast_content %}
     {% with link=podcast.link|force_url %}
         <article class="space-y-3">
