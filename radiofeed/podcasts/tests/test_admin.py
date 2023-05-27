@@ -308,6 +308,24 @@ class TestWebsubFilter:
         assert qs.count() == 1
 
     @pytest.mark.django_db
+    def test_expired(self, podcasts, podcast_admin, req):
+        expired = create_podcast(
+            websub_mode="subscribe",
+            websub_hub=self.hub,
+            websub_expires=timezone.now() - timedelta(days=3),
+        )
+        create_podcast(
+            websub_mode="subscribe",
+            websub_hub=self.hub,
+            websub_expires=timezone.now() + timedelta(days=3),
+        )
+
+        f = WebsubFilter(req, {"websub": "expired"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert expired in qs
+
+    @pytest.mark.django_db
     def test_pending_expired(self, podcasts, podcast_admin, req):
         expired = create_podcast(
             websub_mode="subscribe",

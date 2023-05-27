@@ -209,6 +209,7 @@ class WebsubFilter(admin.SimpleListFilter):
             ("any", "Any"),
             ("none", "None"),
             ("pending", "Pending"),
+            ("expired", "Expired"),
             ("subscribed", "Subscribed"),
             ("failed", "Failed"),
         )
@@ -234,7 +235,11 @@ class WebsubFilter(admin.SimpleListFilter):
                     websub_hub__isnull=False,
                     num_websub_retries__lt=websub.MAX_NUM_RETRIES,
                 )
-
+            case "expired":
+                return queryset.filter(
+                    websub_mode="subscribe",
+                    websub_expires__lt=timezone.now(),
+                )
             case "subscribed":
                 return queryset.filter(
                     websub_hub__isnull=False,
