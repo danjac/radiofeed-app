@@ -422,6 +422,20 @@ class TestSubscribe:
             podcast=podcast, subscriber=auth_user
         ).exists()
 
+    @pytest.mark.django_db
+    def test_subscribe_private(self, client, auth_user):
+        podcast = create_podcast(private=True)
+
+        response = client.post(
+            self.url(podcast),
+            HTTP_HX_TARGET=podcast.get_subscribe_target(),
+            HTTP_HX_REQUEST="true",
+        )
+        assert_not_found(response)
+        assert not Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
+
     @pytest.mark.django_db(transaction=True)
     def test_already_subscribed(
         self,
@@ -463,6 +477,21 @@ class TestUnsubscribe:
         )
         assert_ok(response)
         assert not Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_unsubscribe_private(self, client, auth_user):
+        podcast = create_subscription(
+            subscriber=auth_user, podcast=create_podcast(private=True)
+        ).podcast
+        response = client.post(
+            self.url(podcast),
+            HTTP_HX_TARGET=podcast.get_subscribe_target(),
+            HTTP_HX_REQUEST="true",
+        )
+        assert_not_found(response)
+        assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
 
