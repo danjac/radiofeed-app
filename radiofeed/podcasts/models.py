@@ -115,6 +115,11 @@ class Podcast(models.Model):
         help_text="Inactive podcasts will no longer be updated from their RSS feeds.",
     )
 
+    private: bool = models.BooleanField(
+        default=True,
+        help_text="Only available to subscribers",
+    )
+
     etag: str = models.TextField(blank=True)
     title: str = models.TextField(blank=True)
 
