@@ -25,15 +25,12 @@ class PrivateFeedForm(forms.Form):
 
         return value
 
-    def save(self, user: User) -> Podcast:
-        """Adds podcast if necessary and subscribes user to feed."""
+    def save(self) -> Podcast:
+        """Adds new podcast."""
         podcast, _ = Podcast.objects.get_or_create(
             rss=self.cleaned_data["rss"],
-            private=True,
+            defaults={"private": True},
         )
-
-        Subscription.objects.get_or_create(podcast=podcast, subscriber=user)
-
         return podcast
 
 

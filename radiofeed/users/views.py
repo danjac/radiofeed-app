@@ -1,7 +1,10 @@
+import contextlib
+
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
@@ -10,7 +13,7 @@ from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.pagination import render_pagination_response
-from radiofeed.podcasts.models import Podcast, Subscription
+from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, PrivateFeedForm, UserPreferencesForm
 
 
@@ -117,14 +120,18 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
     form = PrivateFeedForm(request.POST)
     if form.is_valid():
-        podcast = form.save(request.user)
+        podcast = form.save()
 
-        messages.success(
-            request,
+        with contextlib.suppress(IntegrityError):
+            request.user.subscriptions.create(podcast=podcast)
+
+        message = (
             "Podcast has been added to your private feeds."
             if podcast.pub_date
-            else "Podcast should appear in your private feeds in a few minutes.",
+            else "Podcast should appear in your private feeds in a few minutes."
         )
+
+        messages.success(request, message)
 
         return HttpResponseClientRedirect(reverse("users:private_feeds"))
     return render(request, "account/_private_feed_form.html", {"form": form})
@@ -134,14 +141,9 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 @require_auth
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
-    Subscription.objects.filter(
-        subscriber=request.user,
-        podcast__pk=podcast_id,
-        podcast__private=True,
-    ).delete()
-
+    podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
+    request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Podcast has been removed from your private feeds.")
-
     return HttpResponseClientRedirect(reverse("users:private_feeds"))
 
 

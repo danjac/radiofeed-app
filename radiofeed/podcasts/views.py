@@ -17,7 +17,7 @@ from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes, websub
-from radiofeed.podcasts.models import Category, Podcast, Subscription
+from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.models import User
 
 
@@ -262,10 +262,10 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise
         returns the subscribe action as HTMX snippet.
     """
-    podcast = get_object_or_404(_get_podcasts(), private=False, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
 
     try:
-        Subscription.objects.create(subscriber=request.user, podcast=podcast)
+        request.user.subscriptions.create(podcast=podcast)
     except IntegrityError:
         return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
@@ -277,10 +277,8 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
-    podcast = get_object_or_404(_get_podcasts(), private=False, pk=podcast_id)
-
-    Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
-
+    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
+    request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "You are no longer subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, False)
 
