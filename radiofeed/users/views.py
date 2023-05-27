@@ -117,12 +117,13 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
     form = PrivateFeedForm(request.POST)
     if form.is_valid():
         podcast = form.save(request.user)
-        if podcast.pub_date:
-            messages.success(request, "Podcast has been added to your private feeds.")
-        else:
-            messages.success(
-                request, "Podcast will appear in your private feeds shortly."
-            )
+
+        messages.success(
+            request,
+            "Podcast has been added to your private feeds."
+            if podcast.pub_date
+            else "Podcast will appear in your private feeds shortly.",
+        )
 
         return HttpResponseClientRedirect(reverse("users:private_feeds"))
     return render(request, "account/_private_feed_form.html", {"form": form})
