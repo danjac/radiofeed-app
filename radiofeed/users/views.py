@@ -59,6 +59,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     podcasts = (
         Podcast.objects.filter(
             subscriptions__subscriber=request.user,
+            private=False,
         )
         .distinct()
         .order_by("title")
