@@ -149,6 +149,25 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
+class PrivateFilter(admin.SimpleListFilter):
+    """Filters podcasts private status."""
+
+    title = "Private"
+    parameter_name = "private"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", "private"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+        return queryset.filter(private=True) if self.value() == "yes" else queryset
+
+
 class SubscribedFilter(admin.SimpleListFilter):
     """Filters podcasts based on subscription status."""
 
@@ -241,8 +260,9 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         ParserErrorFilter,
-        PubDateFilter,
+        PrivateFilter,
         PromotedFilter,
+        PubDateFilter,
         QueuedFilter,
         SubscribedFilter,
         WebsubFilter,

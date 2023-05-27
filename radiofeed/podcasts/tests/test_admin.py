@@ -11,6 +11,7 @@ from radiofeed.podcasts.admin import (
     CategoryAdmin,
     ParserErrorFilter,
     PodcastAdmin,
+    PrivateFilter,
     PromotedFilter,
     PubDateFilter,
     QueuedFilter,
@@ -134,6 +135,23 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestPrivateFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        create_podcast(private=False)
+        f = PrivateFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_true(self, podcasts, podcast_admin, req):
+        private = create_podcast(private=True)
+        f = PrivateFilter(req, {"private": "yes"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == private
 
 
 class TestQueuedFilter:
