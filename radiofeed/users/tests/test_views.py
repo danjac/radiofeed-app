@@ -3,6 +3,7 @@ import pathlib
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
+from pytest_django.asserts import assertRedirects
 
 from radiofeed.asserts import assert_hx_redirect, assert_ok
 from radiofeed.episodes.factories import create_audio_log, create_bookmark
@@ -82,7 +83,7 @@ class TestRemovePrivateFeed:
             reverse("users:remove_private_feed", args=[podcast.pk]),
             {"rss": podcast.rss},
         )
-        assert_hx_redirect(response, reverse("users:private_feeds"))
+        assertRedirects(response, reverse("users:private_feeds"))
 
         assert not Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast

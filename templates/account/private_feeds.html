@@ -9,9 +9,11 @@
 {% endblock settings_dropdown_title %}
 {% block settings_content %}
     <div class="space-y-3">
-        <h3 class="font-bold text-base lg:text-lg">Add Private Feed</h3>
+        <h3 class="text-base font-bold lg:text-lg">Add Private Feed</h3>
         {% include "account/_private_feed_form.html" %}
-        <hr />
-        {% include pagination_template %}
+        {% if page_obj.paginator.count %}
+            <hr />
+            {% include pagination_template %}
+        {% endif %}
     </div>
 {% endblock settings_content %}

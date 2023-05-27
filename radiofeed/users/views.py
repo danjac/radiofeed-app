@@ -134,6 +134,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
         messages.success(request, message)
 
         return HttpResponseClientRedirect(reverse("users:private_feeds"))
+
     return render(request, "account/_private_feed_form.html", {"form": form})
 
 
@@ -144,7 +145,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Podcast has been removed from your private feeds.")
-    return HttpResponseClientRedirect(reverse("users:private_feeds"))
+    return redirect(reverse("users:private_feeds"))
 
 
 @require_form_methods
