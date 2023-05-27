@@ -1,3 +1,4 @@
+import contextlib
 import http
 from datetime import timedelta
 
@@ -264,10 +265,8 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
 
-    try:
+    with contextlib.suppress(IntegrityError):
         request.user.subscriptions.create(podcast=podcast)
-    except IntegrityError:
-        return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
     messages.success(request, "You are now subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, True)

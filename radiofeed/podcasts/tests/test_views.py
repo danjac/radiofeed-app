@@ -6,7 +6,7 @@ import requests
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertRedirects
 
-from radiofeed.asserts import assert_conflict, assert_not_found, assert_ok
+from radiofeed.asserts import assert_not_found, assert_ok
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
 from radiofeed.podcasts import itunes
@@ -449,7 +449,7 @@ class TestSubscribe:
             HTTP_HX_TARGET=podcast.get_subscribe_target(),
             HTTP_HX_REQUEST="true",
         )
-        assert_conflict(response)
+        assert_ok(response)
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()

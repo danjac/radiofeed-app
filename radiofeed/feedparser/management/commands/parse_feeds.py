@@ -33,8 +33,8 @@ class Command(BaseCommand):
     def _parse_feed(self, podcast: Podcast) -> None:
         try:
             feed_parser.FeedParser(podcast).parse()
-            self.stdout.write(f"parse feed ok: {podcast}")
+            self.stdout.write(self.style.SUCCESS(f"parse feed ok: {podcast}"))
         except FeedParserError as e:
             self.stderr.write(
-                self.styles.ERROR(f"parse feed {e.parser_error}: {podcast}")
+                self.style.ERROR(f"parse feed {e.parser_error}: {podcast}")
             )

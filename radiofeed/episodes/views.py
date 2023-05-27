@@ -1,3 +1,4 @@
+import contextlib
 import http
 from datetime import timedelta
 
@@ -256,10 +257,8 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(_get_episodes_for_user(request.user), pk=episode_id)
 
-    try:
+    with contextlib.suppress(IntegrityError):
         request.user.bookmarks.create(episode=episode)
-    except IntegrityError:
-        return HttpResponse(status=http.HTTPStatus.CONFLICT)
 
     messages.success(request, "Added to Bookmarks")
     return _render_bookmark_toggle(request, episode, True)

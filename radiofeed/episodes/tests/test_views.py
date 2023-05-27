@@ -7,7 +7,6 @@ from pytest_django.asserts import assertContains, assertNotContains, assertRedir
 
 from radiofeed.asserts import (
     assert_bad_request,
-    assert_conflict,
     assert_no_content,
     assert_not_found,
     assert_ok,
@@ -479,7 +478,7 @@ class TestAddBookmark:
             HTTP_HX_TARGET=episode.get_bookmark_target(),
             HTTP_HX_REQUEST="true",
         )
-        assert_conflict(response)
+        assert_ok(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 

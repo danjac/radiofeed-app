@@ -1,4 +1,3 @@
-import contextlib
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 
@@ -32,6 +31,8 @@ class Command(BaseCommand):
             )
 
     def _subscribe(self, podcast: Podcast) -> None:
-        self.stdout.write(f"subscribe: {podcast}")
-        with contextlib.suppress(requests.RequestException):
+        try:
             websub.subscribe(podcast)
+            self.stdout.write(self.style.SUCCESS(f"subscribe: {podcast}"))
+        except requests.RequestException as e:
+            self.stderr.write(self.style.ERROR(f"subscribe error {e}:{podcast}"))
