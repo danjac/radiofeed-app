@@ -123,7 +123,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
             request,
             "Podcast has been added to your private feeds."
             if podcast.pub_date
-            else "Podcast will appear in your private feeds shortly.",
+            else "Podcast should appear in your private feeds in a few minutes.",
         )
 
         return HttpResponseClientRedirect(reverse("users:private_feeds"))
