@@ -255,6 +255,11 @@ class Podcast(models.Model):
         """Returns slugified title."""
         return slugify(self.title, allow_unicode=False) or "no-title"
 
+    @cached_property
+    def has_similar(self) -> bool:
+        """Returns True if podcast has recommendations."""
+        return False if self.private else self.recommendations.exists()
+
     def is_subscribed(self, user: User | AnonymousUser) -> bool:
         """Check if user is subscribed to this podcast."""
         if user.is_anonymous:

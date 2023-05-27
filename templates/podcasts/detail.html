@@ -21,13 +21,13 @@
                     {% if podcast.private %}
                         {% url 'users:remove_private_feed' podcast.pk as remove_feed_url %}
                         <form method="post" action="{{ remove_feed_url }}">
-                            <button class="inline-flex items-center btn btn-danger btn-outline btn-lg"
-                                    title="Remove podcast from private feeds"
+                            <button class="inline-flex items-center btn btn-danger btn-lg"
+                                    title="Remove podcast from your private feeds"
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast? You can't undo this action!"
                                     hx-post="{{ remove_feed_url }}">
                                 {% heroicon_mini "trash" class="mr-2" %}
-                                Remove Feed
+                                Remove
                             </button>
                         </form>
                     {% else %}

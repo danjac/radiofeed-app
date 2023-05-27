@@ -1,11 +1,17 @@
 {% extends "base.html" %}
-{% load cache %}
+{% load cache heroicons %}
 {% block title %}
     | {{ podcast.cleaned_title }}
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-3 border-b space-y-6">
-        <h1 class="text-lg font-bold text-center lg:text-xl xl:text-2xl sm:text-left">{{ podcast.cleaned_title }}</h1>
+        <h1 class="flex items-center text-lg font-bold text-center lg:text-xl xl:text-2xl sm:text-left"
+            {% if podcast.private %}title="Private feed"{% endif %}>
+            {% if podcast.private %}
+                {% heroicon_mini "lock-closed" class="mr-2" %}
+            {% endif %}
+            {{ podcast.cleaned_title }}
+        </h1>
         {% cache 600 podcast-detail-header request.get_full_path language_code %}
         {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
             {% if num_episodes or has_similar %}
