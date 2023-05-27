@@ -18,7 +18,21 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% cover_image podcast.cover_url 200 podcast.cleaned_title css_class="h-32 w-32 lg:h-40 lg:w-40" %}
                 <div class="flex flex-col place-content-between h-28 lg:h-32">
-                    {% include "podcasts/_subscribe_toggle.html" %}
+                    {% if podcast.private %}
+                        {% url 'users:remove_private_feed' podcast.pk as remove_feed_url %}
+                        <form method="post" action="{{ remove_feed_url }}">
+                            <button class="inline-flex items-center btn btn-danger btn-outline btn-lg"
+                                    title="Remove podcast from private feeds"
+                                    hx-push-url="true"
+                                    hx-confirm="Are you sure you want to remove this podcast? You can't undo this action!"
+                                    hx-post="{{ remove_feed_url }}">
+                                {% heroicon_mini "trash" class="mr-2" %}
+                                Remove Feed
+                            </button>
+                        </form>
+                    {% else %}
+                        {% include "podcasts/_subscribe_toggle.html" %}
+                    {% endif %}
                     <nav class="flex items-center space-x-3">
                         {% if link and link != podcast.rss %}
                             <div>

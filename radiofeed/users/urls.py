@@ -22,5 +22,20 @@ urlpatterns = [
         views.import_podcast_feeds,
         name="import_podcast_feeds",
     ),
+    path(
+        "account/private-feeds/",
+        views.private_feeds,
+        name="private_feeds",
+    ),
+    path(
+        "account/private-feeds/new/",
+        views.add_private_feed,
+        name="add_private_feed",
+    ),
+    path(
+        "account/private-feeds/remove/<int:podcast_id>/",
+        views.remove_private_feed,
+        name="remove_private_feed",
+    ),
     path("account/delete/", views.delete_account, name="delete_account"),
 ]

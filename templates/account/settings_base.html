@@ -55,6 +55,14 @@
                                 Import/Export Feeds</a>
                             </li>
                             <li>
+                                {% active_link 'users:private_feeds' as link %}
+                                <a href="{{ link.url }}"
+                                   tabindex="3"
+                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
+                                    {% heroicon_mini "lock-closed" class="mr-2" %}
+                                Private Feeds</a>
+                            </li>
+                            <li>
                                 {% active_link 'account_email' as link %}
                                 <a href="{{ link.url }}"
                                    tabindex="4"

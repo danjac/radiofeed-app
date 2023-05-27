@@ -11,6 +11,32 @@ from radiofeed.users.models import User
 _xpath_parser = XPathParser()
 
 
+class PrivateFeedForm(forms.Form):
+    """Form to add a private feed."""
+
+    rss = forms.URLField(max_length=300, label="Feed RSS")
+
+    def clean_rss(self):
+        """Validates RSS."""
+        value = self.cleaned_data["rss"]
+
+        if Podcast.objects.filter(rss=value, private=False).exists():
+            raise forms.ValidationError("This is not a private feed")
+
+        return value
+
+    def save(self, user: User) -> Podcast:
+        """Adds podcast if necessary and subscribes user to feed."""
+        podcast, _ = Podcast.objects.get_or_create(
+            rss=self.cleaned_data["rss"],
+            private=True,
+        )
+
+        Subscription.objects.get_or_create(podcast=podcast, subscriber=user)
+
+        return podcast
+
+
 class UserPreferencesForm(forms.ModelForm):
     """Form for user settings."""
 

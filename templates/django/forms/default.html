@@ -21,7 +21,7 @@
                 {% endif %}
                 {% if field.errors %}
                     <ul class="font-semibold text-red-800 dark:text-red-600">
-                        {{ form.errors|unordered_list }}
+                        {{ form.errors.values|unordered_list }}
                     </ul>
                 {% endif %}
                 {% if field.help_text %}<p class="text-gray-600 dark:text-gray-300">{{ field.help_text }}</p>{% endif %}
