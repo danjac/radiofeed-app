@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.db import IntegrityError
+from django.db.models import Q, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -12,6 +13,7 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
+from radiofeed.users.models import User
 
 
 @require_safe
@@ -19,7 +21,7 @@ from radiofeed.pagination import render_pagination_response
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
-    subscribed = set(request.user.subscriptions.values_list("podcast", flat=True))
+    subscribed = _get_subscribed(request.user)
     promoted = "promoted" in request.GET or not subscribed
 
     episodes = (
@@ -29,7 +31,10 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
     if promoted:
-        episodes = episodes.filter(podcast__promoted=True)
+        episodes = episodes.filter(
+            podcast__promoted=True,
+            podcast__private=False,
+        )
     else:
         episodes = episodes.filter(podcast__pk__in=subscribed)
 
@@ -54,7 +59,8 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Episode.objects.select_related("podcast")
+                _get_episodes_for_user(request.user)
+                .select_related("podcast")
                 .search(request.search.value)
                 .order_by("-rank", "-pub_date")
             ),
@@ -72,7 +78,7 @@ def episode_detail(
 ) -> HttpResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
-        Episode.objects.select_related("podcast"),
+        _get_episodes_for_user(request.user).select_related("podcast"),
         pk=episode_id,
     )
 
@@ -93,7 +99,8 @@ def episode_detail(
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
-        Episode.objects.select_related("podcast"), pk=episode_id
+        _get_episodes_for_user(request.user).select_related("podcast"),
+        pk=episode_id,
     )
 
     audio_log, _ = request.user.audio_logs.update_or_create(
@@ -168,7 +175,10 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @require_auth
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
+    audio_logs = request.user.audio_logs.filter(
+        Q(episode__podcast__private=False)
+        | Q(episode__podcast__in=_get_subscribed(request.user))
+    ).select_related("episode", "episode__podcast")
 
     if request.search:
         audio_logs = audio_logs.search(request.search.value).order_by(
@@ -220,7 +230,10 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-    bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
+    bookmarks = request.user.bookmarks.filter(
+        Q(episode__podcast__private=False)
+        | Q(episode__podcast__in=_get_subscribed(request.user))
+    ).select_related("episode", "episode__podcast")
 
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
@@ -241,7 +254,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_object_or_404(_get_episodes_for_user(request.user), pk=episode_id)
 
     try:
         request.user.bookmarks.create(episode=episode)
@@ -261,6 +274,16 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from Bookmarks")
     return _render_bookmark_toggle(request, episode, False)
+
+
+def _get_episodes_for_user(user: User) -> QuerySet[Episode]:
+    return Episode.objects.filter(
+        Q(podcast__private=False) | Q(podcast__in=_get_subscribed(user))
+    )
+
+
+def _get_subscribed(user: User) -> set[int]:
+    return set(user.subscriptions.values_list("podcast", flat=True))
 
 
 def _render_bookmark_toggle(

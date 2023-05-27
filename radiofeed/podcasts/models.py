@@ -116,7 +116,7 @@ class Podcast(models.Model):
     )
 
     private: bool = models.BooleanField(
-        default=True,
+        default=False,
         help_text="Only available to subscribers",
     )
 

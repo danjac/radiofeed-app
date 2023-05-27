@@ -4,7 +4,7 @@ from datetime import timedelta
 import requests
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, QuerySet
+from django.db.models import Exists, OuterRef, Q, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -18,6 +18,7 @@ from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes, websub
 from radiofeed.podcasts.models import Category, Podcast, Subscription
+from radiofeed.users.models import User
 
 
 @require_safe
@@ -34,7 +35,7 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
         "podcasts/landing_page.html",
         {
             "podcasts": _get_podcasts()
-            .filter(promoted=True)
+            .filter(promoted=True, private=False)
             .order_by("-pub_date")[:limit],
         },
     )
@@ -44,13 +45,13 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 @require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
-    subscribed = set(request.user.subscriptions.values_list("podcast", flat=True))
+    subscribed = _get_subscribed(request.user)
     promoted = "promoted" in request.GET or not subscribed
 
     podcasts = _get_podcasts().order_by("-pub_date")
 
     podcasts = (
-        podcasts.filter(promoted=True)
+        podcasts.filter(promoted=True, private=False)
         if promoted
         else podcasts.filter(pk__in=subscribed)
     )
@@ -76,7 +77,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                _get_podcasts()
+                _get_podcasts_for_user(request.user)
                 .search(request.search.value)
                 .order_by(
                     "-exact_match",
@@ -137,7 +138,8 @@ def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Details for a single podcast."""
-    podcast = _get_podcast_or_404(podcast_id)
+
+    podcast = get_object_or_404(_get_podcasts_for_user(request.user), pk=podcast_id)
 
     return render(
         request,
@@ -155,7 +157,8 @@ def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(_get_podcasts_for_user(request.user), pk=podcast_id)
+
     episodes = podcast.episodes.select_related("podcast")
 
     if request.search:
@@ -183,7 +186,8 @@ def similar(
     request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
-    podcast = _get_podcast_or_404(podcast_id)
+
+    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
 
     return render(
         request,
@@ -203,7 +207,9 @@ def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.annotate(
-            has_podcasts=Exists(_get_podcasts().filter(categories=OuterRef("pk")))
+            has_podcasts=Exists(
+                _get_podcasts_for_user(request.user).filter(categories=OuterRef("pk"))
+            )
         )
         .filter(has_podcasts=True)
         .order_by("name")
@@ -225,7 +231,9 @@ def category_detail(
     Podcasts can also be searched.
     """
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = _get_podcasts().filter(categories=category).distinct()
+    podcasts = (
+        _get_podcasts_for_user(request.user).filter(categories=category).distinct()
+    )
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
@@ -248,13 +256,13 @@ def category_detail(
 @require_POST
 @require_auth
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Subscribe a user to a podcast. Podcast must be active.
+    """Subscribe a user to a podcast. Podcast must be active and public.
 
     Returns:
         returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise
         returns the subscribe action as HTMX snippet.
     """
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(_get_podcasts(), private=False, pk=podcast_id)
 
     try:
         Subscription.objects.create(subscriber=request.user, podcast=podcast)
@@ -269,7 +277,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(_get_podcasts(), private=False, pk=podcast_id)
 
     Subscription.objects.filter(subscriber=request.user, podcast=podcast).delete()
 
@@ -289,13 +297,16 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     2. A GET request is used for feed verification.
     """
+
+    podcasts = _get_podcasts().filter(active=True)
+
     # content distribution
     if request.method == "POST":
-        podcast = _get_podcast_or_404(
-            podcast_id,
-            active=True,
+        podcast = get_object_or_404(
+            podcasts,
             websub_mode="subscribe",
             websub_secret__isnull=False,
+            pk=podcast_id,
         )
 
         try:
@@ -322,7 +333,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             request.GET.get("hub.lease_seconds", websub.DEFAULT_LEASE_SECONDS)
         )
 
-        podcast = _get_podcast_or_404(podcast_id, active=True, rss=topic)
+        podcast = get_object_or_404(podcasts, rss=topic, pk=podcast_id)
 
         podcast.websub_mode = mode
 
@@ -344,8 +355,13 @@ def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
-    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
+def _get_podcasts_for_user(user: User) -> QuerySet[Podcast]:
+    # get only public podcasts, or those the user is subscribed to
+    return _get_podcasts().filter(Q(private=False) | Q(pk__in=_get_subscribed(user)))
+
+
+def _get_subscribed(user: User) -> set[int]:
+    return set(user.subscriptions.values_list("podcast", flat=True))
 
 
 def _render_subscribe_toggle(

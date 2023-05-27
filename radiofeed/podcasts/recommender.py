@@ -26,7 +26,9 @@ def recommend() -> None:
     """
     podcasts = (
         Podcast.objects.filter(
-            pub_date__gt=timezone.now() - timedelta(days=90), active=True
+            pub_date__gt=timezone.now() - timedelta(days=90),
+            active=True,
+            private=False,
         )
         .filter(language__in=tokenizer.NLTK_LANGUAGES)
         .exclude(extracted_text="")
