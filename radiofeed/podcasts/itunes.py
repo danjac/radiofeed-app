@@ -198,7 +198,8 @@ def _parse_feeds(url: str, params: dict | None = None) -> Iterator[Feed]:
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
         podcasts = Podcast.objects.filter(
-            rss__in={f.rss for f in feeds_for_podcasts}
+            rss__in={f.rss for f in feeds_for_podcasts},
+            private=False,
         ).in_bulk(field_name="rss")
 
         feeds_for_insert, feeds = itertools.tee(

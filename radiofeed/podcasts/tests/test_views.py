@@ -138,6 +138,24 @@ class TestSearchPodcasts:
         assert response.context["page_obj"].object_list[0] == podcast
 
     @pytest.mark.django_db
+    def test_search_filter_private(self, client, auth_user, faker):
+        podcast = create_podcast(title=faker.unique.text(), private=True)
+        create_batch(create_podcast, 3, title="zzz", keywords="zzzz")
+        response = client.get(self.url, {"query": podcast.title})
+        assert_ok(response)
+        assert len(response.context["page_obj"].object_list) == 0
+
+    @pytest.mark.django_db
+    def test_search_filter_private_subscribed(self, client, auth_user, faker):
+        podcast = create_podcast(title=faker.unique.text())
+        create_subscription(podcast=podcast, subscriber=auth_user)
+        create_batch(create_podcast, 3, title="zzz", keywords="zzzz")
+        response = client.get(self.url, {"query": podcast.title})
+        assert_ok(response)
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == podcast
+
+    @pytest.mark.django_db
     def test_search_no_results(self, client, auth_user, faker):
         response = client.get(self.url, {"query": "zzzz"})
         assert_ok(response)
@@ -220,9 +238,7 @@ class TestPodcastDetail:
     @pytest.mark.django_db
     def test_get_podcast_no_link(self, client, auth_user, faker):
         podcast = create_podcast(link=None, owner=faker.name())
-        response = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
-        )
+        response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
 
@@ -230,18 +246,29 @@ class TestPodcastDetail:
     def test_get_podcast_subscribed(self, client, auth_user, podcast):
         podcast.categories.set(create_batch(create_category, 3))
         create_subscription(subscriber=auth_user, podcast=podcast)
-        response = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
-        )
+        response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is True
 
     @pytest.mark.django_db
+    def test_get_podcast_private_subscribed(self, client, auth_user):
+        podcast = create_podcast(private=True)
+        create_subscription(subscriber=auth_user, podcast=podcast)
+        response = client.get(podcast.get_absolute_url())
+        assert_ok(response)
+        assert response.context["podcast"] == podcast
+        assert response.context["is_subscribed"] is True
+
+    @pytest.mark.django_db
+    def test_get_podcast_private_not_subscribed(self, client, auth_user):
+        podcast = create_podcast(private=True)
+        response = client.get(podcast.get_absolute_url())
+        assert_not_found(response)
+
+    @pytest.mark.django_db
     def test_get_podcast_not_subscribed(self, client, auth_user, podcast):
-        response = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
-        )
+        response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is False
