@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
@@ -133,13 +133,12 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 @require_auth
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
-    subscription = get_object_or_404(
-        Subscription,
+    Subscription.objects.filter(
+        subscriber=request.user,
         podcast__pk=podcast_id,
         podcast__private=True,
-        subscriber=request.user,
-    )
-    subscription.delete()
+    ).delete()
+
     messages.info(request, "Podcast has been removed from your private feeds.")
 
     return HttpResponseClientRedirect(reverse("users:private_feeds"))
