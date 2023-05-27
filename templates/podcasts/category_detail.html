@@ -36,5 +36,7 @@
             </header>
         {% endif %}
     {% endwith %}
+    {% cache 600 category-detail request.get_full_path %}
     {% include pagination_template %}
+{% endcache %}
 {% endblock content %}

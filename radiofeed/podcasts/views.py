@@ -234,9 +234,7 @@ def category_detail(
     Podcasts can also be searched.
     """
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = (
-        _get_podcasts_for_user(request.user).filter(categories=category).distinct()
-    )
+    podcasts = _get_podcasts().filter(categories=category, private=False).distinct()
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
