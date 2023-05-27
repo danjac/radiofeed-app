@@ -3,9 +3,8 @@ import pathlib
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertRedirects
 
-from radiofeed.asserts import assert_hx_redirect, assert_ok
+from radiofeed.asserts import assert_ok
 from radiofeed.episodes.factories import create_audio_log, create_bookmark
 from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -63,69 +62,6 @@ class TestManagePodcastFeeds:
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         assert_ok(client.get(reverse("users:manage_podcast_feeds")))
-
-
-class TestPrivateFeeds:
-    @pytest.mark.django_db
-    def test_ok(self, client, auth_user):
-        create_subscription(podcast=create_podcast(private=True), subscriber=auth_user)
-        response = client.get(reverse("users:private_feeds"))
-        assert_ok(response)
-
-
-class TestRemovePrivateFeed:
-    @pytest.mark.django_db
-    def test_ok(self, client, auth_user):
-        podcast = create_podcast(private=True)
-        create_subscription(podcast=podcast, subscriber=auth_user)
-
-        response = client.post(
-            reverse("users:remove_private_feed", args=[podcast.pk]),
-            {"rss": podcast.rss},
-        )
-        assertRedirects(response, reverse("users:private_feeds"))
-
-        assert not Subscription.objects.filter(
-            subscriber=auth_user, podcast=podcast
-        ).exists()
-
-
-class TestAddPrivateFeed:
-    url = reverse_lazy("users:add_private_feed")
-
-    @pytest.mark.django_db
-    def test_ok(self, client, faker, auth_user):
-        rss = faker.url()
-        response = client.post(self.url, {"rss": rss})
-        assert_hx_redirect(response, reverse("users:private_feeds"))
-
-        podcast = Subscription.objects.get(
-            subscriber=auth_user, podcast__rss=rss
-        ).podcast
-
-        assert podcast.private
-
-    @pytest.mark.django_db
-    def test_existing_private(self, client, faker, auth_user):
-        podcast = create_podcast(private=True)
-
-        response = client.post(self.url, {"rss": podcast.rss})
-        assert_hx_redirect(response, reverse("users:private_feeds"))
-
-        assert Subscription.objects.filter(
-            subscriber=auth_user, podcast=podcast
-        ).exists()
-
-    @pytest.mark.django_db
-    def test_existing_public(self, client, faker, auth_user):
-        podcast = create_podcast(private=False)
-
-        response = client.post(self.url, {"rss": podcast.rss})
-        assert_ok(response)
-
-        assert not Subscription.objects.filter(
-            subscriber=auth_user, podcast=podcast
-        ).exists()
 
 
 class TestImportPodcastFeeds:

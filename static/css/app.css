@@ -18,7 +18,9 @@
     height: 3px;
     background: #0076ff;
     z-index: 9999;
-    transition: width 300ms ease-out, opacity 150ms 150ms ease-in;
+    transition:
+        width 300ms ease-out,
+        opacity 150ms 150ms ease-in;
     transform: translate3d(0, 0, 0);
 }
 
@@ -195,7 +197,7 @@
         }
     }
 
-    .btn.focus:enabled {
+    .btn.focus {
         outline: 2px solid transparent;
         outline-offset: 2px;
     }
@@ -206,7 +208,7 @@
         border: solid theme("borderWidth.DEFAULT") theme("colors.blue.800");
     }
 
-    .btn-primary:hover:enabled {
+    .btn-primary:hover {
         background-color: theme("colors.blue.600");
     }
 
@@ -216,7 +218,7 @@
         border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
     }
 
-    .btn-default:hover:enabled {
+    .btn-default:hover {
         background-color: theme("colors.purple.600");
     }
 
@@ -225,7 +227,7 @@
         background-color: theme("colors.red.800");
     }
 
-    .btn-danger:hover:enabled {
+    .btn-danger:hover {
         background-color: theme("colors.red.600");
     }
 
@@ -238,7 +240,7 @@
         border: solid theme("borderWidth.DEFAULT") theme("colors.blue.800");
     }
 
-    .btn-primary.btn-outline:hover:enabled {
+    .btn-primary.btn-outline:hover {
         color: theme("colors.blue.600");
         background-color: theme("colors.gray.100");
         border-color: theme("colors.blue.800");
@@ -249,7 +251,7 @@
         border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
     }
 
-    .btn-default.btn-outline:hover:enabled {
+    .btn-default.btn-outline:hover {
         color: theme("colors.purple.600");
         background-color: theme("colors.gray.100");
         border-color: theme("colors.purple.800");
@@ -260,7 +262,7 @@
         border: solid theme("borderWidth.DEFAULT") theme("colors.red.800");
     }
 
-    .btn-danger.btn-outline:hover:enabled {
+    .btn-danger.btn-outline:hover {
         color: theme("colors.red.600");
         background-color: theme("colors.gray.100");
         border-color: theme("colors.red.800");
@@ -278,19 +280,19 @@
             border-color: theme("colors.red.500");
         }
 
-        .btn-primary.btn-outline:hover:enabled {
+        .btn-primary.btn-outline:hover {
             color: theme("colors.blue.300");
             background-color: inherit;
             border-color: theme("colors.blue.300");
         }
 
-        .btn-default.btn-outline:hover:enabled {
+        .btn-default.btn-outline:hover {
             color: theme("colors.purple.400");
             background-color: inherit;
             border-color: theme("colors.purple.300");
         }
 
-        .btn-danger.btn-outline:hover:enabled {
+        .btn-danger.btn-outline:hover {
             color: theme("colors.red.500");
             background-color: inherit;
             border-color: theme("colors.red.500");

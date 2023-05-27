@@ -5,16 +5,12 @@
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-3 border-b space-y-6">
-        <h1 class="flex items-center text-lg font-bold text-center lg:text-xl xl:text-2xl sm:text-left"
-            {% if podcast.private %}title="Private feed"{% endif %}>
-            {% if podcast.private %}
-                {% heroicon_mini "lock-closed" class="mr-2" %}
-            {% endif %}
+        <h1 class="flex items-center text-lg font-bold text-center lg:text-xl xl:text-2xl sm:text-left">
             {{ podcast.cleaned_title }}
         </h1>
         {% cache 600 podcast-detail-header request.get_full_path language_code %}
         {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
-            {% if num_episodes or has_similar %}
+            {% if num_episodes or has_similar or podcast.private %}
                 <nav class="flex items-center justify-center mb-3 sm:justify-start">
                     <ul class="flex items-center space-x-6">
                         {% active_link podcast.get_detail_url as link %}
@@ -33,7 +29,15 @@
                                    title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
                             </li>
                         {% endif %}
-                        {% if has_similar %}
+                        {% if podcast.private %}
+                            <li>
+                                <a class="flex items-center link"
+                                   href="{% url "podcasts:private_feeds" %}">
+                                    {% heroicon_mini "lock-closed" class="mr-2" %}
+                                    <span>Private Feed</span>
+                                </a>
+                            </li>
+                        {% elif has_similar %}
                             {% active_link podcast.get_similar_url as link %}
                             <li>
                                 <a class="{{ link.css }}"

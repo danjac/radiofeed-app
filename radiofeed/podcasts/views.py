@@ -13,11 +13,13 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
+from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes, websub
+from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.models import User
 
@@ -257,17 +259,9 @@ def category_detail(
 @require_POST
 @require_auth
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Subscribe a user to a podcast. Podcast must be active and public.
-
-    Returns:
-        returns HTTP CONFLICT if user is already subscribed to this podcast, otherwise
-        returns the subscribe action as HTMX snippet.
-    """
+    """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
-
-    with contextlib.suppress(IntegrityError):
-        request.user.subscriptions.create(podcast=podcast)
-
+    _subscribe_podcast(request.user, podcast)
     messages.success(request, "You are now subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, True)
 
@@ -277,9 +271,75 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
-    request.user.subscriptions.filter(podcast=podcast).delete()
+    _unsubscribe_podcast(request.user, podcast)
     messages.info(request, "You are no longer subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, False)
+
+
+@require_safe
+@require_auth
+def private_feeds(request: HttpRequest) -> HttpResponse:
+    """Lists user's private feeds."""
+    podcasts = _get_podcasts().filter(
+        private=True,
+        pk__in=set(
+            request.user.subscriptions.values_list(
+                "podcast",
+                flat=True,
+            )
+        ),
+    )
+
+    if request.search:
+        podcasts = podcasts.search(request.search.value).order_by(
+            "-exact_match",
+            "-rank",
+            "-pub_date",
+        )
+    else:
+        podcasts = podcasts.order_by("-pub_date")
+
+    return render_pagination_response(
+        request,
+        podcasts,
+        "podcasts/private_feeds.html",
+        "podcasts/_podcasts.html",
+    )
+
+
+@require_form_methods
+@require_auth
+def add_private_feed(request: HttpRequest) -> HttpResponse:
+    """Add new private feed to collection."""
+    if request.method == "POST":
+        form = PrivateFeedForm(request.POST)
+        if form.is_valid():
+            podcast = form.save()
+            _subscribe_podcast(request.user, podcast)
+
+            message = (
+                "Podcast has been added to your private feeds."
+                if podcast.pub_date
+                else "Podcast should appear in your private feeds in a few minutes."
+            )
+
+            messages.success(request, message)
+
+            return HttpResponseClientRedirect(reverse("podcasts:private_feeds"))
+    else:
+        form = PrivateFeedForm()
+
+    return render(request, "podcasts/private_feed_form.html", {"form": form})
+
+
+@require_POST
+@require_auth
+def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    """Removes subscription to private feed."""
+    podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
+    _unsubscribe_podcast(request.user, podcast)
+    messages.info(request, "Podcast has been removed from your private feeds.")
+    return redirect(reverse("podcasts:private_feeds"))
 
 
 @require_form_methods
@@ -359,6 +419,15 @@ def _get_podcasts_for_user(user: User) -> QuerySet[Podcast]:
 
 def _get_subscribed(user: User) -> set[int]:
     return set(user.subscriptions.values_list("podcast", flat=True))
+
+
+def _subscribe_podcast(user: User, podcast: Podcast) -> None:
+    with contextlib.suppress(IntegrityError):
+        user.subscriptions.create(podcast=podcast)
+
+
+def _unsubscribe_podcast(user: User, podcast: Podcast) -> None:
+    user.subscriptions.filter(podcast=podcast).delete()
 
 
 def _render_subscribe_toggle(

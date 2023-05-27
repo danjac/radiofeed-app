@@ -1,20 +1,14 @@
-import contextlib
-
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts.models import Podcast
-from radiofeed.users.forms import OpmlUploadForm, PrivateFeedForm, UserPreferencesForm
+from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
 @require_form_methods
@@ -88,64 +82,6 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     return render(request, "account/stats.html")
-
-
-@require_safe
-@require_auth
-def private_feeds(request: HttpRequest) -> HttpResponse:
-    """Lists user's private feeds."""
-    podcasts = Podcast.objects.filter(
-        private=True,
-        pub_date__isnull=False,
-        pk__in=set(
-            request.user.subscriptions.values_list(
-                "podcast",
-                flat=True,
-            )
-        ),
-    ).order_by("-pub_date")
-
-    return render_pagination_response(
-        request,
-        podcasts,
-        "account/private_feeds.html",
-        "podcasts/_podcasts.html",
-        {"form": PrivateFeedForm()},
-    )
-
-
-@require_POST
-@require_auth
-def add_private_feed(request: HttpRequest) -> HttpResponse:
-    """Add new private feed to collection."""
-    form = PrivateFeedForm(request.POST)
-    if form.is_valid():
-        podcast = form.save()
-
-        with contextlib.suppress(IntegrityError):
-            request.user.subscriptions.create(podcast=podcast)
-
-        message = (
-            "Podcast has been added to your private feeds."
-            if podcast.pub_date
-            else "Podcast should appear in your private feeds in a few minutes."
-        )
-
-        messages.success(request, message)
-
-        return HttpResponseClientRedirect(reverse("users:private_feeds"))
-
-    return render(request, "account/_private_feed_form.html", {"form": form})
-
-
-@require_POST
-@require_auth
-def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Removes subscription to private feed."""
-    podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
-    request.user.subscriptions.filter(podcast=podcast).delete()
-    messages.info(request, "Podcast has been removed from your private feeds.")
-    return redirect(reverse("users:private_feeds"))
 
 
 @require_form_methods

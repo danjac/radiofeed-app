@@ -50,5 +50,20 @@ urlpatterns = [
         views.category_detail,
         name="category_detail",
     ),
+    path(
+        "private-feeds/",
+        views.private_feeds,
+        name="private_feeds",
+    ),
+    path(
+        "private-feeds/new/",
+        views.add_private_feed,
+        name="add_private_feed",
+    ),
+    path(
+        "private-feeds/remove/<int:podcast_id>/",
+        views.remove_private_feed,
+        name="remove_private_feed",
+    ),
     path("websub/<int:podcast_id>/", views.websub_callback, name="websub_callback"),
 ]

@@ -6,7 +6,7 @@ import requests
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertRedirects
 
-from radiofeed.asserts import assert_not_found, assert_ok
+from radiofeed.asserts import assert_hx_redirect, assert_not_found, assert_ok
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
 from radiofeed.podcasts import itunes
@@ -631,3 +631,91 @@ class TestWebsubCallback:
         podcast.refresh_from_db()
 
         assert podcast.websub_expires is None
+
+
+class TestPrivateFeeds:
+    url = reverse_lazy("podcasts:private_feeds")
+
+    @pytest.mark.django_db
+    def test_ok(self, client, auth_user):
+        for podcast in create_batch(create_podcast, 33, private=True):
+            create_subscription(subscriber=auth_user, podcast=podcast)
+        response = client.get(self.url)
+        assert_ok(response)
+
+    @pytest.mark.django_db
+    def test_search(self, client, auth_user, faker):
+        podcast = create_subscription(
+            subscriber=auth_user,
+            podcast=create_podcast(title=faker.unique.text(), private=True),
+        ).podcast
+
+        create_subscription(
+            subscriber=auth_user,
+            podcast=create_podcast(title="zzz", keywords="zzzz", private=True),
+        )
+
+        response = client.get(self.url, {"query": podcast.title})
+        assert_ok(response)
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == podcast
+
+
+class TestRemovePrivateFeed:
+    @pytest.mark.django_db
+    def test_ok(self, client, auth_user):
+        podcast = create_podcast(private=True)
+        create_subscription(podcast=podcast, subscriber=auth_user)
+
+        response = client.post(
+            reverse("podcasts:remove_private_feed", args=[podcast.pk]),
+            {"rss": podcast.rss},
+        )
+        assertRedirects(response, reverse("podcasts:private_feeds"))
+
+        assert not Subscription.objects.filter(
+            subscriber=auth_user, podcast=podcast
+        ).exists()
+
+
+class TestAddPrivateFeed:
+    url = reverse_lazy("podcasts:add_private_feed")
+
+    @pytest.mark.django_db
+    def test_get(self, client, auth_user):
+        response = client.get(self.url)
+        assert_ok(response)
+
+    @pytest.mark.django_db
+    def test_post_ok(self, client, faker, auth_user):
+        rss = faker.url()
+        response = client.post(self.url, {"rss": rss})
+        assert_hx_redirect(response, reverse("podcasts:private_feeds"))
+
+        podcast = Subscription.objects.get(
+            subscriber=auth_user, podcast__rss=rss
+        ).podcast
+
+        assert podcast.private
+
+    @pytest.mark.django_db
+    def test_existing_private(self, client, faker, auth_user):
+        podcast = create_podcast(private=True)
+
+        response = client.post(self.url, {"rss": podcast.rss})
+        assert_hx_redirect(response, reverse("podcasts:private_feeds"))
+
+        assert Subscription.objects.filter(
+            subscriber=auth_user, podcast=podcast
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_existing_public(self, client, faker, auth_user):
+        podcast = create_podcast(private=False)
+
+        response = client.post(self.url, {"rss": podcast.rss})
+        assert_ok(response)
+
+        assert not Subscription.objects.filter(
+            subscriber=auth_user, podcast=podcast
+        ).exists()

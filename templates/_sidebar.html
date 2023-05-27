@@ -35,6 +35,14 @@
                 </a>
             </li>
             <li>
+                <a href="{% url 'podcasts:private_feeds' %}"
+                   accesskey="p"
+                   class="{{ SIDEBAR_CSS }}">
+                    {% heroicon_outline "lock-closed" class=ICON_CSS %}
+                    Private Feeds
+                </a>
+            </li>
+            <li>
                 <a href="{% url 'episodes:history' %}"
                    accesskey="h"
                    class="{{ SIDEBAR_CSS }}">
