@@ -13,7 +13,6 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
@@ -323,7 +322,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
             messages.success(request, message)
 
-            return HttpResponseClientRedirect(reverse("podcasts:private_feeds"))
+            return redirect("podcasts:private_feeds")
     else:
         form = PrivateFeedForm()
 

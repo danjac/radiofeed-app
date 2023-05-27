@@ -6,7 +6,7 @@ import requests
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertRedirects
 
-from radiofeed.asserts import assert_hx_redirect, assert_not_found, assert_ok
+from radiofeed.asserts import assert_not_found, assert_ok
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
 from radiofeed.podcasts import itunes
@@ -690,7 +690,7 @@ class TestAddPrivateFeed:
     def test_post_ok(self, client, faker, auth_user):
         rss = faker.url()
         response = client.post(self.url, {"rss": rss})
-        assert_hx_redirect(response, reverse("podcasts:private_feeds"))
+        assertRedirects(response, reverse("podcasts:private_feeds"))
 
         podcast = Subscription.objects.get(
             subscriber=auth_user, podcast__rss=rss
@@ -703,7 +703,7 @@ class TestAddPrivateFeed:
         podcast = create_podcast(private=True)
 
         response = client.post(self.url, {"rss": podcast.rss})
-        assert_hx_redirect(response, reverse("podcasts:private_feeds"))
+        assertRedirects(response, reverse("podcasts:private_feeds"))
 
         assert Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
