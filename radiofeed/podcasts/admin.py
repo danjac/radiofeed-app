@@ -159,7 +159,7 @@ class PrivateFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "private"),)
+        return (("yes", "Private"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
