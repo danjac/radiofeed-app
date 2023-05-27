@@ -154,7 +154,7 @@ class TestEpisodeDetail:
         )
 
     @pytest.mark.django_db
-    def test_authenticated(
+    def test_ok(
         self,
         client,
         auth_user,
@@ -165,6 +165,27 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
         assert response.context["episode"] == episode
+
+    @pytest.mark.django_db
+    def test_private_not_subscribed(
+        self,
+        client,
+        auth_user,
+    ):
+        episode = create_episode(podcast=create_podcast(private=True))
+        response = client.get(episode.get_absolute_url())
+        assert_not_found(response)
+
+    @pytest.mark.django_db
+    def test_private_subscribed(
+        self,
+        client,
+        auth_user,
+    ):
+        episode = create_episode(podcast=create_podcast(private=True))
+        create_subscription(subscriber=auth_user, podcast=episode.podcast)
+        response = client.get(episode.get_absolute_url())
+        assert_ok(response)
 
     @pytest.mark.django_db
     def test_listened(
@@ -247,6 +268,35 @@ class TestStartPlayer:
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
         assert client.session[Player.session_key] == episode.id
+
+    @pytest.mark.django_db
+    def test_play_private_subscribed(self, client, auth_user):
+        episode = create_episode(podcast=create_podcast(private=True))
+        create_subscription(subscriber=auth_user, podcast=episode.podcast)
+        assert_ok(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET=episode.get_player_target(),
+                HTTP_HX_REQUEST="true",
+            ),
+        )
+
+        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
+
+        assert client.session[Player.session_key] == episode.id
+
+    @pytest.mark.django_db
+    def test_play_private_not_subscribed(self, client, auth_user):
+        episode = create_episode(podcast=create_podcast(private=True))
+        assert_not_found(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET=episode.get_player_target(),
+                HTTP_HX_REQUEST="true",
+            ),
+        )
+
+        assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db
     def test_another_episode_in_player(self, client, auth_user, player_episode):
