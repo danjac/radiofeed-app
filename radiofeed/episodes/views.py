@@ -40,7 +40,7 @@ def index(request: HttpRequest) -> HttpResponse:
             podcast__private=False,
         )
     else:
-        episodes = episodes.filter(podcast__pk__in=subscribed)
+        episodes = episodes.filter(podcast__in=subscribed)
 
     return render_pagination_response(
         request,
@@ -250,7 +250,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
             },
         )
 
-    return redirect(audio_log.episode.get_absolute_url())
+    return redirect(audio_log.episode)
 
 
 @require_safe
@@ -317,4 +317,4 @@ def _render_bookmark_toggle(
                 "is_bookmarked": is_bookmarked,
             },
         )
-    return redirect(episode.get_absolute_url())
+    return redirect(episode)

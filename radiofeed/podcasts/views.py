@@ -457,4 +457,4 @@ def _render_subscribe_toggle(
                 "is_subscribed": is_subscribed,
             },
         )
-    return redirect(podcast.get_absolute_url())
+    return redirect(podcast)
