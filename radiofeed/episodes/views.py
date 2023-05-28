@@ -198,15 +198,14 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @require_auth
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    audio_logs = (
-        request.user.audio_logs.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("episode__podcast"))
+    audio_logs = request.user.audio_logs.filter(
+        Q(episode__podcast__private=False)
+        | Q(
+            episode__podcast__pk__in=set(
+                request.user.subscriptions.values_list("pk", flat=True)
             )
         )
-        .filter(Q(episode__podcast__private=False) | Q(is_subscribed=True))
-        .select_related("episode", "episode__podcast")
-    )
+    ).select_related("episode", "episode__podcast")
 
     if request.search:
         audio_logs = audio_logs.search(request.search.value).order_by(
@@ -258,15 +257,14 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-    bookmarks = (
-        request.user.bookmarks.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("episode__podcast"))
+    bookmarks = request.user.bookmarks.filter(
+        Q(episode__podcast__private=False)
+        | Q(
+            episode__podcast__pk__in=set(
+                request.user.subscriptions.values_list("pk", flat=True)
             )
         )
-        .filter(Q(episode__podcast__private=False) | Q(is_subscribed=True))
-        .select_related("episode", "episode__podcast")
-    )
+    ).select_related("episode", "episode__podcast")
 
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
