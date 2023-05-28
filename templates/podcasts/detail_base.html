@@ -5,7 +5,7 @@
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-3 border-b space-y-6">
-        <h1 class="flex items-center text-lg font-bold text-center lg:text-xl xl:text-2xl sm:text-left">
+        <h1 class="flex items-center sm:justify-start text-lg font-bold justify-center lg:text-xl xl:text-2xl">
             {{ podcast.cleaned_title }}
         </h1>
         {% cache 600 podcast-detail-header request.get_full_path %}
