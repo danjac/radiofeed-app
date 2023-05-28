@@ -4,7 +4,6 @@
     | Search | Episodes
 {% endblock title %}
 {% block search_content %}
-    {% cache 600 podcasts-search request.get_full_path %}
     <div class="divide-y divide-solid" id="{{ pagination_target }}">
         {% include "_pagination_links.html" %}
         {% for episode in page_obj.object_list %}
@@ -14,5 +13,4 @@
         {% endfor %}
         {% include "_pagination_links.html" %}
     </div>
-{% endcache %}
 {% endblock search_content %}

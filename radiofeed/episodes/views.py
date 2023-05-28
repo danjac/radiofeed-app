@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Q, QuerySet
+from django.db.models import Exists, OuterRef, Q
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -14,7 +14,6 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
-from radiofeed.users.models import User
 
 
 @require_safe
@@ -22,7 +21,11 @@ from radiofeed.users.models import User
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
-    subscribed = _get_subscribed_podcast_ids(request.user)
+    subscribed = set(
+        request.user.subscriptions.filter(podcast__pub_date__isnull=False).values_list(
+            "podcast", flat=True
+        )
+    )
     promoted = "promoted" in request.GET or not subscribed
 
     episodes = (
@@ -60,7 +63,12 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                _get_episodes_for_user(request.user)
+                Episode.objects.annotate(
+                    is_subscribed=Exists(
+                        request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+                    ),
+                )
+                .filter(Q(podcast__private=False) | Q(is_subscribed=True))
                 .select_related("podcast")
                 .search(request.search.value)
                 .order_by("-rank", "-pub_date")
@@ -79,7 +87,13 @@ def episode_detail(
 ) -> HttpResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
-        _get_episodes_for_user(request.user).select_related("podcast"),
+        Episode.objects.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+            ),
+        )
+        .filter(Q(podcast__private=False) | Q(is_subscribed=True))
+        .select_related("podcast"),
         pk=episode_id,
     )
 
@@ -100,7 +114,13 @@ def episode_detail(
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
-        _get_episodes_for_user(request.user).select_related("podcast"),
+        Episode.objects.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+            ),
+        )
+        .filter(Q(podcast__private=False) | Q(is_subscribed=True))
+        .select_related("podcast"),
         pk=episode_id,
     )
 
@@ -176,10 +196,15 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @require_auth
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    audio_logs = request.user.audio_logs.filter(
-        Q(episode__podcast__private=False)
-        | Q(episode__podcast__in=_get_subscribed_podcast_ids(request.user))
-    ).select_related("episode", "episode__podcast")
+    audio_logs = (
+        request.user.audio_logs.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("episode__podcast"))
+            )
+        )
+        .filter(Q(episode__podcast__private=False) | Q(is_subscribed=True))
+        .select_related("episode", "episode__podcast")
+    )
 
     if request.search:
         audio_logs = audio_logs.search(request.search.value).order_by(
@@ -231,10 +256,15 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-    bookmarks = request.user.bookmarks.filter(
-        Q(episode__podcast__private=False)
-        | Q(episode__podcast__in=_get_subscribed_podcast_ids(request.user))
-    ).select_related("episode", "episode__podcast")
+    bookmarks = (
+        request.user.bookmarks.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("episode__podcast"))
+            )
+        )
+        .filter(Q(episode__podcast__private=False) | Q(is_subscribed=True))
+        .select_related("episode", "episode__podcast")
+    )
 
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
@@ -255,7 +285,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
-    episode = get_object_or_404(_get_episodes_for_user(request.user), pk=episode_id)
+    episode = get_object_or_404(Episode, pk=episode_id)
 
     with contextlib.suppress(IntegrityError):
         request.user.bookmarks.create(episode=episode)
@@ -273,16 +303,6 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from Bookmarks")
     return _render_bookmark_toggle(request, episode, False)
-
-
-def _get_episodes_for_user(user: User) -> QuerySet[Episode]:
-    return Episode.objects.filter(
-        Q(podcast__private=False) | Q(podcast__in=_get_subscribed_podcast_ids(user))
-    )
-
-
-def _get_subscribed_podcast_ids(user: User) -> set[int]:
-    return set(user.subscriptions.values_list("podcast", flat=True))
 
 
 def _render_bookmark_toggle(
