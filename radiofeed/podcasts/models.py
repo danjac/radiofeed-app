@@ -5,7 +5,6 @@ import uuid
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinLengthValidator
@@ -254,12 +253,6 @@ class Podcast(models.Model):
     def slug(self) -> str:
         """Returns slugified title."""
         return slugify(self.title, allow_unicode=False) or "no-title"
-
-    def is_subscribed(self, user: User | AnonymousUser) -> bool:
-        """Check if user is subscribed to this podcast."""
-        if user.is_anonymous:
-            return False
-        return Subscription.objects.filter(podcast=self, subscriber=user).exists()
 
     def get_subscribe_target(self) -> str:
         """Returns HTMX subscribe action target."""

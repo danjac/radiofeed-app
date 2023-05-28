@@ -1,5 +1,4 @@
 import pytest
-from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 
 from radiofeed.factories import create_batch
@@ -9,7 +8,6 @@ from radiofeed.podcasts.factories import (
     create_recommendation,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.users.factories import create_user
 
 
 class TestRecommendationManager:
@@ -121,18 +119,6 @@ class TestPodcastModel:
 
     def test_get_subscribe_target(self):
         return Podcast(id=12345).get_subscribe_target() == "subscribe-actions-12345"
-
-    @pytest.mark.django_db
-    def test_is_subscribed_anonymous(self, podcast):
-        assert not podcast.is_subscribed(AnonymousUser())
-
-    @pytest.mark.django_db
-    def test_is_subscribed_false(self, podcast):
-        assert not podcast.is_subscribed(create_user())
-
-    @pytest.mark.django_db
-    def test_is_subscribed_true(self, subscription):
-        assert subscription.podcast.is_subscribed(subscription.subscriber)
 
     @pytest.mark.django_db
     def test_get_latest_episode_url(self, podcast):
