@@ -141,14 +141,18 @@ def podcast_detail(
 ) -> HttpResponse:
     """Details for a single podcast."""
 
-    podcast = get_object_or_404(_get_podcasts_for_user(request.user), pk=podcast_id)
+    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
+    is_subscribed = podcast.pk in _get_subscribed(request.user)
+
+    if podcast.private and not is_subscribed:
+        raise Http404
 
     return render(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
-            "is_subscribed": podcast.is_subscribed(request.user),
+            "is_subscribed": is_subscribed,
         },
     )
 
