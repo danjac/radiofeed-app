@@ -47,7 +47,7 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 @require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
-    subscribed = _get_subscribed(request.user)
+    subscribed = _get_subscribed_podcast_ids(request.user)
     promoted = "promoted" in request.GET or not subscribed
 
     podcasts = _get_podcasts().order_by("-pub_date")
@@ -142,7 +142,7 @@ def podcast_detail(
     """Details for a single podcast."""
 
     podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
-    is_subscribed = podcast.pk in _get_subscribed(request.user)
+    is_subscribed = podcast.pk in _get_subscribed_podcast_ids(request.user)
 
     if podcast.private and not is_subscribed:
         raise Http404
@@ -282,7 +282,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
     podcasts = _get_podcasts().filter(
-        private=True, pk__in=_get_subscribed(request.user)
+        private=True, pk__in=_get_subscribed_podcast_ids(request.user)
     )
 
     if request.search:
@@ -413,10 +413,12 @@ def _get_public_podcasts() -> QuerySet[Podcast]:
 
 def _get_podcasts_for_user(user: User) -> QuerySet[Podcast]:
     # get only public podcasts, or those the user is subscribed to
-    return _get_podcasts().filter(Q(private=False) | Q(pk__in=_get_subscribed(user)))
+    return _get_podcasts().filter(
+        Q(private=False) | Q(pk__in=_get_subscribed_podcast_ids(user))
+    )
 
 
-def _get_subscribed(user: User) -> set[int]:
+def _get_subscribed_podcast_ids(user: User) -> set[int]:
     # get list of podcast IDs the user is subscribed to
     return set(user.subscriptions.values_list("podcast", flat=True))
 

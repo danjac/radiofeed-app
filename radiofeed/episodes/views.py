@@ -22,7 +22,7 @@ from radiofeed.users.models import User
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
-    subscribed = _get_subscribed(request.user)
+    subscribed = _get_subscribed_podcast_ids(request.user)
     promoted = "promoted" in request.GET or not subscribed
 
     episodes = (
@@ -178,7 +178,7 @@ def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.filter(
         Q(episode__podcast__private=False)
-        | Q(episode__podcast__in=_get_subscribed(request.user))
+        | Q(episode__podcast__in=_get_subscribed_podcast_ids(request.user))
     ).select_related("episode", "episode__podcast")
 
     if request.search:
@@ -233,7 +233,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.filter(
         Q(episode__podcast__private=False)
-        | Q(episode__podcast__in=_get_subscribed(request.user))
+        | Q(episode__podcast__in=_get_subscribed_podcast_ids(request.user))
     ).select_related("episode", "episode__podcast")
 
     if request.search:
@@ -277,11 +277,11 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 def _get_episodes_for_user(user: User) -> QuerySet[Episode]:
     return Episode.objects.filter(
-        Q(podcast__private=False) | Q(podcast__in=_get_subscribed(user))
+        Q(podcast__private=False) | Q(podcast__in=_get_subscribed_podcast_ids(user))
     )
 
 
-def _get_subscribed(user: User) -> set[int]:
+def _get_subscribed_podcast_ids(user: User) -> set[int]:
     return set(user.subscriptions.values_list("podcast", flat=True))
 
 
