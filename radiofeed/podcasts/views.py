@@ -84,13 +84,15 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Podcast.objects.annotate(
-                    is_subscribed=Exists(
-                        request.user.subscriptions.filter(podcast=OuterRef("pk"))
+                Podcast.objects.search(request.search.value)
+                .filter(
+                    Q(private=False)
+                    | Q(
+                        pk__in=set(
+                            request.user.subscriptions.values_list("podcast", flat=True)
+                        )
                     )
                 )
-                .search(request.search.value)
-                .filter(Q(private=False) | Q(is_subscribed=True))
                 .order_by(
                     "-exact_match",
                     "-rank",
