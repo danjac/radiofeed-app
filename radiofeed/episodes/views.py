@@ -63,12 +63,14 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Episode.objects.annotate(
-                    is_subscribed=Exists(
-                        request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-                    ),
+                Episode.objects.filter(
+                    Q(podcast__private=False)
+                    | Q(
+                        pk__in=set(
+                            request.user.subscriptions.values_list("podcast", flat=True)
+                        )
+                    )
                 )
-                .filter(Q(podcast__private=False) | Q(is_subscribed=True))
                 .select_related("podcast")
                 .search(request.search.value)
                 .order_by("-rank", "-pub_date")
