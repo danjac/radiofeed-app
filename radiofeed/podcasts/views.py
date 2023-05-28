@@ -5,7 +5,7 @@ from datetime import timedelta
 import requests
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q, QuerySet
+from django.db.models import Exists, OuterRef, Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -20,7 +20,6 @@ from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes, websub
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.users.models import User
 
 
 @require_safe
@@ -36,9 +35,11 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
         request,
         "podcasts/landing_page.html",
         {
-            "podcasts": _get_public_podcasts()
-            .filter(promoted=True)
-            .order_by("-pub_date")[:limit],
+            "podcasts": Podcast.objects.filter(
+                pub_date__isnull=False,
+                promoted=True,
+                private=False,
+            ).order_by("-pub_date")[:limit],
         },
     )
 
@@ -47,10 +48,14 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 @require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
-    subscribed = _get_subscribed_podcast_ids(request.user)
+    subscribed = set(
+        request.user.subscriptions.filter(podcast__pub_date__isnull=False).values_list(
+            "podcast", flat=True
+        )
+    )
     promoted = "promoted" in request.GET or not subscribed
 
-    podcasts = _get_podcasts().order_by("-pub_date")
+    podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
     podcasts = (
         podcasts.filter(promoted=True)
@@ -79,8 +84,13 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                _get_podcasts_for_user(request.user)
+                Podcast.objects.annotate(
+                    is_subscribed=Exists(
+                        request.user.subscriptions.filter(podcast=OuterRef("pk"))
+                    )
+                )
                 .search(request.search.value)
+                .filter(Q(private=False) | Q(is_subscribed=True))
                 .order_by(
                     "-exact_match",
                     "-rank",
@@ -141,18 +151,21 @@ def podcast_detail(
 ) -> HttpResponse:
     """Details for a single podcast."""
 
-    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
-    is_subscribed = podcast.pk in _get_subscribed_podcast_ids(request.user)
-
-    if podcast.private and not is_subscribed:
-        raise Http404
+    podcast = get_object_or_404(
+        Podcast.objects.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("pk"))
+            )
+        ).filter(Q(private=False) | Q(is_subscribed=True)),
+        pk=podcast_id,
+    )
 
     return render(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
-            "is_subscribed": is_subscribed,
+            "is_subscribed": podcast.is_subscribed,
         },
     )
 
@@ -163,7 +176,14 @@ def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
-    podcast = get_object_or_404(_get_podcasts_for_user(request.user), pk=podcast_id)
+    podcast = get_object_or_404(
+        Podcast.objects.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("pk"))
+            )
+        ).filter(Q(private=False) | Q(is_subscribed=True)),
+        pk=podcast_id,
+    )
 
     episodes = podcast.episodes.select_related("podcast")
 
@@ -193,7 +213,7 @@ def similar(
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
 
-    podcast = get_object_or_404(_get_public_podcasts(), pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     return render(
         request,
@@ -214,7 +234,11 @@ def category_list(request: HttpRequest) -> HttpResponse:
     categories = (
         Category.objects.annotate(
             has_podcasts=Exists(
-                _get_public_podcasts().filter(categories=OuterRef("pk"))
+                Podcast.objects.filter(
+                    categories=OuterRef("pk"),
+                    pub_date__isnull=False,
+                    private=False,
+                )
             )
         )
         .filter(has_podcasts=True)
@@ -237,7 +261,10 @@ def category_detail(
     Podcasts can also be searched.
     """
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = _get_public_podcasts().filter(categories=category).distinct()
+
+    podcasts = category.podcasts.filter(
+        pub_date__isnull=False, private=False
+    ).distinct()
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
@@ -261,8 +288,11 @@ def category_detail(
 @require_auth
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
-    podcast = get_object_or_404(_get_public_podcasts(), pk=podcast_id)
-    _subscribe_podcast(request.user, podcast)
+    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
+
+    with contextlib.suppress(IntegrityError):
+        request.user.subscriptions.create(podcast=podcast)
+
     messages.success(request, "You are now subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, True)
 
@@ -271,8 +301,8 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
-    podcast = get_object_or_404(_get_public_podcasts(), pk=podcast_id)
-    _unsubscribe_podcast(request.user, podcast)
+    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
+    request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "You are no longer subscribed to this podcast")
     return _render_subscribe_toggle(request, podcast, False)
 
@@ -281,8 +311,16 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
-    podcasts = _get_podcasts().filter(
-        private=True, pk__in=_get_subscribed_podcast_ids(request.user)
+    podcasts = Podcast.objects.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(
+                podcast=OuterRef("pk"),
+            )
+        )
+    ).filter(
+        private=True,
+        is_subscribed=True,
+        pub_date__isnull=False,
     )
 
     if request.search:
@@ -310,7 +348,9 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
         form = PrivateFeedForm(request.POST)
         if form.is_valid():
             podcast = form.save()
-            _subscribe_podcast(request.user, podcast)
+
+            with contextlib.suppress(IntegrityError):
+                request.user.subscriptions.create(podcast=podcast)
 
             message = (
                 "Podcast has been added to your private feeds."
@@ -332,7 +372,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
-    _unsubscribe_podcast(request.user, podcast)
+    request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Podcast has been removed from your private feeds.")
     return redirect(reverse("podcasts:private_feeds"))
 
@@ -350,7 +390,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     2. A GET request is used for feed verification.
     """
 
-    podcasts = _get_podcasts().filter(active=True)
+    podcasts = Podcast.objects.filter(active=True)
 
     # content distribution
     if request.method == "POST":
@@ -401,35 +441,6 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     except (KeyError, ValueError) as e:
         raise Http404 from e
-
-
-def _get_podcasts() -> QuerySet[Podcast]:
-    return Podcast.objects.filter(pub_date__isnull=False)
-
-
-def _get_public_podcasts() -> QuerySet[Podcast]:
-    return _get_podcasts().filter(private=False)
-
-
-def _get_podcasts_for_user(user: User) -> QuerySet[Podcast]:
-    # get only public podcasts, or those the user is subscribed to
-    return _get_podcasts().filter(
-        Q(private=False) | Q(pk__in=_get_subscribed_podcast_ids(user))
-    )
-
-
-def _get_subscribed_podcast_ids(user: User) -> set[int]:
-    # get list of podcast IDs the user is subscribed to
-    return set(user.subscriptions.values_list("podcast", flat=True))
-
-
-def _subscribe_podcast(user: User, podcast: Podcast) -> None:
-    with contextlib.suppress(IntegrityError):
-        user.subscriptions.create(podcast=podcast)
-
-
-def _unsubscribe_podcast(user: User, podcast: Podcast) -> None:
-    user.subscriptions.filter(podcast=podcast).delete()
 
 
 def _render_subscribe_toggle(
