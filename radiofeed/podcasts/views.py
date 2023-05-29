@@ -78,6 +78,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             request,
             (
                 Podcast.objects.for_user(request.user)
+                .filter(pub_date__isnull=False)
                 .search(request.search.value)
                 .order_by(
                     "-exact_match",
