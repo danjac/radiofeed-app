@@ -5,7 +5,7 @@ from datetime import timedelta
 import requests
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -38,7 +38,6 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
             "podcasts": Podcast.objects.filter(
                 pub_date__isnull=False,
                 promoted=True,
-                private=False,
             ).order_by("-pub_date")[:limit],
         },
     )
@@ -48,20 +47,14 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 @require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
-    subscribed = set(
-        request.user.subscriptions.filter(podcast__pub_date__isnull=False).values_list(
-            "podcast", flat=True
-        )
-    )
-    promoted = "promoted" in request.GET or not subscribed
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
-    podcasts = (
-        podcasts.filter(promoted=True)
-        if promoted
-        else podcasts.filter(pk__in=subscribed)
-    )
+    subscribed = podcasts.subscribed(request.user)
+    has_subscriptions = subscribed.exists()
+
+    promoted = "promoted" in request.GET or not has_subscriptions
+    podcasts = podcasts.filter(promoted=True) if promoted else subscribed
 
     return render_pagination_response(
         request,
@@ -70,7 +63,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "podcasts/_podcasts.html",
         {
             "promoted": promoted,
-            "has_subscriptions": bool(subscribed),
+            "has_subscriptions": has_subscriptions,
             "search_url": reverse("podcasts:search_podcasts"),
         },
     )
@@ -84,15 +77,8 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Podcast.objects.search(request.search.value)
-                .filter(
-                    Q(private=False)
-                    | Q(
-                        pk__in=set(
-                            request.user.subscriptions.values_list("podcast", flat=True)
-                        )
-                    )
-                )
+                Podcast.objects.for_user(request.user)
+                .search(request.search.value)
                 .order_by(
                     "-exact_match",
                     "-rank",
@@ -154,11 +140,7 @@ def podcast_detail(
     """Details for a single podcast."""
 
     podcast = get_object_or_404(
-        Podcast.objects.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("pk"))
-            )
-        ).filter(Q(private=False) | Q(is_subscribed=True)),
+        Podcast.objects.for_user(request.user),
         pk=podcast_id,
     )
 
@@ -179,11 +161,7 @@ def episodes(
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
     podcast = get_object_or_404(
-        Podcast.objects.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("pk"))
-            )
-        ).filter(Q(private=False) | Q(is_subscribed=True)),
+        Podcast.objects.for_user(request.user),
         pk=podcast_id,
     )
 
@@ -215,7 +193,7 @@ def similar(
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
 
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
 
     return render(
         request,
@@ -313,15 +291,8 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
-    podcasts = Podcast.objects.annotate(
-        is_subscribed=Exists(
-            request.user.subscriptions.filter(
-                podcast=OuterRef("pk"),
-            )
-        )
-    ).filter(
+    podcasts = Podcast.objects.subscribed(request.user).filter(
         private=True,
-        is_subscribed=True,
         pub_date__isnull=False,
     )
 
