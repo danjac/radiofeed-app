@@ -108,7 +108,7 @@ class PodcastQuerySet(
         """Returns podcasts user is subscribed to."""
         return self.is_subscribed(user).filter(is_subscribed=True)
 
-    def for_user(self, user: User) -> models.QuerySet[Podcast]:
+    def accessible(self, user: User) -> models.QuerySet[Podcast]:
         """Returns podcasts available to the user (non-private or subscribed)."""
         return self.is_subscribed(user).filter(
             models.Q(private=False) | models.Q(is_subscribed=True)

@@ -54,7 +54,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Episode.objects.for_user(request.user)
+                Episode.objects.accessible(request.user)
                 .search(request.search.value)
                 .select_related("podcast")
                 .order_by("-rank", "-pub_date")
@@ -73,7 +73,7 @@ def episode_detail(
 ) -> HttpResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
-        Episode.objects.for_user(request.user).select_related("podcast"),
+        Episode.objects.accessible(request.user).select_related("podcast"),
         pk=episode_id,
     )
 
@@ -94,7 +94,7 @@ def episode_detail(
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
-        Episode.objects.for_user(request.user).select_related("podcast"),
+        Episode.objects.accessible(request.user).select_related("podcast"),
         pk=episode_id,
     )
 
@@ -170,7 +170,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @require_auth
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    audio_logs = request.user.audio_logs.for_user(request.user).select_related(
+    audio_logs = request.user.audio_logs.accessible(request.user).select_related(
         "episode", "episode__podcast"
     )
 
@@ -224,7 +224,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-    bookmarks = request.user.bookmarks.for_user(request.user).select_related(
+    bookmarks = request.user.bookmarks.accessible(request.user).select_related(
         "episode", "episode__podcast"
     )
 

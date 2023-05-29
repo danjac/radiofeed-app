@@ -34,7 +34,7 @@ class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQue
             )
         ).filter(is_subscribed=True)
 
-    def for_user(self, user: User) -> models.QuerySet[Episode]:
+    def accessible(self, user: User) -> models.QuerySet[Episode]:
         """Returns episodes for all public podcasts or podcasts user is subscribed to."""
         return self.filter(podcast__private=False) | self.subscribed(user)
 
@@ -243,7 +243,7 @@ class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
-    def for_user(self, user: User) -> models.QuerySet[Episode]:
+    def accessible(self, user: User) -> models.QuerySet[Episode]:
         """Returns episodes for all public podcasts or podcasts user is subscribed to."""
         return self.annotate(
             is_subscribed=models.Exists(
@@ -291,7 +291,7 @@ class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
-    def for_user(self, user: User) -> models.QuerySet[Episode]:
+    def accessible(self, user: User) -> models.QuerySet[Episode]:
         """Returns episodes for all public podcasts or podcasts user is subscribed to."""
         return self.annotate(
             is_subscribed=models.Exists(

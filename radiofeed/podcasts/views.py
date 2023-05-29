@@ -77,7 +77,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Podcast.objects.for_user(request.user)
+                Podcast.objects.accessible(request.user)
                 .filter(pub_date__isnull=False)
                 .search(request.search.value)
                 .order_by(
@@ -141,7 +141,7 @@ def podcast_detail(
     """Details for a single podcast."""
 
     podcast = get_object_or_404(
-        Podcast.objects.for_user(request.user),
+        Podcast.objects.accessible(request.user),
         pk=podcast_id,
     )
 
@@ -162,7 +162,7 @@ def episodes(
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
     podcast = get_object_or_404(
-        Podcast.objects.for_user(request.user),
+        Podcast.objects.accessible(request.user),
         pk=podcast_id,
     )
 

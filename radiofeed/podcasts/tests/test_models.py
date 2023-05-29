@@ -116,19 +116,19 @@ class TestPodcastManager:
         assert not Podcast.objects.subscribed(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_public(self, user):
+    def test_accessible_public(self, user):
         create_podcast(private=False)
-        assert Podcast.objects.for_user(user).exists()
+        assert Podcast.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private(self, user):
+    def test_accessible_private(self, user):
         create_podcast(private=True)
-        assert not Podcast.objects.for_user(user).exists()
+        assert not Podcast.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private_subscribed(self, user):
+    def test_accessible_private_subscribed(self, user):
         create_subscription(subscriber=user, podcast=create_podcast(private=True))
-        assert Podcast.objects.for_user(user).exists()
+        assert Podcast.objects.accessible(user).exists()
 
 
 class TestPodcastModel:

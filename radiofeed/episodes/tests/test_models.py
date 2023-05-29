@@ -34,22 +34,22 @@ class TestEpisodeManager:
         assert not Episode.objects.subscribed(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_public(self, user):
+    def test_accessible_public(self, user):
         create_episode(podcast=create_podcast(private=False))
-        assert Episode.objects.for_user(user).exists()
+        assert Episode.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private(self, user):
+    def test_accessible_private(self, user):
         create_episode(podcast=create_podcast(private=True))
-        assert not Episode.objects.for_user(user).exists()
+        assert not Episode.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private_subscribed(self, user):
+    def test_accessible_private_subscribed(self, user):
         podcast = create_subscription(
             subscriber=user, podcast=create_podcast(private=True)
         ).podcast
         create_episode(podcast=podcast)
-        assert Episode.objects.for_user(user).exists()
+        assert Episode.objects.accessible(user).exists()
 
 
 class TestEpisodeModel:
@@ -247,22 +247,22 @@ class TestBookmarkManager:
         assert Bookmark.objects.search("testing").count() == 1
 
     @pytest.mark.django_db
-    def test_for_user_public(self, user):
+    def test_accessible_public(self, user):
         create_bookmark(episode=create_episode(podcast=create_podcast(private=False)))
-        assert Bookmark.objects.for_user(user).exists()
+        assert Bookmark.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private(self, user):
+    def test_accessible_private(self, user):
         create_bookmark(episode=create_episode(podcast=create_podcast(private=True)))
-        assert not Bookmark.objects.for_user(user).exists()
+        assert not Bookmark.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private_subscribed(self, user):
+    def test_accessible_private_subscribed(self, user):
         podcast = create_subscription(
             subscriber=user, podcast=create_podcast(private=True)
         ).podcast
         create_bookmark(episode=create_episode(podcast=podcast))
-        assert Bookmark.objects.for_user(user).exists()
+        assert Bookmark.objects.accessible(user).exists()
 
 
 class TestAudioLogManager:
@@ -273,19 +273,19 @@ class TestAudioLogManager:
         assert AudioLog.objects.search("testing").count() == 1
 
     @pytest.mark.django_db
-    def test_for_user_public(self, user):
+    def test_accessible_public(self, user):
         create_audio_log(episode=create_episode(podcast=create_podcast(private=False)))
-        assert AudioLog.objects.for_user(user).exists()
+        assert AudioLog.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private(self, user):
+    def test_accessible_private(self, user):
         create_audio_log(episode=create_episode(podcast=create_podcast(private=True)))
-        assert not AudioLog.objects.for_user(user).exists()
+        assert not AudioLog.objects.accessible(user).exists()
 
     @pytest.mark.django_db
-    def test_for_user_private_subscribed(self, user):
+    def test_accessible_private_subscribed(self, user):
         podcast = create_subscription(
             subscriber=user, podcast=create_podcast(private=True)
         ).podcast
         create_audio_log(episode=create_episode(podcast=podcast))
-        assert AudioLog.objects.for_user(user).exists()
+        assert AudioLog.objects.accessible(user).exists()
