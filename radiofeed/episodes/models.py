@@ -241,6 +241,17 @@ class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
+    def for_user(self, user: User) -> models.QuerySet[Bookmark]:
+        """Returns bookmarks for all public podcasts or podcasts user is subscribed to."""
+        return self.filter(
+            models.Q(episode__podcast__private=False)
+            | models.Q(
+                episode__podcast__in=set(
+                    user.subscriptions.values_list("podcast", flat=True)
+                )
+            )
+        )
+
 
 class Bookmark(TimeStampedModel):
     """Bookmarked episodes."""
@@ -278,6 +289,17 @@ class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
+
+    def for_user(self, user: User) -> models.QuerySet[AudioLog]:
+        """Returns bookmarks for all public podcasts or podcasts user is subscribed to."""
+        return self.filter(
+            models.Q(episode__podcast__private=False)
+            | models.Q(
+                episode__podcast__in=set(
+                    user.subscriptions.values_list("podcast", flat=True)
+                )
+            )
+        )
 
 
 class AudioLog(TimeStampedModel):

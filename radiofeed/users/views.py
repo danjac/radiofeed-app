@@ -52,12 +52,10 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @require_POST
 @require_auth
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
-    """Download OPML document containing feeds from user's subscriptions."""
+    """Download OPML document containing public feeds from user's subscriptions."""
     podcasts = (
-        Podcast.objects.filter(
-            subscriptions__subscriber=request.user,
-            private=False,
-        )
+        Podcast.objects.subscribed(request.user)
+        .filter(private=False)
         .distinct()
         .order_by("title")
         .iterator()

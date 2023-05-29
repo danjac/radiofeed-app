@@ -52,7 +52,7 @@ def send_recommendations_email(
     )
 
     podcasts = (
-        Podcast.objects.filter(pk__in=recommended_ids)
+        Podcast.objects.filter(pk__in=recommended_ids, private=False)
         .distinct()
         .order_by("?")[:max_podcasts]
     )

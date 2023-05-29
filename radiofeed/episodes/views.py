@@ -235,14 +235,9 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-    bookmarks = request.user.bookmarks.filter(
-        Q(episode__podcast__private=False)
-        | Q(
-            episode__podcast__pk__in=set(
-                request.user.subscriptions.values_list("pk", flat=True)
-            )
-        )
-    ).select_related("episode", "episode__podcast")
+    bookmarks = request.user.bookmarks.for_user(request.user).select_related(
+        "episode", "episode__podcast"
+    )
 
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
