@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -28,16 +27,11 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
     subscribed = episodes.subscribed(request.user)
+
     has_subscriptions = subscribed.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
 
-    if promoted:
-        episodes = episodes.filter(
-            podcast__promoted=True,
-            podcast__private=False,
-        )
-    else:
-        episodes = subscribed
+    episodes = episodes.filter(podcast__promoted=True) if promoted else subscribed
 
     return render_pagination_response(
         request,
@@ -176,14 +170,9 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @require_auth
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    audio_logs = request.user.audio_logs.filter(
-        Q(episode__podcast__private=False)
-        | Q(
-            episode__podcast__pk__in=set(
-                request.user.subscriptions.values_list("pk", flat=True)
-            )
-        )
-    ).select_related("episode", "episode__podcast")
+    audio_logs = request.user.audio_logs.for_user(request.user).select_related(
+        "episode", "episode__podcast"
+    )
 
     if request.search:
         audio_logs = audio_logs.search(request.search.value).order_by(
