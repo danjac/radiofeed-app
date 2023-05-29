@@ -249,15 +249,18 @@ class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
-    def for_user(self, user: User) -> models.QuerySet[Bookmark]:
-        """Returns bookmarks for all public podcasts or podcasts user is subscribed to."""
-        return self.filter(
-            models.Q(episode__podcast__private=False)
-            | models.Q(
-                episode__podcast__in=set(
-                    user.subscriptions.values_list("podcast", flat=True)
-                )
+    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:
+        """Adds `is_subscribed` annotation to queryset."""
+        return self.annotate(
+            is_subscribed=models.Exists(
+                user.subscriptions.filter(podcast=models.OuterRef("episode__podcast"))
             )
+        )
+
+    def for_user(self, user: User) -> models.QuerySet[Episode]:
+        """Returns episodes for all public podcasts or podcasts user is subscribed to."""
+        return self.is_subscribed(user).filter(
+            models.Q(episode__podcast__private=False) | models.Q(is_subscribed=True)
         )
 
 
@@ -298,15 +301,18 @@ class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
-    def for_user(self, user: User) -> models.QuerySet[AudioLog]:
-        """Returns bookmarks for all public podcasts or podcasts user is subscribed to."""
-        return self.filter(
-            models.Q(episode__podcast__private=False)
-            | models.Q(
-                episode__podcast__in=set(
-                    user.subscriptions.values_list("podcast", flat=True)
-                )
+    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:
+        """Adds `is_subscribed` annotation to queryset."""
+        return self.annotate(
+            is_subscribed=models.Exists(
+                user.subscriptions.filter(podcast=models.OuterRef("episode__podcast"))
             )
+        )
+
+    def for_user(self, user: User) -> models.QuerySet[Episode]:
+        """Returns episodes for all public podcasts or podcasts user is subscribed to."""
+        return self.is_subscribed(user).filter(
+            models.Q(episode__podcast__private=False) | models.Q(is_subscribed=True)
         )
 
 
