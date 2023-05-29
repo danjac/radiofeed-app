@@ -26,15 +26,23 @@ from radiofeed.users.models import User
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
+    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:
+        """Adds `is_subscribed` annotation to queryset."""
+        return self.annotate(
+            is_subscribed=models.Exists(
+                user.subscriptions.filter(podcast=models.OuterRef("podcast"))
+            )
+        )
+
     def subscribed(self, user: User) -> models.QuerySet[Episode]:
         """Returns episodes for podcasts user is subscribed to."""
-        return self.filter(
-            podcast__in=set(user.subscriptions.values_list("podcast", flat=True))
-        )
+        return self.is_subscribed(user).filter(is_subscribed=True)
 
     def for_user(self, user: User) -> models.QuerySet[Episode]:
         """Returns episodes for all public podcasts or podcasts user is subscribed to."""
-        return self.filter(podcast__private=False) | self.subscribed(user)
+        return self.is_subscribed(user).filter(
+            models.Q(podcast__private=False) | models.Q(is_subscribed=True)
+        )
 
 
 class Episode(models.Model):
