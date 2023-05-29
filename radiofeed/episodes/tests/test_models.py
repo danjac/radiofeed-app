@@ -8,7 +8,7 @@ from radiofeed.episodes.factories import (
     create_episode,
 )
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.podcasts.factories import create_podcast
+from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Podcast
 
 
@@ -22,6 +22,34 @@ class TestEpisodeManager:
     def test_search_empty(self):
         create_episode(title="testing")
         assert Episode.objects.search("").count() == 0
+
+    @pytest.mark.django_db
+    def test_subscribed_true(self, user):
+        podcast = create_subscription(subscriber=user).podcast
+        create_episode(podcast=podcast)
+        assert Episode.objects.subscribed(user).exists()
+
+    @pytest.mark.django_db
+    def test_subscribed_false(self, user, episode):
+        assert not Episode.objects.subscribed(user).exists()
+
+    @pytest.mark.django_db
+    def test_for_user_public(self, user):
+        create_episode(podcast=create_podcast(private=False))
+        assert Episode.objects.for_user(user).exists()
+
+    @pytest.mark.django_db
+    def test_for_user_private(self, user):
+        create_episode(podcast=create_podcast(private=True))
+        assert not Episode.objects.for_user(user).exists()
+
+    @pytest.mark.django_db
+    def test_for_user_private_subscribed(self, user):
+        podcast = create_subscription(
+            subscriber=user, podcast=create_podcast(private=True)
+        ).podcast
+        create_episode(podcast=podcast)
+        assert Episode.objects.for_user(user).exists()
 
 
 class TestEpisodeModel:

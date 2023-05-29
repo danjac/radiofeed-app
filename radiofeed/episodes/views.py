@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -21,18 +21,15 @@ from radiofeed.pagination import render_pagination_response
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
-    subscribed = set(
-        request.user.subscriptions.filter(podcast__pub_date__isnull=False).values_list(
-            "podcast", flat=True
-        )
-    )
-    promoted = "promoted" in request.GET or not subscribed
-
     episodes = (
         Episode.objects.filter(pub_date__gt=timezone.now() - timedelta(days=14))
         .select_related("podcast")
         .order_by("-pub_date", "-id")
     )
+
+    subscribed = episodes.subscribed(request.user)
+    has_subscriptions = subscribed.exists()
+    promoted = "promoted" in request.GET or not has_subscriptions
 
     if promoted:
         episodes = episodes.filter(
@@ -40,7 +37,7 @@ def index(request: HttpRequest) -> HttpResponse:
             podcast__private=False,
         )
     else:
-        episodes = episodes.filter(podcast__in=subscribed)
+        episodes = subscribed
 
     return render_pagination_response(
         request,
@@ -49,7 +46,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "episodes/_episodes.html",
         {
             "promoted": promoted,
-            "has_subscriptions": bool(subscribed),
+            "has_subscriptions": has_subscriptions,
             "search_url": reverse("episodes:search_episodes"),
         },
     )
@@ -63,16 +60,9 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Episode.objects.filter(
-                    Q(podcast__private=False)
-                    | Q(
-                        pk__in=set(
-                            request.user.subscriptions.values_list("podcast", flat=True)
-                        )
-                    )
-                )
-                .select_related("podcast")
+                Episode.objects.for_user(request.user)
                 .search(request.search.value)
+                .select_related("podcast")
                 .order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
@@ -89,13 +79,7 @@ def episode_detail(
 ) -> HttpResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
-        Episode.objects.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-            ),
-        )
-        .filter(Q(podcast__private=False) | Q(is_subscribed=True))
-        .select_related("podcast"),
+        Episode.objects.for_user(request.user).select_related("podcast"),
         pk=episode_id,
     )
 
@@ -116,13 +100,7 @@ def episode_detail(
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
-        Episode.objects.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-            ),
-        )
-        .filter(Q(podcast__private=False) | Q(is_subscribed=True))
-        .select_related("podcast"),
+        Episode.objects.for_user(request.user).select_related("podcast"),
         pk=episode_id,
     )
 

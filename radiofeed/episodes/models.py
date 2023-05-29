@@ -26,6 +26,16 @@ from radiofeed.users.models import User
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
+    def subscribed(self, user: User) -> models.QuerySet[Episode]:
+        """Returns episodes for podcasts user is subscribed to."""
+        return self.filter(
+            podcast__in=set(user.subscriptions.values_list("podcast", flat=True))
+        )
+
+    def for_user(self, user: User) -> models.QuerySet[Episode]:
+        """Returns episodes for all public podcasts or podcasts user is subscribed to."""
+        return self.filter(podcast__private=False) | self.subscribed(user)
+
 
 class Episode(models.Model):
     """Individual podcast episode."""
