@@ -371,7 +371,6 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         if podcast := podcasts.filter(
             websub_mode="subscribe",
             websub_secret__isnull=False,
-            podping=False,
             pk=podcast_id,
         ).first():
             with contextlib.suppress(websub.InvalidSignature):
