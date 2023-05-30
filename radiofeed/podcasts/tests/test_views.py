@@ -529,7 +529,7 @@ class TestWebsubCallback:
         )
 
         response = client.post(self.url(websub_podcast))
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
 
         websub_podcast.refresh_from_db()
         assert websub_podcast.queued is None
@@ -539,7 +539,7 @@ class TestWebsubCallback:
         mocker.patch("radiofeed.podcasts.websub.check_signature")
 
         response = client.post(self.url(podcast))
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
         podcast.refresh_from_db()
         assert podcast.queued is None
 
