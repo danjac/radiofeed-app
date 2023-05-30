@@ -43,15 +43,15 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     Results are ordered by their last checked date and prioritized
     if subscribed or promoted.
 
-    Podcasts which are subscribed to a websub hub should not be scheduled
+    Podcasts which are subscribed to a websub hub or updated by podping should not be scheduled
     unless marked queued.
     """
     now = timezone.now()
 
-    subscribed_q = Q(
+    queueable_q = Q(
         websub_mode="subscribe",
         websub_expires__gt=now,
-    )
+    ) | Q(podping=True)
 
     return (
         Podcast.objects.alias(subscribers=Count("subscriptions"))
@@ -65,10 +65,10 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
                     parsed__lt=now - _MIN_FREQUENCY,
                 ),
             )
-            | Q(subscribed_q & Q(queued__isnull=False)),
+            | Q(queueable_q & Q(queued__isnull=False)),
             active=True,
         )
-        .exclude(subscribed_q & Q(queued__isnull=True))
+        .exclude(queueable_q & Q(queued__isnull=True))
         .order_by(
             F("queued").asc(nulls_last=True),
             F("subscribers").desc(),
