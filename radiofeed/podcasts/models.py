@@ -200,6 +200,7 @@ class Podcast(models.Model):
     # websub fields
 
     websub_hub: str | None = models.URLField(blank=True, max_length=2086, null=True)
+    websub_topic: str | None = models.URLField(blank=True, max_length=2086, null=True)
     websub_secret: uuid.UUID | None = models.UUIDField(blank=True, null=True)
     websub_mode: str = models.CharField(max_length=12, blank=True)
     websub_expires: datetime | None = models.DateTimeField(null=True, blank=True)

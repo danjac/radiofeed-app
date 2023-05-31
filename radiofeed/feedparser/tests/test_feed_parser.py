@@ -98,11 +98,14 @@ class TestFeedParser:
         websub_date = now - timedelta(days=3)
         websub_hub = "https://pubsubhubbub.appspot.com/"
 
+        rss = "https://mysteriousuniverse.org/feed/podcast/"
+
         podcast = create_podcast(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
             websub_hub=websub_hub,
+            websub_topic=rss,
             websub_expires=websub_date,
             websub_mode="subscribe",
             queued=now,
@@ -187,6 +190,7 @@ class TestFeedParser:
         # websub fields should remain the same
         assert podcast.websub_mode == "subscribe"
         assert podcast.websub_hub == websub_hub
+        assert podcast.websub_topic == rss
         assert podcast.websub_expires == websub_date
 
     @pytest.mark.django_db

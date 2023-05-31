@@ -313,13 +313,14 @@ class FeedParser:
             topic = feed.websub_topic
 
         # no change to current settings
-        if hub == self._podcast.websub_hub and topic == self._podcast.rss:
+        if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
             return {}
 
         # if websub hub or topic have changed reset all websub settings,
         # so podcast can re-subscribe
         return {
             "websub_hub": hub,
+            "websub_topic": topic,
             "websub_mode": "",
             "websub_expires": None,
             "websub_secret": None,
