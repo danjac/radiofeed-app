@@ -9,6 +9,7 @@ import beem
 from beem.blockchain import Blockchain
 from beem.nodelist import NodeList
 from django.core.management.base import BaseCommand
+from django.template.defaultfilters import pluralize
 from django.utils import timezone
 
 from radiofeed.podcasts.models import Podcast
@@ -78,5 +79,7 @@ class Command(BaseCommand):
                     queued=timezone.now(),
                 ):
                     self.stdout.write(
-                        self.style.SUCCESS(f"{for_update} podcasts queued for update")
+                        self.style.SUCCESS(
+                            f"{for_update} podcast{pluralize(for_update)} queued for update"
+                        )
                     )
