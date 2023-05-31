@@ -70,8 +70,6 @@ class Command(BaseCommand):
                 if url := data.get("url"):
                     urls.add(url)
 
-                self.stdout.write(f"podping urls: {urls}")
-
                 if for_update := Podcast.objects.filter(
                     active=True, rss__in=urls
                 ).update(
