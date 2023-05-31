@@ -10,6 +10,7 @@ from radiofeed.users.factories import create_user
 
 class TestSubscribeWebsubFeeds:
     hub = "https://example.com/hub/"
+    topic = "https://example.com/rss/"
 
     @pytest.fixture
     def subscribe(self, mocker):
@@ -18,7 +19,7 @@ class TestSubscribeWebsubFeeds:
         )
 
     def test_subscribe(self, db, subscribe):
-        create_podcast(websub_hub=self.hub)
+        create_podcast(websub_hub=self.hub, websub_topic=self.topic)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
 
@@ -28,7 +29,7 @@ class TestSubscribeWebsubFeeds:
             side_effect=requests.HTTPError("oops"),
         )
 
-        create_podcast(websub_hub=self.hub)
+        create_podcast(websub_hub=self.hub, websub_topic=self.topic)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
 

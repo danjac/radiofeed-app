@@ -26,6 +26,7 @@ class MockResponse:
 
 class TestGetPodcastsForSubscribe:
     hub = "https://example.com/"
+    topic = "https://example.com/rss/"
 
     @pytest.mark.django_db
     def test_not_websub(self, db, podcast):
@@ -42,6 +43,7 @@ class TestGetPodcastsForSubscribe:
     def test_expired(self, db):
         create_podcast(
             websub_hub=self.hub,
+            websub_topic=self.topic,
             websub_expires=timezone.now() - timedelta(days=1),
             websub_mode="subscribe",
         )
@@ -52,6 +54,7 @@ class TestGetPodcastsForSubscribe:
     def test_too_many_errors(self, db):
         create_podcast(
             websub_hub=self.hub,
+            websub_topic=self.topic,
             websub_expires=timezone.now() - timedelta(days=1),
             websub_mode="subscribe",
             num_websub_retries=3,

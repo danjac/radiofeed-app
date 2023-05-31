@@ -35,6 +35,7 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
         ),
         active=True,
         websub_hub__isnull=False,
+        websub_topic__isnull=False,
         num_websub_retries__lt=MAX_NUM_RETRIES,
     ).order_by(
         F("websub_expires").asc(nulls_first=True),
@@ -66,7 +67,7 @@ def subscribe(
             podcast.websub_hub,
             {
                 "hub.mode": mode,
-                "hub.topic": podcast.websub_topic or podcast.rss,
+                "hub.topic": podcast.websub_topic,
                 "hub.secret": secret.hex,
                 "hub.verify": "async",
                 "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
