@@ -303,7 +303,7 @@ class FeedParser:
 
     def _extract_websub_links(
         self, response: requests.Response, feed: Feed
-    ) -> dict[str, str | None]:
+    ) -> dict[str, str | int | None]:
         # links can be in HTTP headers or XML body
         try:
             hub = response.links["hub"]["url"]
@@ -324,6 +324,7 @@ class FeedParser:
             "websub_mode": "",
             "websub_expires": None,
             "websub_secret": None,
+            "num_websub_retries": 0,
         }
 
     def _make_episode(self, item: Item, episode_id: int | None = None) -> Episode:
