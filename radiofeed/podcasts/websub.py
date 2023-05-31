@@ -68,6 +68,7 @@ def subscribe(
                 "hub.mode": mode,
                 "hub.topic": podcast.rss,
                 "hub.secret": secret.hex,
+                "hub.verify": "async",
                 "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
                 "hub.callback": f"{scheme}://{site.domain}{callback_url}",
             },
