@@ -322,6 +322,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "content_hash",
         "podping",
         "websub_hub",
+        "websub_topic",
         "websub_mode",
         "websub_secret",
         "websub_expires",
