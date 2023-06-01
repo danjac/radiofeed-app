@@ -305,12 +305,8 @@ class FeedParser:
         self, response: requests.Response, feed: Feed
     ) -> dict[str, str | int | None]:
         # links can be in HTTP headers or XML body
-        try:
-            hub = response.links["hub"]["url"]
-            topic = response.links["self"]["url"]
-        except KeyError:
-            hub = feed.websub_hub
-            topic = feed.websub_topic
+        hub = response.links.get("hub", {}).get("url", feed.websub_hub)
+        topic = response.links.get("self", {}).get("url", feed.websub_topic)
 
         # websub hub and topic are either both set or None
         hub = hub if topic else None
@@ -320,7 +316,7 @@ class FeedParser:
         if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
             return {}
 
-        # if websub hub or topic have changed reset all websub settings,
+        # if websub hub or topic have changed reset all related websub settings,
         # so podcast can re-subscribe
         return {
             "websub_hub": hub,
