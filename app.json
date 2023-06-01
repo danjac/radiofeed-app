@@ -5,15 +5,14 @@
         "web": {
             "quantity": 1
         },
+        "feedparser": {
+            "quantity": 1
+        },
         "podping": {
             "quantity": 1
         }
     },
     "cron": [
-        {
-            "command": "python manage.py parse_feeds",
-            "schedule": "*/6 * * * *"
-        },
         {
             "command": "python manage.py create_recommendations",
             "schedule": "15 6 * * *"

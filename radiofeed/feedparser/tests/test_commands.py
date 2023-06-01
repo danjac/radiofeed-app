@@ -73,11 +73,11 @@ class TestParseFeeds:
     @pytest.mark.django_db
     def test_ok(self, mock_parse_ok):
         create_podcast(pub_date=None)
-        call_command("parse_feeds", limit=200)
+        call_command("parse_feeds")
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db
     def test_feed_parser_error(self, mock_parse_fail):
         create_podcast(pub_date=None)
-        call_command("parse_feeds", limit=200)
+        call_command("parse_feeds")
         mock_parse_fail.assert_called()
