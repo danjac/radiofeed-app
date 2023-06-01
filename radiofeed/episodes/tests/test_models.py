@@ -247,6 +247,17 @@ class TestBookmarkManager:
         assert Bookmark.objects.search("testing").count() == 1
 
     @pytest.mark.django_db
+    def test_is_subscribed_true(self, user, podcast):
+        create_subscription(subscriber=user, podcast=podcast)
+        create_bookmark(episode=create_episode(podcast=podcast))
+        assert Bookmark.objects.is_subscribed(user).first().is_subscribed
+
+    @pytest.mark.django_db
+    def test_is_subscribed_false(self, user, podcast):
+        create_bookmark(episode=create_episode(podcast=podcast))
+        assert not Bookmark.objects.is_subscribed(user).first().is_subscribed
+
+    @pytest.mark.django_db
     def test_accessible_public(self, user):
         create_bookmark(episode=create_episode(podcast=create_podcast(private=False)))
         assert Bookmark.objects.accessible(user).exists()
@@ -271,6 +282,17 @@ class TestAudioLogManager:
         episode = create_episode(title="testing")
         create_audio_log(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
+
+    @pytest.mark.django_db
+    def test_is_subscribed_true(self, user, podcast):
+        create_subscription(subscriber=user, podcast=podcast)
+        create_audio_log(episode=create_episode(podcast=podcast))
+        assert AudioLog.objects.is_subscribed(user).first().is_subscribed
+
+    @pytest.mark.django_db
+    def test_is_subscribed_false(self, user, podcast):
+        create_audio_log(episode=create_episode(podcast=podcast))
+        assert not AudioLog.objects.is_subscribed(user).first().is_subscribed
 
     @pytest.mark.django_db
     def test_accessible_public(self, user):
