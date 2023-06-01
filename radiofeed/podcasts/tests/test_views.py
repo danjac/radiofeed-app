@@ -35,8 +35,7 @@ class TestLandingPage:
     @pytest.mark.django_db
     def test_authenticated(self, client, auth_user):
         # should redirect to podcasts index page
-        response = client.get(self.url)
-        assert response.url == podcasts_url
+        assert client.get(self.url).url == podcasts_url
 
 
 class TestPodcasts:
@@ -63,8 +62,7 @@ class TestPodcasts:
 
     @pytest.mark.django_db
     def test_invalid_page(self, client, auth_user):
-        response = client.get(podcasts_url, {"page": 1000})
-        assert_ok(response)
+        assert_ok(client.get(podcasts_url, {"page": 1000}))
 
     @pytest.mark.django_db
     def test_user_is_subscribed_promoted(self, client, auth_user):
@@ -262,8 +260,7 @@ class TestPodcastDetail:
     @pytest.mark.django_db
     def test_get_podcast_private_not_subscribed(self, client, auth_user):
         podcast = create_podcast(private=True)
-        response = client.get(podcast.get_absolute_url())
-        assert_not_found(response)
+        assert_not_found(client.get(podcast.get_absolute_url()))
 
     @pytest.mark.django_db
     def test_get_podcast_not_subscribed(self, client, auth_user, podcast):
@@ -411,12 +408,13 @@ class TestSubscribe:
 
     @pytest.mark.django_db
     def test_subscribe(self, client, podcast, auth_user):
-        response = client.post(
-            self.url(podcast),
-            HTTP_HX_TARGET=podcast.get_subscribe_target(),
-            HTTP_HX_REQUEST="true",
+        assert_ok(
+            client.post(
+                self.url(podcast),
+                HTTP_HX_TARGET=podcast.get_subscribe_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
-        assert_ok(response)
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
@@ -425,12 +423,13 @@ class TestSubscribe:
     def test_subscribe_private(self, client, auth_user):
         podcast = create_podcast(private=True)
 
-        response = client.post(
-            self.url(podcast),
-            HTTP_HX_TARGET=podcast.get_subscribe_target(),
-            HTTP_HX_REQUEST="true",
+        assert_not_found(
+            client.post(
+                self.url(podcast),
+                HTTP_HX_TARGET=podcast.get_subscribe_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
-        assert_not_found(response)
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
@@ -484,12 +483,13 @@ class TestUnsubscribe:
         podcast = create_subscription(
             subscriber=auth_user, podcast=create_podcast(private=True)
         ).podcast
-        response = client.post(
-            self.url(podcast),
-            HTTP_HX_TARGET=podcast.get_subscribe_target(),
-            HTTP_HX_REQUEST="true",
+        assert_not_found(
+            client.post(
+                self.url(podcast),
+                HTTP_HX_TARGET=podcast.get_subscribe_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
-        assert_not_found(response)
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
@@ -642,8 +642,7 @@ class TestPrivateFeeds:
     def test_ok(self, client, auth_user):
         for podcast in create_batch(create_podcast, 33, private=True):
             create_subscription(subscriber=auth_user, podcast=podcast)
-        response = client.get(self.url)
-        assert_ok(response)
+        assert_ok(client.get(self.url))
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, faker):
@@ -685,14 +684,14 @@ class TestAddPrivateFeed:
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
-        response = client.get(self.url)
-        assert_ok(response)
+        assert_ok(client.get(self.url))
 
     @pytest.mark.django_db
     def test_post_ok(self, client, faker, auth_user):
         rss = faker.url()
-        response = client.post(self.url, {"rss": rss})
-        assertRedirects(response, reverse("podcasts:private_feeds"))
+        assertRedirects(
+            client.post(self.url, {"rss": rss}), reverse("podcasts:private_feeds")
+        )
 
         podcast = Subscription.objects.get(
             subscriber=auth_user, podcast__rss=rss
@@ -704,8 +703,10 @@ class TestAddPrivateFeed:
     def test_existing_private(self, client, faker, auth_user):
         podcast = create_podcast(private=True)
 
-        response = client.post(self.url, {"rss": podcast.rss})
-        assertRedirects(response, reverse("podcasts:private_feeds"))
+        assertRedirects(
+            client.post(self.url, {"rss": podcast.rss}),
+            reverse("podcasts:private_feeds"),
+        )
 
         assert Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
@@ -715,8 +716,7 @@ class TestAddPrivateFeed:
     def test_existing_public(self, client, faker, auth_user):
         podcast = create_podcast(private=False)
 
-        response = client.post(self.url, {"rss": podcast.rss})
-        assert_ok(response)
+        assert_ok(client.post(self.url, {"rss": podcast.rss}))
 
         assert not Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
