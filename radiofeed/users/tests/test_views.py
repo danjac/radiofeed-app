@@ -17,21 +17,20 @@ class TestUserPreferences:
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
-        response = client.get(self.url)
-        assert_ok(response)
+        assert_ok(client.get(self.url))
 
     @pytest.mark.django_db
     def test_post(self, client, auth_user):
-        response = client.post(
-            self.url,
-            {
-                "send_email_notifications": False,
-            },
-            HTTP_HX_TARGET="preferences-form",
-            HTTP_HX_REQUEST="true",
+        assert_ok(
+            client.post(
+                self.url,
+                {
+                    "send_email_notifications": False,
+                },
+                HTTP_HX_TARGET="preferences-form",
+                HTTP_HX_REQUEST="true",
+            )
         )
-
-        assert_ok(response)
 
         auth_user.refresh_from_db()
 
@@ -45,8 +44,7 @@ class TestUserStats:
         create_audio_log(user=auth_user)
         create_bookmark(user=auth_user)
 
-        response = client.get(reverse("users:stats"))
-        assert_ok(response)
+        assert_ok(client.get(reverse("users:stats")))
 
     @pytest.mark.django_db
     def test_stats_plural(self, client, auth_user):
@@ -54,8 +52,7 @@ class TestUserStats:
         create_batch(create_bookmark, 3, user=auth_user)
         create_batch(create_subscription, 3, subscriber=auth_user)
 
-        response = client.get(reverse("users:stats"))
-        assert_ok(response)
+        assert_ok(client.get(reverse("users:stats")))
 
 
 class TestManagePodcastFeeds:
@@ -161,7 +158,7 @@ class TestExportPodcastFeeds:
     @pytest.mark.django_db
     def test_export_opml(self, client, subscription):
         response = client.post(self.url)
-        assert_ok(response)
+        assert_ok(client.post(self.url))
         assert response["Content-Type"] == "text/x-opml"
 
 
@@ -171,14 +168,12 @@ class TestDeleteAccount:
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         # make sure we don't accidentally delete account on get request
-        response = client.get(self.url)
-        assert_ok(response)
+        assert_ok(client.get(self.url))
         assert User.objects.exists()
 
     @pytest.mark.django_db
     def test_post_unconfirmed(self, client, auth_user):
-        response = client.post(self.url)
-        assert_ok(response)
+        assert_ok(client.post(self.url))
         assert User.objects.exists()
 
     @pytest.mark.django_db
