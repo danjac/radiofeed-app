@@ -98,8 +98,7 @@ class TestSearchEpisodes:
 
     @pytest.mark.django_db
     def test_no_results(self, auth_user, client):
-        response = client.get(self.url, {"query": "test"})
-        assert_ok(response)
+        assert_ok(client.get(self.url, {"query": "test"}))
 
     @pytest.mark.django_db
     def test_search_empty(self, auth_user, client):
@@ -172,8 +171,7 @@ class TestEpisodeDetail:
         auth_user,
     ):
         episode = create_episode(podcast=create_podcast(private=True))
-        response = client.get(episode.get_absolute_url())
-        assert_not_found(response)
+        assert_not_found(client.get(episode.get_absolute_url()))
 
     @pytest.mark.django_db
     def test_private_subscribed(
@@ -331,8 +329,7 @@ class TestClosePlayer:
 
     @pytest.mark.django_db
     def test_player_empty(self, client, auth_user, episode):
-        response = client.post(self.url, HTTP_HX_REQUEST="true")
-        assert_no_content(response)
+        assert_no_content(client.post(self.url, HTTP_HX_REQUEST="true"))
 
     @pytest.mark.django_db
     def test_close(
@@ -340,13 +337,13 @@ class TestClosePlayer:
         client,
         player_episode,
     ):
-        response = client.post(
-            self.url,
-            HTTP_HX_TARGET=player_episode.get_player_target(),
-            HTTP_HX_REQUEST="true",
+        assert_ok(
+            client.post(
+                self.url,
+                HTTP_HX_TARGET=player_episode.get_player_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
-
-        assert_ok(response)
 
         assert player_episode.id not in client.session
 
@@ -356,11 +353,12 @@ class TestPlayerTimeUpdate:
 
     @pytest.mark.django_db
     def test_is_running(self, client, player_episode):
-        response = client.post(
-            self.url,
-            {"current_time": "1030"},
+        assert_no_content(
+            client.post(
+                self.url,
+                {"current_time": "1030"},
+            )
         )
-        assert_no_content(response)
 
         log = AudioLog.objects.first()
 
@@ -372,11 +370,12 @@ class TestPlayerTimeUpdate:
         session[Player.session_key] = episode.id
         session.save()
 
-        response = client.post(
-            self.url,
-            {"current_time": "1030"},
+        assert_no_content(
+            client.post(
+                self.url,
+                {"current_time": "1030"},
+            )
         )
-        assert_no_content(response)
         log = AudioLog.objects.first()
 
         assert log.current_time == 1030
@@ -384,24 +383,22 @@ class TestPlayerTimeUpdate:
 
     @pytest.mark.django_db
     def test_player_not_in_session(self, client, auth_user, episode):
-        response = client.post(
-            self.url,
-            {"current_time": "1030"},
+        assert_no_content(
+            client.post(
+                self.url,
+                {"current_time": "1030"},
+            )
         )
-
-        assert_no_content(response)
 
         assert not AudioLog.objects.exists()
 
     @pytest.mark.django_db
     def test_missing_data(self, client, auth_user, player_episode):
-        response = client.post(self.url)
-        assert_bad_request(response)
+        assert_bad_request(client.post(self.url))
 
     @pytest.mark.django_db
     def test_invalid_data(self, client, auth_user, player_episode):
-        response = client.post(self.url, {"current_time": "xyz"})
-        assert_bad_request(response)
+        assert_bad_request(client.post(self.url, {"current_time": "xyz"}))
 
 
 class TestBookmarks:
@@ -455,13 +452,13 @@ class TestAddBookmark:
 
     @pytest.mark.django_db
     def test_post(self, client, auth_user, episode):
-        response = client.post(
-            self.url(episode),
-            HTTP_HX_TARGET=episode.get_bookmark_target(),
-            HTTP_HX_REQUEST="true",
+        assert_ok(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET=episode.get_bookmark_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
-
-        assert_ok(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db
@@ -473,12 +470,13 @@ class TestAddBookmark:
     @pytest.mark.django_db(transaction=True)
     def test_already_bookmarked(self, client, auth_user, episode):
         create_bookmark(episode=episode, user=auth_user)
-        response = client.post(
-            self.url(episode),
-            HTTP_HX_TARGET=episode.get_bookmark_target(),
-            HTTP_HX_REQUEST="true",
+        assert_ok(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET=episode.get_bookmark_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
-        assert_ok(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -489,12 +487,13 @@ class TestRemoveBookmark:
     @pytest.mark.django_db
     def test_post(self, client, auth_user, episode):
         create_bookmark(user=auth_user, episode=episode)
-        response = client.post(
-            self.url(episode),
-            HTTP_HX_TARGET=episode.get_bookmark_target(),
-            HTTP_HX_REQUEST="true",
+        assert_ok(
+            client.post(
+                self.url(episode),
+                HTTP_HX_TARGET=episode.get_bookmark_target(),
+                HTTP_HX_REQUEST="true",
+            )
         )
-        assert_ok(response)
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db
