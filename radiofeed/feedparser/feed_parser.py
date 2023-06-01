@@ -312,6 +312,10 @@ class FeedParser:
             hub = feed.websub_hub
             topic = feed.websub_topic
 
+        # websub hub and topic are either both set or None
+        hub = hub if topic else None
+        topic = topic if hub else None
+
         # no change to current settings
         if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
             return {}
