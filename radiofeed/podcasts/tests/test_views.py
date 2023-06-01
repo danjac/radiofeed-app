@@ -506,12 +506,18 @@ class TestUnsubscribe:
 
 
 class TestWebsubCallback:
+    topic = "https://example.com/rss"
+
     def url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
 
     @pytest.fixture
     def websub_podcast(self):
-        return create_podcast(websub_mode="subscribe", websub_secret=uuid.uuid4())
+        return create_podcast(
+            websub_mode="subscribe",
+            websub_secret=uuid.uuid4(),
+            websub_topic=self.topic,
+        )
 
     @pytest.mark.django_db
     def test_post(self, client, mocker, websub_podcast):
@@ -544,40 +550,40 @@ class TestWebsubCallback:
         assert podcast.queued is None
 
     @pytest.mark.django_db
-    def test_get(self, client, podcast):
+    def test_get(self, client, websub_podcast):
         response = client.get(
-            self.url(podcast),
+            self.url(websub_podcast),
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.rss,
+                "hub.topic": self.topic,
                 "hub.lease_seconds": "2000",
             },
         )
 
         assert response.status_code == http.HTTPStatus.OK
 
-        podcast.refresh_from_db()
+        websub_podcast.refresh_from_db()
 
-        assert podcast.websub_expires
+        assert websub_podcast.websub_expires
 
     @pytest.mark.django_db
-    def test_get_denied(self, client, podcast):
+    def test_get_denied(self, client, websub_podcast):
         response = client.get(
-            self.url(podcast),
+            self.url(websub_podcast),
             {
                 "hub.mode": "denied",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.rss,
+                "hub.topic": self.topic,
                 "hub.lease_seconds": "2000",
             },
         )
 
         assert response.status_code == http.HTTPStatus.OK
 
-        podcast.refresh_from_db()
+        websub_podcast.refresh_from_db()
 
-        assert podcast.websub_expires is None
+        assert websub_podcast.websub_expires is None
 
     @pytest.mark.django_db
     def test_get_invalid_topic(self, client, podcast):
@@ -598,39 +604,39 @@ class TestWebsubCallback:
         assert podcast.websub_expires is None
 
     @pytest.mark.django_db
-    def test_get_invalid_lease_seconds(self, client, podcast):
+    def test_get_invalid_lease_seconds(self, client, websub_podcast):
         response = client.get(
-            self.url(podcast),
+            self.url(websub_podcast),
             {
                 "hub.mode": "subscribe",
                 "hub.challenge": "OK",
-                "hub.topic": podcast.rss,
+                "hub.topic": self.topic,
                 "hub.lease_seconds": "invalid",
             },
         )
 
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
-        podcast.refresh_from_db()
+        websub_podcast.refresh_from_db()
 
-        assert podcast.websub_expires is None
+        assert websub_podcast.websub_expires is None
 
     @pytest.mark.django_db
-    def test_get_missing_mode(self, client, podcast):
+    def test_get_missing_mode(self, client, websub_podcast):
         response = client.get(
-            self.url(podcast),
+            self.url(websub_podcast),
             {
                 "hub.challenge": "OK",
-                "hub.topic": podcast.rss,
+                "hub.topic": self.topic,
                 "hub.lease_seconds": "2000",
             },
         )
 
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
-        podcast.refresh_from_db()
+        websub_podcast.refresh_from_db()
 
-        assert podcast.websub_expires is None
+        assert websub_podcast.websub_expires is None
 
 
 class TestPrivateFeeds:

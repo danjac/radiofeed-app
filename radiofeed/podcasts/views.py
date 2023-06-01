@@ -394,7 +394,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             request.GET.get("hub.lease_seconds", websub.DEFAULT_LEASE_SECONDS)
         )
 
-        podcast = get_object_or_404(podcasts, rss=topic, pk=podcast_id)
+        podcast = get_object_or_404(podcasts, websub_topic=topic, pk=podcast_id)
 
         podcast.websub_mode = mode
 
