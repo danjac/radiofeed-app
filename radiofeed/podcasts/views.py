@@ -368,17 +368,18 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     # content distribution
     if request.method == "POST":
-        if podcast := podcasts.filter(
+        podcast = get_object_or_404(
+            podcasts,
             websub_mode="subscribe",
             websub_secret__isnull=False,
             pk=podcast_id,
-        ).first():
-            with contextlib.suppress(websub.InvalidSignature):
-                websub.check_signature(request, podcast.websub_secret)
+        )
+        with contextlib.suppress(websub.InvalidSignature):
+            websub.check_signature(request, podcast.websub_secret)
 
-                # queue podast for immediate update
-                podcast.queued = timezone.now()
-                podcast.save()
+            # queue podast for immediate update
+            podcast.queued = timezone.now()
+            podcast.save()
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 

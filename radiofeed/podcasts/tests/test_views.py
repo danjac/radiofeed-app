@@ -1,4 +1,3 @@
-import http
 import uuid
 
 import pytest
@@ -6,7 +5,7 @@ import requests
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertRedirects
 
-from radiofeed.asserts import assert_not_found, assert_ok
+from radiofeed.asserts import assert_no_content, assert_not_found, assert_ok
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
 from radiofeed.podcasts import itunes
@@ -523,10 +522,17 @@ class TestWebsubCallback:
     def test_post(self, client, mocker, websub_podcast):
         mocker.patch("radiofeed.podcasts.websub.check_signature")
 
-        response = client.post(self.url(websub_podcast))
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
+        assert_no_content(client.post(self.url(websub_podcast)))
         websub_podcast.refresh_from_db()
         assert websub_podcast.queued is not None
+
+    @pytest.mark.django_db
+    def test_post_not_subscribed(self, client, mocker, podcast):
+        mocker.patch("radiofeed.podcasts.websub.check_signature")
+
+        assert_not_found(client.post(self.url(podcast)))
+        podcast.refresh_from_db()
+        assert podcast.queued is None
 
     @pytest.mark.django_db
     def test_post_invalid_signature(self, client, mocker, websub_podcast):
@@ -534,34 +540,24 @@ class TestWebsubCallback:
             "radiofeed.podcasts.websub.check_signature", side_effect=InvalidSignature
         )
 
-        response = client.post(self.url(websub_podcast))
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
+        assert_no_content(client.post(self.url(websub_podcast)))
 
         websub_podcast.refresh_from_db()
         assert websub_podcast.queued is None
 
     @pytest.mark.django_db
-    def test_post_not_subscribed(self, client, mocker, podcast):
-        mocker.patch("radiofeed.podcasts.websub.check_signature")
-
-        response = client.post(self.url(podcast))
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
-        podcast.refresh_from_db()
-        assert podcast.queued is None
-
-    @pytest.mark.django_db
     def test_get(self, client, websub_podcast):
-        response = client.get(
-            self.url(websub_podcast),
-            {
-                "hub.mode": "subscribe",
-                "hub.challenge": "OK",
-                "hub.topic": self.topic,
-                "hub.lease_seconds": "2000",
-            },
+        assert_ok(
+            client.get(
+                self.url(websub_podcast),
+                {
+                    "hub.mode": "subscribe",
+                    "hub.challenge": "OK",
+                    "hub.topic": self.topic,
+                    "hub.lease_seconds": "2000",
+                },
+            )
         )
-
-        assert response.status_code == http.HTTPStatus.OK
 
         websub_podcast.refresh_from_db()
 
@@ -569,17 +565,17 @@ class TestWebsubCallback:
 
     @pytest.mark.django_db
     def test_get_denied(self, client, websub_podcast):
-        response = client.get(
-            self.url(websub_podcast),
-            {
-                "hub.mode": "denied",
-                "hub.challenge": "OK",
-                "hub.topic": self.topic,
-                "hub.lease_seconds": "2000",
-            },
+        assert_ok(
+            client.get(
+                self.url(websub_podcast),
+                {
+                    "hub.mode": "denied",
+                    "hub.challenge": "OK",
+                    "hub.topic": self.topic,
+                    "hub.lease_seconds": "2000",
+                },
+            )
         )
-
-        assert response.status_code == http.HTTPStatus.OK
 
         websub_podcast.refresh_from_db()
 
@@ -587,17 +583,17 @@ class TestWebsubCallback:
 
     @pytest.mark.django_db
     def test_get_invalid_topic(self, client, podcast):
-        response = client.get(
-            self.url(podcast),
-            {
-                "hub.mode": "subscribe",
-                "hub.challenge": "OK",
-                "hub.topic": "https://wrong-topic.com/",
-                "hub.lease_seconds": "2000",
-            },
+        assert_not_found(
+            client.get(
+                self.url(podcast),
+                {
+                    "hub.mode": "subscribe",
+                    "hub.challenge": "OK",
+                    "hub.topic": "https://wrong-topic.com/",
+                    "hub.lease_seconds": "2000",
+                },
+            )
         )
-
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         podcast.refresh_from_db()
 
@@ -605,17 +601,17 @@ class TestWebsubCallback:
 
     @pytest.mark.django_db
     def test_get_invalid_lease_seconds(self, client, websub_podcast):
-        response = client.get(
-            self.url(websub_podcast),
-            {
-                "hub.mode": "subscribe",
-                "hub.challenge": "OK",
-                "hub.topic": self.topic,
-                "hub.lease_seconds": "invalid",
-            },
+        assert_not_found(
+            client.get(
+                self.url(websub_podcast),
+                {
+                    "hub.mode": "subscribe",
+                    "hub.challenge": "OK",
+                    "hub.topic": self.topic,
+                    "hub.lease_seconds": "invalid",
+                },
+            )
         )
-
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         websub_podcast.refresh_from_db()
 
@@ -623,16 +619,16 @@ class TestWebsubCallback:
 
     @pytest.mark.django_db
     def test_get_missing_mode(self, client, websub_podcast):
-        response = client.get(
-            self.url(websub_podcast),
-            {
-                "hub.challenge": "OK",
-                "hub.topic": self.topic,
-                "hub.lease_seconds": "2000",
-            },
+        assert_not_found(
+            client.get(
+                self.url(websub_podcast),
+                {
+                    "hub.challenge": "OK",
+                    "hub.topic": self.topic,
+                    "hub.lease_seconds": "2000",
+                },
+            )
         )
-
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         websub_podcast.refresh_from_db()
 
