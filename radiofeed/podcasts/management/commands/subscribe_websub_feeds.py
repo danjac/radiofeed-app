@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 import requests
 from django.core.management.base import BaseCommand
 
-from radiofeed import futures
+from radiofeed.futures import ThreadPoolExecutor
 from radiofeed.podcasts import websub
 from radiofeed.podcasts.models import Podcast
 
@@ -25,12 +25,13 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
 
-        futures.safemap(
-            websub.get_podcasts_for_subscribe().values_list("pk", flat=True)[
-                : options["limit"]
-            ],
-            self._subscribe,
-        )
+        with ThreadPoolExecutor() as executor:
+            executor.safemap(
+                websub.get_podcasts_for_subscribe().values_list("pk", flat=True)[
+                    : options["limit"]
+                ],
+                self._subscribe,
+            )
 
     def _subscribe(self, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)
