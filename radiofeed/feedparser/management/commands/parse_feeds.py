@@ -21,6 +21,12 @@ class Command(BaseCommand):
             default=False,
             action="store_true",
         )
+        parser.add_argument(
+            "--limit",
+            help="Number of feeds to process",
+            type=int,
+            default=360,
+        )
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
@@ -28,7 +34,7 @@ class Command(BaseCommand):
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     self._parse_feed,
-                    scheduler.get_podcasts_for_update()[:100].iterator(),
+                    scheduler.get_podcasts_for_update()[: options["limit"]].iterator(),
                 )
             if not options["watch"]:
                 break
