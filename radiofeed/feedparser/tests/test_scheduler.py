@@ -28,7 +28,7 @@ class TestNextScheduledUpdate:
             parsed=now - timedelta(days=3),
             frequency=timedelta(days=30),
         )
-        assert (scheduler.next_scheduled_update(podcast) - now).days == 12
+        assert (scheduler.next_scheduled_update(podcast) - now).days == 4
 
     def test_parsed_lt_now(self):
         now = timezone.now()
@@ -61,12 +61,12 @@ class TestNextScheduledUpdate:
         now = timezone.now()
         podcast = Podcast(
             pub_date=now - timedelta(hours=3),
-            parsed=now - timedelta(hours=1),
+            parsed=now - timedelta(minutes=30),
             frequency=timedelta(hours=3),
         )
         assert (
             scheduler.next_scheduled_update(podcast) - now
-        ).total_seconds() / 3600 == pytest.approx(2)
+        ).total_seconds() / 3600 == pytest.approx(0.5)
 
 
 class TestGetPodcastsForUpdate:
@@ -310,7 +310,7 @@ class TestReschedule:
     def test_increment(self):
         assert scheduler.reschedule(
             timezone.now() - timedelta(days=1), timedelta(hours=24)
-        ).total_seconds() / 3600 == pytest.approx(25.2)
+        ).total_seconds() / 3600 == pytest.approx(24.24)
 
 
 class TestSchedule:
@@ -406,7 +406,7 @@ class TestSchedule:
             ],
         )
 
-        assert (scheduler.schedule(feed).total_seconds() / 3600) == pytest.approx(3)
+        assert (scheduler.schedule(feed).total_seconds() / 3600) == pytest.approx(1)
 
     def test_rescheduled(self):
         now = timezone.now()
@@ -422,4 +422,4 @@ class TestSchedule:
             ],
         )
 
-        assert scheduler.schedule(feed).days == 34
+        assert scheduler.schedule(feed).days == 33

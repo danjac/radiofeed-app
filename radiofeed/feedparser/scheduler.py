@@ -9,8 +9,8 @@ from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
 _DEFAULT_FREQUENCY: Final = timedelta(hours=24)
-_MIN_FREQUENCY: Final = timedelta(hours=3)
-_MAX_FREQUENCY: Final = timedelta(days=15)
+_MIN_FREQUENCY: Final = timedelta(hours=1)
+_MAX_FREQUENCY: Final = timedelta(days=7)
 
 
 def next_scheduled_update(podcast: Podcast) -> datetime:
@@ -36,7 +36,7 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns all active podcasts scheduled for feed update.
 
     1) Any newly added feeds
-    2) Any not checked for at least 15 days
+    2) Any not checked for at least 7 days
     3) Any with last pub date since their `frequency` value
     4) Any queued podcasts
 
@@ -114,7 +114,7 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     now = timezone.now()
 
     while now > pub_date + frequency:
-        frequency += frequency * 0.05
+        frequency += frequency * 0.01
 
     # ensure result falls within bounds
 
