@@ -26,7 +26,7 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
         while True:
-            for podcasts in batcher.batch(
+            for podcasts in batcher(
                 scheduler.get_podcasts_for_update().iterator(), 100
             ):
                 with ThreadPoolExecutor() as executor:
