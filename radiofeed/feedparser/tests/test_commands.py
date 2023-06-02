@@ -70,13 +70,13 @@ class TestParseFeeds:
             "radiofeed.feedparser.feed_parser.FeedParser.parse", side_effect=Duplicate()
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db(transaction=True)
     def test_ok(self, mock_parse_ok):
         create_podcast(pub_date=None)
         call_command("parse_feeds")
         mock_parse_ok.assert_called()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db(transaction=True)
     def test_feed_parser_error(self, mock_parse_fail):
         create_podcast(pub_date=None)
         call_command("parse_feeds")

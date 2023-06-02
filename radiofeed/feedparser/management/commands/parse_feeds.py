@@ -34,12 +34,15 @@ class Command(BaseCommand):
             with ThreadPoolExecutor() as executor:
                 executor.map(
                     self._parse_feed,
-                    scheduler.get_podcasts_for_update()[: options["limit"]].iterator(),
+                    scheduler.get_podcasts_for_update().values_list("pk", flat=True)[
+                        : options["limit"]
+                    ],
                 )
             if not options["watch"]:
                 break
 
-    def _parse_feed(self, podcast: Podcast) -> None:
+    def _parse_feed(self, podcast_id: int) -> None:
+        podcast = Podcast.objects.get(pk=podcast_id)
         try:
             feed_parser.FeedParser(podcast).parse()
             self.stdout.write(self.style.SUCCESS(f"parse feed ok: {podcast}"))
