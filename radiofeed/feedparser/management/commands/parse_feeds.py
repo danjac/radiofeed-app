@@ -1,9 +1,8 @@
 from argparse import ArgumentParser
-from concurrent.futures import ThreadPoolExecutor
 
 from django.core.management.base import BaseCommand
-from django.db import connections
 
+from radiofeed import futures
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.models import Podcast
@@ -32,16 +31,13 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
 
-        def _done(future):
-            connections.close_all()
-
         while True:
-            with ThreadPoolExecutor() as executor:
-                for podcast_id in scheduler.get_podcasts_for_update().values_list(
-                    "pk", flat=True
-                )[: options["limit"]]:
-                    future = executor.submit(self._parse_feed, podcast_id)
-                    future.add_done_callback(_done)
+            futures.safemap(
+                scheduler.get_podcasts_for_update().values_list("pk", flat=True)[
+                    : options["limit"]
+                ],
+                self._parse_feed,
+            )
 
             if not options["watch"]:
                 break

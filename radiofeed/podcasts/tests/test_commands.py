@@ -14,22 +14,24 @@ class TestSubscribeWebsubFeeds:
 
     @pytest.fixture
     def subscribe(self, mocker):
-        return mocker.patch(
-            "radiofeed.podcasts.websub.subscribe",
-        )
+        return mocker.patch("radiofeed.podcasts.websub.subscribe")
 
-    def test_subscribe(self, db, subscribe):
-        create_podcast(websub_hub=self.hub, websub_topic=self.topic)
+    @pytest.fixture
+    def websub_podcast(self):
+        return create_podcast(websub_hub=self.hub, websub_topic=self.topic)
+
+    @pytest.mark.django_db(transaction=True)
+    def test_subscribe(self, subscribe, websub_podcast):
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
 
-    def test_exception(self, db, mocker):
+    @pytest.mark.django_db(transaction=True)
+    def test_exception(self, mocker, websub_podcast):
         subscribe = mocker.patch(
             "radiofeed.podcasts.websub.subscribe",
             side_effect=requests.HTTPError("oops"),
         )
 
-        create_podcast(websub_hub=self.hub, websub_topic=self.topic)
         call_command("subscribe_websub_feeds", limit=200)
         subscribe.assert_called()
 
@@ -48,7 +50,7 @@ class TestCreateRecommendations:
 
 
 class TestSendRecommendationsEmails:
-    @pytest.mark.django_db
+    @pytest.mark.django_db(transaction=True)
     def test_send_emails(self, mocker):
         create_user(send_email_notifications=True, is_active=True)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
