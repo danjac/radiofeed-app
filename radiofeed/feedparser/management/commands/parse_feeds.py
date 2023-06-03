@@ -34,10 +34,10 @@ class Command(BaseCommand):
         while True:
             with ThreadPoolExecutor() as executor:
                 executor.safemap(
+                    self._parse_feed,
                     scheduler.get_podcasts_for_update().values_list("pk", flat=True)[
                         : options["limit"]
                     ],
-                    self._parse_feed,
                 )
 
             if not options["watch"]:

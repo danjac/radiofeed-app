@@ -27,10 +27,10 @@ class Command(BaseCommand):
 
         with ThreadPoolExecutor() as executor:
             executor.safemap(
+                self._subscribe,
                 websub.get_podcasts_for_subscribe().values_list("pk", flat=True)[
                     : options["limit"]
                 ],
-                self._subscribe,
             )
 
     def _subscribe(self, podcast_id: int) -> None:

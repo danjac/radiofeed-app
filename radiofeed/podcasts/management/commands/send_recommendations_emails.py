@@ -15,10 +15,10 @@ class Command(BaseCommand):
 
         with ThreadPoolExecutor() as executor:
             executor.safemap(
+                self._send_recommendations_email,
                 User.objects.email_notification_recipients().values_list(
                     "pk", flat=True
                 ),
-                self._send_recommendations_email,
             )
 
     def _send_recommendations_email(self, user_id: int) -> None:
