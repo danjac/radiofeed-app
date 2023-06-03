@@ -145,14 +145,7 @@ def podcast_detail(
         pk=podcast_id,
     )
 
-    return render(
-        request,
-        "podcasts/detail.html",
-        {
-            "podcast": podcast,
-            "is_subscribed": podcast.is_subscribed,
-        },
-    )
+    return render(request, "podcasts/detail.html", {"podcast": podcast})
 
 
 @require_safe
