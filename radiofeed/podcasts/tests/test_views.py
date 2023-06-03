@@ -246,7 +246,7 @@ class TestPodcastDetail:
         response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
-        assert response.context["is_subscribed"] is True
+        assert response.context["podcast"].is_subscribed is True
 
     @pytest.mark.django_db
     def test_get_podcast_private_subscribed(self, client, auth_user):
@@ -255,7 +255,7 @@ class TestPodcastDetail:
         response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
-        assert response.context["is_subscribed"] is True
+        assert response.context["podcast"].is_subscribed is True
 
     @pytest.mark.django_db
     def test_get_podcast_private_not_subscribed(self, client, auth_user):
@@ -267,7 +267,7 @@ class TestPodcastDetail:
         response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
-        assert response.context["is_subscribed"] is False
+        assert response.context["podcast"].is_subscribed is False
 
     @pytest.mark.django_db
     def test_get_podcast_admin(self, client, staff_user, podcast):

@@ -4,5 +4,7 @@
     | Search | Podcasts
 {% endblock title %}
 {% block search_content %}
+    {% cache 600 search-podcasts request.get_full_path request.user.username %}
     {% include pagination_template %}
+{% endcache %}
 {% endblock search_content %}

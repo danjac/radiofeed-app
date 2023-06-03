@@ -4,13 +4,7 @@
     | Search | Episodes
 {% endblock title %}
 {% block search_content %}
-    <div class="divide-y divide-solid" id="{{ pagination_target }}">
-        {% include "_pagination_links.html" %}
-        {% for episode in page_obj.object_list %}
-            {% include "episodes/_episode.html" %}
-        {% empty %}
-            {% include "_empty.html" %}
-        {% endfor %}
-        {% include "_pagination_links.html" %}
-    </div>
+    {% cache 600 search-episodes request.get_full_path request.user.username %}
+    {% include pagination_template %}
+{% endcache %}
 {% endblock search_content %}
