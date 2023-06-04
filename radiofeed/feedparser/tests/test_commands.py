@@ -26,6 +26,12 @@ class TestParseFeeds:
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db(transaction=True)
+    def test_scheduled(self, mock_parse_ok):
+        create_podcast(queued=None)
+        call_command("parse_feeds")
+        mock_parse_ok.assert_called()
+
+    @pytest.mark.django_db(transaction=True)
     def test_feed_parser_error(self, mock_parse_fail):
         create_podcast(queued=timezone.now())
         call_command("parse_feeds")
