@@ -23,6 +23,10 @@
             "schedule": "*/15 * * * *"
         },
         {
+            "command": "python manage.py schedule_feed_updates",
+            "schedule": "*/12 * * * *"
+        },
+        {
             "command": "python manage.py crawl_itunes",
             "schedule": "15 3 * * *"
         },

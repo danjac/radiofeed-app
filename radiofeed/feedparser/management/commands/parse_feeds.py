@@ -35,7 +35,7 @@ class Command(BaseCommand):
             with ThreadPoolExecutor() as executor:
                 executor.safemap(
                     self._parse_feed,
-                    scheduler.get_podcasts_for_update().values_list("pk", flat=True)[
+                    scheduler.get_queued_podcasts().values_list("pk", flat=True)[
                         : options["limit"]
                     ],
                 )

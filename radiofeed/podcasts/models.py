@@ -194,6 +194,7 @@ class Podcast(models.Model):
 
     explicit: bool = models.BooleanField(default=False)
     promoted: bool = models.BooleanField(default=False)
+    priority: bool = models.BooleanField(default=False)
 
     # websub fields
 
