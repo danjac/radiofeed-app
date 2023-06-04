@@ -42,9 +42,6 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
 
     Results are ordered by their last checked date and prioritized
     if subscribed or promoted.
-
-    Podcasts which are subscribed to a websub hub or updated by podping should not be scheduled
-    unless marked queued.
     """
     now = timezone.now()
 
