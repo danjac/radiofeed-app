@@ -124,9 +124,9 @@ class QueuedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        if self.value() == "yes":
-            return queryset & scheduler.get_queued_podcasts()
-        return queryset
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
 
 
 class PromotedFilter(admin.SimpleListFilter):
@@ -272,6 +272,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "parsed",
         "queued",
         "frequency",
+        "priority",
         "next_scheduled_update",
         "parser_error",
         "modified",

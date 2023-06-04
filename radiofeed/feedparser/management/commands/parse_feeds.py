@@ -30,7 +30,6 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
-
         while True:
             with ThreadPoolExecutor() as executor:
                 executor.safemap(
