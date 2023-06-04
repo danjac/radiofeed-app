@@ -256,6 +256,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
+        "queued",
     )
 
     list_editable = (
