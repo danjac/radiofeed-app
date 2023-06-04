@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from concurrent.futures import wait
 
 from django.core.management.base import BaseCommand
 
@@ -31,13 +32,17 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
         while True:
+            scheduler.schedule_podcasts_for_update()
+
             with ThreadPoolExecutor() as executor:
-                executor.safemap(
+                futures = executor.safemap(
                     self._parse_feed,
                     scheduler.get_queued_podcasts().values_list("pk", flat=True)[
                         : options["limit"]
                     ],
                 )
+
+            wait(futures)
 
             if not options["watch"]:
                 break

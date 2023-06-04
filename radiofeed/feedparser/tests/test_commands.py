@@ -6,15 +6,6 @@ from radiofeed.feedparser.exceptions import Duplicate
 from radiofeed.podcasts.factories import create_podcast
 
 
-class TestScheduleFeedUpdates:
-    @pytest.mark.django_db
-    def test_ok(self):
-        podcast = create_podcast(pub_date=None)
-        call_command("schedule_feed_updates")
-        podcast.refresh_from_db()
-        assert podcast.queued
-
-
 class TestParseFeeds:
     @pytest.fixture
     def mock_parse_ok(self, mocker):
