@@ -31,7 +31,8 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
         Q(websub_mode="")
         | Q(
             websub_mode="subscribe",
-            websub_expires__lt=timezone.now(),
+            # check any expiring within one hour
+            websub_expires__lt=timezone.now() + timedelta(hours=1),
         ),
         active=True,
         websub_hub__isnull=False,

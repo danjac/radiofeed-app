@@ -51,6 +51,28 @@ class TestGetPodcastsForSubscribe:
         assert websub.get_podcasts_for_subscribe().count() == 1
 
     @pytest.mark.django_db
+    def test_expires_in_30_mins(self, db):
+        create_podcast(
+            websub_hub=self.hub,
+            websub_topic=self.topic,
+            websub_expires=timezone.now() + timedelta(minutes=30),
+            websub_mode="subscribe",
+        )
+
+        assert websub.get_podcasts_for_subscribe().count() == 1
+
+    @pytest.mark.django_db
+    def test_expires_in_one_day(self, db):
+        create_podcast(
+            websub_hub=self.hub,
+            websub_topic=self.topic,
+            websub_expires=timezone.now() + timedelta(days=1),
+            websub_mode="subscribe",
+        )
+
+        assert websub.get_podcasts_for_subscribe().count() == 0
+
+    @pytest.mark.django_db
     def test_too_many_errors(self, db):
         create_podcast(
             websub_hub=self.hub,
