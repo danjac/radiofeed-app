@@ -195,8 +195,6 @@ class Podcast(models.Model):
     explicit: bool = models.BooleanField(default=False)
     promoted: bool = models.BooleanField(default=False)
 
-    podping: bool = models.BooleanField(default=False)
-
     # websub fields
 
     websub_hub: str | None = models.URLField(blank=True, max_length=2086, null=True)
