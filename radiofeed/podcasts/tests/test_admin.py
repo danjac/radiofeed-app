@@ -6,6 +6,7 @@ from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
 from radiofeed.factories import create_batch
+from radiofeed.podcasts import websub
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -156,15 +157,18 @@ class TestPrivateFilter:
 
 class TestQueuedFilter:
     @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req):
-        create_podcast(queued=timezone.now())
+    def test_none(self, podcast_admin, req):
+        now = timezone.now()
+        create_podcast(pub_date=now, parsed=now)
         f = QueuedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
+        assert qs.count() == 1
 
     @pytest.mark.django_db
-    def test_true(self, podcasts, podcast_admin, req):
-        queued = create_podcast(queued=timezone.now())
+    def test_true(self, podcast_admin, req):
+        now = timezone.now()
+        create_podcast(pub_date=now, parsed=now)
+        queued = create_podcast(pub_date=None)
         f = QueuedFilter(req, {"queued": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -241,25 +245,18 @@ class TestSubscribedFilter:
 
 class TestWebsubFilter:
     hub = "https://example.com"
+    topic = "https://example.com/rss"
 
     @pytest.mark.django_db
     def test_all(self, podcasts, podcast_admin, req):
-        create_podcast(websub_hub=self.hub)
+        create_podcast(websub_hub=self.hub, websub_topic=self.topic)
         f = WebsubFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req):
-        websub = create_podcast(websub_hub=self.hub)
-        f = WebsubFilter(req, {"websub": "none"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert websub not in qs
-
-    @pytest.mark.django_db
     def test_any(self, podcasts, podcast_admin, req):
-        websub = create_podcast(websub_hub=self.hub)
+        websub = create_podcast(websub_hub=self.hub, websub_topic=self.topic)
         f = WebsubFilter(req, {"websub": "any"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -267,7 +264,9 @@ class TestWebsubFilter:
 
     @pytest.mark.django_db
     def test_pending(self, podcasts, podcast_admin, req):
-        pending = create_podcast(websub_hub=self.hub, websub_mode="")
+        pending = create_podcast(
+            websub_hub=self.hub, websub_topic=self.topic, websub_mode=""
+        )
         f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -276,8 +275,9 @@ class TestWebsubFilter:
     @pytest.mark.django_db
     def test_subscribed(self, podcasts, podcast_admin, req):
         subscribed = create_podcast(
-            websub_mode="subscribe",
+            websub_mode=websub.SUBSCRIBE,
             websub_hub=self.hub,
+            websub_topic=self.topic,
             websub_expires=timezone.now() + timedelta(days=3),
         )
         f = WebsubFilter(req, {"websub": "subscribed"}, Podcast, podcast_admin)
@@ -290,6 +290,7 @@ class TestWebsubFilter:
         create_podcast(
             websub_mode="",
             websub_hub=self.hub,
+            websub_topic=self.topic,
             num_websub_retries=3,
         )
         f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
@@ -301,6 +302,7 @@ class TestWebsubFilter:
         create_podcast(
             websub_mode="",
             websub_hub=self.hub,
+            websub_topic=self.topic,
             num_websub_retries=3,
         )
         f = WebsubFilter(req, {"websub": "failed"}, Podcast, podcast_admin)
@@ -310,13 +312,15 @@ class TestWebsubFilter:
     @pytest.mark.django_db
     def test_expired(self, podcasts, podcast_admin, req):
         expired = create_podcast(
-            websub_mode="subscribe",
+            websub_mode=websub.SUBSCRIBE,
             websub_hub=self.hub,
+            websub_topic=self.topic,
             websub_expires=timezone.now() - timedelta(days=3),
         )
         create_podcast(
-            websub_mode="subscribe",
+            websub_mode=websub.SUBSCRIBE,
             websub_hub=self.hub,
+            websub_topic=self.topic,
             websub_expires=timezone.now() + timedelta(days=3),
         )
 
@@ -328,8 +332,9 @@ class TestWebsubFilter:
     @pytest.mark.django_db
     def test_pending_expired(self, podcasts, podcast_admin, req):
         expired = create_podcast(
-            websub_mode="subscribe",
+            websub_mode=websub.SUBSCRIBE,
             websub_hub=self.hub,
+            websub_topic=self.topic,
             websub_expires=timezone.now() - timedelta(days=3),
         )
         f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
@@ -340,8 +345,9 @@ class TestWebsubFilter:
     @pytest.mark.django_db
     def test_subscribed_expired(self, podcasts, podcast_admin, req):
         create_podcast(
-            websub_mode="subscribe",
+            websub_mode=websub.SUBSCRIBE,
             websub_hub=self.hub,
+            websub_topic=self.topic,
             websub_expires=timezone.now() - timedelta(days=3),
         )
 

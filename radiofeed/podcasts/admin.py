@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from django.contrib import admin
-from django.db.models import Count, Exists, OuterRef, Q, QuerySet
+from django.db.models import Count, Exists, OuterRef, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
-from django.utils import timezone
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
@@ -125,9 +124,9 @@ class QueuedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        return (
-            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
-        )
+        if self.value() == "yes":
+            return queryset & scheduler.get_queued_podcasts()
+        return queryset
 
 
 class PromotedFilter(admin.SimpleListFilter):
@@ -218,40 +217,18 @@ class WebsubFilter(admin.SimpleListFilter):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        now = timezone.now()
 
         match self.value():
             case "any":
-                return queryset.filter(websub_hub__isnull=False)
-            case "none":
-                return queryset.filter(websub_hub__isnull=True)
+                return queryset & websub.get_websub_podcasts()
             case "pending":
-                return queryset.filter(
-                    Q(websub_mode="")
-                    | Q(
-                        websub_mode="subscribe",
-                        websub_expires__lt=timezone.now(),
-                    ),
-                    websub_hub__isnull=False,
-                    num_websub_retries__lt=websub.MAX_NUM_RETRIES,
-                )
+                return queryset & websub.get_pending_podcasts()
             case "expired":
-                return queryset.filter(
-                    websub_mode="subscribe",
-                    websub_expires__lt=timezone.now(),
-                )
+                return queryset & websub.get_expired_podcasts()
             case "subscribed":
-                return queryset.filter(
-                    websub_hub__isnull=False,
-                    websub_mode="subscribe",
-                    websub_expires__gte=now,
-                )
+                return queryset & websub.get_subscribed_podcasts()
             case "failed":
-                return queryset.filter(
-                    websub_hub__isnull=False,
-                    num_websub_retries__gte=websub.MAX_NUM_RETRIES,
-                )
-
+                return queryset & websub.get_failed_podcasts()
             case _:
                 return queryset
 

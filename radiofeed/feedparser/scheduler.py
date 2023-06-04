@@ -32,6 +32,23 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     )
 
 
+def get_queued_podcasts() -> QuerySet[Podcast]:
+    """Get podcasts queued for update."""
+    now = timezone.now()
+    return Podcast.objects.filter(
+        Q(
+            Q(parsed__isnull=True)
+            | Q(pub_date__isnull=True)
+            | Q(parsed__lt=now - _MAX_FREQUENCY)
+            | Q(
+                pub_date__lt=now - F("frequency"),
+                parsed__lt=now - _MIN_FREQUENCY,
+            ),
+        )
+        | Q(queued__isnull=False)
+    )
+
+
 def get_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns all active podcasts scheduled for feed update.
 
@@ -43,23 +60,11 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     Results are ordered by their last checked date and prioritized
     if subscribed or promoted.
     """
-    now = timezone.now()
 
     return (
-        Podcast.objects.alias(subscribers=Count("subscriptions"))
-        .filter(
-            Q(
-                Q(parsed__isnull=True)
-                | Q(pub_date__isnull=True)
-                | Q(parsed__lt=now - _MAX_FREQUENCY)
-                | Q(
-                    pub_date__lt=now - F("frequency"),
-                    parsed__lt=now - _MIN_FREQUENCY,
-                ),
-            )
-            | Q(queued__isnull=False),
-            active=True,
-        )
+        get_queued_podcasts()
+        .alias(subscribers=Count("subscriptions"))
+        .filter(active=True)
         .order_by(
             F("queued").asc(nulls_last=True),
             F("subscribers").desc(),
