@@ -63,8 +63,8 @@ def get_queued_podcasts() -> QuerySet[Podcast]:
             F("priority").desc(),
             F("subscribers").desc(),
             F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
             F("queued").asc(),
+            F("parsed").asc(nulls_first=True),
         )
     )
 
