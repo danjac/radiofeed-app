@@ -57,6 +57,7 @@ def get_expired_podcasts() -> QuerySet[Podcast]:
     return get_websub_podcasts().filter(
         websub_mode=SUBSCRIBE,
         websub_expires__lte=timezone.now(),
+        num_websub_retries__lt=MAX_NUM_RETRIES,
     )
 
 
