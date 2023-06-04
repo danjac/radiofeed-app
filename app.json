@@ -24,7 +24,7 @@
         },
         {
             "command": "python manage.py schedule_feed_updates",
-            "schedule": "*/12 * * * *"
+            "schedule": "*/6 * * * *"
         },
         {
             "command": "python manage.py crawl_itunes",
