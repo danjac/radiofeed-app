@@ -69,31 +69,24 @@ class TestNextScheduledUpdate:
         ).total_seconds() / 3600 == pytest.approx(0.5)
 
 
-class TestGetQueuedPodcasts:
+class TestGetScheduledForUpdate:
     @pytest.mark.django_db
-    def test_queued(self):
-        create_podcast(queued=timezone.now())
-        assert scheduler.get_queued_podcasts().exists()
+    def test_active(self):
+        create_podcast(active=True, pub_date=None)
+        assert scheduler.get_podcasts_for_update().exists()
 
     @pytest.mark.django_db
     def test_inactive(self):
-        create_podcast(queued=timezone.now(), active=False)
-        assert not scheduler.get_queued_podcasts().exists()
-
-    @pytest.mark.django_db
-    def test_not_queued(self):
-        create_podcast(queued=None)
-        assert not scheduler.get_queued_podcasts().exists()
+        create_podcast(active=False, pub_date=None)
+        assert not scheduler.get_podcasts_for_update().exists()
 
 
-class TestSchedulePodcastsForUpdate:
+class TestGetScheduledPodcasts:
     @pytest.mark.parametrize(
-        ("kwargs", "success"),
+        ("kwargs", "exists"),
         [
             # no pub date: yes
             ({}, True),
-            # no pub date+inactive: no
-            ({"active": False}, False),
             # just parsed: no
             (
                 {
@@ -102,6 +95,15 @@ class TestSchedulePodcastsForUpdate:
                 },
                 False,
             ),
+            # just parsed + prioritized: yes
+            (
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                    "priority": True,
+                },
+                True,
+            ),
             # parsed before pub date+frequency: yes
             (
                 {
@@ -109,24 +111,6 @@ class TestSchedulePodcastsForUpdate:
                     "pub_date": timedelta(days=3),
                 },
                 True,
-            ),
-            # parsed before pub date+frequency+inactive: no
-            (
-                {
-                    "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=3),
-                    "active": False,
-                },
-                False,
-            ),
-            # parsed before pub date+frequency+queued: no
-            (
-                {
-                    "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=3),
-                    "queued": True,
-                },
-                False,
             ),
             # parsed just before max frequency: yes
             (
@@ -149,28 +133,22 @@ class TestSchedulePodcastsForUpdate:
         ],
     )
     @pytest.mark.django_db
-    def test_get_podcasts_for_update(self, kwargs, success):
+    def test_get_scheduled_podcasts(self, kwargs, exists):
         now = timezone.now()
 
-        active = kwargs.get("active", True)
         frequency = kwargs.get("frequency", timedelta(hours=24))
         parsed = kwargs.get("parsed", None)
         pub_date = kwargs.get("pub_date", None)
-        queued = kwargs.get("queued", False)
+        priority = kwargs.get("priority", False)
 
         create_podcast(
-            active=active,
             frequency=frequency,
+            priority=priority,
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,
-            queued=now if queued else None,
         )
 
-        result = scheduler.schedule_podcasts_for_update()
-        exists = Podcast.objects.filter(queued__isnull=False).exists()
-
-        assert result == (1 if success else 0)
-        assert exists == (1 if success or queued else 0)
+        assert scheduler.get_scheduled_podcasts().exists() is exists
 
 
 class TestReschedule:

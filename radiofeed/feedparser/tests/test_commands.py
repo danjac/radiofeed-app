@@ -1,6 +1,5 @@
 import pytest
 from django.core.management import call_command
-from django.utils import timezone
 
 from radiofeed.feedparser.exceptions import Duplicate
 from radiofeed.podcasts.factories import create_podcast
@@ -21,18 +20,18 @@ class TestParseFeeds:
 
     @pytest.mark.django_db(transaction=True)
     def test_ok(self, mock_parse_ok):
-        create_podcast(queued=timezone.now())
+        create_podcast(pub_date=None)
         call_command("parse_feeds")
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db(transaction=True)
-    def test_scheduled(self, mock_parse_ok):
-        create_podcast(queued=None)
+    def test_not_scheduled(self, mock_parse_ok):
+        create_podcast(active=False)
         call_command("parse_feeds")
-        mock_parse_ok.assert_called()
+        mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db(transaction=True)
     def test_feed_parser_error(self, mock_parse_fail):
-        create_podcast(queued=timezone.now())
+        create_podcast(pub_date=None)
         call_command("parse_feeds")
         mock_parse_fail.assert_called()

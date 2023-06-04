@@ -15,7 +15,7 @@ from radiofeed.podcasts.admin import (
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
-    QueuedFilter,
+    ScheduledFilter,
     SubscribedFilter,
     WebsubFilter,
 )
@@ -155,21 +155,25 @@ class TestPrivateFilter:
         assert qs.first() == private
 
 
-class TestQueuedFilter:
+class TestScheduledFilter:
     @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req):
-        create_podcast(queued=timezone.now())
-        f = QueuedFilter(req, {}, Podcast, podcast_admin)
+    def test_none(self, podcast_admin, req):
+        now = timezone.now()
+        create_podcast(pub_date=None)
+        create_podcast(pub_date=now, parsed=now)
+        f = ScheduledFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
+        assert qs.count() == 2
 
     @pytest.mark.django_db
-    def test_true(self, podcasts, podcast_admin, req):
-        queued = create_podcast(queued=timezone.now())
-        f = QueuedFilter(req, {"queued": "yes"}, Podcast, podcast_admin)
+    def test_true(self, podcast_admin, req):
+        now = timezone.now()
+        scheduled = create_podcast(pub_date=None)
+        create_podcast(pub_date=now, parsed=now)
+        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert qs.first() == queued
+        assert qs.first() == scheduled
 
 
 class TestActiveFilter:

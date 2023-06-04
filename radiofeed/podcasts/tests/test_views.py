@@ -524,7 +524,6 @@ class TestWebsubCallback:
 
         assert_no_content(client.post(self.url(websub_podcast)))
         websub_podcast.refresh_from_db()
-        assert websub_podcast.queued is not None
         assert websub_podcast.priority
 
     @pytest.mark.django_db
@@ -533,7 +532,6 @@ class TestWebsubCallback:
 
         assert_not_found(client.post(self.url(podcast)))
         podcast.refresh_from_db()
-        assert podcast.queued is None
         assert not podcast.priority
 
     @pytest.mark.django_db
@@ -545,7 +543,6 @@ class TestWebsubCallback:
         assert_no_content(client.post(self.url(websub_podcast)))
 
         websub_podcast.refresh_from_db()
-        assert websub_podcast.queued is None
         assert not websub_podcast.priority
 
     @pytest.mark.django_db

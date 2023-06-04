@@ -32,21 +32,15 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
         while True:
-            if num_scheduled := scheduler.schedule_podcasts_for_update():
-                self.stdout.write(f"{num_scheduled} podcasts queued for update")
-
             with ThreadPoolExecutor() as executor:
                 futures = executor.safemap(
                     self._parse_feed,
-                    scheduler.get_queued_podcasts().values_list("pk", flat=True)[
+                    scheduler.get_podcasts_for_update().values_list("pk", flat=True)[
                         : options["limit"]
                     ],
                 )
 
             wait(futures)
-
-            if futures:
-                self.stdout.write(f"{len(futures)} podcasts updated")
 
             if not options["watch"]:
                 break

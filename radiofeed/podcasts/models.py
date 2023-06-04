@@ -144,8 +144,6 @@ class Podcast(models.Model):
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    queued: datetime | None = models.DateTimeField(null=True, blank=True)
-
     parser_error: str = models.CharField(
         max_length=30,
         choices=ParserError.choices,
