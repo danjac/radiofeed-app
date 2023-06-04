@@ -69,6 +69,85 @@ class TestNextScheduledUpdate:
         ).total_seconds() / 3600 == pytest.approx(0.5)
 
 
+class TestGetQueuedPodcasts:
+    @pytest.mark.parametrize(
+        ("kwargs", "exists"),
+        [
+            # no pub date: yes
+            ({}, True),
+            # just parsed: no
+            (
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                },
+                False,
+            ),
+            # just parsed+queued: yes
+            (
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                    "queued": True,
+                },
+                True,
+            ),
+            # parsed before pub date+frequency: yes
+            (
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                },
+                True,
+            ),
+            # parsed before pub date+frequency+queued: yes
+            (
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                    "queued": True,
+                },
+                True,
+            ),
+            # parsed just before max frequency: yes
+            (
+                {
+                    "parsed": timedelta(days=8),
+                    "pub_date": timedelta(days=8),
+                    "frequency": timedelta(days=15),
+                },
+                True,
+            ),
+            # parsed before max frequency: yes
+            (
+                {
+                    "parsed": timedelta(days=30),
+                    "pub_date": timedelta(days=90),
+                    "frequency": timedelta(days=30),
+                },
+                True,
+            ),
+        ],
+    )
+    @pytest.mark.django_db
+    def test_get_podcasts_for_update(self, kwargs, exists):
+        now = timezone.now()
+
+        parsed = kwargs.get("parsed", None)
+        pub_date = kwargs.get("pub_date", None)
+        frequency = kwargs.get("frequency", timedelta(hours=24))
+        queued = kwargs.get("queued", False)
+
+        create_podcast(
+            frequency=frequency,
+            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
+            queued=now if queued else None,
+        )
+
+        assert scheduler.get_queued_podcasts().exists() == exists
+
+
 class TestGetPodcastsForUpdate:
     @pytest.mark.parametrize(
         ("kwargs", "exists"),
