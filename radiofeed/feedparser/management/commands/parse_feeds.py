@@ -45,7 +45,8 @@ class Command(BaseCommand):
 
             wait(futures)
 
-            self.stdout.write(f"{len(futures)} podcasts updated")
+            if futures:
+                self.stdout.write(f"{len(futures)} podcasts updated")
 
             if not options["watch"]:
                 break
