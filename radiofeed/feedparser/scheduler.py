@@ -48,11 +48,6 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     """
     now = timezone.now()
 
-    queueable_q = Q(
-        websub_mode="subscribe",
-        websub_expires__gt=now,
-    ) | Q(podping=True)
-
     return (
         Podcast.objects.alias(subscribers=Count("subscriptions"))
         .filter(
@@ -65,10 +60,9 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
                     parsed__lt=now - _MIN_FREQUENCY,
                 ),
             )
-            | Q(queueable_q & Q(queued__isnull=False)),
+            | Q(queued__isnull=False),
             active=True,
         )
-        .exclude(queueable_q & Q(queued__isnull=True))
         .order_by(
             F("queued").asc(nulls_last=True),
             F("subscribers").desc(),

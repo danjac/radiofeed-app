@@ -71,229 +71,108 @@ class TestNextScheduledUpdate:
 
 class TestGetPodcastsForUpdate:
     @pytest.mark.parametrize(
-        (
-            "active",
-            "parsed",
-            "pub_date",
-            "frequency",
-            "websub_mode",
-            "websub_expires",
-            "podping",
-            "queued",
-            "exists",
-        ),
+        ("kwargs", "exists"),
         [
+            # no pub date: yes
+            ({}, True),
+            # no pub date+inactive: no
+            ({"active": False}, False),
+            # no pub date+inactive+queued: no
             (
-                True,
-                None,
-                None,
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                False,
-                True,
-            ),
-            (
-                False,
-                None,
-                None,
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                False,
+                {
+                    "active": False,
+                    "queued": True,
+                },
                 False,
             ),
+            # just parsed: no
             (
-                True,
-                timedelta(seconds=1200),
-                timedelta(days=3),
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                False,
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                },
                 False,
             ),
+            # just parsed+queued: yes
             (
-                True,
-                timedelta(hours=3),
-                timedelta(days=3),
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                False,
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                    "queued": True,
+                },
                 True,
             ),
+            # parsed before pub date+frequency: yes
             (
-                True,
-                timedelta(days=3),
-                timedelta(days=3),
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                False,
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                },
                 True,
             ),
+            # parsed before pub date+frequency+queued: yes
             (
-                False,
-                timedelta(days=3),
-                timedelta(days=3),
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                False,
-                False,
-            ),
-            (
-                True,
-                timedelta(hours=3),
-                timedelta(hours=3),
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                False,
-                False,
-            ),
-            (
-                True,
-                timedelta(hours=3),
-                timedelta(hours=3),
-                timedelta(hours=24),
-                "",
-                None,
-                False,
-                True,
-                False,
-            ),
-            (
-                True,
-                timedelta(days=15),
-                timedelta(days=15),
-                timedelta(days=30),
-                "",
-                None,
-                False,
-                False,
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                    "queued": True,
+                },
                 True,
             ),
+            # parsed before pub date+frequency+inactive: no
             (
-                True,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "",
-                None,
-                False,
-                False,
-                True,
-            ),
-            (
-                True,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "",
-                None,
-                True,
-                False,
+                {
+                    "active": False,
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                },
                 False,
             ),
+            # parsed just before max frequency: yes
             (
-                True,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "",
-                None,
-                True,
-                True,
+                {
+                    "parsed": timedelta(days=8),
+                    "pub_date": timedelta(days=8),
+                    "frequency": timedelta(days=15),
+                },
                 True,
             ),
+            # parsed before max frequency: yes
             (
-                True,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "subscribe",
-                None,
-                False,
-                False,
+                {
+                    "parsed": timedelta(days=30),
+                    "pub_date": timedelta(days=90),
+                    "frequency": timedelta(days=30),
+                },
                 True,
             ),
+            # parsed before max frequency+inactive: no
             (
-                True,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "subscribe",
-                timedelta(days=-3),
-                False,
-                False,
-                True,
-            ),
-            (
-                True,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "subscribe",
-                timedelta(days=3),
-                False,
-                False,
-                False,
-            ),
-            (
-                True,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "subscribe",
-                timedelta(days=3),
-                False,
-                True,
-                True,
-            ),
-            (
-                False,
-                timedelta(days=30),
-                timedelta(days=90),
-                timedelta(days=30),
-                "subscribe",
-                timedelta(days=3),
-                False,
-                True,
+                {
+                    "active": False,
+                    "parsed": timedelta(days=30),
+                    "pub_date": timedelta(days=90),
+                    "frequency": timedelta(days=30),
+                },
                 False,
             ),
         ],
     )
     @pytest.mark.django_db
-    def test_get_podcasts_for_update(
-        self,
-        active,
-        parsed,
-        pub_date,
-        frequency,
-        websub_mode,
-        websub_expires,
-        podping,
-        queued,
-        exists,
-    ):
+    def test_get_podcasts_for_update(self, kwargs, exists):
         now = timezone.now()
+
+        active = kwargs.get("active", True)
+        parsed = kwargs.get("parsed", None)
+        pub_date = kwargs.get("pub_date", None)
+        frequency = kwargs.get("frequency", timedelta(hours=24))
+        queued = kwargs.get("queued", False)
+
         create_podcast(
             active=active,
+            frequency=frequency,
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,
-            websub_expires=now + websub_expires if websub_expires else None,
-            websub_mode=websub_mode,
-            frequency=frequency,
-            podping=podping,
             queued=now if queued else None,
         )
 
