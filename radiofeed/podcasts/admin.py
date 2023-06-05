@@ -208,7 +208,6 @@ class WebsubFilter(admin.SimpleListFilter):
         """Returns lookup values/labels."""
         return (
             ("any", "Any"),
-            ("none", "None"),
             ("pending", "Pending"),
             ("expired", "Expired"),
             ("subscribed", "Subscribed"),
