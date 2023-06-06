@@ -400,7 +400,6 @@ files = [
 name = "commonmark"
 version = "0.9.1"
 description = "Python parser for the CommonMark Markdown spec"
-category = "dev"
 optional = false
 python-versions = "*"
 files = [
