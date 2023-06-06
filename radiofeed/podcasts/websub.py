@@ -25,56 +25,22 @@ class InvalidSignature(ValueError):
     """Raised if bad signature passed in Content Distribution call."""
 
 
-def get_websub_podcasts() -> QuerySet[Podcast]:
-    """Get podcasts with websub hub+topic."""
-    return Podcast.objects.filter(websub_hub__isnull=False, websub_topic__isnull=False)
-
-
-def get_subscribed_podcasts() -> QuerySet[Podcast]:
-    """Get subscribed podcasts."""
-    return get_websub_podcasts().filter(
-        websub_hub__isnull=False,
-        websub_mode=SUBSCRIBE,
-        websub_expires__gte=timezone.now(),
-    )
-
-
-def get_pending_podcasts() -> QuerySet[Podcast]:
-    """Get podcasts pending update."""
-    return get_websub_podcasts().filter(
+def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
+    """Return podcasts for websub subscription requests."""
+    return Podcast.objects.filter(
         Q(websub_mode="")
         | Q(
             websub_mode=SUBSCRIBE,
             # check any expiring within one hour
             websub_expires__lt=timezone.now() + timedelta(hours=1),
         ),
+        active=True,
         num_websub_retries__lt=MAX_NUM_RETRIES,
-    )
-
-
-def get_expired_podcasts() -> QuerySet[Podcast]:
-    """Get podcasts pending update."""
-    return get_websub_podcasts().filter(
-        websub_mode=SUBSCRIBE,
-        websub_expires__lte=timezone.now(),
-        num_websub_retries__lt=MAX_NUM_RETRIES,
-    )
-
-
-def get_failed_podcasts() -> QuerySet[Podcast]:
-    """Get podcasts with failed subscriptions."""
-    return get_websub_podcasts().filter(num_websub_retries__gte=MAX_NUM_RETRIES)
-
-
-def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
-    """Return podcasts for websub subscription requests."""
-    return (
-        get_pending_podcasts()
-        .filter(active=True)
-        .order_by(
-            F("websub_expires").asc(nulls_first=True),
-            F("parsed").asc(),
-        )
+        websub_hub__isnull=False,
+        websub_topic__isnull=False,
+    ).order_by(
+        F("websub_expires").asc(nulls_first=True),
+        F("parsed").asc(),
     )
 
 

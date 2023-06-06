@@ -27,155 +27,38 @@ class MockResponse:
             raise requests.HTTPError("oops")
 
 
-class TestGetWebsubPodcasts:
-    @pytest.mark.django_db
-    def test_is_websub(self):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-        )
-        assert websub.get_websub_podcasts().exists()
-
-    @pytest.mark.django_db
-    def test_no_websub_hub(self):
-        create_podcast(
-            websub_hub=None,
-            websub_topic=_WEBSUB_TOPIC,
-        )
-        assert not websub.get_websub_podcasts().exists()
-
-    @pytest.mark.django_db
-    def test_no_websub_topic(self):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=None,
-        )
-        assert not websub.get_websub_podcasts().exists()
-
-
-class TestGetFailedPodcasts:
-    @pytest.mark.django_db
-    def test_too_many_errors(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-            websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="subscribe",
-            num_websub_retries=3,
-        )
-
-        assert websub.get_failed_podcasts().count() == 1
-
-
-class TestGetPendingPodcasts:
-    @pytest.mark.django_db
-    def test_not_websub(self, db, podcast):
-        assert websub.get_pending_podcasts().count() == 0
-
-    @pytest.mark.django_db
-    def test_expired_none(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB, websub_expires=None, websub_mode="subscribe"
-        )
-        assert websub.get_pending_podcasts().count() == 0
-
-    @pytest.mark.django_db
-    def test_expired(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-            websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="subscribe",
-        )
-
-        assert websub.get_pending_podcasts().count() == 1
-
-    @pytest.mark.django_db
-    def test_expires_in_30_mins(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-            websub_expires=timezone.now() + timedelta(minutes=30),
-            websub_mode="subscribe",
-        )
-
-        assert websub.get_pending_podcasts().count() == 1
-
-    @pytest.mark.django_db
-    def test_expires_in_one_day(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-            websub_expires=timezone.now() + timedelta(days=1),
-            websub_mode="subscribe",
-        )
-
-        assert websub.get_pending_podcasts().count() == 0
-
-    @pytest.mark.django_db
-    def test_too_many_errors(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-            websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="subscribe",
-            num_websub_retries=3,
-        )
-
-        assert websub.get_pending_podcasts().count() == 0
-
-    @pytest.mark.django_db
-    def test_expired_not_subscribed(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="unsubscribe",
-        )
-
-        assert websub.get_pending_podcasts().count() == 0
-
-    @pytest.mark.django_db
-    def test_not_expired(self, db):
-        create_podcast(
-            websub_hub=_WEBSUB_HUB,
-            websub_expires=timezone.now() + timedelta(days=1),
-            websub_mode="subscribe",
-        )
-
-        assert websub.get_pending_podcasts().count() == 0
-
-
-class TestGetExpiredPodcasts:
-    @pytest.mark.django_db
-    def test_get_expired(self):
-        create_podcast(
-            websub_mode=websub.SUBSCRIBE,
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-            websub_expires=timezone.now() - timedelta(days=3),
-        )
-        assert websub.get_expired_podcasts().exists()
-
-    @pytest.mark.django_db
-    def test_get_not_expired(self):
-        create_podcast(
-            websub_mode=websub.SUBSCRIBE,
-            websub_hub=_WEBSUB_HUB,
-            websub_topic=_WEBSUB_TOPIC,
-            websub_expires=timezone.now() + timedelta(days=3),
-        )
-        assert not websub.get_expired_podcasts().exists()
-
-
 class TestGetPodcastsForSubscribe:
     @pytest.mark.django_db
     def test_not_websub(self, db, podcast):
         assert websub.get_podcasts_for_subscribe().count() == 0
 
     @pytest.mark.django_db
+    def test_not_subscribed(self, db):
+        create_podcast(
+            websub_hub=_WEBSUB_HUB,
+            websub_topic=_WEBSUB_TOPIC,
+            websub_expires=None,
+            websub_mode="",
+        )
+
+        assert websub.get_podcasts_for_subscribe().count() == 1
+
+    @pytest.mark.django_db
+    def test_not_active(self, db):
+        create_podcast(
+            active=False,
+            websub_hub=_WEBSUB_HUB,
+            websub_topic=_WEBSUB_TOPIC,
+            websub_expires=None,
+            websub_mode="",
+        )
+
+        assert websub.get_podcasts_for_subscribe().count() == 0
+
+    @pytest.mark.django_db
     def test_expired_none(self, db):
         create_podcast(
-            websub_hub=_WEBSUB_HUB, websub_expires=None, websub_mode="subscribe"
+            websub_hub=_WEBSUB_HUB, websub_expires=None, websub_mode=websub.SUBSCRIBE
         )
         assert websub.get_podcasts_for_subscribe().count() == 0
 
@@ -184,8 +67,8 @@ class TestGetPodcastsForSubscribe:
         create_podcast(
             websub_hub=_WEBSUB_HUB,
             websub_topic=_WEBSUB_TOPIC,
+            websub_mode=websub.SUBSCRIBE,
             websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="subscribe",
         )
 
         assert websub.get_podcasts_for_subscribe().count() == 1
@@ -195,8 +78,8 @@ class TestGetPodcastsForSubscribe:
         create_podcast(
             websub_hub=_WEBSUB_HUB,
             websub_topic=_WEBSUB_TOPIC,
+            websub_mode=websub.SUBSCRIBE,
             websub_expires=timezone.now() + timedelta(minutes=30),
-            websub_mode="subscribe",
         )
 
         assert websub.get_podcasts_for_subscribe().count() == 1
@@ -206,8 +89,8 @@ class TestGetPodcastsForSubscribe:
         create_podcast(
             websub_hub=_WEBSUB_HUB,
             websub_topic=_WEBSUB_TOPIC,
+            websub_mode=websub.SUBSCRIBE,
             websub_expires=timezone.now() + timedelta(days=1),
-            websub_mode="subscribe",
         )
 
         assert websub.get_podcasts_for_subscribe().count() == 0
@@ -217,8 +100,8 @@ class TestGetPodcastsForSubscribe:
         create_podcast(
             websub_hub=_WEBSUB_HUB,
             websub_topic=_WEBSUB_TOPIC,
+            websub_mode=websub.SUBSCRIBE,
             websub_expires=timezone.now() - timedelta(days=1),
-            websub_mode="subscribe",
             num_websub_retries=3,
         )
 
@@ -228,8 +111,8 @@ class TestGetPodcastsForSubscribe:
     def test_expired_not_subscribed(self, db):
         create_podcast(
             websub_hub=_WEBSUB_HUB,
-            websub_expires=timezone.now() - timedelta(days=1),
             websub_mode="unsubscribe",
+            websub_expires=timezone.now() - timedelta(days=1),
         )
 
         assert websub.get_podcasts_for_subscribe().count() == 0
@@ -238,8 +121,8 @@ class TestGetPodcastsForSubscribe:
     def test_not_expired(self, db):
         create_podcast(
             websub_hub=_WEBSUB_HUB,
+            websub_mode=websub.SUBSCRIBE,
             websub_expires=timezone.now() + timedelta(days=1),
-            websub_mode="subscribe",
         )
 
         assert websub.get_podcasts_for_subscribe().count() == 0

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
+from django.utils import timezone
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
@@ -206,13 +207,7 @@ class WebsubFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (
-            ("any", "Any"),
-            ("pending", "Pending"),
-            ("expired", "Expired"),
-            ("subscribed", "Subscribed"),
-            ("failed", "Failed"),
-        )
+        return (("yes", "Subscribed"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
@@ -220,16 +215,10 @@ class WebsubFilter(admin.SimpleListFilter):
         """Returns filtered queryset."""
 
         match self.value():
-            case "any":
-                return queryset & websub.get_websub_podcasts()
-            case "pending":
-                return queryset & websub.get_pending_podcasts()
-            case "expired":
-                return queryset & websub.get_expired_podcasts()
-            case "subscribed":
-                return queryset & websub.get_subscribed_podcasts()
-            case "failed":
-                return queryset & websub.get_failed_podcasts()
+            case "yes":
+                return queryset.filter(
+                    websub_mode=websub.SUBSCRIBE, websub_expires__gt=timezone.now()
+                )
             case _:
                 return queryset
 

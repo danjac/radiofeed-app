@@ -256,24 +256,6 @@ class TestWebsubFilter:
         assert qs.count() == 4
 
     @pytest.mark.django_db
-    def test_any(self, podcasts, podcast_admin, req):
-        websub = create_podcast(websub_hub=self.hub, websub_topic=self.topic)
-        f = WebsubFilter(req, {"websub": "any"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert websub in qs
-
-    @pytest.mark.django_db
-    def test_pending(self, podcasts, podcast_admin, req):
-        pending = create_podcast(
-            websub_hub=self.hub, websub_topic=self.topic, websub_mode=""
-        )
-        f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert pending in qs
-
-    @pytest.mark.django_db
     def test_subscribed(self, podcasts, podcast_admin, req):
         subscribed = create_podcast(
             websub_mode=websub.SUBSCRIBE,
@@ -281,67 +263,10 @@ class TestWebsubFilter:
             websub_topic=self.topic,
             websub_expires=timezone.now() + timedelta(days=3),
         )
-        f = WebsubFilter(req, {"websub": "subscribed"}, Podcast, podcast_admin)
+        f = WebsubFilter(req, {"websub": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert subscribed in qs
-
-    @pytest.mark.django_db
-    def test_pending_max_retries(self, podcasts, podcast_admin, req):
-        create_podcast(
-            websub_mode="",
-            websub_hub=self.hub,
-            websub_topic=self.topic,
-            num_websub_retries=3,
-        )
-        f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 0
-
-    @pytest.mark.django_db
-    def test_failed_max_retries(self, podcasts, podcast_admin, req):
-        create_podcast(
-            websub_mode="",
-            websub_hub=self.hub,
-            websub_topic=self.topic,
-            num_websub_retries=3,
-        )
-        f = WebsubFilter(req, {"websub": "failed"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-
-    @pytest.mark.django_db
-    def test_expired(self, podcasts, podcast_admin, req):
-        expired = create_podcast(
-            websub_mode=websub.SUBSCRIBE,
-            websub_hub=self.hub,
-            websub_topic=self.topic,
-            websub_expires=timezone.now() - timedelta(days=3),
-        )
-        create_podcast(
-            websub_mode=websub.SUBSCRIBE,
-            websub_hub=self.hub,
-            websub_topic=self.topic,
-            websub_expires=timezone.now() + timedelta(days=3),
-        )
-
-        f = WebsubFilter(req, {"websub": "expired"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert expired in qs
-
-    @pytest.mark.django_db
-    def test_pending_expired(self, podcasts, podcast_admin, req):
-        expired = create_podcast(
-            websub_mode=websub.SUBSCRIBE,
-            websub_hub=self.hub,
-            websub_topic=self.topic,
-            websub_expires=timezone.now() - timedelta(days=3),
-        )
-        f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert expired in qs
 
     @pytest.mark.django_db
     def test_subscribed_expired(self, podcasts, podcast_admin, req):
@@ -352,6 +277,6 @@ class TestWebsubFilter:
             websub_expires=timezone.now() - timedelta(days=3),
         )
 
-        f = WebsubFilter(req, {"websub": "subscribed"}, Podcast, podcast_admin)
+        f = WebsubFilter(req, {"websub": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 0
