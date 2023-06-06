@@ -17,7 +17,7 @@
         "@babel/eslint-parser": "^7.21.8",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
-        "concurrently": "^8.0.1",
+        "concurrently": "^8.1.0",
         "esbuild": "^0.17.19",
         "eslint": "^8.42.0",
         "eslint-plugin-prettier": "^4.2.1",
