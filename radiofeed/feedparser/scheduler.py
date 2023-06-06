@@ -6,6 +6,7 @@ from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
 
 from radiofeed.feedparser.models import Feed
+from radiofeed.podcasts import websub
 from radiofeed.podcasts.models import Podcast
 
 _DEFAULT_FREQUENCY: Final = timedelta(hours=24)
@@ -35,17 +36,23 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
 def get_scheduled_podcasts() -> QuerySet[Podcast]:
     """Schedules podcasts for feed update."""
     now = timezone.now()
-    return Podcast.objects.filter(
-        Q(
-            Q(parsed__isnull=True)
-            | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - _MAX_FREQUENCY)
-            | Q(
-                pub_date__lt=now - F("frequency"),
-                parsed__lt=now - _MIN_FREQUENCY,
-            ),
+    return (
+        Podcast.objects.filter(
+            Q(
+                Q(parsed__isnull=True)
+                | Q(pub_date__isnull=True)
+                | Q(parsed__lt=now - _MAX_FREQUENCY)
+                | Q(
+                    pub_date__lt=now - F("frequency"),
+                    parsed__lt=now - _MIN_FREQUENCY,
+                ),
+            )
+            | Q(priority=True),
         )
-        | Q(priority=True),
+    ).exclude(
+        websub_mode=websub.SUBSCRIBE,
+        websub_expires__gt=now,
+        priority=False,
     )
 
 

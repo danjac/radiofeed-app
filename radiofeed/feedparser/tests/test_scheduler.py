@@ -112,6 +112,37 @@ class TestGetScheduledPodcasts:
                 },
                 True,
             ),
+            # parsed before pub date+frequency+websub: no
+            (
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                    "websub_mode": "subscribe",
+                    "websub_expires": timedelta(days=3),
+                },
+                False,
+            ),
+            # parsed before pub date+frequency+websub expired: yes
+            (
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                    "websub_mode": "subscribe",
+                    "websub_expires": timedelta(days=-3),
+                },
+                True,
+            ),
+            # parsed before pub date+frequency+websub+priority : yes
+            (
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                    "websub_mode": "subscribe",
+                    "websub_expires": timedelta(days=3),
+                    "priority": True,
+                },
+                True,
+            ),
             # parsed just before max frequency: yes
             (
                 {
@@ -141,11 +172,16 @@ class TestGetScheduledPodcasts:
         pub_date = kwargs.get("pub_date", None)
         priority = kwargs.get("priority", False)
 
+        websub_mode = kwargs.get("websub_mode", "")
+        websub_expires = kwargs.get("websub_expires", None)
+
         create_podcast(
             frequency=frequency,
             priority=priority,
+            websub_mode=websub_mode,
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,
+            websub_expires=now + websub_expires if websub_expires else None,
         )
 
         assert scheduler.get_scheduled_podcasts().exists() is exists
