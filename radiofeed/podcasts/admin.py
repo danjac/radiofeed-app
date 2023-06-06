@@ -109,29 +109,6 @@ class PubDateFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class ScheduledFilter(admin.SimpleListFilter):
-    """Filters podcasts immediate status."""
-
-    title = "Scheduled"
-    parameter_name = "scheduled"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (("yes", "Scheduled"),)
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-        return (
-            queryset & scheduler.get_scheduled_podcasts()
-            if self.value() == "yes"
-            else queryset
-        )
-
-
 class PromotedFilter(admin.SimpleListFilter):
     """Filters podcasts promoted status."""
 
@@ -235,7 +212,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         PrivateFilter,
         PromotedFilter,
         PubDateFilter,
-        ScheduledFilter,
         SubscribedFilter,
         WebsubFilter,
     )

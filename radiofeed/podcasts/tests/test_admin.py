@@ -15,7 +15,6 @@ from radiofeed.podcasts.admin import (
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
-    ScheduledFilter,
     SubscribedFilter,
     WebsubFilter,
 )
@@ -153,27 +152,6 @@ class TestPrivateFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == private
-
-
-class TestScheduledFilter:
-    @pytest.mark.django_db
-    def test_none(self, podcast_admin, req):
-        now = timezone.now()
-        create_podcast(pub_date=None)
-        create_podcast(pub_date=now, parsed=now)
-        f = ScheduledFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 2
-
-    @pytest.mark.django_db
-    def test_true(self, podcast_admin, req):
-        now = timezone.now()
-        scheduled = create_podcast(pub_date=None)
-        create_podcast(pub_date=now, parsed=now)
-        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == scheduled
 
 
 class TestActiveFilter:
