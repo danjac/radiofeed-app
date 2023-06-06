@@ -173,7 +173,7 @@ class PrivateFilter(admin.SimpleListFilter):
 class SubscribedFilter(admin.SimpleListFilter):
     """Filters podcasts based on subscription status."""
 
-    title = "Subscribed"
+    title = "Subscribers"
     parameter_name = "subscribed"
 
     def lookups(
