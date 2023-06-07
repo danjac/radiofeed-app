@@ -54,7 +54,7 @@ def subscribe(
     Raises:
         requests.RequestException: invalid request
     """
-    if podcast.websub_hub is None:
+    if podcast.websub_hub is None or podcast.websub_topic is None:
         return None
 
     secret = uuid.uuid4()
@@ -70,7 +70,6 @@ def subscribe(
                 "hub.mode": mode,
                 "hub.topic": podcast.websub_topic,
                 "hub.secret": secret.hex,
-                "hub.verify": "async",
                 "hub.lease_seconds": str(DEFAULT_LEASE_SECONDS),
                 "hub.callback": f"{scheme}://{site.domain}{callback_url}",
             },
@@ -84,15 +83,8 @@ def subscribe(
 
         response.raise_for_status()
 
-        podcast.websub_mode = mode
         podcast.websub_secret = secret
         podcast.num_websub_retries = 0
-
-        podcast.websub_expires = (
-            timezone.now() + timedelta(seconds=lease_seconds)
-            if mode == "subscribe"
-            else None
-        )
 
     except requests.RequestException:
         podcast.num_websub_retries += 1

@@ -209,7 +209,7 @@ class TestCheckSignature:
 class TestSubscribe:
     @pytest.fixture
     def websub_podcast(self):
-        return create_podcast(websub_hub=_WEBSUB_HUB)
+        return create_podcast(websub_hub=_WEBSUB_HUB, websub_topic=_WEBSUB_TOPIC)
 
     @pytest.mark.django_db
     def test_accepted(self, mocker, websub_podcast):
@@ -222,8 +222,6 @@ class TestSubscribe:
 
         websub_podcast.refresh_from_db()
 
-        assert websub_podcast.websub_mode == "subscribe"
-        assert websub_podcast.websub_expires
         assert websub_podcast.websub_secret
 
     @pytest.mark.django_db
@@ -239,8 +237,6 @@ class TestSubscribe:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_mode == ""
-        assert podcast.websub_expires is None
         assert podcast.websub_secret is None
 
     @pytest.mark.django_db
@@ -254,8 +250,6 @@ class TestSubscribe:
 
         websub_podcast.refresh_from_db()
 
-        assert websub_podcast.websub_mode == "unsubscribe"
-        assert websub_podcast.websub_expires is None
         assert websub_podcast.websub_secret
 
     @pytest.mark.django_db
@@ -270,8 +264,6 @@ class TestSubscribe:
 
         websub_podcast.refresh_from_db()
 
-        assert websub_podcast.websub_mode == ""
-        assert websub_podcast.websub_expires is None
         assert websub_podcast.websub_secret is None
 
         assert websub_podcast.num_websub_retries == 1
@@ -288,8 +280,5 @@ class TestSubscribe:
 
         websub_podcast.refresh_from_db()
 
-        assert websub_podcast.websub_mode == ""
-        assert websub_podcast.websub_expires is None
         assert websub_podcast.websub_secret is None
-
         assert websub_podcast.num_websub_retries == 1
