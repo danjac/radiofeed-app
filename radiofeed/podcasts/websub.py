@@ -28,7 +28,10 @@ class InvalidSignature(ValueError):
 def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
     """Return podcasts for websub subscription requests."""
     return Podcast.objects.filter(
-        Q(websub_mode="")
+        Q(
+            websub_mode="",
+            websub_secret__isnull=True,
+        )
         | Q(
             websub_mode=SUBSCRIBE,
             # check any expiring within one hour
