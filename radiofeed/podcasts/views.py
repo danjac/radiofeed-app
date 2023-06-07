@@ -361,13 +361,13 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     # content distribution
     if request.method == "POST":
-        podcast = get_object_or_404(
-            podcasts,
-            websub_mode=websub.SUBSCRIBE,
-            websub_secret__isnull=False,
-            pk=podcast_id,
-        )
-        with contextlib.suppress(websub.InvalidSignature):
+        with contextlib.suppress(Podcast.DoesNotExist, websub.InvalidSignature):
+            podcast = podcasts.get(
+                websub_mode=websub.SUBSCRIBE,
+                websub_secret__isnull=False,
+                pk=podcast_id,
+            )
+
             websub.check_signature(request, podcast.websub_secret)
 
             # prioritize podast for immediate update

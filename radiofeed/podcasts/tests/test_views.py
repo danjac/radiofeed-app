@@ -530,7 +530,7 @@ class TestWebsubCallback:
     def test_post_not_subscribed(self, client, mocker, podcast):
         mocker.patch("radiofeed.podcasts.websub.check_signature")
 
-        assert_not_found(client.post(self.url(podcast)))
+        assert_no_content(client.post(self.url(podcast)))
         podcast.refresh_from_db()
         assert not podcast.priority
 
