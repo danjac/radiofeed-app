@@ -30,7 +30,6 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
     return Podcast.objects.filter(
         Q(
             websub_mode="",
-            websub_secret__isnull=True,
         )
         | Q(
             websub_mode=SUBSCRIBE,
@@ -41,6 +40,7 @@ def get_podcasts_for_subscribe() -> QuerySet[Podcast]:
         num_websub_retries__lt=MAX_NUM_RETRIES,
         websub_hub__isnull=False,
         websub_topic__isnull=False,
+        websub_requested__isnull=True,
     ).order_by(
         F("websub_expires").asc(nulls_first=True),
         F("parsed").asc(),
@@ -87,6 +87,7 @@ def subscribe(
         response.raise_for_status()
 
         podcast.websub_secret = secret
+        podcast.websub_requested = timezone.now()
         podcast.num_websub_retries = 0
 
     except requests.RequestException:
