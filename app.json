@@ -7,6 +7,9 @@
         },
         "feedparser": {
             "quantity": 1
+        },
+        "subscriber": {
+            "quantity": 1
         }
     },
     "cron": [
@@ -17,10 +20,6 @@
         {
             "command": "python manage.py send_recommendations_emails",
             "schedule": "15 9 * * 1"
-        },
-        {
-            "command": "python manage.py subscribe_websub_feeds",
-            "schedule": "*/15 * * * *"
         },
         {
             "command": "python manage.py crawl_itunes",

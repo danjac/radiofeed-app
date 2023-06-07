@@ -22,6 +22,7 @@ class Command(BaseCommand):
             default=False,
             action="store_true",
         )
+
         parser.add_argument(
             "--limit",
             help="Number of feeds to process",
