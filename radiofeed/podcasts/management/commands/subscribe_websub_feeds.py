@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from concurrent.futures import wait
 
 import requests
 from django.core.management.base import BaseCommand
@@ -33,18 +32,13 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
 
-        while True:
-            with ThreadPoolExecutor() as executor:
-                futures = executor.safemap(
-                    self._subscribe,
-                    websub.get_podcasts_for_subscribe().values_list("pk", flat=True)[
-                        : options["limit"]
-                    ],
-                )
-            wait(futures)
-
-            if not options["watch"]:
-                break
+        with ThreadPoolExecutor() as executor:
+            executor.safemap(
+                self._subscribe,
+                websub.get_podcasts_for_subscribe().values_list("pk", flat=True)[
+                    : options["limit"]
+                ],
+            )
 
     def _subscribe(self, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)
