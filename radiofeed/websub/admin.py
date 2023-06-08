@@ -8,28 +8,36 @@ from radiofeed.websub import subscriber
 from radiofeed.websub.models import Subscription
 
 
-class SubscribedFilter(admin.SimpleListFilter):
+class ModeFilter(admin.SimpleListFilter):
     """Filters subscriptions based on their mode."""
 
-    title = "Subscribed"
-    parameter_name = "subscribed"
+    title = "Mode"
+    parameter_name = "mode"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "Subscribed"),)
+        return (
+            ("none", "None"),
+            ("subscribe", "Subscribe"),
+            ("unsubscribe", "Unsubscribe"),
+        )
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
     ) -> QuerySet[Subscription]:
         """Returns filtered queryset."""
 
-        return (
-            queryset.filter(mode=subscriber.SUBSCRIBE)
-            if self.value() == "yes"
-            else queryset
-        )
+        match self.value():
+            case "subscribe":
+                return queryset.filter(mode=subscriber.SUBSCRIBE)
+            case "unsubscribe":
+                return queryset.filter(mode=subscriber.UNSUBSCRIBE)
+            case "none":
+                return queryset.filter(mode="")
+            case _:
+                return queryset
 
 
 class PingedFilter(admin.SimpleListFilter):
@@ -107,7 +115,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     """Django admin for Subscription model."""
 
     list_filter = (
-        SubscribedFilter,
+        ModeFilter,
         RequestedFilter,
         VerifiedFilter,
         PingedFilter,
