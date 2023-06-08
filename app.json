@@ -20,7 +20,7 @@
         },
         {
             "command": "python manage.py subscribe_websub_feeds",
-            "schedule": "*/10 * * * *"
+            "schedule": "*/12 * * * *"
         },
         {
             "command": "python manage.py crawl_itunes",
