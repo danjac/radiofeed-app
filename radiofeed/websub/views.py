@@ -69,7 +69,7 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
         subscription.expires = (
             now + timedelta(seconds=lease_seconds)
-            if mode == subscriber.SUBSCRIBE  # type: ignore
+            if mode == subscriber.SUBSCRIBE
             else None
         )
 
