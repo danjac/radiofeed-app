@@ -4,35 +4,32 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
+from radiofeed.websub import subscriber
 from radiofeed.websub.models import Subscription
 
 
-class ModeFilter(admin.SimpleListFilter):
+class SubscribedFilter(admin.SimpleListFilter):
     """Filters subscriptions based on their mode."""
 
-    title = "Mode"
-    parameter_name = "mode"
+    title = "Subscribed"
+    parameter_name = "subscribed"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("none", "None"),) + tuple(Subscription.Mode.choices)
+        return (("yes", "Subscribed"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
     ) -> QuerySet[Subscription]:
         """Returns filtered queryset."""
 
-        match self.value():
-            case "none":
-                return queryset.filter(mode="")
-
-            case value if value in Subscription.Mode:  # type: ignore
-                return queryset.filter(mode=value)
-
-            case _:
-                return queryset
+        return (
+            queryset.filter(mode=subscriber.SUBSCRIBE)
+            if self.value() == "yes"
+            else queryset
+        )
 
 
 class PingedFilter(admin.SimpleListFilter):
@@ -110,10 +107,10 @@ class SubscriptionAdmin(admin.ModelAdmin):
     """Django admin for Subscription model."""
 
     list_filter = (
-        ModeFilter,
-        PingedFilter,
+        SubscribedFilter,
         RequestedFilter,
         VerifiedFilter,
+        PingedFilter,
     )
 
     list_display = ("podcast", "mode", "requested", "verified", "pinged")

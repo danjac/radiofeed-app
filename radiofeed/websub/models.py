@@ -11,10 +11,6 @@ from radiofeed.podcasts.models import Podcast
 class Subscription(TimeStampedModel):
     """Websub subscription for a podcast."""
 
-    class Mode(models.TextChoices):
-        SUBSCRIBE = "subscribe", "Subscribe"
-        UNSUBSCRIBE = "unsubscribe", "Unsubscribe"
-
     podcast: Podcast = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
@@ -24,7 +20,7 @@ class Subscription(TimeStampedModel):
     hub: str = models.URLField(max_length=2086)
     topic: str = models.URLField(max_length=2086)
 
-    mode: str = models.CharField(max_length=12, blank=True, choices=Mode.choices)
+    mode: str = models.CharField(max_length=12, blank=True)
     secret: uuid.UUID | None = models.UUIDField(blank=True, null=True)
 
     expires: datetime | None = models.DateTimeField(null=True, blank=True)

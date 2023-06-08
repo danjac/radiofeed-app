@@ -2,10 +2,11 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
+from radiofeed.websub import subscriber
 from radiofeed.websub.admin import (
-    ModeFilter,
     PingedFilter,
     RequestedFilter,
+    SubscribedFilter,
     SubscriptionAdmin,
     VerifiedFilter,
 )
@@ -42,32 +43,25 @@ class TestPingedFilter:
         assert qs.first() == pinged
 
 
-class TestModeFilter:
+class TestSubscribedFilter:
     @pytest.mark.django_db
     def test_all(self, req, subscription_admin):
         create_subscription()
-        create_subscription(mode=Subscription.Mode.SUBSCRIBE)
-        f = ModeFilter(req, {}, Subscription, subscription_admin)
+        create_subscription(mode=subscriber.SUBSCRIBE)
+        f = SubscribedFilter(req, {}, Subscription, subscription_admin)
         qs = f.queryset(req, Subscription.objects.all())
         assert qs.count() == 2
 
     @pytest.mark.django_db
-    def test_subscribe(self, req, subscription_admin):
+    def test_subscribed(self, req, subscription_admin):
         create_subscription()
-        subscribed = create_subscription(mode=Subscription.Mode.SUBSCRIBE)
-        f = ModeFilter(req, {"mode": "subscribe"}, Subscription, subscription_admin)
+        subscribed = create_subscription(mode=subscriber.SUBSCRIBE)
+        f = SubscribedFilter(
+            req, {"subscribed": "yes"}, Subscription, subscription_admin
+        )
         qs = f.queryset(req, Subscription.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
-
-    @pytest.mark.django_db
-    def test_none(self, req, subscription_admin):
-        none = create_subscription()
-        create_subscription(mode=Subscription.Mode.SUBSCRIBE)
-        f = ModeFilter(req, {"mode": "none"}, Subscription, subscription_admin)
-        qs = f.queryset(req, Subscription.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == none
 
 
 class TestVerifiedFilter:

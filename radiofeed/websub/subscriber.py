@@ -1,6 +1,6 @@
 import uuid
 from datetime import timedelta
-from typing import Final
+from typing import Final, Literal
 
 import requests
 from django.conf import settings
@@ -9,6 +9,11 @@ from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 
 from radiofeed.websub.models import Subscription
+
+SUBSCRIBE: Final = "subscribe"
+UNSUBSCRIBE: Final = "unsubscribe"
+
+MODE = Literal["subscribe", "unsubscribe"]
 
 DEFAULT_LEASE_SECONDS: Final = 24 * 60 * 60 * 7  # 1 week
 MAX_NUM_RETRIES: Final = 3
@@ -21,7 +26,7 @@ def get_subscriptions_for_update() -> QuerySet[Subscription]:
             mode="",
         )
         | Q(
-            mode=Subscription.Mode.SUBSCRIBE,
+            mode=SUBSCRIBE,
             # check any expiring within one hour
             expires__lt=timezone.now() + timedelta(hours=1),
         ),
@@ -35,7 +40,7 @@ def get_subscriptions_for_update() -> QuerySet[Subscription]:
 
 def subscribe(
     subscription: Subscription,
-    mode: str = Subscription.Mode.SUBSCRIBE,  # type: ignore
+    mode: MODE = SUBSCRIBE,
     lease_seconds: int = DEFAULT_LEASE_SECONDS,
 ) -> requests.Response | None:
     """Subscribes podcast to provided websub hub.
@@ -54,7 +59,7 @@ def subscribe(
         "hub.callback": f"{scheme}://{site.domain}{subscription.get_callback_url()}",
     }
 
-    if mode == Subscription.Mode.SUBSCRIBE:  # type: ignore
+    if mode == SUBSCRIBE:  # type: ignore
         payload = {
             **payload,
             "hub.secret": secret.hex,
@@ -76,7 +81,7 @@ def subscribe(
         response.raise_for_status()
 
         subscription.mode = mode
-        subscription.secret = secret if mode == Subscription.Mode.SUBSCRIBE else None  # type: ignore
+        subscription.secret = secret if mode == SUBSCRIBE else None
         subscription.requested = timezone.now()
         subscription.num_retries = 0
 

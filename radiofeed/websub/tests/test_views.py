@@ -3,17 +3,14 @@ import uuid
 import pytest
 
 from radiofeed.asserts import assert_no_content, assert_not_found, assert_ok
-from radiofeed.websub import signature
+from radiofeed.websub import signature, subscriber
 from radiofeed.websub.factories import create_subscription
-from radiofeed.websub.models import Subscription
 
 
 class TestCallback:
     @pytest.fixture
     def subscription(self):
-        return create_subscription(
-            mode=Subscription.Mode.SUBSCRIBE, secret=uuid.uuid4()
-        )
+        return create_subscription(mode=subscriber.SUBSCRIBE, secret=uuid.uuid4())
 
     @pytest.mark.django_db
     def test_post(self, client, mocker, subscription):

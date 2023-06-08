@@ -10,7 +10,6 @@ from requests.exceptions import ReadTimeout
 from radiofeed.podcasts.factories import create_podcast
 from radiofeed.websub import subscriber
 from radiofeed.websub.factories import create_subscription
-from radiofeed.websub.models import Subscription
 
 
 @dataclasses.dataclass
@@ -34,7 +33,7 @@ class TestGetSubscriptionsForUpdate:
         create_subscription(
             expires=None,
             requested=timezone.now(),
-            mode=Subscription.Mode.SUBSCRIBE,
+            mode=subscriber.SUBSCRIBE,
         )
 
         assert subscriber.get_subscriptions_for_update().count() == 0
@@ -51,13 +50,13 @@ class TestGetSubscriptionsForUpdate:
 
     @pytest.mark.django_db
     def test_expired_none(self):
-        create_subscription(expires=None, mode=Subscription.Mode.SUBSCRIBE)
+        create_subscription(expires=None, mode=subscriber.SUBSCRIBE)
         assert subscriber.get_subscriptions_for_update().count() == 0
 
     @pytest.mark.django_db
     def test_expired(self):
         create_subscription(
-            mode=Subscription.Mode.SUBSCRIBE,
+            mode=subscriber.SUBSCRIBE,
             expires=timezone.now() - timedelta(days=1),
         )
 
@@ -66,7 +65,7 @@ class TestGetSubscriptionsForUpdate:
     @pytest.mark.django_db
     def test_expires_in_30_mins(self):
         create_subscription(
-            mode=Subscription.Mode.SUBSCRIBE,
+            mode=subscriber.SUBSCRIBE,
             expires=timezone.now() + timedelta(minutes=30),
         )
 
@@ -75,7 +74,7 @@ class TestGetSubscriptionsForUpdate:
     @pytest.mark.django_db
     def test_expires_in_one_day(self):
         create_subscription(
-            mode=Subscription.Mode.SUBSCRIBE,
+            mode=subscriber.SUBSCRIBE,
             expires=timezone.now() + timedelta(days=1),
         )
 
@@ -84,7 +83,7 @@ class TestGetSubscriptionsForUpdate:
     @pytest.mark.django_db
     def test_too_many_errors(self):
         create_subscription(
-            mode=Subscription.Mode.SUBSCRIBE,
+            mode=subscriber.SUBSCRIBE,
             expires=timezone.now() - timedelta(days=1),
             num_retries=3,
         )
@@ -94,7 +93,7 @@ class TestGetSubscriptionsForUpdate:
     @pytest.mark.django_db
     def test_expired_not_subscribed(self):
         create_subscription(
-            mode="unsubscribe",
+            mode=subscriber.UNSUBSCRIBE,
             expires=timezone.now() - timedelta(days=1),
         )
 
@@ -103,7 +102,7 @@ class TestGetSubscriptionsForUpdate:
     @pytest.mark.django_db
     def test_not_expired(self):
         create_subscription(
-            mode=Subscription.Mode.SUBSCRIBE,
+            mode=subscriber.SUBSCRIBE,
             expires=timezone.now() + timedelta(days=1),
         )
 
@@ -126,6 +125,7 @@ class TestSubscribe:
 
         subscription.refresh_from_db()
 
+        assert subscription.mode == subscriber.SUBSCRIBE
         assert subscription.secret
         assert subscription.requested
 
@@ -136,10 +136,11 @@ class TestSubscribe:
             return_value=MockResponse(status_code=http.HTTPStatus.ACCEPTED),
         )
 
-        subscriber.subscribe(subscription, mode=Subscription.Mode.UNSUBSCRIBE)
+        subscriber.subscribe(subscription, mode=subscriber.UNSUBSCRIBE)
 
         subscription.refresh_from_db()
 
+        assert subscription.mode == subscriber.UNSUBSCRIBE
         assert subscription.secret is None
         assert subscription.requested
 

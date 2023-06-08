@@ -32,7 +32,7 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
         with contextlib.suppress(Subscription.DoesNotExist, signature.InvalidSignature):
             subscription = Subscription.objects.select_related("podcast").get(
                 pk=subscription_id,
-                mode=Subscription.Mode.SUBSCRIBE,
+                mode=subscriber.SUBSCRIBE,
                 podcast__active=True,
             )
 
@@ -69,7 +69,7 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
         subscription.expires = (
             now + timedelta(seconds=lease_seconds)
-            if mode == Subscription.Mode.SUBSCRIBE  # type: ignore
+            if mode == subscriber.SUBSCRIBE  # type: ignore
             else None
         )
 
