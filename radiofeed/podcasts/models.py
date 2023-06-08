@@ -202,6 +202,7 @@ class Podcast(models.Model):
     websub_mode: str = models.CharField(max_length=12, blank=True)
     websub_expires: datetime | None = models.DateTimeField(null=True, blank=True)
     websub_requested: datetime | None = models.DateTimeField(null=True, blank=True)
+    websub_verified: datetime | None = models.DateTimeField(null=True, blank=True)
 
     num_websub_retries: int = models.PositiveSmallIntegerField(default=0)
 

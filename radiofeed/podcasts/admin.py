@@ -249,6 +249,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "websub_secret",
         "websub_expires",
         "websub_requested",
+        "websub_verified",
         "num_websub_retries",
     )
 

@@ -391,13 +391,14 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
         podcast = get_object_or_404(podcasts, websub_topic=topic, pk=podcast_id)
 
+        now = timezone.now()
+
         podcast.websub_mode = mode
         podcast.websub_requested = None
+        podcast.websub_verified = now
 
         podcast.websub_expires = (
-            timezone.now() + timedelta(seconds=lease_seconds)
-            if mode == websub.SUBSCRIBE
-            else None
+            now + timedelta(seconds=lease_seconds) if mode == websub.SUBSCRIBE else None
         )
 
         podcast.save()

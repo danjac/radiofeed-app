@@ -94,6 +94,7 @@ def subscribe(
         podcast.num_websub_retries += 1
         raise
     finally:
+        podcast.websub_verified = None
         podcast.save()
 
     return response
