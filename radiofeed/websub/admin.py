@@ -9,3 +9,14 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     list_display = ("podcast", "mode", "requested", "verified")
     raw_id_fields = ("podcast",)
+    readonly_fields = (
+        "podcast",
+        "hub",
+        "topic",
+        "mode",
+        "secret",
+        "expires",
+        "requested",
+        "verified",
+        "num_retries",
+    )
