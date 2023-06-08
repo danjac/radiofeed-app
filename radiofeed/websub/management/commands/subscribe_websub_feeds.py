@@ -34,7 +34,9 @@ class Command(BaseCommand):
             )
 
     def _subscribe(self, subscription_id: int) -> None:
-        subscription = Subscription.objects.get(pk=subscription_id)
+        subscription = Subscription.objects.select_related("podcast").get(
+            pk=subscription_id
+        )
         try:
             subscriber.subscribe(subscription)
             self.stdout.write(self.style.SUCCESS(f"subscribe: {subscription}"))
