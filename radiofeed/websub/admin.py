@@ -10,8 +10,8 @@ from radiofeed.websub.models import Subscription
 class ModeFilter(admin.SimpleListFilter):
     """Filters subscriptions based on their mode."""
 
-    title = "Verified"
-    parameter_name = "verified"
+    title = "Mode"
+    parameter_name = "mode"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
