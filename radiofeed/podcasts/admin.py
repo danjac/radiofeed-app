@@ -4,11 +4,9 @@ from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
-from django.utils import timezone
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
-from radiofeed.podcasts import websub
 from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
@@ -174,32 +172,6 @@ class SubscribedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class WebsubFilter(admin.SimpleListFilter):
-    """Filters podcasts based on websub status."""
-
-    title = "Websub"
-    parameter_name = "websub"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (("yes", "Subscribed"),)
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-
-        match self.value():
-            case "yes":
-                return queryset.filter(
-                    websub_mode=websub.SUBSCRIBE, websub_expires__gt=timezone.now()
-                )
-            case _:
-                return queryset
-
-
 @admin.register(Podcast)
 class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Podcast model admin."""
@@ -213,7 +185,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         PromotedFilter,
         PubDateFilter,
         SubscribedFilter,
-        WebsubFilter,
     )
 
     list_display = (
@@ -243,14 +214,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "modified",
         "etag",
         "content_hash",
-        "websub_hub",
-        "websub_topic",
-        "websub_mode",
-        "websub_secret",
-        "websub_expires",
-        "websub_requested",
-        "websub_verified",
-        "num_websub_retries",
     )
 
     @admin.display(description="Estimated Next Update")

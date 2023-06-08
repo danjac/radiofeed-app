@@ -114,7 +114,7 @@ class FeedParser:
                         self._feed_attrs.categories,
                         self._feed_attrs.complete,
                         self._feed_attrs.items,
-                        self._feed_attrs.websub_hub,
+                        self._feed_attrs.websub_hubs,
                         self._feed_attrs.websub_topic,
                     ),
                 ),
@@ -317,16 +317,15 @@ class FeedParser:
     def _websub_subscription_updates(
         self, response: requests.Response, feed: Feed
     ) -> None:
-        if not (topic := response.links.get("self", {}).get("url", feed.websub_topic)):
-            return
-
         hubs = set(feed.websub_hubs)
 
         # links can be in HTTP headers or XML body
         if hub := response.links.get("hub", {}).get("url", None):
             hubs.add(hub)
 
-        if not hubs:
+        topic = response.links.get("self", {}).get("url", feed.websub_topic)
+
+        if not hubs or not topic:
             return
 
         Subscription.objects.bulk_create(

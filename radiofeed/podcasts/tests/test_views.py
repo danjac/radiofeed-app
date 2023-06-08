@@ -1,11 +1,9 @@
-import uuid
-
 import pytest
 import requests
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertRedirects
 
-from radiofeed.asserts import assert_no_content, assert_not_found, assert_ok
+from radiofeed.asserts import assert_not_found, assert_ok
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
 from radiofeed.podcasts import itunes
@@ -16,7 +14,6 @@ from radiofeed.podcasts.factories import (
     create_subscription,
 )
 from radiofeed.podcasts.models import Subscription
-from radiofeed.podcasts.websub import InvalidSignature
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -502,137 +499,6 @@ class TestUnsubscribe:
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
-
-
-class TestWebsubCallback:
-    topic = "https://example.com/rss"
-
-    def url(self, podcast):
-        return reverse("podcasts:websub_callback", args=[podcast.id])
-
-    @pytest.fixture
-    def websub_podcast(self):
-        return create_podcast(
-            websub_mode="subscribe",
-            websub_secret=uuid.uuid4(),
-            websub_topic=self.topic,
-        )
-
-    @pytest.mark.django_db
-    def test_post(self, client, mocker, websub_podcast):
-        mocker.patch("radiofeed.podcasts.websub.check_signature")
-
-        assert_no_content(client.post(self.url(websub_podcast)))
-        websub_podcast.refresh_from_db()
-        assert websub_podcast.priority
-
-    @pytest.mark.django_db
-    def test_post_not_subscribed(self, client, mocker, podcast):
-        mocker.patch("radiofeed.podcasts.websub.check_signature")
-
-        assert_no_content(client.post(self.url(podcast)))
-        podcast.refresh_from_db()
-        assert not podcast.priority
-
-    @pytest.mark.django_db
-    def test_post_invalid_signature(self, client, mocker, websub_podcast):
-        mocker.patch(
-            "radiofeed.podcasts.websub.check_signature", side_effect=InvalidSignature
-        )
-
-        assert_no_content(client.post(self.url(websub_podcast)))
-
-        websub_podcast.refresh_from_db()
-        assert not websub_podcast.priority
-
-    @pytest.mark.django_db
-    def test_get(self, client, websub_podcast):
-        assert_ok(
-            client.get(
-                self.url(websub_podcast),
-                {
-                    "hub.mode": "subscribe",
-                    "hub.challenge": "OK",
-                    "hub.topic": self.topic,
-                    "hub.lease_seconds": "2000",
-                },
-            )
-        )
-
-        websub_podcast.refresh_from_db()
-
-        assert websub_podcast.websub_expires
-
-    @pytest.mark.django_db
-    def test_get_denied(self, client, websub_podcast):
-        assert_ok(
-            client.get(
-                self.url(websub_podcast),
-                {
-                    "hub.mode": "denied",
-                    "hub.challenge": "OK",
-                    "hub.topic": self.topic,
-                    "hub.lease_seconds": "2000",
-                },
-            )
-        )
-
-        websub_podcast.refresh_from_db()
-
-        assert websub_podcast.websub_expires is None
-
-    @pytest.mark.django_db
-    def test_get_invalid_topic(self, client, podcast):
-        assert_not_found(
-            client.get(
-                self.url(podcast),
-                {
-                    "hub.mode": "subscribe",
-                    "hub.challenge": "OK",
-                    "hub.topic": "https://wrong-topic.com/",
-                    "hub.lease_seconds": "2000",
-                },
-            )
-        )
-
-        podcast.refresh_from_db()
-
-        assert podcast.websub_expires is None
-
-    @pytest.mark.django_db
-    def test_get_invalid_lease_seconds(self, client, websub_podcast):
-        assert_not_found(
-            client.get(
-                self.url(websub_podcast),
-                {
-                    "hub.mode": "subscribe",
-                    "hub.challenge": "OK",
-                    "hub.topic": self.topic,
-                    "hub.lease_seconds": "invalid",
-                },
-            )
-        )
-
-        websub_podcast.refresh_from_db()
-
-        assert websub_podcast.websub_expires is None
-
-    @pytest.mark.django_db
-    def test_get_missing_mode(self, client, websub_podcast):
-        assert_not_found(
-            client.get(
-                self.url(websub_podcast),
-                {
-                    "hub.challenge": "OK",
-                    "hub.topic": self.topic,
-                    "hub.lease_seconds": "2000",
-                },
-            )
-        )
-
-        websub_podcast.refresh_from_db()
-
-        assert websub_podcast.websub_expires is None
 
 
 class TestPrivateFeeds:

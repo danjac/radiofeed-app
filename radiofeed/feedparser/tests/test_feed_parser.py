@@ -1,7 +1,7 @@
 import dataclasses
 import http
 import pathlib
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
 import requests
@@ -24,6 +24,7 @@ from radiofeed.feedparser.feed_parser import (
 )
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
+from radiofeed.websub.factories import create_subscription
 
 
 @dataclasses.dataclass
@@ -94,8 +95,6 @@ class TestFeedParser:
     def test_parse_ok(self, mocker, categories):
         # set date to before latest
 
-        now = timezone.now()
-        websub_date = now - timedelta(days=3)
         websub_hub = "https://pubsubhubbub.appspot.com/"
 
         rss = "https://mysteriousuniverse.org/feed/podcast/"
@@ -104,11 +103,13 @@ class TestFeedParser:
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
-            websub_hub=websub_hub,
-            websub_topic=rss,
-            websub_expires=websub_date,
-            websub_mode="subscribe",
             priority=True,
+        )
+
+        create_subscription(
+            podcast=podcast,
+            hub=websub_hub,
+            topic=rss,
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -187,11 +188,10 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-        # websub fields should remain the same
-        assert podcast.websub_mode == "subscribe"
-        assert podcast.websub_hub == websub_hub
-        assert podcast.websub_topic == rss
-        assert podcast.websub_expires == websub_date
+        subscription = podcast.websub_subscriptions.get()
+
+        assert subscription.hub == websub_hub
+        assert subscription.topic == podcast.rss
 
     @pytest.mark.django_db
     def test_websub_headers_in_response(self, mocker, db, categories):
@@ -208,6 +208,9 @@ class TestFeedParser:
         # test updated
         create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
 
+        websub_hub = "https://example.com/hub/"
+        websub_topic = "https://example.com/topic/"
+
         mocker.patch(
             "requests.get",
             return_value=MockResponse(
@@ -219,8 +222,8 @@ class TestFeedParser:
                     "Last-Modified": self.updated,
                 },
                 links={
-                    "hub": {"url": "https://example.com/hub/"},
-                    "self": {"url": "https://example.com/topic/"},
+                    "hub": {"url": websub_hub},
+                    "self": {"url": websub_topic},
                 },
             ),
         )
@@ -272,7 +275,10 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-        assert podcast.websub_hub == "https://example.com/hub/"
+        assert podcast.websub_subscriptions.count() == 2
+        assert podcast.websub_subscriptions.filter(
+            hub=websub_hub, topic=websub_topic
+        ).exists()
 
     @pytest.mark.django_db
     def test_parse_high_num_episodes(self, mocker, categories):

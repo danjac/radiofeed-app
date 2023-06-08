@@ -64,8 +64,9 @@ class RSSParser:
                     "//media:category/text()",
                 ),
                 websub_hubs=self._parser.aslist(
-                    "atom:link[@rel='hub']/@href",
-                    "link[@rel='hub']/@href",
+                    channel,
+                    "//atom:link[@rel='hub']/@href",
+                    "//link[@rel='hub']/@href",
                 ),
                 **self._parser.asdict(
                     channel,

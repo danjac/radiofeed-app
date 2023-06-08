@@ -56,8 +56,8 @@ class Subscription(TimeStampedModel):
         related_name="websub_subscriptions",
     )
 
-    hub: str | None = models.URLField(max_length=2086)
-    topic: str | None = models.URLField(max_length=2086)
+    hub: str = models.URLField(max_length=2086)
+    topic: str = models.URLField(max_length=2086)
 
     mode: str = models.CharField(max_length=12, blank=True, choices=Mode.choices)
     secret: uuid.UUID | None = models.UUIDField(blank=True, null=True)
@@ -84,7 +84,7 @@ class Subscription(TimeStampedModel):
 
     def subscribe(
         self,
-        mode: str = Mode.SUBSCRIBE,
+        mode: str = Mode.SUBSCRIBE,  # type: ignore
         lease_seconds: int = DEFAULT_LEASE_SECONDS,
     ) -> requests.Response | None:
         """Subscribes podcast to provided websub hub.
@@ -132,7 +132,7 @@ class Subscription(TimeStampedModel):
 
     def verify(
         self,
-        mode: str = Mode.SUBSCRIBE,
+        mode: str = Mode.SUBSCRIBE,  # type: ignore
         lease_seconds: int = DEFAULT_LEASE_SECONDS,
     ) -> None:
         """Handles the verification step."""
@@ -145,7 +145,7 @@ class Subscription(TimeStampedModel):
 
         self.expires = (
             now + timedelta(seconds=lease_seconds)
-            if mode == self.Mode.SUBSCRIBE
+            if self.mode == self.Mode.SUBSCRIBE  # type: ignore
             else None
         )
         self.save()

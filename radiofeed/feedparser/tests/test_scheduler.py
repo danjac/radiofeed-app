@@ -70,18 +70,6 @@ class TestNextScheduledUpdate:
 
 
 class TestGetScheduledForUpdate:
-    @pytest.mark.django_db
-    def test_active(self):
-        create_podcast(active=True, pub_date=None)
-        assert scheduler.get_podcasts_for_update().exists()
-
-    @pytest.mark.django_db
-    def test_inactive(self):
-        create_podcast(active=False, pub_date=None)
-        assert not scheduler.get_podcasts_for_update().exists()
-
-
-class TestGetScheduledPodcasts:
     @pytest.mark.parametrize(
         ("kwargs", "exists"),
         [
@@ -112,37 +100,6 @@ class TestGetScheduledPodcasts:
                 },
                 True,
             ),
-            # parsed before pub date+frequency+websub: no
-            (
-                {
-                    "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=3),
-                    "websub_mode": "subscribe",
-                    "websub_expires": timedelta(days=3),
-                },
-                False,
-            ),
-            # parsed before pub date+frequency+websub expired: yes
-            (
-                {
-                    "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=3),
-                    "websub_mode": "subscribe",
-                    "websub_expires": timedelta(days=-3),
-                },
-                True,
-            ),
-            # parsed before pub date+frequency+websub+priority : yes
-            (
-                {
-                    "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=3),
-                    "websub_mode": "subscribe",
-                    "websub_expires": timedelta(days=3),
-                    "priority": True,
-                },
-                True,
-            ),
             # parsed just before max frequency: yes
             (
                 {
@@ -167,24 +124,21 @@ class TestGetScheduledPodcasts:
     def test_get_scheduled_podcasts(self, kwargs, exists):
         now = timezone.now()
 
+        active = kwargs.get("active", True)
         frequency = kwargs.get("frequency", timedelta(hours=24))
         parsed = kwargs.get("parsed", None)
         pub_date = kwargs.get("pub_date", None)
         priority = kwargs.get("priority", False)
 
-        websub_mode = kwargs.get("websub_mode", "")
-        websub_expires = kwargs.get("websub_expires", None)
-
         create_podcast(
+            active=active,
             frequency=frequency,
             priority=priority,
-            websub_mode=websub_mode,
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,
-            websub_expires=now + websub_expires if websub_expires else None,
         )
 
-        assert scheduler.get_scheduled_podcasts().exists() is exists
+        assert scheduler.get_podcasts_for_update().exists() is exists
 
 
 class TestReschedule:

@@ -6,7 +6,6 @@ from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
 from radiofeed.factories import create_batch
-from radiofeed.podcasts import websub
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -16,7 +15,6 @@ from radiofeed.podcasts.admin import (
     PromotedFilter,
     PubDateFilter,
     SubscribedFilter,
-    WebsubFilter,
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Category, Podcast
@@ -220,41 +218,3 @@ class TestSubscribedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
-
-
-class TestWebsubFilter:
-    hub = "https://example.com"
-    topic = "https://example.com/rss"
-
-    @pytest.mark.django_db
-    def test_all(self, podcasts, podcast_admin, req):
-        create_podcast(websub_hub=self.hub, websub_topic=self.topic)
-        f = WebsubFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    @pytest.mark.django_db
-    def test_subscribed(self, podcasts, podcast_admin, req):
-        subscribed = create_podcast(
-            websub_mode=websub.SUBSCRIBE,
-            websub_hub=self.hub,
-            websub_topic=self.topic,
-            websub_expires=timezone.now() + timedelta(days=3),
-        )
-        f = WebsubFilter(req, {"websub": "yes"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert subscribed in qs
-
-    @pytest.mark.django_db
-    def test_subscribed_expired(self, podcasts, podcast_admin, req):
-        create_podcast(
-            websub_mode=websub.SUBSCRIBE,
-            websub_hub=self.hub,
-            websub_topic=self.topic,
-            websub_expires=timezone.now() - timedelta(days=3),
-        )
-
-        f = WebsubFilter(req, {"websub": "yes"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 0
