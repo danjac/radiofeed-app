@@ -39,8 +39,8 @@ class Subscription(TimeStampedModel):
         ]
 
     def __str__(self) -> str:
-        """Returns websub topic"""
-        return self.topic
+        """Returns websub podcast"""
+        return str(self.podcast)
 
     def get_callback_url(self) -> str:
         """Returns url to websub callback url."""
