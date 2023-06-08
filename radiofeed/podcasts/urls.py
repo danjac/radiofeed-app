@@ -65,5 +65,4 @@ urlpatterns = [
         views.remove_private_feed,
         name="remove_private_feed",
     ),
-    path("websub/<int:podcast_id>/", views.websub_callback, name="websub_callback"),
 ]

@@ -4,8 +4,7 @@ import requests
 from django.core.management.base import BaseCommand
 
 from radiofeed.futures import ThreadPoolExecutor
-from radiofeed.podcasts import websub
-from radiofeed.podcasts.models import Podcast
+from radiofeed.websub.models import Subscription
 
 
 class Command(BaseCommand):
@@ -15,13 +14,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Parse command args."""
-        parser.add_argument(
-            "--watch",
-            help="Watch continuously",
-            default=False,
-            action="store_true",
-        )
-
         parser.add_argument(
             "--limit",
             help="Max number of feeds for update",
@@ -35,15 +27,15 @@ class Command(BaseCommand):
         with ThreadPoolExecutor() as executor:
             executor.safemap(
                 self._subscribe,
-                websub.get_podcasts_for_subscribe().values_list("pk", flat=True)[
+                Subscription.objects.for_subscribe().values_list("pk", flat=True)[
                     : options["limit"]
                 ],
             )
 
-    def _subscribe(self, podcast_id: int) -> None:
-        podcast = Podcast.objects.get(pk=podcast_id)
+    def _subscribe(self, subscription_id: int) -> None:
+        subscription = Subscription.objects.get(pk=subscription_id)
         try:
-            websub.subscribe(podcast)
-            self.stdout.write(self.style.SUCCESS(f"subscribe: {podcast}"))
+            subscription.subscribe()
+            self.stdout.write(self.style.SUCCESS(f"subscribe: {subscription}"))
         except requests.RequestException as e:
-            self.stderr.write(self.style.ERROR(f"subscribe error {e}:{podcast}"))
+            self.stderr.write(self.style.ERROR(f"subscribe error {e}:{subscription}"))

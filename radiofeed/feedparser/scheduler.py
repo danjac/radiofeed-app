@@ -62,8 +62,22 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     Results are ordered by their last checked date and prioritized
     if subscribed or promoted.
     """
+    now = timezone.now()
     return (
-        get_scheduled_podcasts()
+        (
+            Podcast.objects.filter(
+                Q(
+                    Q(parsed__isnull=True)
+                    | Q(pub_date__isnull=True)
+                    | Q(parsed__lt=now - _MAX_FREQUENCY)
+                    | Q(
+                        pub_date__lt=now - F("frequency"),
+                        parsed__lt=now - _MIN_FREQUENCY,
+                    ),
+                )
+                | Q(priority=True),
+            )
+        )
         .alias(subscribers=Count("subscriptions"))
         .filter(active=True)
         .order_by(

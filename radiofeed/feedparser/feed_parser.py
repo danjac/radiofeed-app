@@ -27,6 +27,7 @@ from radiofeed.feedparser.exceptions import (
 )
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.websub.models import Subscription
 
 _ACCEPT: Final = (
     "application/atom+xml,"
@@ -107,7 +108,6 @@ class FeedParser:
                 modified=parse_date(response.headers.get("Last-Modified")),
                 extracted_text=self._extract_text(feed),
                 frequency=scheduler.schedule(feed),
-                **self._extract_websub_links(response, feed),
                 **attrs.asdict(
                     feed,
                     filter=attrs.filters.exclude(  # type: ignore
@@ -122,6 +122,7 @@ class FeedParser:
 
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
+            self._websub_subscription_updates(response, feed)
 
     def _get_response(self) -> requests.Response:
         try:
@@ -301,32 +302,6 @@ class FeedParser:
                 yield self._make_episode(item, episode_id)
                 episode_ids.add(episode_id)
 
-    def _extract_websub_links(
-        self, response: requests.Response, feed: Feed
-    ) -> dict[str, str | int | None]:
-        # links can be in HTTP headers or XML body
-        hub = response.links.get("hub", {}).get("url", feed.websub_hub)
-        topic = response.links.get("self", {}).get("url", feed.websub_topic)
-
-        # websub hub and topic are either both set or None
-        hub = hub if topic else None
-        topic = topic if hub else None
-
-        # no change to current settings
-        if hub == self._podcast.websub_hub and topic == self._podcast.websub_topic:
-            return {}
-
-        # if websub hub or topic have changed reset all related websub settings,
-        # so podcast can re-subscribe
-        return {
-            "websub_hub": hub,
-            "websub_topic": topic,
-            "websub_mode": "",
-            "websub_expires": None,
-            "websub_secret": None,
-            "num_websub_retries": 0,
-        }
-
     def _make_episode(self, item: Item, episode_id: int | None = None) -> Episode:
         return Episode(
             pk=episode_id,
@@ -337,4 +312,31 @@ class FeedParser:
                     self._item_attrs.categories,
                 ),
             ),
+        )
+
+    def _websub_subscription_updates(
+        self, response: requests.Response, feed: Feed
+    ) -> None:
+        if not (topic := response.links.get("self", {}).get("url", feed.websub_topic)):
+            return
+
+        hubs = set(feed.websub_hubs)
+
+        # links can be in HTTP headers or XML body
+        if hub := response.links.get("hub", {}).get("url", None):
+            hubs.add(hub)
+
+        if not hubs:
+            return
+
+        Subscription.objects.bulk_create(
+            [
+                Subscription(
+                    podcast=self._podcast,
+                    hub=hub,
+                    topic=topic,
+                )
+                for hub in hubs
+            ],
+            ignore_conflicts=True,
         )

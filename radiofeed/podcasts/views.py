@@ -1,6 +1,4 @@
 import contextlib
-import http
-from datetime import timedelta
 
 import requests
 from django.contrib import messages
@@ -9,15 +7,12 @@ from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone
-from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.pagination import render_pagination_response
-from radiofeed.podcasts import itunes, websub
+from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
 
@@ -342,71 +337,6 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Podcast has been removed from your private feeds.")
     return redirect(reverse("podcasts:private_feeds"))
-
-
-@require_form_methods
-@csrf_exempt
-@never_cache
-def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Callback view as per spec https://www.w3.org/TR/websub/.
-
-    Handles GET and POST requests:
-
-    1. A POST request is used for content distribution and indicates podcast should be updated with new content.
-
-    2. A GET request is used for feed verification.
-    """
-
-    podcasts = Podcast.objects.filter(active=True)
-
-    # content distribution
-    if request.method == "POST":
-        with contextlib.suppress(Podcast.DoesNotExist, websub.InvalidSignature):
-            podcast = podcasts.get(
-                websub_mode=websub.SUBSCRIBE,
-                websub_secret__isnull=False,
-                pk=podcast_id,
-            )
-
-            websub.check_signature(request, podcast.websub_secret)
-
-            # prioritize podast for immediate update
-            podcast.priority = True
-            podcast.queued = timezone.now()
-            podcast.save()
-
-        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-
-    # verification
-    try:
-        # check all required fields are present
-
-        mode = request.GET["hub.mode"]
-        topic = request.GET["hub.topic"]
-        challenge = request.GET["hub.challenge"]
-
-        lease_seconds = int(
-            request.GET.get("hub.lease_seconds", websub.DEFAULT_LEASE_SECONDS)
-        )
-
-        podcast = get_object_or_404(podcasts, websub_topic=topic, pk=podcast_id)
-
-        now = timezone.now()
-
-        podcast.websub_mode = mode
-        podcast.websub_requested = None
-        podcast.websub_verified = now
-
-        podcast.websub_expires = (
-            now + timedelta(seconds=lease_seconds) if mode == websub.SUBSCRIBE else None
-        )
-
-        podcast.save()
-
-        return HttpResponse(challenge)
-
-    except (KeyError, ValueError) as e:
-        raise Http404 from e
 
 
 def _render_subscribe_toggle(
