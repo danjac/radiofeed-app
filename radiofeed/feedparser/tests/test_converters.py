@@ -42,6 +42,18 @@ class TestUrl:
         assert converters.url(None) is None
 
 
+class TestUrlList:
+    def test_just_urls(self):
+        assert converters.url_list(
+            [
+                "http://yhanewashington.wixsite.com/1972",
+                "yhanewashington",
+                "",
+                None,
+            ]
+        ) == ["http://yhanewashington.wixsite.com/1972"]
+
+
 class TestDuration:
     @pytest.mark.parametrize(
         ("value", "expected"),

@@ -82,6 +82,10 @@ class Subscription(TimeStampedModel):
         """Returns websub topic"""
         return self.topic
 
+    def get_callback_url(self) -> str:
+        """Returns url to websub callback hook."""
+        return reverse("websub:callback", args=[self.pk])
+
     def subscribe(
         self,
         mode: str = Mode.SUBSCRIBE,  # type: ignore
@@ -94,20 +98,26 @@ class Subscription(TimeStampedModel):
         """
         secret = uuid.uuid4()
 
-        callback_url = reverse("websub:callback", args=[self.pk])
         scheme = "https" if settings.USE_HTTPS else "http"
         site = Site.objects.get_current()
+
+        payload = {
+            "hub.mode": mode,
+            "hub.topic": self.topic,
+            "hub.callback": f"{scheme}://{site.domain}{self.get_callback_url()}",
+        }
+
+        if mode == self.Mode.SUBSCRIBE:  # type: ignore
+            payload = {
+                **payload,
+                "hub.secret": secret.hex,
+                "hub.lease_seconds": str(lease_seconds),
+            }
 
         try:
             response = requests.post(
                 self.hub,
-                {
-                    "hub.mode": mode,
-                    "hub.topic": self.topic,
-                    "hub.secret": secret.hex,
-                    "hub.lease_seconds": str(lease_seconds),
-                    "hub.callback": f"{scheme}://{site.domain}{callback_url}",
-                },
+                payload,
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
                     "User-Agent": settings.USER_AGENT,
@@ -118,7 +128,7 @@ class Subscription(TimeStampedModel):
 
             response.raise_for_status()
 
-            self.secret = secret
+            self.secret = secret if mode == self.Mode.SUBSCRIBE else None  # type: ignore
             self.requested = timezone.now()
             self.num_retries = 0
 
