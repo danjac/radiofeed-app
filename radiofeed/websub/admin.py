@@ -35,6 +35,27 @@ class ModeFilter(admin.SimpleListFilter):
                 return queryset
 
 
+class PingedFilter(admin.SimpleListFilter):
+    """Filters subscriptions with subscribe request."""
+
+    title = "Pinged"
+    parameter_name = "pinged"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", "Pinged"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Subscription]
+    ) -> QuerySet[Subscription]:
+        """Returns filtered queryset."""
+
+        if self.value() == "yes":
+            return queryset.filter(pinged__isnull=False)
+
+
 class RequestedFilter(admin.SimpleListFilter):
     """Filters subscriptions with subscribe request."""
 
@@ -83,11 +104,12 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     list_filter = (
         ModeFilter,
+        PingedFilter,
         RequestedFilter,
         VerifiedFilter,
     )
 
-    list_display = ("podcast", "mode", "requested", "verified")
+    list_display = ("podcast", "mode", "requested", "verified", "pinged")
     raw_id_fields = ("podcast",)
     readonly_fields = (
         "podcast",
@@ -98,5 +120,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "expires",
         "requested",
         "verified",
+        "pinged",
         "num_retries",
     )

@@ -9,7 +9,9 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = []
+    dependencies = [
+        ("podcasts", "0046_remove_podcast_num_websub_retries_and_more"),
+    ]
 
     operations = [
         migrations.CreateModel(

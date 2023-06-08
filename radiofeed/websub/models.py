@@ -62,6 +62,7 @@ class Subscription(TimeStampedModel):
     secret: uuid.UUID | None = models.UUIDField(blank=True, null=True)
 
     expires: datetime | None = models.DateTimeField(null=True, blank=True)
+    pinged: datetime | None = models.DateTimeField(null=True, blank=True)
     requested: datetime | None = models.DateTimeField(null=True, blank=True)
     verified: datetime | None = models.DateTimeField(null=True, blank=True)
 

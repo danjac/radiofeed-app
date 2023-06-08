@@ -3,6 +3,7 @@ import http
 
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
@@ -36,6 +37,9 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
             )
 
             subscription.check_signature(request)
+
+            subscription.pinged = timezone.now()
+            subscription.save()
 
             # prioritize podcast for immediate update
             subscription.podcast.priority = True
