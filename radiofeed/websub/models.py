@@ -33,7 +33,6 @@ class SubscriptionQuerySet(models.QuerySet):
             ),
             podcast__active=True,
             num_retries__lt=self.model.MAX_NUM_RETRIES,
-            requested__isnull=True,
         )
 
 

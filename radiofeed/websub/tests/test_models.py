@@ -35,7 +35,7 @@ class TestSubscriptionManager:
         create_subscription(
             expires=None,
             requested=timezone.now(),
-            mode="",
+            mode=Subscription.Mode.SUBSCRIBE,
         )
 
         assert Subscription.objects.for_subscribe().count() == 0
