@@ -8,7 +8,7 @@ from radiofeed.websub.factories import create_subscription
 class TestSubscribeWebsubFeeds:
     @pytest.fixture
     def subscribe(self, mocker):
-        return mocker.patch("radiofeed.websub.models.Subscription.subscribe")
+        return mocker.patch("radiofeed.websub.subscriber.subscribe")
 
     @pytest.fixture
     def subscription(self):
@@ -22,7 +22,7 @@ class TestSubscribeWebsubFeeds:
     @pytest.mark.django_db(transaction=True)
     def test_exception(self, mocker, subscription):
         subscribe = mocker.patch(
-            "radiofeed.websub.models.Subscription.subscribe",
+            "radiofeed.websub.subscriber.subscribe",
             side_effect=requests.HTTPError("oops"),
         )
 

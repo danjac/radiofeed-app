@@ -3,6 +3,7 @@ import uuid
 import pytest
 
 from radiofeed.asserts import assert_no_content, assert_not_found, assert_ok
+from radiofeed.websub import signature
 from radiofeed.websub.factories import create_subscription
 from radiofeed.websub.models import Subscription
 
@@ -16,7 +17,7 @@ class TestCallback:
 
     @pytest.mark.django_db
     def test_post(self, client, mocker, subscription):
-        mocker.patch("radiofeed.websub.models.Subscription.check_signature")
+        mocker.patch("radiofeed.websub.signature.check_signature")
 
         assert_no_content(client.post(subscription.get_callback_url()))
         subscription.refresh_from_db()
@@ -25,8 +26,8 @@ class TestCallback:
     @pytest.mark.django_db
     def test_post_invalid_signature(self, client, mocker, subscription):
         mocker.patch(
-            "radiofeed.websub.models.Subscription.check_signature",
-            side_effect=Subscription.InvalidSignature,
+            "radiofeed.websub.signature.check_signature",
+            side_effect=signature.InvalidSignature,
         )
 
         assert_no_content(client.post(subscription.get_callback_url()))

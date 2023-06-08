@@ -4,6 +4,7 @@ import requests
 from django.core.management.base import BaseCommand
 
 from radiofeed.futures import ThreadPoolExecutor
+from radiofeed.websub import subscriber
 from radiofeed.websub.models import Subscription
 
 
@@ -27,7 +28,7 @@ class Command(BaseCommand):
         with ThreadPoolExecutor() as executor:
             executor.safemap(
                 self._subscribe,
-                Subscription.objects.for_subscribe().values_list("pk", flat=True)[
+                subscriber.get_subscriptions_for_update().values_list("pk", flat=True)[
                     : options["limit"]
                 ],
             )
@@ -35,7 +36,7 @@ class Command(BaseCommand):
     def _subscribe(self, subscription_id: int) -> None:
         subscription = Subscription.objects.get(pk=subscription_id)
         try:
-            subscription.subscribe()
+            subscriber.subscribe(subscription)
             self.stdout.write(self.style.SUCCESS(f"subscribe: {subscription}"))
         except requests.RequestException as e:
             self.stderr.write(self.style.ERROR(f"subscribe error {e}:{subscription}"))

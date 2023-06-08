@@ -1,5 +1,6 @@
 import contextlib
 import http
+from datetime import timedelta
 
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
@@ -8,6 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from radiofeed.decorators import require_form_methods
+from radiofeed.websub import signature, subscriber
 from radiofeed.websub.models import Subscription
 
 
@@ -27,16 +29,14 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
     # content distribution
     if request.method == "POST":
         # always return a 204 regardless
-        with contextlib.suppress(
-            Subscription.DoesNotExist, Subscription.InvalidSignature
-        ):
+        with contextlib.suppress(Subscription.DoesNotExist, signature.InvalidSignature):
             subscription = Subscription.objects.select_related("podcast").get(
                 pk=subscription_id,
                 mode=Subscription.Mode.SUBSCRIBE,
                 podcast__active=True,
             )
 
-            subscription.check_signature(request)
+            signature.check_signature(request, subscription.secret)
 
             subscription.pinged = timezone.now()
             subscription.save()
@@ -56,11 +56,24 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
         challenge = request.GET["hub.challenge"]
 
         lease_seconds = int(
-            request.GET.get("hub.lease_seconds", Subscription.DEFAULT_LEASE_SECONDS)
+            request.GET.get("hub.lease_seconds", subscriber.DEFAULT_LEASE_SECONDS)
         )
 
         subscription = get_object_or_404(Subscription, topic=topic, pk=subscription_id)
-        subscription.verify(mode, lease_seconds)
+
+        subscription.mode = mode
+
+        now = timezone.now()
+
+        subscription.verified = now
+
+        subscription.expires = (
+            now + timedelta(seconds=lease_seconds)
+            if mode == Subscription.Mode.SUBSCRIBE  # type: ignore
+            else None
+        )
+
+        subscription.save()
 
         return HttpResponse(challenge)
 

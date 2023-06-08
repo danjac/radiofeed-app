@@ -1,7 +1,5 @@
 import dataclasses
-import hmac
 import http
-import uuid
 from datetime import timedelta
 
 import pytest
@@ -10,6 +8,7 @@ from django.utils import timezone
 from requests.exceptions import ReadTimeout
 
 from radiofeed.podcasts.factories import create_podcast
+from radiofeed.websub import subscriber
 from radiofeed.websub.factories import create_subscription
 from radiofeed.websub.models import Subscription
 
@@ -23,12 +22,12 @@ class MockResponse:
             raise requests.HTTPError("oops")
 
 
-class TestSubscriptionManager:
+class TestGetSubscriptionsForUpdate:
     @pytest.mark.django_db
     def test_not_subscribed(self):
         create_subscription(expires=None, mode="")
 
-        assert Subscription.objects.for_subscribe().count() == 1
+        assert subscriber.get_subscriptions_for_update().count() == 1
 
     @pytest.mark.django_db
     def test_already_requested(self):
@@ -38,7 +37,7 @@ class TestSubscriptionManager:
             mode=Subscription.Mode.SUBSCRIBE,
         )
 
-        assert Subscription.objects.for_subscribe().count() == 0
+        assert subscriber.get_subscriptions_for_update().count() == 0
 
     @pytest.mark.django_db
     def test_not_active(self):
@@ -48,12 +47,12 @@ class TestSubscriptionManager:
             mode="",
         )
 
-        assert Subscription.objects.for_subscribe().count() == 0
+        assert subscriber.get_subscriptions_for_update().count() == 0
 
     @pytest.mark.django_db
     def test_expired_none(self):
         create_subscription(expires=None, mode=Subscription.Mode.SUBSCRIBE)
-        assert Subscription.objects.for_subscribe().count() == 0
+        assert subscriber.get_subscriptions_for_update().count() == 0
 
     @pytest.mark.django_db
     def test_expired(self):
@@ -62,7 +61,7 @@ class TestSubscriptionManager:
             expires=timezone.now() - timedelta(days=1),
         )
 
-        assert Subscription.objects.for_subscribe().count() == 1
+        assert subscriber.get_subscriptions_for_update().count() == 1
 
     @pytest.mark.django_db
     def test_expires_in_30_mins(self):
@@ -71,7 +70,7 @@ class TestSubscriptionManager:
             expires=timezone.now() + timedelta(minutes=30),
         )
 
-        assert Subscription.objects.for_subscribe().count() == 1
+        assert subscriber.get_subscriptions_for_update().count() == 1
 
     @pytest.mark.django_db
     def test_expires_in_one_day(self):
@@ -80,7 +79,7 @@ class TestSubscriptionManager:
             expires=timezone.now() + timedelta(days=1),
         )
 
-        assert Subscription.objects.for_subscribe().count() == 0
+        assert subscriber.get_subscriptions_for_update().count() == 0
 
     @pytest.mark.django_db
     def test_too_many_errors(self):
@@ -90,7 +89,7 @@ class TestSubscriptionManager:
             num_retries=3,
         )
 
-        assert Subscription.objects.for_subscribe().count() == 0
+        assert subscriber.get_subscriptions_for_update().count() == 0
 
     @pytest.mark.django_db
     def test_expired_not_subscribed(self):
@@ -99,7 +98,7 @@ class TestSubscriptionManager:
             expires=timezone.now() - timedelta(days=1),
         )
 
-        assert Subscription.objects.for_subscribe().count() == 0
+        assert subscriber.get_subscriptions_for_update().count() == 0
 
     @pytest.mark.django_db
     def test_not_expired(self):
@@ -108,98 +107,13 @@ class TestSubscriptionManager:
             expires=timezone.now() + timedelta(days=1),
         )
 
-        assert Subscription.objects.for_subscribe().count() == 0
+        assert subscriber.get_subscriptions_for_update().count() == 0
 
 
-class TestSubscriptionModel:
-    body = b"testme"
-    content_type = "application/xml"
-
-    @pytest.fixture
-    def secret(self):
-        return uuid.uuid4()
-
-    @pytest.fixture
-    def signature(self, secret):
-        return hmac.new(secret.hex.encode("utf-8"), self.body, "sha1").hexdigest()
-
+class TestSubscribe:
     @pytest.fixture
     def subscription(self):
         return create_subscription()
-
-    def test_ok(self, rf, secret, signature):
-        subscription = Subscription(secret=secret)
-        req = rf.post(
-            "/",
-            self.body,
-            content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
-        )
-
-        subscription.check_signature(req)
-
-    def test_secret_is_none(self, rf, signature):
-        subscription = Subscription(secret=None)
-        req = rf.post(
-            "/",
-            self.body,
-            content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
-        )
-
-        with pytest.raises(Subscription.InvalidSignature):
-            subscription.check_signature(req)
-
-    def test_signature_mismatch(self, rf, signature):
-        req = rf.post(
-            "/",
-            self.body,
-            content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
-        )
-
-        subscription = Subscription(secret=uuid.uuid4())
-
-        with pytest.raises(Subscription.InvalidSignature):
-            subscription.check_signature(req)
-
-    def test_content_length_too_large(self, rf, secret, signature):
-        req = rf.post(
-            "/",
-            self.body,
-            content_type=self.content_type,
-            CONTENT_LENGTH=2000000000,
-            HTTP_X_HUB_SIGNATURE=f"sha1={signature}",
-        )
-        subscription = Subscription(secret=secret)
-
-        with pytest.raises(Subscription.InvalidSignature):
-            subscription.check_signature(req)
-
-    def test_hub_signature_header_missing(self, rf, secret):
-        req = rf.post(
-            "/",
-            self.body,
-            content_type=self.content_type,
-        )
-
-        subscription = Subscription(secret=secret)
-
-        with pytest.raises(Subscription.InvalidSignature):
-            subscription.check_signature(req)
-
-    def test_invalid_algo(self, rf, secret, signature):
-        req = rf.post(
-            "/",
-            self.body,
-            content_type=self.content_type,
-            HTTP_X_HUB_SIGNATURE=f"sha1111={signature}",
-        )
-
-        subscription = Subscription(secret=secret)
-
-        with pytest.raises(Subscription.InvalidSignature):
-            subscription.check_signature(req)
 
     @pytest.mark.django_db
     def test_subscribe_accepted(self, mocker, subscription):
@@ -208,7 +122,7 @@ class TestSubscriptionModel:
             return_value=MockResponse(status_code=http.HTTPStatus.ACCEPTED),
         )
 
-        subscription.subscribe()
+        subscriber.subscribe(subscription)
 
         subscription.refresh_from_db()
 
@@ -222,7 +136,7 @@ class TestSubscriptionModel:
             return_value=MockResponse(status_code=http.HTTPStatus.ACCEPTED),
         )
 
-        subscription.subscribe(mode=Subscription.Mode.UNSUBSCRIBE)
+        subscriber.subscribe(subscription, mode=Subscription.Mode.UNSUBSCRIBE)
 
         subscription.refresh_from_db()
 
@@ -237,7 +151,7 @@ class TestSubscriptionModel:
         )
 
         with pytest.raises(requests.ReadTimeout):
-            subscription.subscribe()
+            subscriber.subscribe(subscription)
 
         subscription.refresh_from_db()
 
@@ -253,24 +167,10 @@ class TestSubscriptionModel:
         )
 
         with pytest.raises(requests.HTTPError):
-            subscription.subscribe()
+            subscriber.subscribe(subscription)
 
         subscription.refresh_from_db()
 
         assert subscription.secret is None
         assert subscription.requested is None
         assert subscription.num_retries == 1
-
-    @pytest.mark.django_db
-    def test_verify_subscribe(self, subscription):
-        subscription.verify()
-
-        assert subscription.mode == Subscription.Mode.SUBSCRIBE
-        assert subscription.expires
-
-    @pytest.mark.django_db
-    def test_verify_unsubscribe(self, subscription):
-        subscription.verify(mode=Subscription.Mode.UNSUBSCRIBE)
-
-        assert subscription.mode == Subscription.Mode.UNSUBSCRIBE
-        assert subscription.expires is None
