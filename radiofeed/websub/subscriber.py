@@ -82,7 +82,6 @@ def subscribe(
 
         subscription.mode = mode
         subscription.secret = secret if mode == SUBSCRIBE else None
-        subscription.requested = timezone.now()
         subscription.num_retries = 0
 
     except requests.RequestException:

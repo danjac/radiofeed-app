@@ -29,10 +29,9 @@ class TestGetSubscriptionsForUpdate:
         assert subscriber.get_subscriptions_for_update().count() == 1
 
     @pytest.mark.django_db
-    def test_already_requested(self):
+    def test_already_subscribed(self):
         create_subscription(
             expires=None,
-            requested=timezone.now(),
             mode=subscriber.SUBSCRIBE,
         )
 
@@ -127,7 +126,6 @@ class TestSubscribe:
 
         assert subscription.mode == subscriber.SUBSCRIBE
         assert subscription.secret
-        assert subscription.requested
 
     @pytest.mark.django_db
     def test_unsubscribe(self, mocker, subscription):
@@ -142,7 +140,6 @@ class TestSubscribe:
 
         assert subscription.mode == subscriber.UNSUBSCRIBE
         assert subscription.secret is None
-        assert subscription.requested
 
     @pytest.mark.django_db
     def test_subscribe_timeout(self, mocker, subscription):
@@ -157,7 +154,6 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.secret is None
-        assert subscription.requested is None
         assert subscription.num_retries == 1
 
     @pytest.mark.django_db
@@ -173,5 +169,4 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.secret is None
-        assert subscription.requested is None
         assert subscription.num_retries == 1
