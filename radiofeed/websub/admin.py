@@ -52,8 +52,9 @@ class PingedFilter(admin.SimpleListFilter):
     ) -> QuerySet[Subscription]:
         """Returns filtered queryset."""
 
-        if self.value() == "yes":
-            return queryset.filter(pinged__isnull=False)
+        return (
+            queryset.filter(pinged__isnull=False) if self.value() == "yes" else queryset
+        )
 
 
 class RequestedFilter(admin.SimpleListFilter):
@@ -73,8 +74,11 @@ class RequestedFilter(admin.SimpleListFilter):
     ) -> QuerySet[Subscription]:
         """Returns filtered queryset."""
 
-        if self.value() == "yes":
-            return queryset.filter(requested__isnull=False)
+        return (
+            queryset.filter(requested__isnull=False)
+            if self.value() == "yes"
+            else queryset
+        )
 
 
 class VerifiedFilter(admin.SimpleListFilter):
@@ -94,8 +98,11 @@ class VerifiedFilter(admin.SimpleListFilter):
     ) -> QuerySet[Subscription]:
         """Returns filtered queryset."""
 
-        if self.value() == "yes":
-            return queryset.filter(verified__isnull=False)
+        return (
+            queryset.filter(verified__isnull=False)
+            if self.value() == "yes"
+            else queryset
+        )
 
 
 @admin.register(Subscription)
