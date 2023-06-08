@@ -150,7 +150,6 @@ class Subscription(TimeStampedModel):
         now = timezone.now()
 
         self.mode = mode
-        self.requested = None
         self.verified = now
 
         self.expires = (
