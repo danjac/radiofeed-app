@@ -128,6 +128,7 @@ class Subscription(TimeStampedModel):
 
             response.raise_for_status()
 
+            self.mode = mode
             self.secret = secret if mode == self.Mode.SUBSCRIBE else None  # type: ignore
             self.requested = timezone.now()
             self.num_retries = 0
