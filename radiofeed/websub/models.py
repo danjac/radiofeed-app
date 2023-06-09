@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from datetime import datetime
 
@@ -5,7 +7,19 @@ from django.db import models
 from django.urls import reverse
 from model_utils.models import TimeStampedModel
 
+from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.podcasts.models import Podcast
+from radiofeed.search import SearchQuerySetMixin
+
+
+class SubscriptionQuerySet(
+    FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet
+):
+    """QuerySet for Subscription model."""
+
+    search_vectors = [
+        ("podcast__search_vector", "rank"),
+    ]
 
 
 class Subscription(TimeStampedModel):
@@ -28,6 +42,8 @@ class Subscription(TimeStampedModel):
     pinged: datetime | None = models.DateTimeField(null=True, blank=True)
 
     num_retries: int = models.PositiveSmallIntegerField(default=0)
+
+    objects: models.Manager[Subscription] = SubscriptionQuerySet.as_manager()
 
     class Meta:
         constraints = [

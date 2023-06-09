@@ -93,6 +93,8 @@ class StatusFilter(admin.SimpleListFilter):
 class SubscriptionAdmin(admin.ModelAdmin):
     """Django admin for Subscription model."""
 
+    search_fields = ("search_document", "hub", "topic")
+
     list_filter = (
         StatusFilter,
         ConfirmedFilter,
