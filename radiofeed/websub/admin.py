@@ -18,7 +18,7 @@ class PendingFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("pending", "Pending"),)
+        return (("yes", "Pending"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
@@ -42,7 +42,7 @@ class ConfirmedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("confirmed", "Confirmed"),)
+        return (("yes", "Confirmed"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
@@ -66,7 +66,7 @@ class PingedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("pinged", "Pinged"),)
+        return (("yes", "Pinged"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
@@ -88,7 +88,7 @@ class FailedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("failed", "Failed"),)
+        return (("yes", "Failed"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
