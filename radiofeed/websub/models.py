@@ -9,17 +9,10 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.podcasts.models import Podcast
-from radiofeed.search import SearchQuerySetMixin
 
 
-class SubscriptionQuerySet(
-    FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet
-):
+class SubscriptionQuerySet(FastCountQuerySetMixin, models.QuerySet):
     """QuerySet for Subscription model."""
-
-    search_vectors = [
-        ("podcast__search_vector", "rank"),
-    ]
 
 
 class Subscription(TimeStampedModel):
