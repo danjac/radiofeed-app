@@ -93,7 +93,11 @@ class StatusFilter(admin.SimpleListFilter):
 class SubscriptionAdmin(admin.ModelAdmin):
     """Django admin for Subscription model."""
 
-    search_fields = ("hub", "topic")
+    search_fields = (
+        "hub",
+        "topic",
+        "podcast__title",
+    )
 
     list_filter = (
         StatusFilter,
