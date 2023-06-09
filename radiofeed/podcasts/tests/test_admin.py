@@ -10,6 +10,7 @@ from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
     ParserErrorFilter,
+    PingedFilter,
     PodcastAdmin,
     PrivateFilter,
     PromotedFilter,
@@ -127,12 +128,29 @@ class TestPromotedFilter:
         assert qs.count() == 4
 
     @pytest.mark.django_db
-    def test_true(self, podcasts, podcast_admin, req):
+    def test_promoted(self, podcasts, podcast_admin, req):
         promoted = create_podcast(promoted=True)
         f = PromotedFilter(req, {"promoted": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestPingedFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        create_podcast(pinged=timezone.now())
+        f = PingedFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_true(self, podcasts, podcast_admin, req):
+        pinged = create_podcast(pinged=timezone.now())
+        f = PingedFilter(req, {"pinged": "yes"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == pinged
 
 
 class TestPrivateFilter:

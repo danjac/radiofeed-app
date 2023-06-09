@@ -40,6 +40,7 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
             # prioritize podcast for immediate update
             subscription.podcast.priority = True
+            subscription.podcast.pinged = timezone.now()
             subscription.podcast.save()
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)

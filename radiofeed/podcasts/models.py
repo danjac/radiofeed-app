@@ -142,6 +142,7 @@ class Podcast(models.Model):
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
+    pinged: datetime | None = models.DateTimeField(null=True, blank=True)
 
     parser_error: str = models.CharField(
         max_length=30,

@@ -172,6 +172,28 @@ class SubscribedFilter(admin.SimpleListFilter):
         return queryset
 
 
+class PingedFilter(admin.SimpleListFilter):
+    """Filters podcasts based on pinged status."""
+
+    title = "Websub Ping"
+    parameter_name = "pinged"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", "Pinged"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+
+        return (
+            queryset.filter(pinged__isnull=False) if self.value() == "yes" else queryset
+        )
+
+
 @admin.register(Podcast)
 class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Podcast model admin."""
@@ -181,6 +203,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         ParserErrorFilter,
+        PingedFilter,
         PrivateFilter,
         PromotedFilter,
         PubDateFilter,
@@ -193,6 +216,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
+        "pinged",
     )
 
     list_editable = (
@@ -207,6 +231,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     readonly_fields = (
         "pub_date",
         "parsed",
+        "pinged",
         "frequency",
         "priority",
         "next_scheduled_update",
