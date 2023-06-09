@@ -153,5 +153,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "mode",
         "secret",
         "expires",
+        "confirmed",
+        "pinged",
         "num_retries",
     )
