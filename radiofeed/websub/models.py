@@ -24,6 +24,8 @@ class Subscription(TimeStampedModel):
     secret: uuid.UUID | None = models.UUIDField(blank=True, null=True)
 
     expires: datetime | None = models.DateTimeField(null=True, blank=True)
+    confirmed: datetime | None = models.DateTimeField(null=True, blank=True)
+    pinged: datetime | None = models.DateTimeField(null=True, blank=True)
 
     num_retries: int = models.PositiveSmallIntegerField(default=0)
 

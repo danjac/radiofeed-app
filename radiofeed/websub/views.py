@@ -38,9 +38,11 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
             signature.check_signature(request, subscription.secret)
 
+            subscription.pinged = timezone.now()
+            subscription.save()
+
             # prioritize podcast for immediate update
             subscription.podcast.priority = True
-            subscription.podcast.pinged = timezone.now()
             subscription.podcast.save()
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
@@ -59,10 +61,14 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
         subscription = get_object_or_404(Subscription, topic=topic, pk=subscription_id)
 
+        now = timezone.now()
+
         subscription.mode = mode
 
+        subscription.confirmed = now
+
         subscription.expires = (
-            timezone.now() + timedelta(seconds=lease_seconds)
+            now + timedelta(seconds=lease_seconds)
             if mode == subscriber.SUBSCRIBE
             else None
         )

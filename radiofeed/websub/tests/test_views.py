@@ -18,8 +18,9 @@ class TestCallback:
 
         assert_no_content(client.post(subscription.get_callback_url()))
         subscription.refresh_from_db()
+
+        assert subscription.pinged
         assert subscription.podcast.priority
-        assert subscription.podcast.pinged
 
     @pytest.mark.django_db
     def test_post_invalid_signature(self, client, mocker, subscription):
@@ -31,8 +32,8 @@ class TestCallback:
         assert_no_content(client.post(subscription.get_callback_url()))
 
         subscription.refresh_from_db()
+        assert not subscription.pinged
         assert not subscription.podcast.priority
-        assert not subscription.podcast.pinged
 
     @pytest.mark.django_db
     def test_get(self, client, subscription):
@@ -50,6 +51,7 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
+        assert subscription.confirmed
         assert subscription.expires
 
     @pytest.mark.django_db
@@ -68,6 +70,7 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
+        assert subscription.confirmed
         assert subscription.expires is None
 
     @pytest.mark.django_db
@@ -86,6 +89,7 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
+        assert subscription.confirmed is None
         assert subscription.expires is None
 
     @pytest.mark.django_db
@@ -104,6 +108,7 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
+        assert subscription.confirmed is None
         assert subscription.expires is None
 
     @pytest.mark.django_db
@@ -121,4 +126,5 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
+        assert subscription.confirmed is None
         assert subscription.expires is None

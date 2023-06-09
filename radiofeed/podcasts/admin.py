@@ -8,6 +8,8 @@ from django.template.defaultfilters import timeuntil
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
 from radiofeed.podcasts.models import Category, Podcast, Subscription
+from radiofeed.websub import subscriber
+from radiofeed.websub.models import Subscription as WebsubSubscription
 
 
 @admin.register(Category)
@@ -172,26 +174,59 @@ class SubscribedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class PingedFilter(admin.SimpleListFilter):
-    """Filters podcasts based on pinged status."""
+class WebsubFilter(admin.SimpleListFilter):
+    """Filters podcasts based on websub status."""
 
-    title = "Websub Ping"
-    parameter_name = "pinged"
+    title = "Websub"
+    parameter_name = "websub"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "Pinged"),)
+        return (
+            ("any", "Any"),
+            ("pending", "Pending"),
+            ("subscribed", "Subscribed"),
+            ("pinged", "Pinged"),
+        )
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
 
-        return (
-            queryset.filter(pinged__isnull=False) if self.value() == "yes" else queryset
-        )
+        websub_qs = WebsubSubscription.objects.filter(podcast=OuterRef("pk"))
+
+        match self.value():
+            case "any":
+                return queryset.annotate(is_websub=Exists(websub_qs)).filter(
+                    is_websub=True
+                )
+
+            case "pending":
+                return queryset.annotate(
+                    is_websub=Exists(
+                        websub_qs.filter(mode=""),
+                    )
+                ).filter(is_websub=True)
+
+            case "subscribed":
+                return queryset.annotate(
+                    is_websub=Exists(
+                        websub_qs.filter(mode=subscriber.SUBSCRIBE),
+                    )
+                ).filter(is_websub=True)
+
+            case "pinged":
+                return queryset.annotate(
+                    is_websub=Exists(
+                        websub_qs.filter(pinged__isnull=False),
+                    )
+                ).filter(is_websub=True)
+
+            case _:
+                return queryset
 
 
 @admin.register(Podcast)
@@ -203,11 +238,11 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         ParserErrorFilter,
-        PingedFilter,
         PrivateFilter,
         PromotedFilter,
         PubDateFilter,
         SubscribedFilter,
+        WebsubFilter,
     )
 
     list_display = (
@@ -216,7 +251,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
-        "pinged",
     )
 
     list_editable = (
@@ -231,7 +265,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     readonly_fields = (
         "pub_date",
         "parsed",
-        "pinged",
         "frequency",
         "priority",
         "next_scheduled_update",
