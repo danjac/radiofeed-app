@@ -8,47 +8,142 @@ from radiofeed.websub import subscriber
 from radiofeed.websub.models import Subscription
 
 
-class ModeFilter(admin.SimpleListFilter):
-    """Filters subscriptions based on their mode."""
+class PendingFilter(admin.SimpleListFilter):
+    """Filters subscribed."""
 
-    title = "Mode"
-    parameter_name = "mode"
+    title = "Pending"
+    parameter_name = "pending"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (
-            ("none", "None"),
-            ("subscribe", "Subscribe"),
-            ("unsubscribe", "Unsubscribe"),
-        )
+        return (("pending", "Pending"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
     ) -> QuerySet[Subscription]:
         """Returns filtered queryset."""
 
-        match self.value():
-            case "subscribe":
-                return queryset.filter(mode=subscriber.SUBSCRIBE)
-            case "unsubscribe":
-                return queryset.filter(mode=subscriber.UNSUBSCRIBE)
-            case "none":
-                return queryset.filter(mode="")
-            case _:
-                return queryset
+        return (
+            queryset.filter(mode="", num_retries__lt=subscriber.MAX_NUM_RETRIES)
+            if self.value() == "yes"
+            else queryset
+        )
+
+
+class ConfirmedFilter(admin.SimpleListFilter):
+    """Filters confirmed."""
+
+    title = "Confirmed"
+    parameter_name = "confirmed"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("confirmed", "Confirmed"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Subscription]
+    ) -> QuerySet[Subscription]:
+        """Returns filtered queryset."""
+
+        return (
+            queryset.filter(confirmed__isnull=False)
+            if self.value() == "yes"
+            else queryset
+        )
+
+
+class PingedFilter(admin.SimpleListFilter):
+    """Filters pinged."""
+
+    title = "Pinged"
+    parameter_name = "pinged"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("pinged", "Pinged"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Subscription]
+    ) -> QuerySet[Subscription]:
+        """Returns filtered queryset."""
+
+        return (
+            queryset.filter(pinged__isnull=False) if self.value() == "yes" else queryset
+        )
+
+
+class FailedFilter(admin.SimpleListFilter):
+    """Filters subscriptions that could not be subscribed."""
+
+    title = "Failed"
+    parameter_name = "failed"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("failed", "Failed"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Subscription]
+    ) -> QuerySet[Subscription]:
+        """Returns filtered queryset."""
+
+        return (
+            queryset.filter(num_retries__gte=subscriber.MAX_NUM_RETRIES)
+            if self.value() == "yes"
+            else queryset
+        )
+
+
+class SubscribedFilter(admin.SimpleListFilter):
+    """Filters subscribed."""
+
+    title = "Subscribed"
+    parameter_name = "subscribed"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", "Subscribed"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Subscription]
+    ) -> QuerySet[Subscription]:
+        """Returns filtered queryset."""
+
+        return (
+            queryset.filter(mode=subscriber.SUBSCRIBE)
+            if self.value() == "yes"
+            else queryset
+        )
 
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     """Django admin for Subscription model."""
 
-    list_filter = (ModeFilter,)
+    list_filter = (
+        SubscribedFilter,
+        ConfirmedFilter,
+        PingedFilter,
+        PendingFilter,
+        FailedFilter,
+    )
 
     list_display = (
         "podcast",
+        "hub",
         "mode",
+        "confirmed",
+        "pinged",
     )
     raw_id_fields = ("podcast",)
     readonly_fields = (
