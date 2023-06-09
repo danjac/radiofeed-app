@@ -8,30 +8,6 @@ from radiofeed.websub import subscriber
 from radiofeed.websub.models import Subscription
 
 
-class PendingFilter(admin.SimpleListFilter):
-    """Filters subscribed."""
-
-    title = "Pending"
-    parameter_name = "pending"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (("yes", "Pending"),)
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Subscription]
-    ) -> QuerySet[Subscription]:
-        """Returns filtered queryset."""
-
-        return (
-            queryset.filter(mode="", num_retries__lt=subscriber.MAX_NUM_RETRIES)
-            if self.value() == "yes"
-            else queryset
-        )
-
-
 class ConfirmedFilter(admin.SimpleListFilter):
     """Filters confirmed."""
 
@@ -78,52 +54,39 @@ class PingedFilter(admin.SimpleListFilter):
         )
 
 
-class FailedFilter(admin.SimpleListFilter):
-    """Filters subscriptions that could not be subscribed."""
-
-    title = "Failed"
-    parameter_name = "failed"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (("yes", "Failed"),)
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Subscription]
-    ) -> QuerySet[Subscription]:
-        """Returns filtered queryset."""
-
-        return (
-            queryset.filter(num_retries__gte=subscriber.MAX_NUM_RETRIES)
-            if self.value() == "yes"
-            else queryset
-        )
-
-
-class SubscribedFilter(admin.SimpleListFilter):
+class StatusFilter(admin.SimpleListFilter):
     """Filters subscribed."""
 
-    title = "Subscribed"
-    parameter_name = "subscribed"
+    title = "Status"
+    parameter_name = "status"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Subscription]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "Subscribed"),)
+        return (
+            ("subscribed", "Subscribed"),
+            ("pending", "Pending"),
+            ("failed", "Failed"),
+        )
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Subscription]
     ) -> QuerySet[Subscription]:
         """Returns filtered queryset."""
 
-        return (
-            queryset.filter(mode=subscriber.SUBSCRIBE)
-            if self.value() == "yes"
-            else queryset
-        )
+        match self.value():
+            case "subscribed":
+                return queryset.filter(mode=subscriber.SUBSCRIBE)
+            case "pending":
+                return queryset.filter(
+                    mode="", num_retries__lt=subscriber.MAX_NUM_RETRIES
+                )
+            case "failed":
+                return queryset.filter(num_retries__gte=subscriber.MAX_NUM_RETRIES)
+
+            case _:
+                return queryset
 
 
 @admin.register(Subscription)
@@ -131,11 +94,9 @@ class SubscriptionAdmin(admin.ModelAdmin):
     """Django admin for Subscription model."""
 
     list_filter = (
-        SubscribedFilter,
+        StatusFilter,
         ConfirmedFilter,
         PingedFilter,
-        PendingFilter,
-        FailedFilter,
     )
 
     list_display = (
