@@ -19,10 +19,6 @@
             "schedule": "15 9 * * 1"
         },
         {
-            "command": "python manage.py subscribe_websub_feeds",
-            "schedule": "*/6 * * * *"
-        },
-        {
             "command": "python manage.py crawl_itunes",
             "schedule": "15 3 * * *"
         },
