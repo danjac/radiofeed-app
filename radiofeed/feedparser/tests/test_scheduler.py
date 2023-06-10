@@ -97,7 +97,7 @@ class TestGetScheduledForUpdate:
             (
                 {
                     "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=3),
+                    "pub_date": timedelta(hours=3),
                     "pinged": timedelta(hours=1),
                     "pubsub": True,
                 },
