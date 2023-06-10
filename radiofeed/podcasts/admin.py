@@ -217,6 +217,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
+        "pinged",
     )
 
     list_editable = (
@@ -231,6 +232,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     readonly_fields = (
         "pub_date",
         "parsed",
+        "pinged",
         "parser_method",
         "parser_error",
         "frequency",
