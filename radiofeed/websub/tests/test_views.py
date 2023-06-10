@@ -3,6 +3,7 @@ import uuid
 import pytest
 
 from radiofeed.asserts import assert_no_content, assert_not_found, assert_ok
+from radiofeed.podcasts.models import Podcast
 from radiofeed.websub import signature, subscriber
 from radiofeed.websub.factories import create_subscription
 
@@ -21,6 +22,7 @@ class TestCallback:
 
         assert subscription.pinged
         assert subscription.podcast.priority
+        assert subscription.podcast.parser_method == Podcast.ParserMethod.PUBSUB
 
     @pytest.mark.django_db
     def test_post_invalid_signature(self, client, mocker, subscription):
@@ -34,6 +36,7 @@ class TestCallback:
         subscription.refresh_from_db()
         assert not subscription.pinged
         assert not subscription.podcast.priority
+        assert subscription.podcast.parser_method == Podcast.ParserMethod.POLLING
 
     @pytest.mark.django_db
     def test_get(self, client, subscription):

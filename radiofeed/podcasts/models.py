@@ -117,6 +117,10 @@ class PodcastQuerySet(
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
+    class ParserMethod(models.TextChoices):
+        POLLING = "polling", "Polling"
+        PUBSUB = "pubsub", "Pubsub"
+
     class ParserError(models.TextChoices):
         DUPLICATE = "duplicate", "Duplicate"
         INACCESSIBLE = "inaccessible", "Inaccessible"
@@ -142,6 +146,12 @@ class Podcast(models.Model):
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
+
+    parser_method = models.CharField(
+        max_length=12,
+        choices=ParserMethod.choices,
+        default=ParserMethod.POLLING,
+    )
 
     parser_error: str = models.CharField(
         max_length=30,

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
+from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.websub import subscriber
 from radiofeed.websub.models import Subscription
 
@@ -90,7 +91,7 @@ class StatusFilter(admin.SimpleListFilter):
 
 
 @admin.register(Subscription)
-class SubscriptionAdmin(admin.ModelAdmin):
+class SubscriptionAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Django admin for Subscription model."""
 
     search_fields = (

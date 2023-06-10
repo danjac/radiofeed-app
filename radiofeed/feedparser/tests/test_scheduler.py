@@ -83,15 +83,6 @@ class TestGetScheduledForUpdate:
                 },
                 False,
             ),
-            # just parsed + prioritized: yes
-            (
-                {
-                    "parsed": timedelta(seconds=1200),
-                    "pub_date": timedelta(days=3),
-                    "priority": True,
-                },
-                True,
-            ),
             # parsed before pub date+frequency: yes
             (
                 {
@@ -121,21 +112,65 @@ class TestGetScheduledForUpdate:
         ],
     )
     @pytest.mark.django_db
-    def test_get_scheduled_podcasts(self, kwargs, exists):
+    def test_get_scheduled_polling_podcasts(self, kwargs, exists):
         now = timezone.now()
 
         active = kwargs.get("active", True)
         frequency = kwargs.get("frequency", timedelta(hours=24))
         parsed = kwargs.get("parsed", None)
         pub_date = kwargs.get("pub_date", None)
-        priority = kwargs.get("priority", False)
 
         create_podcast(
             active=active,
             frequency=frequency,
-            priority=priority,
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,
+        )
+
+        assert scheduler.get_podcasts_for_update().exists() is exists
+
+    @pytest.mark.parametrize(
+        ("kwargs", "exists"),
+        [
+            # just parsed: yes
+            (
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                    "priority": True,
+                },
+                True,
+            ),
+            # inactive: no
+            (
+                {
+                    "active": False,
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                    "priority": True,
+                },
+                False,
+            ),
+            # just parsed not prioritized: no
+            (
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                    "priority": False,
+                },
+                False,
+            ),
+        ],
+    )
+    @pytest.mark.django_db
+    def test_get_scheduled_pubsub_podcasts(self, kwargs, exists):
+        active = kwargs.get("active", True)
+        priority = kwargs.get("priority", False)
+
+        create_podcast(
+            active=active,
+            priority=priority,
+            parser_method=Podcast.ParserMethod.PUBSUB,
         )
 
         assert scheduler.get_podcasts_for_update().exists() is exists

@@ -10,16 +10,15 @@ from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
     ParserErrorFilter,
+    ParserMethodFilter,
     PodcastAdmin,
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
     SubscribedFilter,
-    WebsubFilter,
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.websub.factories import create_subscription as create_websub_subscription
 
 
 @pytest.fixture(scope="module")
@@ -137,49 +136,6 @@ class TestPromotedFilter:
         assert qs.first() == promoted
 
 
-class TestWebsubFilter:
-    @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req):
-        create_websub_subscription()
-        f = WebsubFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    @pytest.mark.django_db
-    def test_any(self, podcasts, podcast_admin, req):
-        websub = create_websub_subscription().podcast
-        f = WebsubFilter(req, {"websub": "any"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == websub
-
-    @pytest.mark.django_db
-    def test_pending(self, podcasts, podcast_admin, req):
-        pending = create_websub_subscription().podcast
-        f = WebsubFilter(req, {"websub": "pending"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == pending
-
-    @pytest.mark.django_db
-    def test_subscribed(self, podcasts, podcast_admin, req):
-        subscribed = create_websub_subscription(mode="subscribe").podcast
-        f = WebsubFilter(req, {"websub": "subscribed"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == subscribed
-
-    @pytest.mark.django_db
-    def test_pinged(self, podcasts, podcast_admin, req):
-        pinged = create_websub_subscription(
-            mode="subscribe", pinged=timezone.now()
-        ).podcast
-        f = WebsubFilter(req, {"websub": "pinged"}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == pinged
-
-
 class TestPrivateFilter:
     @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
@@ -244,6 +200,30 @@ class TestParserErrorFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert duplicate in qs
+
+
+class TestParserMethodFilter:
+    @pytest.fixture
+    def pubsub(self):
+        return create_podcast(parser_method=Podcast.ParserMethod.PUBSUB)
+
+    @pytest.mark.django_db
+    def test_all(self, podcasts, podcast_admin, req, pubsub):
+        f = ParserMethodFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_pubsub(self, podcasts, podcast_admin, req, pubsub):
+        f = ParserMethodFilter(
+            req,
+            {"parser_method": Podcast.ParserMethod.PUBSUB},
+            Podcast,
+            podcast_admin,
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert pubsub in qs
 
 
 class TestSubscribedFilter:
