@@ -166,11 +166,17 @@ class TestGetScheduledForUpdate:
     def test_get_scheduled_pubsub_podcasts(self, kwargs, exists):
         active = kwargs.get("active", True)
         priority = kwargs.get("priority", False)
+        parsed = kwargs.get("parsed", None)
+        pub_date = kwargs.get("pub_date", None)
+
+        now = timezone.now()
 
         create_podcast(
             active=active,
             priority=priority,
             parser_method=Podcast.ParserMethod.PUBSUB,
+            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
         )
 
         assert scheduler.get_podcasts_for_update().exists() is exists
