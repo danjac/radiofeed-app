@@ -20,6 +20,7 @@ def set_default_parser_method(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("podcasts", "0049_podcast_parser_method"),
+        ("websub", "0005_subscription_confirmed_subscription_pinged"),
     ]
 
     operations = [
