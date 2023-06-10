@@ -31,6 +31,7 @@ class TestPodping:
         call_command("podping")
         podcast.refresh_from_db()
         assert podcast.priority
+        assert podcast.pinged
         assert podcast.parser_method == Podcast.ParserMethod.PUBSUB
 
     @pytest.mark.django_db
@@ -39,6 +40,7 @@ class TestPodping:
         call_command("podping")
         podcast.refresh_from_db()
         assert not podcast.priority
+        assert not podcast.pinged
         assert podcast.parser_method == Podcast.ParserMethod.POLLING
 
     @pytest.mark.django_db
@@ -47,6 +49,7 @@ class TestPodping:
         call_command("podping")
         podcast.refresh_from_db()
         assert podcast.priority
+        assert podcast.pinged
         assert podcast.parser_method == Podcast.ParserMethod.PUBSUB
 
     @pytest.mark.django_db
@@ -55,6 +58,7 @@ class TestPodping:
         call_command("podping")
         podcast.refresh_from_db()
         assert not podcast.priority
+        assert not podcast.pinged
         assert podcast.parser_method == Podcast.ParserMethod.POLLING
 
 

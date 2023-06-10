@@ -21,6 +21,7 @@ class TestCallback:
         subscription.refresh_from_db()
 
         assert subscription.pinged
+        assert subscription.podcast.pinged
         assert subscription.podcast.priority
         assert subscription.podcast.parser_method == Podcast.ParserMethod.PUBSUB
 
@@ -36,6 +37,7 @@ class TestCallback:
         subscription.refresh_from_db()
         assert not subscription.pinged
         assert not subscription.podcast.priority
+        assert not subscription.podcast.pinged
         assert subscription.podcast.parser_method == Podcast.ParserMethod.POLLING
 
     @pytest.mark.django_db

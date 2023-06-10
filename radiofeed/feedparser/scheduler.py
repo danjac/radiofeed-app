@@ -40,34 +40,25 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     """
     now = timezone.now()
     return (
-        (
-            Podcast.objects.alias(subscribers=Count("subscriptions")).filter(
-                Q(
-                    Q(parsed__isnull=True)
-                    | Q(pub_date__isnull=True)
-                    | Q(parsed__lt=now - _MAX_FREQUENCY)
-                    | Q(
-                        pub_date__lt=now - F("frequency"),
-                        parsed__lt=now - _MIN_FREQUENCY,
-                    ),
-                )
+        Podcast.objects.alias(subscribers=Count("subscriptions")).filter(
+            Q(
+                Q(parsed__isnull=True)
+                | Q(pub_date__isnull=True)
+                | Q(parsed__lt=now - _MAX_FREQUENCY)
                 | Q(
-                    parser_method=Podcast.ParserMethod.PUBSUB,
-                    priority=True,
+                    pub_date__lt=now - F("frequency"),
+                    parsed__lt=now - _MIN_FREQUENCY,
                 ),
-                active=True,
+                pinged__isnull=True,
             )
+            | Q(pinged__lt=now - _MIN_FREQUENCY),
+            active=True,
         )
-        .exclude(
-            parser_method=Podcast.ParserMethod.PUBSUB,
-            priority=False,
-        )
-        .order_by(
-            F("priority").desc(),
-            F("subscribers").desc(),
-            F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
-        )
+    ).order_by(
+        F("pinged").asc(nulls_first=False),
+        F("subscribers").desc(),
+        F("promoted").desc(),
+        F("parsed").asc(nulls_first=True),
     )
 
 

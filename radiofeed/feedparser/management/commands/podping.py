@@ -76,6 +76,7 @@ class Command(BaseCommand):
                 ).update(
                     parser_method=Podcast.ParserMethod.PUBSUB,
                     priority=True,
+                    pinged=timezone.now(),
                 ):
                     self.stdout.write(
                         self.style.SUCCESS(

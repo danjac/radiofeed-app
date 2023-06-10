@@ -39,12 +39,15 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
 
             signature.check_signature(request, subscription.secret)
 
-            subscription.pinged = timezone.now()
+            now = timezone.now()
+
+            subscription.pinged = now
             subscription.save()
 
             # prioritize podcast for immediate update
             subscription.podcast.priority = True
             subscription.podcast.parser_method = Podcast.ParserMethod.PUBSUB
+            subscription.podcast.pinged = now
             subscription.podcast.save()
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)

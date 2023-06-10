@@ -147,6 +147,8 @@ class Podcast(models.Model):
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    pinged: datetime | None = models.DateTimeField(null=True, blank=True)
+
     parser_method = models.CharField(
         max_length=12,
         choices=ParserMethod.choices,
