@@ -227,9 +227,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     readonly_fields = (
         "pub_date",
         "parsed",
-        "pinged",
         "parser_error",
-        "pubsub",
         "frequency",
         "next_scheduled_update",
         "modified",

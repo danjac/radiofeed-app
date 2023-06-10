@@ -49,17 +49,10 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
                     pub_date__lt=now - F("frequency"),
                     parsed__lt=now - _MIN_FREQUENCY,
                 ),
-                pubsub=False,
-            )
-            | Q(
-                pubsub=True,
-                pinged__isnull=False,
-                parsed__lt=now - _MIN_FREQUENCY,
             ),
             active=True,
         )
     ).order_by(
-        F("pinged").asc(nulls_first=False),
         F("subscribers").desc(),
         F("promoted").desc(),
         F("parsed").asc(nulls_first=True),

@@ -117,10 +117,6 @@ class PodcastQuerySet(
 class Podcast(models.Model):
     """Podcast channel or feed."""
 
-    class ParserMethod(models.TextChoices):
-        POLLING = "polling", "Polling"
-        PUBSUB = "pubsub", "Pubsub"
-
     class ParserError(models.TextChoices):
         DUPLICATE = "duplicate", "Duplicate"
         INACCESSIBLE = "inaccessible", "Inaccessible"
@@ -146,8 +142,6 @@ class Podcast(models.Model):
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
-
-    pinged: datetime | None = models.DateTimeField(null=True, blank=True)
 
     parser_error: str = models.CharField(
         max_length=30,
@@ -197,7 +191,6 @@ class Podcast(models.Model):
 
     explicit: bool = models.BooleanField(default=False)
     promoted: bool = models.BooleanField(default=False)
-    pubsub: bool = models.BooleanField(default=False)
 
     categories: models.QuerySet[Category] = models.ManyToManyField(
         "podcasts.Category",
