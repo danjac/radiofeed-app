@@ -42,6 +42,7 @@ django-environ = "^0.10.0"
 django-fast-update = "^0.2.2"
 django-anymail = "^10.0"
 djlint = "^1.27.1"
+beem = "^0.24.26"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}

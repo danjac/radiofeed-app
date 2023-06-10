@@ -1,8 +1,61 @@
+import json
+
 import pytest
 from django.core.management import call_command
 
 from radiofeed.feedparser.exceptions import Duplicate
 from radiofeed.podcasts.factories import create_podcast
+from radiofeed.podcasts.models import Podcast
+
+
+class TestPodping:
+    def _mock_stream(self, mocker, json_data, op_id="pp_podcast_update"):
+        mocker.patch("beem.nodelist.NodeList.update_nodes")
+        mocker.patch(
+            "beem.nodelist.NodeList.get_hive_nodes",
+            return_value=["https://api.hive.blog"],
+        )
+        return mocker.patch(
+            "beem.blockchain.Blockchain.stream",
+            return_value=[
+                {
+                    "id": op_id,
+                    "json": json.dumps(json_data),
+                }
+            ],
+        )
+
+    @pytest.mark.django_db
+    def test_ok(self, mocker, podcast):
+        self._mock_stream(mocker, {"urls": [podcast.rss]})
+        call_command("podping")
+        podcast.refresh_from_db()
+        assert podcast.priority
+        assert podcast.parser_method == Podcast.ParserMethod.PUBSUB
+
+    @pytest.mark.django_db
+    def test_invalid_op_id(self, mocker, podcast):
+        self._mock_stream(mocker, {"urls": [podcast.rss]}, "sm-incorrect")
+        call_command("podping")
+        podcast.refresh_from_db()
+        assert not podcast.priority
+        assert podcast.parser_method == Podcast.ParserMethod.POLLING
+
+    @pytest.mark.django_db
+    def test_single_url(self, mocker, podcast):
+        self._mock_stream(mocker, {"url": podcast.rss})
+        call_command("podping")
+        podcast.refresh_from_db()
+        assert podcast.priority
+        assert podcast.parser_method == Podcast.ParserMethod.PUBSUB
+
+    @pytest.mark.django_db
+    def test_no_matching_urls(self, mocker, podcast):
+        self._mock_stream(mocker, {"urls": ["https//random/url.com"]})
+        call_command("podping")
+        podcast.refresh_from_db()
+        assert not podcast.priority
+        assert podcast.parser_method == Podcast.ParserMethod.POLLING
 
 
 class TestParseFeeds:
