@@ -27,7 +27,6 @@ from radiofeed.feedparser.exceptions import (
 )
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.websub.models import Subscription
 
 _ACCEPT: Final = (
     "application/atom+xml,"
@@ -122,7 +121,6 @@ class FeedParser:
 
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
-            self._websub_subscription_updates(response, feed)
 
     def _get_response(self) -> requests.Response:
         try:
@@ -312,30 +310,4 @@ class FeedParser:
                     self._item_attrs.categories,
                 ),
             ),
-        )
-
-    def _websub_subscription_updates(
-        self, response: requests.Response, feed: Feed
-    ) -> None:
-        hubs = set(feed.websub_hubs)
-
-        # links can be in HTTP headers or XML body
-        if hub := response.links.get("hub", {}).get("url", None):
-            hubs.add(hub)
-
-        topic = response.links.get("self", {}).get("url", feed.websub_topic)
-
-        if not hubs or not topic:
-            return
-
-        Subscription.objects.bulk_create(
-            [
-                Subscription(
-                    podcast=self._podcast,
-                    hub=hub,
-                    topic=topic,
-                )
-                for hub in hubs
-            ],
-            ignore_conflicts=True,
         )
