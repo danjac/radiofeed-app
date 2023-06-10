@@ -41,14 +41,12 @@ def get_podcasts_for_update() -> QuerySet[Podcast]:
     now = timezone.now()
     return (
         Podcast.objects.alias(subscribers=Count("subscriptions")).filter(
-            Q(
-                Q(parsed__isnull=True)
-                | Q(pub_date__isnull=True)
-                | Q(parsed__lt=now - _MAX_FREQUENCY)
-                | Q(
-                    pub_date__lt=now - F("frequency"),
-                    parsed__lt=now - _MIN_FREQUENCY,
-                ),
+            Q(parsed__isnull=True)
+            | Q(pub_date__isnull=True)
+            | Q(parsed__lt=now - _MAX_FREQUENCY)
+            | Q(
+                pub_date__lt=now - F("frequency"),
+                parsed__lt=now - _MIN_FREQUENCY,
             ),
             active=True,
         )
