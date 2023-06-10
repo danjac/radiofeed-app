@@ -14,7 +14,6 @@ from radiofeed.podcasts.admin import (
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
-    PubsubFilter,
     SubscribedFilter,
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -200,30 +199,6 @@ class TestParserErrorFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert duplicate in qs
-
-
-class TestPubsubFilter:
-    @pytest.fixture
-    def pubsub(self):
-        return create_podcast(pubsub=True)
-
-    @pytest.mark.django_db
-    def test_all(self, podcasts, podcast_admin, req, pubsub):
-        f = PubsubFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    @pytest.mark.django_db
-    def test_pubsub(self, podcasts, podcast_admin, req, pubsub):
-        f = PubsubFilter(
-            req,
-            {"pubsub": "yes"},
-            Podcast,
-            podcast_admin,
-        )
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert pubsub in qs
 
 
 class TestSubscribedFilter:

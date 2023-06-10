@@ -172,25 +172,6 @@ class SubscribedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class PubsubFilter(admin.SimpleListFilter):
-    """Filters podcasts based on websub status."""
-
-    title = "Pubsub"
-    parameter_name = "pubsub"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (("yes", "Pubsub"),)
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-        return queryset.filter(pubsub=True) if self.value() == "yes" else queryset
-
-
 @admin.register(Podcast)
 class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Podcast model admin."""
@@ -204,7 +185,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         PromotedFilter,
         PubDateFilter,
         SubscribedFilter,
-        PubsubFilter,
     )
 
     list_display = (

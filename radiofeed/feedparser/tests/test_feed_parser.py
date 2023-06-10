@@ -24,7 +24,6 @@ from radiofeed.feedparser.feed_parser import (
 )
 from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
-from radiofeed.websub.factories import create_subscription
 
 
 @dataclasses.dataclass
@@ -95,20 +94,10 @@ class TestFeedParser:
     def test_parse_ok(self, mocker, categories):
         # set date to before latest
 
-        websub_hub = "https://pubsubhubbub.appspot.com/"
-
-        rss = "https://mysteriousuniverse.org/feed/podcast/"
-
         podcast = create_podcast(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
-        )
-
-        create_subscription(
-            podcast=podcast,
-            hub=websub_hub,
-            topic=rss,
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -185,11 +174,6 @@ class TestFeedParser:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
-
-        subscription = podcast.websub_subscriptions.get()
-
-        assert subscription.hub == websub_hub
-        assert subscription.topic == podcast.rss
 
     @pytest.mark.django_db
     def test_websub_headers_in_response(self, mocker, db, categories):
@@ -272,11 +256,6 @@ class TestFeedParser:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
-
-        assert podcast.websub_subscriptions.count() == 2
-        assert podcast.websub_subscriptions.filter(
-            hub=websub_hub, topic=websub_topic
-        ).exists()
 
     @pytest.mark.django_db
     def test_parse_high_num_episodes(self, mocker, categories):
