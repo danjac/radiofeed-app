@@ -11,7 +11,6 @@ urlpatterns = [
     path("", include("radiofeed.episodes.urls")),
     path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.users.urls")),
-    path("", include("radiofeed.websub.urls")),
     path("account/", include("allauth.urls")),
     path("about/", views.about_page, name="about"),
     path("health-check/", views.health_check, name="health_check"),
