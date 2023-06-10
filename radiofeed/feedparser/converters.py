@@ -11,11 +11,6 @@ def explicit(value: str | None) -> bool:
     return bool(value and value.casefold() in ("clean", "yes"))
 
 
-def url_list(value: list) -> list:
-    """Convert list of urls"""
-    return [converted for converted in [url(item) for item in value] if converted]
-
-
 def url(value: str | None) -> str | None:
     """Returns a URL value. Will try to prefix with https:// if only domain provided.
 

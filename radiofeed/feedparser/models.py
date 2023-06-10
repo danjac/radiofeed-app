@@ -121,12 +121,6 @@ class Feed:
 
     funding_url: str | None = attrs.field(converter=converters.url, default=None)
 
-    websub_hubs: list[str] = attrs.field(
-        default=attrs.Factory(list), converter=converters.url_list
-    )
-
-    websub_topic: str | None = attrs.field(converter=converters.url, default=None)
-
     categories: list[str] = attrs.field(default=attrs.Factory(list))
 
     items: list[Item] = attrs.field(

@@ -63,11 +63,6 @@ class RSSParser:
                     "//media:category/@label",
                     "//media:category/text()",
                 ),
-                websub_hubs=self._parser.aslist(
-                    channel,
-                    "//atom:link[@rel='hub']/@href",
-                    "//link[@rel='hub']/@href",
-                ),
                 **self._parser.asdict(
                     channel,
                     complete="itunes:complete/text()",
@@ -78,10 +73,6 @@ class RSSParser:
                     funding_url="podcast:funding/@url",
                     language="language/text()",
                     link="link/text()",
-                    websub_topic=(
-                        "atom:link[@rel='self']/@href",
-                        "link[@rel='self']/@href",
-                    ),
                     owner=(
                         "itunes:author/text()",
                         "itunes:owner/itunes:name/text()",
