@@ -13,25 +13,6 @@ _MIN_FREQUENCY: Final = timedelta(hours=1)
 _MAX_FREQUENCY: Final = timedelta(days=7)
 
 
-def next_scheduled_update(podcast: Podcast) -> datetime:
-    """Returns estimated next update."""
-    now = timezone.now()
-
-    if podcast.pub_date is None or podcast.parsed is None:
-        return now
-
-    return max(
-        min(
-            podcast.parsed + _MAX_FREQUENCY,
-            max(
-                podcast.pub_date + podcast.frequency,
-                podcast.parsed + _MIN_FREQUENCY,
-            ),
-        ),
-        now,
-    )
-
-
 def get_podcasts_for_update() -> QuerySet[Podcast]:
     """Returns all active podcasts scheduled for feed update.
 
@@ -96,3 +77,22 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
     # ensure result falls within bounds
 
     return max(frequency, _MIN_FREQUENCY)
+
+
+def next_scheduled_update(podcast: Podcast) -> datetime:
+    """Returns estimated next update."""
+    now = timezone.now()
+
+    if podcast.pub_date is None or podcast.parsed is None:
+        return now
+
+    return max(
+        min(
+            podcast.parsed + _MAX_FREQUENCY,
+            max(
+                podcast.pub_date + podcast.frequency,
+                podcast.parsed + _MIN_FREQUENCY,
+            ),
+        ),
+        now,
+    )
