@@ -19,7 +19,6 @@ class TestCallback:
         assert_no_content(client.post(subscription.get_callback_url()))
         subscription.refresh_from_db()
 
-        assert subscription.pinged
         assert subscription.podcast.pinged
         assert subscription.podcast.pubsub
 
@@ -33,7 +32,6 @@ class TestCallback:
         assert_no_content(client.post(subscription.get_callback_url()))
 
         subscription.refresh_from_db()
-        assert not subscription.pinged
         assert not subscription.podcast.pinged
         assert not subscription.podcast.pubsub
 
@@ -53,7 +51,6 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.confirmed
         assert subscription.expires
 
     @pytest.mark.django_db
@@ -72,7 +69,6 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.confirmed
         assert subscription.expires is None
 
     @pytest.mark.django_db
@@ -91,7 +87,6 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.confirmed is None
         assert subscription.expires is None
 
     @pytest.mark.django_db
@@ -110,7 +105,6 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.confirmed is None
         assert subscription.expires is None
 
     @pytest.mark.django_db
@@ -128,5 +122,4 @@ class TestCallback:
 
         subscription.refresh_from_db()
 
-        assert subscription.confirmed is None
         assert subscription.expires is None
