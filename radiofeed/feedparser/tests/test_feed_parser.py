@@ -103,7 +103,6 @@ class TestFeedParser:
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
-            priority=True,
         )
 
         create_subscription(
@@ -152,7 +151,6 @@ class TestFeedParser:
 
         assert podcast.rss
         assert podcast.parser_error is None
-        assert not podcast.priority
         assert podcast.active
         assert podcast.num_retries == 0
         assert podcast.content_hash

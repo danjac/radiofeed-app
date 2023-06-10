@@ -10,11 +10,11 @@ from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
     ParserErrorFilter,
-    ParserMethodFilter,
     PodcastAdmin,
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
+    PubsubFilter,
     SubscribedFilter,
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -202,22 +202,22 @@ class TestParserErrorFilter:
         assert duplicate in qs
 
 
-class TestParserMethodFilter:
+class TestPubsubFilter:
     @pytest.fixture
     def pubsub(self):
-        return create_podcast(parser_method=Podcast.ParserMethod.PUBSUB)
+        return create_podcast(pubsub=True)
 
     @pytest.mark.django_db
     def test_all(self, podcasts, podcast_admin, req, pubsub):
-        f = ParserMethodFilter(req, {}, Podcast, podcast_admin)
+        f = PubsubFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
     def test_pubsub(self, podcasts, podcast_admin, req, pubsub):
-        f = ParserMethodFilter(
+        f = PubsubFilter(
             req,
-            {"parser_method": Podcast.ParserMethod.PUBSUB},
+            {"pubsub": "yes"},
             Podcast,
             podcast_admin,
         )

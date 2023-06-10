@@ -89,15 +89,17 @@ class TestGetScheduledForUpdate:
                     "parsed": timedelta(seconds=1200),
                     "pub_date": timedelta(days=3),
                     "pinged": timedelta(seconds=1200),
+                    "pubsub": True,
                 },
                 False,
             ),
             # parsed under frequency+ pinged: yes
             (
                 {
-                    "parsed": timedelta(seconds=1200),
+                    "parsed": timedelta(hours=3),
                     "pub_date": timedelta(days=3),
-                    "pinged": timedelta(hours=32),
+                    "pinged": timedelta(hours=1),
+                    "pubsub": True,
                 },
                 True,
             ),
@@ -137,11 +139,14 @@ class TestGetScheduledForUpdate:
         frequency = kwargs.get("frequency", timedelta(hours=24))
         parsed = kwargs.get("parsed", None)
         pinged = kwargs.get("pinged", None)
+        pubsub = kwargs.get("pubsub", False)
+
         pub_date = kwargs.get("pub_date", None)
 
         create_podcast(
             active=active,
             frequency=frequency,
+            pubsub=pubsub,
             parsed=now - parsed if parsed else None,
             pinged=now - pinged if pinged else None,
             pub_date=now - pub_date if pub_date else None,

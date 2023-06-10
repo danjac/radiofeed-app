@@ -73,11 +73,7 @@ class Command(BaseCommand):
                 if for_update := Podcast.objects.filter(
                     active=True,
                     rss__in=urls,
-                ).update(
-                    parser_method=Podcast.ParserMethod.PUBSUB,
-                    priority=True,
-                    pinged=timezone.now(),
-                ):
+                ).update(pinged=timezone.now(), pubsub=True):
                     self.stdout.write(
                         self.style.SUCCESS(
                             f"{for_update} podcast{pluralize(for_update)} queued for update"

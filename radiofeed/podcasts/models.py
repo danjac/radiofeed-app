@@ -149,12 +149,6 @@ class Podcast(models.Model):
 
     pinged: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    parser_method = models.CharField(
-        max_length=12,
-        choices=ParserMethod.choices,
-        default=ParserMethod.POLLING,
-    )
-
     parser_error: str = models.CharField(
         max_length=30,
         choices=ParserError.choices,
@@ -203,7 +197,7 @@ class Podcast(models.Model):
 
     explicit: bool = models.BooleanField(default=False)
     promoted: bool = models.BooleanField(default=False)
-    priority: bool = models.BooleanField(default=False)
+    pubsub: bool = models.BooleanField(default=False)
 
     categories: models.QuerySet[Category] = models.ManyToManyField(
         "podcasts.Category",

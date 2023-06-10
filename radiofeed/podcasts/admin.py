@@ -172,27 +172,23 @@ class SubscribedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class ParserMethodFilter(admin.SimpleListFilter):
+class PubsubFilter(admin.SimpleListFilter):
     """Filters podcasts based on websub status."""
 
-    title = "Parser Method"
-    parameter_name = "parser_method"
+    title = "Pubsub"
+    parameter_name = "pubsub"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return Podcast.ParserMethod.choices
+        return (("yes", "Pubsub"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        match self.value():
-            case value if value in Podcast.ParserMethod:  # type: ignore
-                return queryset.filter(parser_method=value)
-            case _:
-                return queryset
+        return queryset.filter(pubsub=True) if self.value() == "yes" else queryset
 
 
 @admin.register(Podcast)
@@ -203,12 +199,12 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        ParserMethodFilter,
         ParserErrorFilter,
         PrivateFilter,
         PromotedFilter,
         PubDateFilter,
         SubscribedFilter,
+        PubsubFilter,
     )
 
     list_display = (
@@ -217,7 +213,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
-        "pinged",
     )
 
     list_editable = (
@@ -233,10 +228,9 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "pub_date",
         "parsed",
         "pinged",
-        "parser_method",
         "parser_error",
+        "pubsub",
         "frequency",
-        "priority",
         "next_scheduled_update",
         "modified",
         "etag",

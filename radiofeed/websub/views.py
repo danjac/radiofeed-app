@@ -9,7 +9,6 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from radiofeed.decorators import require_form_methods
-from radiofeed.podcasts.models import Podcast
 from radiofeed.websub import signature, subscriber
 from radiofeed.websub.models import Subscription
 
@@ -44,10 +43,8 @@ def callback(request: HttpRequest, subscription_id: int) -> HttpResponse:
             subscription.pinged = now
             subscription.save()
 
-            # prioritize podcast for immediate update
-            subscription.podcast.priority = True
-            subscription.podcast.parser_method = Podcast.ParserMethod.PUBSUB
             subscription.podcast.pinged = now
+            subscription.podcast.pubsub = True
             subscription.podcast.save()
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)

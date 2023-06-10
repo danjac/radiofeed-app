@@ -5,7 +5,6 @@ from django.core.management import call_command
 
 from radiofeed.feedparser.exceptions import Duplicate
 from radiofeed.podcasts.factories import create_podcast
-from radiofeed.podcasts.models import Podcast
 
 
 class TestPodping:
@@ -30,36 +29,32 @@ class TestPodping:
         self._mock_stream(mocker, {"urls": [podcast.rss]})
         call_command("podping")
         podcast.refresh_from_db()
-        assert podcast.priority
         assert podcast.pinged
-        assert podcast.parser_method == Podcast.ParserMethod.PUBSUB
+        assert podcast.pubsub
 
     @pytest.mark.django_db
     def test_invalid_op_id(self, mocker, podcast):
         self._mock_stream(mocker, {"urls": [podcast.rss]}, "sm-incorrect")
         call_command("podping")
         podcast.refresh_from_db()
-        assert not podcast.priority
         assert not podcast.pinged
-        assert podcast.parser_method == Podcast.ParserMethod.POLLING
+        assert not podcast.pubsub
 
     @pytest.mark.django_db
     def test_single_url(self, mocker, podcast):
         self._mock_stream(mocker, {"url": podcast.rss})
         call_command("podping")
         podcast.refresh_from_db()
-        assert podcast.priority
         assert podcast.pinged
-        assert podcast.parser_method == Podcast.ParserMethod.PUBSUB
+        assert podcast.pubsub
 
     @pytest.mark.django_db
     def test_no_matching_urls(self, mocker, podcast):
         self._mock_stream(mocker, {"urls": ["https//random/url.com"]})
         call_command("podping")
         podcast.refresh_from_db()
-        assert not podcast.priority
         assert not podcast.pinged
-        assert podcast.parser_method == Podcast.ParserMethod.POLLING
+        assert not podcast.pubsub
 
 
 class TestParseFeeds:
