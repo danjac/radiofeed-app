@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import decimal
-from datetime import datetime, timedelta
+from datetime import timedelta
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -17,7 +17,12 @@ from model_utils.models import TimeStampedModel
 from radiofeed import cleaners
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.search import SearchQuerySetMixin
-from radiofeed.users.models import User
+
+if TYPE_CHECKING:
+    import decimal
+    from datetime import datetime
+
+    from radiofeed.users.models import User
 
 
 class CategoryQuerySet(models.QuerySet):

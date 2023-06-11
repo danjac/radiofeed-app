@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import mimetypes
-from datetime import datetime
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -18,15 +18,19 @@ from model_utils.models import TimeStampedModel
 
 from radiofeed import cleaners
 from radiofeed.fast_count import FastCountQuerySetMixin
-from radiofeed.podcasts.models import Podcast
 from radiofeed.search import SearchQuerySetMixin
-from radiofeed.users.models import User
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    from radiofeed.podcasts.models import Podcast
+    from radiofeed.users.models import User
 
 
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
-    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:
+    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:  # pyright: ignore
         """Annotates `is_subscribed` flag to episodes."""
         return self.annotate(
             is_subscribed=models.Exists(
@@ -34,11 +38,11 @@ class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQue
             )
         )
 
-    def subscribed(self, user: User) -> models.QuerySet[Episode]:
+    def subscribed(self, user: User) -> models.QuerySet[Episode]:  # pyright: ignore
         """Returns episodes for podcasts user is subscribed to."""
         return self.is_subscribed(user).filter(is_subscribed=True)
 
-    def accessible(self, user: User) -> models.QuerySet[Episode]:
+    def accessible(self, user: User) -> models.QuerySet[Episode]:  # pyright: ignore
         """Returns episodes for all public podcasts or podcasts user is subscribed to."""
         return self.is_subscribed(user).filter(
             models.Q(podcast__private=False) | models.Q(is_subscribed=True)

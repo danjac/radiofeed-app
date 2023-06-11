@@ -168,6 +168,8 @@ select = [
     "SIM",
     # isort
     "I001",
+    # type-checking
+    "TCH"
 ]
 ignore = [
     "D100",

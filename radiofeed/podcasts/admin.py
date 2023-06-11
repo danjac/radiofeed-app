@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
-from django.http import HttpRequest
 from django.template.defaultfilters import timeuntil
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
 from radiofeed.podcasts.models import Category, Podcast, Subscription
+
+if TYPE_CHECKING:
+    from django.http import HttpRequest
 
 
 @admin.register(Category)
