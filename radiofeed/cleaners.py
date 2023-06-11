@@ -55,13 +55,13 @@ _CLEAN_TAGS: Final = {
     "style",
 }
 
+_LINK_REL: Final = "noopener noreferrer nofollow"
+
 _TAG_ATTRIBUTES: Final = {
     "a": {
         "target": "_blank",
     },
 }
-
-_LINK_REL = "noopener noreferrer nofollow"
 
 
 @functools.cache
