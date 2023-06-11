@@ -1,7 +1,7 @@
 import pytest
 from django.core.management import call_command
 
-from radiofeed.feedparser.exceptions import Duplicate
+from radiofeed.feedparser.exceptions import DuplicateError
 from radiofeed.podcasts.factories import create_podcast
 
 
@@ -15,7 +15,8 @@ class TestParseFeeds:
     @pytest.fixture()
     def mock_parse_fail(self, mocker):
         return mocker.patch(
-            "radiofeed.feedparser.feed_parser.FeedParser.parse", side_effect=Duplicate()
+            "radiofeed.feedparser.feed_parser.FeedParser.parse",
+            side_effect=DuplicateError(),
         )
 
     @pytest.mark.django_db()(transaction=True)

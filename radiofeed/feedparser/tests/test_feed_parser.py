@@ -11,11 +11,11 @@ from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
-    Duplicate,
-    Inaccessible,
-    InvalidRSS,
-    NotModified,
-    Unavailable,
+    DuplicateError,
+    InaccessibleError,
+    InvalidRSSError,
+    NotModifiedError,
+    UnavailableError,
 )
 from radiofeed.feedparser.feed_parser import (
     FeedParser,
@@ -288,7 +288,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(NotModified):
+        with pytest.raises(NotModifiedError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -318,7 +318,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(Duplicate):
+        with pytest.raises(DuplicateError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -435,7 +435,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(Duplicate):
+        with pytest.raises(DuplicateError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -455,7 +455,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(InvalidRSS):
+        with pytest.raises(InvalidRSSError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -479,7 +479,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(InvalidRSS):
+        with pytest.raises(InvalidRSSError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -501,7 +501,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(InvalidRSS):
+        with pytest.raises(InvalidRSSError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -523,7 +523,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(NotModified):
+        with pytest.raises(NotModifiedError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -544,7 +544,7 @@ class TestFeedParser:
             ),
         )
 
-        with pytest.raises(Inaccessible):
+        with pytest.raises(InaccessibleError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -558,7 +558,7 @@ class TestFeedParser:
     def test_parse_connect_error(self, mocker, podcast, categories):
         mocker.patch("requests.get", side_effect=requests.ConnectionError("fail"))
 
-        with pytest.raises(Unavailable):
+        with pytest.raises(UnavailableError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
@@ -575,7 +575,7 @@ class TestFeedParser:
 
         mocker.patch("requests.get", side_effect=requests.ConnectionError("fail"))
 
-        with pytest.raises(Unavailable):
+        with pytest.raises(UnavailableError):
             FeedParser(podcast).parse()
 
         podcast.refresh_from_db()
