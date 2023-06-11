@@ -13,7 +13,8 @@ class PrivateFeedForm(forms.Form):
         value = self.cleaned_data["rss"]
 
         if Podcast.objects.filter(rss=value, private=False).exists():
-            raise forms.ValidationError("This is not a private feed")
+            msg = f"{value} is not a private feed"
+            raise forms.ValidationError(msg)
 
         return value
 
