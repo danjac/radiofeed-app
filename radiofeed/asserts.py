@@ -7,7 +7,7 @@ from django.http import HttpResponse
 def assert_hx_redirect(response: HttpResponse, url: str) -> None:
     """Asserts HX-Redirect header matches url."""
     assert "HX-Redirect" in response, response.headers
-    assert response["HX-Redirect"] == url, url
+    assert response["HX-Redirect"] == url, response.headers
 
 
 def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
