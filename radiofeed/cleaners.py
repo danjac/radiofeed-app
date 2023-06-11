@@ -50,6 +50,19 @@ _ALLOWED_TAGS: Final = {
     "ul",
 }
 
+_CLEAN_TAGS: Final = {
+    "script",
+    "style",
+}
+
+_TAG_ATTRIBUTES: Final = {
+    "a": {
+        "target": "_blank",
+    },
+}
+
+_LINK_REL = "noopener noreferrer nofollow"
+
 
 @functools.cache
 def _md():
@@ -61,8 +74,10 @@ def clean_html(value: str) -> str:
     if value := value.strip():
         return nh3.clean(
             value if nh3.is_html(value) else _md().render(value),
+            clean_content_tags=_CLEAN_TAGS,
+            link_rel=_LINK_REL,
+            set_tag_attribute_values=_TAG_ATTRIBUTES,
             tags=_ALLOWED_TAGS,
-            link_rel="noopener noreferrer nofollow",
         )
     return ""
 
