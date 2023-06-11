@@ -206,10 +206,10 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        PrivateFilter,
-        PromotedFilter,
         PubDateFilter,
         SubscribedFilter,
+        PromotedFilter,
+        PrivateFilter,
         ScheduledFilter,
         ParserErrorFilter,
     )
