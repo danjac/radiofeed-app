@@ -162,8 +162,12 @@ select = [
     # Pycodestyle (error+warning)
     "E",
     "W",
+    # no pep420
+    "INP",
+    # flake8-simplify
+    "SIM",
     # isort
-    "I001"
+    "I001",
 ]
 ignore = [
     "D100",
