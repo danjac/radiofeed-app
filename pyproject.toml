@@ -173,7 +173,9 @@ select = [
     # tidy imports
     "TID",
     # explicit return
-    "RET"
+    "RET",
+    # flake-pie
+    "PIE",
 ]
 ignore = [
     "D100",
