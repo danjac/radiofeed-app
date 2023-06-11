@@ -87,7 +87,7 @@ Parse podcast RSS feeds:
 */6 * * * * python manage.py parse_feeds
 ```
 
-Note: you can also run this command continuously using the `--watch` flag:
+You can also run this command continuously using the `--watch` flag:
 
 ```bash
 python manage.py parse_feeds --watch
