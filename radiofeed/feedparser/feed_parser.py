@@ -18,12 +18,12 @@ from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
-    Duplicate,
+    DuplicateError,
     FeedParserError,
-    Inaccessible,
-    InvalidRSS,
-    NotModified,
-    Unavailable,
+    InaccessibleError,
+    InvalidRSSError,
+    NotModifiedError,
+    UnavailableError,
 )
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
@@ -81,14 +81,14 @@ class FeedParser:
             content_hash = make_content_hash(response.content)
 
             if content_hash == self._podcast.content_hash:
-                raise NotModified()
+                raise NotModifiedError
 
             if (
                 Podcast.objects.exclude(pk=self._podcast.pk)
                 .filter(Q(rss=response.url) | Q(content_hash=content_hash))
                 .exists()
             ):
-                raise Duplicate()
+                raise DuplicateError
             feed = rss_parser.parse_rss(response.content)
         except FeedParserError as e:
             return self._handle_feed_error(e)
@@ -132,7 +132,7 @@ class FeedParser:
             )
 
             if response.status_code == http.HTTPStatus.NOT_MODIFIED:
-                raise NotModified()
+                raise NotModifiedError
 
             if response.status_code in (
                 http.HTTPStatus.FORBIDDEN,
@@ -141,7 +141,7 @@ class FeedParser:
                 http.HTTPStatus.NOT_FOUND,
                 http.HTTPStatus.UNAUTHORIZED,
             ):
-                raise Inaccessible()
+                raise InaccessibleError
 
             # check for any other http errors
             response.raise_for_status()
@@ -149,7 +149,7 @@ class FeedParser:
             return response
 
         except requests.RequestException as e:
-            raise Unavailable from e
+            raise UnavailableError from e
 
     def _get_feed_headers(self) -> dict[str, str]:
         headers = {
@@ -167,11 +167,11 @@ class FeedParser:
         active: bool = True
 
         match exc:
-            case Duplicate() | Inaccessible():
+            case DuplicateError() | InaccessibleError():
                 # podcast should be discontinued and no longer updated
                 active = False
 
-            case InvalidRSS() | Unavailable():
+            case InvalidRSSError() | UnavailableError():
                 # increment num_retries in case a temporary error
                 num_retries += 1
 

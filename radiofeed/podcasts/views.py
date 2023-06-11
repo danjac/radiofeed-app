@@ -123,7 +123,7 @@ def latest_episode(
         .order_by("-pub_date")
         .first()
     ) is None:
-        raise Http404()
+        raise Http404
 
     return redirect(episode)
 

@@ -2,7 +2,7 @@ from collections.abc import Iterator
 
 import lxml.etree  # nosec
 
-from radiofeed.feedparser.exceptions import InvalidRSS
+from radiofeed.feedparser.exceptions import InvalidRSSError
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.feedparser.xpath_parser import XPathParser
 
@@ -14,7 +14,7 @@ def parse_rss(content: bytes) -> Feed:
         content: the body of the RSS or Atom feed
 
     Raises:
-        InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid
+        InvalidRSSError: if XML content is unparseable, or the feed is otherwise invalid
         or empty.
     """
     return _rss_parser.parse(content)
@@ -39,7 +39,7 @@ class RSSParser:
         """Parses RSS feed.
 
         Raises:
-            InvalidRSS: if XML content is unparseable, or the feed is otherwise invalid
+            InvalidRSSError: if XML content is unparseable, or the feed is otherwise invalid
             or empty.
         """
         try:
@@ -47,9 +47,11 @@ class RSSParser:
                 next(self._parser.iterparse(content, "rss", "channel"))
             )
         except StopIteration as e:
-            raise InvalidRSS("Document does not contain <channel /> element") from e
+            raise InvalidRSSError(
+                "Document does not contain <channel /> element"
+            ) from e
         except lxml.etree.XMLSyntaxError as e:
-            raise InvalidRSS from e
+            raise InvalidRSSError from e
 
     def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
         """Parse a RSS XML feed."""
@@ -81,7 +83,7 @@ class RSSParser:
                 ),
             )
         except (TypeError, ValueError) as e:
-            raise InvalidRSS from e
+            raise InvalidRSSError from e
         finally:
             channel.clear()
 

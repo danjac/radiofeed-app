@@ -143,43 +143,30 @@ ignore = "H030,H031,H017,H021"
 target-version = "py311"
 
 select = [
-    # flake8-Bugbear
-    "B",
-    # flake8-Comprehensions
-    "C4",
-    # flake8-Debugger
-    "D10",
-    # flake8-Django
-    "DJ",
-    # flake8-Print
-    "T20",
-    # flake8-Bandit
-    "S",
-    # flake8-tidy-imports
-    "TID",
-    # flake8-return
-    "RET",
-    # flake8-pie
-    "PIE",
-    # flake8-future-annotations
-    "FA",
-    # flake8-type-checking
-    "TCH",
-    # flake8-no-pep420
-    "INP",
-    # flake8-simplify
-    "SIM",
-    # flake8-pytest-style
-    "PT",
-    # Mccabe
-    "C90",
-    # pyflakes
-    "F",
-    # pycodestyle (error+warning)
-    "E",
-    "W",
-    # isort
-    "I001",
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "C90", # Mccabe
+    "D10", # flake8-debugger
+    "DJ", # flake8-django
+    "E", # pycodestyle (error)
+    "ERA", # eradicate
+    "F", # pyflakes
+    "FA", # flake8-future-annotations
+    "I001", # isort
+    "INP", # flake8-no-pep420
+    "ISC", # flake8-implicit-str-concat
+    "N", # pep8-naming
+    "PIE", # flake8-pie
+    "PT", # flake8-pytest-style
+    "PTH", # flake8-use-pathlib
+    "RET", # flake8-return
+    "RSE", # flake8-raise
+    "S", # flake8-bandit
+    "SIM", # flake8-simplify
+    "T20", # flake8-Print
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "W", # pycodestyle (warning)
 ]
 ignore = [
     "D100",
@@ -209,7 +196,7 @@ ignore = [
 "**/factories.py" = ["D101", "D102", "D103", "D105"]
 "**/fixtures.py" = ["D101", "D102", "D103", "D105"]
 "**/apps.py" = ["D101", "D102", "D103", "D105"]
-"**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501"]
+"**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N"]
 "**/tests/**.py" = ["D101", "D102", "D103", "D105"]
 
 [tool.ruff.isort]

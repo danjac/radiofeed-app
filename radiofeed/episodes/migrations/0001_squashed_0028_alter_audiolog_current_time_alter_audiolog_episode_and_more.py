@@ -594,10 +594,6 @@ class Migration(migrations.Migration):
             name="is_playing",
             field=models.BooleanField(default=False),
         ),
-        # migrations.RunPython(
-        # code=radiofeed.episodes.migrations.0020_audiolog_unique_episodes_audiolog_is_playing.reset_all_logs,
-        # reverse_code=django.db.migrations.operations.special.RunPython.noop,
-        # ),
         migrations.AddConstraint(
             model_name="audiolog",
             constraint=models.UniqueConstraint(
