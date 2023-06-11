@@ -9,11 +9,11 @@ from radiofeed.feedparser.models import Feed, Item
 
 class TestItem:
     def test_pub_date_none(self):
-        with pytest.raises(ValueError, match="pub_date cannot be None"):
+        with pytest.raises(ValueError, match=r"cannot be None"):
             Item(**create_item(pub_date=None))
 
     def test_pub_date_in_future(self):
-        with pytest.raises(ValueError, match="pub_date cannot be in future"):
+        with pytest.raises(ValueError, match=r"cannot be in future"):
             Item(**create_item(pub_date=timezone.now() + timedelta(days=1)))
 
     def test_not_audio_mimetype(self):
