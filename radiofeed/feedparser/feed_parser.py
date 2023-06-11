@@ -120,6 +120,8 @@ class FeedParser:
             self._podcast.categories.set(categories)
             self._episode_updates(feed)
 
+            return None
+
     def _get_response(self) -> requests.Response:
         try:
             response = requests.get(

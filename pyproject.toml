@@ -169,7 +169,11 @@ select = [
     # isort
     "I001",
     # type-checking
-    "TCH"
+    "TCH",
+    # tidy imports
+    "TID",
+    # explicit return
+    "RET"
 ]
 ignore = [
     "D100",
