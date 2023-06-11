@@ -14,7 +14,14 @@ _MAX_FREQUENCY: Final = timedelta(days=7)
 
 
 def get_scheduled_podcasts() -> QuerySet[Podcast]:
-    """Returns all podcasts scheduled for feed update."""
+    """Returns all podcasts scheduled for feed parser update.
+
+    1) Any podcast with `pub_date` or `parsed` is `None`
+    2) Any podcast that has not been parsed with 7 days
+    3) Any podcast with `pub_date` + `frequency` is less than current time
+
+    Podcasts should not be parsed more than once per hour.
+    """
     now = timezone.now()
     return Podcast.objects.filter(
         Q(parsed__isnull=True)
