@@ -13,37 +13,37 @@ from radiofeed.podcasts.models import Podcast
 
 
 class TestEpisodeManager:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self):
         create_episode(title="testing")
         assert Episode.objects.search("testing").count() == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_empty(self):
         create_episode(title="testing")
         assert Episode.objects.search("").count() == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_subscribed_true(self, user):
         podcast = create_subscription(subscriber=user).podcast
         create_episode(podcast=podcast)
         assert Episode.objects.subscribed(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_subscribed_false(self, user, episode):
         assert not Episode.objects.subscribed(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_public(self, user):
         create_episode(podcast=create_podcast(private=False))
         assert Episode.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private(self, user):
         create_episode(podcast=create_podcast(private=True))
         assert not Episode.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private_subscribed(self, user):
         podcast = create_subscription(
             subscriber=user, podcast=create_podcast(private=True)
@@ -55,15 +55,15 @@ class TestEpisodeManager:
 class TestEpisodeModel:
     link = "https://example.com"
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_next_episode_if_none(self, episode):
         assert episode.get_next_episode() is None
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_previous_episode_if_none(self, episode):
         assert episode.get_previous_episode() is None
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_next_episode_not_same_podcast(self, episode):
         create_episode(
             pub_date=episode.pub_date + datetime.timedelta(days=2),
@@ -71,7 +71,7 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() is None
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_previous_episode_not_same_podcast(self, episode):
         create_episode(
             pub_date=episode.pub_date - datetime.timedelta(days=2),
@@ -79,7 +79,7 @@ class TestEpisodeModel:
 
         assert episode.get_previous_episode() is None
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_next_episode(self, episode):
         next_episode = create_episode(
             podcast=episode.podcast,
@@ -88,7 +88,7 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() == next_episode
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_previous_episode(self, episode):
         previous_episode = create_episode(
             podcast=episode.podcast,
@@ -178,7 +178,7 @@ class TestEpisodeModel:
     def test_get_file_size_if_none(self):
         assert Episode(length=None).get_file_size() is None
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_media_metadata(self):
         cover_url = "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/9b63d479-4382-4198-8e63-aac7013964ff/e5ebd302-9d49-4c56-a234-aac701396502/image.jpg?t=1568401263\u0026size=Large"
         episode = create_episode(podcast=create_podcast(cover_url=cover_url))
@@ -192,18 +192,18 @@ class TestEpisodeModel:
             "type": "image/jpeg",
         }
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_cover_url_if_episode_cover(self, podcast):
         episode = create_episode(
             podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
         )
         assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_cover_url_if_podcast_cover(self, episode):
         assert episode.get_cover_url() == "https://example.com/cover.jpg"
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_cover_url_if_none(self):
         episode = create_episode(podcast=create_podcast(cover_url=None))
         assert episode.get_cover_url() is None
@@ -240,34 +240,34 @@ class TestEpisodeModel:
 
 
 class TestBookmarkManager:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self):
         episode = create_episode(title="testing")
         create_bookmark(episode=episode)
         assert Bookmark.objects.search("testing").count() == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_subscribed_true(self, user, podcast):
         create_subscription(subscriber=user, podcast=podcast)
         create_bookmark(episode=create_episode(podcast=podcast))
         assert Bookmark.objects.is_subscribed(user).first().is_subscribed
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_subscribed_false(self, user, podcast):
         create_bookmark(episode=create_episode(podcast=podcast))
         assert not Bookmark.objects.is_subscribed(user).first().is_subscribed
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_public(self, user):
         create_bookmark(episode=create_episode(podcast=create_podcast(private=False)))
         assert Bookmark.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private(self, user):
         create_bookmark(episode=create_episode(podcast=create_podcast(private=True)))
         assert not Bookmark.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private_subscribed(self, user):
         podcast = create_subscription(
             subscriber=user, podcast=create_podcast(private=True)
@@ -277,34 +277,34 @@ class TestBookmarkManager:
 
 
 class TestAudioLogManager:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self):
         episode = create_episode(title="testing")
         create_audio_log(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_subscribed_true(self, user, podcast):
         create_subscription(subscriber=user, podcast=podcast)
         create_audio_log(episode=create_episode(podcast=podcast))
         assert AudioLog.objects.is_subscribed(user).first().is_subscribed
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_subscribed_false(self, user, podcast):
         create_audio_log(episode=create_episode(podcast=podcast))
         assert not AudioLog.objects.is_subscribed(user).first().is_subscribed
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_public(self, user):
         create_audio_log(episode=create_episode(podcast=create_podcast(private=False)))
         assert AudioLog.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private(self, user):
         create_audio_log(episode=create_episode(podcast=create_podcast(private=True)))
         assert not AudioLog.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private_subscribed(self, user):
         podcast = create_subscription(
             subscriber=user, podcast=create_podcast(private=True)

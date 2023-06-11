@@ -9,7 +9,7 @@ from radiofeed.users.forms import OpmlUploadForm
 
 
 class TestOpmlUploadForm:
-    @pytest.fixture
+    @pytest.fixture()
     def form(self):
         form = OpmlUploadForm()
         form.cleaned_data = {
@@ -21,20 +21,20 @@ class TestOpmlUploadForm:
         }
         return form
 
-    @pytest.fixture
+    @pytest.fixture()
     def podcast(self):
         return create_podcast(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_subscribe_to_feeds(self, form, user, podcast):
         assert form.subscribe_to_feeds(user) == 1
         assert (
             Subscription.objects.filter(subscriber=user, podcast=podcast).count() == 1
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_subscribe_to_feeds_parser_error(self, user, podcast):
         form = OpmlUploadForm()
         form.cleaned_data = {

@@ -143,39 +143,43 @@ ignore = "H030,H031,H017,H021"
 target-version = "py311"
 
 select = [
-    # Mccabe
-    "C90",
-    # Flake8-Bugbear
+    # flake8-Bugbear
     "B",
-    # Flake8-Comprehensions
+    # flake8-Comprehensions
     "C4",
-    # Flake8-Debugger
+    # flake8-Debugger
     "D10",
-    # Flake8-Django
+    # flake8-Django
     "DJ",
-    # Flake8-Print
+    # flake8-Print
     "T20",
-    # Flake8-Bandit
+    # flake8-Bandit
     "S",
-    # Pyflakes
-    "F",
-    # Pycodestyle (error+warning)
-    "E",
-    "W",
-    # no pep420
+    # flake8-tidy-imports
+    "TID",
+    # flake8-return
+    "RET",
+    # flake8-pie
+    "PIE",
+    # flake8-future-annotations
+    "FA",
+    # flake8-type-checking
+    "TCH",
+    # flake8-no-pep420
     "INP",
     # flake8-simplify
     "SIM",
+    # flake8-pytest-style
+    "PT",
+    # Mccabe
+    "C90",
+    # pyflakes
+    "F",
+    # pycodestyle (error+warning)
+    "E",
+    "W",
     # isort
     "I001",
-    # type-checking
-    "TCH",
-    # tidy imports
-    "TID",
-    # explicit return
-    "RET",
-    # flake-pie
-    "PIE",
 ]
 ignore = [
     "D100",

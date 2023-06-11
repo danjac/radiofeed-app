@@ -80,4 +80,4 @@ def url(instance: Any, attr: attrs.Attribute, value: Any) -> None:
     try:
         _url_validator(value)
     except ValidationError as e:
-        raise ValueError from e
+        raise ValueError(f"{attr=} must be a URL") from e

@@ -36,9 +36,9 @@ class MockResponse:
         return self.json_data
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_good_response(mocker):
-    yield mocker.patch(
+    return mocker.patch(
         "requests.get",
         return_value=MockResponse(
             json={
@@ -48,9 +48,9 @@ def mock_good_response(mocker):
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_bad_response(mocker):
-    yield mocker.patch(
+    return mocker.patch(
         "requests.get",
         return_value=MockResponse(
             exception=requests.RequestException("fail"),
@@ -58,9 +58,9 @@ def mock_bad_response(mocker):
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_invalid_response(mocker):
-    yield mocker.patch(
+    return mocker.patch(
         "requests.get",
         return_value=MockResponse(
             json={
@@ -76,7 +76,7 @@ def mock_invalid_response(mocker):
 
 
 class TestCrawl:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_crawl(self, mocker):
         def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
@@ -96,7 +96,7 @@ class TestCrawl:
 
         assert Podcast.objects.count() == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_crawl_with_parse_genre_error(self, mocker):
         def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
@@ -116,7 +116,7 @@ class TestCrawl:
 
         assert Podcast.objects.count() == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_crawl_with_parse_feeds_error(self, mocker):
         def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
@@ -136,7 +136,7 @@ class TestCrawl:
 
         assert Podcast.objects.count() == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_crawl_with_podcasts_url_error(self, mocker):
         def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
@@ -158,25 +158,26 @@ class TestCrawl:
 
 
 class TestSearch:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_not_ok(self, mock_bad_response):
         with pytest.raises(requests.RequestException):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_ok(self, mock_good_response):
         feeds = list(itunes.search("test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_bad_data(self, mock_invalid_response):
         feeds = list(itunes.search("test"))
         assert not feeds
 
-    @pytest.mark.django_db
-    def test_is_not_cached(self, mock_good_response, locmem_cache):
+    @pytest.mark.django_db()
+    @pytest.mark.usefixtures("_locmem_cache")
+    def test_is_not_cached(self, mock_good_response):
         feeds = itunes.search("test")
 
         assert len(feeds) == 1
@@ -184,8 +185,9 @@ class TestSearch:
 
         assert cache.get(itunes.search_cache_key("test")) == feeds
 
-    @pytest.mark.django_db
-    def test_is_cached(self, mock_good_response, locmem_cache):
+    @pytest.mark.django_db()
+    @pytest.mark.usefixtures("_locmem_cache")
+    def test_is_cached(self, mock_good_response):
         cache.set(
             itunes.search_cache_key("test"),
             [
@@ -204,7 +206,7 @@ class TestSearch:
 
         mock_good_response.get.assert_not_called()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_podcast_exists(self, mock_good_response):
         create_podcast(rss="https://feeds.fireside.fm/testandcode/rss")
 

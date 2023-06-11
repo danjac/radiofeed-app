@@ -4,12 +4,12 @@ from django.template.loader import get_template
 from radiofeed.users.factories import create_email_address
 
 
-@pytest.fixture
+@pytest.fixture()
 def req(rf):
     return rf.get("/")
 
 
-@pytest.fixture
+@pytest.fixture()
 def auth_req(req, user, mocker):
     req.user = user
 
@@ -42,7 +42,7 @@ class TestSocialAccount:
             {"process": "connect"}, request=req
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_connections(self, auth_req, mocker):
         form = mocker.Mock()
         form.accounts = [mocker.Mock()]
@@ -50,7 +50,7 @@ class TestSocialAccount:
             {"form": form}, request=auth_req
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_connections_no_accounts(self, auth_req, mocker):
         form = mocker.Mock()
         form.accounts = []
@@ -70,7 +70,7 @@ class TestAccount:
     def test_verification_sent(self, req):
         assert get_template("account/verification_sent.html").render({}, request=req)
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_email(self, auth_req):
         create_email_address(user=auth_req.user, primary=True)
         create_email_address(user=auth_req.user, primary=False)
@@ -83,7 +83,7 @@ class TestAccount:
             request=auth_req,
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_email_no_emails(self, auth_req):
         assert get_template("account/email.html").render(
             {
@@ -114,11 +114,11 @@ class TestAccount:
     def test_account_inactive(self, req):
         assert get_template("account/account_inactive.html").render({}, request=req)
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_password_change(self, auth_req):
         assert get_template("account/password_change.html").render({}, request=auth_req)
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_password_reset(self, auth_req):
         assert get_template("account/password_reset.html").render(
             {
@@ -127,7 +127,7 @@ class TestAccount:
             request=auth_req,
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_password_reset_done(self, auth_req):
         assert get_template("account/password_reset_done.html").render(
             {

@@ -13,23 +13,23 @@ from radiofeed.middleware import (
 )
 
 
-@pytest.fixture
+@pytest.fixture()
 def htmx_mw(get_response):
     return HtmxMiddleware(get_response)
 
 
-@pytest.fixture
+@pytest.fixture()
 def req(rf):
     return rf.get("/")
 
 
-@pytest.fixture
+@pytest.fixture()
 def htmx_req(rf):
     return rf.get("/", HTTP_HX_REQUEST="true")
 
 
 class TestCacheControlMiddleware:
-    @pytest.fixture
+    @pytest.fixture()
     def cache_mw(self, get_response):
         return CacheControlMiddleware(get_response)
 
@@ -58,7 +58,7 @@ class TestCacheControlMiddleware:
 
 
 class TestOrderingMiddleware:
-    @pytest.fixture
+    @pytest.fixture()
     def mw(self, get_response):
         return OrderingMiddleware(get_response)
 
@@ -69,7 +69,7 @@ class TestOrderingMiddleware:
 
 
 class TestSearchMiddleware:
-    @pytest.fixture
+    @pytest.fixture()
     def mw(self, get_response):
         return SearchMiddleware(get_response)
 
@@ -86,7 +86,7 @@ class TestSearchMiddleware:
 
 
 class TestPaginationMiddleware:
-    @pytest.fixture
+    @pytest.fixture()
     def mw(self, get_response):
         return PaginationMiddleware(get_response)
 

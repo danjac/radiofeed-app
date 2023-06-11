@@ -9,7 +9,7 @@ class TestXPathParser:
     def read_mock_file(self, mock_filename="rss_mock.xml"):
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
-    @pytest.fixture
+    @pytest.fixture()
     def channel(self):
         return next(XPathParser().iterparse(self.read_mock_file(), "rss", "channel"))
 

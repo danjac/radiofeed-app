@@ -5,14 +5,14 @@ from radiofeed.podcasts.factories import create_recommendation, create_subscript
 
 
 class TestRecommendations:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
 
         assert not emails.send_recommendations_email(user)
         assert len(mailoutbox) == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_sufficient_recommendations(self, user, mailoutbox):
         first = create_subscription(subscriber=user).podcast
         second = create_subscription(subscriber=user).podcast
@@ -28,7 +28,7 @@ class TestRecommendations:
         assert mailoutbox[0].to == [user.email]
         assert user.recommended_podcasts.count() == 3
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_already_recommended(self, user, mailoutbox):
         subscribed = create_subscription(subscriber=user).podcast
         recommended = create_recommendation(podcast=subscribed).podcast

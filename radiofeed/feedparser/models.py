@@ -68,7 +68,7 @@ class Item:
     @pub_date.validator
     def _check_pub_date(self, attribute: attrs.Attribute, value: Any) -> None:
         if value is None:
-            raise ValueError("pub_date cannot be null")
+            raise ValueError("pub_date cannot be None")
         if value > timezone.now():
             raise ValueError("pub_date cannot be in future")
 

@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 
 @pytest.fixture(autouse=True)
-def settings_overrides(settings):
+def _settings_overrides(settings):
     """Default settings for all tests."""
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
@@ -13,8 +13,8 @@ def settings_overrides(settings):
     settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 
-@pytest.fixture
-def locmem_cache(settings):
+@pytest.fixture()
+def _locmem_cache(settings):
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
     }

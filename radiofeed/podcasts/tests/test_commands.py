@@ -8,7 +8,7 @@ from radiofeed.users.factories import create_user
 
 
 class TestCreateRecommendations:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_create_recommendations(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",
@@ -21,7 +21,7 @@ class TestCreateRecommendations:
 
 
 class TestSendRecommendationsEmails:
-    @pytest.mark.django_db(transaction=True)
+    @pytest.mark.django_db()(transaction=True)
     def test_send_emails(self, mocker):
         create_user(send_email_notifications=True, is_active=True)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
@@ -30,7 +30,7 @@ class TestSendRecommendationsEmails:
 
 
 class TestCrawlItunes:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_command(self, mocker, podcast):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.crawl",

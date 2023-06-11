@@ -18,7 +18,7 @@ from radiofeed import cleaners
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.search import SearchQuerySetMixin
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import decimal
     from datetime import datetime
 

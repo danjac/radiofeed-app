@@ -24,7 +24,7 @@ from radiofeed.podcasts.factories import create_podcast, create_subscription
 episodes_url = reverse_lazy("episodes:index")
 
 
-@pytest.fixture
+@pytest.fixture()
 def player_episode(auth_user, client, episode):
     create_audio_log(user=auth_user, episode=episode)
 
@@ -36,14 +36,14 @@ def player_episode(auth_user, client, episode):
 
 
 class TestNewEpisodes:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_episodes(self, client, auth_user):
         response = client.get(episodes_url)
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_not_subscribed(self, client, auth_user):
         promoted = create_podcast(promoted=True)
         create_episode(podcast=promoted)
@@ -55,7 +55,7 @@ class TestNewEpisodes:
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_user_has_subscribed(self, client, auth_user):
         promoted = create_podcast(promoted=True)
         create_episode(podcast=promoted)
@@ -73,7 +73,7 @@ class TestNewEpisodes:
         assert not response.context["promoted"]
         assert response.context["has_subscriptions"]
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_user_has_subscribed_promoted(self, client, auth_user):
         promoted = create_podcast(promoted=True)
         create_episode(podcast=promoted)
@@ -96,15 +96,15 @@ class TestNewEpisodes:
 class TestSearchEpisodes:
     url = reverse_lazy("episodes:search_episodes")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_results(self, auth_user, client):
         assert_ok(client.get(self.url, {"query": "test"}))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_empty(self, auth_user, client):
         assert client.get(self.url, {"query": ""}).url == episodes_url
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self, auth_user, client, faker):
         create_batch(create_episode, 3, title="zzzz", keywords="zzzz")
         episode = create_episode(title=faker.unique.name())
@@ -113,7 +113,7 @@ class TestSearchEpisodes:
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_no_results(self, auth_user, client):
         response = client.get(self.url, {"query": "zzzz"})
         assert_ok(response)
@@ -121,7 +121,7 @@ class TestSearchEpisodes:
 
 
 class TestEpisodeDetail:
-    @pytest.fixture
+    @pytest.fixture()
     def episode(self, faker):
         return create_episode(
             podcast=create_podcast(
@@ -139,19 +139,19 @@ class TestEpisodeDetail:
             duration="3:30:30",
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def prev_episode(self, auth_user, episode):
         return create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7)
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def next_episode(self, auth_user, episode):
         return create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7)
         )
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_ok(
         self,
         client,
@@ -164,7 +164,7 @@ class TestEpisodeDetail:
         assert_ok(response)
         assert response.context["episode"] == episode
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_private_not_subscribed(
         self,
         client,
@@ -173,7 +173,7 @@ class TestEpisodeDetail:
         episode = create_episode(podcast=create_podcast(private=True))
         assert_not_found(client.get(episode.get_absolute_url()))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_private_subscribed(
         self,
         client,
@@ -184,7 +184,7 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_listened(
         self,
         client,
@@ -205,7 +205,7 @@ class TestEpisodeDetail:
         assertContains(response, "Remove episode from your History")
         assertContains(response, "Listened")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_prev_next_episde(
         self,
         client,
@@ -217,7 +217,7 @@ class TestEpisodeDetail:
         assert response.context["episode"] == episode
         assertNotContains(response, "No More Episodes")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_next_episode(
         self,
         client,
@@ -232,7 +232,7 @@ class TestEpisodeDetail:
         assert response.context["episode"] == episode
         assertContains(response, "No More Episodes")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_previous_episode(
         self,
         client,
@@ -252,7 +252,7 @@ class TestStartPlayer:
     def url(self, episode):
         return reverse("episodes:start_player", args=[episode.id])
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_play_from_start(self, client, auth_user, episode):
         assert_ok(
             client.post(
@@ -266,7 +266,7 @@ class TestStartPlayer:
 
         assert client.session[Player.session_key] == episode.id
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_play_private_subscribed(self, client, auth_user):
         episode = create_episode(podcast=create_podcast(private=True))
         create_subscription(subscriber=auth_user, podcast=episode.podcast)
@@ -282,7 +282,7 @@ class TestStartPlayer:
 
         assert client.session[Player.session_key] == episode.id
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_play_private_not_subscribed(self, client, auth_user):
         episode = create_episode(podcast=create_podcast(private=True))
         assert_not_found(
@@ -295,7 +295,7 @@ class TestStartPlayer:
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_another_episode_in_player(self, client, auth_user, player_episode):
         episode = create_episode()
 
@@ -311,7 +311,7 @@ class TestStartPlayer:
 
         assert client.session[Player.session_key] == episode.id
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_resume(self, client, auth_user, player_episode):
         assert_ok(
             client.post(
@@ -327,11 +327,11 @@ class TestStartPlayer:
 class TestClosePlayer:
     url = reverse_lazy("episodes:close_player")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_player_empty(self, client, auth_user, episode):
         assert_no_content(client.post(self.url, HTTP_HX_REQUEST="true"))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_close(
         self,
         client,
@@ -351,7 +351,7 @@ class TestClosePlayer:
 class TestPlayerTimeUpdate:
     url = reverse_lazy("episodes:player_time_update")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_running(self, client, player_episode):
         assert_no_content(
             client.post(
@@ -364,7 +364,7 @@ class TestPlayerTimeUpdate:
 
         assert log.current_time == 1030
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_player_log_missing(self, client, auth_user, episode):
         session = client.session
         session[Player.session_key] = episode.id
@@ -381,7 +381,7 @@ class TestPlayerTimeUpdate:
         assert log.current_time == 1030
         assert log.episode == episode
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_player_not_in_session(self, client, auth_user, episode):
         assert_no_content(
             client.post(
@@ -392,11 +392,11 @@ class TestPlayerTimeUpdate:
 
         assert not AudioLog.objects.exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_missing_data(self, client, auth_user, player_episode):
         assert_bad_request(client.post(self.url))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_invalid_data(self, client, auth_user, player_episode):
         assert_bad_request(client.post(self.url, {"current_time": "xyz"}))
 
@@ -404,7 +404,7 @@ class TestPlayerTimeUpdate:
 class TestBookmarks:
     url = reverse_lazy("episodes:bookmarks")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client, auth_user):
         create_batch(create_bookmark, 33, user=auth_user)
 
@@ -413,7 +413,7 @@ class TestBookmarks:
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_ascending(self, client, auth_user):
         create_batch(create_bookmark, 33, user=auth_user)
 
@@ -422,14 +422,14 @@ class TestBookmarks:
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
         response = client.get(self.url)
 
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self, client, auth_user):
         podcast = create_podcast(title="zzzz", keywords="zzzzz")
 
@@ -450,7 +450,7 @@ class TestAddBookmark:
     def url(self, episode):
         return reverse("episodes:add_bookmark", args=[episode.id])
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_post(self, client, auth_user, episode):
         assert_ok(
             client.post(
@@ -461,13 +461,13 @@ class TestAddBookmark:
         )
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_js(self, client, auth_user, episode):
         response = client.post(self.url(episode))
         assertRedirects(response, episode.get_absolute_url())
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db(transaction=True)
+    @pytest.mark.django_db()(transaction=True)
     def test_already_bookmarked(self, client, auth_user, episode):
         create_bookmark(episode=episode, user=auth_user)
         assert_ok(
@@ -484,7 +484,7 @@ class TestRemoveBookmark:
     def url(self, episode):
         return reverse("episodes:remove_bookmark", args=[episode.id])
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_post(self, client, auth_user, episode):
         create_bookmark(user=auth_user, episode=episode)
         assert_ok(
@@ -496,7 +496,7 @@ class TestRemoveBookmark:
         )
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_js(self, client, auth_user, episode):
         create_bookmark(user=auth_user, episode=episode)
         response = client.post(self.url(episode))
@@ -507,20 +507,20 @@ class TestRemoveBookmark:
 class TestHistory:
     url = reverse_lazy("episodes:history")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client, auth_user):
         create_batch(create_audio_log, 33, user=auth_user)
         response = client.get(self.url)
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 30
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
         response = client.get(self.url)
         assert_ok(response)
         assert len(response.context["page_obj"].object_list) == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_ascending(self, client, auth_user):
         create_batch(create_audio_log, 33, user=auth_user)
 
@@ -529,7 +529,7 @@ class TestHistory:
 
         assert len(response.context["page_obj"].object_list) == 30
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self, client, auth_user):
         podcast = create_podcast(title="zzzz", keywords="zzzzz")
 
@@ -549,7 +549,7 @@ class TestRemoveAudioLog:
     def url(self, episode):
         return reverse("episodes:remove_audio_log", args=[episode.id])
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_ok(self, client, auth_user, episode):
         create_audio_log(user=auth_user, episode=episode)
         create_audio_log(user=auth_user)
@@ -565,7 +565,7 @@ class TestRemoveAudioLog:
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_no_js(self, client, auth_user, episode):
         create_audio_log(user=auth_user, episode=episode)
 
@@ -573,7 +573,7 @@ class TestRemoveAudioLog:
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
 
@@ -586,7 +586,7 @@ class TestRemoveAudioLog:
         )
         assert AudioLog.objects.filter(user=auth_user, episode=player_episode).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_none_remaining(self, client, auth_user, episode):
         log = create_audio_log(user=auth_user, episode=episode)
 

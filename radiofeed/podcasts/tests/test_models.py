@@ -12,7 +12,7 @@ from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 
 class TestRecommendationManager:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_bulk_delete(self):
         create_batch(create_recommendation, 3)
         Recommendation.objects.bulk_delete()
@@ -25,15 +25,15 @@ class TestRecommendationModel:
 
 
 class TestCategoryManager:
-    @pytest.fixture
+    @pytest.fixture()
     def category(self):
         return create_category(name="testing")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_empty(self, category):
         assert Category.objects.search("").count() == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self, category):
         assert Category.objects.search("testing").count() == 1
 
@@ -49,27 +49,27 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_no_results(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("random").count() == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_partial(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("test").count() == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_if_empty(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("").count() == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_search_title_fallback(self):
         # usually "the" would be removed by stemmer
         create_podcast(title="the")
@@ -77,7 +77,7 @@ class TestPodcastManager:
         assert podcasts.count() == 1
         assert podcasts.first().exact_match == 1
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_compare_exact_and_partial_matches_in_search(self):
         create_podcast(title="the testing")
         create_podcast(title="testing")
@@ -95,37 +95,37 @@ class TestPodcastManager:
         assert second.title == "the testing"
         assert second.exact_match == 0
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_subscribed_true(self, user):
         create_subscription(subscriber=user)
         podcasts = Podcast.objects.is_subscribed(user)
         assert podcasts.first().is_subscribed
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_is_subscribed_false(self, user, podcast):
         podcasts = Podcast.objects.is_subscribed(user)
         assert not podcasts.first().is_subscribed
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_subscribed_true(self, user):
         create_subscription(subscriber=user)
         assert Podcast.objects.subscribed(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_subscribed_false(self, user, podcast):
         assert not Podcast.objects.subscribed(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_public(self, user):
         create_podcast(private=False)
         assert Podcast.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private(self, user):
         create_podcast(private=True)
         assert not Podcast.objects.accessible(user).exists()
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_accessible_private_subscribed(self, user):
         create_subscription(subscriber=user, podcast=create_podcast(private=True))
         assert Podcast.objects.accessible(user).exists()
@@ -156,7 +156,7 @@ class TestPodcastModel:
     def test_get_subscribe_target(self):
         return Podcast(id=12345).get_subscribe_target() == "subscribe-actions-12345"
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()
         assert url == reverse(

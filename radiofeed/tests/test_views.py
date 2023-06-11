@@ -10,49 +10,49 @@ from radiofeed.asserts import assert_not_found, assert_ok
 
 
 class TestManifest:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client):
         assert_ok(client.get(reverse("manifest")))
 
 
 class TestServiceWorker:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client):
         assert_ok(client.get(reverse("service_worker")))
 
 
 class TestFavicon:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client):
         assert_ok(client.get(reverse("favicon")))
 
 
 class TestRobots:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client):
         assert_ok(client.get(reverse("robots")))
 
 
 class TestHealthCheck:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client):
         assert_ok(client.get(reverse("health_check")))
 
 
 class TestSecurty:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client):
         assert_ok(client.get(reverse("security")))
 
 
 class TestAbout:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_get(self, client):
         assert_ok(client.get(reverse("about")))
 
 
 class TestAcceptCookies:
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_post(self, client, db):
         response = client.post(reverse("accept_cookies"))
         assert_ok(response)
@@ -72,7 +72,7 @@ class TestCoverImage:
     def encode_url(self, url):
         return Signer().sign(url)
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_ok(self, client, db, mocker):
         class MockResponse:
             content = b"content"
@@ -84,19 +84,19 @@ class TestCoverImage:
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_not_accepted_size(self, client, db, mocker):
         assert_not_found(client.get(self.get_url(500, self.encode_url(self.cover_url))))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_missing_url_param(self, client, db, mocker):
         assert_not_found(client.get(reverse("cover_image", kwargs={"size": 100})))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_unsigned_url(self, client, db):
         assert_not_found(client.get(self.get_url(100, self.cover_url)))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_failed_download(self, client, db, mocker):
         class MockResponse:
             def raise_for_status(self):
@@ -105,7 +105,7 @@ class TestCoverImage:
         mocker.patch("requests.get", return_value=MockResponse())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_failed_process(self, client, db, mocker):
         class MockResponse:
             content = b"content"

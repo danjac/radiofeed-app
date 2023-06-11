@@ -8,7 +8,7 @@ from radiofeed.decorators import require_auth
 
 
 class TestRequireAuth:
-    @pytest.fixture
+    @pytest.fixture()
     def view(self):
         return require_auth(lambda req: HttpResponse())
 
@@ -31,7 +31,7 @@ class TestRequireAuth:
         resp = view(req)
         assert_unauthorized(resp)
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_authenticated(self, rf, user, view):
         req = rf.get("/")
         req.user = user

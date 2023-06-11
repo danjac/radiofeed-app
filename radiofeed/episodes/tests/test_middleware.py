@@ -13,13 +13,13 @@ class TestPlayerMiddleware:
 class TestPlayer:
     episode_id = 12345
 
-    @pytest.fixture
+    @pytest.fixture()
     def req(self, rf):
         req = rf.get("/")
         req.session = {}
         return req
 
-    @pytest.fixture
+    @pytest.fixture()
     def player(self, req):
         return Player(req)
 

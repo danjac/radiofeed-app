@@ -7,16 +7,16 @@ from radiofeed.podcasts.factories import (
 )
 
 
-@pytest.fixture
+@pytest.fixture()
 def podcast():
     return create_podcast()
 
 
-@pytest.fixture
+@pytest.fixture()
 def category():
     return create_category()
 
 
-@pytest.fixture
+@pytest.fixture()
 def subscription(auth_user, podcast):
     return create_subscription(podcast=podcast, subscriber=auth_user)

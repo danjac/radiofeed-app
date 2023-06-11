@@ -16,14 +16,14 @@ from radiofeed.template import (
 )
 
 
-@pytest.fixture
+@pytest.fixture()
 def req(rf, anonymous_user):
     req = rf.get("/")
     req.user = anonymous_user
     return req
 
 
-@pytest.fixture
+@pytest.fixture()
 def auth_req(req, user):
     req.user = user
     return req
@@ -123,11 +123,11 @@ class TestPaginationUrl:
 
 
 class TestNavbar:
-    @pytest.fixture
+    @pytest.fixture()
     def tmpl(self):
         return get_template("_navbar.html")
 
-    @pytest.mark.django_db
+    @pytest.mark.django_db()
     def test_authenticated(self, tmpl, auth_req):
         rendered = tmpl.render({}, request=auth_req)
         assert auth_req.user.username in rendered
@@ -138,11 +138,11 @@ class TestNavbar:
 
 
 class TestPaginationLinks:
-    @pytest.fixture
+    @pytest.fixture()
     def tmpl(self):
         return get_template("_pagination_links.html")
 
-    @pytest.fixture
+    @pytest.fixture()
     def page_req(self, req):
         req.pagination = Pagination(req)
         return req
@@ -195,11 +195,11 @@ class MockForm:
 
 
 class TestDefaultForm:
-    @pytest.fixture
+    @pytest.fixture()
     def tmpl(self):
         return get_template("django/forms/default.html")
 
-    @pytest.fixture
+    @pytest.fixture()
     def form(self):
         return MockForm()
 

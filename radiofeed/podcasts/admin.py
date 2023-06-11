@@ -10,7 +10,7 @@ from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
 from radiofeed.podcasts.models import Category, Podcast, Subscription
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
 
 
