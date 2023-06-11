@@ -36,7 +36,7 @@ python -m venv .venv && source .venv/bin/activate
 
 Poetry should create the virtualenv for you automatically.
 
-A `Makefile` has been provided with shortcuts to install and run your local development environment, including:
+The `Makefile` has some convenient shortcuts for local development, including:
 
 * `make install`: download and install front and backend dependencies
 * `make dbinstall`: run migrations and install sample fixtures
