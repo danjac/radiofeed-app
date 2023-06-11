@@ -115,20 +115,18 @@ class TestGetScheduledForUpdate:
     def test_get_scheduled_podcasts(self, kwargs, exists):
         now = timezone.now()
 
-        active = kwargs.get("active", True)
         frequency = kwargs.get("frequency", timedelta(hours=24))
         parsed = kwargs.get("parsed", None)
 
         pub_date = kwargs.get("pub_date", None)
 
         create_podcast(
-            active=active,
             frequency=frequency,
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,
         )
 
-        assert scheduler.get_podcasts_for_update().exists() is exists
+        assert scheduler.get_scheduled_podcasts().exists() is exists
 
 
 class TestReschedule:

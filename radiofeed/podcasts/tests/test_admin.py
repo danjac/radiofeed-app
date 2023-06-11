@@ -14,6 +14,7 @@ from radiofeed.podcasts.admin import (
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
+    ScheduledFilter,
     SubscribedFilter,
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -199,6 +200,30 @@ class TestParserErrorFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert duplicate in qs
+
+
+class TestScheduledFilter:
+    @pytest.fixture
+    def scheduled(self):
+        return create_podcast(pub_date=None, parsed=None)
+
+    @pytest.fixture
+    def unscheduled(self):
+        now = timezone.now()
+        return create_podcast(pub_date=now, parsed=now)
+
+    @pytest.mark.django_db
+    def test_none(self, podcast_admin, req, scheduled, unscheduled):
+        f = ScheduledFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 2
+
+    @pytest.mark.django_db
+    def test_true(self, podcast_admin, req, scheduled, unscheduled):
+        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == scheduled
 
 
 class TestSubscribedFilter:

@@ -2,6 +2,8 @@ from argparse import ArgumentParser
 from concurrent.futures import wait
 
 from django.core.management.base import BaseCommand
+from django.db.models import Count, F
+from django.db.models.query import ValuesListIterable
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
@@ -36,15 +38,27 @@ class Command(BaseCommand):
             with ThreadPoolExecutor() as executor:
                 futures = executor.safemap(
                     self._parse_feed,
-                    scheduler.get_podcasts_for_update().values_list("pk", flat=True)[
-                        : options["limit"]
-                    ],
+                    self._get_scheduled_podcasts(options["limit"]),
                 )
 
             wait(futures)
 
             if not options["watch"]:
                 break
+
+    def _get_scheduled_podcasts(self, limit: int) -> ValuesListIterable:
+        return (
+            scheduler.get_scheduled_podcasts()
+            .alias(subscribers=Count("subscriptions"))
+            .filter(active=True)
+            .order_by(
+                F("subscribers").desc(),
+                F("promoted").desc(),
+                F("parsed").asc(nulls_first=True),
+            )
+            .values_list("pk", flat=True)
+            .distinct()
+        )[:limit]
 
     def _parse_feed(self, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)

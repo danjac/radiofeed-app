@@ -2,7 +2,7 @@ import itertools
 from datetime import datetime, timedelta
 from typing import Final
 
-from django.db.models import Count, F, Q, QuerySet
+from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 
 from radiofeed.feedparser.models import Feed
@@ -13,28 +13,17 @@ _MIN_FREQUENCY: Final = timedelta(hours=1)
 _MAX_FREQUENCY: Final = timedelta(days=7)
 
 
-def get_podcasts_for_update() -> QuerySet[Podcast]:
-    """Returns all active podcasts scheduled for feed update.
-
-    Results are ordered by their last checked date and prioritized
-    if subscribed or promoted.
-    """
+def get_scheduled_podcasts() -> QuerySet[Podcast]:
+    """Returns all podcasts scheduled for feed update."""
     now = timezone.now()
-    return (
-        Podcast.objects.alias(subscribers=Count("subscriptions")).filter(
-            Q(parsed__isnull=True)
-            | Q(pub_date__isnull=True)
-            | Q(parsed__lt=now - _MAX_FREQUENCY)
-            | Q(
-                pub_date__lt=now - F("frequency"),
-                parsed__lt=now - _MIN_FREQUENCY,
-            ),
-            active=True,
-        )
-    ).order_by(
-        F("subscribers").desc(),
-        F("promoted").desc(),
-        F("parsed").asc(nulls_first=True),
+    return Podcast.objects.filter(
+        Q(parsed__isnull=True)
+        | Q(pub_date__isnull=True)
+        | Q(parsed__lt=now - _MAX_FREQUENCY)
+        | Q(
+            pub_date__lt=now - F("frequency"),
+            parsed__lt=now - _MIN_FREQUENCY,
+        ),
     )
 
 
