@@ -186,7 +186,7 @@ class QueuedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", ""),)
+        return (("yes", "Queued"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
