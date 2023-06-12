@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 futures = executor.safemap(
                     self._parse_feed,
                     podcasts.alias(subscribers=Count("subscriptions"))
-                    .filter(active=True)
+                    .filter(active=True, queued__isnull=False)
                     .order_by(
                         F("subscribers").desc(),
                         F("promoted").desc(),
