@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
-from concurrent.futures import Future, wait
+from concurrent.futures import wait
 
 from django.core.management.base import BaseCommand
-from django.db.models import Count, F, QuerySet
+from django.db.models import Count, F
 from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser, scheduler
@@ -40,34 +40,32 @@ class Command(BaseCommand):
             podcasts = scheduler.get_scheduled_podcasts()
 
             # add any new items to queue
-            if queued := self._enqueue_podcasts(podcasts):
+            if queued := podcasts.filter(queued__isnull=True).update(
+                queued=timezone.now()
+            ):
                 self.stdout.write(f"{queued} podcasts added to feed parser queue")
 
+            # parse queued feeds
+            with ThreadPoolExecutor() as executor:
+                futures = executor.safemap(
+                    self._parse_feed,
+                    podcasts.alias(subscribers=Count("subscriptions"))
+                    .filter(active=True, queued__isnull=False)
+                    .order_by(
+                        F("subscribers").desc(),
+                        F("promoted").desc(),
+                        F("queued").asc(),
+                        F("parsed").asc(nulls_first=True),
+                    )
+                    .values_list("pk", flat=True)
+                    .distinct()[: options["limit"]],
+                )
+
             # parse feeds
-            wait(self._parse_feeds(podcasts, options["limit"]))
+            wait(futures)
 
             if not options["watch"]:
                 break
-
-    def _enqueue_podcasts(self, podcasts: QuerySet[Podcast]) -> int:
-        return podcasts.filter(queued__isnull=True).update(queued=timezone.now())
-
-    def _parse_feeds(self, podcasts: QuerySet[Podcast], limit: int) -> list[Future]:
-        # parse next n items in queue
-        with ThreadPoolExecutor() as executor:
-            return executor.safemap(
-                self._parse_feed,
-                podcasts.alias(subscribers=Count("subscriptions"))
-                .filter(active=True, queued__isnull=False)
-                .order_by(
-                    F("subscribers").desc(),
-                    F("promoted").desc(),
-                    F("queued").asc(),
-                    F("parsed").asc(nulls_first=True),
-                )
-                .values_list("pk", flat=True)
-                .distinct()[:limit],
-            )
 
     def _parse_feed(self, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)
