@@ -209,6 +209,7 @@ class FeedParser:
         Podcast.objects.filter(pk=self._podcast.id).update(
             updated=now,
             parsed=now,
+            queued=None,
             **fields,
         )
 

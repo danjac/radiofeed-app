@@ -236,6 +236,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "parsed",
         "parser_error",
         "frequency",
+        "queued",
         "next_scheduled_update",
         "modified",
         "etag",

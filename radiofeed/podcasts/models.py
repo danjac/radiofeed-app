@@ -159,6 +159,8 @@ class Podcast(models.Model):
         default=timedelta(hours=24),
     )
 
+    queued: datetime | None = models.DateTimeField(null=True, blank=True)
+
     modified: datetime | None = models.DateTimeField(
         null=True,
         blank=True,
