@@ -82,13 +82,10 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     if podcast.pub_date is None or podcast.parsed is None:
         return now
 
-    return max(
-        min(
-            podcast.parsed + _MAX_FREQUENCY,
-            max(
-                podcast.pub_date + podcast.frequency,
-                podcast.parsed + _MIN_FREQUENCY,
-            ),
+    return min(
+        podcast.parsed + _MAX_FREQUENCY,
+        max(
+            podcast.pub_date + podcast.frequency,
+            podcast.parsed + _MIN_FREQUENCY,
         ),
-        now,
     )

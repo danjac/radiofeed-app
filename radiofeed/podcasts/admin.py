@@ -4,7 +4,8 @@ from typing import TYPE_CHECKING
 
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
-from django.template.defaultfilters import timeuntil
+from django.template.defaultfilters import timesince, timeuntil
+from django.utils import timezone
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
@@ -245,7 +246,14 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast):
         """Return estimated next update time."""
-        return timeuntil(scheduler.next_scheduled_update(obj))
+        if obj.active:
+            scheduled = scheduler.next_scheduled_update(obj)
+            return (
+                f"{timesince(scheduled)} ago"
+                if scheduled < timezone.now()
+                else timeuntil(scheduled)
+            )
+        return "-"
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns default ordering."""
