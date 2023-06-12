@@ -176,26 +176,26 @@ class SubscribedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class QueuedFilter(admin.SimpleListFilter):
-    """Filters podcasts queued for update."""
+class ScheduledFilter(admin.SimpleListFilter):
+    """Filters podcasts scheduled for update."""
 
-    title = "Queued"
-    parameter_name = "queued"
+    title = "Scheduled"
+    parameter_name = "scheduled"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "Queued"),)
+        return (("yes", "Scheduled"),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
 
-        return (
-            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
-        )
+        if self.value() == "yes":
+            return queryset & scheduler.get_scheduled_podcasts()
+        return queryset
 
 
 @admin.register(Podcast)
@@ -210,7 +210,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         SubscribedFilter,
         PromotedFilter,
         PrivateFilter,
-        QueuedFilter,
+        ScheduledFilter,
         ParserErrorFilter,
     )
 
@@ -220,7 +220,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "promoted",
         "pub_date",
         "parsed",
-        "queued",
     )
 
     list_editable = (
@@ -237,7 +236,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "parsed",
         "parser_error",
         "frequency",
-        "queued",
         "next_scheduled_update",
         "modified",
         "etag",

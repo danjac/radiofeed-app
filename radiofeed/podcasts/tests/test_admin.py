@@ -14,7 +14,7 @@ from radiofeed.podcasts.admin import (
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
-    QueuedFilter,
+    ScheduledFilter,
     SubscribedFilter,
 )
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -202,28 +202,28 @@ class TestParserErrorFilter:
         assert duplicate in qs
 
 
-class TestQueuedFilter:
+class TestScheduledFilter:
     @pytest.fixture()
-    def queued(self):
-        return create_podcast(queued=timezone.now())
+    def scheduled(self):
+        return create_podcast(pub_date=None, parsed=None)
 
     @pytest.fixture()
-    def unqueued(self):
+    def unscheduled(self):
         now = timezone.now()
         return create_podcast(pub_date=now, parsed=now)
 
     @pytest.mark.django_db()
-    def test_none(self, podcast_admin, req, queued, unqueued):
-        f = QueuedFilter(req, {}, Podcast, podcast_admin)
+    def test_none(self, podcast_admin, req, scheduled, unscheduled):
+        f = ScheduledFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 2
 
     @pytest.mark.django_db()
-    def test_true(self, podcast_admin, req, queued, unqueued):
-        f = QueuedFilter(req, {"queued": "yes"}, Podcast, podcast_admin)
+    def test_true(self, podcast_admin, req, scheduled, unscheduled):
+        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert qs.first() == queued
+        assert qs.first() == scheduled
 
 
 class TestSubscribedFilter:

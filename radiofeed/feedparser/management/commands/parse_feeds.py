@@ -41,7 +41,7 @@ class Command(BaseCommand):
                     self._parse_feed,
                     scheduler.get_scheduled_podcasts()
                     .alias(subscribers=Count("subscriptions"))
-                    .filter(active=True, queued__isnull=False)
+                    .filter(active=True)
                     .order_by(
                         F("subscribers").desc(),
                         F("promoted").desc(),
