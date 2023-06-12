@@ -176,26 +176,26 @@ class SubscribedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class ScheduledFilter(admin.SimpleListFilter):
-    """Filters podcasts scheduled for update."""
+class QueuedFilter(admin.SimpleListFilter):
+    """Filters podcasts queued for update."""
 
-    title = "Scheduled"
-    parameter_name = "scheduled"
+    title = "Queued"
+    parameter_name = "queued"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
-        return (("yes", "Scheduled"),)
+        return (("yes", ""),)
 
     def queryset(
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
 
-        if self.value() == "yes":
-            return queryset & scheduler.get_scheduled_podcasts()
-        return queryset
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
 
 
 @admin.register(Podcast)
@@ -210,7 +210,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         SubscribedFilter,
         PromotedFilter,
         PrivateFilter,
-        ScheduledFilter,
+        QueuedFilter,
         ParserErrorFilter,
     )
 
