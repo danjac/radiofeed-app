@@ -35,7 +35,6 @@ class Command(BaseCommand):
         """Command handler implementation."""
 
         while True:
-            # parse queued feeds
             with ThreadPoolExecutor() as executor:
                 futures = executor.safemap(
                     self._parse_feed,
@@ -51,7 +50,6 @@ class Command(BaseCommand):
                     .distinct()[: options["limit"]],
                 )
 
-            # parse feeds
             wait(futures)
 
             if not options["watch"]:
