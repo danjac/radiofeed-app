@@ -3,7 +3,6 @@ from concurrent.futures import wait
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
-from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
@@ -36,25 +35,16 @@ class Command(BaseCommand):
         """Command handler implementation."""
 
         while True:
-            # get all scheduled podcasts
-            podcasts = scheduler.get_scheduled_podcasts()
-
-            # add any new items to queue
-            if queued := podcasts.filter(queued__isnull=True).update(
-                queued=timezone.now()
-            ):
-                self.stdout.write(f"{queued} podcasts added to feed parser queue")
-
             # parse queued feeds
             with ThreadPoolExecutor() as executor:
                 futures = executor.safemap(
                     self._parse_feed,
-                    podcasts.alias(subscribers=Count("subscriptions"))
+                    scheduler.get_scheduled_podcasts()
+                    .alias(subscribers=Count("subscriptions"))
                     .filter(active=True, queued__isnull=False)
                     .order_by(
                         F("subscribers").desc(),
                         F("promoted").desc(),
-                        F("queued").asc(),
                         F("parsed").asc(nulls_first=True),
                     )
                     .values_list("pk", flat=True)
