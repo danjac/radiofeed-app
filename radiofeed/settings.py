@@ -18,7 +18,7 @@ env = environ.Env(
     USE_HTTPS=(bool, True),
 )
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parent.parent
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
 environ.Env.read_env(BASE_DIR / ".env")
 
