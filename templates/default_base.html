@@ -27,7 +27,7 @@
         <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth lg:text-base"
               hx-boost="true"
               hx-target="#content"
-              hx-swap="innerHTML show:window:top transition:true"
+              hx-swap="innerHTML show:window:top"
               hx-indicator="#hx-indicator"
               hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
             {% include "_hx_indicator.html" %}
