@@ -1,6 +1,6 @@
 # Production Dockerfile for application
 
-FROM python:3.11.3-buster
+FROM python:3.11.4-buster
 
 ENV PYTHONUNBUFFERED=1
 
