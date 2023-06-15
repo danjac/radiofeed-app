@@ -608,13 +608,13 @@ postal = ["cryptography"]
 
 [[package]]
 name = "django-browser-reload"
-version = "1.9.0"
+version = "1.10.0"
 description = "Automatically reload your browser in development."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_browser_reload-1.9.0-py3-none-any.whl", hash = "sha256:f8017d33fa8e72e6038f2a6a6e5215d1ff2ce1d2be49957722a0919d5fb1e6e0"},
-    {file = "django_browser_reload-1.9.0.tar.gz", hash = "sha256:4384cccd49580b4d60f3266166462912b771e55e510fdb1a945270862209b799"},
+    {file = "django_browser_reload-1.10.0-py3-none-any.whl", hash = "sha256:a4c72ad7e7c670ce15d9c8e8f649d47c661fd1de383f3e5a0cd9da613b439364"},
+    {file = "django_browser_reload-1.10.0.tar.gz", hash = "sha256:7528891a2d231e9fa6b04575154e636d099b03480cd75c571aad97c3c5b9d9b9"},
 ]
 
 [package.dependencies]
@@ -694,13 +694,13 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-htmx"
-version = "1.14.0"
+version = "1.15.0"
 description = "Extensions for using Django with htmx."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_htmx-1.14.0-py3-none-any.whl", hash = "sha256:393e2a4a963aff691b3973c898dbca1363139d7c7bf2e8cc4c605e2ad808a779"},
-    {file = "django_htmx-1.14.0.tar.gz", hash = "sha256:b689a8d6f7052a96a373411ec55ba81c1ddffb4d66b1f5ab4d6e3d28420842fd"},
+    {file = "django_htmx-1.15.0-py3-none-any.whl", hash = "sha256:b76068485905ad9f911419746f07f877633bb036c0870a0f9fc13dec42c6e425"},
+    {file = "django_htmx-1.15.0.tar.gz", hash = "sha256:bac7ff59bf507db6d40424f635f83889ce028a54f47663f227083413de22cabf"},
 ]
 
 [package.dependencies]
@@ -722,13 +722,13 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.15.0"
+version = "4.16.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_permissions_policy-4.15.0-py3-none-any.whl", hash = "sha256:e80b535b771ebf166fc1452254ce07772affac9b7960975b3909510760d653ac"},
-    {file = "django_permissions_policy-4.15.0.tar.gz", hash = "sha256:43f72a66c40b68c8de47ac9390a8f31994551daeaef196c9d20761b38ab324ca"},
+    {file = "django_permissions_policy-4.16.0-py3-none-any.whl", hash = "sha256:e8a6f956d49b471854dc0a06bfefa5164e5e7531f3e423acdca35e5df76bab5c"},
+    {file = "django_permissions_policy-4.16.0.tar.gz", hash = "sha256:bb786fb10246cb5acfa20ac091956c649492694f55e041395ed2b2e516b24519"},
 ]
 
 [package.dependencies]
