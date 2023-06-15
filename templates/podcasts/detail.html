@@ -8,6 +8,7 @@
                     {% if link %}
                         <a href="{{ link }}"
                            rel="noopener nofollow"
+                           target="_blank"
                            title="Podcast Owner"
                            class="link">{{ podcast.owner }}</a>
                     {% else %}
@@ -36,7 +37,10 @@
                     <nav class="flex items-center space-x-3">
                         {% if link and link != podcast.rss %}
                             <div>
-                                <a href="{{ link }}" class="link" rel="noopener nofollow">Website</a>
+                                <a href="{{ link }}"
+                                   class="link"
+                                   rel="noopener nofollow"
+                                   target="_blank">Website</a>
                             </div>
                         {% endif %}
                         <div>
