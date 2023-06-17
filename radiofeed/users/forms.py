@@ -1,4 +1,3 @@
-import itertools
 from collections.abc import Iterator
 
 import lxml  # nosec
@@ -51,27 +50,26 @@ class OpmlUploadForm(forms.Form):
     def subscribe_to_feeds(self, user: User, limit: int = 300) -> int:
         """Subscribes user to feeds in uploaded OPML.
 
-        Only feeds that already exist in the database will be included.
+        Only public feeds that already exist in the database will be included.
 
         Returns:
-            number of new subscribed feeds
+            number of subscribed feeds
         """
-        return len(
-            Subscription.objects.bulk_create(
-                [
-                    Subscription(podcast=podcast, subscriber=user)
-                    for podcast in itertools.islice(
-                        Podcast.objects.filter(
-                            rss__in=set(self._parse_opml()), private=False
-                        )
-                        .exclude(subscriptions__subscriber=user)
-                        .distinct(),
-                        limit,
-                    )
-                ],
-                ignore_conflicts=True,
+
+        if urls := set(self._parse_opml()):
+            podcasts = Podcast.objects.filter(rss__in=urls, private=False)
+
+            return len(
+                Subscription.objects.bulk_create(
+                    [
+                        Subscription(podcast=podcast, subscriber=user)
+                        for podcast in podcasts
+                    ],
+                    ignore_conflicts=True,
+                )
             )
-        )
+
+        return 0
 
     def _parse_opml(self) -> Iterator[str]:
         self.cleaned_data["opml"].seek(0)
