@@ -2,7 +2,7 @@ import Alpine from "alpinejs";
 
 document.addEventListener("alpine:init", () => {
     Alpine.data(
-        "player",
+        "audioPlayer",
         (
             startPlayer = false,
             currentTime = 0,
@@ -170,7 +170,7 @@ document.addEventListener("alpine:init", () => {
                     .join(":");
             },
             getMediaMetadata() {
-                const dataTag = document.getElementById("player-metadata");
+                const dataTag = document.getElementById("audioplayer-metadata");
                 const metadata = JSON.parse(dataTag?.textContent || "{}");
 
                 if (metadata && Object.keys(metadata).length > 0) {

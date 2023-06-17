@@ -5,7 +5,7 @@
             <div class="h-40 sm:h-28"
                 {# djlint:off #}
                 x-data="
-            player(
+            audioPlayer(
                 startPlayer={{ start_player|yesno:'true,false' }},
                 currentTime={{ audio_log.current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
@@ -13,7 +13,7 @@
             )"
                 {# djlint:on #}
                 @keydown.window="shortcuts">
-                {{ episode.get_media_metadata|json_script:"player-metadata" }}
+                {{ episode.get_media_metadata|json_script:"audioplayer-metadata" }}
                 <audio x-ref="audio"
                        preload="auto"
                        @loadedmetadata="loaded"
