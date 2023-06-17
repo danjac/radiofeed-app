@@ -54,8 +54,8 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Episode.objects.accessible(request.user)
-                .search(request.search.value)
+                Episode.objects.search(request.search.value)
+                .filter(podcast__private__isnull=False)
                 .select_related("podcast")
                 .order_by("-rank", "-pub_date")
             ),

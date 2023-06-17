@@ -26,7 +26,6 @@ _ITUNES_LOCATIONS: Final = (
 
 _ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
 
-
 _APPLE_NAMESPACE: Final = "http://www.apple.com/itms/"
 
 _xpath_parser = XPathParser({"apple": _APPLE_NAMESPACE})

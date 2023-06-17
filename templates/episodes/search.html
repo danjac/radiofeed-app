@@ -4,7 +4,7 @@
     | Search | Episodes
 {% endblock title %}
 {% block search_content %}
-    {% cache 600 search-episodes request.get_full_path request.user.username %}
+    {% cache 600 search-episodes request.get_full_path %}
     {% include pagination_template %}
 {% endcache %}
 {% endblock search_content %}

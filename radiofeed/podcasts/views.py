@@ -72,9 +72,8 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         return render_pagination_response(
             request,
             (
-                Podcast.objects.accessible(request.user)
-                .filter(pub_date__isnull=False)
-                .search(request.search.value)
+                Podcast.objects.search(request.search.value)
+                .filter(pub_date__isnull=False, private=False)
                 .order_by(
                     "-exact_match",
                     "-rank",
