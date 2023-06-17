@@ -5,18 +5,20 @@ from radiofeed.podcasts.factories import (
     create_podcast,
     create_subscription,
 )
+from radiofeed.podcasts.models import Category, Podcast, Subscription
+from radiofeed.users.models import User
 
 
 @pytest.fixture()
-def podcast():
+def podcast() -> Podcast:
     return create_podcast()
 
 
 @pytest.fixture()
-def category():
+def category() -> Category:
     return create_category()
 
 
 @pytest.fixture()
-def subscription(auth_user, podcast):
+def subscription(auth_user: User, podcast: Podcast) -> Subscription:
     return create_subscription(podcast=podcast, subscriber=auth_user)

@@ -1,27 +1,29 @@
 import pytest
 from django.contrib.auth.models import AnonymousUser
+from django.test import Client
 
 from radiofeed.users.factories import create_user
+from radiofeed.users.models import User
 
 
 @pytest.fixture()
-def user():
+def user() -> User:
     return create_user()
 
 
 @pytest.fixture()
-def anonymous_user():
+def anonymous_user() -> AnonymousUser:
     return AnonymousUser()
 
 
 @pytest.fixture()
-def auth_user(client, user):
+def auth_user(client: Client, user: User) -> User:
     client.force_login(user)
     return user
 
 
 @pytest.fixture()
-def staff_user(client):
+def staff_user(client: Client) -> User:
     user = create_user(is_staff=True)
     client.force_login(user)
     return user

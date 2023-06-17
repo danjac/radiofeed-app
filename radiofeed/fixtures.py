@@ -1,10 +1,13 @@
+from collections.abc import Callable, Iterator
+
 import pytest
+from django.conf import Settings
 from django.core.cache import cache
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 
 
 @pytest.fixture(autouse=True)
-def _settings_overrides(settings):
+def _settings_overrides(settings: Settings) -> None:
     """Default settings for all tests."""
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
@@ -14,7 +17,7 @@ def _settings_overrides(settings):
 
 
 @pytest.fixture()
-def _locmem_cache(settings):
+def _locmem_cache(settings: Settings) -> Iterator:
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
     }
@@ -23,5 +26,5 @@ def _locmem_cache(settings):
 
 
 @pytest.fixture(scope="session")
-def get_response():
+def get_response() -> Callable[[HttpRequest], HttpResponse]:
     return lambda req: HttpResponse()
