@@ -49,13 +49,13 @@ class OpmlUploadForm(forms.Form):
         """
 
         if urls := set(self._parse_opml()):
-            podcasts = Podcast.objects.filter(rss__in=urls, private=False)
+            podcasts = Podcast.objects.filter(rss__in=urls, private=False)[:limit]
 
             return len(
                 Subscription.objects.bulk_create(
                     [
                         Subscription(podcast=podcast, subscriber=user)
-                        for podcast in podcasts
+                        for podcast in podcasts.iterator()
                     ],
                     ignore_conflicts=True,
                 )
