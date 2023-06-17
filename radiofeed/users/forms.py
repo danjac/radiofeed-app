@@ -39,17 +39,21 @@ class OpmlUploadForm(forms.Form):
         ),
     )
 
-    def subscribe_to_feeds(self, user: User, limit: int = 300) -> int:
+    def subscribe_to_feeds(self, user: User, limit: int = 360) -> int:
         """Subscribes user to feeds in uploaded OPML.
 
-        Only public feeds that already exist in the database will be included.
+        Only active public feeds that already exist in the database will be included.
 
         Returns:
             number of subscribed feeds
         """
 
         if urls := set(self._parse_opml()):
-            podcasts = Podcast.objects.filter(rss__in=urls, private=False)[:limit]
+            podcasts = Podcast.objects.filter(
+                active=True,
+                private=False,
+                rss__in=urls,
+            )[:limit]
 
             return len(
                 Subscription.objects.bulk_create(
