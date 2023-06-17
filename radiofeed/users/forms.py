@@ -48,7 +48,11 @@ class OpmlUploadForm(forms.Form):
             number of subscribed feeds
         """
 
-        if urls := set(self._parse_opml()):
+        if urls := set(self._parse_opml()) - set(
+            Subscription.objects.filter(subscriber=user)
+            .select_related("podcast")
+            .values_list("podcast__rss", flat=True)
+        ):
             podcasts = Podcast.objects.filter(
                 active=True,
                 private=False,
