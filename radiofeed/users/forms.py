@@ -34,15 +34,7 @@ class OpmlUploadForm(forms.Form):
         label="Select OPML file",
         widget=forms.FileInput(
             attrs={
-                "accept": ",".join(
-                    [
-                        ".opml",
-                        ".xml",
-                        "application/xml",
-                        "text/x-opml",
-                        "text/xml",
-                    ]
-                )
+                "accept": ".opml,.xml,application/xml,text/x-opml,text/xml",
             }
         ),
     )
