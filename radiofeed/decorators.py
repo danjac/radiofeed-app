@@ -1,7 +1,6 @@
 import functools
 import http
 from collections.abc import Callable
-from typing import Concatenate, ParamSpec
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
@@ -9,20 +8,14 @@ from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
-P = ParamSpec("P")
-
 require_form_methods = require_http_methods(["GET", "POST"])
 
 
-def require_auth(
-    view: Callable[Concatenate[HttpRequest, P], HttpResponse]
-) -> Callable[Concatenate[HttpRequest, P], HttpResponse]:
+def require_auth(view: Callable) -> Callable:
     """Login required decorator also handling HTMX and AJAX views."""
 
     @functools.wraps(view)
-    def _wrapper(
-        request: HttpRequest, *args: P.args, **kwargs: P.kwargs
-    ) -> HttpResponse:
+    def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
