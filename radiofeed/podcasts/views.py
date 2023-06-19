@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
-from radiofeed.pagination import render_pagination_response
+from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -51,7 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
     promoted = "promoted" in request.GET or not has_subscriptions
     podcasts = podcasts.filter(promoted=True) if promoted else subscribed
 
-    return render_pagination_response(
+    return render_paginated_response(
         request,
         podcasts,
         "podcasts/index.html",
@@ -69,7 +69,7 @@ def index(request: HttpRequest) -> HttpResponse:
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
-        return render_pagination_response(
+        return render_paginated_response(
             request,
             (
                 Podcast.objects.search(request.search.value)
@@ -162,7 +162,7 @@ def episodes(
             "-pub_date" if request.ordering.is_desc else "pub_date"
         )
 
-    return render_pagination_response(
+    return render_paginated_response(
         request,
         episodes,
         "podcasts/episodes.html",
@@ -243,7 +243,7 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination_response(
+    return render_paginated_response(
         request,
         podcasts,
         "podcasts/category_detail.html",
@@ -293,7 +293,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination_response(
+    return render_paginated_response(
         request,
         podcasts,
         "podcasts/private_feeds.html",
