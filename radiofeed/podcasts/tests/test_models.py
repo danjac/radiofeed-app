@@ -153,9 +153,6 @@ class TestPodcastModel:
         podcast = Podcast(description="<b>Test &amp; Code")
         assert podcast.cleaned_description == "Test & Code"
 
-    def test_get_subscribe_target(self):
-        return Podcast(id=12345).get_subscribe_target() == "subscribe-actions-12345"
-
     @pytest.mark.django_db()
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()
