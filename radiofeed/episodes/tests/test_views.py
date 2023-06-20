@@ -257,7 +257,7 @@ class TestStartPlayer:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_player_target(),
+                HTTP_HX_TARGET="audio-player-button",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -273,7 +273,7 @@ class TestStartPlayer:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_player_target(),
+                HTTP_HX_TARGET="audio-player-button",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -288,7 +288,7 @@ class TestStartPlayer:
         assert_not_found(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_player_target(),
+                HTTP_HX_TARGET="audio-player-button",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -302,7 +302,7 @@ class TestStartPlayer:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_player_target(),
+                HTTP_HX_TARGET="audio-player-button",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -316,7 +316,7 @@ class TestStartPlayer:
         assert_ok(
             client.post(
                 self.url(player_episode),
-                HTTP_HX_TARGET=player_episode.get_player_target(),
+                HTTP_HX_TARGET="audio-player-button",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -340,7 +340,7 @@ class TestClosePlayer:
         assert_ok(
             client.post(
                 self.url,
-                HTTP_HX_TARGET=player_episode.get_player_target(),
+                HTTP_HX_TARGET="audio-player-button",
                 HTTP_HX_REQUEST="true",
             )
         )
@@ -455,7 +455,7 @@ class TestAddBookmark:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_bookmark_target(),
+                HTTP_HX_TARGET="bookmark-button",
                 HTTP_HX_REQUEST="true",
             )
         )
@@ -473,7 +473,7 @@ class TestAddBookmark:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_bookmark_target(),
+                HTTP_HX_TARGET="bookmark-button",
                 HTTP_HX_REQUEST="true",
             )
         )
@@ -490,7 +490,7 @@ class TestRemoveBookmark:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_bookmark_target(),
+                HTTP_HX_TARGET="bookmark-button",
                 HTTP_HX_REQUEST="true",
             )
         )
@@ -557,7 +557,7 @@ class TestRemoveAudioLog:
         assert_ok(
             client.post(
                 self.url(episode),
-                HTTP_HX_TARGET=episode.get_history_target(),
+                HTTP_HX_TARGET="audio-log",
                 HTTP_HX_REQUEST="true",
             )
         )
@@ -580,7 +580,7 @@ class TestRemoveAudioLog:
         assert_not_found(
             client.post(
                 self.url(player_episode),
-                HTTP_HX_TARGET=player_episode.get_history_target(),
+                HTTP_HX_TARGET="audio-log",
                 HTTP_HX_REQUEST="true",
             ),
         )
@@ -593,7 +593,7 @@ class TestRemoveAudioLog:
         assert_ok(
             client.post(
                 self.url(log.episode),
-                HTTP_HX_TARGET=episode.get_history_target(),
+                HTTP_HX_TARGET="audio-log",
                 HTTP_HX_REQUEST="true",
             ),
         )
