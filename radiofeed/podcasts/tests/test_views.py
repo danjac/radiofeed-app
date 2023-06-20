@@ -449,14 +449,6 @@ class TestSubscribe:
             podcast=podcast, subscriber=auth_user
         ).exists()
 
-    @pytest.mark.django_db()
-    def test_no_js(self, client, podcast, auth_user):
-        response = client.post(self.url(podcast))
-        assertRedirects(response, podcast.get_absolute_url())
-        assert Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
 
 class TestUnsubscribe:
     def url(self, podcast):

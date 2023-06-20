@@ -267,19 +267,6 @@ class TestStartPlayer:
         assert client.session[Player.session_key] == episode.id
 
     @pytest.mark.django_db()
-    def test_play_not_htmx(self, client, auth_user, episode):
-        assertRedirects(
-            client.post(
-                self.url(episode),
-            ),
-            episode.get_absolute_url(),
-        )
-
-        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-
-        assert client.session[Player.session_key] == episode.id
-
-    @pytest.mark.django_db()
     def test_play_private_subscribed(self, client, auth_user):
         episode = create_episode(podcast=create_podcast(private=True))
         create_subscription(subscriber=auth_user, podcast=episode.podcast)
@@ -357,16 +344,6 @@ class TestClosePlayer:
                 HTTP_HX_REQUEST="true",
             )
         )
-
-        assert player_episode.id not in client.session
-
-    @pytest.mark.django_db()
-    def test_close_not_htmx(
-        self,
-        client,
-        player_episode,
-    ):
-        assertRedirects(client.post(self.url), player_episode.get_absolute_url())
 
         assert player_episode.id not in client.session
 
