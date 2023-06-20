@@ -197,16 +197,14 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from History")
 
-    if request.htmx:
-        return render_template_fragments(
-            request,
-            "episodes/detail.html",
-            {
-                "episode": audio_log.episode,
-            },
-            use_blocks=["audio_log", "messages"],
-        )
-    return redirect(audio_log.episode)
+    return render_template_fragments(
+        request,
+        "episodes/detail.html",
+        {
+            "episode": audio_log.episode,
+        },
+        use_blocks=["audio_log", "messages"],
+    )
 
 
 @require_safe

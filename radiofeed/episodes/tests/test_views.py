@@ -3,7 +3,7 @@ from datetime import timedelta
 import pytest
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from pytest_django.asserts import assertContains, assertNotContains, assertRedirects
+from pytest_django.asserts import assertContains, assertNotContains
 
 from radiofeed.asserts import (
     assert_bad_request,
@@ -551,14 +551,6 @@ class TestRemoveAudioLog:
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
-
-    @pytest.mark.django_db()
-    def test_no_js(self, client, auth_user, episode):
-        create_audio_log(user=auth_user, episode=episode)
-
-        assertRedirects(client.post(self.url(episode)), episode.get_absolute_url())
-
-        assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db()
     def test_is_playing(self, client, auth_user, player_episode):
