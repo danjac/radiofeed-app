@@ -6,14 +6,12 @@ from django import template
 from django.core.exceptions import ValidationError
 from django.core.signing import Signer
 from django.core.validators import URLValidator
-from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from render_block import render_block_to_string
 
 from radiofeed import cleaners
 
@@ -151,34 +149,3 @@ def force_url(url: str) -> str:
             except ValidationError:
                 continue
     return ""
-
-
-def render_template_fragments(
-    request: HttpRequest,
-    template_name: str,
-    context: dict | None = None,
-    *,
-    use_blocks: list[str] | None = None,
-    status: int | None = None,
-) -> HttpResponse:
-    """Renders HTMX fragments."""
-
-    use_blocks = use_blocks or []
-
-    context = {
-        **(context or {}),
-        "template_blocks": use_blocks,
-    }
-
-    return HttpResponse(
-        [
-            render_block_to_string(
-                template_name,
-                block,
-                context,
-                request=request,
-            )
-            for block in use_blocks
-        ],
-        status=status,
-    )
