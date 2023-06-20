@@ -119,7 +119,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             "audio_log",
             "audio_player_button",
             "audio_player",
-            "messages",
         ],
     )
 
@@ -146,7 +145,6 @@ def close_player(request: HttpRequest) -> HttpResponse:
                 "audio_log",
                 "audio_player_button",
                 "audio_player",
-                "messages",
             ],
         )
 
