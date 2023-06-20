@@ -33,20 +33,16 @@
                         </form>
                     {% else %}
                         {% block subscribe_button %}
-                            {% url is_subscribed|yesno:'podcasts:unsubscribe,podcasts:subscribe' podcast.id as subscribe_url %}
-                            <form action="{{ subscribe_url }}"
-                                  method="post"
-                                  hx-target="this"
-                                  hx-push-url="false"
-                                  hx-indicator="this"
-                                  hx-swap="outerHTML"
-                                  x-data="{isLoading: false}">
-                                {% csrf_token %}
+                            <div hx-target="this"
+                                 hx-push-url="false"
+                                 hx-indicator="this"
+                                 hx-swap="outerHTML"
+                                 x-data="{isLoading: false}">
                                 {% if is_subscribed %}
                                     <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                             title="Unsubscribe from this Podcast"
                                             @click="isLoading=true"
-                                            hx-post="{{ subscribe_url }}"
+                                            hx-post="{% url 'podcasts:unsubscribe' podcast.pk %}"
                                             hx-trigger="click once">
                                         {% heroicon_mini "eye-slash" class="mr-2" x_show="!isLoading" %}
                                         {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
@@ -56,14 +52,14 @@
                                     <button class="inline-flex items-center btn btn-primary btn-lg"
                                             title="Subscribe to this Podcast"
                                             @click="isLoading=true"
-                                            hx-post="{{ subscribe_url }}"
+                                            hx-post="{% url 'podcasts:subscribe' podcast.pk %}"
                                             hx-trigger="click once">
                                         {% heroicon_mini "eye" class="mr-2" x_show="!isLoading" %}
                                         {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
                                         Subscribe
                                     </button>
                                 {% endif %}
-                            </form>
+                            </div>
                         {% endblock subscribe_button %}
                     {% endif %}
                     <nav class="flex items-center space-x-3">

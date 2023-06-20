@@ -151,22 +151,6 @@ class Episode(models.Model):
         """Returns cover image URL or podcast cover image if former not provided."""
         return self.cover_url or self.podcast.cover_url
 
-    def get_audio_player_url(self, is_playing: bool) -> str:
-        """Returns URL for audio player action."""
-        return (
-            reverse("episodes:close_player")
-            if is_playing
-            else reverse("episodes:start_player", args=[self.pk])
-        )
-
-    def get_bookmark_url(self, is_bookmarked: bool) -> str:
-        """Returns URL for bookmark action."""
-        return (
-            reverse("episodes:remove_bookmark", args=[self.pk])
-            if is_bookmarked
-            else reverse("episodes:add_bookmark", args=[self.pk])
-        )
-
     @cached_property
     def cleaned_title(self) -> str:
         """Strips HTML from title field."""
