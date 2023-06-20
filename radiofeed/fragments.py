@@ -1,4 +1,4 @@
-from django.http import HttpRequest, StreamingHttpResponse
+from django.http import HttpRequest, HttpResponse
 from render_block import render_block_to_string
 
 
@@ -9,7 +9,7 @@ def render_template_fragments(
     *,
     use_blocks: list[str] | None = None,
     status: int | None = None,
-) -> StreamingHttpResponse:
+) -> HttpResponse:
     """Renders HTMX fragments.
 
     Individual template blocks in the template are rendered instead of the whole template.
@@ -24,7 +24,7 @@ def render_template_fragments(
         "rendered_template_blocks": use_blocks,
     }
 
-    return StreamingHttpResponse(
+    return HttpResponse(
         [
             render_block_to_string(
                 template_name,
