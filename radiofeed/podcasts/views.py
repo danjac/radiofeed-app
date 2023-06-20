@@ -15,6 +15,7 @@ from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.template_fragments import render_template_fragments
 
 
 @require_safe
@@ -55,7 +56,6 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/index.html",
-        "podcasts/_podcasts.html",
         {
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
@@ -81,7 +81,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 )
             ),
             "podcasts/search.html",
-            "podcasts/_podcasts.html",
         )
 
     return redirect("podcasts:index")
@@ -139,7 +138,14 @@ def podcast_detail(
         pk=podcast_id,
     )
 
-    return render(request, "podcasts/detail.html", {"podcast": podcast})
+    return render(
+        request,
+        "podcasts/detail.html",
+        {
+            "podcast": podcast,
+            "is_subscribed": podcast.is_subscribed,
+        },
+    )
 
 
 @require_safe
@@ -166,7 +172,6 @@ def episodes(
         request,
         episodes,
         "podcasts/episodes.html",
-        "episodes/_episodes.html",
         {
             "podcast": podcast,
             "is_podcast_detail": True,
@@ -247,7 +252,6 @@ def category_detail(
         request,
         podcasts,
         "podcasts/category_detail.html",
-        "podcasts/_podcasts.html",
         {"category": category},
     )
 
@@ -297,7 +301,6 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/private_feeds.html",
-        "podcasts/_podcasts.html",
     )
 
 
@@ -339,12 +342,13 @@ def _render_subscribe_toggle(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
     if request.htmx:
-        return render(
+        return render_template_fragments(
             request,
-            "podcasts/_subscribe_toggle.html",
+            "podcasts/detail.html",
             {
                 "podcast": podcast,
                 "is_subscribed": is_subscribed,
             },
+            use_blocks=["subscribe_button", "messages"],
         )
     return redirect(podcast)
