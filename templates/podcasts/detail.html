@@ -1,124 +1,121 @@
 {% extends "podcasts/detail_base.html" %}
 {% load cache heroicons %}
 {% block podcast_content %}
-    {% with link=podcast.link|force_url %}
-        <article class="space-y-3">
-            {% if podcast.owner %}
-                <h2 class="flex-wrap text-base font-semibold lg:text-lg">
-                    {% if link %}
-                        <a href="{{ link }}"
-                           rel="noopener nofollow"
-                           target="_blank"
-                           title="Podcast Owner"
-                           class="link">{{ podcast.owner }}</a>
-                    {% else %}
-                        {{ podcast.owner }}
-                    {% endif %}
-                </h2>
-            {% endif %}
-            <div class="flex items-center space-x-3 sm:space-x-6">
-                {% cover_image podcast.cover_url 200 podcast.cleaned_title css_class="h-32 w-32 lg:h-40 lg:w-40" %}
-                <div class="flex flex-col place-content-between h-28 lg:h-32">
-                    {% if podcast.private %}
-                        {% url 'podcasts:remove_private_feed' podcast.pk as remove_feed_url %}
-                        <form method="post" action="{{ remove_feed_url }}">
-                            <button class="inline-flex items-center btn btn-danger btn-lg"
-                                    title="Remove podcast from your private feeds"
-                                    hx-push-url="true"
-                                    hx-confirm="Are you sure you want to remove this podcast? You can't undo this action!"
-                                    hx-post="{{ remove_feed_url }}">
-                                {% heroicon_mini "trash" class="mr-2" %}
-                                Remove
-                            </button>
-                        </form>
-                    {% else %}
-                        {% block subscribe_button %}
-                            <div hx-target="this"
-                                 hx-push-url="false"
-                                 hx-indicator="this"
-                                 hx-swap="outerHTML"
-                                 x-data="{isLoading: false}">
-                                {% if is_subscribed %}
-                                    <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
-                                            title="Unsubscribe from this Podcast"
-                                            @click="isLoading=true"
-                                            hx-post="{% url 'podcasts:unsubscribe' podcast.pk %}"
-                                            hx-trigger="click once">
-                                        {% heroicon_mini "eye-slash" class="mr-2" x_show="!isLoading" %}
-                                        {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
-                                        Unsubscribe
-                                    </button>
-                                {% else %}
-                                    <button class="inline-flex items-center btn btn-primary btn-lg"
-                                            title="Subscribe to this Podcast"
-                                            @click="isLoading=true"
-                                            hx-post="{% url 'podcasts:subscribe' podcast.pk %}"
-                                            hx-trigger="click once">
-                                        {% heroicon_mini "eye" class="mr-2" x_show="!isLoading" %}
-                                        {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
-                                        Subscribe
-                                    </button>
-                                {% endif %}
-                            </div>
-                        {% endblock subscribe_button %}
-                    {% endif %}
-                    <nav class="flex items-center space-x-3">
-                        {% if link and link != podcast.rss %}
-                            <div>
-                                <a href="{{ link }}"
-                                   class="link"
-                                   rel="noopener nofollow"
-                                   target="_blank">Website</a>
-                            </div>
-                        {% endif %}
-                        <div>
-                            <a href="{{ podcast.rss }}" class="link" download>RSS</a>
+    <article class="space-y-3">
+        {% if podcast.owner %}
+            <h2 class="flex-wrap text-base font-semibold lg:text-lg">
+                {% if podcast.website %}
+                    <a href="{{ podcast.website }}"
+                       rel="noopener nofollow"
+                       target="_blank"
+                       title="Podcast Owner"
+                       class="link">{{ podcast.owner }}</a>
+                {% else %}
+                    {{ podcast.owner }}
+                {% endif %}
+            </h2>
+        {% endif %}
+        <div class="flex items-center space-x-3 sm:space-x-6">
+            {% cover_image podcast.cover_url 200 podcast.cleaned_title css_class="h-32 w-32 lg:h-40 lg:w-40" %}
+            <div class="flex flex-col place-content-between h-28 lg:h-32">
+                {% if podcast.private %}
+                    {% url 'podcasts:remove_private_feed' podcast.pk as remove_feed_url %}
+                    <form method="post" action="{{ remove_feed_url }}">
+                        <button class="inline-flex items-center btn btn-danger btn-lg"
+                                title="Remove podcast from your private feeds"
+                                hx-push-url="true"
+                                hx-confirm="Are you sure you want to remove this podcast? You can't undo this action!"
+                                hx-post="{{ remove_feed_url }}">
+                            {% heroicon_mini "trash" class="mr-2" %}
+                            Remove
+                        </button>
+                    </form>
+                {% else %}
+                    {% block subscribe_button %}
+                        <div hx-target="this"
+                             hx-push-url="false"
+                             hx-indicator="this"
+                             hx-swap="outerHTML"
+                             x-data="{isLoading: false}">
+                            {% if is_subscribed %}
+                                <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
+                                        title="Unsubscribe from this Podcast"
+                                        @click="isLoading=true"
+                                        hx-post="{% url 'podcasts:unsubscribe' podcast.pk %}"
+                                        hx-trigger="click once">
+                                    {% heroicon_mini "eye-slash" class="mr-2" x_show="!isLoading" %}
+                                    {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
+                                    Unsubscribe
+                                </button>
+                            {% else %}
+                                <button class="inline-flex items-center btn btn-primary btn-lg"
+                                        title="Subscribe to this Podcast"
+                                        @click="isLoading=true"
+                                        hx-post="{% url 'podcasts:subscribe' podcast.pk %}"
+                                        hx-trigger="click once">
+                                    {% heroicon_mini "eye" class="mr-2" x_show="!isLoading" %}
+                                    {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
+                                    Subscribe
+                                </button>
+                            {% endif %}
                         </div>
-                        {% if user.is_staff %}
-                            <div>
-                                <a href="{% url 'admin:podcasts_podcast_change' podcast.id %}"
-                                   hx-disable="true"
-                                   class="link">Admin</a>
-                            </div>
-                        {% endif %}
-                    </nav>
-                    <div class="flex flex-wrap">
-                        <a href="{{ podcast.get_latest_episode_url }}"
-                           class="link"
-                           title="Latest Episode">
-                            Latest episode
-                            {% include "_date.html" with value=podcast.pub_date %}
-                        </a>
+                    {% endblock subscribe_button %}
+                {% endif %}
+                <nav class="flex items-center space-x-3">
+                    {% if podcast.website and podcast.website != podcast.rss %}
+                        <div>
+                            <a href="{{ podcast.website }}"
+                               class="link"
+                               rel="noopener nofollow"
+                               target="_blank">Website</a>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <a href="{{ podcast.rss }}" class="link" download>RSS</a>
                     </div>
+                    {% if user.is_staff %}
+                        <div>
+                            <a href="{% url 'admin:podcasts_podcast_change' podcast.id %}"
+                               hx-disable="true"
+                               class="link">Admin</a>
+                        </div>
+                    {% endif %}
+                </nav>
+                <div class="flex flex-wrap">
+                    <a href="{{ podcast.get_latest_episode_url }}"
+                       class="link"
+                       title="Latest Episode">
+                        Latest episode
+                        {% include "_date.html" with value=podcast.pub_date %}
+                    </a>
                 </div>
             </div>
-            {% with funding_url=podcast.funding_url|force_url %}
-                {% if funding_url %}
-                    <div class="flex-wrap font-semibold">
-                        <a href="{{ funding_url }}" rel="noopener nofollow" target="_blank">{{ podcast.funding_text|default:'Support this podcast' }}
+        </div>
+        {% if podcast.funding_url %}
+            <div class="flex-wrap font-semibold">
+                <a href="{{ podcast.funding_url }}"
+                   rel="noopener nofollow"
+                   target="_blank">{{ podcast.funding_text|default:'Support this podcast' }}</a>
+            </div>
+        {% endif %}
+        {% cache 600 podcast-categories podcast.id %}
+        {% with categories=podcast.categories.all %}
+            {% if categories %}
+                <div class="flex flex-wrap items-center leading-loose max-w-prose space-x-2 sm:space-x-3">
+                    {% for category in categories %}
+                        <a class="inline-flex items-center link"
+                           title="{{ category.name }} Podcasts"
+                           href="{{ category.get_absolute_url }}">
+                            {% heroicon_mini "tag" class="mr-2" %}
+                            {{ category.name }}
                         </a>
-                    </div>
-                {% endif %}
-            {% endwith %}
-            {% cache 600 podcast-categories podcast.id %}
-            {% with categories=podcast.categories.all %}
-                {% if categories %}
-                    <div class="flex flex-wrap items-center leading-loose max-w-prose space-x-2 sm:space-x-3">
-                        {% for category in categories %}
-                            <a class="inline-flex items-center link"
-                               title="{{ category.name }} Podcasts"
-                               href="{{ category.get_absolute_url }}">
-                                {% heroicon_mini "tag" class="mr-2" %}
-                                {{ category.name }}
-                            </a>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-        {% endcache %}
-        {% markdown podcast.description %}
-    </article>
-{% endwith %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endcache %}
+    {% markdown podcast.description %}
+</article>
 {% endblock podcast_content %}
 {% if "messages" in template_blocks %}
     {% block messages %}

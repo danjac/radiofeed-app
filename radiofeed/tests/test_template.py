@@ -9,7 +9,6 @@ from radiofeed.middleware import Pagination
 from radiofeed.template import (
     active_link,
     cover_image,
-    force_url,
     format_duration,
     markdown,
     pagination_url,
@@ -92,24 +91,6 @@ class TestMarkdown:
     )
     def test_markdown(self, value, expected):
         return markdown(value) == {"content": expected}
-
-
-class TestForceUrl:
-    base_url = "www.newstatesman.com/podcast"
-    full_url = "https://" + base_url
-
-    @pytest.mark.parametrize(
-        ("value", "expected"),
-        [
-            (None, ""),
-            ("", ""),
-            ("random-string", ""),
-            (base_url, full_url),
-            (full_url, full_url),
-        ],
-    )
-    def test_force_url(self, value, expected):
-        assert force_url(value) == expected
 
 
 class TestPaginationUrl:

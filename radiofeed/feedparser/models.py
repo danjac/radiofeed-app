@@ -15,7 +15,7 @@ class Item:
     guid: str = attrs.field(validator=validators.required)
     title: str = attrs.field(validator=validators.required)
 
-    link: str | None = attrs.field(converter=converters.url, default=None)
+    website: str | None = attrs.field(converter=converters.url, default=None)
 
     pub_date: datetime = attrs.field(converter=parse_date)  # type: ignore
 
@@ -102,7 +102,7 @@ class Feed:
         default=None,
     )
 
-    link: str | None = attrs.field(converter=converters.url, default=None)
+    website: str | None = attrs.field(converter=converters.url, default=None)
 
     cover_url: str | None = attrs.field(converter=converters.url, default=None)
 

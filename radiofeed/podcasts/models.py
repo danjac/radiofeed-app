@@ -184,7 +184,7 @@ class Podcast(models.Model):
     )
 
     description: str = models.TextField(blank=True)
-    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    website: str | None = models.URLField(max_length=2083, null=True, blank=True)
     keywords: str = models.TextField(blank=True)
     extracted_text = models.TextField(blank=True)
     owner: str = models.TextField(blank=True)

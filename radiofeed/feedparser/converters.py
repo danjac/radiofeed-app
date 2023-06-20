@@ -1,4 +1,9 @@
-from radiofeed.template import force_url
+import contextlib
+
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+
+_url_validator = URLValidator(["http", "https"])
 
 
 def language(value: str) -> str:
@@ -22,7 +27,14 @@ def url(value: str | None) -> str | None:
     Returns:
         str | None
     """
-    return force_url(value) or None
+    if value:
+        if not value.startswith("http"):
+            value = f"http://{value}"
+
+        with contextlib.suppress(ValidationError):
+            _url_validator(value)
+            return value
+    return None
 
 
 def duration(value: str | None) -> str:

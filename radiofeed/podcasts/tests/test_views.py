@@ -174,7 +174,7 @@ class TestSearchItunes:
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
             ),
             itunes.Feed(
-                url=podcast.link,
+                url=podcast.website,
                 rss=podcast.rss,
                 title=podcast.title,
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
@@ -224,7 +224,7 @@ class TestPodcastDetail:
     def podcast(self, faker):
         return create_podcast(
             owner=faker.name(),
-            link=faker.url(),
+            website=faker.url(),
             funding_url=faker.url(),
             funding_text=faker.text(),
             keywords=faker.text(),
@@ -232,8 +232,8 @@ class TestPodcastDetail:
         )
 
     @pytest.mark.django_db()
-    def test_get_podcast_no_link(self, client, auth_user, faker):
-        podcast = create_podcast(link=None, owner=faker.name())
+    def test_get_podcast_no_website(self, client, auth_user, faker):
+        podcast = create_podcast(website=None, owner=faker.name())
         response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast

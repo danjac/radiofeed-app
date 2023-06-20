@@ -126,7 +126,7 @@ class TestEpisodeDetail:
         return create_episode(
             podcast=create_podcast(
                 owner=faker.name(),
-                link=faker.url(),
+                website=faker.url(),
                 funding_url=faker.url(),
                 funding_text=faker.text(),
                 keywords=faker.text(),

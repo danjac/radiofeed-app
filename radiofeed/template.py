@@ -3,12 +3,9 @@ import urllib.parse
 from typing import TypedDict
 
 from django import template
-from django.core.exceptions import ValidationError
 from django.core.signing import Signer
-from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
-from django.template.defaultfilters import stringfilter
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -16,8 +13,6 @@ from django.utils.safestring import mark_safe
 from radiofeed import cleaners
 
 register = template.Library()
-
-_validate_url = URLValidator(["http", "https"])
 
 
 class ActiveLink(TypedDict):
@@ -132,20 +127,3 @@ def format_duration(total_seconds: int | None) -> str:
         rv.append(f"{total_minutes}min")
 
     return " ".join(rv)
-
-
-@register.filter
-@stringfilter
-def force_url(url: str) -> str:
-    """If a URL is provided minus http(s):// prefix, prepends protocol.
-
-    If we cannot create a valid URL, just return an empty string.
-    """
-    if url:
-        for value in (url, f"https://{url}"):
-            try:
-                _validate_url(value)
-                return value
-            except ValidationError:
-                continue
-    return ""

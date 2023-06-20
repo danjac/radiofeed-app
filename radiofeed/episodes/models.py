@@ -66,7 +66,7 @@ class Episode(models.Model):
     description: str = models.TextField(blank=True)
     keywords: str = models.TextField(blank=True)
 
-    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    website: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
     episode_type: str = models.CharField(max_length=30, default="full")
     episode: int | None = models.IntegerField(null=True, blank=True)
@@ -135,10 +135,6 @@ class Episode(models.Model):
     def slug(self) -> str:
         """Returns slugified title, if any."""
         return slugify(self.title, allow_unicode=False) or "no-title"
-
-    def get_link(self) -> str | None:
-        """Returns link to episode web page or podcast site if former not provided."""
-        return self.link or self.podcast.link
 
     def get_file_size(self) -> str | None:
         """Returns human readable file size e.g. 30MB.

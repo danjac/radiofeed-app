@@ -73,7 +73,7 @@ class RSSParser:
                     funding_text="podcast:funding/text()",
                     funding_url="podcast:funding/@url",
                     language="language/text()",
-                    link="link/text()",
+                    website="link/text()",
                     owner=(
                         "itunes:author/text()",
                         "itunes:owner/itunes:name/text()",
@@ -105,7 +105,7 @@ class RSSParser:
                         explicit="itunes:explicit/text()",
                         guid="guid/text()",
                         length=("enclosure//@length", "media:content//@fileSize"),
-                        link="link/text()",
+                        website="link/text()",
                         media_type=("enclosure//@type", "media:content//@type"),
                         media_url=("enclosure//@url", "media:content//@url"),
                         pub_date=("pubDate/text()", "pubdate/text()"),

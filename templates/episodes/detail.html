@@ -4,7 +4,7 @@
     | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
 {% block content %}
-    {% with podcast=episode.podcast next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
+    {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
         <header class="pb-3 mb-6 border-b space-y-6">
             <h1 class="text-lg font-bold lg:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
             {% if next_episode or previous_episode %}
@@ -40,6 +40,8 @@
                 </nav>
             {% endif %}
         </header>
+    {% endwith %}
+    {% with podcast=episode.podcast %}
         <article class="space-y-3">
             <h2 class="text-base lg:text-lg">
                 <a href="{{ podcast.get_episodes_url }}"
@@ -117,9 +119,9 @@
                            title="Download audio file to your device"
                            href="{{ episode.media_url }}"
                            class="link">Download</a>
-                        {% with link=episode.get_link|force_url %}
-                            {% if link %}
-                                <a href="{{ link }}"
+                        {% with website=episode.webside|default:podcast.website %}
+                            {% if website %}
+                                <a href="{{ website }}"
                                    target="_blank"
                                    rel="noopener"
                                    class="link"

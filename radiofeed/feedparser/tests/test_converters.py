@@ -32,7 +32,7 @@ class TestUrl:
     def test_domain_only(self):
         assert (
             converters.url("yhanewashington.wixsite.com/1972")
-            == "https://yhanewashington.wixsite.com/1972"
+            == "http://yhanewashington.wixsite.com/1972"
         )
 
     def test_bad_url(self):
