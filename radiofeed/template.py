@@ -165,7 +165,10 @@ def render_template_fragments(
 
     use_blocks = use_blocks or []
 
-    context = context or {}
+    context = {
+        **(context or {}),
+        "template_blocks": use_blocks,
+    }
 
     return HttpResponse(
         [
