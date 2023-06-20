@@ -265,14 +265,6 @@ class Podcast(models.Model):
         """Returns slugified title."""
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def get_subscribe_url(self, is_subscribed: bool) -> str:
-        """Returns URL for subscribe action."""
-        return (
-            reverse("podcasts:unsubscribe", args=[self.pk])
-            if is_subscribed
-            else reverse("podcasts:subscribe", args=[self.pk])
-        )
-
 
 class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""

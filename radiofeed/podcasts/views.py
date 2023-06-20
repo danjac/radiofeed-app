@@ -341,15 +341,12 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def _render_subscribe_toggle(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    if request.htmx:
-        return render_template_fragments(
-            request,
-            "podcasts/detail.html",
-            {
-                "podcast": podcast,
-                "is_subscribed": is_subscribed,
-                "subscribe_url": podcast.get_subscribe_url(is_subscribed),
-            },
-            use_blocks=["subscribe_button", "messages"],
-        )
-    return redirect(podcast)
+    return render_template_fragments(
+        request,
+        "podcasts/detail.html",
+        {
+            "podcast": podcast,
+            "is_subscribed": is_subscribed,
+        },
+        use_blocks=["subscribe_button", "messages"],
+    )
