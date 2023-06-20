@@ -19,6 +19,8 @@ def render_paginated_response(
 
     Conditionally renders to selected pagination template if matching HTMX target.
 
+    Adds `django.core.paginator.Page` instance to context as `page_obj`.
+
     Requires `radiofeed.middleware.PaginationMiddleware` in MIDDLEWARE.
     """
     context = {
@@ -26,8 +28,7 @@ def render_paginated_response(
             request.pagination.current
         ),
         "pagination_target": pagination_target,
-        **(extra_context or {}),
-    }
+    } | (extra_context or {})
 
     if request.htmx and request.htmx.target == pagination_target:
         return render_template_fragments(

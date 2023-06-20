@@ -19,8 +19,7 @@ def render_template_fragments(
 
     use_blocks = use_blocks or []
 
-    context = {
-        **(context or {}),
+    context = (context or {}) | {
         "rendered_template_blocks": use_blocks,
     }
 
