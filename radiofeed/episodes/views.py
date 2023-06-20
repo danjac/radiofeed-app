@@ -76,14 +76,19 @@ def episode_detail(
         pk=episode_id,
     )
 
+    is_bookmarked = request.user.bookmarks.filter(episode=episode).exists()
+    is_playing = request.player.has(episode.id)
+
     return render(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
-            "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
-            "is_playing": request.player.has(episode.id),
+            "is_bookmarked": is_bookmarked,
+            "is_playing": is_playing,
+            "audio_player_url": episode.get_audio_player_url(is_playing),
+            "bookmark_url": episode.get_bookmark_url(is_bookmarked),
         },
     )
 
@@ -109,8 +114,8 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_audio_player_action(
         request,
         audio_log,
-        episode=episode,
         is_playing=True,
+        episode=episode,
     )
 
 
@@ -126,7 +131,6 @@ def close_player(request: HttpRequest) -> HttpResponse:
         return _render_audio_player_action(
             request,
             audio_log,
-            episode=audio_log.episode,
             is_playing=False,
         )
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
@@ -204,7 +208,6 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
             "episodes/detail.html",
             {
                 "episode": audio_log.episode,
-                "hx_oob": True,
             },
             use_blocks=["audio_log", "messages"],
         )
@@ -267,6 +270,7 @@ def _render_bookmark_action(
             {
                 "episode": episode,
                 "is_bookmarked": is_bookmarked,
+                "bookmark_url": episode.get_bookmark_url(is_bookmarked),
             },
             use_blocks=["bookmark_button", "messages"],
         )
@@ -274,9 +278,13 @@ def _render_bookmark_action(
 
 
 def _render_audio_player_action(
-    request: HttpRequest, audio_log: AudioLog, episode: Episode, is_playing: bool
-):
+    request: HttpRequest,
+    audio_log: AudioLog,
+    is_playing: bool,
+    episode: Episode | None = None,
+) -> HttpResponse:
     if request.htmx:
+        episode = episode or audio_log.episode
         return render_template_fragments(
             request,
             "episodes/detail.html",
@@ -285,7 +293,7 @@ def _render_audio_player_action(
                 "episode": episode,
                 "is_playing": is_playing,
                 "start_player": is_playing,
-                "include_audio_player": True,
+                "audio_player_url": episode.get_audio_player_url(is_playing),
             },
             use_blocks=[
                 "audio_player_button",
@@ -294,5 +302,4 @@ def _render_audio_player_action(
                 "messages",
             ],
         )
-
     return redirect(episode)

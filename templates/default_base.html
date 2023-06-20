@@ -34,9 +34,7 @@
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     {% include "_navbar.html" %}
-                    {% block messages %}
-                        {% include "_messages.html" %}
-                    {% endblock messages %}
+                    {% include "_messages.html" %}
                     <div class="relative flex min-h-screen p-2 py-6 mx-auto xl:pt-12 xl:w-11/12">
                         {% if user.is_authenticated %}
                             <aside class="hidden w-full xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-28">
@@ -51,9 +49,7 @@
                     </div>
                     {% cookie_notice %}
                     {% if user.is_authenticated %}
-                        {% block audio_player %}
-                            {% audio_player %}
-                        {% endblock audio_player %}
+                        {% audio_player %}
                     {% endif %}
                 </div>
             </div>

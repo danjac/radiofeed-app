@@ -124,8 +124,8 @@
     </article>
 {% endwith %}
 {% endblock podcast_content %}
-{% block messages %}
-    {% if "messages" in template_blocks %}
+{% if "messages" in template_blocks %}
+    {% block messages %}
         {% include "_messages.html" with hx_oob=True %}
-    {% endif %}
-{% endblock messages %}
+    {% endblock messages %}
+{% endif %}
