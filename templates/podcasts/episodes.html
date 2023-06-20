@@ -22,7 +22,9 @@
             </ul>
         </nav>
     {% endif %}
-    {% cache 600 podcast-episodes request.get_full_path %}
-    {% include pagination_template %}
-{% endcache %}
+    {% block pagination %}
+        {% cache 600 podcast-episodes request.get_full_path %}
+        {% include "episodes/_episodes.html" %}
+    {% endcache %}
+{% endblock pagination %}
 {% endblock podcast_content %}
