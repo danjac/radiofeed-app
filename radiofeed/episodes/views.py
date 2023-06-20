@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth
-from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.episodes.models import Episode
 from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 
@@ -106,11 +106,21 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return _render_audio_player_action(
+    return render_template_fragments(
         request,
-        audio_log,
-        is_playing=True,
-        episode=episode,
+        "episodes/detail.html",
+        {
+            "audio_log": audio_log,
+            "episode": episode,
+            "is_playing": True,
+            "start_player": True,
+        },
+        use_blocks=[
+            "audio_log",
+            "audio_player_button",
+            "audio_player",
+            "messages",
+        ],
     )
 
 
@@ -123,11 +133,23 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_audio_player_action(
+
+        return render_template_fragments(
             request,
-            audio_log,
-            is_playing=False,
+            "episodes/detail.html",
+            {
+                "audio_log": audio_log,
+                "episode": audio_log.episode,
+                "is_playing": False,
+            },
+            use_blocks=[
+                "audio_log",
+                "audio_player_button",
+                "audio_player",
+                "messages",
+            ],
         )
+
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
@@ -264,28 +286,4 @@ def _render_bookmark_action(
             "is_bookmarked": is_bookmarked,
         },
         use_blocks=["bookmark_button", "messages"],
-    )
-
-
-def _render_audio_player_action(
-    request: HttpRequest,
-    audio_log: AudioLog,
-    is_playing: bool,
-    episode: Episode | None = None,
-) -> HttpResponse:
-    return render_template_fragments(
-        request,
-        "episodes/detail.html",
-        {
-            "audio_log": audio_log,
-            "episode": episode or audio_log.episode,
-            "is_playing": is_playing,
-            "start_player": is_playing,
-        },
-        use_blocks=[
-            "audio_log",
-            "audio_player_button",
-            "audio_player",
-            "messages",
-        ],
     )
