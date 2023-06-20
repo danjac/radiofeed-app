@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.pagination import render_paginated_response
-from radiofeed.template_fragments import render_template_fragments
+from radiofeed.template import render_template_fragments
 
 
 @require_safe
@@ -204,6 +204,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
             "episodes/detail.html",
             {
                 "episode": audio_log.episode,
+                "hx_oob": True,
             },
             use_blocks=["audio_log", "messages"],
         )
@@ -284,10 +285,14 @@ def _render_audio_player_action(
                 "episode": episode,
                 "is_playing": is_playing,
                 "start_player": is_playing,
-                "hx_oob": ["audio_log", "audio_player", "messages"],
+                "include_audio_player": True,
             },
-            use_blocks=["audio_player_button", "audio_log", "messages"],
-            use_templates=["episodes/_audio_player.html"],
+            use_blocks=[
+                "audio_player_button",
+                "audio_player",
+                "audio_log",
+                "messages",
+            ],
         )
 
     return redirect(episode)

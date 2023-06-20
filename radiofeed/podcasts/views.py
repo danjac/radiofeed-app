@@ -15,7 +15,7 @@ from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.template_fragments import render_template_fragments
+from radiofeed.template import render_template_fragments
 
 
 @require_safe
@@ -348,6 +348,7 @@ def _render_subscribe_toggle(
             {
                 "podcast": podcast,
                 "is_subscribed": is_subscribed,
+                "hx_oob": True,
             },
             use_blocks=["subscribe_button", "messages"],
         )

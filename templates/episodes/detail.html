@@ -3,9 +3,6 @@
 {% block title %}
     | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
-{% block messages %}
-    {{ block.super }}
-{% endblock messages %}
 {% block content %}
     {% with podcast=episode.podcast next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
         <header class="pb-3 mb-6 border-b space-y-6">
@@ -196,3 +193,11 @@
         </article>
     {% endwith %}
 {% endblock content %}
+{% block audio_player %}
+    {% if include_audio_player %}
+        {% include "episodes/_audio_player.html" with hx_oob=True %}
+    {% endif %}
+{% endblock audio_player %}
+{% block messages %}
+    {% include "_messages.html" with hx_oob=True %}
+{% endblock messages %}
