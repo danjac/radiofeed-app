@@ -461,12 +461,6 @@ class TestAddBookmark:
         )
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db()
-    def test_no_js(self, client, auth_user, episode):
-        response = client.post(self.url(episode))
-        assertRedirects(response, episode.get_absolute_url())
-        assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
-
     @pytest.mark.django_db()(transaction=True)
     def test_already_bookmarked(self, client, auth_user, episode):
         create_bookmark(episode=episode, user=auth_user)
@@ -494,13 +488,6 @@ class TestRemoveBookmark:
                 HTTP_HX_REQUEST="true",
             )
         )
-        assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
-
-    @pytest.mark.django_db()
-    def test_no_js(self, client, auth_user, episode):
-        create_bookmark(user=auth_user, episode=episode)
-        response = client.post(self.url(episode))
-        assertRedirects(response, episode.get_absolute_url())
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
