@@ -348,6 +348,7 @@ def _render_subscribe_toggle(
             {
                 "podcast": podcast,
                 "is_subscribed": is_subscribed,
+                "subscribe_url": podcast.get_subscribe_url(is_subscribed),
             },
             use_blocks=["subscribe_button", "messages"],
         )

@@ -151,6 +151,22 @@ class Episode(models.Model):
         """Returns cover image URL or podcast cover image if former not provided."""
         return self.cover_url or self.podcast.cover_url
 
+    def get_audio_player_url(self, is_playing: bool) -> str:
+        """Returns URL for audio player action."""
+        return (
+            reverse("episodes:close_player")
+            if is_playing
+            else reverse("episodes:start_player", args=[self.pk])
+        )
+
+    def get_bookmark_url(self, is_bookmarked: bool) -> str:
+        """Returns URL for bookmark action."""
+        return (
+            reverse("episodes:remove_bookmark", args=[self.pk])
+            if is_bookmarked
+            else reverse("episodes:add_bookmark", args=[self.pk])
+        )
+
     @cached_property
     def cleaned_title(self) -> str:
         """Strips HTML from title field."""
@@ -231,18 +247,6 @@ class Episode(models.Model):
                 for size in [96, 128, 192, 256, 384, 512]
             ],
         }
-
-    def get_player_target(self) -> str:
-        """Play button HTMX target."""
-        return f"player-actions-{self.pk}"
-
-    def get_bookmark_target(self) -> str:
-        """Add/remove bookmark button HTMX target."""
-        return f"bookmark-actions-{self.pk}"
-
-    def get_history_target(self) -> str:
-        """Listening history episode detail HTMX target."""
-        return f"episode-timestamps-{self.pk}"
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
