@@ -41,7 +41,6 @@ psycopg = {extras = ["binary"], version = "^3.1.8"}
 django-environ = "^0.10.0"
 django-fast-update = "^0.2.2"
 django-anymail = "^10.0"
-djlint = "^1.27.1"
 django-render-block = "^0.9.2"
 
 [tool.poetry.group.dev.dependencies]
@@ -67,6 +66,7 @@ ipython = "^8.10.0"
 django-debug-toolbar = "^4.0.0"
 pytest-env = "^0.8.1"
 ruff = "^0.0.272"
+djlint = "^1.31.0"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings"
