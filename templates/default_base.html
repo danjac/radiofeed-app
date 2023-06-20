@@ -51,7 +51,9 @@
                     </div>
                     {% cookie_notice %}
                     {% if user.is_authenticated %}
-                        {% audio_player %}
+                        {% block audio_player %}
+                            {% audio_player %}
+                        {% endblock audio_player %}
                     {% endif %}
                 </div>
             </div>
