@@ -3,7 +3,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from radiofeed.template import render_template_fragments
+from radiofeed.fragments import render_template_fragments
 
 
 def render_paginated_response(

@@ -11,11 +11,11 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
+from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.template import render_template_fragments
 
 
 @require_safe
@@ -266,7 +266,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         request.user.subscriptions.create(podcast=podcast)
 
     messages.success(request, "You are now subscribed to this podcast")
-    return _render_subscribe_toggle(request, podcast, True)
+    return _render_subscribe_action(request, podcast, True)
 
 
 @require_POST
@@ -276,7 +276,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "You are no longer subscribed to this podcast")
-    return _render_subscribe_toggle(request, podcast, False)
+    return _render_subscribe_action(request, podcast, False)
 
 
 @require_safe
@@ -338,7 +338,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return redirect(reverse("podcasts:private_feeds"))
 
 
-def _render_subscribe_toggle(
+def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
     return render_template_fragments(

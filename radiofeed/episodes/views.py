@@ -12,8 +12,8 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth
 from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
-from radiofeed.template import render_template_fragments
 
 
 @require_safe
