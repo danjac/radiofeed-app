@@ -162,8 +162,7 @@
                                 {% url "episodes:remove_audio_log" episode.id as remove_audio_log_url %}
                                 <form class="inline-flex items-center"
                                       action="{{ remove_audio_log_url }}"
-                                      method="post"
-                                      x-data="{isLoading: false}">
+                                      method="post">
                                     {% csrf_token %}
                                     <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
                                             title="Remove episode from your History"
@@ -173,6 +172,7 @@
                                             hx-push-url="false"
                                             hx-swap="outerHTML"
                                             hx-confirm="Are you sure you want to remove this episode from your History?"
+                                            x-data="{isLoading: false}"
                                             @click="isLoading=true">
                                         {% heroicon_mini "trash" class="mr-2" x_show="!isLoading" %}
                                         {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
