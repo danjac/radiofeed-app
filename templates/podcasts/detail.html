@@ -120,7 +120,7 @@
     </article>
 {% endwith %}
 {% endblock podcast_content %}
-{% if messages and "messages" in template_blocks %}
+{% if "messages" in template_blocks %}
     {% block messages %}
         {% include "_messages.html" with hx_oob=True %}
     {% endblock messages %}
