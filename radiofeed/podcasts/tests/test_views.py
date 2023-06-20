@@ -40,7 +40,9 @@ class TestPodcasts:
     def test_htmx(self, client, auth_user):
         create_batch(create_podcast, 3, promoted=True)
         response = client.get(
-            podcasts_url, HTTP_HX_REQUEST="true", HTTP_HX_TARGET="pagination"
+            podcasts_url,
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="pagination",
         )
         assert_ok(response)
 
@@ -408,7 +410,6 @@ class TestSubscribe:
         assert_ok(
             client.post(
                 self.url(podcast),
-                HTTP_HX_TARGET="subscribe-button",
                 HTTP_HX_REQUEST="true",
             )
         )
@@ -423,7 +424,6 @@ class TestSubscribe:
         assert_not_found(
             client.post(
                 self.url(podcast),
-                HTTP_HX_TARGET="subscribe-button",
                 HTTP_HX_REQUEST="true",
             )
         )
@@ -441,7 +441,6 @@ class TestSubscribe:
         create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.post(
             self.url(podcast),
-            HTTP_HX_TARGET="subscribe-button",
             HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
@@ -459,7 +458,6 @@ class TestUnsubscribe:
         create_subscription(subscriber=auth_user, podcast=podcast)
         response = client.post(
             self.url(podcast),
-            HTTP_HX_TARGET="subscribe-button",
             HTTP_HX_REQUEST="true",
         )
         assert_ok(response)
@@ -475,7 +473,6 @@ class TestUnsubscribe:
         assert_not_found(
             client.post(
                 self.url(podcast),
-                HTTP_HX_TARGET="subscribe-button",
                 HTTP_HX_REQUEST="true",
             )
         )
