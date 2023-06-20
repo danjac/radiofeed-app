@@ -34,5 +34,7 @@
             </div>
         {% endif %}
     </header>
-    {% include pagination_template %}
+    {% block pagination %}
+        {% include "podcasts/_podcasts.html" %}
+    {% endblock pagination %}
 {% endblock content %}

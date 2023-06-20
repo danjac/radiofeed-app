@@ -5,9 +5,9 @@
         {% block title %}{% endblock title %}
         {# djlint:on #}
     </title>
-    {% if messages %}
+    {% block messages %}
         {% include "_messages.html" with hx_oob=True %}
-    {% endif %}
+    {% endblock messages %}
     {# djlint:off #}
     {% block content %}{% endblock content %}
     {# djlint:on #}

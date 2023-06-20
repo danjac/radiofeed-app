@@ -11,8 +11,9 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth
-from radiofeed.episodes.models import Episode
+from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.pagination import render_paginated_response
+from radiofeed.template_fragments import render_template_fragments
 
 
 @require_safe
@@ -37,7 +38,6 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/index.html",
-        "episodes/_episodes.html",
         {
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
@@ -60,7 +60,6 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
                 .order_by("-rank", "-pub_date")
             ),
             "episodes/search.html",
-            "episodes/_episodes.html",
         )
 
     return redirect("episodes:index")
@@ -107,15 +106,11 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render(
+    return _render_audio_player_action(
         request,
-        "episodes/_player_toggle.html",
-        {
-            "episode": episode,
-            "audio_log": audio_log,
-            "is_playing": True,
-            "start_player": True,
-        },
+        audio_log,
+        episode=episode,
+        is_playing=True,
     )
 
 
@@ -128,16 +123,12 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return render(
+        return _render_audio_player_action(
             request,
-            "episodes/_player_toggle.html",
-            {
-                "episode": audio_log.episode,
-                "audio_log": audio_log,
-                "is_playing": False,
-            },
+            audio_log,
+            episode=audio_log.episode,
+            is_playing=False,
         )
-
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
@@ -187,7 +178,6 @@ def history(request: HttpRequest) -> HttpResponse:
         request,
         audio_logs,
         "episodes/history.html",
-        "episodes/_audio_logs.html",
     )
 
 
@@ -209,14 +199,14 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     messages.info(request, "Removed from History")
 
     if request.htmx:
-        return render(
+        return render_template_fragments(
             request,
-            "episodes/_audio_log.html",
+            "episodes/detail.html",
             {
                 "episode": audio_log.episode,
             },
+            use_blocks=["audio_log", "messages"],
         )
-
     return redirect(audio_log.episode)
 
 
@@ -239,7 +229,6 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/_bookmarks.html",
     )
 
 
@@ -253,7 +242,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
         request.user.bookmarks.create(episode=episode)
 
     messages.success(request, "Added to Bookmarks")
-    return _render_bookmark_toggle(request, episode, True)
+    return _render_bookmark_action(request, episode, True)
 
 
 @require_POST
@@ -264,19 +253,41 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     request.user.bookmarks.filter(episode=episode).delete()
 
     messages.info(request, "Removed from Bookmarks")
-    return _render_bookmark_toggle(request, episode, False)
+    return _render_bookmark_action(request, episode, False)
 
 
-def _render_bookmark_toggle(
+def _render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
     if request.htmx:
-        return render(
+        return render_template_fragments(
             request,
-            "episodes/_bookmark_toggle.html",
+            "episodes/detail.html",
             {
                 "episode": episode,
                 "is_bookmarked": is_bookmarked,
             },
+            use_blocks=["bookmark_button", "messages"],
         )
+    return redirect(episode)
+
+
+def _render_audio_player_action(
+    request: HttpRequest, audio_log: AudioLog, episode: Episode, is_playing: bool
+):
+    if request.htmx:
+        return render_template_fragments(
+            request,
+            "episodes/detail.html",
+            {
+                "audio_log": audio_log,
+                "episode": episode,
+                "is_playing": is_playing,
+                "start_player": is_playing,
+                "hx_oob": ["audio_log", "audio_player", "messages"],
+            },
+            use_blocks=["audio_player_button", "audio_log", "messages"],
+            use_templates=["episodes/_audio_player.html"],
+        )
+
     return redirect(episode)
