@@ -150,7 +150,7 @@
             </div>
             {% block audio_log %}
                 <div id="audio-log"
-                     {% if "audio_log" in template_blocks and request.htmx.target != "audio-log" %}hx-swap-oob="true"{% endif %}>
+                     {% if "audio_log" in rendered_template_blocks and request.htmx.target != "audio-log" %}hx-swap-oob="true"{% endif %}>
                     {% if audio_log %}
                         <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
                             <div class="flex items-center space-x-1">
@@ -184,12 +184,12 @@
         </article>
     {% endwith %}
 {% endblock content %}
-{% if "audio_player" in template_blocks %}
+{% if "audio_player" in rendered_template_blocks %}
     {% block audio_player %}
         {% include "episodes/_audio_player.html" with hx_oob=True %}
     {% endblock audio_player %}
 {% endif %}
-{% if "messages" in template_blocks %}
+{% if "messages" in rendered_template_blocks %}
     {% block messages %}
         {% include "_messages.html" with hx_oob=True %}
     {% endblock messages %}

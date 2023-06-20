@@ -14,14 +14,14 @@ def render_template_fragments(
 
     Individual template blocks in the template are rendered instead of the whole template.
 
-    A list of the blocks rendered is passed into the template context as `template_blocks`.
+    A list of the blocks rendered is passed into the template context as `rendered_template_blocks`.
     """
 
     use_blocks = use_blocks or []
 
     context = {
         **(context or {}),
-        "template_blocks": use_blocks,
+        "rendered_template_blocks": use_blocks,
     }
 
     return StreamingHttpResponse(
