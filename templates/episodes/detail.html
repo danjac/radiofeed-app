@@ -152,7 +152,8 @@
             </div>
             {% block audio_log %}
                 {% with target=episode.get_history_target %}
-                    <div id="{{ target }}"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
+                    <div id="{{ target }}"
+                         {% if "audio_log" in template_blocks %}hx-swap-oob="true"{% endif %}>
                         {% if audio_log %}
                             <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
                                 <div class="flex items-center space-x-1">
@@ -194,10 +195,12 @@
     {% endwith %}
 {% endblock content %}
 {% block audio_player %}
-    {% if include_audio_player %}
+    {% if "audio_player" in template_blocks %}
         {% include "episodes/_audio_player.html" with hx_oob=True %}
     {% endif %}
 {% endblock audio_player %}
 {% block messages %}
-    {% include "_messages.html" with hx_oob=True %}
+    {% if "messages" in template_blocks %}
+        {% include "_messages.html" with hx_oob=True %}
+    {% endif %}
 {% endblock messages %}

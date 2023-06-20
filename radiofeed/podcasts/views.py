@@ -348,7 +348,6 @@ def _render_subscribe_toggle(
             {
                 "podcast": podcast,
                 "is_subscribed": is_subscribed,
-                "hx_oob": True,
             },
             use_blocks=["subscribe_button", "messages"],
         )
