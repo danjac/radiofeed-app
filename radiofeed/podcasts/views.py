@@ -309,12 +309,9 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
-    form = PrivateFeedForm(request.POST or None)
+    form = PrivateFeedForm(request.user, request.POST or None)
     if request.method == "POST" and form.is_valid():
         podcast = form.save()
-
-        with contextlib.suppress(IntegrityError):
-            request.user.subscriptions.create(podcast=podcast)
 
         message = (
             "Podcast has been added to your private feeds."
