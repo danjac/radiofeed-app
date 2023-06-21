@@ -1,5 +1,6 @@
 import functools
 import http
+import json
 
 from django.http import HttpResponse
 
@@ -10,9 +11,16 @@ def assert_hx_redirect(response: HttpResponse, url: str) -> None:
     assert response["HX-Redirect"] == url, response.headers
 
 
+def assert_hx_location(response: HttpResponse, data: dict) -> None:
+    """Asserts values in HX-Location"""
+    assert "HX-Location" in response, response.headers
+    location = json.loads(response.headers["HX-Location"])
+    assert data == location, location
+
+
 def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
     """Assert response status matches."""
-    assert response.status_code == status, response.content
+    assert response.status_code == status, response.status_code
 
 
 (

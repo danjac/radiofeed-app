@@ -8,7 +8,6 @@ def render_template_fragments(
     context: dict | None = None,
     *,
     use_blocks: list[str] | None = None,
-    status: int | None = None,
 ) -> HttpResponse:
     """Renders HTMX fragments.
 
@@ -33,5 +32,4 @@ def render_template_fragments(
             )
             for block in use_blocks
         ],
-        status=status,
     )

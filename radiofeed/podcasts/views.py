@@ -8,6 +8,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
+from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.episodes.models import Episode
@@ -323,9 +324,24 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
         messages.success(request, message)
 
-        return redirect("podcasts:private_feeds")
+        return HttpResponseLocation(
+            reverse("podcasts:private_feeds"),
+            swap="innerHTML",
+            target="#content",
+        )
 
-    return render(request, "podcasts/private_feed_form.html", {"form": form})
+    template_name: str = "podcasts/private_feed_form.html"
+    context: dict = {"form": form}
+
+    if request.htmx.target == "private-feed-form":
+        return render_template_fragments(
+            request,
+            template_name,
+            context,
+            use_blocks=["form"],
+        )
+
+    return render(request, template_name, context)
 
 
 @require_POST

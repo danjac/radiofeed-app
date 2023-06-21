@@ -3,7 +3,11 @@ import requests
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertRedirects
 
-from radiofeed.asserts import assert_not_found, assert_ok
+from radiofeed.asserts import (
+    assert_hx_location,
+    assert_not_found,
+    assert_ok,
+)
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
 from radiofeed.podcasts import itunes
@@ -535,8 +539,13 @@ class TestAddPrivateFeed:
     @pytest.mark.django_db()
     def test_post_ok(self, client, faker, auth_user):
         rss = faker.url()
-        assertRedirects(
-            client.post(self.url, {"rss": rss}), reverse("podcasts:private_feeds")
+        assert_hx_location(
+            client.post(self.url, {"rss": rss}),
+            {
+                "path": reverse("podcasts:private_feeds"),
+                "target": "#content",
+                "swap": "innerHTML",
+            },
         )
 
         podcast = Subscription.objects.get(
@@ -549,9 +558,13 @@ class TestAddPrivateFeed:
     def test_existing_private(self, client, faker, auth_user):
         podcast = create_podcast(private=True)
 
-        assertRedirects(
+        assert_hx_location(
             client.post(self.url, {"rss": podcast.rss}),
-            reverse("podcasts:private_feeds"),
+            {
+                "path": reverse("podcasts:private_feeds"),
+                "target": "#content",
+                "swap": "innerHTML",
+            },
         )
 
         assert Subscription.objects.filter(
@@ -562,7 +575,14 @@ class TestAddPrivateFeed:
     def test_existing_public(self, client, faker, auth_user):
         podcast = create_podcast(private=False)
 
-        assert_ok(client.post(self.url, {"rss": podcast.rss}))
+        assert_ok(
+            client.post(
+                self.url,
+                {"rss": podcast.rss},
+                HTTP_HX_REQUEST="true",
+                HTTP_HX_TARGET="private-feed-form",
+            ),
+        )
 
         assert not Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
