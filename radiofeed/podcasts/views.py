@@ -1,8 +1,7 @@
-import contextlib
+import http
 
 import requests
 from django.contrib import messages
-from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -263,8 +262,10 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
 
-    with contextlib.suppress(IntegrityError):
-        request.user.subscriptions.create(podcast=podcast)
+    if request.user.subscriptions.filter(podcast=podcast).exists():
+        return HttpResponse(status=http.HTTPStatus.CONFLICT)
+
+    request.user.subscriptions.create(podcast=podcast)
 
     messages.success(request, "You are now subscribed to this podcast")
     return _render_subscribe_action(request, podcast, True)

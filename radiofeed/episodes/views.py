@@ -1,9 +1,7 @@
-import contextlib
 import http
 from datetime import timedelta
 
 from django.contrib import messages
-from django.db import IntegrityError
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -228,8 +226,10 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
 
-    with contextlib.suppress(IntegrityError):
-        request.user.bookmarks.create(episode=episode)
+    if request.user.bookmarks.exists():
+        return HttpResponse(status=http.HTTPStatus.CONFLICT)
+
+    request.user.bookmarks.create(episode=episode)
 
     messages.success(request, "Added to Bookmarks")
     return _render_bookmark_action(request, episode, True)
