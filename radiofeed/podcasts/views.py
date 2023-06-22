@@ -328,11 +328,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
         messages.success(request, message)
 
-        return HttpResponseLocation(
-            reverse("podcasts:private_feeds"),
-            swap="innerHTML",
-            target="#content",
-        )
+        return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
     template_name: str = "podcasts/private_feed_form.html"
     context: dict = {"form": form}

@@ -532,6 +532,7 @@ class TestRemovePrivateFeed:
 
 class TestAddPrivateFeed:
     url = reverse_lazy("podcasts:add_private_feed")
+    redirect_url = reverse_lazy("podcasts:private_feeds")
 
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
@@ -543,9 +544,7 @@ class TestAddPrivateFeed:
         assert_hx_location(
             client.post(self.url, {"rss": rss}),
             {
-                "path": reverse("podcasts:private_feeds"),
-                "target": "#content",
-                "swap": "innerHTML",
+                "path": self.redirect_url,
             },
         )
 
@@ -562,9 +561,7 @@ class TestAddPrivateFeed:
         assert_hx_location(
             client.post(self.url, {"rss": podcast.rss}),
             {
-                "path": reverse("podcasts:private_feeds"),
-                "target": "#content",
-                "swap": "innerHTML",
+                "path": self.redirect_url,
             },
         )
 

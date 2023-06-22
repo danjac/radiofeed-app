@@ -27,8 +27,6 @@ class TestUserPreferences:
                 {
                     "send_email_notifications": False,
                 },
-                HTTP_HX_TARGET="preferences-form",
-                HTTP_HX_REQUEST="true",
             )
         )
 
