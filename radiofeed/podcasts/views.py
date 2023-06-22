@@ -310,23 +310,28 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
-    form = PrivateFeedForm(request.user, request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        podcast = form.save()
 
-        message = (
-            "Podcast has been added to your private feeds."
-            if podcast.pub_date
-            else "Podcast should appear in your private feeds in a few minutes."
-        )
+    if request.method == "POST":
+        form = PrivateFeedForm(request.user, request.POST)
 
-        messages.success(request, message)
+        if form.is_valid():
+            podcast = form.save()
 
-        return HttpResponseLocation(
-            reverse("podcasts:private_feeds"),
-            swap="innerHTML",
-            target="#content",
-        )
+            message = (
+                "Podcast has been added to your private feeds."
+                if podcast.pub_date
+                else "Podcast should appear in your private feeds in a few minutes."
+            )
+
+            messages.success(request, message)
+
+            return HttpResponseLocation(
+                reverse("podcasts:private_feeds"),
+                swap="innerHTML",
+                target="#content",
+            )
+    else:
+        form = PrivateFeedForm(request.user)
 
     template_name: str = "podcasts/private_feed_form.html"
     context: dict = {"form": form}
