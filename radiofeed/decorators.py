@@ -8,7 +8,7 @@ from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
-require_form_methods = require_http_methods(["GET", "POST"])
+require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
 
 def require_auth(view: Callable) -> Callable:
