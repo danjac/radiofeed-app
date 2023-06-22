@@ -1,7 +1,6 @@
 from django import forms
 
 from radiofeed.podcasts.models import Podcast, Subscription
-from radiofeed.users.models import User
 
 
 class PrivateFeedForm(forms.Form):
@@ -9,11 +8,11 @@ class PrivateFeedForm(forms.Form):
 
     rss = forms.URLField(max_length=300, label="Feed RSS")
 
-    def __init__(self, user: User, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        self.user = user
 
-    def clean_rss(self):
+    def clean_rss(self) -> str:
         """Validates RSS."""
         value = self.cleaned_data["rss"]
 
