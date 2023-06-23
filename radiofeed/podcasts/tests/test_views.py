@@ -461,7 +461,7 @@ class TestUnsubscribe:
     @pytest.mark.django_db()
     def test_unsubscribe(self, client, auth_user, podcast):
         create_subscription(subscriber=auth_user, podcast=podcast)
-        response = client.post(
+        response = client.delete(
             self.url(podcast),
             HTTP_HX_REQUEST="true",
         )
@@ -476,7 +476,7 @@ class TestUnsubscribe:
             subscriber=auth_user, podcast=create_podcast(private=True)
         ).podcast
         assert_not_found(
-            client.post(
+            client.delete(
                 self.url(podcast),
                 HTTP_HX_REQUEST="true",
             )
@@ -519,7 +519,7 @@ class TestRemovePrivateFeed:
         podcast = create_podcast(private=True)
         create_subscription(podcast=podcast, subscriber=auth_user)
 
-        response = client.post(
+        response = client.delete(
             reverse("podcasts:remove_private_feed", args=[podcast.pk]),
             {"rss": podcast.rss},
         )

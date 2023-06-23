@@ -475,7 +475,7 @@ class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode):
         create_bookmark(user=auth_user, episode=episode)
         assert_ok(
-            client.post(
+            client.delete(
                 self.url(episode),
                 HTTP_HX_REQUEST="true",
             )
@@ -534,7 +534,7 @@ class TestRemoveAudioLog:
         create_audio_log(user=auth_user)
 
         assert_ok(
-            client.post(
+            client.delete(
                 self.url(episode),
                 HTTP_HX_TARGET="audio-log",
                 HTTP_HX_REQUEST="true",
@@ -549,7 +549,7 @@ class TestRemoveAudioLog:
         """Do not remove log if episode is currently playing"""
 
         assert_not_found(
-            client.post(
+            client.delete(
                 self.url(player_episode),
                 HTTP_HX_TARGET="audio-log",
                 HTTP_HX_REQUEST="true",
@@ -562,7 +562,7 @@ class TestRemoveAudioLog:
         log = create_audio_log(user=auth_user, episode=episode)
 
         assert_ok(
-            client.post(
+            client.delete(
                 self.url(log.episode),
                 HTTP_HX_TARGET="audio-log",
                 HTTP_HX_REQUEST="true",

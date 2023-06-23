@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
-from radiofeed.decorators import require_auth, require_form_methods
+from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
@@ -271,7 +271,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return _render_subscribe_action(request, podcast, True)
 
 
-@require_POST
+@require_DELETE
 @require_auth
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
@@ -343,7 +343,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
     return render(request, template_name, context)
 
 
-@require_POST
+@require_DELETE
 @require_auth
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""

@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import require_auth
+from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
@@ -171,7 +171,7 @@ def history(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_POST
+@require_DELETE
 @require_auth
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
@@ -235,7 +235,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_action(request, episode, True)
 
 
-@require_POST
+@require_DELETE
 @require_auth
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Remove episode from bookmarks."""

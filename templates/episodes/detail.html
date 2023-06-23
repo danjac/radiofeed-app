@@ -95,7 +95,7 @@
                                 <button title="Remove Bookmark"
                                         class="inline-flex items-center btn btn-default btn-outline"
                                         @click="isLoading=true"
-                                        hx-post="{% url 'episodes:remove_bookmark' episode.pk %}"
+                                        hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "bookmark-slash" class="mr-2" x_show="!isLoading" %}
                                     {% heroicon_mini "arrow-path" class="mr-2" x_show="isLoading" x_cloak="true" %}
@@ -164,7 +164,7 @@
                                 <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
                                         title="Remove episode from your History"
                                         hx-target="#audio-log"
-                                        hx-post="{% url "episodes:remove_audio_log" episode.pk %}"
+                                        hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                                         hx-indicator="this"
                                         hx-push-url="false"
                                         hx-swap="outerHTML"

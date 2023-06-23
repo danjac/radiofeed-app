@@ -10,6 +10,8 @@ from django_htmx.http import HttpResponseClientRedirect
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
+require_DELETE = require_http_methods(["DELETE"])  # noqa
+
 
 def require_auth(view: Callable) -> Callable:
     """Login required decorator also handling HTMX and AJAX views."""
