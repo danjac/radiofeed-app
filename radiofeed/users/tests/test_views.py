@@ -4,7 +4,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.asserts import assert_ok
+from radiofeed.asserts import assert_hx_location, assert_ok
 from radiofeed.episodes.factories import create_audio_log, create_bookmark
 from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -78,13 +78,14 @@ class TestImportPodcastFeeds:
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
-        assert_ok(
+        assert_hx_location(
             client.post(
                 self.url,
                 data={"opml": upload_file},
                 HTTP_HX_TARGET="import-feeds-form",
                 HTTP_HX_REQUEST="true",
             ),
+            {"path": reverse("users:manage_podcast_feeds")},
         )
 
         assert Subscription.objects.filter(
