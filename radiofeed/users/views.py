@@ -51,15 +51,18 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
 
+    template_name: str = "account/podcast_feeds.html"
+    context: dict = {"form": form}
+
     if request.htmx.target == "import-feeds-form":
         return render_template_fragments(
             request,
-            "account/podcast_feeds.html",
-            {"form": form},
+            template_name,
+            context,
             use_blocks=["import_feeds_form"],
         )
 
-    return render(request, "account/podcast_feeds.html", {"form": form})
+    return render(request, template_name, context)
 
 
 @require_POST
