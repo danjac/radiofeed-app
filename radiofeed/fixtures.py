@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Generator
 
 import pytest
 from django.conf import Settings
@@ -17,7 +17,7 @@ def _settings_overrides(settings: Settings) -> None:
 
 
 @pytest.fixture()
-def _locmem_cache(settings: Settings) -> Iterator:
+def _locmem_cache(settings: Settings) -> Generator:
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
     }
