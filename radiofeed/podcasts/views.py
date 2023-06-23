@@ -65,8 +65,8 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_auth
 @require_safe
+@require_auth
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -87,8 +87,8 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     return redirect("podcasts:index")
 
 
-@require_auth
 @require_safe
+@require_auth
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if request.search:
