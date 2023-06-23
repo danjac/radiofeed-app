@@ -360,5 +360,5 @@ def _render_subscribe_action(
             "podcast": podcast,
             "is_subscribed": is_subscribed,
         },
-        use_blocks=["subscribe_button", "messages"],
+        use_blocks=["subscribe_button"],
     )

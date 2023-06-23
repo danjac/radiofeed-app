@@ -116,8 +116,3 @@
     {% markdown podcast.description %}
 </article>
 {% endblock podcast_content %}
-{% if "messages" in rendered_template_blocks %}
-    {% block messages %}
-        {% include "_messages.html" with hx_oob=True %}
-    {% endblock messages %}
-{% endif %}

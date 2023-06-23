@@ -189,8 +189,3 @@
         {% include "episodes/_audio_player.html" with hx_oob=True %}
     {% endblock audio_player %}
 {% endif %}
-{% if "messages" in rendered_template_blocks %}
-    {% block messages %}
-        {% include "_messages.html" with hx_oob=True %}
-    {% endblock messages %}
-{% endif %}

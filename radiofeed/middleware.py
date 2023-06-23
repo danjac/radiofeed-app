@@ -2,19 +2,25 @@ import enum
 from collections.abc import Callable
 from urllib.parse import urlencode
 
+from django.contrib.messages import get_messages
 from django.http import HttpRequest, HttpResponse
+from django.template.loader import render_to_string
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 
 
-class CacheControlMiddleware:
+class BaseMiddleware:
+    """Base class for middleware"""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
+        self.get_response = get_response
+
+
+class CacheControlMiddleware(BaseMiddleware):
     """Workaround for https://github.com/bigskysoftware/htmx/issues/497.
 
     Place after HtmxMiddleware.
     """
-
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -25,11 +31,40 @@ class CacheControlMiddleware:
         return response
 
 
-class PaginationMiddleware:
-    """Adds `Pagination` instance as `request.pagination`."""
+class HtmxMessagesMiddleware(BaseMiddleware):
+    """Adds messages to HTMX response"""
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
-        self.get_response = get_response
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation"""
+        response = self.get_response(request)
+
+        if not request.htmx:
+            return response
+
+        for header in (
+            "HX-Location",
+            "HX-Redirect",
+            "HX-Refresh",
+        ):
+            if header in response.headers:
+                return response
+
+        if not (get_messages(request)):
+            return response
+
+        response.write(
+            render_to_string(
+                template_name="_messages.html",
+                context={"hx_oob": True},
+                request=request,
+            )
+        )
+
+        return response
+
+
+class PaginationMiddleware(BaseMiddleware):
+    """Adds `Pagination` instance as `request.pagination`."""
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -37,11 +72,8 @@ class PaginationMiddleware:
         return self.get_response(request)
 
 
-class SearchMiddleware:
+class SearchMiddleware(BaseMiddleware):
     """Adds `Search` instance as `request.search`."""
-
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -49,11 +81,8 @@ class SearchMiddleware:
         return self.get_response(request)
 
 
-class OrderingMiddleware:
+class OrderingMiddleware(BaseMiddleware):
     """Adds `Ordering` instance as `request.ordering`."""
-
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""

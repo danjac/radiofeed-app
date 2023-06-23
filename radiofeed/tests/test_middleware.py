@@ -1,9 +1,10 @@
 import pytest
 from django.http import HttpResponse
-from django_htmx.middleware import HtmxMiddleware
+from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
 from radiofeed.middleware import (
     CacheControlMiddleware,
+    HtmxMessagesMiddleware,
     Ordering,
     OrderingMiddleware,
     Pagination,
@@ -83,6 +84,44 @@ class TestSearchMiddleware:
         mw(req)
         assert not req.search
         assert not str(req.search)
+
+
+class TestHtmxMiddleware:
+    @pytest.fixture()
+    def mw(self, get_response):
+        return HtmxMessagesMiddleware(get_response)
+
+    @pytest.fixture()
+    def messages(self):
+        return [
+            {"message": "OK", "tags": "success"},
+        ]
+
+    def test_not_htmx(self, req, mw, messages):
+        req.htmx = HtmxDetails(req)
+        req._messages = messages
+        resp = mw(req)
+        assert b"OK" not in resp.content
+
+    def test_htmx(self, rf, mw, messages):
+        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req.htmx = HtmxDetails(req)
+        req._messages = messages
+        resp = mw(req)
+        assert b"OK" in resp.content
+
+    def test_hx_redirect(self, rf, messages):
+        def _get_response(req):
+            resp = HttpResponse()
+            resp["HX-Redirect"] = "/"
+            return resp
+
+        mw = HtmxMessagesMiddleware(_get_response)
+        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req.htmx = HtmxDetails(req)
+        req._messages = messages
+        resp = mw(req)
+        assert b"OK" not in resp.content
 
 
 class TestPaginationMiddleware:
