@@ -65,8 +65,8 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_safe
 @require_auth
+@require_safe
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
