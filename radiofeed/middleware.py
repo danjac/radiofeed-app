@@ -38,16 +38,17 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         """Middleware implementation"""
         response = self.get_response(request)
 
-        if (
-            request.htmx
-            and not set(response.headers)
-            & {
-                "HX-Location",
-                "HX-Redirect",
-                "HX-Refresh",
-            }
-            and get_messages(request)
-        ):
+        if not request.htmx:
+            return response
+
+        if set(response.headers) & {
+            "HX-Location",
+            "HX-Redirect",
+            "HX-Refresh",
+        }:
+            return response
+
+        if get_messages(request):
             response.write(
                 render_to_string(
                     template_name="_messages.html",
