@@ -49,6 +49,7 @@ class TestPodcasts:
             HTTP_HX_REQUEST="true",
             HTTP_HX_TARGET="pagination",
         )
+
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 3

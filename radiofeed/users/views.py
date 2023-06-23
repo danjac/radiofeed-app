@@ -3,10 +3,14 @@ from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
+from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
+from radiofeed.forms import handle_form
+from radiofeed.fragments import render_template_fragments
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -16,16 +20,10 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
 
-    if request.method == "POST":
-        form = UserPreferencesForm(request.POST, instance=request.user)
-
-        if form.is_valid():
-            form.save()
-
+    form, success = handle_form(UserPreferencesForm, request, instance=request.user)
+    if success:
+        form.save()
         messages.success(request, "Your preferences have been saved")
-
-    else:
-        form = UserPreferencesForm(instance=request.user)
 
     return render(request, "account/preferences.html", {"form": form})
 
@@ -41,8 +39,8 @@ def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    form = OpmlUploadForm(request.POST, request.FILES)
-    if form.is_valid():
+    form, success = handle_form(OpmlUploadForm, request)
+    if success:
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
@@ -50,6 +48,16 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
             )
         else:
             messages.info(request, "No new podcasts found in uploaded file")
+
+        return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
+
+    if request.htmx.target == "import-feeds-form":
+        return render_template_fragments(
+            request,
+            "account/podcast_feeds.html",
+            {"form": form},
+            use_blocks=["import_feeds_form"],
+        )
 
     return render(request, "account/podcast_feeds.html", {"form": form})
 

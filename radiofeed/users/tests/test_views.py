@@ -56,6 +56,7 @@ class TestUserStats:
 class TestManagePodcastFeeds:
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
+        create_subscription(subscriber=auth_user)
         assert_ok(client.get(reverse("users:manage_podcast_feeds")))
 
 
@@ -89,6 +90,19 @@ class TestImportPodcastFeeds:
         assert Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
         ).exists()
+
+    @pytest.mark.django_db()
+    def test_post_invalid_form(self, client, auth_user):
+        assert_ok(
+            client.post(
+                self.url,
+                data={"opml": "test.xml"},
+                HTTP_HX_TARGET="import-feeds-form",
+                HTTP_HX_REQUEST="true",
+            ),
+        )
+
+        assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
     @pytest.mark.django_db()
     def test_post_podcast_not_in_db(self, client, auth_user, upload_file):

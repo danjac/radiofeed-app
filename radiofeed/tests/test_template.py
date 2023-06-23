@@ -4,6 +4,7 @@ import pytest
 from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
+from django_htmx.middleware import HtmxDetails
 
 from radiofeed.middleware import Pagination
 from radiofeed.template import (
@@ -233,3 +234,30 @@ class TestCoverImage:
 
     def test_is_not_cover_url(self):
         assert cover_image("", 100, "test img")["cover_url"] == ""
+
+
+class TestBaseTemplates:
+    @pytest.fixture()
+    def tmpl(self):
+        return get_template("about.html")
+
+    def test_default(self, rf):
+        req = rf.get("/")
+        tmpl = get_template("about.html")
+        assert tmpl.render({}, request=req)
+
+    def test_htmx(self, rf):
+        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req.htmx = HtmxDetails(req)
+        tmpl = get_template("about.html")
+        assert tmpl.render(
+            {
+                "messages": [
+                    {
+                        "message": "test",
+                        "tags": "success",
+                    },
+                ],
+            },
+            request=req,
+        )
