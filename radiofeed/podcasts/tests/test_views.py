@@ -1,13 +1,14 @@
 import pytest
 import requests
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains, assertRedirects
+from pytest_django.asserts import assertContains
 
 from radiofeed.asserts import (
     assert_conflict,
     assert_hx_location,
     assert_not_found,
     assert_ok,
+    assert_unprocessable_entity,
 )
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
@@ -496,6 +497,10 @@ class TestPrivateFeeds:
         assert_ok(client.get(self.url))
 
     @pytest.mark.django_db()
+    def test_empty(self, client, auth_user):
+        assert_ok(client.get(self.url))
+
+    @pytest.mark.django_db()
     def test_search(self, client, auth_user, faker):
         podcast = create_subscription(
             subscriber=auth_user,
@@ -523,7 +528,7 @@ class TestRemovePrivateFeed:
             reverse("podcasts:remove_private_feed", args=[podcast.pk]),
             {"rss": podcast.rss},
         )
-        assertRedirects(response, reverse("podcasts:private_feeds"))
+        assert_hx_location(response, {"path": reverse("podcasts:private_feeds")})
 
         assert not Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
@@ -573,7 +578,7 @@ class TestAddPrivateFeed:
     def test_existing_public(self, client, faker, auth_user):
         podcast = create_podcast(private=False)
 
-        assert_ok(
+        assert_unprocessable_entity(
             client.post(
                 self.url,
                 {"rss": podcast.rss},

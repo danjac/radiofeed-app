@@ -326,6 +326,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
             messages.success(request, message)
 
             return HttpResponseLocation(reverse("podcasts:private_feeds"))
+
     else:
         form = PrivateFeedForm()
 
@@ -338,6 +339,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
             template_name,
             context,
             use_blocks=["form"],
+            status=http.HTTPStatus.UNPROCESSABLE_ENTITY,
         )
 
     return render(request, template_name, context)
@@ -350,7 +352,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Podcast has been removed from your private feeds.")
-    return redirect(reverse("podcasts:private_feeds"))
+    return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
 
 def _render_subscribe_action(
