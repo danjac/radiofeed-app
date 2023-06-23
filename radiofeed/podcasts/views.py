@@ -339,7 +339,6 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
             template_name,
             context,
             use_blocks=["form"],
-            status=http.HTTPStatus.UNPROCESSABLE_ENTITY,
         )
 
     return render(request, template_name, context)
