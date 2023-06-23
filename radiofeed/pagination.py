@@ -30,7 +30,7 @@ def render_paginated_response(
         "pagination_target": pagination_target,
     } | (extra_context or {})
 
-    if request.htmx and request.htmx.target == pagination_target:
+    if request.htmx.target == pagination_target:
         return render_template_fragments(
             request,
             template_name,
