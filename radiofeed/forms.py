@@ -12,6 +12,6 @@ def handle_form(
     Returns the initialized form and `True` or `False` if form is valid.
     """
     if request.method == "POST":
-        form = form_class(request.POST, request.FILES, **form_kwargs)
+        form = form_class(data=request.POST, files=request.FILES, **form_kwargs)
         return form, form.is_valid()
     return form_class(**form_kwargs), False
