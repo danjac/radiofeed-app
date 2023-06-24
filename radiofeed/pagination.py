@@ -1,9 +1,8 @@
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
 
-from radiofeed.fragments import render_template_fragments
+from radiofeed.fragments import render_fragments_if_target
 
 
 def render_paginated_response(
@@ -30,14 +29,10 @@ def render_paginated_response(
         "pagination_target": pagination_target,
     } | (extra_context or {})
 
-    use_blocks = use_blocks or ["pagination"]
-
-    if request.htmx.target == pagination_target:
-        return render_template_fragments(
-            request,
-            template_name,
-            context,
-            use_blocks=use_blocks,
-        )
-
-    return render(request, template_name, context)
+    return render_fragments_if_target(
+        request,
+        template_name,
+        pagination_target,
+        context,
+        use_blocks=use_blocks or ["pagination"],
+    )
