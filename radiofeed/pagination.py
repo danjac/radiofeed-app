@@ -12,8 +12,8 @@ def render_paginated_response(
     template_name: str,
     extra_context: dict | None = None,
     page_size: int = 30,
-    pagination_block: str = "pagination",
     pagination_target: str = "pagination",
+    use_blocks: list[str] | None = None,
 ) -> HttpResponse:
     """Renders optimized paginated response.
 
@@ -30,12 +30,14 @@ def render_paginated_response(
         "pagination_target": pagination_target,
     } | (extra_context or {})
 
+    use_blocks = use_blocks or ["pagination"]
+
     if request.htmx.target == pagination_target:
         return render_template_fragments(
             request,
             template_name,
             context,
-            use_blocks=[pagination_block],
+            use_blocks=use_blocks,
         )
 
     return render(request, template_name, context)
