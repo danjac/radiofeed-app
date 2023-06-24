@@ -116,7 +116,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 @require_auth
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> HttpResponseRedirect:
     """Redirects to the latest episode for a given podcast."""
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
@@ -132,7 +132,7 @@ def latest_episode(
 @require_auth
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Details for a single podcast."""
 
     podcast = get_object_or_404(
@@ -185,26 +185,29 @@ def episodes(
 @require_auth
 def similar(
     request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
-) -> HttpResponse:
+) -> TemplateResponse:
     """List similar podcasts based on recommendations."""
 
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
+
+    recommendations = podcast.recommendations.select_related("recommended").order_by(
+        "-similarity",
+        "-frequency",
+    )[:limit]
 
     return TemplateResponse(
         request,
         "podcasts/similar.html",
         {
             "podcast": podcast,
-            "recommendations": podcast.recommendations.select_related(
-                "recommended"
-            ).order_by("-similarity", "-frequency",)[:limit],
+            "recommendations": recommendations,
         },
     )
 
 
 @require_safe
 @require_auth
-def category_list(request: HttpRequest) -> HttpResponse:
+def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.annotate(
