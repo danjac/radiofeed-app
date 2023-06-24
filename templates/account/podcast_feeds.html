@@ -37,7 +37,7 @@
                       hx-swap="outerHTML"
                       hx-post="{% url 'users:import_podcast_feeds' %}">
                     {% csrf_token %}
-                    {{ form }}
+                    {{ upload_form }}
                     <div>
                         <button class="inline-flex items-center btn btn-default">
                             {% heroicon_mini "arrow-up-tray" class="mr-2" %}
