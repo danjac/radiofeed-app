@@ -11,7 +11,7 @@ from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
-from radiofeed.forms import handle_form
+from radiofeed.forms import handle_form, render_form_response
 from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
@@ -326,18 +326,12 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
-    template_name: str = "podcasts/private_feed_form.html"
-    context: dict = {"form": form}
-
-    if request.htmx.target == "private-feed-form":
-        return render_template_fragments(
-            request,
-            template_name,
-            context,
-            use_blocks=["form"],
-        )
-
-    return render(request, template_name, context)
+    return render_form_response(
+        request,
+        form,
+        "podcasts/private_feed_form.html",
+        form_target="private-feed-form",
+    )
 
 
 @require_DELETE

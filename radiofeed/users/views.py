@@ -9,8 +9,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.forms import handle_form
-from radiofeed.fragments import render_template_fragments
+from radiofeed.forms import handle_form, render_form_response
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -24,8 +23,15 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
     if success:
         form.save()
         messages.success(request, "Your preferences have been saved")
+        return HttpResponseLocation(request.path)
 
-    return render(request, "account/preferences.html", {"form": form})
+    return render_form_response(
+        request,
+        form,
+        "account/preferences.html",
+        form_target="preferences-form",
+        use_blocks=["settings_content"],
+    )
 
 
 @require_safe
@@ -51,18 +57,13 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
 
-    template_name: str = "account/podcast_feeds.html"
-    context: dict = {"form": form}
-
-    if request.htmx.target == "import-feeds-form":
-        return render_template_fragments(
-            request,
-            template_name,
-            context,
-            use_blocks=["import_feeds_form"],
-        )
-
-    return render(request, template_name, context)
+    return render_form_response(
+        request,
+        form,
+        "account/podcast_feeds.html",
+        form_target="import-feeds-form",
+        use_blocks=["import_feeds_form"],
+    )
 
 
 @require_POST
