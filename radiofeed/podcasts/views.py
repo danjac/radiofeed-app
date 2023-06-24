@@ -342,7 +342,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
 @require_DELETE
 @require_auth
-def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseLocation:
     """Removes subscription to private feed."""
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()

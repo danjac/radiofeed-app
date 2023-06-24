@@ -39,7 +39,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Renders import/export page."""
     return TemplateResponse(
         request,
@@ -79,7 +79,7 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @require_auth
-def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
     podcasts = (
         Podcast.objects.subscribed(request.user)
@@ -104,7 +104,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-def user_stats(request: HttpRequest) -> HttpResponse:
+def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     return TemplateResponse(request, "account/stats.html")
 
