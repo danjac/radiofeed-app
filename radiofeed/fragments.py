@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.template.response import TemplateResponse
 from render_block import render_block_to_string
 
 
@@ -9,7 +9,7 @@ def render_template_fragments(
     context: dict | None = None,
     *,
     use_blocks: list[str] | None = None,
-    status: int | None = None,
+    **response_kwargs,
 ) -> HttpResponse:
     """Renders HTMX fragments.
 
@@ -34,7 +34,7 @@ def render_template_fragments(
             )
             for block in use_blocks
         ],
-        status=status,
+        **response_kwargs,
     )
 
 
@@ -58,5 +58,5 @@ def render_fragments_if_target(
             **response_kwargs,
         )
         if request.htmx.target == target
-        else render(request, template_name, context, **response_kwargs)
+        else TemplateResponse(request, template_name, context, **response_kwargs)
     )

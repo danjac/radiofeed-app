@@ -2,8 +2,15 @@ import http
 from datetime import timedelta
 
 from django.contrib import messages
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseRedirect,
+)
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
@@ -60,7 +67,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             "episodes/search.html",
         )
 
-    return redirect("episodes:index")
+    return HttpResponseRedirect(reverse("episodes:index"))
 
 
 @require_safe
@@ -74,7 +81,7 @@ def episode_detail(
         pk=episode_id,
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/detail.html",
         {
