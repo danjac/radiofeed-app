@@ -30,6 +30,7 @@ def for_htmx(*, target: str | None = None, use_blocks: str | list[str]) -> Calla
     use_blocks = use_blocks or []
 
     def _decorator(view: Callable) -> Callable:
+        @functools.wraps(view)
         def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
             response = view(request, *args, **kwargs)
 
