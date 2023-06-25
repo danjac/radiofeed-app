@@ -327,9 +327,8 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 @for_htmx(target="private-feed-form", use_blocks="form")
 def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseLocation:
     """Add new private feed to collection."""
-    form, success, status = handle_form(PrivateFeedForm, request, user=request.user)
-    if success:
-        podcast = form.save()
+    if result := handle_form(PrivateFeedForm, request, user=request.user):
+        podcast = result.form.save()
 
         message = (
             "Podcast has been added to your private feeds."
@@ -345,9 +344,9 @@ def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseLoc
         request,
         "podcasts/private_feed_form.html",
         {
-            "form": form,
+            "form": result.form,
         },
-        status=status,
+        status=result.status,
     )
 
 
