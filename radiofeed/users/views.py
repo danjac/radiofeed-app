@@ -19,16 +19,14 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 def user_preferences(request: HttpRequest) -> TemplateResponse | HttpResponseLocation:
     """Allow user to edit their preferences."""
 
-    form = (
-        UserPreferencesForm(request.POST, instance=request.user)
-        if request.method == "POST"
-        else UserPreferencesForm(instance=request.user)
-    )
-
-    if form.is_valid():
-        form.save()
-        messages.success(request, "Your preferences have been saved")
-        return HttpResponseLocation(request.path)
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your preferences have been saved")
+            return HttpResponseLocation(request.path)
+    else:
+        form = UserPreferencesForm()
 
     return TemplateResponse(
         request,
