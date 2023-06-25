@@ -35,7 +35,7 @@
         {% endif %}
     </header>
     {% block pagination %}
-        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+        <div class="divide-y divide-solid" id="pagination">
             {% include "_pagination_links.html" %}
             {% for podcast in page_obj.object_list %}
                 {% include "podcasts/_podcast.html" %}

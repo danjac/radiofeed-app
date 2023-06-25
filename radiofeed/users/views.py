@@ -8,15 +8,15 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
-from radiofeed.decorators import require_auth, require_form_methods
+from radiofeed.decorators import for_htmx, require_auth, require_form_methods
 from radiofeed.forms import handle_form
-from radiofeed.fragments import render_fragments_if_target
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
 @require_form_methods
 @require_auth
+@for_htmx(target="preferences-form", use_blocks="settings_content")
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
 
@@ -26,14 +26,12 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         messages.success(request, "Your preferences have been saved")
         return HttpResponseLocation(request.path)
 
-    return render_fragments_if_target(
+    return TemplateResponse(
         request,
         "account/preferences.html",
-        "preferences-form",
         {
             "form": form,
         },
-        use_blocks=["settings_content"],
     )
 
 
@@ -52,6 +50,7 @@ def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_POST
 @require_auth
+@for_htmx(target="import-feeds-form", use_blocks="import_feeds_form")
 def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form, success = handle_form(OpmlUploadForm, request)
@@ -66,14 +65,12 @@ def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
 
-    return render_fragments_if_target(
+    return TemplateResponse(
         request,
         "account/podcast_feeds.html",
-        "import-feeds-form",
         {
             "upload_form": form,
         },
-        use_blocks=["import_feeds_form"],
     )
 
 
