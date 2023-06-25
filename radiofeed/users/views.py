@@ -9,7 +9,6 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import for_htmx, require_auth, require_form_methods
-from radiofeed.forms import handle_form
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -20,18 +19,23 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 def user_preferences(request: HttpRequest) -> TemplateResponse | HttpResponseLocation:
     """Allow user to edit their preferences."""
 
-    if result := handle_form(UserPreferencesForm, request, instance=request.user):
-        result.form.save()
-        messages.success(request, "Your preferences have been saved")
-        return HttpResponseLocation(request.path)
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+
+            messages.success(request, "Your preferences have been saved")
+            return HttpResponseLocation(request.path)
+
+    else:
+        form = UserPreferencesForm(instance=request.user)
 
     return TemplateResponse(
         request,
         "account/preferences.html",
         {
-            "form": result.form,
+            "form": form,
         },
-        status=result.status,
     )
 
 
@@ -56,8 +60,10 @@ def import_podcast_feeds(
 ) -> TemplateResponse | HttpResponseLocation:
     """Imports an OPML document and subscribes user to any discovered feeds."""
 
-    if result := handle_form(OpmlUploadForm, request):
-        if new_feeds := result.form.subscribe_to_feeds(request.user):
+    form = OpmlUploadForm(request.POST, request.FILES)
+
+    if form.is_valid():
+        if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
                 f"{new_feeds} podcast feed{pluralize(new_feeds)} added to your collection",  # noqa
@@ -71,9 +77,8 @@ def import_podcast_feeds(
         request,
         "account/podcast_feeds.html",
         {
-            "upload_form": result.form,
+            "upload_form": form,
         },
-        status=result.status,
     )
 
 

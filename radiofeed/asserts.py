@@ -30,7 +30,6 @@ def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
     assert_no_content,
     assert_ok,
     assert_unauthorized,
-    assert_unprocessable_entity,
 ) = (
     functools.partial(assert_status, status=status)
     for status in (
@@ -40,6 +39,5 @@ def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
         http.HTTPStatus.NO_CONTENT,
         http.HTTPStatus.OK,
         http.HTTPStatus.UNAUTHORIZED,
-        http.HTTPStatus.UNPROCESSABLE_ENTITY,
     )
 )
