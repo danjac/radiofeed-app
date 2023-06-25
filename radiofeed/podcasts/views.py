@@ -17,7 +17,6 @@ from radiofeed.decorators import (
     require_form_methods,
 )
 from radiofeed.episodes.models import Episode
-from radiofeed.forms import handle_form
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -327,19 +326,22 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 @for_htmx(target="private-feed-form", use_blocks="form")
 def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseLocation:
     """Add new private feed to collection."""
-    form, success = handle_form(PrivateFeedForm, request, user=request.user)
-    if success:
-        podcast = form.save()
+    if request.method == "POST":
+        form = PrivateFeedForm(request.POST, user=request.user)
+        if form.is_valid():
+            podcast = form.save()
 
-        message = (
-            "Podcast has been added to your private feeds."
-            if podcast.pub_date
-            else "Podcast should appear in your private feeds in a few minutes."
-        )
+            message = (
+                "Podcast has been added to your private feeds."
+                if podcast.pub_date
+                else "Podcast should appear in your private feeds in a few minutes."
+            )
 
-        messages.success(request, message)
+            messages.success(request, message)
 
-        return HttpResponseLocation(reverse("podcasts:private_feeds"))
+            return HttpResponseLocation(reverse("podcasts:private_feeds"))
+    else:
+        form = PrivateFeedForm()
 
     return TemplateResponse(
         request,
