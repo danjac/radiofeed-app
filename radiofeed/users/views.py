@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import for_htmx, require_auth, require_form_methods
+from radiofeed.forms import handle_form
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -19,14 +20,13 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 def user_preferences(request: HttpRequest) -> TemplateResponse | HttpResponseLocation:
     """Allow user to edit their preferences."""
 
-    if request.method == "POST":
-        form = UserPreferencesForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your preferences have been saved")
-            return HttpResponseLocation(request.path)
-    else:
-        form = UserPreferencesForm()
+    form, success, status = handle_form(
+        UserPreferencesForm, request, instance=request.user
+    )
+    if success:
+        form.save()
+        messages.success(request, "Your preferences have been saved")
+        return HttpResponseLocation(request.path)
 
     return TemplateResponse(
         request,
@@ -34,6 +34,7 @@ def user_preferences(request: HttpRequest) -> TemplateResponse | HttpResponseLoc
         {
             "form": form,
         },
+        status=status,
     )
 
 
@@ -58,9 +59,9 @@ def import_podcast_feeds(
 ) -> TemplateResponse | HttpResponseLocation:
     """Imports an OPML document and subscribes user to any discovered feeds."""
 
-    form = OpmlUploadForm(request.POST, request.FILES)
+    form, success, status = handle_form(OpmlUploadForm, request)
 
-    if form.is_valid():
+    if success:
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
@@ -77,6 +78,7 @@ def import_podcast_feeds(
         {
             "upload_form": form,
         },
+        status=status,
     )
 
 

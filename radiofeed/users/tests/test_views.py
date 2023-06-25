@@ -4,7 +4,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.asserts import assert_hx_location, assert_ok
+from radiofeed.asserts import assert_hx_location, assert_ok, assert_unprocessable_entity
 from radiofeed.episodes.factories import create_audio_log, create_bookmark
 from radiofeed.factories import create_batch
 from radiofeed.podcasts.factories import create_podcast, create_subscription
@@ -94,7 +94,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_invalid_form(self, client, auth_user):
-        assert_ok(
+        assert_unprocessable_entity(
             client.post(
                 self.url,
                 data={"opml": "test.xml"},
@@ -144,19 +144,6 @@ class TestImportPodcastFeeds:
             client.post(
                 self.url,
                 data={"opml": upload_file},
-                HTTP_HX_TARGET="opml-import-form",
-                HTTP_HX_REQUEST="true",
-            ),
-        )
-
-        assert not Subscription.objects.filter(subscriber=auth_user).exists()
-
-    @pytest.mark.django_db()
-    def test_invalid_form(self, client, auth_user):
-        assert_ok(
-            client.post(
-                self.url,
-                data={},
                 HTTP_HX_TARGET="opml-import-form",
                 HTTP_HX_REQUEST="true",
             ),
