@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -17,7 +17,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_form_methods
 @require_auth
 @for_htmx(target="preferences-form", use_blocks="settings_content")
-def user_preferences(request: HttpRequest) -> HttpResponse:
+def user_preferences(request: HttpRequest) -> TemplateResponse | HttpResponseLocation:
     """Allow user to edit their preferences."""
 
     form, success = handle_form(UserPreferencesForm, request, instance=request.user)
@@ -51,7 +51,9 @@ def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 @require_POST
 @require_auth
 @for_htmx(target="import-feeds-form", use_blocks="import_feeds_form")
-def import_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def import_podcast_feeds(
+    request: HttpRequest,
+) -> TemplateResponse | HttpResponseLocation:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form, success = handle_form(OpmlUploadForm, request)
     if success:
@@ -108,7 +110,7 @@ def user_stats(request: HttpRequest) -> TemplateResponse:
 
 @require_form_methods
 @require_auth
-def delete_account(request: HttpRequest) -> HttpResponse:
+def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Delete account on confirmation.
 
     Returns:
