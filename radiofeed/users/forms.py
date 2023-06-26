@@ -7,8 +7,6 @@ from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
-_xpath_parser = XPathParser()
-
 
 class UserPreferencesForm(forms.ModelForm):
     """Form for user settings."""
@@ -38,6 +36,8 @@ class OpmlUploadForm(forms.Form):
             }
         ),
     )
+
+    _xpath_parser = XPathParser()
 
     def subscribe_to_feeds(self, user: User, limit: int = 360) -> int:
         """Subscribes user to feeds in uploaded OPML.
@@ -75,11 +75,11 @@ class OpmlUploadForm(forms.Form):
         self.cleaned_data["opml"].seek(0)
 
         try:
-            for element in _xpath_parser.iterparse(
+            for element in self._xpath_parser.iterparse(
                 self.cleaned_data["opml"].read(), "opml", "body"
             ):
                 try:
-                    yield from _xpath_parser.iter(element, "//outline//@xmlUrl")
+                    yield from self._xpath_parser.iter(element, "//outline//@xmlUrl")
                 finally:
                     element.clear()
         except lxml.etree.XMLSyntaxError:
