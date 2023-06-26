@@ -98,7 +98,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         content_type="text/x-opml",
     )
     response[
-        "HttpResponse"
+        "Content-Disposition"
     ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
     return response
 
