@@ -169,6 +169,7 @@ def episodes(
         episodes,
         "podcasts/episodes.html",
         {
+            "podcast": podcast,
             "is_podcast_detail": True,
         },
     )
