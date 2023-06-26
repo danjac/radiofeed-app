@@ -3,7 +3,7 @@
          aria-label="Pagination"
          class="py-2"
          hx-swap="outerHTML show:window:top"
-         hx-target="#{{ pagination_target|default:'pagination' }}">
+         hx-target="#{{ pagination_target }}">
         <ul class="flex items-center justify-between">
             <li>
                 {% if page_obj.has_previous %}

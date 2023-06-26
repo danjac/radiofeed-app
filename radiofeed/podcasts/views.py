@@ -13,6 +13,7 @@ from radiofeed.decorators import require_auth, require_DELETE, require_form_meth
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
 from radiofeed.fragments import render_template_fragments
+from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -52,17 +53,15 @@ def index(request: HttpRequest) -> HttpResponse:
     promoted = "promoted" in request.GET or not has_subscriptions
     podcasts = podcasts.filter(promoted=True) if promoted else subscribed
 
-    return render_template_fragments(
+    return render_paginated_response(
         request,
+        podcasts,
         "podcasts/index.html",
         {
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
             "search_url": reverse("podcasts:search_podcasts"),
-            "page_obj": request.pagination.get_page(podcasts),
         },
-        target="pagination",
-        use_blocks=["pagination"],
     )
 
 
@@ -80,16 +79,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 "-pub_date",
             )
         )
-
-        return render_template_fragments(
-            request,
-            "podcasts/search.html",
-            {
-                "page_obj": request.pagination.get_page(podcasts),
-            },
-            target="pagination",
-            use_blocks=["pagination"],
-        )
+        return render_paginated_response(request, podcasts, "podcasts/search.html")
     return redirect("podcasts:index")
 
 
@@ -174,15 +164,13 @@ def episodes(
             "-pub_date" if request.ordering.is_desc else "pub_date"
         )
 
-    return render_template_fragments(
+    return render_paginated_response(
         request,
+        episodes,
         "podcasts/episodes.html",
         {
             "is_podcast_detail": True,
-            "page_obj": request.pagination.get_page(episodes),
         },
-        target="pagination",
-        use_blocks=["pagination"],
     )
 
 
@@ -264,15 +252,13 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_template_fragments(
+    return render_paginated_response(
         request,
+        podcasts,
         "podcasts/category_detail.html",
         {
             "category": category,
-            "page_obj": request.pagination.get_page(podcasts),
         },
-        target="pagination",
-        use_blocks=["pagination"],
     )
 
 
@@ -319,15 +305,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_template_fragments(
-        request,
-        "podcasts/private_feeds.html",
-        {
-            "page_obj": request.pagination.get_page(podcasts),
-        },
-        target="pagination",
-        use_blocks=["pagination"],
-    )
+    return render_paginated_response(request, podcasts, "podcasts/private_feeds.html")
 
 
 @require_form_methods
