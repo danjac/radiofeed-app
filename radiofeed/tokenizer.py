@@ -76,8 +76,7 @@ def clean_text(text: str) -> str:
     """Scrub text of any HTML tags and entities, punctuation and numbers."""
     text = cleaners.strip_html(text)
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
-    text = re.sub(r"\d+", "", text)
-    return text
+    return re.sub(r"\d+", "", text)
 
 
 def tokenize(language: str, text: str) -> list[str]:
@@ -87,16 +86,15 @@ def tokenize(language: str, text: str) -> list[str]:
         language: 2-char language code e.g. "en"
         text: text source
     """
-    if not (text := clean_text(text).casefold()):
-        return []
+    if text := clean_text(text).casefold():
+        stopwords_for_language = get_stopwords(language)
 
-    stopwords_for_language = get_stopwords(language)
-
-    return [
-        token
-        for token in _lemmatized_tokens(text)
-        if token and token not in stopwords_for_language
-    ]
+        return [
+            token
+            for token in _lemmatized_tokens(text)
+            if token and token not in stopwords_for_language
+        ]
+    return []
 
 
 def _get_date_stopwords(language: str) -> Iterator[str]:
