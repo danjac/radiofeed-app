@@ -1,10 +1,36 @@
+import dataclasses
+import http
+
 from django.forms import Form
 from django.http import HttpRequest
 
 
+@dataclasses.dataclass(frozen=True)
+class FormResult:
+    """Result from form handler."""
+
+    form: Form
+
+    is_bound: bool = False
+    is_valid: bool = False
+
+    def __bool__(self) -> bool:
+        """Returns `True` if valid bound form."""
+        return self.is_bound and self.is_valid
+
+    @property
+    def status(self) -> http.HTTPStatus:
+        """Returns status based on state: 422 if invalid, otherwise 200."""
+        return (
+            http.HTTPStatus.UNPROCESSABLE_ENTITY
+            if self.is_bound and not self.is_valid
+            else http.HTTPStatus.OK
+        )
+
+
 def handle_form(
     form_class: type[Form], request: HttpRequest, **form_kwargs
-) -> tuple[Form, bool]:
+) -> FormResult:
     """Shortcut for common form view processing logic.
 
     If HTTP POST, passes request data to form constructor and validates form.
@@ -18,5 +44,5 @@ def handle_form(
 
     if request.method == "POST":
         form = form_class(data=request.POST, files=request.FILES, **form_kwargs)
-        return form, form.is_valid()
-    return form_class(**form_kwargs), False
+        return FormResult(form=form, is_bound=True, is_valid=form.is_valid())
+    return FormResult(form=form_class(**form_kwargs))

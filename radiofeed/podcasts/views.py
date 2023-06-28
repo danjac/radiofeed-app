@@ -324,30 +324,28 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
-    form, success = handle_form(PrivateFeedForm, request, user=request.user)
-    if success:
-        podcast = form.save()
+    if result := handle_form(PrivateFeedForm, request, user=request.user):
+        podcast = result.form.save()
 
         if podcast.pub_date:
-            message = "Podcast has been added to your private feeds."
-            redirect_to = podcast.get_absolute_url()
-        else:
-            # new or unparsed feed
-            message = "Podcast should appear in your private feeds in a few minutes."
-            redirect_to = reverse("podcasts:private_feeds")
+            messages.success(request, "Podcast has been added to your private feeds.")
+            return HttpResponseLocation(podcast.get_absolute_url())
 
-        messages.success(request, message)
-
-        return HttpResponseLocation(redirect_to)
+        # new or unparsed feed
+        messages.success(
+            request, "Podcast should appear in your private feeds in a few minutes."
+        )
+        return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
     return render_template_fragments(
         request,
         "podcasts/private_feed_form.html",
         {
-            "form": form,
+            "form": result.form,
         },
         target="private-feed-form",
         use_blocks=["form"],
+        status=result.status,
     )
 
 
