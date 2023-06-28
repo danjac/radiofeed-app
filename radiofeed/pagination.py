@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 
-from radiofeed.htmx import hx_render
+from radiofeed.fragments import render_template_fragments
 
 
 def render_paginated_response(
@@ -27,7 +27,7 @@ def render_paginated_response(
         "pagination_target": pagination_target,
     }
     use_blocks = use_blocks or ["pagination"]
-    return hx_render(
+    return render_template_fragments(
         request,
         template_name,
         context,

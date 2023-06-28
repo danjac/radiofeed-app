@@ -1,7 +1,7 @@
 import pytest
 import requests
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains, assertRedirects
+from pytest_django.asserts import assertContains
 
 from radiofeed.asserts import (
     assert_conflict,
@@ -546,7 +546,7 @@ class TestAddPrivateFeed:
         assert_ok(client.get(self.url))
 
     @pytest.mark.django_db()
-    def test_post_htmx(self, client, faker, auth_user):
+    def test_post_ok(self, client, faker, auth_user):
         rss = faker.url()
         assert_hx_location(
             client.post(self.url, {"rss": rss}, HTTP_HX_REQUEST="true"),
@@ -554,17 +554,6 @@ class TestAddPrivateFeed:
                 "path": self.redirect_url,
             },
         )
-
-        podcast = Subscription.objects.get(
-            subscriber=auth_user, podcast__rss=rss
-        ).podcast
-
-        assert podcast.private
-
-    @pytest.mark.django_db()
-    def test_post_ok(self, client, faker, auth_user):
-        rss = faker.url()
-        assertRedirects(client.post(self.url, {"rss": rss}), self.redirect_url)
 
         podcast = Subscription.objects.get(
             subscriber=auth_user, podcast__rss=rss

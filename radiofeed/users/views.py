@@ -1,14 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
+from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
+from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.forms import process_form
-from radiofeed.htmx import hx_redirect, hx_render
+from radiofeed.fragments import render_template_fragments
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -21,9 +23,9 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         result.form.save()
 
         messages.success(request, "Your preferences have been saved")
-        return hx_redirect(request)
+        return HttpResponseLocation(request.path)
 
-    return hx_render(
+    return render_template_fragments(
         request,
         "account/preferences.html",
         {"form": result.form},
@@ -37,7 +39,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 @require_auth
 def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
-    return render(
+    return TemplateResponse(
         request,
         "account/podcast_feeds.html",
         {
@@ -61,9 +63,9 @@ def import_podcast_feeds(
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
-        return hx_redirect(request, "users:manage_podcast_feeds")
+        return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
 
-    return hx_render(
+    return render_template_fragments(
         request,
         "account/podcast_feeds.html",
         {
@@ -87,7 +89,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .iterator()
     )
 
-    response = render(
+    response = TemplateResponse(
         request,
         "account/podcasts.opml",
         {
@@ -105,7 +107,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return render(request, "account/stats.html")
+    return TemplateResponse(request, "account/stats.html")
 
 
 @require_form_methods
@@ -121,5 +123,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect("podcasts:landing_page")
-    return render(request, "account/delete_account.html")
+        return HttpResponseRedirect(reverse("podcasts:landing_page"))
+    return TemplateResponse(request, "account/delete_account.html")

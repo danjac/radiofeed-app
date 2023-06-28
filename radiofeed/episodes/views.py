@@ -2,15 +2,22 @@ import http
 from datetime import timedelta
 
 from django.contrib import messages
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseRedirect,
+)
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.htmx import hx_render
+from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 
 
@@ -56,7 +63,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .order_by("-rank", "-pub_date")
         )
         return render_paginated_response(request, episodes, "episodes/search.html")
-    return redirect("episodes:index")
+    return HttpResponseRedirect(reverse("episodes:index"))
 
 
 @require_safe
@@ -70,7 +77,7 @@ def episode_detail(
         pk=episode_id,
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/detail.html",
         {
@@ -178,7 +185,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from History")
 
-    return hx_render(
+    return render_template_fragments(
         request,
         "episodes/detail.html",
         {
@@ -235,7 +242,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 def _render_audio_player_action(
     request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
 ) -> HttpResponse:
-    return hx_render(
+    return render_template_fragments(
         request,
         "episodes/detail.html",
         {
@@ -255,7 +262,7 @@ def _render_audio_player_action(
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> HttpResponse:
-    return hx_render(
+    return render_template_fragments(
         request,
         "episodes/detail.html",
         {

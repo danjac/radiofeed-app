@@ -3,15 +3,17 @@ import http
 import requests
 from django.contrib import messages
 from django.db.models import Exists, OuterRef
-from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
+from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import process_form
-from radiofeed.htmx import hx_redirect, hx_render
+from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -25,9 +27,9 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
     Redirects authenticated users to podcast index page.
     """
     if request.user.is_authenticated:
-        return redirect("podcasts:index")
+        return HttpResponseRedirect(reverse("podcasts:index"))
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/landing_page.html",
         {
@@ -79,7 +81,8 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             )
         )
         return render_paginated_response(request, podcasts, "podcasts/search.html")
-    return redirect("podcasts:index")
+
+    return HttpResponseRedirect(reverse("podcasts:index"))
 
 
 @require_safe
@@ -94,7 +97,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         except requests.RequestException:
             messages.error(request, "Sorry, an error occurred trying to access iTunes.")
 
-        return render(
+        return TemplateResponse(
             request,
             "podcasts/itunes_search.html",
             {
@@ -103,7 +106,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    return redirect("podcasts:index")
+    return HttpResponseRedirect(reverse("podcasts:index"))
 
 
 @require_safe
@@ -119,7 +122,7 @@ def latest_episode(
     ) is None:
         raise Http404
 
-    return redirect(episode)
+    return HttpResponseRedirect(episode.get_absolute_url())
 
 
 @require_safe
@@ -133,7 +136,7 @@ def podcast_detail(
         Podcast.objects.accessible(request.user),
         pk=podcast_id,
     )
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
@@ -188,7 +191,7 @@ def similar(
         "-frequency",
     )[:limit]
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/similar.html",
         {
@@ -219,7 +222,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         categories = categories.search(request.search.value)
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/categories.html",
         {
@@ -323,9 +326,9 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
         messages.success(request, message)
 
-        return hx_redirect(request, "podcasts:private_feeds")
+        return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
-    return hx_render(
+    return render_template_fragments(
         request,
         "podcasts/private_feed_form.html",
         {
@@ -344,13 +347,13 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Podcast has been removed from your private feeds.")
-    return hx_redirect(request, "podcasts:private_feeds")
+    return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
 ) -> HttpResponse:
-    return hx_render(
+    return render_template_fragments(
         request,
         "podcasts/detail.html",
         {
