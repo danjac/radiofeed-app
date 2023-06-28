@@ -199,6 +199,12 @@
         background-color: theme("colors.blue.600");
     }
 
+    .btn:disabled,
+    .btn:hover:disabled {
+        background-color: theme("colors.gray.600");
+        border-color: theme("colors.gray.600");
+    }
+
     .btn-default {
         color: theme("colors.white");
         background-color: theme("colors.purple.800");

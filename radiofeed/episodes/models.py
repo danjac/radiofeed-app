@@ -30,24 +30,6 @@ if TYPE_CHECKING:  # pragma: no cover
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
-    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:  # pyright: ignore
-        """Annotates `is_subscribed` flag to episodes."""
-        return self.annotate(
-            is_subscribed=models.Exists(
-                user.subscriptions.filter(podcast=models.OuterRef("podcast"))
-            )
-        )
-
-    def subscribed(self, user: User) -> models.QuerySet[Episode]:  # pyright: ignore
-        """Returns episodes for podcasts user is subscribed to."""
-        return self.is_subscribed(user).filter(is_subscribed=True)
-
-    def accessible(self, user: User) -> models.QuerySet[Episode]:  # pyright: ignore
-        """Returns episodes for all public podcasts or podcasts user is subscribed to."""
-        return self.is_subscribed(user).filter(
-            models.Q(podcast__private=False) | models.Q(is_subscribed=True)
-        )
-
 
 class Episode(models.Model):
     """Individual podcast episode."""
@@ -237,20 +219,6 @@ class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
-    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:
-        """Annotates `is_subscribed` flag to bookmarks."""
-        return self.annotate(
-            is_subscribed=models.Exists(
-                user.subscriptions.filter(podcast=models.OuterRef("episode__podcast"))
-            )
-        )
-
-    def accessible(self, user: User) -> models.QuerySet[Episode]:
-        """Returns episodes for all public podcasts or podcasts user is subscribed to."""
-        return self.is_subscribed(user).filter(
-            models.Q(episode__podcast__private=False) | models.Q(is_subscribed=True)
-        )
-
 
 class Bookmark(TimeStampedModel):
     """Bookmarked episodes."""
@@ -288,20 +256,6 @@ class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
-
-    def is_subscribed(self, user: User) -> models.QuerySet[Episode]:
-        """Annotates `is_subscribed` flag to audio logs."""
-        return self.annotate(
-            is_subscribed=models.Exists(
-                user.subscriptions.filter(podcast=models.OuterRef("episode__podcast"))
-            )
-        )
-
-    def accessible(self, user: User) -> models.QuerySet[Episode]:
-        """Returns audio logs for all public podcasts or podcasts user is subscribed to."""
-        return self.is_subscribed(user).filter(
-            models.Q(episode__podcast__private=False) | models.Q(is_subscribed=True)
-        )
 
 
 class AudioLog(TimeStampedModel):

@@ -166,26 +166,6 @@ class TestEpisodeDetail:
         assert response.context["episode"] == episode
 
     @pytest.mark.django_db()
-    def test_private_not_subscribed(
-        self,
-        client,
-        auth_user,
-    ):
-        episode = create_episode(podcast=create_podcast(private=True))
-        assert_not_found(client.get(episode.get_absolute_url()))
-
-    @pytest.mark.django_db()
-    def test_private_subscribed(
-        self,
-        client,
-        auth_user,
-    ):
-        episode = create_episode(podcast=create_podcast(private=True))
-        create_subscription(subscriber=auth_user, podcast=episode.podcast)
-        response = client.get(episode.get_absolute_url())
-        assert_ok(response)
-
-    @pytest.mark.django_db()
     def test_listened(
         self,
         client,
@@ -280,18 +260,6 @@ class TestStartPlayer:
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
         assert client.session[Player.session_key] == episode.id
-
-    @pytest.mark.django_db()
-    def test_play_private_not_subscribed(self, client, auth_user):
-        episode = create_episode(podcast=create_podcast(private=True))
-        assert_not_found(
-            client.post(
-                self.url(episode),
-                HTTP_HX_REQUEST="true",
-            ),
-        )
-
-        assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db()
     def test_another_episode_in_player(self, client, auth_user, player_episode):

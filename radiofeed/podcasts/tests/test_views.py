@@ -251,7 +251,7 @@ class TestPodcastDetail:
         response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
-        assert response.context["podcast"].is_subscribed is True
+        assert response.context["is_subscribed"] is True
 
     @pytest.mark.django_db()
     def test_get_podcast_private_subscribed(self, client, auth_user):
@@ -260,19 +260,22 @@ class TestPodcastDetail:
         response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
-        assert response.context["podcast"].is_subscribed is True
+        assert response.context["is_subscribed"] is True
 
     @pytest.mark.django_db()
     def test_get_podcast_private_not_subscribed(self, client, auth_user):
         podcast = create_podcast(private=True)
-        assert_not_found(client.get(podcast.get_absolute_url()))
+        response = client.get(podcast.get_absolute_url())
+        assert_ok(response)
+        assert response.context["podcast"] == podcast
+        assert response.context["is_subscribed"] is False
 
     @pytest.mark.django_db()
     def test_get_podcast_not_subscribed(self, client, auth_user, podcast):
         response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
-        assert response.context["podcast"].is_subscribed is False
+        assert response.context["is_subscribed"] is False
 
     @pytest.mark.django_db()
     def test_get_podcast_admin(self, client, staff_user, podcast):
@@ -538,19 +541,18 @@ class TestRemovePrivateFeed:
 
 class TestAddPrivateFeed:
     url = reverse_lazy("podcasts:add_private_feed")
-    redirect_url = reverse_lazy("podcasts:private_feeds")
 
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
         assert_ok(client.get(self.url))
 
     @pytest.mark.django_db()
-    def test_post_ok(self, client, faker, auth_user):
+    def test_post_not_existing(self, client, faker, auth_user):
         rss = faker.url()
         assert_hx_location(
             client.post(self.url, {"rss": rss}, HTTP_HX_REQUEST="true"),
             {
-                "path": self.redirect_url,
+                "path": reverse("podcasts:private_feeds"),
             },
         )
 
@@ -567,7 +569,7 @@ class TestAddPrivateFeed:
         assert_hx_location(
             client.post(self.url, {"rss": podcast.rss}, HTTP_HX_REQUEST="true"),
             {
-                "path": self.redirect_url,
+                "path": podcast.get_absolute_url(),
             },
         )
 

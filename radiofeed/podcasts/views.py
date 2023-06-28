@@ -47,9 +47,15 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
-    subscribed = podcasts.subscribed(request.user)
-    has_subscriptions = subscribed.exists()
+    subscribed = podcasts.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(
+                podcast=OuterRef("pk"),
+            )
+        )
+    ).filter(is_subscribed=True)
 
+    has_subscriptions = subscribed.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
     podcasts = podcasts.filter(promoted=True) if promoted else subscribed
 
@@ -131,16 +137,15 @@ def podcast_detail(
 ) -> HttpResponse:
     """Details for a single podcast."""
 
-    podcast = get_object_or_404(
-        Podcast.objects.accessible(request.user),
-        pk=podcast_id,
-    )
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
+
     return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
-            "is_subscribed": podcast.is_subscribed,
+            "is_subscribed": is_subscribed,
         },
     )
 
@@ -151,10 +156,7 @@ def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
-    podcast = get_object_or_404(
-        Podcast.objects.accessible(request.user),
-        pk=podcast_id,
-    )
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     episodes = podcast.episodes.select_related("podcast")
 
@@ -183,7 +185,7 @@ def similar(
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
 
-    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     recommendations = podcast.recommendations.select_related("recommended").order_by(
         "-similarity",
@@ -293,7 +295,14 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
-    podcasts = Podcast.objects.subscribed(request.user).filter(
+    podcasts = Podcast.objects.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(
+                podcast=OuterRef("pk"),
+            )
+        )
+    ).filter(
+        is_subscribed=True,
         private=True,
         pub_date__isnull=False,
     )
@@ -319,15 +328,18 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             podcast = form.save()
 
-            message = (
-                "Podcast has been added to your private feeds."
-                if podcast.pub_date
-                else "Podcast should appear in your private feeds in a few minutes."
-            )
+            if podcast.pub_date:
+                message = "Podcast has been added to your private feeds."
+                redirect_to = podcast.get_absolute_url()
+            else:
+                message = (
+                    "Podcast should appear in your private feeds in a few minutes."
+                )
+                redirect_to = reverse("podcasts:private_feeds")
 
             messages.success(request, message)
 
-            return HttpResponseLocation(reverse("podcasts:private_feeds"))
+            return HttpResponseLocation(redirect_to)
     else:
         form = PrivateFeedForm()
 

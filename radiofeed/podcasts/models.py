@@ -100,24 +100,6 @@ class PodcastQuerySet(
             ).distinct()
         return qs.annotate(exact_match=models.Value(0))
 
-    def is_subscribed(self, user: User) -> models.QuerySet[Podcast]:
-        """Adds annotation `is_subscribed` to queryset."""
-        return self.annotate(
-            is_subscribed=models.Exists(
-                user.subscriptions.filter(podcast=models.OuterRef("pk"))
-            )
-        )
-
-    def subscribed(self, user: User) -> models.QuerySet[Podcast]:
-        """Returns podcasts user is subscribed to."""
-        return self.is_subscribed(user).filter(is_subscribed=True)
-
-    def accessible(self, user: User) -> models.QuerySet[Podcast]:
-        """Returns podcasts available to the user (non-private or subscribed)."""
-        return self.is_subscribed(user).filter(
-            models.Q(private=False) | models.Q(is_subscribed=True)
-        )
-
 
 class Podcast(models.Model):
     """Podcast channel or feed."""

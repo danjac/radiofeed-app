@@ -6,7 +6,6 @@ from radiofeed.podcasts.factories import (
     create_category,
     create_podcast,
     create_recommendation,
-    create_subscription,
 )
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
@@ -94,41 +93,6 @@ class TestPodcastManager:
 
         assert second.title == "the testing"
         assert second.exact_match == 0
-
-    @pytest.mark.django_db()
-    def test_is_subscribed_true(self, user):
-        create_subscription(subscriber=user)
-        podcasts = Podcast.objects.is_subscribed(user)
-        assert podcasts.first().is_subscribed
-
-    @pytest.mark.django_db()
-    def test_is_subscribed_false(self, user, podcast):
-        podcasts = Podcast.objects.is_subscribed(user)
-        assert not podcasts.first().is_subscribed
-
-    @pytest.mark.django_db()
-    def test_subscribed_true(self, user):
-        create_subscription(subscriber=user)
-        assert Podcast.objects.subscribed(user).exists()
-
-    @pytest.mark.django_db()
-    def test_subscribed_false(self, user, podcast):
-        assert not Podcast.objects.subscribed(user).exists()
-
-    @pytest.mark.django_db()
-    def test_accessible_public(self, user):
-        create_podcast(private=False)
-        assert Podcast.objects.accessible(user).exists()
-
-    @pytest.mark.django_db()
-    def test_accessible_private(self, user):
-        create_podcast(private=True)
-        assert not Podcast.objects.accessible(user).exists()
-
-    @pytest.mark.django_db()
-    def test_accessible_private_subscribed(self, user):
-        create_subscription(subscriber=user, podcast=create_podcast(private=True))
-        assert Podcast.objects.accessible(user).exists()
 
 
 class TestPodcastModel:

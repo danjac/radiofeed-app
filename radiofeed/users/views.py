@@ -10,7 +10,6 @@ from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.fragments import render_template_fragments
-from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -82,19 +81,18 @@ def import_podcast_feeds(
 @require_auth
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
-    podcasts = (
-        Podcast.objects.subscribed(request.user)
-        .filter(private=False)
-        .distinct()
-        .order_by("title")
-        .iterator()
+
+    subscriptions = (
+        request.user.subscriptions.filter(podcast__private=False)
+        .select_related("podcast")
+        .order_by("podcast__title")
     )
 
     return TemplateResponse(
         request,
         "account/podcasts.opml",
         {
-            "podcasts": podcasts,
+            "subscriptions": subscriptions,
         },
         content_type="text/x-opml",
         headers={

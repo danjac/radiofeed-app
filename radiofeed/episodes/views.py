@@ -2,6 +2,7 @@ import http
 from datetime import timedelta
 
 from django.contrib import messages
+from django.db.models import Exists, OuterRef
 from django.http import (
     Http404,
     HttpRequest,
@@ -32,7 +33,11 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date", "-id")
     )
 
-    subscribed = episodes.subscribed(request.user)
+    subscribed = episodes.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+        )
+    ).filter(is_subscribed=True)
 
     has_subscriptions = subscribed.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
@@ -73,7 +78,7 @@ def episode_detail(
 ) -> HttpResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
-        Episode.objects.accessible(request.user).select_related("podcast"),
+        Episode.objects.select_related("podcast"),
         pk=episode_id,
     )
 
@@ -94,7 +99,7 @@ def episode_detail(
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
-        Episode.objects.accessible(request.user).select_related("podcast"),
+        Episode.objects.select_related("podcast"),
         pk=episode_id,
     )
 
@@ -152,9 +157,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 @require_auth
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
-    audio_logs = request.user.audio_logs.accessible(request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
 
     if request.search:
         audio_logs = audio_logs.search(request.search.value).order_by(
@@ -199,9 +202,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_auth
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
-    bookmarks = request.user.bookmarks.accessible(request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
 
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
