@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.form_processor import process_form
+from radiofeed.forms import process_form
 from radiofeed.fragments import render_template_fragments
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 

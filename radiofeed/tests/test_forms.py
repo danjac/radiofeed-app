@@ -1,6 +1,6 @@
 from django import forms
 
-from radiofeed.form_processor import process_form
+from radiofeed.forms import process_form
 
 
 class MyForm(forms.Form):
