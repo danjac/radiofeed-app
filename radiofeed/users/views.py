@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.forms import process_form
+from radiofeed.forms import handle_form
 from radiofeed.fragments import render_template_fragments
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -18,7 +18,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_auth
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
-    form, success = process_form(UserPreferencesForm, request, instance=request.user)
+    form, success = handle_form(UserPreferencesForm, request, instance=request.user)
     if success:
         form.save()
         messages.success(request, "Your preferences have been saved")
@@ -52,7 +52,7 @@ def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    form, success = process_form(OpmlUploadForm, request)
+    form, success = handle_form(OpmlUploadForm, request)
 
     if success:
         if new_feeds := form.subscribe_to_feeds(request.user):

@@ -2,7 +2,7 @@ from django.forms import Form
 from django.http import HttpRequest
 
 
-def process_form(
+def handle_form(
     form_class: type[Form], request: HttpRequest, **form_kwargs
 ) -> tuple[Form, bool]:
     """Shortcut for common form view processing logic.
