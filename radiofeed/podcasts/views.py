@@ -12,7 +12,6 @@ from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
-from radiofeed.forms import process_form
 from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
@@ -315,28 +314,31 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
-    if result := process_form(PrivateFeedForm, request, user=request.user):
-        podcast = result.form.save()
+    if request.method == "POST":
+        form = PrivateFeedForm(request.POST, user=request.user)
+        if form.is_valid():
+            podcast = form.save()
 
-        message = (
-            "Podcast has been added to your private feeds."
-            if podcast.pub_date
-            else "Podcast should appear in your private feeds in a few minutes."
-        )
+            message = (
+                "Podcast has been added to your private feeds."
+                if podcast.pub_date
+                else "Podcast should appear in your private feeds in a few minutes."
+            )
 
-        messages.success(request, message)
+            messages.success(request, message)
 
-        return HttpResponseLocation(reverse("podcasts:private_feeds"))
+            return HttpResponseLocation(reverse("podcasts:private_feeds"))
+    else:
+        form = PrivateFeedForm()
 
     return render_template_fragments(
         request,
         "podcasts/private_feed_form.html",
         {
-            "form": result.form,
+            "form": form,
         },
         target="private-feed-form",
         use_blocks=["form"],
-        status=result.status,
     )
 
 

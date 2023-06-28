@@ -9,7 +9,6 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.forms import process_form
 from radiofeed.fragments import render_template_fragments
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
@@ -19,19 +18,21 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_auth
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
-    if result := process_form(UserPreferencesForm, request, instance=request.user):
-        result.form.save()
-
-        messages.success(request, "Your preferences have been saved")
-        return HttpResponseLocation(request.path)
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your preferences have been saved")
+            return HttpResponseLocation(request.path)
+    else:
+        form = UserPreferencesForm(instance=request.user)
 
     return render_template_fragments(
         request,
         "account/preferences.html",
-        {"form": result.form},
+        {"form": form},
         target="preferences-form",
         use_blocks=["settings_content"],
-        status=result.status,
     )
 
 
@@ -54,8 +55,9 @@ def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    if result := process_form(OpmlUploadForm, request):
-        if new_feeds := result.form.subscribe_to_feeds(request.user):
+    form = OpmlUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+        if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
                 f"{new_feeds} podcast feed{pluralize(new_feeds)} added to your collection",  # noqa
@@ -69,11 +71,10 @@ def import_podcast_feeds(
         request,
         "account/podcast_feeds.html",
         {
-            "upload_form": result.form,
+            "upload_form": form,
         },
         target="import-feeds-form",
         use_blocks=["import_feeds_form"],
-        status=result.status,
     )
 
 
