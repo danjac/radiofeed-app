@@ -1,7 +1,7 @@
 import pytest
 import requests
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertRedirects
 
 from radiofeed.asserts import (
     assert_conflict,
@@ -527,6 +527,7 @@ class TestRemovePrivateFeed:
         response = client.delete(
             reverse("podcasts:remove_private_feed", args=[podcast.pk]),
             {"rss": podcast.rss},
+            HTTP_HX_REQUEST="true",
         )
         assert_hx_location(response, {"path": reverse("podcasts:private_feeds")})
 
@@ -544,10 +545,10 @@ class TestAddPrivateFeed:
         assert_ok(client.get(self.url))
 
     @pytest.mark.django_db()
-    def test_post_ok(self, client, faker, auth_user):
+    def test_post_htmx(self, client, faker, auth_user):
         rss = faker.url()
         assert_hx_location(
-            client.post(self.url, {"rss": rss}),
+            client.post(self.url, {"rss": rss}, HTTP_HX_REQUEST="true"),
             {
                 "path": self.redirect_url,
             },
@@ -560,11 +561,22 @@ class TestAddPrivateFeed:
         assert podcast.private
 
     @pytest.mark.django_db()
+    def test_post_ok(self, client, faker, auth_user):
+        rss = faker.url()
+        assertRedirects(client.post(self.url, {"rss": rss}), self.redirect_url)
+
+        podcast = Subscription.objects.get(
+            subscriber=auth_user, podcast__rss=rss
+        ).podcast
+
+        assert podcast.private
+
+    @pytest.mark.django_db()
     def test_existing_private(self, client, faker, auth_user):
         podcast = create_podcast(private=True)
 
         assert_hx_location(
-            client.post(self.url, {"rss": podcast.rss}),
+            client.post(self.url, {"rss": podcast.rss}, HTTP_HX_REQUEST="true"),
             {
                 "path": self.redirect_url,
             },

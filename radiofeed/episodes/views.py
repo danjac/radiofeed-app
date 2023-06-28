@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.htmx import render_template_fragments
+from radiofeed.htmx import hx_render
 from radiofeed.pagination import render_paginated_response
 
 
@@ -178,7 +178,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from History")
 
-    return render_template_fragments(
+    return hx_render(
         request,
         "episodes/detail.html",
         {
@@ -235,7 +235,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 def _render_audio_player_action(
     request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
 ) -> HttpResponse:
-    return render_template_fragments(
+    return hx_render(
         request,
         "episodes/detail.html",
         {
@@ -255,7 +255,7 @@ def _render_audio_player_action(
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> HttpResponse:
-    return render_template_fragments(
+    return hx_render(
         request,
         "episodes/detail.html",
         {

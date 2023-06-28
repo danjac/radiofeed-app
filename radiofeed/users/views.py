@@ -3,14 +3,12 @@ from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.forms import handle_form
-from radiofeed.htmx import render_template_fragments
+from radiofeed.htmx import hx_redirect, hx_render
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -24,9 +22,9 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         form.save()
 
         messages.success(request, "Your preferences have been saved")
-        return HttpResponseLocation(request.path)
+        return hx_redirect(request)
 
-    return render_template_fragments(
+    return hx_render(
         request,
         "account/preferences.html",
         {"form": form},
@@ -64,9 +62,9 @@ def import_podcast_feeds(
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
-        return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
+        return hx_redirect(request, "users:manage_podcast_feeds")
 
-    return render_template_fragments(
+    return hx_render(
         request,
         "account/podcast_feeds.html",
         {

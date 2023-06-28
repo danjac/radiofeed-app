@@ -7,12 +7,11 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
-from radiofeed.htmx import render_template_fragments
+from radiofeed.htmx import hx_redirect, hx_render
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -325,9 +324,9 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
         messages.success(request, message)
 
-        return HttpResponseLocation(reverse("podcasts:private_feeds"))
+        return hx_redirect(request, "podcasts:private_feeds")
 
-    return render_template_fragments(
+    return hx_render(
         request,
         "podcasts/private_feed_form.html",
         {
@@ -340,18 +339,18 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
 @require_DELETE
 @require_auth
-def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseLocation:
+def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Podcast has been removed from your private feeds.")
-    return HttpResponseLocation(reverse("podcasts:private_feeds"))
+    return hx_redirect(request, "podcasts:private_feeds")
 
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
 ) -> HttpResponse:
-    return render_template_fragments(
+    return hx_render(
         request,
         "podcasts/detail.html",
         {

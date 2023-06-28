@@ -21,13 +21,17 @@ class TestUserPreferences:
 
     @pytest.mark.django_db()
     def test_post(self, client, auth_user):
-        assert_ok(
+        assert_hx_location(
             client.post(
                 self.url,
                 {
                     "send_email_notifications": False,
                 },
-            )
+                HTTP_HX_REQUEST="true",
+            ),
+            {
+                "path": self.url,
+            },
         )
 
         auth_user.refresh_from_db()
