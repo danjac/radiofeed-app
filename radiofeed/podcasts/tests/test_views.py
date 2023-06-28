@@ -8,6 +8,7 @@ from radiofeed.asserts import (
     assert_hx_location,
     assert_not_found,
     assert_ok,
+    assert_unprocessable_entity,
 )
 from radiofeed.episodes.factories import create_episode
 from radiofeed.factories import create_batch
@@ -590,7 +591,7 @@ class TestAddPrivateFeed:
     def test_existing_public(self, client, faker, auth_user):
         podcast = create_podcast(private=False)
 
-        assert_ok(
+        assert_unprocessable_entity(
             client.post(
                 self.url,
                 {"rss": podcast.rss},

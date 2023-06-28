@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.forms import handle_form
+from radiofeed.forms import process_form
 from radiofeed.htmx import hx_redirect, hx_render
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
@@ -17,9 +17,8 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_auth
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
-    form, is_valid = handle_form(UserPreferencesForm, request, instance=request.user)
-    if is_valid:
-        form.save()
+    if result := process_form(UserPreferencesForm, request, instance=request.user):
+        result.form.save()
 
         messages.success(request, "Your preferences have been saved")
         return hx_redirect(request)
@@ -27,9 +26,10 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
     return hx_render(
         request,
         "account/preferences.html",
-        {"form": form},
+        {"form": result.form},
         target="preferences-form",
         use_blocks=["settings_content"],
+        status=result.status,
     )
 
 
@@ -52,9 +52,8 @@ def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    form, is_valid = handle_form(OpmlUploadForm, request)
-    if is_valid:
-        if new_feeds := form.subscribe_to_feeds(request.user):
+    if result := process_form(OpmlUploadForm, request):
+        if new_feeds := result.form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
                 f"{new_feeds} podcast feed{pluralize(new_feeds)} added to your collection",  # noqa
@@ -68,10 +67,11 @@ def import_podcast_feeds(
         request,
         "account/podcast_feeds.html",
         {
-            "upload_form": form,
+            "upload_form": result.form,
         },
         target="import-feeds-form",
         use_blocks=["import_feeds_form"],
+        status=result.status,
     )
 
 
