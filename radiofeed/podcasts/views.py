@@ -12,7 +12,7 @@ from django_htmx.http import HttpResponseLocation
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
-from radiofeed.fragments import render_template_fragments
+from radiofeed.htmx import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm

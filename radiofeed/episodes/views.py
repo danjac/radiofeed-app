@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.fragments import render_template_fragments
+from radiofeed.htmx import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 
 
