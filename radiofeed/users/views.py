@@ -32,7 +32,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         "account/preferences.html",
         {"form": form},
         target="preferences-form",
-        use_blocks=["settings_content"],
+        use_blocks=["form"],
     )
 
 
@@ -90,18 +90,17 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .iterator()
     )
 
-    response = TemplateResponse(
+    return TemplateResponse(
         request,
         "account/podcasts.opml",
         {
             "podcasts": podcasts,
         },
         content_type="text/x-opml",
+        headers={
+            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+        },
     )
-    response[
-        "Content-Disposition"
-    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-    return response
 
 
 @require_safe
