@@ -7,9 +7,13 @@
 	<body>
 		<outline text="My Podcasts" title="My Podcasts">
 			{% for subscription in subscriptions %}
-            {% with podcast=subscription.podcast %}
-			<outline type="rss" text="{{ podcast.cleaned_description|truncatewords:60 }}" title="{{ podcast.title }}" xmlUrl="{{ podcast.rss }}" htmlUrl="{{ podcast.link }}" />
-            {% endwith %}
+                {% with podcast=subscription.podcast %}
+                    <outline type="rss"
+                        text="{{ podcast.cleaned_description|truncatewords:60 }}"
+                        title="{{ podcast.title }}"
+                        xmlUrl="{{ podcast.rss }}"
+                        {% if podcast.website %}htmlUrl="{{ podcast.website }}"{% endif %} />
+                {% endwith %}
 			{% endfor %}
 		</outline>
 	</body>
