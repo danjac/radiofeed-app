@@ -1,10 +1,10 @@
 <div id="messages"
-     class="fixed inset-x-0 z-50 mx-auto max-w-fit top-10 sm:top-3"
+     class="fixed inset-x-0 z-50 mx-auto max-w-fit top-10 sm:top-1"
      {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if messages %}
         <ul class="space-y-3">
             {% for message in messages %}
-                <li class="flex flex-wrap items-center justify-center px-2 py-1 text-white font-bold text-center rounded shadow-xl message-{{ message.tags }}"
+                <li class="flex flex-wrap items-center justify-center p-2 text-white font-bold text-center rounded shadow-xl message-{{ message.tags }}"
                     role="alert"
                     x-data="{show: true}"
                     x-show="show"
