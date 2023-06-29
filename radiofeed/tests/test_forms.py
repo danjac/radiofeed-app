@@ -1,5 +1,3 @@
-import http
-
 from django import forms
 
 from radiofeed.forms import handle_form
@@ -11,31 +9,19 @@ class MyForm(forms.Form):
 
 class TestHandleForm:
     def test_get(self, rf):
-        form, result = handle_form(MyForm, rf.get("/"))
+        form, success = handle_form(MyForm, rf.get("/"))
 
-        assert not result
-        assert not result.is_bound
-        assert not result.is_valid
-        assert result.status == http.HTTPStatus.OK
-
+        assert not success
         assert not form.errors
 
     def test_post_ok(self, rf):
-        form, result = handle_form(MyForm, rf.post("/", {"name": "testing"}))
+        form, success = handle_form(MyForm, rf.post("/", {"name": "testing"}))
 
-        assert result
-        assert result.is_bound
-        assert result.is_valid
-        assert result.status == http.HTTPStatus.OK
-
+        assert success
         assert not form.errors
 
     def test_post_errors(self, rf):
-        form, result = handle_form(MyForm, rf.post("/"))
+        form, success = handle_form(MyForm, rf.post("/"))
 
-        assert not result
-        assert result.is_bound
-        assert not result.is_valid
-        assert result.status == http.HTTPStatus.UNPROCESSABLE_ENTITY
-
+        assert not success
         assert form.errors

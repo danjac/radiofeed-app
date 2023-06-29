@@ -324,9 +324,9 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
-    form, result = handle_form(PrivateFeedForm, request, user=request.user)
+    form, success = handle_form(PrivateFeedForm, request, user=request.user)
 
-    if result:
+    if success:
         podcast, is_new = form.save()
 
         messages.success(request, "Added to Private Feeds")
@@ -345,7 +345,6 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
         },
         target="private-feed-form",
         use_blocks=["form"],
-        status=result.status,
     )
 
 
