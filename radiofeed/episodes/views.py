@@ -1,7 +1,9 @@
+import contextlib
 import http
 from datetime import timedelta
 
 from django.contrib import messages
+from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import (
     Http404,
@@ -220,10 +222,8 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
 
-    if request.user.bookmarks.filter(episode=episode).exists():
-        return HttpResponse(status=http.HTTPStatus.CONFLICT)
-
-    request.user.bookmarks.create(episode=episode)
+    with contextlib.suppress(IntegrityError):
+        request.user.bookmarks.create(episode=episode)
 
     messages.success(request, "Added to Bookmarks")
     return _render_bookmark_action(request, episode, is_bookmarked=True)

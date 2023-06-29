@@ -25,7 +25,6 @@ def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
 
 (
     assert_bad_request,
-    assert_conflict,
     assert_not_found,
     assert_no_content,
     assert_ok,
@@ -34,7 +33,6 @@ def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
     functools.partial(assert_status, status=status)
     for status in (
         http.HTTPStatus.BAD_REQUEST,
-        http.HTTPStatus.CONFLICT,
         http.HTTPStatus.NOT_FOUND,
         http.HTTPStatus.NO_CONTENT,
         http.HTTPStatus.OK,

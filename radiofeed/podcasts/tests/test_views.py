@@ -4,7 +4,6 @@ from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
 
 from radiofeed.asserts import (
-    assert_conflict,
     assert_hx_location,
     assert_not_found,
     assert_ok,
@@ -452,7 +451,7 @@ class TestSubscribe:
             self.url(podcast),
             HTTP_HX_REQUEST="true",
         )
-        assert_conflict(response)
+        assert_ok(response)
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
