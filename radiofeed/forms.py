@@ -13,8 +13,8 @@ class Result:
     is_valid: bool = False
 
     def __bool__(self) -> bool:
-        """Returns `True` if form processed and validated."""
-        return self.is_bound and self.is_valid
+        """Returns `True` if form is valid."""
+        return self.is_valid
 
     @property
     def status(self) -> http.HTTPStatus:

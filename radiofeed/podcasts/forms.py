@@ -28,11 +28,15 @@ class PrivateFeedForm(forms.Form):
 
         return value
 
-    def save(self) -> Podcast:
-        """Adds new podcast."""
-        podcast, _ = Podcast.objects.get_or_create(
+    def save(self) -> tuple[Podcast, bool]:
+        """Adds new podcast.
+
+        Returns podcast instance and boolean to indicate podcast is new.
+        """
+        podcast, is_new = Podcast.objects.get_or_create(
             rss=self.cleaned_data["rss"],
             defaults={"private": True},
         )
+        is_new = is_new or podcast.pub_date is None
         Subscription.objects.create(subscriber=self.user, podcast=podcast)
-        return podcast
+        return podcast, is_new

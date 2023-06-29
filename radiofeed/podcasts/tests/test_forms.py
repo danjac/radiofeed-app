@@ -1,4 +1,5 @@
 import pytest
+from django.utils import timezone
 
 from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -13,7 +14,8 @@ class TestPrivateFeedForm:
         form = PrivateFeedForm({"rss": self.rss}, user=user)
         assert form.is_valid()
 
-        podcast = form.save()
+        podcast, is_new = form.save()
+        assert is_new is True
         assert podcast.private
         assert podcast.rss == self.rss
 
@@ -21,12 +23,26 @@ class TestPrivateFeedForm:
 
     @pytest.mark.django_db()
     def test_feed_exists(self, user):
-        create_podcast(private=True, rss=self.rss)
+        create_podcast(private=True, rss=self.rss, pub_date=timezone.now())
         form = PrivateFeedForm({"rss": self.rss}, user=user)
         assert form.is_valid()
 
-        podcast = form.save()
+        podcast, is_new = form.save()
         assert podcast.private
+        assert is_new is False
+        assert podcast.rss == self.rss
+
+        assert Subscription.objects.filter(podcast=podcast, subscriber=user).exists()
+
+    @pytest.mark.django_db()
+    def test_feed_exists_no_pub_date(self, user):
+        create_podcast(private=True, rss=self.rss, pub_date=None)
+        form = PrivateFeedForm({"rss": self.rss}, user=user)
+        assert form.is_valid()
+
+        podcast, is_new = form.save()
+        assert podcast.private
+        assert is_new is True
         assert podcast.rss == self.rss
 
         assert Subscription.objects.filter(podcast=podcast, subscriber=user).exists()
