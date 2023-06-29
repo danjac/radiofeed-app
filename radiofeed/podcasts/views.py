@@ -101,7 +101,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         try:
             feeds = itunes.search(request.search.value)
         except requests.RequestException:
-            messages.error(request, "Sorry, an error occurred trying to access iTunes.")
+            messages.error(request, "Error: iTunes unavailable")
 
         return TemplateResponse(
             request,
@@ -278,7 +278,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     request.user.subscriptions.create(podcast=podcast)
 
-    messages.success(request, "You are now subscribed to this podcast")
+    messages.success(request, "Subscribed to Podcast")
     return _render_subscribe_action(request, podcast, is_subscribed=True)
 
 
@@ -288,7 +288,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
-    messages.info(request, "You are no longer subscribed to this podcast")
+    messages.info(request, "Unsubscribed from Podcast")
     return _render_subscribe_action(request, podcast, is_subscribed=False)
 
 
@@ -329,14 +329,13 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
     if result:
         podcast, is_new = form.save()
 
-        if is_new:
-            messages.success(
-                request, "Podcast should appear in your private feeds in a few minutes."
-            )
-            return HttpResponseLocation(reverse("podcasts:private_feeds"))
+        messages.success(request, "Added to Private Feeds")
 
-        messages.success(request, "Podcast has been added to your private feeds.")
-        return HttpResponseLocation(podcast.get_absolute_url())
+        redirect_url = (
+            reverse("podcasts:private_feeds") if is_new else podcast.get_absolute_url()
+        )
+
+        return HttpResponseLocation(redirect_url)
 
     return render_template_fragments(
         request,
@@ -356,7 +355,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
-    messages.info(request, "Podcast has been removed from your private feeds.")
+    messages.info(request, "Removed from Private Feeds")
     return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
 
