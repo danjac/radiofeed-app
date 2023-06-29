@@ -12,6 +12,7 @@ from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
+from radiofeed.forms import handle_form
 from radiofeed.fragments import render_template_fragments
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
@@ -323,24 +324,20 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
-    if request.method == "POST":
-        form = PrivateFeedForm(request.POST, user=request.user)
-        if form.is_valid():
-            podcast = form.save()
+    form, result = handle_form(PrivateFeedForm, request, user=request.user)
 
-            if podcast.pub_date:
-                messages.success(
-                    request, "Podcast has been added to your private feeds."
-                )
-                return HttpResponseLocation(podcast.get_absolute_url())
+    if result:
+        podcast = form.save()
 
-            # new or unparsed feed
-            messages.success(
-                request, "Podcast should appear in your private feeds in a few minutes."
-            )
-            return HttpResponseLocation(reverse("podcasts:private_feeds"))
-    else:
-        form = PrivateFeedForm()
+        if podcast.pub_date:
+            messages.success(request, "Podcast has been added to your private feeds.")
+            return HttpResponseLocation(podcast.get_absolute_url())
+
+        # new or unparsed feed
+        messages.success(
+            request, "Podcast should appear in your private feeds in a few minutes."
+        )
+        return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
     return render_template_fragments(
         request,
@@ -350,6 +347,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
         },
         target="private-feed-form",
         use_blocks=["form"],
+        status=result.status,
     )
 
 

@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
+from radiofeed.forms import handle_form
 from radiofeed.fragments import render_template_fragments
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
@@ -18,14 +19,12 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
 
-    if request.method == "POST":
-        form = UserPreferencesForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your preferences have been saved")
-            return HttpResponseLocation(request.path)
-    else:
-        form = UserPreferencesForm(instance=request.user)
+    form, result = handle_form(UserPreferencesForm, request, instance=request.user)
+
+    if result:
+        form.save()
+        messages.success(request, "Your preferences have been saved")
+        return HttpResponseLocation(request.path)
 
     return render_template_fragments(
         request,
@@ -33,6 +32,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         {"form": form},
         target="preferences-form",
         use_blocks=["form"],
+        status=result.status,
     )
 
 
@@ -55,8 +55,8 @@ def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    form = OpmlUploadForm(request.POST, request.FILES)
-    if form.is_valid():
+    form, result = handle_form(OpmlUploadForm, request)
+    if result:
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
@@ -75,6 +75,7 @@ def import_podcast_feeds(
         },
         target="import-feeds-form",
         use_blocks=["import_feeds_form"],
+        status=result.status,
     )
 
 
