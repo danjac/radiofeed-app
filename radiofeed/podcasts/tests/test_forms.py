@@ -11,7 +11,7 @@ class TestPrivateFeedForm:
 
     @pytest.mark.django_db()
     def test_new_feed(self, user):
-        form = PrivateFeedForm({"rss": self.rss}, user=user)
+        form = PrivateFeedForm(data={"rss": self.rss}, user=user)
         assert form.is_valid()
 
         podcast, is_new = form.save()
@@ -24,7 +24,7 @@ class TestPrivateFeedForm:
     @pytest.mark.django_db()
     def test_feed_exists(self, user):
         create_podcast(private=True, rss=self.rss, pub_date=timezone.now())
-        form = PrivateFeedForm({"rss": self.rss}, user=user)
+        form = PrivateFeedForm(data={"rss": self.rss}, user=user)
         assert form.is_valid()
 
         podcast, is_new = form.save()
@@ -37,7 +37,7 @@ class TestPrivateFeedForm:
     @pytest.mark.django_db()
     def test_feed_exists_no_pub_date(self, user):
         create_podcast(private=True, rss=self.rss, pub_date=None)
-        form = PrivateFeedForm({"rss": self.rss}, user=user)
+        form = PrivateFeedForm(data={"rss": self.rss}, user=user)
         assert form.is_valid()
 
         podcast, is_new = form.save()
@@ -50,7 +50,7 @@ class TestPrivateFeedForm:
     @pytest.mark.django_db()
     def test_feed_not_private(self, user):
         create_podcast(private=False, rss=self.rss)
-        form = PrivateFeedForm({"rss": self.rss}, user=user)
+        form = PrivateFeedForm(data={"rss": self.rss}, user=user)
         assert not form.is_valid()
 
     @pytest.mark.django_db()
@@ -58,5 +58,5 @@ class TestPrivateFeedForm:
         user = create_subscription(
             podcast=create_podcast(private=True, rss=self.rss)
         ).subscriber
-        form = PrivateFeedForm({"rss": self.rss}, user=user)
+        form = PrivateFeedForm(data={"rss": self.rss}, user=user)
         assert not form.is_valid()

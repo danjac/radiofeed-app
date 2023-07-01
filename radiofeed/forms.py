@@ -12,7 +12,14 @@ def handle_form(
     `form_kwargs` will be passed to the form constructor in either case.
 
     Returns the form instance and `True` if form is valid.
+
+    If form takes `request` as an argument, pass in as `_request` e.g.
+
+        handle_form(MyForm, request, _request=request)
     """
+
+    if _request := form_kwargs.pop("_request", None):
+        form_kwargs["request"] = _request
 
     if request.method == "POST":
         form = form_class(data=request.POST, files=request.FILES, **form_kwargs)
