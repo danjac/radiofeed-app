@@ -14,15 +14,13 @@ def render_template_fragments(
     use_templates: list[str] | None = None,
     **response_kwargs,
 ) -> HttpResponse:
-    """Renders template blocks instead of whole template for an HTMX request.
+    """Renders template blocks or individual templates instead of whole template for an HTMX request.
 
     If not an HTMX request (HX-Request is not `true`) will render the entire template in a `TemplateResponse`.
 
     If `target` is provided, will also try to match the HX-Target header.
 
-    A list of the blocks rendered is added to template context as `use_blocks`.
-
-    You can also pass in a list of templates rather than blocks in `use_templates`.
+    A list of blocks or templates rendered are added to template context as `use_blocks` and `use_templates`.
     """
 
     if (
