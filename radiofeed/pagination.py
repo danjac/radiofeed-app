@@ -21,18 +21,17 @@ def render_paginated_response(
     Adds Page instance `page_obj` to template context. If `pagination_target` matches HX-Target request header,
     will render the pagination block instead of the entire template.
     """
-    context = (context or {}) | {
-        "page_obj": Paginator(object_list, page_size).get_page(
-            request.pagination.current
-        ),
-        "pagination_target": pagination_target,
-    }
-    use_blocks = use_blocks or ["pagination"]
     return render_template_fragments(
         request,
         template_name,
-        context,
+        (context or {})
+        | {
+            "page_obj": Paginator(object_list, page_size).get_page(
+                request.pagination.current
+            ),
+            "pagination_target": pagination_target,
+        },
         target=pagination_target,
-        use_blocks=use_blocks,
+        use_blocks=use_blocks or ["pagination"],
         **kwargs,
     )
