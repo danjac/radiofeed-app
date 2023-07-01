@@ -24,13 +24,13 @@ def render_paginated_response(
     return render_template_fragments(
         request,
         template_name,
-        (context or {})
-        | {
+        {
             "page_obj": Paginator(object_list, page_size).get_page(
                 request.pagination.current
             ),
             "pagination_target": pagination_target,
-        },
+        }
+        | (context or {}),
         target=pagination_target,
         use_blocks=use_blocks or ["pagination"],
         **kwargs,
