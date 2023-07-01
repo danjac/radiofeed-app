@@ -14,6 +14,7 @@ def render_paginated_response(
     page_size: int = 30,
     pagination_target: str = "pagination",
     use_blocks: list[str] | None = None,
+    **kwargs,
 ) -> HttpResponse:
     """Renders a paginated queryset.
 
@@ -33,4 +34,5 @@ def render_paginated_response(
         context,
         target=pagination_target,
         use_blocks=use_blocks,
+        **kwargs,
     )
