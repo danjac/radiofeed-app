@@ -18,9 +18,6 @@ def handle_form(
         handle_form(MyForm, request, _request=request)
     """
 
-    if _request := form_kwargs.pop("_request", None):
-        form_kwargs["request"] = _request
-
     if request.method == "POST":
         form = form_class(data=request.POST, files=request.FILES, **form_kwargs)
         return form, form.is_valid()
