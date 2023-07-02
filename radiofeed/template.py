@@ -40,7 +40,7 @@ def render_template_partials(
 
     If `use_blocks` is a `list`, will render each named template block in list.
 
-    If `use_blocks` is a `str`,  will render the specified template block.
+    If `use_blocks` is a `str`, will render the specified template block.
 
     If `target` is provided, will render template blocks if HX-Target matches `target`.
 
