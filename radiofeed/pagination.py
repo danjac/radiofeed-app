@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 
-from radiofeed.fragments import render_template_fragments
+from radiofeed.template import render_template_partials
 
 
 def render_paginated_response(
@@ -21,7 +21,7 @@ def render_paginated_response(
     Adds Page instance `page_obj` to template context. If `target` matches HX-Target request header,
     will render the pagination block instead of the entire template.
     """
-    return render_template_fragments(
+    return render_template_partials(
         request,
         template_name,
         {

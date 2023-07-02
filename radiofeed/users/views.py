@@ -10,7 +10,7 @@ from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.forms import handle_form
-from radiofeed.fragments import render_template_fragments
+from radiofeed.template import render_template_partials
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -26,7 +26,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         messages.success(request, "Your preferences have been saved")
         return HttpResponseLocation(request.path)
 
-    return render_template_fragments(
+    return render_template_partials(
         request,
         "account/preferences.html",
         {"form": form},
@@ -66,7 +66,7 @@ def import_podcast_feeds(
 
         return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
 
-    return render_template_fragments(
+    return render_template_partials(
         request,
         "account/podcast_feeds.html",
         {
