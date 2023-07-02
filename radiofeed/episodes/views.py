@@ -196,7 +196,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         {
             "episode": audio_log.episode,
         },
-        use_blocks=["audio_log"],
+        use_blocks="audio_log",
     )
 
 
@@ -270,5 +270,5 @@ def _render_bookmark_action(
             "episode": episode,
             "is_bookmarked": is_bookmarked,
         },
-        use_blocks=["bookmark_button"],
+        use_blocks="bookmark_button",
     )

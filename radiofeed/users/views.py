@@ -31,7 +31,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         "account/preferences.html",
         {"form": form},
         target="preferences-form",
-        use_blocks=["form"],
+        use_blocks="form",
     )
 
 
@@ -73,7 +73,7 @@ def import_podcast_feeds(
             "upload_form": form,
         },
         target="import-feeds-form",
-        use_blocks=["import_feeds_form"],
+        use_blocks="import_feeds_form",
     )
 
 

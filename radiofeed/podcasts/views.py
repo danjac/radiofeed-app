@@ -343,7 +343,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
             "form": form,
         },
         target="private-feed-form",
-        use_blocks=["form"],
+        use_blocks="form",
     )
 
 
@@ -367,5 +367,5 @@ def _render_subscribe_action(
             "podcast": podcast,
             "is_subscribed": is_subscribed,
         },
-        use_blocks=["subscribe_button"],
+        use_blocks="subscribe_button",
     )

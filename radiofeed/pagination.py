@@ -12,13 +12,13 @@ def render_paginated_response(
     context: dict | None = None,
     *,
     page_size: int = 30,
-    pagination_target: str = "pagination",
-    use_blocks: list[str] | None = None,
+    target: str = "pagination",
+    use_blocks: list | str = "pagination",
     **kwargs,
 ) -> HttpResponse:
     """Renders a paginated queryset.
 
-    Adds Page instance `page_obj` to template context. If `pagination_target` matches HX-Target request header,
+    Adds Page instance `page_obj` to template context. If `target` matches HX-Target request header,
     will render the pagination block instead of the entire template.
     """
     return render_template_fragments(
@@ -28,10 +28,10 @@ def render_paginated_response(
             "page_obj": Paginator(object_list, page_size).get_page(
                 request.pagination.current
             ),
-            "pagination_target": pagination_target,
+            "pagination_target": target,
         }
         | (context or {}),
-        target=pagination_target,
-        use_blocks=use_blocks or ["pagination"],
+        target=target,
+        use_blocks=use_blocks,
         **kwargs,
     )
