@@ -124,7 +124,7 @@ def cookie_notice(context: RequestContext) -> dict:
 
 
 @register.simple_tag
-def cover_image_url(cover_url: str, size: int) -> str:
+def cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
     return (
         reverse(
@@ -142,7 +142,7 @@ def cover_image_url(cover_url: str, size: int) -> str:
 
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
-    cover_url: str,
+    cover_url: str | None,
     size: int,
     title: str,
     url: str = "",
