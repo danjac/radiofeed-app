@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
 
 DEBUG = config("DEBUG", default=False, cast=bool)
 
@@ -128,7 +128,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ROOT_URLCONF = "radiofeed.urls"
+ROOT_URLCONF = "radiofeed.config.urls"
 
 ALLOWED_HOSTS: list[str] = config(
     "ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv()
