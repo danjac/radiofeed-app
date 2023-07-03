@@ -12,10 +12,6 @@ def handle_form(
     `form_kwargs` will be passed to the form constructor in either case.
 
     Returns the form instance and `True` if form is valid.
-
-    If form takes `request` as an argument, pass in as `_request` e.g.
-
-        handle_form(MyForm, request, _request=request)
     """
 
     if request.method == "POST":
