@@ -23,7 +23,7 @@ _cache_page = cache_page(60 * 60)
 
 
 @require_safe
-def about_page(request: HttpRequest) -> HttpResponse:
+def about_page(request: HttpRequest) -> TemplateResponse:
     """Renders about page."""
     return TemplateResponse(
         request,

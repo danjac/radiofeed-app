@@ -6,20 +6,22 @@ from django.db import connections
 
 
 class ThreadPoolExecutor(futures.ThreadPoolExecutor):
-    """ThreadPoolExecutor with safemap() and safesubmit() methods."""
+    """ThreadPoolExecutor which handles closing DB connections for each thread."""
 
-    def _close_db_connections(self, future: futures.Future) -> None:
-        connections.close_all()
-
-    def safesubmit(self, fn: Callable, *args, **kwargs) -> futures.Future:
+    def db_safe_submit(self, fn: Callable, *args, **kwargs) -> futures.Future:
         """Runs submit() on function, closing the DB connections when done."""
         future = self.submit(fn, *args, **kwargs)
         future.add_done_callback(self._close_db_connections)
         return future
 
-    def safemap(self, fn: Callable, *iterables: Iterable) -> list[futures.Future]:
-        """Runs safesubmit() on each item of iterators, returning list of futures."""
+    def db_safe_map(
+        self, fn: Callable, *iterables: Iterable, **kwargs
+    ) -> list[futures.Future]:
+        """Runs db_safe_submit() on each item of iterators, returning list of futures."""
         return [
-            self.safesubmit(fn, item)
+            self.db_safe_submit(fn, item, **kwargs)
             for item in itertools.chain.from_iterable(iterables)
         ]
+
+    def _close_db_connections(self, future: futures.Future) -> None:
+        connections.close_all()

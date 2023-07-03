@@ -14,7 +14,7 @@ class Command(BaseCommand):
         """Command handler implementation."""
 
         with ThreadPoolExecutor() as executor:
-            executor.safemap(
+            executor.db_safe_map(
                 self._send_recommendations_email,
                 User.objects.email_notification_recipients().values_list(
                     "pk", flat=True

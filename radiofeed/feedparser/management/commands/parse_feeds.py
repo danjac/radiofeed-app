@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
         while True:
             with ThreadPoolExecutor() as executor:
-                futures = executor.safemap(
+                futures = executor.db_safe_map(
                     self._parse_feed,
                     scheduler.get_scheduled_podcasts()
                     .alias(subscribers=Count("subscriptions"))
