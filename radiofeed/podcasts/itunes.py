@@ -12,8 +12,8 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed import iterators
-from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast
+from radiofeed.xml import XPathParser
 
 _ITUNES_LOCATIONS: Final = (
     "de",

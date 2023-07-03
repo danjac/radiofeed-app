@@ -3,9 +3,9 @@ from collections.abc import Iterator
 import lxml  # nosec
 from django import forms
 
-from radiofeed.feedparser.xpath_parser import XPathParser
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
+from radiofeed.xml import XPathParser
 
 
 class UserPreferencesForm(forms.ModelForm):
