@@ -26,9 +26,7 @@ _ITUNES_LOCATIONS: Final = (
 
 _ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
 
-_APPLE_NAMESPACE: Final = "http://www.apple.com/itms/"
-
-_xpath_parser = XPathParser({"apple": _APPLE_NAMESPACE})
+_xpath_parser = XPathParser({"apple": "http://www.apple.com/itms/"})
 
 
 @dataclasses.dataclass(frozen=True)
@@ -153,7 +151,7 @@ class Crawler:
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
         for element in _xpath_parser.iterparse(
-            content, f"{{{_APPLE_NAMESPACE}}}html", "/apple:html"
+            content, "{http://www.apple.com/itms/}html", "/apple:html"
         ):
             try:
                 yield from _xpath_parser.iter(element, "//a//@href")
