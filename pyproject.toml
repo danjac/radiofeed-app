@@ -70,7 +70,7 @@ ruff = "^0.0.275"
 djlint = "^1.31.1"
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.settings"
+DJANGO_SETTINGS_MODULE="radiofeed.config.settings"
 addopts = [
     "-v",
     "-x",
