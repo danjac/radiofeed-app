@@ -68,7 +68,7 @@ def favicon(request: HttpRequest) -> FileResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def service_worker(request: HttpRequest) -> HttpResponse:
+def service_worker(request: HttpRequest) -> TemplateResponse:
     """PWA service worker."""
     return TemplateResponse(
         request,
