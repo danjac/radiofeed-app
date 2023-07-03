@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from radiofeed.futures import ThreadPoolExecutor
+from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts import emails
 from radiofeed.users.models import User
 
@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         """Command handler implementation."""
 
-        with ThreadPoolExecutor() as executor:
+        with DatabaseSafeThreadPoolExecutor() as executor:
             executor.db_safe_map(
                 self._send_recommendations_email,
                 User.objects.email_notification_recipients().values_list(

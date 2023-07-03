@@ -5,8 +5,8 @@ from concurrent import futures
 from django.db import connections
 
 
-class ThreadPoolExecutor(futures.ThreadPoolExecutor):
-    """ThreadPoolExecutor which handles closing DB connections for each thread."""
+class DatabaseSafeThreadPoolExecutor(futures.ThreadPoolExecutor):
+    """ThreadPoolExecutor subclass which handles closing DB connections for each thread."""
 
     def db_safe_submit(self, fn: Callable, *args, **kwargs) -> futures.Future:
         """Runs submit() on function, closing the DB connections when done."""

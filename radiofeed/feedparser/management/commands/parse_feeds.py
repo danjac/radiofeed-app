@@ -6,7 +6,7 @@ from django.db.models import Count, F
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.futures import ThreadPoolExecutor
+from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts.models import Podcast
 
 
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         """Command handler implementation."""
 
         while True:
-            with ThreadPoolExecutor() as executor:
+            with DatabaseSafeThreadPoolExecutor() as executor:
                 futures = executor.db_safe_map(
                     self._parse_feed,
                     scheduler.get_scheduled_podcasts()
