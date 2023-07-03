@@ -21,8 +21,8 @@
                                    title="{{ previous_episode.cleaned_title }}">Previous</a>
                             {% else %}
                                 <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
-                                      title="No More Episodes"
-                                      aria-label="No More Episodes">Previous</span>
+                                      title="First Episode"
+                                      aria-label="First Episode">Previous</span>
                             {% endif %}
                         </li>
                         <li>
@@ -33,8 +33,8 @@
                                    title="{{ next_episode.cleaned_title }}">Next</a>
                             {% else %}
                                 <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
-                                      title="No More Episodes"
-                                      aria-label="No More Episodes">Next</span>
+                                      title="Last Episode"
+                                      aria-label="Last Episode">Next</span>
                             {% endif %}
                         </li>
                     </ul>

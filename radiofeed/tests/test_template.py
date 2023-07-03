@@ -143,7 +143,8 @@ class TestPaginationLinks:
             ),
         }
         rendered = tmpl.render(ctx, request=page_req)
-        assert rendered.count("No More Pages") == 2
+        assert rendered.count("First Page") == 2
+        assert rendered.count("Last Page") == 0
 
     def test_has_previous(self, page_req, tmpl):
         ctx = {
@@ -152,7 +153,8 @@ class TestPaginationLinks:
             ),
         }
         rendered = tmpl.render(ctx, request=page_req)
-        assert rendered.count("No More Pages") == 2
+        assert rendered.count("First Page") == 0
+        assert rendered.count("Last Page") == 2
 
     def test_has_next_and_previous(self, page_req, tmpl):
         ctx = {
@@ -165,7 +167,8 @@ class TestPaginationLinks:
             ),
         }
         rendered = tmpl.render(ctx, request=page_req)
-        assert rendered.count("No More Pages") == 0
+        assert rendered.count("First Page") == 0
+        assert rendered.count("Last Page") == 0
 
 
 class MockForm:

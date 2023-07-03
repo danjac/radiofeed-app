@@ -210,7 +210,7 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
         assert response.context["episode"] == episode
-        assertContains(response, "No More Episodes")
+        assertContains(response, "Last Episode")
 
     @pytest.mark.django_db()
     def test_no_previous_episode(
@@ -225,7 +225,7 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
         assert response.context["episode"] == episode
-        assertContains(response, "No More Episodes")
+        assertContains(response, "First Episode")
 
 
 class TestStartPlayer:
