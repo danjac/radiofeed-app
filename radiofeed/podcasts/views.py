@@ -120,7 +120,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 @require_auth
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> HttpResponseRedirect:
     """Redirects to the latest episode for a given podcast."""
     if (
         episode := Episode.objects.filter(podcast=podcast_id)
@@ -136,7 +136,7 @@ def latest_episode(
 @require_auth
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Details for a single podcast."""
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
@@ -184,7 +184,7 @@ def episodes(
 @require_auth
 def similar(
     request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
-) -> HttpResponse:
+) -> TemplateResponse:
     """List similar podcasts based on recommendations."""
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
@@ -206,7 +206,7 @@ def similar(
 
 @require_safe
 @require_auth
-def category_list(request: HttpRequest) -> HttpResponse:
+def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.annotate(
@@ -349,7 +349,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
 @require_DELETE
 @require_auth
-def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseLocation:
     """Removes subscription to private feed."""
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()

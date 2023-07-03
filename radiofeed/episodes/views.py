@@ -77,7 +77,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 @require_auth
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
