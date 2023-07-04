@@ -94,9 +94,8 @@ env = [
 [tool.coverage.run]
 source=["radiofeed", "templates"]
 omit=[
-    "**/settings.py",
-    "**/wsgi.py",
     "**/migrations/*",
+    "*/config/*",
     "*/nltk/*",
     "*/static/*",
     "*/tests/*",

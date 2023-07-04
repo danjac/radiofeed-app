@@ -35,7 +35,6 @@ INSTALLED_APPS: list[str] = [
     "django_extensions",
     "django_htmx",
     "heroicons",
-    "whitenoise.runserver_nostatic",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
@@ -264,6 +263,9 @@ if USE_COLLECTSTATIC := config("USE_COLLECTSTATIC", default=True, cast=bool):
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+else:
+    # for development only
+    INSTALLED_APPS += ["whitenoise.runserver_nostatic"]
 
 
 # Templates
