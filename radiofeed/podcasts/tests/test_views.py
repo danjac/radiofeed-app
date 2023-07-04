@@ -3,11 +3,6 @@ import requests
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
 
-from radiofeed.asserts import (
-    assert_hx_location,
-    assert_not_found,
-    assert_ok,
-)
 from radiofeed.episodes.tests.factories import create_episode
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Subscription
@@ -16,6 +11,11 @@ from radiofeed.podcasts.tests.factories import (
     create_podcast,
     create_recommendation,
     create_subscription,
+)
+from radiofeed.tests.asserts import (
+    assert_hx_location,
+    assert_not_found,
+    assert_ok,
 )
 from radiofeed.tests.factories import create_batch
 
