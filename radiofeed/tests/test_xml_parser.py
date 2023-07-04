@@ -2,27 +2,27 @@ import pathlib
 
 import pytest
 
-from radiofeed.xml import XPathParser
+from radiofeed.xml_parser import XMLParser
 
 
-class TestXPathParser:
+class TestXMLParser:
     def read_mock_file(self, mock_filename="rss_mock.xml"):
         return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
 
     @pytest.fixture()
     def channel(self):
-        return next(XPathParser().iterparse(self.read_mock_file(), "rss", "channel"))
+        return next(XMLParser().iterparse(self.read_mock_file(), "rss", "channel"))
 
     def test_iter(self, channel):
-        assert list(XPathParser().iter(channel, "title/text()")) == [
+        assert list(XMLParser().iter(channel, "title/text()")) == [
             "Mysterious Universe"
         ]
 
     def test_aslist(self, channel):
-        assert XPathParser().aslist(channel, "title/text()") == ["Mysterious Universe"]
+        assert XMLParser().aslist(channel, "title/text()") == ["Mysterious Universe"]
 
     def test_asdict(self, channel):
-        assert XPathParser(
+        assert XMLParser(
             {
                 "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
             }
@@ -42,16 +42,16 @@ class TestXPathParser:
         }
 
     def test_first_exists(self, channel):
-        assert XPathParser().first(channel, "title/text()") == "Mysterious Universe"
+        assert XMLParser().first(channel, "title/text()") == "Mysterious Universe"
 
     def test_find_first_matching(self, channel):
         assert (
-            XPathParser().first(channel, "editor/text()", "managingEditor/text()")
+            XMLParser().first(channel, "editor/text()", "managingEditor/text()")
             == "sales@mysteriousuniverse.org (8th Kind)"
         )
 
     def test_default(self, channel):
         assert (
-            XPathParser().first(channel, "editor/text()", "managingEditor2/text()")
+            XMLParser().first(channel, "editor/text()", "managingEditor2/text()")
             is None
         )

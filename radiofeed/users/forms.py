@@ -5,7 +5,7 @@ from django import forms
 
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
-from radiofeed.xml import XPathParser
+from radiofeed.xml_parser import XMLParser
 
 
 class UserPreferencesForm(forms.ModelForm):
@@ -37,7 +37,7 @@ class OpmlUploadForm(forms.Form):
         ),
     )
 
-    _xpath_parser = XPathParser()
+    _xml_parser = XMLParser()
 
     def subscribe_to_feeds(self, user: User, limit: int = 360) -> int:
         """Subscribes user to feeds in uploaded OPML.
@@ -75,11 +75,11 @@ class OpmlUploadForm(forms.Form):
         self.cleaned_data["opml"].seek(0)
 
         try:
-            for element in self._xpath_parser.iterparse(
+            for element in self._xml_parser.iterparse(
                 self.cleaned_data["opml"].read(), "opml", "body"
             ):
                 try:
-                    yield from self._xpath_parser.iter(element, "//outline//@xmlUrl")
+                    yield from self._xml_parser.iter(element, "//outline//@xmlUrl")
                 finally:
                     element.clear()
         except lxml.etree.XMLSyntaxError:

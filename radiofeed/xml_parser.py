@@ -8,7 +8,7 @@ import lxml.etree
 Namespaces: TypeAlias = dict[str, str]
 
 
-class XPathParser:
+class XMLParser:
     """Does efficient XPath lookups to find elements and text/attribute values in
     elements."""
 
