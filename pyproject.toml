@@ -193,8 +193,6 @@ ignore = [
 [tool.ruff.per-file-ignores]
 # ignore pydocstyle rules for tests and migrations
 "**/conftest.py" = ["D101", "D102", "D103", "D105"]
-"**/factories.py" = ["D101", "D102", "D103", "D105"]
-"**/fixtures.py" = ["D101", "D102", "D103", "D105"]
 "**/apps.py" = ["D101", "D102", "D103", "D105"]
 "**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N"]
 "**/tests/**.py" = ["D101", "D102", "D103", "D105"]
