@@ -32,6 +32,7 @@ INSTALLED_APPS: list[str] = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "cacheops",
     "django_extensions",
     "django_htmx",
     "heroicons",
@@ -83,16 +84,31 @@ DATABASES = {
 
 # Caches
 
+REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/0")
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config("REDIS_URL", default="redis://127.0.0.1:6379/0"),
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "IGNORE_EXCEPTIONS": True,
             "PARSER_CLASS": "redis.connection.HiredisParser",
         },
     }
+}
+
+# https://github.com/Suor/django-cacheops
+
+CACHEOPS_REDIS = REDIS_URL
+CACHEOPS_DEGRADE_ON_FAILURE = True
+CACHEOPS_TIMEOUT = 60 * 15
+
+CACHEOPS_DEFAULTS = {"ops": "all", "timeout": 60 * 15}
+
+CACHEOPS = {
+    "episodes.*": CACHEOPS_DEFAULTS,
+    "podcasts.*": CACHEOPS_DEFAULTS,
 }
 
 # Templates

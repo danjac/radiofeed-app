@@ -12,6 +12,7 @@ def _settings_overrides(settings: Settings) -> None:
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
     }
+    settings.CACHEOPS_ENABLED = False
     settings.LOGGING = None
     settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
