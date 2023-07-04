@@ -2,7 +2,7 @@ import pytest
 from django.core.management import call_command
 
 from radiofeed.feedparser.exceptions import DuplicateError
-from radiofeed.podcasts.factories import create_podcast
+from radiofeed.podcasts.tests.factories import create_podcast
 
 
 class TestParseFeeds:

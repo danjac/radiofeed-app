@@ -1,7 +1,7 @@
 from allauth.account.models import EmailAddress
 from faker import Faker
 
-from radiofeed.factories import NotSet, resolve
+from radiofeed.tests.factories import NotSet, resolve
 from radiofeed.users.models import User
 
 _faker = Faker()

@@ -1,10 +1,10 @@
 import pytest
 from django.core.management import call_command
 
-from radiofeed.factories import create_batch
-from radiofeed.podcasts.factories import create_recommendation
 from radiofeed.podcasts.itunes import Feed
-from radiofeed.users.factories import create_user
+from radiofeed.podcasts.tests.factories import create_recommendation
+from radiofeed.tests.factories import create_batch
+from radiofeed.users.tests.factories import create_user
 
 
 class TestCreateRecommendations:

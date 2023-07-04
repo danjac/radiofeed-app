@@ -1,9 +1,9 @@
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.factories import create_audio_log
 from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.templatetags.audio_player import audio_player
+from radiofeed.episodes.tests.factories import create_audio_log
 
 
 class TestAudioPlayer:

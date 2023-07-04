@@ -5,10 +5,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.asserts import assert_hx_location, assert_ok
-from radiofeed.episodes.factories import create_audio_log, create_bookmark
-from radiofeed.factories import create_batch
-from radiofeed.podcasts.factories import create_podcast, create_subscription
+from radiofeed.episodes.tests.factories import create_audio_log, create_bookmark
 from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
+from radiofeed.tests.factories import create_batch
 from radiofeed.users.models import User
 
 

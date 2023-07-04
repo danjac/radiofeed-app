@@ -1,7 +1,7 @@
 import pytest
 
-from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
+from radiofeed.episodes.tests.factories import create_episode
 
 
 @pytest.fixture()

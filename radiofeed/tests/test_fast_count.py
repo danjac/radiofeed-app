@@ -1,9 +1,9 @@
 import pytest
 
-from radiofeed.factories import create_batch
 from radiofeed.fast_count import FastCountPaginator
-from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.tests.factories import create_batch
 
 
 class TestFastCountPaginator:

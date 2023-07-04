@@ -4,7 +4,7 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.factories import NotSet, resolve
+from radiofeed.tests.factories import NotSet, resolve
 
 _faker = Faker()
 

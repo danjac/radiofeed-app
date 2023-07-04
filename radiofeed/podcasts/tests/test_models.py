@@ -1,13 +1,13 @@
 import pytest
 from django.urls import reverse
 
-from radiofeed.factories import create_batch
-from radiofeed.podcasts.factories import (
+from radiofeed.podcasts.models import Category, Podcast, Recommendation
+from radiofeed.podcasts.tests.factories import (
     create_category,
     create_podcast,
     create_recommendation,
 )
-from radiofeed.podcasts.models import Category, Podcast, Recommendation
+from radiofeed.tests.factories import create_batch
 
 
 class TestRecommendationManager:

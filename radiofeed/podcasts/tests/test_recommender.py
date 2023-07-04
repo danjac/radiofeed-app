@@ -1,10 +1,10 @@
-from radiofeed.podcasts.factories import (
+from radiofeed.podcasts.models import Category, Podcast, Recommendation
+from radiofeed.podcasts.recommender import Recommender, recommend
+from radiofeed.podcasts.tests.factories import (
     create_category,
     create_podcast,
     create_recommendation,
 )
-from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.podcasts.recommender import Recommender, recommend
 
 
 class TestRecommender:

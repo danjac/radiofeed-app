@@ -5,11 +5,11 @@ from django.utils import timezone
 from faker import Faker
 
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.factories import NotSet, resolve
-from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
-from radiofeed.users.factories import create_user
+from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.tests.factories import NotSet, resolve
 from radiofeed.users.models import User
+from radiofeed.users.tests.factories import create_user
 
 _faker = Faker()
 

@@ -1,9 +1,9 @@
 import pytest
 from django.utils import timezone
 
-from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
 
 
 class TestPrivateFeedForm:

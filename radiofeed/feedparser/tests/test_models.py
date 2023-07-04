@@ -3,8 +3,8 @@ from datetime import timedelta
 import pytest
 from django.utils import timezone
 
-from radiofeed.feedparser.factories import create_feed, create_item
 from radiofeed.feedparser.models import Feed, Item
+from radiofeed.feedparser.tests.factories import create_feed, create_item
 
 
 class TestItem:

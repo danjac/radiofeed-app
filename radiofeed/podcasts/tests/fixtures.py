@@ -1,11 +1,11 @@
 import pytest
 
-from radiofeed.podcasts.factories import (
+from radiofeed.podcasts.models import Category, Podcast, Subscription
+from radiofeed.podcasts.tests.factories import (
     create_category,
     create_podcast,
     create_subscription,
 )
-from radiofeed.podcasts.models import Category, Podcast, Subscription
 from radiofeed.users.models import User
 
 

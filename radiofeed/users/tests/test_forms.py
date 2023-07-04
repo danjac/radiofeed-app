@@ -3,8 +3,8 @@ import pathlib
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.tests.factories import create_podcast
 from radiofeed.users.forms import OpmlUploadForm
 
 

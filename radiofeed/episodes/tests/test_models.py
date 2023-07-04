@@ -2,14 +2,14 @@ import datetime
 
 import pytest
 
-from radiofeed.episodes.factories import (
+from radiofeed.episodes.models import AudioLog, Bookmark, Episode
+from radiofeed.episodes.tests.factories import (
     create_audio_log,
     create_bookmark,
     create_episode,
 )
-from radiofeed.episodes.models import AudioLog, Bookmark, Episode
-from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.tests.factories import create_podcast
 
 
 class TestEpisodeManager:

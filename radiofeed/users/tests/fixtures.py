@@ -2,8 +2,8 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.test import Client
 
-from radiofeed.users.factories import create_user
 from radiofeed.users.models import User
+from radiofeed.users.tests.factories import create_user
 
 
 @pytest.fixture()

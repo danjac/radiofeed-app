@@ -1,7 +1,7 @@
 import pytest
 from django.template.loader import get_template
 
-from radiofeed.users.factories import create_email_address
+from radiofeed.users.tests.factories import create_email_address
 
 
 @pytest.fixture()

@@ -5,7 +5,6 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
-from radiofeed.factories import create_batch
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
@@ -17,8 +16,9 @@ from radiofeed.podcasts.admin import (
     ScheduledFilter,
     SubscribedFilter,
 )
-from radiofeed.podcasts.factories import create_podcast, create_subscription
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
+from radiofeed.tests.factories import create_batch
 
 
 @pytest.fixture(scope="module")

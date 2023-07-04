@@ -8,16 +8,16 @@ from radiofeed.asserts import (
     assert_not_found,
     assert_ok,
 )
-from radiofeed.episodes.factories import create_episode
-from radiofeed.factories import create_batch
+from radiofeed.episodes.tests.factories import create_episode
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.factories import (
+from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.tests.factories import (
     create_category,
     create_podcast,
     create_recommendation,
     create_subscription,
 )
-from radiofeed.podcasts.models import Subscription
+from radiofeed.tests.factories import create_batch
 
 podcasts_url = reverse_lazy("podcasts:index")
 

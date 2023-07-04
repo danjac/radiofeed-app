@@ -7,8 +7,8 @@ import pytest
 import requests
 from django.utils import timezone
 
-from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
+from radiofeed.episodes.tests.factories import create_episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     DuplicateError,
@@ -22,8 +22,8 @@ from radiofeed.feedparser.feed_parser import (
     get_categories,
     make_content_hash,
 )
-from radiofeed.podcasts.factories import create_category, create_podcast
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.tests.factories import create_category, create_podcast
 
 
 @dataclasses.dataclass

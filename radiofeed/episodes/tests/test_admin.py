@@ -2,10 +2,10 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 
 from radiofeed.episodes.admin import EpisodeAdmin
-from radiofeed.episodes.factories import create_episode
 from radiofeed.episodes.models import Episode
-from radiofeed.factories import create_batch
-from radiofeed.podcasts.factories import create_podcast
+from radiofeed.episodes.tests.factories import create_episode
+from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.tests.factories import create_batch
 
 
 class TestEpisodeAdmin:

@@ -5,8 +5,8 @@ import requests
 from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.factories import create_podcast
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.tests.factories import create_podcast
 
 MOCK_RESULT = {
     "feedUrl": "https://feeds.fireside.fm/testandcode/rss",

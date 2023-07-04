@@ -4,10 +4,10 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.feedparser import scheduler
-from radiofeed.feedparser.factories import create_feed, create_item
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.podcasts.factories import create_podcast
+from radiofeed.feedparser.tests.factories import create_feed, create_item
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.tests.factories import create_podcast
 
 
 class TestNextScheduledUpdate:

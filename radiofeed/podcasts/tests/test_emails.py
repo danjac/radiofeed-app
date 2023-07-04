@@ -1,7 +1,10 @@
 import pytest
 
 from radiofeed.podcasts import emails
-from radiofeed.podcasts.factories import create_recommendation, create_subscription
+from radiofeed.podcasts.tests.factories import (
+    create_recommendation,
+    create_subscription,
+)
 
 
 class TestRecommendations:

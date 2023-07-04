@@ -95,8 +95,6 @@ env = [
 source=["radiofeed", "templates"]
 omit=[
     "**/settings.py",
-    "**/factories.py",
-    "**/fixtures.py",
     "**/wsgi.py",
     "**/migrations/*",
     "*/nltk/*",

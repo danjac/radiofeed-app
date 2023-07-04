@@ -3,10 +3,10 @@ from datetime import datetime
 from django.utils import timezone
 from faker import Faker
 
-from radiofeed.factories import NotSet, resolve
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
-from radiofeed.users.factories import create_user
+from radiofeed.tests.factories import NotSet, resolve
 from radiofeed.users.models import User
+from radiofeed.users.tests.factories import create_user
 
 _faker = Faker()
 
