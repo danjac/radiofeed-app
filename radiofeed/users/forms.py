@@ -5,7 +5,7 @@ from django import forms
 
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
-from radiofeed.xml_parser import XMLParser
+from radiofeed.xml_parser import xml_parser
 
 
 class UserPreferencesForm(forms.ModelForm):
@@ -36,8 +36,6 @@ class OpmlUploadForm(forms.Form):
             }
         ),
     )
-
-    _xml_parser = XMLParser()
 
     def subscribe_to_feeds(self, user: User, limit: int = 360) -> int:
         """Subscribes user to feeds in uploaded OPML.
@@ -73,13 +71,14 @@ class OpmlUploadForm(forms.Form):
 
     def _parse_opml(self) -> Iterator[str]:
         self.cleaned_data["opml"].seek(0)
+        parser = xml_parser()
 
         try:
-            for element in self._xml_parser.iterparse(
+            for element in parser.iterparse(
                 self.cleaned_data["opml"].read(), "opml", "body"
             ):
                 try:
-                    yield from self._xml_parser.iter(element, "//outline//@xmlUrl")
+                    yield from parser.iter(element, "//outline//@xmlUrl")
                 finally:
                     element.clear()
         except lxml.etree.XMLSyntaxError:

@@ -13,7 +13,7 @@ from django.utils.http import urlsafe_base64_encode
 
 from radiofeed import iterators
 from radiofeed.podcasts.models import Podcast
-from radiofeed.xml_parser import XMLParser
+from radiofeed.xml_parser import xml_parser
 
 _ITUNES_LOCATIONS: Final = (
     "de",
@@ -25,8 +25,6 @@ _ITUNES_LOCATIONS: Final = (
 )
 
 _ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
-
-_xml_parser = XMLParser({"apple": "http://www.apple.com/itms/"})
 
 
 @dataclasses.dataclass(frozen=True)
@@ -150,11 +148,12 @@ class Crawler:
             return []
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
-        for element in _xml_parser.iterparse(
+        parser = xml_parser(apple="http://www.apple.com/itms/")
+        for element in parser.iterparse(
             content, "{http://www.apple.com/itms/}html", "/apple:html"
         ):
             try:
-                yield from _xml_parser.iter(element, "//a//@href")
+                yield from parser.iter(element, "//a//@href")
             finally:
                 element.clear()
 

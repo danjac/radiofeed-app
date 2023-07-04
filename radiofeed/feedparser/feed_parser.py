@@ -39,7 +39,7 @@ _ACCEPT: Final = (
 )
 
 
-@functools.lru_cache
+@functools.cache
 def get_categories() -> dict[str, Category]:
     """Returns a cached dict of categories with lowercase names as key."""
     return {

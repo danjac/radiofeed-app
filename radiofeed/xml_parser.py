@@ -1,4 +1,5 @@
 import contextlib
+import functools
 import io
 from collections.abc import Iterable, Iterator
 from typing import Any, TypeAlias
@@ -79,3 +80,9 @@ class XMLParser:
                 path, namespaces=self._namespaces
             )
         return xpath
+
+
+@functools.cache
+def xml_parser(**namespaces) -> XMLParser:
+    """Returns cached XMLParser instance."""
+    return XMLParser(namespaces)
