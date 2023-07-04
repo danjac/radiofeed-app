@@ -16,7 +16,7 @@ _IMPORT_ERR_MSG: Final = (
 
 def main() -> None:
     """Django management entry point."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.config.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

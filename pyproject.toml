@@ -70,7 +70,7 @@ ruff = "^0.0.276"
 djlint = "^1.31.1"
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.config.settings"
+DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = [
     "-v",
     "-x",
@@ -95,10 +95,11 @@ env = [
 source=["radiofeed", "templates"]
 omit=[
     "**/migrations/*",
-    "*/config/*",
     "*/nltk/*",
     "*/static/*",
     "*/tests/*",
+    "*/settings.py",
+    "*/wsgi.py",
 ]
 
 plugins = [
