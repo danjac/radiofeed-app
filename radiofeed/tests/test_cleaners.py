@@ -34,4 +34,4 @@ class TestStripHtml:
         ],
     )
     def test_strip_html(self, value, expected):
-        return strip_html(value) == expected
+        assert strip_html(value) == expected
