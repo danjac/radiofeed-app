@@ -85,6 +85,7 @@ class Crawler:
     def __init__(self, location: str):
         self._location = location
         self._feed_ids: set[str] = set()
+        self._parser = xml_parser(apple="http://www.apple.com/itms/")
 
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the
@@ -148,12 +149,11 @@ class Crawler:
             return []
 
     def _parse_urls(self, content: bytes) -> Iterator[str]:
-        parser = xml_parser(apple="http://www.apple.com/itms/")
-        for element in parser.iterparse(
+        for element in self._parser.iterparse(
             content, "{http://www.apple.com/itms/}html", "/apple:html"
         ):
             try:
-                yield from parser.iter(element, "//a//@href")
+                yield from self._parser.iter(element, "//a//@href")
             finally:
                 element.clear()
 
