@@ -42,9 +42,11 @@ def render_template_partials(
 
     If `use_blocks` is a `str`, will render the specified template block.
 
+    The list of blocks will be passed to the template context as `use_blocks`.
+
     If `target` is provided, will render template blocks if HX-Target matches `target`.
 
-    If not an HTMX request or no matching blocks found will render the entire template.
+    If not an HTMX request or the target does not match will render the entire template.
     """
 
     if (
