@@ -176,7 +176,7 @@ class PaginationNode(template.Node):
 
     def __init__(
         self,
-        page_obj: template.Variable,
+        page_obj: str,
         context_name: str,
         nodelist: template.NodeList,
     ):
