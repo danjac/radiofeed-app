@@ -31,8 +31,8 @@
         </nav>
     </header>
     {% block pagination %}
-        {% pagination %}
-        {% include "podcasts/_podcast.html" with podcast=object %}
-    {% endpagination %}
+        {% for_paginated page_obj as podcast %}
+        {% include "podcasts/_podcast.html" %}
+    {% endfor_paginated %}
 {% endblock pagination %}
 {% endblock content %}

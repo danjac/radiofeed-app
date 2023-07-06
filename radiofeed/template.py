@@ -1,7 +1,7 @@
 import math
 import urllib.parse
 from collections.abc import Iterator
-from typing import TypedDict
+from typing import Final, TypedDict
 
 from django import template
 from django.core.signing import Signer
@@ -174,17 +174,24 @@ def pagination_url(context: RequestContext, page_number: int) -> str:
 class PaginationNode(template.Node):
     """Custom pagination node."""
 
-    def __init__(self, nodelist: template.NodeList):
+    def __init__(
+        self,
+        page_obj: template.Variable,
+        context_name: str,
+        nodelist: template.NodeList,
+    ):
+        self.page_obj = template.Variable(page_obj)
+        self.context_name = context_name
         self.nodelist = nodelist
 
     def render(self, context: RequestContext) -> str:
         """Render template tag contents"""
-        page_obj = context["page_obj"]
+        page_obj = self.page_obj.resolve(context)
 
         def _render_paginated_list() -> Iterator[str]:
             for obj in page_obj.object_list:
                 with context.push():
-                    context["object"] = obj
+                    context[self.context_name] = obj
                     yield self.nodelist.render(context)
 
         tmpl_context = context.flatten()
@@ -204,9 +211,20 @@ class PaginationNode(template.Node):
         )
 
 
+_FOR_PAGINATED_SYNTAX: Final = "syntax is 'for_paginated page_obj as object_name'"
+
+
 @register.tag
-def pagination(parser: Parser, token: Token) -> PaginationNode:
-    """Does a pagination."""
-    nodelist = parser.parse(("endpagination",))
+def for_paginated(parser: Parser, token: Token) -> PaginationNode:
+    """Renders paginated list."""
+    try:
+        bits = token.contents.split()[1:]
+        assert len(bits) == 3, _FOR_PAGINATED_SYNTAX
+        page_obj, _as, context_name = bits
+        assert _as == "as", _FOR_PAGINATED_SYNTAX
+    except AssertionError as e:  # pragma: no cover
+        raise template.TemplateSyntaxError from e
+
+    nodelist = parser.parse(("endfor_paginated",))
     parser.delete_first_token()
-    return PaginationNode(nodelist)
+    return PaginationNode(page_obj, context_name, nodelist)

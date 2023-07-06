@@ -36,8 +36,8 @@
         {% endif %}
     </header>
     {% block pagination %}
-        {% pagination %}
-        {% include "episodes/_episode.html" with episode=object %}
-    {% endpagination %}
+        {% for_paginated page_obj as episode %}
+        {% include "episodes/_episode.html" %}
+    {% endfor_paginated %}
 {% endblock pagination %}
 {% endblock content %}

@@ -38,9 +38,9 @@
     {% endwith %}
     {% cache 600 category-detail request.get_full_path %}
     {% block pagination %}
-        {% pagination %}
-        {% include "podcasts/_podcast.html" with podcast=object %}
-    {% endpagination %}
+        {% for_paginated page_obj as podcast %}
+        {% include "podcasts/_podcast.html" %}
+    {% endfor_paginated %}
 {% endblock pagination %}
 {% endcache %}
 {% endblock content %}

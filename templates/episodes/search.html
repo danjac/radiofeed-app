@@ -6,9 +6,9 @@
 {% block search_content %}
     {% block pagination %}
         {% cache 600 search-episodes request.get_full_path %}
-        {% pagination %}
+        {% for_paginated page_obj as episode %}
         {% include "episodes/_episode.html" with episode=object %}
-    {% endpagination %}
+    {% endfor_paginated %}
 {% endcache %}
 {% endblock pagination %}
 {% endblock search_content %}
