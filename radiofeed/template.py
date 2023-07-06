@@ -165,6 +165,12 @@ def format_duration(total_seconds: int | None) -> str:
     return " ".join(rv)
 
 
+@register.simple_tag(takes_context=True)
+def pagination_url(context: RequestContext, page_number: int) -> str:
+    """Returns URL for next/previous page."""
+    return context.request.pagination.url(page_number)
+
+
 class PaginationNode(template.Node):
     """Custom pagination node."""
 
@@ -183,23 +189,9 @@ class PaginationNode(template.Node):
                     context["object"] = obj
                     yield self.nodelist.render(context)
 
-        next_page_url = (
-            context.request.pagination.url(page_obj.next_page_number())
-            if page_obj.has_next()
-            else None
-        )
-
-        previous_page_url = (
-            context.request.pagination.url(page_obj.previous_page_number())
-            if page_obj.has_previous()
-            else None
-        )
-
         context.update(
             {
                 "paginated_list_contents": _paginated_list_contents(),
-                "next_page_url": next_page_url,
-                "previous_page_url": previous_page_url,
             }
         )
         return render_to_string(

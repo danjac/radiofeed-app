@@ -7,10 +7,12 @@
         <ul class="flex items-center justify-between">
             <li>
                 {% if page_obj.has_previous %}
-                    <a class="link"
-                       href="{{ previous_page_url }}"
-                       aria-label="Page {{ page_obj.previous_page_number }}"
-                       title="Page {{ page_obj.previous_page_number }}">Previous</a>
+                    {% with page_number=page_obj.previous_page_number %}
+                        <a class="link"
+                           href="{% pagination_url page_number %}"
+                           aria-label="Page {{ page_number }}"
+                           title="Page {{ page_number }}">Next</a>
+                    {% endwith %}
                 {% else %}
                     <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                           title="First Page"
@@ -19,10 +21,12 @@
             </li>
             <li>
                 {% if page_obj.has_next %}
-                    <a class="link"
-                       href="{{ next_page_url }}"
-                       aria-label="Page {{ page_obj.next_page_number }}"
-                       title="Page {{ page_obj.next_page_number }}">Next</a>
+                    {% with page_number=page_obj.next_page_number %}
+                        <a class="link"
+                           href="{% pagination_url page_number %}"
+                           aria-label="Page {{ page_number }}"
+                           title="Page {{ page_number }}">Next</a>
+                    {% endwith %}
                 {% else %}
                     <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                           title="Last Page"
