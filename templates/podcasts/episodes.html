@@ -24,15 +24,9 @@
     {% endif %}
     {% block pagination %}
         {% cache 600 podcast-episodes request.get_full_path %}
-        <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "_pagination_links.html" %}
-            {% for episode in page_obj.object_list %}
-                {% include "episodes/_episode.html" %}
-            {% empty %}
-                {% include "_empty.html" %}
-            {% endfor %}
-            {% include "_pagination_links.html" %}
-        </div>
-    {% endcache %}
+        {% pagination %}
+        {% include "episodes/_episode.html" with episode=object %}
+    {% endpagination %}
+{% endcache %}
 {% endblock pagination %}
 {% endblock podcast_content %}

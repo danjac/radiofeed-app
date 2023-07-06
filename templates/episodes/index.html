@@ -4,14 +4,14 @@
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
 {% endblock title %}
 {% block content %}
-    <header class="mb-3 pb-3 border-b">
+    <header class="pb-3 mb-3 border-b">
         {% url 'episodes:index' as index_url %}
         {% if has_subscriptions %}
-            <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl mb-3">
+            <h1 class="flex items-center justify-center mb-3 text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
                 New Releases: {{ promoted|yesno:"Promotions,Subscriptions" }}
             </h1>
             <nav>
-                <ul class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
+                <ul class="items-center justify-between sm:flex space-y-2 sm:space-y-0">
                     <li class="flex items-center justify-center sm:justify-start">
                         {% if promoted %}
                             <a href="{{ index_url }}" class="link">Subscriptions</a>
@@ -25,8 +25,8 @@
                 </ul>
             </nav>
         {% else %}
-            <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0">
-                <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">
+            <div class="items-center justify-between sm:flex space-y-2 sm:space-y-0">
+                <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     New Releases
                 </h1>
                 <div class="flex items-center justify-center sm:justify-end space-x-3">
@@ -36,14 +36,8 @@
         {% endif %}
     </header>
     {% block pagination %}
-        <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "_pagination_links.html" %}
-            {% for episode in page_obj.object_list %}
-                {% include "episodes/_episode.html" %}
-            {% empty %}
-                {% include "_empty.html" %}
-            {% endfor %}
-            {% include "_pagination_links.html" %}
-        </div>
-    {% endblock pagination %}
+        {% pagination %}
+        {% include "episodes/_episode.html" with episode=object %}
+    {% endpagination %}
+{% endblock pagination %}
 {% endblock content %}

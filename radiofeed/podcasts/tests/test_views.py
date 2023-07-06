@@ -12,11 +12,7 @@ from radiofeed.podcasts.tests.factories import (
     create_recommendation,
     create_subscription,
 )
-from radiofeed.tests.asserts import (
-    assert_hx_location,
-    assert_not_found,
-    assert_ok,
-)
+from radiofeed.tests.asserts import assert_hx_location, assert_not_found, assert_ok
 from radiofeed.tests.factories import create_batch
 
 podcasts_url = reverse_lazy("podcasts:index")
@@ -67,6 +63,15 @@ class TestPodcasts:
     @pytest.mark.django_db()
     def test_invalid_page(self, client, auth_user):
         assert_ok(client.get(podcasts_url, {"page": 1000}))
+
+    @pytest.mark.django_db()
+    def test_next_page(self, client, auth_user):
+        create_batch(create_podcast, 33, promoted=True)
+        response = client.get(reverse("podcasts:index"), {"promoted": True, "page": 2})
+        assert_ok(response)
+
+        assert len(response.context["page_obj"].object_list) == 3
+        assert response.context["promoted"]
 
     @pytest.mark.django_db()
     def test_user_is_subscribed_promoted(self, client, auth_user):

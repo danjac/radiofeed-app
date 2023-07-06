@@ -1,4 +1,4 @@
-{% if page_obj.has_other_pages %}
+{% if page_ctx.has_other_pages %}
     <nav role="navigation"
          aria-label="Pagination"
          class="py-2"
@@ -6,13 +6,11 @@
          hx-target="#{{ pagination_target }}">
         <ul class="flex items-center justify-between">
             <li>
-                {% if page_obj.has_previous %}
-                    {% with page_number=page_obj.previous_page_number %}
-                        <a class="link"
-                           href="{% pagination_url page_number %}"
-                           aria-label="Page {{ page_number }}"
-                           title="Page {{ page_number }}">Previous</a>
-                    {% endwith %}
+                {% if page_ctx.has_previous %}
+                    <a class="link"
+                       href="{{ page_ctx.previous_url }}"
+                       aria-label="Page {{ page_ctx.previous_page }}"
+                       title="Page {{ page_ctx.previous_page }}">Previous</a>
                 {% else %}
                     <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                           title="First Page"
@@ -20,13 +18,11 @@
                 {% endif %}
             </li>
             <li>
-                {% if page_obj.has_next %}
-                    {% with page_number=page_obj.next_page_number %}
-                        <a class="link"
-                           href="{% pagination_url page_number %}"
-                           aria-label="Page {{ page_number }}"
-                           title="Page {{ page_number }}">Next</a>
-                    {% endwith %}
+                {% if page_ctx.has_next %}
+                    <a class="link"
+                       href="{{ page_ctx.next_url }}"
+                       aria-label="Page {{ page_ctx.next_page }}"
+                       title="Page {{ page_ctx.next_page }}">Next</a>
                 {% else %}
                     <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                           title="Last Page"
