@@ -91,57 +91,6 @@ class TestNavbar:
         assert "About this Site" in rendered
 
 
-class TestPaginationLinks:
-    @pytest.fixture()
-    def tmpl(self):
-        return get_template("_pagination_links.html")
-
-    def test_no_pagination(self, tmpl, mocker):
-        ctx = {"page_obj": mocker.Mock(has_other_pages=False)}
-        rendered = tmpl.render(ctx)
-        assert "Pagination" not in rendered
-
-    def test_has_next(self, tmpl, mocker):
-        ctx = {
-            "page_obj": mocker.Mock(
-                has_other_pages=True,
-                has_previous=False,
-                has_next=True,
-                next_page_number=2,
-            )
-        }
-        rendered = tmpl.render(ctx)
-        assert rendered.count("First Page") == 2
-        assert rendered.count("Last Page") == 0
-
-    def test_has_previous(self, tmpl, mocker):
-        ctx = {
-            "page_obj": mocker.Mock(
-                has_other_pages=True,
-                has_next=False,
-                has_previous=True,
-                previous_page_number=1,
-            )
-        }
-        rendered = tmpl.render(ctx)
-        assert rendered.count("First Page") == 0
-        assert rendered.count("Last Page") == 2
-
-    def test_has_next_and_previous(self, tmpl, mocker):
-        ctx = {
-            "page_obj": mocker.Mock(
-                has_other_pages=True,
-                has_next=True,
-                has_previous=True,
-                next_page_number=2,
-                previous_page_number=1,
-            )
-        }
-        rendered = tmpl.render(ctx)
-        assert rendered.count("First Page") == 0
-        assert rendered.count("Last Page") == 0
-
-
 class MockForm:
     fields = []
     non_field_errors = []
