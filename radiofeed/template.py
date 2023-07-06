@@ -179,17 +179,18 @@ class PaginationNode(template.Node):
 
         def _paginated_list_contents() -> Iterator[str]:
             for obj in page_obj:
-                context.update({"object": obj})
-                yield self.nodelist.render(context)
+                with context.push():
+                    context["object"] = obj
+                    yield self.nodelist.render(context)
 
         next_page_url = (
-            context.request.pagination.url(page_obj.next_page_number)
+            context.request.pagination.url(page_obj.next_page_number())
             if page_obj.has_next()
             else None
         )
 
         previous_page_url = (
-            context.request.pagination.url(page_obj.previous_page_number)
+            context.request.pagination.url(page_obj.previous_page_number())
             if page_obj.has_previous()
             else None
         )
