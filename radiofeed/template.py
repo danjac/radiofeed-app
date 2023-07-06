@@ -171,7 +171,7 @@ def pagination_url(context: RequestContext, page_number: int) -> str:
     return context.request.pagination.url(page_number)
 
 
-class PaginationNode(template.Node):
+class ForPaginatedNode(template.Node):
     """Custom pagination node."""
 
     def __init__(
@@ -215,7 +215,7 @@ _FOR_PAGINATED_SYNTAX: Final = "syntax is 'for_paginated page_obj as object_name
 
 
 @register.tag
-def for_paginated(parser: Parser, token: Token) -> PaginationNode:
+def for_paginated(parser: Parser, token: Token) -> ForPaginatedNode:
     """Renders paginated list."""
     try:
         bits = token.contents.split()[1:]
@@ -227,4 +227,4 @@ def for_paginated(parser: Parser, token: Token) -> PaginationNode:
 
     nodelist = parser.parse(("endfor_paginated",))
     parser.delete_first_token()
-    return PaginationNode(page_obj, context_name, nodelist)
+    return ForPaginatedNode(page_obj, context_name, nodelist)
