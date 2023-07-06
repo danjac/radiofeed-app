@@ -1,5 +1,3 @@
-import dataclasses
-
 import pytest
 from django.template.context import RequestContext
 from django.template.loader import get_template
@@ -7,13 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django_htmx.middleware import HtmxDetails
 
 from radiofeed.middleware import Pagination
-from radiofeed.template import (
-    active_link,
-    cover_image,
-    format_duration,
-    markdown,
-    pagination_url,
-)
+from radiofeed.template import active_link, cover_image, format_duration, markdown
 
 
 @pytest.fixture()
@@ -27,15 +19,6 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
-
-
-@dataclasses.dataclass
-class PageObj:
-    has_other_pages: bool = False
-    has_next: bool = False
-    has_previous: bool = False
-    next_page_number: int = 0
-    previous_page_number: int = 0
 
 
 class TestFormatDuration:
@@ -94,16 +77,6 @@ class TestMarkdown:
         return markdown(value) == {"content": expected}
 
 
-class TestPaginationUrl:
-    def test_append_page_number_to_querystring(self, rf):
-        req = rf.get("/search/", {"query": "test"})
-        req.pagination = Pagination(req)
-        url = pagination_url(RequestContext(req), 5)
-        assert url.startswith("/search/?")
-        assert "query=test" in url
-        assert "page=5" in url
-
-
 class TestNavbar:
     @pytest.fixture()
     def tmpl(self):
@@ -131,16 +104,20 @@ class TestPaginationLinks:
 
     def test_no_pagination(self, page_req, tmpl):
         ctx = {
-            "page_obj": PageObj(has_other_pages=False),
+            "pagination_context": {
+                "has_other_pages": False,
+            }
         }
         rendered = tmpl.render(ctx, request=page_req)
         assert "Pagination" not in rendered
 
     def test_has_next(self, page_req, tmpl):
         ctx = {
-            "page_obj": PageObj(
-                has_other_pages=True, has_next=True, next_page_number=2
-            ),
+            "page_ctx": {
+                "has_other_pages": True,
+                "has_next": True,
+                "next_page": 2,
+            }
         }
         rendered = tmpl.render(ctx, request=page_req)
         assert rendered.count("First Page") == 2
@@ -148,9 +125,11 @@ class TestPaginationLinks:
 
     def test_has_previous(self, page_req, tmpl):
         ctx = {
-            "page_obj": PageObj(
-                has_other_pages=True, has_previous=True, previous_page_number=1
-            ),
+            "page_ctx": {
+                "has_other_pages": True,
+                "has_previous": True,
+                "previous_page": 1,
+            }
         }
         rendered = tmpl.render(ctx, request=page_req)
         assert rendered.count("First Page") == 0
@@ -158,13 +137,13 @@ class TestPaginationLinks:
 
     def test_has_next_and_previous(self, page_req, tmpl):
         ctx = {
-            "page_obj": PageObj(
-                has_other_pages=True,
-                has_previous=True,
-                has_next=True,
-                previous_page_number=1,
-                next_page_number=3,
-            ),
+            "page_ctx": {
+                "has_other_pages": True,
+                "has_previous": True,
+                "has_next": True,
+                "previous_page": 1,
+                "next_page": 3,
+            }
         }
         rendered = tmpl.render(ctx, request=page_req)
         assert rendered.count("First Page") == 0

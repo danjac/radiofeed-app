@@ -1,15 +1,21 @@
+import dataclasses
 import math
 import urllib.parse
+from collections.abc import Iterator
 from typing import TypedDict
 
 from django import template
+from django.core.paginator import Page
 from django.core.signing import Signer
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
+from django.template.base import Parser, Token
 from django.template.context import RequestContext
+from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from render_block import render_block_to_string
 
@@ -73,24 +79,6 @@ def render_template_partials(
             **response_kwargs,
         )
     return TemplateResponse(request, template_name, context, **response_kwargs)
-
-
-@register.simple_tag(takes_context=True)
-def pagination_url(context: RequestContext, page_number: int) -> str:
-    """Inserts the "page" query string parameter with the provided page number into
-    the template.
-
-    Preserves the original request path and any other query string parameters.
-
-    Given the above and a URL of "/search?q=test" the result would
-    be something like: "/search?q=test&page=3"
-
-    Requires `PaginationMiddleware` in MIDDLEWARE.
-
-    Returns:
-        updated URL path with new page
-    """
-    return context.request.pagination.url(page_number)
 
 
 @register.simple_tag(takes_context=True)
@@ -178,3 +166,90 @@ def format_duration(total_seconds: int | None) -> str:
         rv.append(f"{total_minutes}min")
 
     return " ".join(rv)
+
+
+@dataclasses.dataclass(frozen=True)
+class PaginationContext:
+    """Pagination info."""
+
+    request: HttpRequest
+    page_obj: Page
+
+    @cached_property
+    def has_other_pages(self) -> bool:
+        """If other pages."""
+        return self.page_obj.has_other_pages()
+
+    @cached_property
+    def has_next(self) -> bool:
+        """If next page."""
+        return self.has_other_pages and self.page_obj.has_next()
+
+    @cached_property
+    def has_previous(self) -> bool:
+        """If next page."""
+        return self.has_other_pages and self.page_obj.has_previous()
+
+    @cached_property
+    def next_page(self) -> int | None:
+        """Returns next page number."""
+        return self.page_obj.next_page_number() if self.has_next else None
+
+    @cached_property
+    def previous_page(self) -> int | None:
+        """Returns previous page number."""
+        return self.page_obj.previous_page_number() if self.has_previous else None
+
+    @cached_property
+    def next_url(self) -> str | None:
+        """Returns next page URL."""
+        return self.request.pagination.url(self.next_page) if self.next_page else None
+
+    @cached_property
+    def previous_url(self) -> str | None:
+        """Returns previous page URL."""
+        return (
+            self.request.pagination.url(self.previous_page)
+            if self.previous_page
+            else None
+        )
+
+
+class PaginationNode(template.Node):
+    """Custom pagination node."""
+
+    template_name = "_pagination.html"
+
+    def __init__(self, nodelist: template.NodeList):
+        self.nodelist = nodelist
+
+    def render(self, context: RequestContext) -> str:
+        """Render template tag contents"""
+        page_obj = context["page_obj"]
+
+        def _paginated_list_contents() -> Iterator[str]:
+            for obj in page_obj:
+                context.update({"object": obj})
+                yield self.nodelist.render(context)
+
+        context.update(
+            {
+                "page_ctx": PaginationContext(
+                    request=context.request, page_obj=page_obj
+                ),
+                "paginated_list_contents": _paginated_list_contents(),
+            }
+        )
+        return render_to_string(
+            self.template_name,
+            context.flatten(),
+            request=context.request,
+        )
+
+
+@register.tag
+def pagination(parser: Parser, token: Token) -> PaginationNode:
+    """Does a pagination."""
+    nodelist = parser.parse(("endpagination",))
+    parser.delete_first_token()
+    return PaginationNode(nodelist)
