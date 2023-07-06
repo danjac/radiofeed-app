@@ -174,8 +174,6 @@ def pagination_url(context: RequestContext, page_number: int) -> str:
 class PaginationNode(template.Node):
     """Custom pagination node."""
 
-    template_name = "_pagination.html"
-
     def __init__(self, nodelist: template.NodeList):
         self.nodelist = nodelist
 
@@ -183,20 +181,25 @@ class PaginationNode(template.Node):
         """Render template tag contents"""
         page_obj = context["page_obj"]
 
-        def _paginated_list_contents() -> Iterator[str]:
-            for obj in page_obj:
+        def _render_paginated_list() -> Iterator[str]:
+            for obj in page_obj.object_list:
                 with context.push():
                     context["object"] = obj
                     yield self.nodelist.render(context)
 
-        context.update(
-            {
-                "paginated_list_contents": _paginated_list_contents(),
-            }
-        )
+        tmpl_context = context.flatten()
+
         return render_to_string(
-            self.template_name,
-            context.flatten(),
+            "_pagination.html",
+            {
+                **tmpl_context,
+                "rendered_pagination_links": render_to_string(
+                    "_pagination_links.html",
+                    tmpl_context,
+                    request=context.request,
+                ),
+                "rendered_pagination_list": _render_paginated_list(),
+            },
             request=context.request,
         )
 
