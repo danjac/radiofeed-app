@@ -25,8 +25,14 @@
         {% endif %}
     </header>
     {% block pagination %}
-        {% for_paginated audio_log in page_obj %}
-        {% include "episodes/_episode.html" with episode=audio_log.episode %}
-    {% endfor_paginated %}
-{% endblock pagination %}
+        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+            {% include "_pagination_links.html" %}
+            {% for audio_log in page_obj %}
+                {% include "episodes/_episode.html" with episode=audio_log.episode %}
+            {% empty %}
+                {% include "_empty.html" %}
+            {% endfor %}
+            {% include "_pagination_links.html" %}
+        </div>
+    {% endblock pagination %}
 {% endblock content %}

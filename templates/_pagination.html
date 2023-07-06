@@ -1,9 +1,0 @@
-<div class="divide-y divide-solid" id="{{ pagination_target }}">
-    {{ rendered_pagination_links }}
-    {% for rendered_item in rendered_paginated_list %}
-        {{ rendered_item }}
-    {% empty %}
-        {% include "_empty.html" %}
-    {% endfor %}
-    {{ rendered_pagination_links }}
-</div>

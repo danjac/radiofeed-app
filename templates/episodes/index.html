@@ -36,8 +36,14 @@
         {% endif %}
     </header>
     {% block pagination %}
-        {% for_paginated episode in page_obj %}
-        {% include "episodes/_episode.html" %}
-    {% endfor_paginated %}
-{% endblock pagination %}
+        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+            {% include "_pagination_links.html" %}
+            {% for episode in page_obj %}
+                {% include "episodes/_episode.html" %}
+            {% empty %}
+                {% include "_empty.html" %}
+            {% endfor %}
+            {% include "_pagination_links.html" %}
+        </div>
+    {% endblock pagination %}
 {% endblock content %}

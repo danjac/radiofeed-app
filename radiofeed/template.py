@@ -1,15 +1,12 @@
 import math
 import urllib.parse
-from collections.abc import Iterator
-from typing import Final, TypedDict
+from typing import TypedDict
 
 from django import template
 from django.core.signing import Signer
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
-from django.template.base import Parser, Token
 from django.template.context import RequestContext
-from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.templatetags.static import static
 from django.urls import reverse
@@ -169,59 +166,3 @@ def format_duration(total_seconds: int | None) -> str:
 def pagination_url(context: RequestContext, page_number: int) -> str:
     """Returns URL for next/previous page."""
     return context.request.pagination.url(page_number)
-
-
-class ForPaginatedNode(template.Node):
-    """Custom pagination node."""
-
-    def __init__(
-        self,
-        context_name: str,
-        page_obj: str,
-        nodelist: template.NodeList,
-    ):
-        self.context_name = context_name
-        self.page_obj = template.Variable(page_obj)
-        self.nodelist = nodelist
-
-    def render(self, context: RequestContext) -> str:
-        """Render template tag contents"""
-        page_obj = self.page_obj.resolve(context)
-
-        def _render_paginated_list() -> Iterator[str]:
-            for obj in page_obj.object_list:
-                with context.push():
-                    context[self.context_name] = obj
-                    yield self.nodelist.render(context)
-
-        tmpl_context = context.flatten()
-
-        return render_to_string(
-            "_pagination.html",
-            {
-                **tmpl_context,
-                "rendered_pagination_links": render_to_string(
-                    "_pagination_links.html",
-                    tmpl_context,
-                    request=context.request,
-                ),
-                "rendered_paginated_list": _render_paginated_list(),
-            },
-            request=context.request,
-        )
-
-
-_FOR_PAGINATED_SYNTAX: Final = "syntax is 'for_paginated object_name in page_obj'"
-
-
-@register.tag
-def for_paginated(parser: Parser, token: Token) -> ForPaginatedNode:
-    """Renders paginated list."""
-    bits = token.contents.split()[1:]
-
-    assert len(bits) == 3, _FOR_PAGINATED_SYNTAX
-    assert bits[1] == "in", _FOR_PAGINATED_SYNTAX
-
-    nodelist = parser.parse(("endfor_paginated",))
-    parser.delete_first_token()
-    return ForPaginatedNode(bits[0], bits[2], nodelist)

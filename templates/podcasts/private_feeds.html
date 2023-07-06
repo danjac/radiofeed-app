@@ -31,8 +31,14 @@
         </nav>
     </header>
     {% block pagination %}
-        {% for_paginated podcast in page_obj %}
-        {% include "podcasts/_podcast.html" %}
-    {% endfor_paginated %}
-{% endblock pagination %}
+        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+            {% include "_pagination_links.html" %}
+            {% for podcast in page_obj %}
+                {% include "podcasts/_podcast.html" %}
+            {% empty %}
+                {% include "_empty.html" %}
+            {% endfor %}
+            {% include "_pagination_links.html" %}
+        </div>
+    {% endblock pagination %}
 {% endblock content %}
