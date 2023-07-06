@@ -4,7 +4,6 @@ from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.middleware import Pagination
 from radiofeed.template import active_link, cover_image, format_duration, markdown
 
 
@@ -97,55 +96,48 @@ class TestPaginationLinks:
     def tmpl(self):
         return get_template("_pagination_links.html")
 
-    @pytest.fixture()
-    def page_req(self, req):
-        req.pagination = Pagination(req)
-        return req
-
-    def test_no_pagination(self, page_req, tmpl):
-        ctx = {
-            "pagination_context": {
-                "has_other_pages": False,
-            }
-        }
-        rendered = tmpl.render(ctx, request=page_req)
+    def test_no_pagination(self, tmpl, mocker):
+        ctx = {"page_obj": mocker.Mock(has_other_pages=False)}
+        rendered = tmpl.render(ctx)
         assert "Pagination" not in rendered
 
-    def test_has_next(self, page_req, tmpl):
+    def test_has_next(self, tmpl, mocker):
         ctx = {
-            "page_ctx": {
-                "has_other_pages": True,
-                "has_next": True,
-                "next_page": 2,
-            }
+            "page_obj": mocker.Mock(
+                has_other_pages=True,
+                has_previous=False,
+                has_next=True,
+                next_page_number=2,
+            )
         }
-        rendered = tmpl.render(ctx, request=page_req)
+        rendered = tmpl.render(ctx)
         assert rendered.count("First Page") == 2
         assert rendered.count("Last Page") == 0
 
-    def test_has_previous(self, page_req, tmpl):
+    def test_has_previous(self, tmpl, mocker):
         ctx = {
-            "page_ctx": {
-                "has_other_pages": True,
-                "has_previous": True,
-                "previous_page": 1,
-            }
+            "page_obj": mocker.Mock(
+                has_other_pages=True,
+                has_next=False,
+                has_previous=True,
+                previous_page_number=1,
+            )
         }
-        rendered = tmpl.render(ctx, request=page_req)
+        rendered = tmpl.render(ctx)
         assert rendered.count("First Page") == 0
         assert rendered.count("Last Page") == 2
 
-    def test_has_next_and_previous(self, page_req, tmpl):
+    def test_has_next_and_previous(self, tmpl, mocker):
         ctx = {
-            "page_ctx": {
-                "has_other_pages": True,
-                "has_previous": True,
-                "has_next": True,
-                "previous_page": 1,
-                "next_page": 3,
-            }
+            "page_obj": mocker.Mock(
+                has_other_pages=True,
+                has_next=True,
+                has_previous=True,
+                next_page_number=2,
+                previous_page_number=1,
+            )
         }
-        rendered = tmpl.render(ctx, request=page_req)
+        rendered = tmpl.render(ctx)
         assert rendered.count("First Page") == 0
         assert rendered.count("Last Page") == 0
 

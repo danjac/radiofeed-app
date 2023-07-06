@@ -1,11 +1,9 @@
-import dataclasses
 import math
 import urllib.parse
 from collections.abc import Iterator
 from typing import TypedDict
 
 from django import template
-from django.core.paginator import Page
 from django.core.signing import Signer
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
@@ -15,7 +13,6 @@ from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from render_block import render_block_to_string
 
@@ -168,53 +165,6 @@ def format_duration(total_seconds: int | None) -> str:
     return " ".join(rv)
 
 
-@dataclasses.dataclass(frozen=True)
-class PaginationContext:
-    """Pagination info."""
-
-    request: HttpRequest
-    page_obj: Page
-
-    @cached_property
-    def has_other_pages(self) -> bool:
-        """If other pages."""
-        return self.page_obj.has_other_pages()
-
-    @cached_property
-    def has_next(self) -> bool:
-        """If next page."""
-        return self.has_other_pages and self.page_obj.has_next()
-
-    @cached_property
-    def has_previous(self) -> bool:
-        """If next page."""
-        return self.has_other_pages and self.page_obj.has_previous()
-
-    @cached_property
-    def next_page(self) -> int | None:
-        """Returns next page number."""
-        return self.page_obj.next_page_number() if self.has_next else None
-
-    @cached_property
-    def previous_page(self) -> int | None:
-        """Returns previous page number."""
-        return self.page_obj.previous_page_number() if self.has_previous else None
-
-    @cached_property
-    def next_url(self) -> str | None:
-        """Returns next page URL."""
-        return self.request.pagination.url(self.next_page) if self.next_page else None
-
-    @cached_property
-    def previous_url(self) -> str | None:
-        """Returns previous page URL."""
-        return (
-            self.request.pagination.url(self.previous_page)
-            if self.previous_page
-            else None
-        )
-
-
 class PaginationNode(template.Node):
     """Custom pagination node."""
 
@@ -232,12 +182,23 @@ class PaginationNode(template.Node):
                 context.update({"object": obj})
                 yield self.nodelist.render(context)
 
+        next_page_url = (
+            context.request.pagination.url(page_obj.next_page_number)
+            if page_obj.has_next()
+            else None
+        )
+
+        previous_page_url = (
+            context.request.pagination.url(page_obj.previous_page_number)
+            if page_obj.has_previous()
+            else None
+        )
+
         context.update(
             {
-                "page_ctx": PaginationContext(
-                    request=context.request, page_obj=page_obj
-                ),
                 "paginated_list_contents": _paginated_list_contents(),
+                "next_page_url": next_page_url,
+                "previous_page_url": previous_page_url,
             }
         )
         return render_to_string(
