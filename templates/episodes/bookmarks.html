@@ -25,7 +25,7 @@
         {% endif %}
     </header>
     {% block pagination %}
-        {% for_paginated page_obj as bookmark %}
+        {% for_paginated bookmark in page_obj %}
         {% include "episodes/_episode.html" with episode=bookmark.episode %}
     {% endfor_paginated %}
 {% endblock pagination %}

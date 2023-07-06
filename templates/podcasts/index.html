@@ -35,7 +35,7 @@
         {% endif %}
     </header>
     {% block pagination %}
-        {% for_paginated page_obj as podcast %}
+        {% for_paginated podcast in page_obj %}
         {% include "podcasts/_podcast.html" %}
     {% endfor_paginated %}
 {% endblock pagination %}

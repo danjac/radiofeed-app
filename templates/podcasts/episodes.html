@@ -24,7 +24,7 @@
     {% endif %}
     {% block pagination %}
         {% cache 600 podcast-episodes request.get_full_path %}
-        {% for_paginated page_obj as episode %}
+        {% for_paginated episode in page_obj %}
         {% include "episodes/_episode.html" %}
     {% endfor_paginated %}
 {% endcache %}

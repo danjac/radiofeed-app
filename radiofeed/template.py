@@ -21,15 +21,6 @@ from radiofeed import cleaners
 register = template.Library()
 
 
-class ActiveLink(TypedDict):
-    """Provides details on whether a link is currently active, along with its
-    URL and CSS."""
-
-    url: str
-    css: str
-    active: bool
-
-
 def render_template_partials(
     request: HttpRequest,
     template_name: str,
@@ -76,6 +67,15 @@ def render_template_partials(
             **response_kwargs,
         )
     return TemplateResponse(request, template_name, context, **response_kwargs)
+
+
+class ActiveLink(TypedDict):
+    """Provides details on whether a link is currently active, along with its
+    URL and CSS."""
+
+    url: str
+    css: str
+    active: bool
 
 
 @register.simple_tag(takes_context=True)
@@ -176,12 +176,12 @@ class ForPaginatedNode(template.Node):
 
     def __init__(
         self,
-        page_obj: str,
         context_name: str,
+        page_obj: str,
         nodelist: template.NodeList,
     ):
-        self.page_obj = template.Variable(page_obj)
         self.context_name = context_name
+        self.page_obj = template.Variable(page_obj)
         self.nodelist = nodelist
 
     def render(self, context: RequestContext) -> str:
@@ -205,26 +205,23 @@ class ForPaginatedNode(template.Node):
                     tmpl_context,
                     request=context.request,
                 ),
-                "rendered_pagination_list": _render_paginated_list(),
+                "rendered_paginated_list": _render_paginated_list(),
             },
             request=context.request,
         )
 
 
-_FOR_PAGINATED_SYNTAX: Final = "syntax is 'for_paginated page_obj as object_name'"
+_FOR_PAGINATED_SYNTAX: Final = "syntax is 'for_paginated object_name in page_obj'"
 
 
 @register.tag
 def for_paginated(parser: Parser, token: Token) -> ForPaginatedNode:
     """Renders paginated list."""
-    try:
-        bits = token.contents.split()[1:]
-        assert len(bits) == 3, _FOR_PAGINATED_SYNTAX
-        page_obj, _as, context_name = bits
-        assert _as == "as", _FOR_PAGINATED_SYNTAX
-    except AssertionError as e:  # pragma: no cover
-        raise template.TemplateSyntaxError from e
+    bits = token.contents.split()[1:]
+
+    assert len(bits) == 3, _FOR_PAGINATED_SYNTAX
+    assert bits[1] == "in", _FOR_PAGINATED_SYNTAX
 
     nodelist = parser.parse(("endfor_paginated",))
     parser.delete_first_token()
-    return ForPaginatedNode(page_obj, context_name, nodelist)
+    return ForPaginatedNode(bits[0], bits[2], nodelist)

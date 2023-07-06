@@ -25,7 +25,7 @@
         {% endif %}
     </header>
     {% block pagination %}
-        {% for_paginated page_obj as audio_log %}
+        {% for_paginated audio_log in page_obj %}
         {% include "episodes/_episode.html" with episode=audio_log.episode %}
     {% endfor_paginated %}
 {% endblock pagination %}
