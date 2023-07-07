@@ -2,10 +2,10 @@ from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 
-from radiofeed.template import render_template_partials
+from radiofeed.partials import render_template_partials
 
 
-def render_paginated_response(
+def render_paginated_list(
     request: HttpRequest,
     object_list: QuerySet,
     template_name: str,

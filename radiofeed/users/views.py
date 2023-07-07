@@ -10,7 +10,7 @@ from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods
 from radiofeed.forms import handle_form
-from radiofeed.template import render_template_partials
+from radiofeed.partials import render_template_partials
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 

@@ -19,9 +19,9 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.pagination import render_paginated_response
-from radiofeed.response import HttpResponseConflict, HttpResponseNoContent
-from radiofeed.template import render_template_partials
+from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
+from radiofeed.pagination import render_paginated_list
+from radiofeed.partials import render_template_partials
 
 
 @require_safe
@@ -46,7 +46,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     episodes = episodes.filter(podcast__promoted=True) if promoted else subscribed
 
-    return render_paginated_response(
+    return render_paginated_list(
         request,
         episodes,
         "episodes/index.html",
@@ -69,7 +69,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .select_related("podcast")
             .order_by("-rank", "-pub_date")
         )
-        return render_paginated_response(request, episodes, "episodes/search.html")
+        return render_paginated_list(request, episodes, "episodes/search.html")
     return HttpResponseRedirect(reverse("episodes:index"))
 
 
@@ -170,7 +170,7 @@ def history(request: HttpRequest) -> HttpResponse:
             "-listened" if request.ordering.is_desc else "listened"
         )
 
-    return render_paginated_response(request, audio_logs, "episodes/history.html")
+    return render_paginated_list(request, audio_logs, "episodes/history.html")
 
 
 @require_DELETE
@@ -213,7 +213,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.ordering.is_desc else "created"
         )
 
-    return render_paginated_response(request, bookmarks, "episodes/bookmarks.html")
+    return render_paginated_list(request, bookmarks, "episodes/bookmarks.html")
 
 
 @require_POST
