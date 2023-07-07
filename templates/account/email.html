@@ -3,10 +3,10 @@
 {% block title %}
     {{ block.super }} | Email Addresses
 {% endblock title %}
-{% block settings_dropdown_title %}
+{% block settings_selected_item %}
     {% heroicon_mini "envelope" class="mr-3" %}
     Email Addresses
-{% endblock settings_dropdown_title %}
+{% endblock settings_selected_item %}
 {% block settings_content %}
     <div class="space-y-3">
         {% with emailaddresses=user.emailaddress_set.all num_addresses=user.emailaddress_set.count %}

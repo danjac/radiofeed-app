@@ -3,10 +3,10 @@
 {% block title %}
     {{ block.super }} | Import/Export Feeds
 {% endblock title %}
-{% block settings_dropdown_title %}
+{% block settings_selected_item %}
     {% heroicon_mini "rss" class="mr-3" %}
     Import/Export Feeds
-{% endblock settings_dropdown_title %}
+{% endblock settings_selected_item %}
 {% block settings_content %}
     <div class="space-y-3">
         {% if user.subscriptions.exists %}

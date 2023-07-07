@@ -3,10 +3,10 @@
 {% block title %}
     {{ block.super }} | Social Logins
 {% endblock title %}
-{% block settings_dropdown_title %}
+{% block settings_selected_item %}
     {% heroicon_mini "user-group" class="mr-3" %}
     Social Logins
-{% endblock settings_dropdown_title %}
+{% endblock settings_selected_item %}
 {% block settings_content %}
     {% if form.accounts %}
         <p>You can sign in to your account using any of the following third party accounts:</p>

@@ -18,10 +18,10 @@
                             @keyup.escape.window="showDropdown=false"
                             class="flex items-center px-2 py-1 border rounded-lg link sm:justify-end md:hover:bg-transparent focus:outline-none focus:ring ">
                         <span class="inline-flex items-center">
-                            {% block settings_dropdown_title %}
+                            {% block settings_selected_item %}
                                 {% heroicon_mini "adjustments-horizontal" class="mr-3" %}
                                 Preferences
-                            {% endblock settings_dropdown_title %}
+                            {% endblock settings_selected_item %}
                         </span>
                         {% heroicon_mini "chevron-down" class="ml-3" %}
                     </button>
