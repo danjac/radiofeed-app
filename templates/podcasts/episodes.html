@@ -24,14 +24,15 @@
     {% endif %}
     {% block pagination %}
         {% cache 600 podcast-episodes request.get_full_path %}
+        {% render_as "_pagination_links.html" as pagination_links %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "_pagination_links.html" %}
+            {{ pagination_links }}
             {% for episode in page_obj %}
                 {% include "episodes/_episode.html" %}
             {% empty %}
                 {% include "_empty.html" %}
             {% endfor %}
-            {% include "_pagination_links.html" %}
+            {{ pagination_links }}
         </div>
     {% endcache %}
 {% endblock pagination %}

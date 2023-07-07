@@ -31,6 +31,7 @@
               hx-indicator="#hx-indicator"
               hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
             {% include "_hx_indicator.html" %}
+            {% render_as "_sidebar.html" as sidebar %}
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     {% include "_navbar.html" %}
@@ -38,7 +39,7 @@
                     <div class="relative flex min-h-screen p-2 py-6 mx-auto xl:pt-12 xl:w-11/12">
                         {% if user.is_authenticated %}
                             <aside class="hidden w-full xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-28">
-                                {% include "_sidebar.html" %}
+                                {{ sidebar }}
                             </aside>
                         {% endif %}
                         <main class="w-full mx-auto xl:block xl:w-4/5" id="content" hx-history-elt>

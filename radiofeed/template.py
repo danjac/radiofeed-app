@@ -7,6 +7,7 @@ from django.core.signing import Signer
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
+from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.templatetags.static import static
 from django.urls import reverse
@@ -166,3 +167,16 @@ def format_duration(total_seconds: int | None) -> str:
 def pagination_url(context: RequestContext, page_number: int) -> str:
     """Returns URL for next/previous page."""
     return context.request.pagination.url(page_number)
+
+
+@register.simple_tag(takes_context=True)
+def render_as(context: RequestContext, template_name: str, **extra_context) -> str:
+    """Renders template contents into string."""
+    return render_to_string(
+        template_name,
+        {
+            **context.flatten(),
+            **extra_context,
+        },
+        request=context.request,
+    )

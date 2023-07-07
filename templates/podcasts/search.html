@@ -4,17 +4,18 @@
     | Search | Podcasts
 {% endblock title %}
 {% block search_content %}
-    {% cache 600 search-podcasts request.get_full_path %}
     {% block pagination %}
+        {% cache 600 search-podcasts request.get_full_path %}
+        {% render_as "_pagination_links.html" as pagination_links %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "_pagination_links.html" %}
+            {{ pagination_links }}
             {% for podcast in page_obj %}
                 {% include "podcasts/_podcast.html" %}
             {% empty %}
                 {% include "_empty.html" %}
             {% endfor %}
-            {% include "_pagination_links.html" %}
+            {{ pagination_links }}
         </div>
-    {% endblock pagination %}
-{% endcache %}
+    {% endcache %}
+{% endblock pagination %}
 {% endblock search_content %}

@@ -4,8 +4,9 @@
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
 {% endblock title %}
 {% block content %}
+    {% url 'episodes:index' as index_url %}
+    {% render_as "_search_form.html" placeholder="Search: Episodes" as search_form %}
     <header class="pb-3 mb-3 border-b">
-        {% url 'episodes:index' as index_url %}
         {% if has_subscriptions %}
             <h1 class="flex items-center justify-center mb-3 text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
                 New Releases: {{ promoted|yesno:"Promotions,Subscriptions" }}
@@ -19,9 +20,7 @@
                             <a href="{{ index_url }}?promoted=true" class="link">Promotions</a>
                         {% endif %}
                     </li>
-                    <li class="flex items-center justify-center sm:justify-end space-x-3">
-                        {% include "_search_form.html" with placeholder="Search: Episodes" %}
-                    </li>
+                    <li class="flex items-center justify-center sm:justify-end space-x-3">{{ search_form }}</li>
                 </ul>
             </nav>
         {% else %}
@@ -29,21 +28,20 @@
                 <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     New Releases
                 </h1>
-                <div class="flex items-center justify-center sm:justify-end space-x-3">
-                    {% include "_search_form.html" with placeholder="Search: Episodes" %}
-                </div>
+                <div class="flex items-center justify-center sm:justify-end space-x-3">{{ search_form }}</div>
             </div>
         {% endif %}
     </header>
     {% block pagination %}
+        {% render_as "_pagination_links.html" as pagination_links %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
-            {% include "_pagination_links.html" %}
+            {{ pagination_links }}
             {% for episode in page_obj %}
                 {% include "episodes/_episode.html" %}
             {% empty %}
                 {% include "_empty.html" %}
             {% endfor %}
-            {% include "_pagination_links.html" %}
+            {{ pagination_links }}
         </div>
     {% endblock pagination %}
 {% endblock content %}
