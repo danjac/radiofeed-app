@@ -13,6 +13,7 @@ from radiofeed.podcasts.tests.factories import (
     create_subscription,
 )
 from radiofeed.tests.asserts import (
+    assert_conflict,
     assert_hx_location,
     assert_not_found,
     assert_ok,
@@ -461,7 +462,7 @@ class TestSubscribe:
             self.url(podcast),
             HTTP_HX_REQUEST="true",
         )
-        assert_ok(response)
+        assert_conflict(response)
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()

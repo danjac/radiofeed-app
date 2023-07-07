@@ -15,6 +15,7 @@ from radiofeed.episodes.tests.factories import (
 from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
 from radiofeed.tests.asserts import (
     assert_bad_request,
+    assert_conflict,
     assert_no_content,
     assert_not_found,
     assert_ok,
@@ -425,7 +426,7 @@ class TestAddBookmark:
     @pytest.mark.django_db()(transaction=True)
     def test_already_bookmarked(self, client, auth_user, episode):
         create_bookmark(episode=episode, user=auth_user)
-        assert_ok(
+        assert_conflict(
             client.post(
                 self.url(episode),
                 HTTP_HX_REQUEST="true",

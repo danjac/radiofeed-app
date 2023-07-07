@@ -1,5 +1,3 @@
-import contextlib
-
 import requests
 from django.contrib import messages
 from django.db import IntegrityError
@@ -18,6 +16,7 @@ from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.response import HttpResponseConflict
 from radiofeed.template import render_template_partials
 
 
@@ -273,9 +272,10 @@ def category_detail(
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
-
-    with contextlib.suppress(IntegrityError):
+    try:
         request.user.subscriptions.create(podcast=podcast)
+    except IntegrityError:
+        return HttpResponseConflict()
 
     messages.success(request, "Subscribed to Podcast")
     return _render_subscribe_action(request, podcast, is_subscribed=True)

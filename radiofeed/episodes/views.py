@@ -1,4 +1,3 @@
-import contextlib
 import http
 from datetime import timedelta
 
@@ -21,6 +20,7 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.pagination import render_paginated_response
+from radiofeed.response import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.template import render_template_partials
 
 
@@ -127,7 +127,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             episode__pk=episode_id,
         )
         return _render_audio_player_action(request, audio_log, is_playing=False)
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    return HttpResponseNoContent()
 
 
 @require_POST
@@ -222,8 +222,10 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
 
-    with contextlib.suppress(IntegrityError):
+    try:
         request.user.bookmarks.create(episode=episode)
+    except IntegrityError:
+        return HttpResponseConflict()
 
     messages.success(request, "Added to Bookmarks")
     return _render_bookmark_action(request, episode, is_bookmarked=True)
