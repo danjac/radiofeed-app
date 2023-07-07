@@ -1,4 +1,3 @@
-import http
 from datetime import timedelta
 
 from django.contrib import messages
@@ -152,7 +151,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         except (KeyError, ValueError):
             return HttpResponseBadRequest()
 
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    return HttpResponseNoContent()
 
 
 @require_safe
