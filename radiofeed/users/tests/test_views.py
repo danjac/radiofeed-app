@@ -7,7 +7,11 @@ from django.urls import reverse, reverse_lazy
 from radiofeed.episodes.tests.factories import create_audio_log, create_bookmark
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
-from radiofeed.tests.asserts import assert_hx_location, assert_ok
+from radiofeed.tests.asserts import (
+    assert_hx_location,
+    assert_ok,
+    assert_unprocessable_entity,
+)
 from radiofeed.tests.factories import create_batch
 from radiofeed.users.models import User
 
@@ -98,7 +102,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_invalid_form(self, client, auth_user):
-        assert_ok(
+        assert_unprocessable_entity(
             client.post(
                 self.url,
                 data={"opml": "test.xml"},

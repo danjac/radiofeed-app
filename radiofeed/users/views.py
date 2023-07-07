@@ -19,9 +19,9 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
 
-    form, success = handle_form(UserPreferencesForm, request, instance=request.user)
+    form, result = handle_form(UserPreferencesForm, request, instance=request.user)
 
-    if success:
+    if result:
         form.save()
         messages.success(request, "Your preferences have been saved")
         return HttpResponseLocation(request.path)
@@ -32,6 +32,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         {"form": form},
         target="preferences-form",
         use_blocks="form",
+        status=result.status,
     )
 
 
@@ -54,8 +55,8 @@ def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    form, success = handle_form(OpmlUploadForm, request)
-    if success:
+    form, result = handle_form(OpmlUploadForm, request)
+    if result:
         if new_feeds := form.subscribe_to_feeds(request.user):
             messages.success(
                 request,
@@ -74,6 +75,7 @@ def import_podcast_feeds(
         },
         target="import-feeds-form",
         use_blocks="import_feeds_form",
+        status=result.status,
     )
 
 

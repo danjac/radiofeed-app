@@ -12,7 +12,12 @@ from radiofeed.podcasts.tests.factories import (
     create_recommendation,
     create_subscription,
 )
-from radiofeed.tests.asserts import assert_hx_location, assert_not_found, assert_ok
+from radiofeed.tests.asserts import (
+    assert_hx_location,
+    assert_not_found,
+    assert_ok,
+    assert_unprocessable_entity,
+)
 from radiofeed.tests.factories import create_batch
 
 podcasts_url = reverse_lazy("podcasts:index")
@@ -585,7 +590,7 @@ class TestAddPrivateFeed:
     def test_existing_public(self, client, faker, auth_user):
         podcast = create_podcast(private=False)
 
-        assert_ok(
+        assert_unprocessable_entity(
             client.post(
                 self.url,
                 {"rss": podcast.rss},
