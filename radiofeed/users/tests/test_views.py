@@ -165,8 +165,7 @@ class TestExportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_export_opml(self, client, subscription):
-        response = client.post(self.url)
-        assert_ok(client.post(self.url))
+        response = client.get(self.url)
         assert response["Content-Type"] == "text/x-opml"
 
 

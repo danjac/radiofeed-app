@@ -79,7 +79,7 @@ def import_podcast_feeds(
     )
 
 
-@require_POST
+@require_safe
 @require_auth
 def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
