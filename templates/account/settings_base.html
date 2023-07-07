@@ -18,10 +18,9 @@
                             @keyup.escape.window="showDropdown=false"
                             class="flex items-center px-2 py-1 border rounded-lg link sm:justify-end md:hover:bg-transparent focus:outline-none focus:ring ">
                         <span class="inline-flex items-center">
-                            {% block settings_selected_item %}
-                                {% heroicon_mini "adjustments-horizontal" class="mr-3" %}
-                                Preferences
-                            {% endblock settings_selected_item %}
+                            {# djlint:off #}
+                            {% block settings_selected_item %}{% endblock settings_selected_item %}
+                            {# djlint:on #}
                         </span>
                         {% heroicon_mini "chevron-down" class="ml-3" %}
                     </button>
@@ -30,62 +29,52 @@
                          x-show="showDropdown"
                          x-transition.scape.origin.top>
                         <ul class="py-1 list-none" aria-labelledby="settings-dropdown-btn">
-                            <li>
-                                {% active_link 'users:preferences' as link %}
-                                <a href="{{ link.url }}"
-                                   tabindex="1"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
-                                    {% heroicon_mini "adjustments-horizontal" class="mr-2" %}
-                                Preferences</a>
-                            </li>
-                            <li>
-                                {% active_link 'users:stats' as link %}
-                                <a href="{{ link.url }}"
-                                   tabindex="2"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
-                                    {% heroicon_mini "chart-bar" class="mr-2" %}
-                                Statistics</a>
-                            </li>
-                            <li>
-                                {% active_link 'users:manage_podcast_feeds' as link %}
-                                <a href="{{ link.url }}"
-                                   tabindex="3"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
-                                    {% heroicon_mini "rss" class="mr-2" %}
-                                Import/Export Feeds</a>
-                            </li>
-                            <li>
-                                {% active_link 'account_email' as link %}
-                                <a href="{{ link.url }}"
-                                   tabindex="4"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
-                                    {% heroicon_mini "envelope" class="mr-2" %}
-                                Email Addresses</a>
-                            </li>
-                            <li>
-                                {% active_link 'account_change_password' as link %}
-                                <a href="{{ link.url }}"
-                                   tabindex="5"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
-                                    {% heroicon_mini "key" class="mr-2" %}
-                                Change Password</a>
-                            </li>
-                            <li>
-                                {% active_link 'socialaccount_connections' as link %}
-                                <a href="{{ link.url }}"
-                                   tabindex="6"
-                                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
-                                    {% heroicon_mini "user-group" class="mr-2" %}
-                                Social Logins</a>
-                            </li>
-                            <li>
-                                {% active_link 'users:delete_account' as link %}
-                                <a href="{{ link.url }}"
-                                   tabindex="7"
-                                   class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:text-red-500 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
-                                    {% heroicon_mini "trash" class="mr-2" %}
-                                Delete Account</a>
-                            </li>
+                            {% with DROPDOWN_CSS="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800" ACTIVE_CSS="font-bold" %}
+                                <li>
+                                    {% active_link 'users:preferences' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    <a href="{{ link.url }}" tabindex="1" class="{{ link.css }}">
+                                        {% heroicon_mini "adjustments-horizontal" class="mr-2" %}
+                                    Preferences</a>
+                                </li>
+                                <li>
+                                    {% active_link 'users:stats' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    <a href="{{ link.url }}" tabindex="2" class="{{ link.css }}">
+                                        {% heroicon_mini "chart-bar" class="mr-2" %}
+                                    Statistics</a>
+                                </li>
+                                <li>
+                                    {% active_link 'users:manage_podcast_feeds' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    <a href="{{ link.url }}" tabindex="3" class="{{ link.css }}">
+                                        {% heroicon_mini "rss" class="mr-2" %}
+                                    Import/Export Feeds</a>
+                                </li>
+                                <li>
+                                    {% active_link 'account_email' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    <a href="{{ link.url }}" tabindex="4" class="{{ link.css }}">
+                                        {% heroicon_mini "envelope" class="mr-2" %}
+                                    Email Addresses</a>
+                                </li>
+                                <li>
+                                    {% active_link 'account_change_password' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    <a href="{{ link.url }}" tabindex="5" class="{{ link.css }}">
+                                        {% heroicon_mini "key" class="mr-2" %}
+                                    Change Password</a>
+                                </li>
+                                <li>
+                                    {% active_link 'socialaccount_connections' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    <a href="{{ link.url }}" tabindex="6" class="{{ link.css }}">
+                                        {% heroicon_mini "user-group" class="mr-2" %}
+                                    Social Logins</a>
+                                </li>
+                                <li>
+                                    {% active_link 'users:delete_account' as link %}
+                                    <a href="{{ link.url }}"
+                                       tabindex="7"
+                                       class="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-gray-100 dark:text-red-500 dark:hover:bg-gray-800{% if link.active %} font-bold {% endif %}">
+                                        {% heroicon_mini "trash" class="mr-2" %}
+                                    Delete Account</a>
+                                </li>
+                            {% endwith %}
                         </ul>
                     </div>
                 </nav>
