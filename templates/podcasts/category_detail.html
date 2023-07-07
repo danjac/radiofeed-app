@@ -4,7 +4,7 @@
     | Categories | {{ category.name }} Podcasts
 {% endblock title %}
 {% block content %}
-    {% render_as "_search_form.html" placeholder="Search: "|add:category.name as search_form %}
+    {% render "_search_form.html" placeholder="Search: "|add:category.name as search_form %}
     {% if request.search %}
         <header class="pb-3 mb-3 border-b space-y-3">
             <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
@@ -35,7 +35,7 @@
     {% endif %}
     {% block pagination %}
         {% cache 600 category-detail request.get_full_path %}
-        {% render_as "_pagination_links.html" as pagination_links %}
+        {% render "_pagination_links.html" as pagination_links %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
             {{ pagination_links }}
             {% for podcast in page_obj %}

@@ -6,7 +6,7 @@
 {% block search_content %}
     {% block pagination %}
         {% cache 600 search-podcasts request.get_full_path %}
-        {% render_as "_pagination_links.html" as pagination_links %}
+        {% render "_pagination_links.html" as pagination_links %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
             {{ pagination_links }}
             {% for podcast in page_obj %}

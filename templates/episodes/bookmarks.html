@@ -25,7 +25,7 @@
         {% endif %}
     </header>
     {% block pagination %}
-        {% render_as "_pagination_links.html" as pagination_links %}
+        {% render "_pagination_links.html" as pagination_links %}
         <div class="divide-y divide-solid" id="{{ pagination_target }}">
             {{ pagination_links }}
             {% for bookmark in page_obj %}

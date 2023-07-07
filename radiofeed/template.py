@@ -170,7 +170,7 @@ def pagination_url(context: RequestContext, page_number: int) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def render_as(context: RequestContext, template_name: str, **extra_context) -> str:
+def render(context: RequestContext, template_name: str, **extra_context) -> str:
     """Renders template contents into string."""
     return render_to_string(
         template_name,
