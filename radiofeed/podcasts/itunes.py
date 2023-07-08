@@ -86,7 +86,7 @@ class Crawler:
     def __init__(self, location: str):
         self._location = location
         self._feed_ids: set[str] = set()
-        self._parser = _xml_parser()
+        self._parser = _itunes_parser()
 
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the
@@ -232,6 +232,6 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
 
 
 @functools.cache
-def _xml_parser() -> XMLParser:
+def _itunes_parser() -> XMLParser:
     """Returns cached XMLParser instance."""
     return XMLParser({"apple": "http://www.apple.com/itms/"})
