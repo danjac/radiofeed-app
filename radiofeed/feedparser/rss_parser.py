@@ -5,7 +5,7 @@ import lxml.etree  # nosec
 
 from radiofeed.feedparser.exceptions import InvalidRSSError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.xml_parser import xml_parser
+from radiofeed.xml_parser import XMLParser
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -25,13 +25,15 @@ class RSSParser:
     """Parses RSS or Atom feed and returns the feed details and individual episodes."""
 
     def __init__(self):
-        self._parser = xml_parser(
-            atom="http://www.w3.org/2005/Atom",
-            content="http://purl.org/rss/1.0/modules/content/",
-            googleplay="http://www.google.com/schemas/play-podcasts/1.0",
-            itunes="http://www.itunes.com/dtds/podcast-1.0.dtd",
-            media="http://search.yahoo.com/mrss/",
-            podcast="https://podcastindex.org/namespace/1.0",
+        self._parser = XMLParser(
+            {
+                "atom": "http://www.w3.org/2005/Atom",
+                "content": "http://purl.org/rss/1.0/modules/content/",
+                "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+                "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+                "media": "http://search.yahoo.com/mrss/",
+                "podcast": "https://podcastindex.org/namespace/1.0",
+            }
         )
 
     def parse(self, content: bytes) -> Feed:

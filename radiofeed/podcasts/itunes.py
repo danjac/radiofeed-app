@@ -1,4 +1,5 @@
 import dataclasses
+import functools
 import itertools
 import re
 from collections.abc import Iterator
@@ -13,7 +14,7 @@ from django.utils.http import urlsafe_base64_encode
 
 from radiofeed import iterators
 from radiofeed.podcasts.models import Podcast
-from radiofeed.xml_parser import xml_parser
+from radiofeed.xml_parser import XMLParser
 
 _ITUNES_LOCATIONS: Final = (
     "de",
@@ -85,7 +86,7 @@ class Crawler:
     def __init__(self, location: str):
         self._location = location
         self._feed_ids: set[str] = set()
-        self._parser = xml_parser(apple="http://www.apple.com/itms/")
+        self._parser = _xml_parser()
 
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the
@@ -228,3 +229,9 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
             )
         except KeyError:
             continue
+
+
+@functools.cache
+def _xml_parser() -> XMLParser:
+    """Returns cached XMLParser instance."""
+    return XMLParser({"apple": "http://www.apple.com/itms/"})

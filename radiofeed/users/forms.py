@@ -1,3 +1,4 @@
+import functools
 from collections.abc import Iterator
 
 import lxml  # nosec
@@ -5,7 +6,7 @@ from django import forms
 
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
-from radiofeed.xml_parser import xml_parser
+from radiofeed.xml_parser import XMLParser
 
 
 class UserPreferencesForm(forms.ModelForm):
@@ -70,8 +71,9 @@ class OpmlUploadForm(forms.Form):
         return 0
 
     def _parse_opml(self) -> Iterator[str]:
+        parser = _opml_parser()
+
         self.cleaned_data["opml"].seek(0)
-        parser = xml_parser()
 
         try:
             for element in parser.iterparse(
@@ -83,3 +85,9 @@ class OpmlUploadForm(forms.Form):
                     element.clear()
         except lxml.etree.XMLSyntaxError:
             return
+
+
+@functools.cache
+def _opml_parser() -> XMLParser:
+    """Returns cached XMLParser instance."""
+    return XMLParser()
