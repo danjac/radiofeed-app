@@ -1,18 +1,16 @@
 import contextlib
 import io
 from collections.abc import Iterable, Iterator
-from typing import Any, TypeAlias
+from typing import Any
 
 import lxml.etree
-
-Namespaces: TypeAlias = dict[str, str]
 
 
 class XMLParser:
     """Does efficient XPath lookups to find elements and text/attribute values in
     elements."""
 
-    def __init__(self, namespaces: Namespaces | None = None):
+    def __init__(self, namespaces: dict[str, str] | None = None):
         self._namespaces = namespaces or {}
         self._xpaths: dict[str, lxml.etree.XPath] = {}
 
