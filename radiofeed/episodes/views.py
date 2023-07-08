@@ -113,7 +113,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return _render_audio_player_action(request, audio_log, is_playing=True)
+    return _render_audio_player_button(request, audio_log, is_playing=True)
 
 
 @require_POST
@@ -125,7 +125,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_audio_player_action(request, audio_log, is_playing=False)
+        return _render_audio_player_button(request, audio_log, is_playing=False)
     return HttpResponseNoContent()
 
 
@@ -227,7 +227,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "Added to Bookmarks")
-    return _render_bookmark_action(request, episode, is_bookmarked=True)
+    return _render_bookmark_button(request, episode, is_bookmarked=True)
 
 
 @require_DELETE
@@ -238,10 +238,10 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     request.user.bookmarks.filter(episode=episode).delete()
 
     messages.info(request, "Removed from Bookmarks")
-    return _render_bookmark_action(request, episode, is_bookmarked=False)
+    return _render_bookmark_button(request, episode, is_bookmarked=False)
 
 
-def _render_audio_player_action(
+def _render_audio_player_button(
     request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
 ) -> HttpResponse:
     return render_template_partials(
@@ -254,14 +254,14 @@ def _render_audio_player_action(
             "start_player": is_playing,
         },
         use_blocks=[
-            "audio_log",
             "audio_player_button",
             "audio_player",
+            "audio_log",
         ],
     )
 
 
-def _render_bookmark_action(
+def _render_bookmark_button(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> HttpResponse:
     return render_template_partials(

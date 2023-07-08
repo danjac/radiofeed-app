@@ -278,7 +278,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "Subscribed to Podcast")
-    return _render_subscribe_action(request, podcast, is_subscribed=True)
+    return _render_subscribe_button(request, podcast, is_subscribed=True)
 
 
 @require_DELETE
@@ -288,7 +288,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Unsubscribed from Podcast")
-    return _render_subscribe_action(request, podcast, is_subscribed=False)
+    return _render_subscribe_button(request, podcast, is_subscribed=False)
 
 
 @require_safe
@@ -358,7 +358,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseLo
     return HttpResponseLocation(reverse("podcasts:private_feeds"))
 
 
-def _render_subscribe_action(
+def _render_subscribe_button(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
 ) -> HttpResponse:
     return render_template_partials(
