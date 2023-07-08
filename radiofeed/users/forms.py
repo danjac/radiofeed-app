@@ -80,7 +80,7 @@ class OpmlUploadForm(forms.Form):
                 self.cleaned_data["opml"].read(), "opml", "body"
             ):
                 try:
-                    yield from parser.iter(element, "//outline//@xmlUrl")
+                    yield from parser.itertext(element, "//outline//@xmlUrl")
                 finally:
                     element.clear()
         except lxml.etree.XMLSyntaxError:

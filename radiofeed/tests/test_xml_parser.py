@@ -13,8 +13,8 @@ class TestXMLParser:
     def channel(self):
         return next(XMLParser().iterparse(self.read_mock_file(), "rss", "channel"))
 
-    def test_iter(self, channel):
-        assert list(XMLParser().iter(channel, "title/text()")) == [
+    def test_itertext(self, channel):
+        assert list(XMLParser().itertext(channel, "title/text()")) == [
             "Mysterious Universe"
         ]
 

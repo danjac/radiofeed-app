@@ -154,7 +154,7 @@ class Crawler:
             content, "{http://www.apple.com/itms/}html", "/apple:html"
         ):
             try:
-                yield from self._parser.iter(element, "//a//@href")
+                yield from self._parser.itertext(element, "//a//@href")
             finally:
                 element.clear()
 

@@ -88,7 +88,7 @@ class RSSParser:
             channel.clear()
 
     def _parse_items(self, channel: lxml.etree.Element) -> Iterator[Item]:
-        for item in self._parser.findall(channel, "item"):
+        for item in self._parser.iterate(channel, "item"):
             try:
                 yield Item(
                     categories=self._parser.aslist(item, "category/text()"),
