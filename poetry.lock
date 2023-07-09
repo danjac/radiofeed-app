@@ -835,13 +835,13 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "execnet"
-version = "2.0.1"
+version = "2.0.2"
 description = "execnet: rapid multi-Python deployment"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "execnet-2.0.1-py3-none-any.whl", hash = "sha256:eb9d131005116496240eabb9682a580c11e46071b7e873fdc30e4251d5e7945c"},
-    {file = "execnet-2.0.1.tar.gz", hash = "sha256:5b4e29cf334efcdc488ae21e0f841dff6564545df767ecb21b786f9c260fcf09"},
+    {file = "execnet-2.0.2-py3-none-any.whl", hash = "sha256:88256416ae766bc9e8895c76a87928c0012183da3cc4fc18016e6f050e025f41"},
+    {file = "execnet-2.0.2.tar.gz", hash = "sha256:cc59bc4423742fd71ad227122eb0dd44db51efb3dc4095b45ac9a08c770096af"},
 ]
 
 [package.extras]

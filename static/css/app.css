@@ -332,7 +332,7 @@
         .border-l,
         .border-r,
         .border-b {
-            border-color: theme("colors.gray.500");
+            border-color: theme("colors.gray.600");
         }
     }
 }
