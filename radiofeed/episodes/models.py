@@ -164,27 +164,22 @@ class Episode(models.Model):
     def get_episode_metadata(self) -> str:
         """Returns the episode season/episode/type as a single string, e.g.
         "Episode 3 Season 4", "Trailer", etc."""
-        episode_type = (
+        if episode_type := (
             self.episode_type.capitalize()
             if self.episode_type and self.episode_type.casefold() != "full"
             else None
-        )
+        ):
+            return episode_type
 
-        return " ".join(
-            [
-                info
-                for info in (
-                    episode_type,
-                    f"Episode {self.episode}"
-                    if self.episode and not episode_type
-                    else None,
-                    f"Season {self.season}"
-                    if self.season and not episode_type
-                    else None,
-                )
-                if info
-            ]
-        )
+        metadata: list[str] = []
+
+        if self.episode:
+            metadata.append(f"Episode {self.episode}")
+
+        if self.season:
+            metadata.append(f"Season {self.season}")
+
+        return " ".join(metadata)
 
     def get_media_metadata(self) -> dict:
         """Returns media session metadata for integration with client device.
