@@ -8,16 +8,16 @@
             {% if feed.podcast and feed.podcast.pub_date %}
                 {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
             {% else %}
-                <article class="flex items-center space-x-3 py-2">
+                <article class="flex items-center py-2 space-x-3">
                     {% cover_image feed.image 100 feed.title css_class="h-16 w-16" %}
                     <div class="flex flex-col place-content-between h-14">
-                        <h2 class="w-60 tracking-tight leading-tight break-words sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-bold line-clamp-2 lg:line-clamp-1">
+                        <h2 class="font-bold leading-tight tracking-tight break-words line-clamp-2">
                             <a title="{{ feed.title }}"
-                               class="link font-bold"
+                               class="font-bold link"
                                rel="noopener nofollow"
-                               href="{{ feed.url }}">{{ feed.title|truncatechars:180 }}</a>
+                               href="{{ feed.url }}">{{ feed.title }}</a>
                         </h2>
-                        <h3 class="truncate w-60 sm:w-auto sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
+                        <h3 class="text-xs font-semibold leading-tight tracking-tight text-gray-600 truncate w-60 lg:w-96 lg:text-sm dark:text-gray-300">
                             <span class="animate-pulse">Adding podcast to database...</span>
                         </h3>
                     </div>

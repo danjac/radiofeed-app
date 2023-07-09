@@ -8,7 +8,7 @@
             <h2 class="font-bold leading-tight tracking-tight break-words line-clamp-2"
                 title="{{ podcast.cleaned_title }}">
                 <a class="link group-hover:text-blue-600 dark:group-hover:text-blue-300"
-                   href="{{ podcast_url }}">{{ podcast.cleaned_title|truncatechars:180 }}</a>
+                   href="{{ podcast_url }}">{{ podcast.cleaned_title }}</a>
             </h2>
             <h3 class="text-xs font-semibold leading-tight tracking-tight text-gray-600 truncate w-60 lg:w-96 lg:text-sm dark:text-gray-300">
                 {% include "_date.html" with value=podcast.pub_date title="Latest Episode" %}
