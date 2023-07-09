@@ -172,12 +172,12 @@ class TestEpisodeModel:
     @pytest.mark.parametrize(
         ("episode_type", "number", "season", "expected"),
         [
-            ("full", None, None, ""),
-            ("trailer", None, None, "Trailer"),
-            ("trailer", 10, 3, "Trailer"),
-            ("full", 10, 3, "Episode 10 Season 3"),
-            ("full", 10, None, "Episode 10"),
-            ("full", None, 3, "Season 3"),
+            ("full", None, None, {}),
+            ("trailer", None, None, {"type": "trailer"}),
+            ("trailer", 10, 3, {"type": "trailer", "episode": 10, "season": 3}),
+            ("full", 10, 3, {"episode": 10, "season": 3}),
+            ("full", 10, None, {"episode": 10}),
+            ("full", None, 3, {"season": 3}),
         ],
     )
     def test_get_episode_metadata(self, episode_type, number, season, expected):

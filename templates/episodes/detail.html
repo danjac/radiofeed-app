@@ -52,7 +52,11 @@
         </h2>
         {% with metadata=episode.get_episode_metadata %}
             {% if metadata %}
-                <div class="flex items-center font-semibold text-gray-800 space-x-3 dark:text-gray-300">{{ metadata }}</div>
+                <div class="flex items-center font-semibold text-gray-800 space-x-3 dark:text-gray-300">
+                    {% if metadata.type %}{{ metadata.type|capfirst }}{% endif %}
+                    {% if metadata.episode %}Episode {{ metadata.episode }}{% endif %}
+                    {% if metadata.season %}Season {{ metadata.season }}{% endif %}
+                </div>
             {% endif %}
         {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">

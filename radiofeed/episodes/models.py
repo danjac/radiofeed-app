@@ -161,25 +161,24 @@ class Episode(models.Model):
         """Check if either this specific episode or the podcast is explicit."""
         return self.explicit or self.podcast.explicit
 
-    def get_episode_metadata(self) -> str:
-        """Returns the episode season/episode/type as a single string, e.g.
-        "Episode 3 Season 4", "Trailer", etc."""
-        if episode_type := (
-            self.episode_type.capitalize()
+    def get_episode_metadata(self) -> dict:
+        """Returns the episode season/episode/type."""
+
+        episode_type = (
+            self.episode_type
             if self.episode_type and self.episode_type.casefold() != "full"
             else None
-        ):
-            return episode_type
+        )
 
-        metadata: list[str] = []
-
-        if self.episode:
-            metadata.append(f"Episode {self.episode}")
-
-        if self.season:
-            metadata.append(f"Season {self.season}")
-
-        return " ".join(metadata)
+        return {
+            k: v
+            for k, v in [
+                ("type", episode_type),
+                ("episode", self.episode),
+                ("season", self.season),
+            ]
+            if v
+        }
 
     def get_media_metadata(self) -> dict:
         """Returns media session metadata for integration with client device.
