@@ -59,6 +59,7 @@ _LINK_REL: Final = "noopener noreferrer nofollow"
 
 _TAG_ATTRIBUTES: Final = {
     "a": {
+        "class": "link",
         "target": "_blank",
     },
 }
