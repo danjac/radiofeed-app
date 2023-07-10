@@ -1,12 +1,16 @@
 {
     "name": "Radiofeed Dokku deployment",
-    "addons": ["dokku-letsencrypt", "dokku-redis", "dokku-postgres"],
+    "addons": [
+        "dokku-letsencrypt",
+        "dokku-redis",
+        "dokku-postgres"
+    ],
     "formation": {
         "web": {
             "quantity": 1
         },
         "feedparser": {
-            "quantity": 1
+            "quantity": 2
         }
     },
     "cron": [
