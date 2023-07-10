@@ -623,13 +623,13 @@ postal = ["cryptography"]
 
 [[package]]
 name = "django-browser-reload"
-version = "1.10.0"
+version = "1.11.0"
 description = "Automatically reload your browser in development."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "django_browser_reload-1.10.0-py3-none-any.whl", hash = "sha256:a4c72ad7e7c670ce15d9c8e8f649d47c661fd1de383f3e5a0cd9da613b439364"},
-    {file = "django_browser_reload-1.10.0.tar.gz", hash = "sha256:7528891a2d231e9fa6b04575154e636d099b03480cd75c571aad97c3c5b9d9b9"},
+    {file = "django_browser_reload-1.11.0-py3-none-any.whl", hash = "sha256:ce9576bd31562fda01dd8fca73e07696a9a1c7138d2aee084abfb7315dc633a4"},
+    {file = "django_browser_reload-1.11.0.tar.gz", hash = "sha256:fe232478a58e9e5d8b703537651d5a76b017d2208d1da5dfbe013937b5cca065"},
 ]
 
 [package.dependencies]
@@ -708,13 +708,13 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-htmx"
-version = "1.15.0"
+version = "1.16.0"
 description = "Extensions for using Django with htmx."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "django_htmx-1.15.0-py3-none-any.whl", hash = "sha256:b76068485905ad9f911419746f07f877633bb036c0870a0f9fc13dec42c6e425"},
-    {file = "django_htmx-1.15.0.tar.gz", hash = "sha256:bac7ff59bf507db6d40424f635f83889ce028a54f47663f227083413de22cabf"},
+    {file = "django_htmx-1.16.0-py3-none-any.whl", hash = "sha256:360d11266666e5d92bda57069f671f2c04642eb1fc071e4c4160cf9f504cbfa6"},
+    {file = "django_htmx-1.16.0.tar.gz", hash = "sha256:56a65045e079503877ba1354acb481030cf54da1e1f731d33c280e0a14b214cf"},
 ]
 
 [package.dependencies]
@@ -736,13 +736,13 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.16.0"
+version = "4.17.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "django_permissions_policy-4.16.0-py3-none-any.whl", hash = "sha256:e8a6f956d49b471854dc0a06bfefa5164e5e7531f3e423acdca35e5df76bab5c"},
-    {file = "django_permissions_policy-4.16.0.tar.gz", hash = "sha256:bb786fb10246cb5acfa20ac091956c649492694f55e041395ed2b2e516b24519"},
+    {file = "django_permissions_policy-4.17.0-py3-none-any.whl", hash = "sha256:e317143f8c8ef7ff30dc20bc1343f8f299c9e4423148957d9f0fc2bae04b0ebe"},
+    {file = "django_permissions_policy-4.17.0.tar.gz", hash = "sha256:cb2f0d2772ddab63dabd50331fa823d0cea06c89932d412c8c6aa5fc239b364f"},
 ]
 
 [package.dependencies]
@@ -2424,13 +2424,13 @@ test = ["asv", "gmpy2", "mpmath", "pooch", "pytest", "pytest-cov", "pytest-timeo
 
 [[package]]
 name = "sentry-sdk"
-version = "1.27.1"
+version = "1.28.0"
 description = "Python client for Sentry (https://sentry.io)"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sentry-sdk-1.27.1.tar.gz", hash = "sha256:53f36293a0da271a22f476259d2fda76c0b8a1cb96b16d6e6e6aca490d7f3451"},
-    {file = "sentry_sdk-1.27.1-py2.py3-none-any.whl", hash = "sha256:24308bd05a1f7d65e40acc68a768b4e5c35462039bfd6ae2ca116b92a7b53c78"},
+    {file = "sentry-sdk-1.28.0.tar.gz", hash = "sha256:2281ba98011cfa9bc9bb15c1074b6dd9f7fdfce94033cd25b50f18f078ffed4c"},
+    {file = "sentry_sdk-1.28.0-py2.py3-none-any.whl", hash = "sha256:b8b363aaa3f3d6a3acc1aa571efa4db29fb440339fed03560bb1276b8d2c2509"},
 ]
 
 [package.dependencies]

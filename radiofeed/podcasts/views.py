@@ -67,7 +67,6 @@ def index(request: HttpRequest) -> HttpResponse:
         {
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
-            "search_url": reverse("podcasts:search_podcasts"),
         },
     )
 
