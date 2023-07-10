@@ -27,12 +27,12 @@ class XMLParser:
             events=("end",),
         )
         for _, element in context:
-            yield from self.iterate(element, *paths)
+            yield from self.iterpaths(element, *paths)
             element.clear()
         del context
 
-    def iterate(self, element: lxml.etree.Element, *paths: str) -> Iterator:
-        """Iterate through elements or strings."""
+    def iterpaths(self, element: lxml.etree.Element, *paths: str) -> Iterator:
+        """Iterate through elements or strings for each path."""
         for path in paths:
             yield from self._xpath(path)(element)
 
@@ -43,7 +43,7 @@ class XMLParser:
         All strings are stripped of extra whitespace. Should skip any unicode errors.
         """
         with contextlib.suppress(UnicodeDecodeError):
-            for value in self.iterate(element, *paths):
+            for value in self.iterpaths(element, *paths):
                 if isinstance(value, str) and (cleaned := value.strip()):
                     yield cleaned
 
