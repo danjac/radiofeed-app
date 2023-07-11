@@ -162,7 +162,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _handle_feed_error(self, exc: FeedParserError, **fields) -> None:
+    def _handle_feed_error(self, exc: FeedParserError) -> None:
         num_retries: int = self._podcast.num_retries
         active: bool = True
 
@@ -197,7 +197,6 @@ class FeedParser:
             num_retries=num_retries,
             frequency=frequency,
             parser_error=exc.parser_error,
-            **fields,
         )
 
         # re-raise original exception
