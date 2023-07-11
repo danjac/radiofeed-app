@@ -64,7 +64,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self):
+    def parse(self) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
