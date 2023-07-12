@@ -62,10 +62,7 @@ def cookie_notice(context: RequestContext) -> dict:
 @register.simple_tag
 def cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
-    if size not in COVER_IMAGE_SIZES:
-        msg = f"size:{size} is invalid, must be one of {COVER_IMAGE_SIZES}"
-        raise ValueError(msg)
-
+    assert size in COVER_IMAGE_SIZES
     return (
         reverse(
             "cover_image",
