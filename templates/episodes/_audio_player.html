@@ -1,7 +1,8 @@
 {% load heroicons %}
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if audio_log and is_playing %}
-        {% with episode=audio_log.episode %}
+        {% with episode=audio_log.episode METADATA_TAG="audioplayer-metadata" %}
+            {{ episode.get_media_metadata|json_script:METADATA_TAG }}
             <div class="h-40 sm:h-28"
                 {# djlint:off #}
                 x-data="
@@ -10,10 +11,10 @@
                 currentTime={{ audio_log.current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
+                metadataTag='{{ METADATA_TAG }}',
             )"
                 {# djlint:on #}
                 @keydown.window="shortcuts">
-                {{ episode.get_media_metadata|json_script:"audioplayer-metadata" }}
                 <audio x-ref="audio"
                        preload="auto"
                        @loadedmetadata="loaded"

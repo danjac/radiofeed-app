@@ -8,6 +8,7 @@ document.addEventListener("alpine:init", () => {
             currentTime = 0,
             csrfToken = null,
             timeUpdateUrl = null,
+            metadataTag = "audioplayer-metadata",
         ) => ({
             currentTime,
             csrfToken,
@@ -23,7 +24,8 @@ document.addEventListener("alpine:init", () => {
             },
             init() {
                 if ("mediaSession" in navigator) {
-                    navigator.mediaSession.metadata = this.getMediaMetadata();
+                    navigator.mediaSession.metadata =
+                        this.getMediaMetadata(metadataTag);
                 }
 
                 this.$watch("runtime", value => {
@@ -159,7 +161,10 @@ document.addEventListener("alpine:init", () => {
                 });
             },
             formatCounter(value) {
-                if (isNaN(value) || value < 0) return "00:00:00";
+                if (isNaN(value) || value < 0) {
+                    return "00:00:00";
+                }
+
                 const duration = Math.floor(value);
                 return [
                     Math.floor(duration / 3600),
@@ -169,9 +174,11 @@ document.addEventListener("alpine:init", () => {
                     .map(t => t.toString().padStart(2, "0"))
                     .join(":");
             },
-            getMediaMetadata() {
-                const dataTag = document.getElementById("audioplayer-metadata");
-                const metadata = JSON.parse(dataTag?.textContent || "{}");
+            getMediaMetadata(metadataTag) {
+                const dataTag = document.getElementById(metadataTag);
+                const metadata = dataTag
+                    ? JSON.parse(dataTag.textContent || "{}")
+                    : {};
 
                 if (metadata && Object.keys(metadata).length > 0) {
                     return new MediaMetadata(metadata);
