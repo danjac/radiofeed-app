@@ -188,14 +188,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from History")
 
-    return render_template_partials(
-        request,
-        "episodes/detail.html",
-        {
-            "episode": audio_log.episode,
-        },
-        use_blocks="audio_log",
-    )
+    return _render_episode_partial(request, audio_log.episode, use_blocks="audio_log")
 
 
 @require_safe
@@ -240,17 +233,34 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_button(request, episode, is_bookmarked=False)
 
 
-def _render_audio_player_button(
-    request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
-) -> HttpResponse:
+def _render_episode_partial(
+    request: HttpRequest,
+    episode: Episode,
+    extra_context: dict | None = None,
+    *,
+    use_blocks: str | list[str],
+):
     return render_template_partials(
         request,
         "episodes/detail.html",
         {
+            "episode": episode,
+            **(extra_context or {}),
+        },
+        use_blocks=use_blocks,
+    )
+
+
+def _render_audio_player_button(
+    request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
+) -> HttpResponse:
+    return _render_episode_partial(
+        request,
+        audio_log.episode,
+        {
             "audio_log": audio_log,
-            "episode": audio_log.episode,
             "is_playing": is_playing,
-            "start_player": is_playing,
+            "start_player": start_player,
         },
         use_blocks=[
             "audio_player_button",
@@ -263,11 +273,10 @@ def _render_audio_player_button(
 def _render_bookmark_button(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> HttpResponse:
-    return render_template_partials(
+    return _render_episode_partial(
         request,
-        "episodes/detail.html",
+        episode,
         {
-            "episode": episode,
             "is_bookmarked": is_bookmarked,
         },
         use_blocks="bookmark_button",
