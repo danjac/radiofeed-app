@@ -2,8 +2,48 @@ import pytest
 from django.template.context import RequestContext
 
 from radiofeed.episodes.middleware import Player
-from radiofeed.episodes.templatetags.audio_player import audio_player
-from radiofeed.episodes.tests.factories import create_audio_log
+from radiofeed.episodes.templatetags.audio_player import (
+    audio_player,
+    get_media_metadata,
+)
+from radiofeed.episodes.tests.factories import create_audio_log, create_episode
+from radiofeed.podcasts.tests.factories import create_podcast
+
+
+class TestMediaMetadata:
+    @pytest.mark.django_db()
+    def test_get_media_metadata(self, rf, settings):
+        settings.USE_HTTPS = False
+        episode = create_episode(
+            podcast=create_podcast(cover_url="https://mysite.com/test.jpg")
+        )
+        data = get_media_metadata(RequestContext(rf.get("/")), episode)
+        assert data["title"] == episode.title
+        assert data["album"] == episode.podcast.title
+        assert data["artist"] == episode.podcast.owner
+
+        assert len(data["artwork"]) == 3
+
+        assert data["artwork"][0]["src"].startswith(
+            "http://testserver/covers/100/cover.webp"
+        )
+        assert data["artwork"][0]["sizes"] == "100x100"
+        assert data["artwork"][0]["type"] == "image/webp"
+
+    @pytest.mark.django_db()
+    def test_get_media_metadata_no_cover_url(self, rf, settings):
+        settings.STATIC_URL = "/static/"
+        episode = create_episode(podcast=create_podcast(cover_url=None))
+        data = get_media_metadata(RequestContext(rf.get("/")), episode)
+        assert data["title"] == episode.title
+        assert data["album"] == episode.podcast.title
+        assert data["artist"] == episode.podcast.owner
+
+        assert len(data["artwork"]) == 3
+
+        assert data["artwork"][0]["src"] == "/static/img/placeholder-100.webp"
+        assert data["artwork"][0]["sizes"] == "100x100"
+        assert data["artwork"][0]["type"] == "image/webp"
 
 
 class TestAudioPlayer:

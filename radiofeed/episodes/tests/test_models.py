@@ -140,20 +140,6 @@ class TestEpisodeModel:
         assert Episode(length=None).get_file_size() is None
 
     @pytest.mark.django_db()
-    def test_get_media_metadata(self):
-        cover_url = "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/9b63d479-4382-4198-8e63-aac7013964ff/e5ebd302-9d49-4c56-a234-aac701396502/image.jpg?t=1568401263\u0026size=Large"
-        episode = create_episode(podcast=create_podcast(cover_url=cover_url))
-        data = episode.get_media_metadata()
-        assert data["title"] == episode.title
-        assert data["album"] == episode.podcast.title
-        assert data["artist"] == episode.podcast.owner
-        assert data["artwork"][0] == {
-            "src": cover_url,
-            "sizes": "96x96",
-            "type": "image/jpeg",
-        }
-
-    @pytest.mark.django_db()
     def test_get_cover_url_if_episode_cover(self, podcast):
         episode = create_episode(
             podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
@@ -170,25 +156,16 @@ class TestEpisodeModel:
         assert episode.get_cover_url() is None
 
     @pytest.mark.parametrize(
-        ("episode_type", "number", "season", "expected"),
+        ("episode_type", "expected"),
         [
-            ("full", None, None, {}),
-            ("trailer", None, None, {"type": "trailer"}),
-            ("trailer", 10, 3, {"type": "trailer", "episode": 10, "season": 3}),
-            ("full", 10, 3, {"episode": 10, "season": 3}),
-            ("full", 10, None, {"episode": 10}),
-            ("full", None, 3, {"season": 3}),
+            (None, None),
+            ("full", None),
+            ("FULL", None),
+            ("trailer", "trailer"),
         ],
     )
-    def test_get_episode_metadata(self, episode_type, number, season, expected):
-        assert (
-            Episode(
-                episode_type=episode_type,
-                episode=number,
-                season=season,
-            ).get_episode_metadata()
-            == expected
-        )
+    def test_get_episode_type(self, episode_type, expected):
+        return Episode(episode_type=episode_type) == expected
 
 
 class TestBookmarkManager:

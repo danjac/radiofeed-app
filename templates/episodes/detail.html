@@ -50,12 +50,12 @@
                title="See all episodes for {{ podcast.cleaned_title }}"
                class="link">{{ podcast.cleaned_title }}</a>
         </h2>
-        {% with metadata=episode.get_episode_metadata %}
-            {% if metadata %}
+        {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
+            {% if episode_type or episode_num or season %}
                 <div class="flex items-center font-semibold text-gray-800 space-x-3 dark:text-gray-300">
-                    {% if metadata.type %}{{ metadata.type|capfirst }}{% endif %}
-                    {% if metadata.episode %}Episode {{ metadata.episode }}{% endif %}
-                    {% if metadata.season %}Season {{ metadata.season }}{% endif %}
+                    {% if episode_type %}{{ episode_type|capfirst }}{% endif %}
+                    {% if episode_num %}Episode {{ episode_num }}{% endif %}
+                    {% if season %}Season {{ season }}{% endif %}
                 </div>
             {% endif %}
         {% endwith %}

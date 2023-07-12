@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-import mimetypes
 from typing import TYPE_CHECKING
-from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.template.defaultfilters import filesizeformat
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -161,48 +158,13 @@ class Episode(models.Model):
         """Check if either this specific episode or the podcast is explicit."""
         return self.explicit or self.podcast.explicit
 
-    def get_episode_metadata(self) -> dict:
-        """Returns the episode season/episode/type."""
-
-        episode_type = (
+    def get_episode_type(self) -> str | None:
+        """Get the episode type (if not 'full')"""
+        return (
             self.episode_type
             if self.episode_type and self.episode_type.casefold() != "full"
             else None
         )
-
-        return {
-            k: v
-            for k, v in [
-                ("type", episode_type),
-                ("episode", self.episode),
-                ("season", self.season),
-            ]
-            if v
-        }
-
-    def get_media_metadata(self) -> dict:
-        """Returns media session metadata for integration with client device.
-
-        For more details:
-
-            https://developers.google.com/web/updates/2017/02/media-session
-        """
-        cover_url = self.podcast.cover_url or static("img/podcast-icon.png")
-        cover_url_type, _ = mimetypes.guess_type(urlparse(cover_url).path)
-
-        return {
-            "title": self.cleaned_title,
-            "album": self.podcast.cleaned_title,
-            "artist": self.podcast.owner,
-            "artwork": [
-                {
-                    "src": cover_url,
-                    "sizes": f"{size}x{size}",
-                    "type": cover_url_type,
-                }
-                for size in [96, 128, 192, 256, 384, 512]
-            ],
-        }
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):

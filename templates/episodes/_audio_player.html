@@ -1,8 +1,9 @@
-{% load heroicons %}
+{% load heroicons audio_player %}
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if audio_log and is_playing %}
         {% with episode=audio_log.episode METADATA_TAG="audioplayer-metadata" %}
-            {{ episode.get_media_metadata|json_script:METADATA_TAG }}
+            {% get_media_metadata episode as metadata %}
+            {% if metadata %}{{ metadata|json_script:METADATA_TAG }}{% endif %}
             <div class="h-40 sm:h-28"
                 {# djlint:off #}
                 x-data="
