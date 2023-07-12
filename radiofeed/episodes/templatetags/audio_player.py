@@ -3,7 +3,7 @@ from django.template.context import RequestContext
 from django.templatetags.static import static
 
 from radiofeed.episodes.models import Episode
-from radiofeed.template import cover_image_url
+from radiofeed.template import COVER_IMAGE_SIZES, cover_image_url
 
 register = template.Library()
 
@@ -33,7 +33,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
                 "sizes": f"{size}x{size}",
                 "type": "image/webp",
             }
-            for size in [100, 200, 300]
+            for size in COVER_IMAGE_SIZES
         ],
     }
 

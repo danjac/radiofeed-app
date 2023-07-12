@@ -1,6 +1,6 @@
 import math
 import urllib.parse
-from typing import TypedDict
+from typing import Final, TypedDict
 
 from django import template
 from django.core.signing import Signer
@@ -12,6 +12,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from radiofeed import cleaners
+
+COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
 register = template.Library()
 
@@ -60,6 +62,10 @@ def cookie_notice(context: RequestContext) -> dict:
 @register.simple_tag
 def cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
+    if size not in COVER_IMAGE_SIZES:
+        msg = f"size:{size} is invalid, must be one of {COVER_IMAGE_SIZES}"
+        raise ValueError(msg)
+
     return (
         reverse(
             "cover_image",

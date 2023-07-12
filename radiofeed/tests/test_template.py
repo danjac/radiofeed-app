@@ -158,6 +158,12 @@ class TestCoverImage:
     def test_is_not_cover_url(self):
         assert cover_image("", 100, "test img")["cover_url"] == ""
 
+    def test_invalid_size(self):
+        with pytest.raises(
+            ValueError, match=r"size\:500 is invalid, must be one of \(100, 200, 300\)"
+        ):
+            cover_image("https://example.com/test.jpg", 500, "test img")
+
 
 class TestBaseTemplates:
     @pytest.fixture()
