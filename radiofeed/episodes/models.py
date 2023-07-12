@@ -110,10 +110,17 @@ class Episode(models.Model):
         except self.DoesNotExist:
             return None
 
-    @property
-    def slug(self) -> str:
-        """Returns slugified title, if any."""
-        return slugify(self.title, allow_unicode=False) or "no-title"
+    def get_cover_url(self) -> str | None:
+        """Returns cover image URL or podcast cover image if former not provided."""
+        return self.cover_url or self.podcast.cover_url
+
+    def get_episode_type(self) -> str | None:
+        """Get the episode type (if not 'full')"""
+        return (
+            self.episode_type
+            if self.episode_type and self.episode_type.casefold() != "full"
+            else None
+        )
 
     def get_file_size(self) -> str | None:
         """Returns human readable file size e.g. 30MB.
@@ -122,9 +129,14 @@ class Episode(models.Model):
         """
         return filesizeformat(self.length) if self.length else None
 
-    def get_cover_url(self) -> str | None:
-        """Returns cover image URL or podcast cover image if former not provided."""
-        return self.cover_url or self.podcast.cover_url
+    def is_explicit(self) -> bool:
+        """Check if either this specific episode or the podcast is explicit."""
+        return self.explicit or self.podcast.explicit
+
+    @cached_property
+    def slug(self) -> str:
+        """Returns slugified title, if any."""
+        return slugify(self.title, allow_unicode=False) or "no-title"
 
     @cached_property
     def cleaned_title(self) -> str:
@@ -153,18 +165,6 @@ class Episode(models.Model):
             )
         except ValueError:
             return 0
-
-    def is_explicit(self) -> bool:
-        """Check if either this specific episode or the podcast is explicit."""
-        return self.explicit or self.podcast.explicit
-
-    def get_episode_type(self) -> str | None:
-        """Get the episode type (if not 'full')"""
-        return (
-            self.episode_type
-            if self.episode_type and self.episode_type.casefold() != "full"
-            else None
-        )
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
