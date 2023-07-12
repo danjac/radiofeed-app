@@ -260,7 +260,7 @@ def _render_audio_player_button(
         {
             "audio_log": audio_log,
             "is_playing": is_playing,
-            "start_player": start_player,
+            "start_player": is_playing,
         },
         use_blocks=[
             "audio_player_button",
