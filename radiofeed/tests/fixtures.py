@@ -9,6 +9,7 @@ from django.http import HttpRequest, HttpResponse
 @pytest.fixture(autouse=True)
 def _settings_overrides(settings: Settings) -> None:
     """Default settings for all tests."""
+    settings.ALLOWED_HOSTS = ["example.com", "testserver", "localhost"]
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
     }
