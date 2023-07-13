@@ -1,6 +1,4 @@
 from django import template
-from django.conf import settings
-from django.http import HttpRequest
 from django.template.context import RequestContext
 
 from radiofeed.episodes.models import Episode
@@ -28,10 +26,10 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
         "artist": episode.podcast.owner,
         "artwork": [
             {
-                "src": _cover_image_url(
-                    context.request,
-                    episode.podcast.cover_url,
-                    size,
+                "src": context.request.build_absolute_uri(
+                    get_cover_image_url(episode.podcast.cover_url, size)
+                    if episode.podcast.cover_url
+                    else get_placeholder_cover_url(size)
                 ),
                 "sizes": f"{size}x{size}",
                 "type": "image/webp",
@@ -56,16 +54,3 @@ def audio_player(context: RequestContext) -> dict:
         }
 
     return {}
-
-
-def _cover_image_url(request: HttpRequest, cover_url: str | None, size: int) -> str:
-    if cover_url:
-        return request.build_absolute_uri(get_cover_image_url(cover_url, size=size))
-
-    placeholder_url = get_placeholder_cover_url(size)
-
-    return (
-        placeholder_url
-        if settings.STATIC_URL.startswith("http")
-        else request.build_absolute_uri(placeholder_url)
-    )
