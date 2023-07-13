@@ -62,11 +62,15 @@ def send_recommendations_email(
 
     user.recommended_podcasts.add(*podcasts)
 
+    site = Site.objects.get_current()
+    protocol = "https" if settings.USE_HTTPS else "http"
+    absolute_url = f"{protocol}://{site.domain}"
+
     context = {
-        "recipient": user,
+        "absolute_url": absolute_url,
         "podcasts": podcasts,
-        "site": Site.objects.get_current(),
-        "protocol": "https" if settings.USE_HTTPS else "http",
+        "recipient": user,
+        "site": site,
     }
 
     send_mail(

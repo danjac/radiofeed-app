@@ -9,13 +9,13 @@ Here are some podcasts you might find interesting:
 
     {{ podcast.cleaned_description|truncatewords:60 }}
 
-    {{ protocol }}://{{ site.domain }}{{ podcast.get_absolute_url }}
+    {{ absolute_url }}{{ podcast.get_absolute_url }}
 
 {% endfor %}
 
 If you do not want to receive any more notifications, just uncheck the "Send email notifications"
 option on your Settings page:
 
-{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}
+{{ absolute_url }}{% url 'users:preferences' %}
 
 {% endautoescape %}

@@ -20,7 +20,7 @@
                     {% get_cover_image_url podcast.cover_url 100 as cover_url %}
                     {% get_placeholder_cover_url 100 as placeholder %}
                     <div>
-                        <img src="{{ protocol }}://{{ site.domain }}{{ cover_url|default:placeholder }}"
+                        <img src="{{ absolute_url }}{{ cover_url|default:placeholder }}"
                              alt="{{ podcast.cleaned_title }}"
                              height="100"
                              width="100"
@@ -34,7 +34,7 @@
                                line-height: 1.75rem">
                         <a style="text-decoration: underline;
                                   color: #000"
-                           href="{{ protocol }}://{{ site.domain }}{{ podcast.get_absolute_url }}">{{ podcast.cleaned_title }}</a>
+                           href="{{ absolute_url }}{{ podcast.get_absolute_url }}">{{ podcast.cleaned_title }}</a>
                     </h2>
                 </div>
                 <p class="markdown">{{ podcast.cleaned_description|urlize|truncatewords:60 }}</p>
@@ -44,7 +44,7 @@
             If you do not want to receive any more notifications, just uncheck the "Send email notifications"
             option on your <a style="text-decoration: underline;
            color: #000"
-    href="{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}">Settings</a> page.
+    href="{{ absolute_url }}{% url 'users:preferences' %}">Settings</a> page.
         </p>
     </body>
 </html>
