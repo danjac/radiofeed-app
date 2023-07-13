@@ -2,10 +2,13 @@ from django import template
 from django.conf import settings
 from django.http import HttpRequest
 from django.template.context import RequestContext
-from django.templatetags.static import static
 
 from radiofeed.episodes.models import Episode
-from radiofeed.template import COVER_IMAGE_SIZES, cover_image_url
+from radiofeed.template import (
+    COVER_IMAGE_SIZES,
+    get_cover_image_url,
+    get_placeholder_cover_url,
+)
 
 register = template.Library()
 
@@ -57,9 +60,9 @@ def audio_player(context: RequestContext) -> dict:
 
 def _cover_image_url(request: HttpRequest, cover_url: str | None, size: int) -> str:
     if cover_url:
-        return request.build_absolute_uri(cover_image_url(cover_url, size=size))
+        return request.build_absolute_uri(get_cover_image_url(cover_url, size=size))
 
-    placeholder_url = static(f"img/placeholder-{size}.webp")
+    placeholder_url = get_placeholder_cover_url(size)
 
     return (
         placeholder_url

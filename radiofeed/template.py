@@ -61,7 +61,7 @@ def cookie_notice(context: RequestContext) -> dict:
 
 
 @register.simple_tag
-def cover_image_url(cover_url: str | None, size: int) -> str:
+def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
 
     assert size in COVER_IMAGE_SIZES, f"invalid image size {size}"
@@ -80,6 +80,12 @@ def cover_image_url(cover_url: str | None, size: int) -> str:
     )
 
 
+@register.simple_tag
+def get_placeholder_cover_url(size: int) -> str:
+    """Return placeholder cover image URL."""
+    return static(f"img/placeholder-{size}.webp")
+
+
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     cover_url: str | None,
@@ -89,11 +95,9 @@ def cover_image(
     css_class: str = "",
 ) -> dict:
     """Renders a cover image with proxy URL."""
-    placeholder = static(f"img/placeholder-{size}.webp")
 
     return {
-        "cover_url": cover_image_url(cover_url, size),
-        "placeholder": placeholder,
+        "cover_url": get_cover_image_url(cover_url, size),
         "title": title,
         "size": size,
         "url": url,

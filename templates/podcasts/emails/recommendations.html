@@ -17,8 +17,8 @@
                         padding-bottom: 0.75rem;
                         border-bottom: 1px solid #eee">
                 <div style="display:flex; align-items:center;">
-                    {% cover_image_url podcast.cover_url 100 as cover_url %}
-                    {% static "img/placeholder-100.webp" as placeholder %}
+                    {% get_cover_image_url podcast.cover_url 100 as cover_url %}
+                    {% get_placeholder_cover_url 100 as placeholder %}
                     <div>
                         <img src="{{ protocol }}://{{ site.domain }}{{ cover_url|default:placeholder }}"
                              alt="{{ podcast.cleaned_title }}"
