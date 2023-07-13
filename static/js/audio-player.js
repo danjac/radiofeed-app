@@ -174,8 +174,8 @@ document.addEventListener("alpine:init", () => {
                     .map(t => t.toString().padStart(2, "0"))
                     .join(":");
             },
-            getMediaMetadata(metadataTag) {
-                const dataTag = document.getElementById(metadataTag);
+            getMediaMetadata(tagName) {
+                const dataTag = document.getElementById(tagName);
                 const metadata = dataTag
                     ? JSON.parse(dataTag.textContent || "{}")
                     : {};
