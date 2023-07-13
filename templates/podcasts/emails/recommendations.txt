@@ -1,5 +1,4 @@
 {% autoescape off %}
-{% get_site as site %}
 Hi {{ recipient.username }}, greetings from {{ site.name }}!
 
 Here are some podcasts you might find interesting:
@@ -10,13 +9,13 @@ Here are some podcasts you might find interesting:
 
     {{ podcast.cleaned_description|truncatewords:60 }}
 
-    {% absolute_uri podcast %}
+    {{ absolute_uri }}{{ podcast.get_absolute_url }}
 
 {% endfor %}
 
 If you do not want to receive any more notifications, just uncheck the "Send email notifications"
 option on your Settings page:
 
-{% absolute_uri 'users:preferences' %}
+{{ absolute_uri }}{% url 'users:preferences' %}
 
 {% endautoescape %}

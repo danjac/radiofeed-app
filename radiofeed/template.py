@@ -4,9 +4,7 @@ import urllib.parse
 from typing import Any, TypedDict
 
 from django import template
-from django.contrib.sites.models import Site
 from django.core.signing import Signer
-from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
@@ -142,23 +140,3 @@ def render(context: RequestContext, template_name: str, **extra_context) -> str:
         },
         request=context.request,
     )
-
-
-@register.simple_tag
-def absolute_uri(to: Any, *args, **kwargs) -> str:
-    """Return absolute URL. Use outside of HTTP request scope, e.g. in email links."""
-    return _get_request_from_site().build_absolute_uri(resolve_url(to, *args, **kwargs))
-
-
-@register.simple_tag
-@functools.cache
-def get_site() -> Site:
-    """Return current site, use when `request.site` is unavailable to template."""
-    return Site.objects.get_current()
-
-
-@functools.cache
-def _get_request_from_site() -> HttpRequest:
-    request = HttpRequest()
-    request.META = {"HTTP_HOST": get_site().domain}
-    return request
