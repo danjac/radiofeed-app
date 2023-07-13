@@ -15,7 +15,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.template import COVER_IMAGE_SIZES
+from radiofeed.template import validate_cover_image_size
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
 _cache_page = cache_page(60 * 60)
@@ -176,8 +176,10 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
     URL should be signed, so we can verify the request comes from this site.
     """
-    if size not in COVER_IMAGE_SIZES:
-        raise Http404
+    try:
+        validate_cover_image_size(size)
+    except ValueError as e:
+        raise Http404 from e
 
     # check cover url is legit
     try:

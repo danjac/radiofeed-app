@@ -28,6 +28,13 @@ class ActiveLink(TypedDict):
     active: bool
 
 
+def validate_cover_image_size(size: int) -> None:
+    """Checks image size is in `COVER_IMAGE_SIZES`, otherwise raises ValueError"""
+    if size not in COVER_IMAGE_SIZES:
+        msg = f"size {size} invalid, must be one of: {COVER_IMAGE_SIZES}"
+        raise ValueError(msg)
+
+
 @register.simple_tag(takes_context=True)
 def active_link(
     context: RequestContext,
@@ -63,8 +70,7 @@ def cookie_notice(context: RequestContext) -> dict:
 @register.simple_tag
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
-
-    assert size in COVER_IMAGE_SIZES, f"invalid image size {size}"
+    validate_cover_image_size(size)
 
     return (
         reverse(
@@ -83,6 +89,8 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @register.simple_tag
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
+    validate_cover_image_size(size)
+
     return static(f"img/placeholder-{size}.webp")
 
 
