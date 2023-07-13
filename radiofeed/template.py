@@ -15,6 +15,7 @@ from radiofeed import cleaners
 
 COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
+
 register = template.Library()
 
 
@@ -62,7 +63,9 @@ def cookie_notice(context: RequestContext) -> dict:
 @register.simple_tag
 def cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
-    assert size in COVER_IMAGE_SIZES
+
+    assert size in COVER_IMAGE_SIZES, f"invalid image size {size}"
+
     return (
         reverse(
             "cover_image",

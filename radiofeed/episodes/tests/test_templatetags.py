@@ -41,7 +41,30 @@ class TestMediaMetadata:
 
         assert len(data["artwork"]) == 3
 
-        assert data["artwork"][0]["src"] == "/static/img/placeholder-100.webp"
+        assert (
+            data["artwork"][0]["src"]
+            == "http://testserver/static/img/placeholder-100.webp"
+        )
+        assert data["artwork"][0]["sizes"] == "100x100"
+        assert data["artwork"][0]["type"] == "image/webp"
+
+    @pytest.mark.django_db()
+    def test_get_media_metadata_no_cover_url_static_url_starts_with_http(
+        self, rf, settings
+    ):
+        settings.STATIC_URL = "https://cdn.example.com/static/"
+        episode = create_episode(podcast=create_podcast(cover_url=None))
+        data = get_media_metadata(RequestContext(rf.get("/")), episode)
+        assert data["title"] == episode.title
+        assert data["album"] == episode.podcast.title
+        assert data["artist"] == episode.podcast.owner
+
+        assert len(data["artwork"]) == 3
+
+        assert (
+            data["artwork"][0]["src"]
+            == "https://cdn.example.com/static/img/placeholder-100.webp"
+        )
         assert data["artwork"][0]["sizes"] == "100x100"
         assert data["artwork"][0]["type"] == "image/webp"
 

@@ -36,6 +36,18 @@ class TestFormatDuration:
         assert format_duration(duration) == expected
 
 
+class TestCoverImage:
+    def test_is_cover_url(self):
+        assert cover_image("https://example.com/test.jpg", 99, "test img")["cover_url"]
+
+    def test_is_not_cover_url(self):
+        assert cover_image("", 99, "test img")["cover_url"] == ""
+
+    def test_invalid_size(self):
+        with pytest.raises(AssertionError):
+            cover_image("https://example.com/test.jpg", 499, "test img")
+
+
 class TestActiveLink:
     episodes_url = reverse_lazy("episodes:index")
 
@@ -108,59 +120,46 @@ class TestDefaultForm:
     def form(self):
         return MockForm()
 
-    def test_is_hidden(self, tmpl, mocker, form):
-        field = mocker.Mock()
+    @pytest.fixture()
+    def field(self, mocker):
+        return mocker.Mock()
+
+    def test_is_hidden(self, tmpl, form, field):
         field.is_hidden = True
         form.fields = [field]
         assert tmpl.render({"form": form}, request=req)
 
-    def test_textinput(self, tmpl, mocker, form):
-        field = mocker.Mock()
+    def test_textinput(self, tmpl, mocker, form, field):
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
         field.errors = []
         form.fields = [field]
         assert tmpl.render({"form": form}, request=req)
 
-    def test_checkboxinput(self, tmpl, mocker, form):
-        field = mocker.Mock()
+    def test_checkboxinput(self, tmpl, mocker, form, field):
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
         field.errors = []
         form.fields = [field]
         assert tmpl.render({"form": form}, request=req)
 
-    def test_fileinput(self, tmpl, mocker, form):
-        field = mocker.Mock()
+    def test_fileinput(self, tmpl, mocker, form, field):
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
         field.errors = []
         form.fields = [field]
         assert tmpl.render({"form": form}, request=req)
 
-    def test_errors(self, tmpl, mocker, form):
-        field = mocker.Mock()
+    def test_errors(self, tmpl, mocker, form, field):
         field.is_hidden = False
         field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
         field.errors = ["error"]
         form.fields = [field]
         assert tmpl.render({"form": form}, request=req)
 
-    def test_non_field_errors(self, tmpl, mocker, form):
+    def test_non_field_errors(self, tmpl, form):
         form.non_field_errors = ["error!"]
         assert tmpl.render({"form": form}, request=req)
-
-
-class TestCoverImage:
-    def test_is_cover_url(self):
-        assert cover_image("https://example.com/test.jpg", 100, "test img")["cover_url"]
-
-    def test_is_not_cover_url(self):
-        assert cover_image("", 100, "test img")["cover_url"] == ""
-
-    def test_invalid_size(self):
-        with pytest.raises(AssertionError):
-            cover_image("https://example.com/test.jpg", 500, "test img")
 
 
 class TestBaseTemplates:
