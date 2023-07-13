@@ -94,6 +94,7 @@ def cover_image(
 
     return {
         "cover_url": get_cover_image_url(cover_url, size),
+        "placeholder": get_placeholder_cover_url(size),
         "title": title,
         "size": size,
         "url": url,
