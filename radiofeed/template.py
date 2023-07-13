@@ -1,7 +1,7 @@
 import functools
 import math
 import urllib.parse
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from django import template
 from django.core.signing import Signer
@@ -29,14 +29,14 @@ class ActiveLink(TypedDict):
 @register.simple_tag(takes_context=True)
 def active_link(
     context: RequestContext,
-    url_name: str,
+    to: Any,
     css: str = "link",
     active_css: str = "active",
     *args,
     **kwargs,
 ) -> ActiveLink:
     """Returns url with active link info."""
-    url = resolve_url(url_name, *args, **kwargs)
+    url = resolve_url(to, *args, **kwargs)
 
     return (
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
