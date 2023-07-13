@@ -1,6 +1,6 @@
 import math
 import urllib.parse
-from typing import Final, TypedDict
+from typing import TypedDict
 
 from django import template
 from django.core.signing import Signer
@@ -13,9 +13,6 @@ from django.utils.safestring import mark_safe
 
 from radiofeed import cleaners
 
-COVER_IMAGE_SIZES: Final = (100, 200, 300)
-
-
 register = template.Library()
 
 
@@ -26,13 +23,6 @@ class ActiveLink(TypedDict):
     url: str
     css: str
     active: bool
-
-
-def validate_cover_image_size(size: int) -> None:
-    """Checks image size is in `COVER_IMAGE_SIZES`, otherwise raises ValueError"""
-    if size not in COVER_IMAGE_SIZES:
-        msg = f"size {size} invalid, must be one of: {COVER_IMAGE_SIZES}"
-        raise ValueError(msg)
 
 
 @register.simple_tag(takes_context=True)
@@ -70,7 +60,6 @@ def cookie_notice(context: RequestContext) -> dict:
 @register.simple_tag
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
-    validate_cover_image_size(size)
 
     return (
         reverse(
@@ -89,7 +78,6 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @register.simple_tag
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
-    validate_cover_image_size(size)
 
     return static(f"img/placeholder-{size}.webp")
 
