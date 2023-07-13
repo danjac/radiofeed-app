@@ -147,9 +147,7 @@ def render(context: RequestContext, template_name: str, **extra_context) -> str:
 @register.simple_tag
 def absolute_uri(to: Any, *args, **kwargs) -> str:
     """Return absolute URL. Use outside of HTTP request scope, e.g. in email links."""
-    request = HttpRequest()
-    request.META = {"HTTP_HOST": get_site().domain}
-    return request.build_absolute_uri(resolve_url(to, *args, **kwargs))
+    return _get_request_from_site().build_absolute_uri(resolve_url(to, *args, **kwargs))
 
 
 @register.simple_tag
@@ -157,3 +155,10 @@ def absolute_uri(to: Any, *args, **kwargs) -> str:
 def get_site() -> Site:
     """Return current site, use when `request.site` is unavailable to template."""
     return Site.objects.get_current()
+
+
+@functools.cache
+def _get_request_from_site() -> HttpRequest:
+    request = HttpRequest()
+    request.META = {"HTTP_HOST": get_site().domain}
+    return request
