@@ -38,10 +38,10 @@ class TestFormatDuration:
 
 class TestCoverImage:
     def test_is_cover_url(self):
-        assert cover_image("https://example.com/test.jpg", 99, "test img")["cover_url"]
+        assert cover_image("https://example.com/test.jpg", 100, "test img")["cover_url"]
 
     def test_is_not_cover_url(self):
-        assert cover_image("", 99, "test img")["cover_url"] == ""
+        assert cover_image("", 100, "test img")["cover_url"] == ""
 
     def test_invalid_size(self):
         with pytest.raises(AssertionError):
