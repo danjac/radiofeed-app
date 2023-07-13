@@ -8,6 +8,7 @@ from radiofeed.episodes.templatetags.audio_player import (
 )
 from radiofeed.episodes.tests.factories import create_audio_log, create_episode
 from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.template import get_placeholder_cover_url
 
 
 class TestMediaMetadata:
@@ -32,6 +33,8 @@ class TestMediaMetadata:
 
     @pytest.mark.django_db()
     def test_get_media_metadata_no_cover_url(self, rf, settings):
+        get_placeholder_cover_url.cache_clear()
+
         settings.STATIC_URL = "/static/"
         episode = create_episode(podcast=create_podcast(cover_url=None))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
@@ -52,6 +55,8 @@ class TestMediaMetadata:
     def test_get_media_metadata_no_cover_url_static_url_starts_with_http(
         self, rf, settings
     ):
+        get_placeholder_cover_url.cache_clear()
+
         settings.STATIC_URL = "https://cdn.example.com/static/"
         episode = create_episode(podcast=create_podcast(cover_url=None))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)

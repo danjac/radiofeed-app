@@ -1,3 +1,4 @@
+import functools
 import math
 import urllib.parse
 from typing import TypedDict
@@ -58,6 +59,7 @@ def cookie_notice(context: RequestContext) -> dict:
 
 
 @register.simple_tag
+@functools.cache
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
 
@@ -76,6 +78,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 
 
 @register.simple_tag
+@functools.cache
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
 
@@ -83,6 +86,7 @@ def get_placeholder_cover_url(size: int) -> str:
 
 
 @register.inclusion_tag("_cover_image.html")
+@functools.cache
 def cover_image(
     cover_url: str | None,
     size: int,
