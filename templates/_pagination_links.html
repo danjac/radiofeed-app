@@ -1,3 +1,5 @@
+{% load cache %}
+{% cache 600 pagination-links request.get_full_path page_obj.paginator.count %}
 {% if page_obj.has_other_pages %}
     <nav role="navigation"
          aria-label="Pagination"
@@ -36,3 +38,4 @@
         </ul>
     </nav>
 {% endif %}
+{% endcache %}
