@@ -4,6 +4,8 @@ import urllib.parse
 from typing import Any, TypedDict
 
 from django import template
+from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.signing import Signer
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
@@ -140,3 +142,22 @@ def render(context: RequestContext, template_name: str, **extra_context) -> str:
         },
         request=context.request,
     )
+
+
+@register.simple_tag
+@functools.cache
+def get_site() -> Site:
+    """Returns the current Site instance. Use when `request.site` is unavailable, e.g. in emails run from cronjobs."""
+
+    return Site.objects.get_current()
+
+
+@register.simple_tag
+def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
+    """Returns the absolute URL to site domain."""
+
+    site = get_site()
+    path = resolve_url(to, *args, **kwargs) if to else ""
+    scheme = "https" if settings.USE_HTTPS else "http"
+
+    return f"{scheme}://{site.domain}{path}"

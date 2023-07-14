@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
@@ -62,15 +61,9 @@ def send_recommendations_email(
 
     user.recommended_podcasts.add(*podcasts)
 
-    site = Site.objects.get_current()
-    protocol = "https" if settings.USE_HTTPS else "http"
-    absolute_uri = f"{protocol}://{site.domain}"
-
     context = {
         "podcasts": podcasts,
         "recipient": user,
-        "site": site,
-        "absolute_uri": absolute_uri,
     }
 
     send_mail(
