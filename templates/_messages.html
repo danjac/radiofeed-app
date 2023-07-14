@@ -1,10 +1,11 @@
+{# vim: set filetype=htmldjango #}
 <div id="messages"
      class="fixed inset-x-0 z-50 mx-auto max-w-fit top-16"
      {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if messages %}
         <ul class="space-y-3">
             {% for message in messages %}
-                <li class="flex flex-wrap items-center justify-center p-2 font-bold text-center text-white bg-gray-900 rounded shadow-xl dark:bg-gray-600"
+                <li class="flex flex-wrap items-center justify-center p-2 font-bold text-center text-white bg-gray-900 rounded shadow-xl dark:bg-gray-600 "
                     role="alert"
                     x-data="{show: true}"
                     x-show="show"
