@@ -1,7 +1,8 @@
+{# vim: set filetype=htmldjango #}
 {% if user.is_anonymous %}
     {% with path=request.get_full_path %}
         <div id="signup-cta"
-             class="text-center p-3 bg-blue-700 text-white font-bold">
+             class="p-3 font-bold text-center text-white bg-blue-700">
             {% with css_class="underline text-white hover:text-gray-300" %}
                 <a class="{{ css_class }}" href="{% url 'account_signup' %}">Sign up</a>
                 or
