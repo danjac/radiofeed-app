@@ -4,19 +4,19 @@ document.addEventListener("alpine:init", () => {
     Alpine.data(
         "audioPlayer",
         (
-            startPlayer = false,
-            currentTime = 0,
             csrfToken = null,
-            timeUpdateUrl = null,
+            currentTime = 0,
             metadataTag = "audioplayer-metadata",
+            startPlayer = false,
+            timeUpdateUrl = null,
         ) => ({
-            currentTime,
             csrfToken,
+            currentTime,
             timeUpdateUrl,
-            runtime: 0,
             duration: 0,
             isLoaded: false,
             isPlaying: false,
+            runtime: 0,
             timer: null,
             counters: {
                 current: "00:00:00",

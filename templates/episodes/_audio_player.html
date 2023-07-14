@@ -8,11 +8,11 @@
                 {# djlint:off #}
                 x-data="
             audioPlayer(
-                startPlayer={{ start_player|yesno:'true,false' }},
-                currentTime={{ audio_log.current_time|default:0 }},
                 csrfToken='{{ csrf_token }}',
-                timeUpdateUrl='{% url 'episodes:player_time_update' %}',
+                currentTime={{ audio_log.current_time|default:0 }},
                 metadataTag='{{ METADATA_TAG }}',
+                startPlayer={{ start_player|yesno:'true,false' }},
+                timeUpdateUrl='{% url 'episodes:player_time_update' %}',
             )"
                 {# djlint:on #}
                 @keydown.window="shortcuts">
