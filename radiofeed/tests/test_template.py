@@ -1,10 +1,17 @@
 import pytest
 from django.template.context import RequestContext
 from django.template.loader import get_template
+from django.test import override_settings
 from django.urls import reverse, reverse_lazy
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.template import active_link, cover_image, format_duration, markdown
+from radiofeed.template import (
+    absolute_uri,
+    active_link,
+    cover_image,
+    format_duration,
+    markdown,
+)
 
 
 @pytest.fixture()
@@ -37,11 +44,21 @@ class TestFormatDuration:
 
 
 class TestCoverImage:
+    @override_settings(STATIC_URL="/static/")
     def test_is_cover_url(self):
-        assert cover_image("https://example.com/test.jpg", 100, "test img")["cover_url"]
+        dct = cover_image("https://example.com/test.jpg", 100, "test img")
+        assert "test.jpg" in dct["cover_url"]
+        assert dct["placeholder"] == "/static/img/placeholder-100.webp"
 
+    @override_settings(STATIC_URL="/static/")
     def test_is_not_cover_url(self):
-        assert cover_image("", 100, "test img")["cover_url"] == ""
+        dct = cover_image("", 100, "test img")
+        assert dct["cover_url"] == ""
+        assert dct["placeholder"] == "/static/img/placeholder-100.webp"
+
+    def test_invalid_cover_image_size(self):
+        with pytest.raises(AssertionError, match=r"size:500 invalid"):
+            cover_image("https://example.com/test.jpg", 500, "test img")
 
 
 class TestActiveLink:
@@ -182,4 +199,19 @@ class TestBaseTemplates:
                 ],
             },
             request=req,
+        )
+
+
+class TestAbsoluteUri:
+    def test_plain_url(self):
+        assert absolute_uri("/podcasts/") == "http://example.com/podcasts/"
+
+    @override_settings(USE_HTTPS=True)
+    def test_https(self):
+        assert absolute_uri("/podcasts/") == "https://example.com/podcasts/"
+
+    @pytest.mark.django_db()
+    def test_object(self, podcast):
+        assert (
+            absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
         )

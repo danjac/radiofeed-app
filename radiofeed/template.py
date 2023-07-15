@@ -1,7 +1,7 @@
 import functools
 import math
 import urllib.parse
-from typing import Any, TypedDict
+from typing import Any, Final, TypedDict
 
 from django import template
 from django.conf import settings
@@ -15,6 +15,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from radiofeed import cleaners
+
+COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
 register = template.Library()
 
@@ -65,6 +67,8 @@ def cookie_notice(context: RequestContext) -> dict:
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
 
+    assert size in COVER_IMAGE_SIZES, f"size:{size} invalid"
+
     return (
         reverse(
             "cover_image",
@@ -83,6 +87,8 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @functools.cache
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
+
+    assert size in COVER_IMAGE_SIZES, f"size:{size} invalid"
 
     return static(f"img/placeholder-{size}.webp")
 

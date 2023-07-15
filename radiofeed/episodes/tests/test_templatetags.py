@@ -1,5 +1,6 @@
 import pytest
 from django.template.context import RequestContext
+from django.test import override_settings
 
 from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.templatetags.audio_player import (
@@ -13,8 +14,7 @@ from radiofeed.template import get_placeholder_cover_url
 
 class TestMediaMetadata:
     @pytest.mark.django_db()
-    def test_get_media_metadata(self, rf, settings):
-        settings.USE_HTTPS = False
+    def test_get_media_metadata(self, rf):
         episode = create_episode(
             podcast=create_podcast(cover_url="https://mysite.com/test.jpg")
         )
@@ -32,10 +32,9 @@ class TestMediaMetadata:
         assert data["artwork"][0]["type"] == "image/webp"
 
     @pytest.mark.django_db()
-    def test_get_media_metadata_no_cover_url(self, rf, settings):
+    def test_get_media_metadata_no_cover_url(self, rf):
         get_placeholder_cover_url.cache_clear()
 
-        settings.STATIC_URL = "/static/"
         episode = create_episode(podcast=create_podcast(cover_url=None))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.title
@@ -52,12 +51,10 @@ class TestMediaMetadata:
         assert data["artwork"][0]["type"] == "image/webp"
 
     @pytest.mark.django_db()
-    def test_get_media_metadata_no_cover_url_static_url_starts_with_http(
-        self, rf, settings
-    ):
+    @override_settings(STATIC_URL="https://cdn.example.com/static/")
+    def test_get_media_metadata_no_cover_url_static_url_starts_with_http(self, rf):
         get_placeholder_cover_url.cache_clear()
 
-        settings.STATIC_URL = "https://cdn.example.com/static/"
         episode = create_episode(podcast=create_podcast(cover_url=None))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.title
