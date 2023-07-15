@@ -52,6 +52,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
         httponly=True,
         samesite="Lax",
     )
+
     return response
 
 
