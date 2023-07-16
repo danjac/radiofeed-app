@@ -50,8 +50,11 @@
                             {# djlint:on #}
                         </main>
                     </div>
-                    {% cookie_notice %}
-                    {% audio_player %}
+                    {% if user.is_authenticated %}
+                        {% audio_player %}
+                    {% else %}
+                        {% cookie_notice %}
+                    {% endif %}
                 </div>
             </div>
             {% django_htmx_script %}

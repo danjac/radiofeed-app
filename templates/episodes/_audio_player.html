@@ -1,5 +1,5 @@
 {% load heroicons audio_player %}
-{% if request.user.is_authenticated %}
+{% if user.is_authenticated %}
     <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
         {% if audio_log and is_playing %}
             {% with episode=audio_log.episode METADATA_TAG="audioplayer-metadata" %}
