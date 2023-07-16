@@ -235,12 +235,15 @@ class TestStartPlayer:
 
     @pytest.mark.django_db()
     def test_play_from_start(self, client, auth_user, episode):
-        assert_ok(
-            client.post(
-                self.url(episode),
-                HTTP_HX_REQUEST="true",
-            ),
+        response = client.post(
+            self.url(episode),
+            HTTP_HX_REQUEST="true",
         )
+
+        assert_ok(response)
+
+        assert response.context["start_player"]
+        assert response.context["is_playing"]
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -301,12 +304,15 @@ class TestClosePlayer:
         client,
         player_episode,
     ):
-        assert_ok(
-            client.post(
-                self.url,
-                HTTP_HX_REQUEST="true",
-            )
+        response = client.post(
+            self.url,
+            HTTP_HX_REQUEST="true",
         )
+
+        assert_ok(response)
+
+        assert not response.context["start_player"]
+        assert not response.context["is_playing"]
 
         assert player_episode.id not in client.session
 
