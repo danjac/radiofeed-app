@@ -42,10 +42,14 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Returns details of current episode in player."""
-    if (episode_id := context.request.player.get()) and (
-        audio_log := context.request.user.audio_logs.filter(episode__pk=episode_id)
-        .select_related("episode", "episode__podcast")
-        .first()
+    if (
+        context.request.user.is_authenticated
+        and (episode_id := context.request.player.get())
+        and (
+            audio_log := context.request.user.audio_logs.filter(episode__pk=episode_id)
+            .select_related("episode", "episode__podcast")
+            .first()
+        )
     ):
         return {
             "audio_log": audio_log,

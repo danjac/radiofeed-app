@@ -44,15 +44,15 @@ class TestFormatDuration:
 
 
 class TestCoverImage:
-    @override_settings(STATIC_URL="/static/")
     def test_is_cover_url(self):
-        dct = cover_image("https://example.com/test.jpg", 100, "test img")
+        with override_settings(STATIC_URL="/static/"):
+            dct = cover_image("https://example.com/test.jpg", 100, "test img")
         assert "test.jpg" in dct["cover_url"]
         assert dct["placeholder"] == "/static/img/placeholder-100.webp"
 
-    @override_settings(STATIC_URL="/static/")
     def test_is_not_cover_url(self):
-        dct = cover_image("", 100, "test img")
+        with override_settings(STATIC_URL="/static/"):
+            dct = cover_image("", 100, "test img")
         assert dct["cover_url"] == ""
         assert dct["placeholder"] == "/static/img/placeholder-100.webp"
 
@@ -175,33 +175,6 @@ class TestDefaultForm:
         assert tmpl.render({"form": form}, request=req)
 
 
-class TestBaseTemplates:
-    @pytest.fixture()
-    def tmpl(self):
-        return get_template("about.html")
-
-    def test_default(self, rf):
-        req = rf.get("/")
-        tmpl = get_template("about.html")
-        assert tmpl.render({}, request=req)
-
-    def test_htmx(self, rf):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        req.htmx = HtmxDetails(req)
-        tmpl = get_template("about.html")
-        assert tmpl.render(
-            {
-                "messages": [
-                    {
-                        "message": "test",
-                        "tags": "success",
-                    },
-                ],
-            },
-            request=req,
-        )
-
-
 class TestAbsoluteUri:
     def test_plain_url(self):
         assert absolute_uri("/podcasts/") == "http://example.com/podcasts/"
@@ -214,4 +187,41 @@ class TestAbsoluteUri:
     def test_object(self, podcast):
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
+        )
+
+
+class TestBaseTemplates:
+    @pytest.fixture()
+    def tmpl(self):
+        return get_template("about.html")
+
+    @pytest.fixture()
+    def player(self, mocker):
+        player = mocker.Mock()
+        player.get.return_value = None
+        return player
+
+    def test_default(self, rf, anonymous_user, player):
+        req = rf.get("/")
+        req.user = anonymous_user
+        req.player = player
+        tmpl = get_template("about.html")
+        assert tmpl.render({}, request=req)
+
+    def test_htmx(self, rf, anonymous_user, player):
+        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req.htmx = HtmxDetails(req)
+        req.user = anonymous_user
+        req.player = player
+        tmpl = get_template("about.html")
+        assert tmpl.render(
+            {
+                "messages": [
+                    {
+                        "message": "test",
+                        "tags": "success",
+                    },
+                ],
+            },
+            request=req,
         )

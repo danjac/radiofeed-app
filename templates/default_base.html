@@ -51,9 +51,7 @@
                         </main>
                     </div>
                     {% cookie_notice %}
-                    {% if user.is_authenticated %}
-                        {% audio_player %}
-                    {% endif %}
+                    {% audio_player %}
                 </div>
             </div>
             {% django_htmx_script %}

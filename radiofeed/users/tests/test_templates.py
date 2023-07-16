@@ -5,16 +5,25 @@ from radiofeed.users.tests.factories import create_email_address
 
 
 @pytest.fixture()
-def req(rf):
-    return rf.get("/")
+def player(mocker):
+    player = mocker.Mock()
+    player.get.return_value = None
+    return player
 
 
 @pytest.fixture()
-def auth_req(req, user, mocker):
+def req(rf, anonymous_user, player):
+    req = rf.get("/")
+    req.player = player
+    req.user = anonymous_user
+    return req
+
+
+@pytest.fixture()
+def auth_req(req, user, player):
     req.user = user
 
-    req.player = mocker.Mock()
-    req.player.get.return_value = None
+    req.player = player
 
     return req
 

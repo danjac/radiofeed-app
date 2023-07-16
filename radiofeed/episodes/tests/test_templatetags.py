@@ -51,12 +51,14 @@ class TestMediaMetadata:
         assert data["artwork"][0]["type"] == "image/webp"
 
     @pytest.mark.django_db()
-    @override_settings(STATIC_URL="https://cdn.example.com/static/")
     def test_get_media_metadata_no_cover_url_static_url_starts_with_http(self, rf):
         get_placeholder_cover_url.cache_clear()
 
         episode = create_episode(podcast=create_podcast(cover_url=None))
-        data = get_media_metadata(RequestContext(rf.get("/")), episode)
+
+        with override_settings(STATIC_URL="https://cdn.example.com/static/"):
+            data = get_media_metadata(RequestContext(rf.get("/")), episode)
+
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
@@ -72,6 +74,14 @@ class TestMediaMetadata:
 
 
 class TestAudioPlayer:
+    @pytest.mark.django_db()
+    def test_is_anonymous(self, rf, anonymous_user):
+        req = rf.get("/")
+        req.user = anonymous_user
+        req.session = {}
+        req.player = Player(req)
+        assert audio_player(RequestContext(req)) == {}
+
     @pytest.mark.django_db()
     def test_is_empty(self, rf, user):
         req = rf.get("/")
