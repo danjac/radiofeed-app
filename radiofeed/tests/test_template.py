@@ -45,14 +45,12 @@ class TestFormatDuration:
 
 class TestCoverImage:
     def test_is_cover_url(self):
-        with override_settings(STATIC_URL="/static/"):
-            dct = cover_image("https://example.com/test.jpg", 100, "test img")
+        dct = cover_image("https://example.com/test.jpg", 100, "test img")
         assert "test.jpg" in dct["cover_url"]
         assert dct["placeholder"] == "/static/img/placeholder-100.webp"
 
     def test_is_not_cover_url(self):
-        with override_settings(STATIC_URL="/static/"):
-            dct = cover_image("", 100, "test img")
+        dct = cover_image("", 100, "test img")
         assert dct["cover_url"] == ""
         assert dct["placeholder"] == "/static/img/placeholder-100.webp"
 
