@@ -112,7 +112,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return _render_audio_player_button(request, audio_log, is_playing=True)
+    return _render_audio_player_button(request, audio_log, start_player=True)
 
 
 @require_POST
@@ -124,7 +124,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_audio_player_button(request, audio_log, is_playing=False)
+        return _render_audio_player_button(request, audio_log, start_player=False)
     return HttpResponseNoContent()
 
 
@@ -252,15 +252,15 @@ def _render_episode_partial(
 
 
 def _render_audio_player_button(
-    request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
+    request: HttpRequest, audio_log: AudioLog, *, start_player: bool
 ) -> HttpResponse:
     return _render_episode_partial(
         request,
         audio_log.episode,
         {
             "audio_log": audio_log,
-            "is_playing": is_playing,
-            "start_player": is_playing,
+            "is_playing": start_player,
+            "start_player": start_player,
         },
         use_blocks=[
             "audio_player_button",
