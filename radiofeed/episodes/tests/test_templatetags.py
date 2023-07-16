@@ -51,30 +51,39 @@ class TestMediaMetadata:
 
 
 class TestAudioPlayer:
+    @pytest.fixture()
+    def defaults(self):
+        return {
+            "is_playing": False,
+            "audio_log": None,
+        }
+
     @pytest.mark.django_db()
-    def test_is_anonymous(self, rf, anonymous_user):
+    def test_is_anonymous(self, rf, anonymous_user, defaults):
         req = rf.get("/")
         req.user = anonymous_user
         req.session = {}
         req.player = Player(req)
         assert audio_player(RequestContext(req)) == {
+            **defaults,
             "request": req,
             "user": req.user,
         }
 
     @pytest.mark.django_db()
-    def test_is_empty(self, rf, user):
+    def test_is_empty(self, rf, user, defaults):
         req = rf.get("/")
         req.user = user
         req.session = {}
         req.player = Player(req)
         assert audio_player(RequestContext(req)) == {
+            **defaults,
             "request": req,
             "user": req.user,
         }
 
     @pytest.mark.django_db()
-    def test_is_playing(self, rf, user, episode):
+    def test_is_playing(self, rf, user, episode, defaults):
         log = create_audio_log(episode=episode, user=user)
 
         req = rf.get("/")
@@ -85,6 +94,7 @@ class TestAudioPlayer:
         req.player.set(log.episode.id)
 
         assert audio_player(RequestContext(req)) == {
+            **defaults,
             "request": req,
             "user": req.user,
             "audio_log": log,

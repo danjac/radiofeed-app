@@ -41,11 +41,13 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
-    """Returns details of current episode in player."""
+    """Renders audio player if audio log in current session."""
 
-    dct = {
+    defaults = {
         "request": context.request,
         "user": context.request.user,
+        "is_playing": False,
+        "audio_log": None,
     }
 
     if (
@@ -58,9 +60,9 @@ def audio_player(context: RequestContext) -> dict:
         )
     ):
         return {
-            **dct,
+            **defaults,
             "audio_log": audio_log,
             "is_playing": True,
         }
 
-    return dct
+    return defaults
