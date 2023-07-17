@@ -133,11 +133,6 @@ ignore_errors = true
 module="*.migrations.*"
 ignore_errors = true
 
-[tool.pyright]
-reportOptionalMemberAccess = false
-reportGeneralTypeIssues = false
-reportMissingTypeStubs = false
-
 [tool.djlint]
 ignore = "H030,H031,H017,H021"
 

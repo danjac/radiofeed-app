@@ -63,7 +63,7 @@ class User(AbstractUser):
 
     send_email_notifications: bool = models.BooleanField(default=True)
 
-    objects: models.Manager[User] = UserManager()  # pyright: ignore
+    objects: models.Manager[User] = UserManager()
 
     def get_email_addresses(self) -> set[str]:
         """Get set of all emails belonging to user."""

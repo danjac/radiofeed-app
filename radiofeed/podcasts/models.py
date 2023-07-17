@@ -74,9 +74,7 @@ class PodcastQuerySet(
 ):
     """Custom QuerySet of Podcast model."""
 
-    def search(
-        self, search_term: str
-    ) -> models.QuerySet[Podcast]:  # pyright: ignore # noqa
+    def search(self, search_term: str) -> models.QuerySet[Podcast]:
         """Does standard full text search, prioritizing exact search results.
 
         Annotates `exact_match` to indicate such results.
@@ -193,7 +191,7 @@ class Podcast(models.Model):
 
     search_vector: str | None = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager[Podcast] = PodcastQuerySet.as_manager()  # pyright: ignore
+    objects: models.Manager[Podcast] = PodcastQuerySet.as_manager()
 
     class Meta:
         indexes = [
@@ -309,9 +307,7 @@ class Recommendation(models.Model):
         blank=True,
     )
 
-    objects: models.Manager[
-        Recommendation  # pyright: ignore
-    ] = RecommendationQuerySet.as_manager()
+    objects: models.Manager[Recommendation] = RecommendationQuerySet.as_manager()
 
     class Meta:
         indexes = [
