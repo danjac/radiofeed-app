@@ -66,7 +66,7 @@ _TAG_ATTRIBUTES: Final = {
 
 
 @functools.cache
-def _md():
+def _markdown():
     return MarkdownIt("commonmark", {"linkify": True}).enable("linkify")
 
 
@@ -74,7 +74,7 @@ def clean_html(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes."""
     if value := value.strip():
         return nh3.clean(
-            value if nh3.is_html(value) else _md().render(value),
+            value if nh3.is_html(value) else _markdown().render(value),
             clean_content_tags=_CLEAN_TAGS,
             link_rel=_LINK_REL,
             set_tag_attribute_values=_TAG_ATTRIBUTES,
