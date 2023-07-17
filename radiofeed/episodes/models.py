@@ -63,12 +63,7 @@ class Episode(models.Model):
 
     search_vector: str | None = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()  # pyright: ignore
-
-    # annotations
-
-    current_time: datetime | None = None
-    listened: datetime | None = None
+    objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()
 
     class Meta:
         constraints = [
