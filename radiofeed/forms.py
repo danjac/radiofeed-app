@@ -34,8 +34,6 @@ def handle_form(
     If HTTP POST will pass request data to constructor and validate form, otherwise just initializes unbound form.
 
     `form_kwargs` will be passed to the form constructor in either case.
-
-    Returns the form instance and `True` if form is valid.
     """
 
     if request.method == "POST":

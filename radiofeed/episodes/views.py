@@ -18,9 +18,9 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.htmx import render_blocks_to_response
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.pagination import render_paginated_list
-from radiofeed.partials import render_template_partials
 
 
 @require_safe
@@ -188,7 +188,11 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from History")
 
-    return _render_episode_partial(request, audio_log.episode, use_blocks="audio_log")
+    return _render_episode_detail_blocks(
+        request,
+        audio_log.episode,
+        use_blocks="audio_log",
+    )
 
 
 @require_safe
@@ -233,14 +237,14 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_button(request, episode, is_bookmarked=False)
 
 
-def _render_episode_partial(
+def _render_episode_detail_blocks(
     request: HttpRequest,
     episode: Episode,
     extra_context: dict | None = None,
     *,
-    use_blocks: str | list[str],
+    use_blocks: list[str] | str,
 ):
-    return render_template_partials(
+    return render_blocks_to_response(
         request,
         "episodes/detail.html",
         {
@@ -254,7 +258,7 @@ def _render_episode_partial(
 def _render_audio_player_button(
     request: HttpRequest, audio_log: AudioLog, *, start_player: bool
 ) -> HttpResponse:
-    return _render_episode_partial(
+    return _render_episode_detail_blocks(
         request,
         audio_log.episode,
         {
@@ -273,7 +277,7 @@ def _render_audio_player_button(
 def _render_bookmark_button(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> HttpResponse:
-    return _render_episode_partial(
+    return _render_episode_detail_blocks(
         request,
         episode,
         {

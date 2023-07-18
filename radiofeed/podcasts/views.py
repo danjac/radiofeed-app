@@ -12,9 +12,9 @@ from django_htmx.http import HttpResponseLocation
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
+from radiofeed.htmx import render_blocks_to_response
 from radiofeed.http import HttpResponseConflict
 from radiofeed.pagination import render_paginated_list
-from radiofeed.partials import render_template_partials
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -335,14 +335,14 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseLocation(redirect_url)
 
-    return render_template_partials(
+    return render_blocks_to_response(
         request,
         "podcasts/private_feed_form.html",
         {
             "form": form,
         },
-        target="private-feed-form",
         use_blocks="form",
+        target="private-feed-form",
         status=result.status,
     )
 
@@ -360,7 +360,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseLo
 def _render_subscribe_button(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
 ) -> HttpResponse:
-    return render_template_partials(
+    return render_blocks_to_response(
         request,
         "podcasts/detail.html",
         {

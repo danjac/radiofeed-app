@@ -197,3 +197,8 @@ ignore = [
 
 [tool.ruff.isort]
 known-first-party = ["radiofeed"]
+
+[tool.pyright]
+reportOptionalMemberAccess = false
+reportGeneralTypeIssues = false
+reportMissingTypeStubs = false

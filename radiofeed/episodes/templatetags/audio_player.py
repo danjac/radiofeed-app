@@ -1,7 +1,8 @@
 from django import template
+from django.http import HttpRequest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.models import Episode
+from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.template import (
     COVER_IMAGE_SIZES,
     get_cover_image_url,
@@ -50,15 +51,7 @@ def audio_player(context: RequestContext) -> dict:
         "audio_log": None,
     }
 
-    if (
-        context.request.user.is_authenticated
-        and (episode_id := context.request.player.get())
-        and (
-            audio_log := context.request.user.audio_logs.filter(episode__pk=episode_id)
-            .select_related("episode", "episode__podcast")
-            .first()
-        )
-    ):
+    if audio_log := _get_audio_player_log(context.request):
         return {
             **defaults,
             "audio_log": audio_log,
@@ -66,3 +59,14 @@ def audio_player(context: RequestContext) -> dict:
         }
 
     return defaults
+
+
+def _get_audio_player_log(request: HttpRequest) -> AudioLog | None:
+    if request.user.is_authenticated and (episode_id := request.player.get()):
+        return (
+            request.user.audio_logs.filter(episode__pk=episode_id)
+            .select_related("episode", "episode__podcast")
+            .first()
+        )
+
+    return None
