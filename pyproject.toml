@@ -87,7 +87,6 @@ addopts = [
 ]
 testpaths = "radiofeed"
 env = [
-    "STATIC_URL=/static/",
     "TEMPLATE_DEBUG=true",
     "USE_COLLECTSTATIC=false",
     "USE_HTTPS=false",
