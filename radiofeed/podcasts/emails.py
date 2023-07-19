@@ -37,11 +37,17 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
             )
         )
     )
+    # exclude any podcasts already recommended/subscribed/listened etc
+
+    exclude_podcast_ids = podcast_ids | set(
+        user.recommended_podcasts.values_list("pk", flat=True)
+    )
 
     # pick highest matches
 
     recommended_ids = set(
         Recommendation.objects.filter(podcast__pk__in=podcast_ids)
+        .exclude(recommended__in=exclude_podcast_ids)
         .select_related("recommended")
         .order_by(
             "-similarity",
@@ -51,11 +57,6 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
     )
 
     # include recommended + promoted
-    # exclude any podcasts already recommended/subscribed/listened etc
-
-    exclude_podcast_ids = podcast_ids | set(
-        user.recommended_podcasts.values_list("pk", flat=True)
-    )
 
     podcasts = (
         Podcast.objects.annotate(
