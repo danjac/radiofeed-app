@@ -373,13 +373,13 @@ files = [
 
 [[package]]
 name = "click"
-version = "8.1.5"
+version = "8.1.6"
 description = "Composable command line interface toolkit"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "click-8.1.5-py3-none-any.whl", hash = "sha256:e576aa487d679441d7d30abb87e1b43d24fc53bffb8758443b1a9e1cee504548"},
-    {file = "click-8.1.5.tar.gz", hash = "sha256:4be4b1af8d665c6d942909916d31a213a106800c47d0eeba73d34da3cbc11367"},
+    {file = "click-8.1.6-py3-none-any.whl", hash = "sha256:fa244bb30b3b5ee2cae3da8f55c9e5e0c0e86093306301fb418eb9dc40fbded5"},
+    {file = "click-8.1.6.tar.gz", hash = "sha256:48ee849951919527a045bfe3bf7baa8a959c423134e1a5b98c05c20ba75a1cbd"},
 ]
 
 [package.dependencies]
@@ -789,13 +789,13 @@ dev = ["Jinja2 (>=2.8)"]
 
 [[package]]
 name = "djlint"
-version = "1.31.1"
+version = "1.32.0"
 description = "HTML Template Linter and Formatter"
 optional = false
 python-versions = ">=3.8.0,<4.0.0"
 files = [
-    {file = "djlint-1.31.1-py3-none-any.whl", hash = "sha256:9b2e2fc3a059a8e5a62f309edea15c1aeee331a279ab2699b9fb51a31d8c0934"},
-    {file = "djlint-1.31.1.tar.gz", hash = "sha256:a11739e2f919f760b3986eb13d06e00171f3bd342b8d88e9bd914a4260eaa8ce"},
+    {file = "djlint-1.32.0-py3-none-any.whl", hash = "sha256:b1b14731a39c36be654712a930c6a8b41dd0eefddf83641d8d6e00cfa798644c"},
+    {file = "djlint-1.32.0.tar.gz", hash = "sha256:0f53692b9b9731966d955b805dc8c6d43c99b967a7c2222d112451cb96145bd2"},
 ]
 
 [package.dependencies]
@@ -1860,13 +1860,13 @@ plugins = ["importlib-metadata"]
 
 [[package]]
 name = "pyjwt"
-version = "2.7.0"
+version = "2.8.0"
 description = "JSON Web Token implementation in Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "PyJWT-2.7.0-py3-none-any.whl", hash = "sha256:ba2b425b15ad5ef12f200dc67dd56af4e26de2331f965c5439994dad075876e1"},
-    {file = "PyJWT-2.7.0.tar.gz", hash = "sha256:bd6ca4a3c4285c1a2d4349e5a035fdf8fb94e04ccd0fcbe6ba289dae9cc3e074"},
+    {file = "PyJWT-2.8.0-py3-none-any.whl", hash = "sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320"},
+    {file = "PyJWT-2.8.0.tar.gz", hash = "sha256:57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de"},
 ]
 
 [package.dependencies]

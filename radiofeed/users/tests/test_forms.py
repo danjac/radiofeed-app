@@ -29,7 +29,11 @@ class TestOpmlUploadForm:
 
     @pytest.mark.django_db()
     def test_subscribe_to_feeds(self, form, user, podcast):
-        assert form.subscribe_to_feeds(user) == 1
+        subscription = form.subscribe_to_feeds(user)[0]
+
+        assert subscription.podcast == podcast
+        assert subscription.subscriber == user
+
         assert (
             Subscription.objects.filter(subscriber=user, podcast=podcast).count() == 1
         )
@@ -40,7 +44,7 @@ class TestOpmlUploadForm:
         form.cleaned_data = {
             "opml": SimpleUploadedFile("feeds.opml", b"", content_type="text/xml")
         }
-        assert form.subscribe_to_feeds(user) == 0
+        assert form.subscribe_to_feeds(user) == []
         assert (
             Subscription.objects.filter(subscriber=user, podcast=podcast).count() == 0
         )

@@ -57,10 +57,10 @@ def import_podcast_feeds(
     """Imports an OPML document and subscribes user to any discovered feeds."""
     form, result = handle_form(OpmlUploadForm, request)
     if result:
-        if new_feeds := form.subscribe_to_feeds(request.user):
+        if num_new_feeds := len(form.subscribe_to_feeds(request.user)):
             messages.success(
                 request,
-                f"{new_feeds} podcast feed{pluralize(new_feeds)} added to your collection",  # noqa
+                f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
             )
         else:
             messages.info(request, "No new podcasts found in uploaded file")

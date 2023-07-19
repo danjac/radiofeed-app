@@ -38,7 +38,7 @@ class OpmlUploadForm(forms.Form):
         ),
     )
 
-    def subscribe_to_feeds(self, user: User, limit: int = 360) -> int:
+    def subscribe_to_feeds(self, user: User, limit: int = 360) -> list[Subscription]:
         """Subscribes user to feeds in uploaded OPML.
 
         Only active public feeds that already exist in the database will be included.
@@ -58,17 +58,15 @@ class OpmlUploadForm(forms.Form):
                 rss__in=urls,
             )[:limit]
 
-            return len(
-                Subscription.objects.bulk_create(
-                    [
-                        Subscription(podcast=podcast, subscriber=user)
-                        for podcast in podcasts.iterator()
-                    ],
-                    ignore_conflicts=True,
-                )
+            return Subscription.objects.bulk_create(
+                [
+                    Subscription(podcast=podcast, subscriber=user)
+                    for podcast in podcasts.iterator()
+                ],
+                ignore_conflicts=True,
             )
 
-        return 0
+        return []
 
     def _parse_opml(self) -> Iterator[str]:
         parser = _opml_parser()
