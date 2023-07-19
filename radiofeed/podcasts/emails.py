@@ -51,7 +51,11 @@ def send_recommendations_email(user: User, max_podcasts: int = 6) -> None:
         for recommendation in Recommendation.objects.filter(podcast__pk__in=podcast_ids)
         .exclude(recommended__pk__in=exclude_podcast_ids)
         .select_related("recommended")
-        .order_by("-similarity", "-frequency")[:max_podcasts]
+        .order_by(
+            "-similarity",
+            "-frequency",
+            "-recommended__pub_date",
+        )[:max_podcasts]
     }
 
     # latest promotions
