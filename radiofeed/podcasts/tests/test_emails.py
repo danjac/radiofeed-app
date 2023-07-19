@@ -2,18 +2,30 @@ import pytest
 
 from radiofeed.podcasts import emails
 from radiofeed.podcasts.tests.factories import (
+    create_podcast,
     create_recommendation,
     create_subscription,
 )
+from radiofeed.tests.factories import create_batch
 
 
 class TestRecommendations:
     @pytest.mark.django_db()
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
+        create_batch(create_podcast, 3)
 
         assert not emails.send_recommendations_email(user)
         assert len(mailoutbox) == 0
+
+    @pytest.mark.django_db()
+    def test_send_promoted(self, user, mailoutbox):
+        create_batch(create_podcast, 3, promoted=True)
+        assert emails.send_recommendations_email(user)
+        assert len(mailoutbox) == 1
+
+        assert mailoutbox[0].to == [user.email]
+        assert user.recommended_podcasts.count() == 3
 
     @pytest.mark.django_db()
     def test_sufficient_recommendations(self, user, mailoutbox):

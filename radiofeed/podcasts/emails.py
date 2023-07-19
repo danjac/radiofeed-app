@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.template import loader
 
 from radiofeed.episodes.models import AudioLog, Bookmark
@@ -22,39 +23,43 @@ def send_recommendations_email(
     Returns:
         `True` user has been sent recommendations email
     """
-    if not (
-        podcast_ids := (
-            set(
-                Bookmark.objects.filter(user=user)
-                .select_related("episode__podcast")
-                .values_list("episode__podcast", flat=True)
-            )
-            | set(
-                AudioLog.objects.filter(user=user)
-                .select_related("episode__podcast")
-                .values_list("episode__podcast", flat=True)
-            )
-            | set(
-                Subscription.objects.filter(subscriber=user).values_list(
-                    "podcast", flat=True
-                )
+    podcast_ids = (
+        set(
+            Bookmark.objects.filter(user=user)
+            .select_related("episode__podcast")
+            .values_list("episode__podcast", flat=True)
+        )
+        | set(
+            AudioLog.objects.filter(user=user)
+            .select_related("episode__podcast")
+            .values_list("episode__podcast", flat=True)
+        )
+        | set(
+            Subscription.objects.filter(subscriber=user).values_list(
+                "podcast", flat=True
             )
         )
-        | set(user.recommended_podcasts.values_list("pk", flat=True))
-    ):
-        return False
-
-    recommended_ids = (
-        Recommendation.objects.filter(podcast__pk__in=podcast_ids)
-        .exclude(recommended__pk__in=podcast_ids)
-        .values_list("recommended", flat=True)
     )
 
     podcasts = (
-        Podcast.objects.filter(pk__in=recommended_ids, private=False)
+        Podcast.objects.filter(
+            Q(
+                pk__in=set(
+                    Recommendation.objects.filter(
+                        podcast__pk__in=podcast_ids
+                    ).values_list("recommended", flat=True)
+                )
+            )
+            | Q(promoted=True),
+            private=False,
+        )
+        .exclude(
+            pk__in=set(podcast_ids)
+            | set(user.recommended_podcasts.values_list("pk", flat=True))
+        )
         .distinct()
-        .order_by("?")[:max_podcasts]
-    )
+        .order_by("?")
+    )[:max_podcasts]
 
     if len(podcasts) < min_podcasts:
         return False
