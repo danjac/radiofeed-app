@@ -57,6 +57,7 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
         Podcast.objects.filter(
             Q(pk__in=recommended_ids) | Q(promoted=True),
             private=False,
+            pub_date__isnull=False,
         )
         .exclude(
             pk__in=podcast_ids
