@@ -49,10 +49,7 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
         Recommendation.objects.filter(podcast__pk__in=podcast_ids)
         .exclude(recommended__in=exclude_podcast_ids)
         .select_related("recommended")
-        .order_by(
-            "-similarity",
-            "-frequency",
-        )
+        .order_by("-frequency", "-similarity")
         .values_list("recommended", flat=True)[:num_podcasts]
     )
 
