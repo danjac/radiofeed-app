@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import Case, Value, When
 from django.template import loader
 
 from radiofeed.episodes.models import AudioLog, Bookmark
@@ -53,17 +53,25 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
     # include recommended + promoted
     # exclude any podcasts already recommended/subscribed/listened etc
 
+    exclude_podcast_ids = podcast_ids | set(
+        user.recommended_podcasts.values_list("pk", flat=True)
+    )
+
     podcasts = (
-        Podcast.objects.filter(
-            Q(pk__in=recommended_ids) | Q(promoted=True),
+        Podcast.objects.annotate(
+            priority=Case(
+                When(pk__in=recommended_ids, then=Value(2)),
+                When(promoted=True, then=Value(1)),
+                default=Value(0),
+            )
+        )
+        .filter(
+            priority__gt=0,
             private=False,
             pub_date__isnull=False,
         )
-        .exclude(
-            pk__in=podcast_ids
-            | set(user.recommended_podcasts.values_list("pk", flat=True))
-        )
-        .order_by("-pub_date")
+        .exclude(pk__in=exclude_podcast_ids)
+        .order_by("-priority", "-pub_date")
     )[:num_podcasts]
 
     if podcasts.exists():
