@@ -72,7 +72,7 @@ def send_recommendations_email(user: User, max_podcasts: int = 6) -> None:
         }
 
         send_mail(
-            f"Hi {user.username}, here are some new podcasts you might like!",
+            f"Hi {user.first_name or user.username}, here are some new podcasts you might like!",
             loader.render_to_string("podcasts/emails/recommendations.txt", context),
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
