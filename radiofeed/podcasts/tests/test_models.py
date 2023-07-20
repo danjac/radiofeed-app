@@ -17,6 +17,12 @@ class TestRecommendationManager:
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
 
+    @pytest.mark.django_db()
+    def test_with_relevance(self):
+        create_recommendation(similarity=0.5, frequency=3)
+        recommendation = Recommendation.objects.with_relevance().first()
+        assert recommendation.relevance == 1.5
+
 
 class TestRecommendationModel:
     def test_str(self):

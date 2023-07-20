@@ -46,10 +46,11 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
     # pick highest matches
 
     recommended_ids = set(
-        Recommendation.objects.filter(podcast__pk__in=podcast_ids)
+        Recommendation.objects.with_relevance()
+        .filter(podcast__pk__in=podcast_ids)
         .exclude(recommended__in=exclude_podcast_ids)
         .select_related("recommended")
-        .order_by("-frequency", "-similarity")
+        .order_by("-relevance")
         .values_list("recommended", flat=True)[:num_podcasts]
     )
 

@@ -187,10 +187,11 @@ def similar(
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
-    recommendations = podcast.recommendations.select_related("recommended").order_by(
-        "-frequency",
-        "-similarity",
-    )[:limit]
+    recommendations = (
+        podcast.recommendations.with_relevance()
+        .select_related("recommended")
+        .order_by("-relevance")[:limit]
+    )
 
     return TemplateResponse(
         request,

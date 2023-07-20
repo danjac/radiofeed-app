@@ -274,6 +274,10 @@ class Subscription(TimeStampedModel):
 class RecommendationQuerySet(models.QuerySet):
     """Custom QuerySet for Recommendation model."""
 
+    def with_relevance(self) -> models.QuerySet[Recommendation]:
+        """Returns factor of frequency and similarity as annotated value `relevance`."""
+        return self.annotate(relevance=models.F("frequency") * models.F("similarity"))
+
     def bulk_delete(self) -> int:
         """More efficient quick delete.
 
