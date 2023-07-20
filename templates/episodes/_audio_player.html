@@ -31,16 +31,15 @@
                         <div class="items-center w-full sm:flex space-y-2 sm:space-y-0 divide-y sm:divide-y-0 sm:divide-x divide-solid divide-gray-500">
                             <div class="sm:w-1/2" hx-swap="innerHTML show:window:top">
                                 {% with podcast=episode.podcast %}
-                                    <div class="flex items-center space-x-2 lg:space-x-3">
+                                    <div class="flex items-center space-x-2 lg:space-x-3 pr-2">
                                         {% cover_image podcast.cover_url 100 podcast.cleaned_title url=podcast.get_absolute_url css_class="w-16 h-16" %}
                                         <div class="flex flex-col h-16 place-content-between">
                                             <a class="font-bold leading-tight tracking-tight break-words line-clamp-2 hover:text-blue-300"
                                                href="{{ episode.get_absolute_url }}"
-                                               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}
-                                            </a>
+                                               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                             <a class="text-xs leading-tight tracking-tight truncate w-60 lg:w-96 xl:w-128 lg:text-sm hover:text-blue-300"
                                                href="{{ podcast.get_episodes_url }}"
-                                               title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title|truncatechars:120 }}
+                                               title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title }}
                                             </a>
                                         </div>
                                     </div>
