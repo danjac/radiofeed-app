@@ -72,7 +72,7 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
         .order_by("-priority", "-pub_date")
     )[:num_podcasts]
 
-    if podcasts.exists():
+    if podcasts:
         user.recommended_podcasts.add(*podcasts)
 
         context = {
