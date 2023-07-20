@@ -49,7 +49,6 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
         Recommendation.objects.with_relevance()
         .filter(podcast__pk__in=podcast_ids)
         .exclude(recommended__in=exclude_podcast_ids)
-        .select_related("recommended")
         .order_by("-relevance")
         .values_list("recommended", flat=True)[:num_podcasts]
     )

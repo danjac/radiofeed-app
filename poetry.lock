@@ -518,12 +518,12 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "cssbeautifier"
-version = "1.14.8"
+version = "1.14.9"
 description = "CSS unobfuscator and beautifier."
 optional = false
 python-versions = "*"
 files = [
-    {file = "cssbeautifier-1.14.8.tar.gz", hash = "sha256:9ad4c5b2ffe0b439a4bed278bc440b6a89c40823c3f19db38f808d256216a592"},
+    {file = "cssbeautifier-1.14.9.tar.gz", hash = "sha256:2da432472f68170eb854aff97b16a24721f5090ee36af2e31199590a89e7f71f"},
 ]
 
 [package.dependencies]
@@ -789,13 +789,13 @@ dev = ["Jinja2 (>=2.8)"]
 
 [[package]]
 name = "djlint"
-version = "1.32.0"
+version = "1.32.1"
 description = "HTML Template Linter and Formatter"
 optional = false
 python-versions = ">=3.8.0,<4.0.0"
 files = [
-    {file = "djlint-1.32.0-py3-none-any.whl", hash = "sha256:b1b14731a39c36be654712a930c6a8b41dd0eefddf83641d8d6e00cfa798644c"},
-    {file = "djlint-1.32.0.tar.gz", hash = "sha256:0f53692b9b9731966d955b805dc8c6d43c99b967a7c2222d112451cb96145bd2"},
+    {file = "djlint-1.32.1-py3-none-any.whl", hash = "sha256:8aaec6776376cfd41f3e742ed9f5e3c46dc7c6cd7646abf9e99860fb1ec9f19a"},
+    {file = "djlint-1.32.1.tar.gz", hash = "sha256:c1e2141acf1547d244af7ef8abd15fbbae2abcc7a03e2bf31f8a491de69a6c72"},
 ]
 
 [package.dependencies]
@@ -1193,12 +1193,12 @@ files = [
 
 [[package]]
 name = "jsbeautifier"
-version = "1.14.8"
+version = "1.14.9"
 description = "JavaScript unobfuscator and beautifier."
 optional = false
 python-versions = "*"
 files = [
-    {file = "jsbeautifier-1.14.8.tar.gz", hash = "sha256:d4c4e263a42dd6194afb9dbe54710be3c5604492cbec3e89c92dd98513f98b9f"},
+    {file = "jsbeautifier-1.14.9.tar.gz", hash = "sha256:c738ebc36b47bd94e4ca6dd17a9004c3cc74edad582ca1d60e0e5d5945a63cb9"},
 ]
 
 [package.dependencies]
