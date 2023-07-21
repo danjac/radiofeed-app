@@ -12,11 +12,15 @@
                 {% if widget_type == "checkbox" %}
                     <label class="flex items-center w-full space-x-3 font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}">
                         {{ field }}
+                        {% if not field.required %}(optional){% endif %}
                         <span>{{ field.label }}</span>
                     </label>
                 {% else %}
                     <label class="block font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}"
-                           for="{{ field.id_for_label }}">{{ field.label }}</label>
+                           for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if not field.required %}(optional){% endif %}
+                    </label>
                     {{ field }}
                 {% endif %}
                 {% if field.errors %}

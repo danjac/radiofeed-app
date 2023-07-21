@@ -24,7 +24,6 @@ def render_blocks_to_response(
 
     If not an HTMX request or matching target will render the entire template.
     """
-
     if request.htmx and (target is None or target == request.htmx.target):
         if isinstance(use_blocks, str):
             use_blocks = [use_blocks]
