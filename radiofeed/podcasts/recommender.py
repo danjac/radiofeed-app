@@ -32,6 +32,7 @@ class Recommender:
     categories."""
 
     _num_matches: int = 12
+    _since: timedelta = timedelta(days=90)
 
     def __init__(self, language: str):
         self._language = language
@@ -43,16 +44,10 @@ class Recommender:
     def recommend(self) -> None:
         """Creates recommendation instances."""
 
-        categories = get_categories()
-        podcasts = self._get_podcasts()
-
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
-        for batch in iterators.batcher(
-            self._build_matches_dict(podcasts, categories).items(),
-            1000,
-        ):
+        for batch in iterators.batcher(self._build_matches_dict().items(), 1000):
             Recommendation.objects.bulk_create(
                 (
                     Recommendation(
@@ -67,25 +62,14 @@ class Recommender:
                 ignore_conflicts=True,
             )
 
-    def _get_podcasts(self) -> QuerySet[Podcast]:
-        return (
-            Podcast.objects.filter(
-                pub_date__gt=timezone.now() - timedelta(days=90),
-                active=True,
-                private=False,
-            )
-            .filter(language__iexact=self._language)
-            .exclude(extracted_text="")
-        )
-
     def _build_matches_dict(
-        self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
+        self,
     ) -> collections.defaultdict[tuple[int, int], list[float]]:
         matches = collections.defaultdict(list)
 
-        for category in categories:
+        for category in get_categories():
             for batch in iterators.batcher(
-                podcasts.filter(categories=category)
+                self._get_podcasts(category)
                 .values_list("id", "extracted_text")
                 .iterator(),
                 1000,
@@ -98,6 +82,15 @@ class Recommender:
                     matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
+
+    def _get_podcasts(self, category: Category) -> QuerySet[Podcast]:
+        return Podcast.objects.filter(
+            pub_date__gt=timezone.now() - self._since,
+            language__iexact=self._language,
+            categories=category,
+            active=True,
+            private=False,
+        ).exclude(extracted_text="")
 
     def _find_similarities(
         self, rows: dict[int, str]
