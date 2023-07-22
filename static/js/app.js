@@ -1,6 +1,16 @@
 import Alpine from "alpinejs";
-import "htmx.org";
+import htmx from "htmx.org";
 import "./audio-player";
+
+// global HTMX configuration
+// https://htmx.org/docs/#config
+htmx.config = {
+    ...htmx.config,
+    historyCacheSize: 0,
+    historyEnabled: false,
+    refreshOnHistoryMiss: false,
+    useTemplateFragments: true,
+};
 
 // set global Alpine instance
 window.Alpine = Alpine;
