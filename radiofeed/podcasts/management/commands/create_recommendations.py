@@ -18,3 +18,4 @@ class Command(BaseCommand):
     def _recommend(self, language: str):
         self.stdout.write(f"Creating recommendations for language: {language}...")
         recommender.recommend(language)
+        self.stdout.write(f"Recommendations created for language: {language}.")
