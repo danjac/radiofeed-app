@@ -7,7 +7,6 @@ import "./audio-player";
 htmx.config = {
     ...htmx.config,
     historyCacheSize: 0,
-    historyEnabled: false,
     refreshOnHistoryMiss: false,
     useTemplateFragments: true,
 };
