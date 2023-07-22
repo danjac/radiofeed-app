@@ -1,4 +1,5 @@
 import collections
+import functools
 import itertools
 import operator
 import statistics
@@ -6,7 +7,6 @@ from collections.abc import Iterator
 from datetime import timedelta
 
 from django.db.models import QuerySet
-from django.db.models.functions import Lower
 from django.utils import timezone
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -15,7 +15,7 @@ from radiofeed import iterators, tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 
-def recommend() -> None:
+def recommend(language: str) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by
     language and category.
 
@@ -24,22 +24,7 @@ def recommend() -> None:
     Only podcasts matching certain languages and updated within the past 90 days are
     included.
     """
-    podcasts = (
-        Podcast.objects.filter(
-            pub_date__gt=timezone.now() - timedelta(days=90),
-            active=True,
-            private=False,
-        )
-        .filter(language__in=tokenizer.NLTK_LANGUAGES)
-        .exclude(extracted_text="")
-    )
-
-    categories = Category.objects.order_by("name")
-
-    # separate by language, so we don't get false matches
-
-    for language in podcasts.values_list(Lower("language"), flat=True).distinct():
-        Recommender(language).recommend(podcasts, categories)
+    Recommender(language).recommend()
 
 
 class Recommender:
@@ -55,17 +40,17 @@ class Recommender:
             stop_words=list(tokenizer.get_stopwords(self._language))
         )
 
-    def recommend(
-        self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
-    ) -> None:
+    def recommend(self) -> None:
         """Creates recommendation instances."""
+
+        categories = get_categories()
+        podcasts = self._get_podcasts()
+
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
         for batch in iterators.batcher(
-            self._build_matches_dict(
-                podcasts.filter(language=self._language), categories
-            ).items(),
+            self._build_matches_dict(podcasts, categories).items(),
             1000,
         ):
             Recommendation.objects.bulk_create(
@@ -81,6 +66,17 @@ class Recommender:
                 batch_size=100,
                 ignore_conflicts=True,
             )
+
+    def _get_podcasts(self) -> QuerySet[Podcast]:
+        return (
+            Podcast.objects.filter(
+                pub_date__gt=timezone.now() - timedelta(days=90),
+                active=True,
+                private=False,
+            )
+            .filter(language__iexact=self._language)
+            .exclude(extracted_text="")
+        )
 
     def _build_matches_dict(
         self, podcasts: QuerySet[Podcast], categories: QuerySet[Category]
@@ -136,3 +132,9 @@ class Recommender:
 
             except IndexError:  # pragma: no cover
                 continue
+
+
+@functools.cache
+def get_categories() -> list[Category]:
+    """Returns cached list of categories."""
+    return list(Category.objects.order_by("name"))
