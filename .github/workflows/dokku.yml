@@ -16,5 +16,5 @@ jobs:
               uses: vitalyliber/dokku-github-action@v7.1
               with:
                   branch: main
-                  git_remote_url: "ssh://dokku@radiofeed.app:22/~/radiofeed"
+                  git_remote_url: "ssh://dokku@radiofeed.app:22/radiofeed"
                   ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
