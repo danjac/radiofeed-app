@@ -16,8 +16,7 @@ jobs:
 
             - name: Deploy to Dokku
               uses: vitalyliber/dokku-github-action@v7.1
-              env:
-                  PRIVATE_KEY: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
-                  HOST: ${{ secrets.DOKKU_HOST }}
-                  PROJECT: ${{ secrets.DOKKU_APP }}
-                  BRANCH: main
+              with:
+                  branch: main
+                  git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
+                  ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
