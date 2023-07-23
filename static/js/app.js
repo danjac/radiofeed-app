@@ -4,12 +4,10 @@ import "./audio-player";
 
 // global HTMX configuration
 // https://htmx.org/docs/#config
-htmx.config = {
-    ...htmx.config,
-    historyCacheSize: 0,
-    refreshOnHistoryMiss: false,
-    useTemplateFragments: true,
-};
+
+htmx.config.historyCacheSize = 0;
+htmx.config.refreshOnHistoryMiss = false;
+htmx.config.useTemplateFragments = true;
 
 // set global Alpine instance
 window.Alpine = Alpine;
