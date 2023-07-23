@@ -1,10 +1,9 @@
 name: deploy:dokku
 
 on:
-    workflow_call:
-        secrets:
-            DOKKU_SSH_PRIVATE_KEY:
-                required: true
+    push:
+        branches:
+            - main
 
 jobs:
     deploy:
