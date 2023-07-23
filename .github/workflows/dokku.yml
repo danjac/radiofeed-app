@@ -18,5 +18,5 @@ jobs:
               uses: vitalyliber/dokku-github-action@v7.1
               with:
                   branch: main
-                  git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
+                  git_remote_url: "${{ secrets.DOKKU_REMOTE_URL }}"
                   ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
