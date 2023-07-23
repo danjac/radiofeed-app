@@ -2,6 +2,9 @@ name: deploy:dokku
 
 on:
     workflow_dispatch:
+        secrets:
+            required: true
+            DOKKU_SSH_PRIVATE_KEY:
 
 jobs:
     deploy:
@@ -14,9 +17,7 @@ jobs:
 
             - name: Deploy to Dokku
               uses: dokku/github-action@v1.4.0
-              env:
-                  SSH_PRIVATE_KEY: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
               with:
                   branch: main
                   git_remote_url: "ssh://dokku@radiofeed.app:22/radiofeed"
-                  ssh_private_key: ${{ SSH_PRIVATE_KEY }}
+                  ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
