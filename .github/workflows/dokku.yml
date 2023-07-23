@@ -1,7 +1,7 @@
 name: deploy:dokku
 
 on:
-    workflow_dispatch:
+    workflow_call:
         secrets:
             required: true
             DOKKU_SSH_PRIVATE_KEY:
