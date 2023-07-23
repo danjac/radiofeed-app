@@ -1,6 +1,20 @@
 # Production Dockerfile for application
 
-FROM python:3.11.4-buster
+FROM node:20-buster AS assets
+
+WORKDIR /app
+
+COPY ./package.json /app/package.json
+
+COPY ./package-lock.json /app/package-lock.json
+
+RUN npm install
+
+COPY . /app
+
+RUN npm run build
+
+FROM python:3.11.4-buster AS app
 
 ENV PYTHONUNBUFFERED=1
 
@@ -21,5 +35,7 @@ COPY ./nltk.txt /app/nltk.txt
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 COPY . /app
+
+COPY --from=assets /app/static /app/static
 
 RUN python manage.py collectstatic --no-input --traceback
