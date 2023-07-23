@@ -16,6 +16,7 @@ jobs:
 
             - name: Deploy to Dokku
               uses: dokku/github-action@v1.4.0
+              secrets: inherit
               with:
                   branch: main
                   git_remote_url: "ssh://dokku@radiofeed.app:22/radiofeed"
