@@ -26,8 +26,6 @@ ENV PIP_ROOT_USER_ACTION=ignore
 
 WORKDIR /app
 
-COPY --from=assets /app/static /app/static
-
 COPY ./requirements.txt /app/requirements.txt
 
 RUN pip install -r /app/requirements.txt --no-cache-dir
@@ -37,5 +35,7 @@ COPY ./nltk.txt /app/nltk.txt
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 COPY . /app
+
+COPY --from=assets /app/static /app/static
 
 RUN python manage.py collectstatic --no-input --traceback
