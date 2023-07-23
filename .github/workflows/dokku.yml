@@ -13,7 +13,7 @@ jobs:
                   fetch-depth: 0
 
             - name: Deploy to Dokku
-              uses: dokku/github-actions@v1.4.0
+              uses: dokku/github-action@v1.4.0
               with:
                   branch: main
                   git_remote_url: "ssh://dokku@radiofeed.app:22/radiofeed"
