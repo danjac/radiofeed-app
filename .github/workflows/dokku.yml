@@ -3,8 +3,8 @@ name: deploy:dokku
 on:
     workflow_call:
         secrets:
-            required: true
             DOKKU_SSH_PRIVATE_KEY:
+                required: true
 
 jobs:
     deploy:
