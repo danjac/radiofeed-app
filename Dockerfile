@@ -8,11 +8,13 @@ COPY ./package.json /app/package.json
 
 COPY ./package-lock.json /app/package-lock.json
 
+ENV NODE_ENV=production
+
 RUN npm install
 
 COPY . /app
 
-RUN npm run build
+RUN npm run build-js && npm run build-css
 
 FROM python:3.11.4-buster AS app
 
