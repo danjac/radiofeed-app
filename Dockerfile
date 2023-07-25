@@ -54,9 +54,21 @@ COPY ./nltk.txt /app/nltk.txt
 
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
-# Copy all app files
+# Application runtime scripts etc
 
-COPY . /app
+COPY ./gunicorn.conf.py /app/gunicorn.conf.py
+
+COPY ./manage.py /app/manage.py
+
+COPY ./release.sh /app/release.sh
+
+# Application packages
+
+COPY ./radiofeed /app/radiofeed
+
+# Application templates
+
+COPY ./templates /app/templates
 
 # Build and copy over assets
 
