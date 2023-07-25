@@ -23,7 +23,6 @@ README.md
 __pycache__
 bin
 node_modules
-nltk
 npm-debug.log
 screenshots
 render.yaml
