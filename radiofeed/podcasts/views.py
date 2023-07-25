@@ -9,7 +9,12 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 from django_htmx.http import HttpResponseLocation
 
-from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
+from radiofeed.decorators import (
+    require_auth,
+    require_DELETE,
+    require_form_methods,
+    require_htmx,
+)
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
 from radiofeed.htmx import render_blocks_to_response
@@ -268,6 +273,7 @@ def category_detail(
 
 
 @require_POST
+@require_htmx
 @require_auth
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
@@ -282,6 +288,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 @require_DELETE
+@require_htmx
 @require_auth
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
@@ -320,6 +327,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 
 
 @require_form_methods
+@require_htmx
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
@@ -349,6 +357,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
 
 @require_DELETE
+@require_htmx
 @require_auth
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseLocation:
     """Removes subscription to private feed."""

@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import require_auth, require_DELETE
+from radiofeed.decorators import require_auth, require_DELETE, require_htmx
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.htmx import render_blocks_to_response
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
@@ -95,6 +95,7 @@ def episode_detail(
 
 
 @require_POST
+@require_htmx
 @require_auth
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
@@ -116,6 +117,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
+@require_htmx
 @require_auth
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
@@ -172,6 +174,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 
 @require_DELETE
+@require_htmx
 @require_auth
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
@@ -212,6 +215,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
+@require_htmx
 @require_auth
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
@@ -227,6 +231,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_DELETE
+@require_htmx
 @require_auth
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Remove episode from bookmarks."""

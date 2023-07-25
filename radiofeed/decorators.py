@@ -4,13 +4,25 @@ from collections.abc import Callable
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
 require_DELETE = require_http_methods(["DELETE"])  # noqa
+
+
+def require_htmx(view: Callable) -> Callable:
+    """Requires HTTP header HX-Request. If header is absent, returns an HTTP 400 response."""
+
+    @functools.wraps(view)
+    def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if request.htmx:
+            return view(request, *args, **kwargs)
+        return HttpResponseBadRequest("HX-Request header required")
+
+    return _wrapper
 
 
 def require_auth(view: Callable) -> Callable:

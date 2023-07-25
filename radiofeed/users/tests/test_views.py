@@ -21,7 +21,7 @@ class TestUserPreferences:
 
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
-        assert_ok(client.get(self.url))
+        assert_ok(client.get(self.url, HTTP_HX_REQUEST="true"))
 
     @pytest.mark.django_db()
     def test_post(self, client, auth_user):

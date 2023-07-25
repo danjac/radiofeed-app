@@ -3,8 +3,29 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.decorators import require_auth
-from radiofeed.tests.asserts import assert_hx_redirect, assert_ok, assert_unauthorized
+from radiofeed.decorators import require_auth, require_htmx
+from radiofeed.tests.asserts import (
+    assert_bad_request,
+    assert_hx_redirect,
+    assert_ok,
+    assert_unauthorized,
+)
+
+
+class TestRequireHtmx:
+    @pytest.fixture()
+    def view(self):
+        return require_htmx(lambda req: HttpResponse())
+
+    def test_is_htmx(self, rf, view):
+        req = rf.get("/")
+        req.htmx = True
+        assert_ok(view(req))
+
+    def test_is_not_htmx(self, rf, view):
+        req = rf.get("/")
+        req.htmx = False
+        assert_bad_request(view(req))
 
 
 class TestRequireAuth:
