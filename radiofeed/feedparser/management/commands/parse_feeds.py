@@ -36,6 +36,7 @@ class Command(BaseCommand):
 
         while True:
             with DatabaseSafeThreadPoolExecutor() as executor:
+                self.stdout.write(f"Fetching next {options['limit']} podcasts")
                 wait(
                     executor.db_safe_map(
                         self._parse_feed,
@@ -44,6 +45,7 @@ class Command(BaseCommand):
                         ),
                     )
                 )
+                self.stdout.write("Done")
 
             if not options["watch"]:
                 break
