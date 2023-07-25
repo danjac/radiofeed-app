@@ -12,9 +12,10 @@ class FormResult:
     is_bound: bool = False
     is_valid: bool = False
 
-    def __bool__(self) -> bool:
-        """Returns `True` if form is valid."""
-        return self.is_valid
+    @property
+    def success(self) -> bool:
+        """Returns `True` if form is bound and valid."""
+        return self.is_bound and self.is_valid
 
     @property
     def status(self) -> http.HTTPStatus:

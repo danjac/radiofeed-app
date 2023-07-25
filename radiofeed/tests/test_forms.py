@@ -13,20 +13,20 @@ class TestHandleForm:
     def test_get(self, rf):
         form, result = handle_form(MyForm, rf.get("/"))
 
-        assert not result
+        assert not result.success
         assert not form.errors
         assert result.status == http.HTTPStatus.OK
 
     def test_post_ok(self, rf):
         form, result = handle_form(MyForm, rf.post("/", {"name": "testing"}))
 
-        assert result
+        assert result.success
         assert not form.errors
         assert result.status == http.HTTPStatus.OK
 
     def test_post_errors(self, rf):
         form, result = handle_form(MyForm, rf.post("/"))
 
-        assert not result
+        assert not result.success
         assert form.errors
         assert result.status == http.HTTPStatus.UNPROCESSABLE_ENTITY
