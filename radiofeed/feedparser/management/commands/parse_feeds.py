@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from concurrent.futures import wait
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
@@ -35,11 +36,13 @@ class Command(BaseCommand):
 
         while True:
             with DatabaseSafeThreadPoolExecutor() as executor:
-                executor.db_safe_map(
-                    self._parse_feed,
-                    self._get_scheduled_podcast_ids(
-                        options["limit"],
-                    ),
+                wait(
+                    executor.db_safe_map(
+                        self._parse_feed,
+                        self._get_scheduled_podcast_ids(
+                            options["limit"],
+                        ),
+                    )
                 )
 
             if not options["watch"]:
