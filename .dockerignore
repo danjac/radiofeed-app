@@ -10,6 +10,8 @@
 !.pylintrc
 !.sonarcloud.properties
 !.tern-project
+**/__pycache__
+**/tests
 .*
 .git
 .github
@@ -23,7 +25,6 @@ LICENSE
 Makefile
 Procfile
 README.md
-__pycache__
 app.json
 conftest.py
 docker-compose.yaml
