@@ -23,6 +23,15 @@ README.md
 __pycache__
 bin
 node_modules
+nltk
 npm-debug.log
 screenshots
 render.yaml
+conftest.py
+Makefile
+requirements-ci.txt
+pyproject.toml
+poetry.lock
+docker-compose.yaml
+app.json
+Procfile

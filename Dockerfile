@@ -12,19 +12,9 @@ COPY ./package-lock.json /app/package-lock.json
 
 RUN npm install
 
-# Asset files
-
-COPY ./static/css /app/static/css
-
-COPY ./static/js /app/static/js
-
-COPY ./tailwind.config.js /app/tailwind.config.js
-
-# Tailwind requires access to Django templates
-
-COPY ./templates /app/templates
-
 # Build assets
+
+COPY . /app
 
 ENV NODE_ENV=production
 
@@ -54,21 +44,9 @@ COPY ./nltk.txt /app/nltk.txt
 
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
-# Application runtime scripts etc
+# Copy over files
 
-COPY ./gunicorn.conf.py /app/gunicorn.conf.py
-
-COPY ./manage.py /app/manage.py
-
-COPY ./release.sh /app/release.sh
-
-# Application packages
-
-COPY ./radiofeed /app/radiofeed
-
-# Application templates
-
-COPY ./templates /app/templates
+COPY . /app
 
 # Build and copy over assets
 
