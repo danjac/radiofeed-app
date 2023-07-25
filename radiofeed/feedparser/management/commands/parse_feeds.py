@@ -4,6 +4,7 @@ from concurrent.futures import wait
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 
+from radiofeed import iterators
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.futures import DatabaseSafeThreadPoolExecutor
@@ -35,25 +36,31 @@ class Command(BaseCommand):
         """Command handler implementation."""
 
         while True:
-            with DatabaseSafeThreadPoolExecutor() as executor:
-                futures = executor.db_safe_map(
-                    self._parse_feed,
-                    scheduler.get_scheduled_podcasts()
-                    .alias(subscribers=Count("subscriptions"))
-                    .filter(active=True)
-                    .order_by(
-                        F("subscribers").desc(),
-                        F("promoted").desc(),
-                        F("parsed").asc(nulls_first=True),
-                    )
-                    .values_list("pk", flat=True)
-                    .distinct()[: options["limit"]],
-                )
+            for batch in iterators.batcher(
+                self._get_scheduled_podcast_ids(options["limit"]),
+                batch_size=100,
+            ):
+                with DatabaseSafeThreadPoolExecutor() as executor:
+                    futures = executor.db_safe_map(self._parse_feed, batch)
 
-            wait(futures)
+                wait(futures)
 
             if not options["watch"]:
                 break
+
+    def _get_scheduled_podcast_ids(self, limit: int) -> list[int]:
+        return list(
+            scheduler.get_scheduled_podcasts()
+            .alias(subscribers=Count("subscriptions"))
+            .filter(active=True)
+            .order_by(
+                F("subscribers").desc(),
+                F("promoted").desc(),
+                F("parsed").asc(nulls_first=True),
+            )
+            .values_list("pk", flat=True)
+            .distinct()[:limit]
+        )
 
     def _parse_feed(self, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)
