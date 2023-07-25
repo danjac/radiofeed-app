@@ -68,11 +68,12 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
 
     if cover_url:
+        _check_cover_image_size(size)
         return (
             reverse(
                 "cover_image",
                 kwargs={
-                    "size": _check_cover_image_size(size),
+                    "size": size,
                 },
             )
             + "?"
@@ -85,7 +86,8 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @functools.cache
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
-    return static(f"img/placeholder-{_check_cover_image_size(size)}.webp")
+    _check_cover_image_size(size)
+    return static(f"img/placeholder-{size}.webp")
 
 
 @register.inclusion_tag("_cover_image.html")
@@ -164,8 +166,7 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-def _check_cover_image_size(size: int) -> int:
+def _check_cover_image_size(size: int) -> None:
     if size not in COVER_IMAGE_SIZES:
         msg = f"size:{size} invalid"
         raise ValueError(msg)
-    return size
