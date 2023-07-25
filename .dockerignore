@@ -2,6 +2,7 @@
 !.coveragerc
 !.editorconfig
 !.env
+!.env.example
 !.eslintrc
 !.flake8
 !.pre-commit-config.yaml
