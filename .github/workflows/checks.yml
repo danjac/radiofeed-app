@@ -30,7 +30,7 @@ jobs:
               run: npm install
 
             - name: Run eslint
-              run: eslint ./static/ --ext .js, .css
+              run: npm run lint
 
             - name: Set up Python 3.11
               uses: actions/setup-python@v4

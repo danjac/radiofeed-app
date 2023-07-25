@@ -7,6 +7,7 @@
         "watch-js": "esbuild --bundle ./static/js/app.js --minify --sourcemap --outfile=./static/js/bundle.js --watch",
         "build": "concurrently \"npm:build-js\" \"npm:build-css\"",
         "watch": "concurrently \"npm:watch-js\" \"npm:watch-css\"",
+        "lint": "eslint ./static --ext .js .css",
         "check-updates": "ncu -u"
     },
     "dependencies": {
