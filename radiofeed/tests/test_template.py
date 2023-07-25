@@ -55,7 +55,7 @@ class TestCoverImage:
         assert dct["placeholder"] == "/static/img/placeholder-100.webp"
 
     def test_invalid_cover_image_size(self):
-        with pytest.raises(AssertionError, match=r"size:500 invalid"):
+        with pytest.raises(ValueError, match=r"size:500 invalid"):
             cover_image("https://example.com/test.jpg", 500, "test img")
 
 

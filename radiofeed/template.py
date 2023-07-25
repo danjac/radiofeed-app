@@ -66,29 +66,26 @@ def cookie_notice(context: RequestContext) -> dict:
 @functools.cache
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
-    _assert_cover_image_size(size)
 
-    return (
-        reverse(
-            "cover_image",
-            kwargs={
-                "size": size,
-            },
+    if cover_url:
+        return (
+            reverse(
+                "cover_image",
+                kwargs={
+                    "size": _check_cover_image_size(size),
+                },
+            )
+            + "?"
+            + urllib.parse.urlencode({"url": Signer().sign(cover_url)})
         )
-        + "?"
-        + urllib.parse.urlencode({"url": Signer().sign(cover_url)})
-        if cover_url
-        else ""
-    )
+    return ""
 
 
 @register.simple_tag
 @functools.cache
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
-    _assert_cover_image_size(size)
-
-    return static(f"img/placeholder-{size}.webp")
+    return static(f"img/placeholder-{_check_cover_image_size(size)}.webp")
 
 
 @register.inclusion_tag("_cover_image.html")
@@ -167,5 +164,8 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-def _assert_cover_image_size(size: int) -> None:
-    assert size in COVER_IMAGE_SIZES, f"size:{size} invalid"
+def _check_cover_image_size(size: int) -> int:
+    if size not in COVER_IMAGE_SIZES:
+        msg = f"size:{size} invalid"
+        raise ValueError(msg)
+    return size
