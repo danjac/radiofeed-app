@@ -1,10 +1,8 @@
 from argparse import ArgumentParser
-from concurrent.futures import wait
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 
-from radiofeed import iterators
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.futures import DatabaseSafeThreadPoolExecutor
@@ -36,20 +34,19 @@ class Command(BaseCommand):
         """Command handler implementation."""
 
         while True:
-            for batch in iterators.batcher(
-                self._get_scheduled_podcast_ids(options["limit"]),
-                batch_size=100,
-            ):
-                with DatabaseSafeThreadPoolExecutor() as executor:
-                    futures = executor.db_safe_map(self._parse_feed, batch)
-
-                wait(futures)
+            with DatabaseSafeThreadPoolExecutor() as executor:
+                executor.db_safe_map(
+                    self._parse_feed,
+                    self._get_scheduled_podcast_ids(
+                        options["limit"],
+                    ),
+                )
 
             if not options["watch"]:
                 break
 
-    def _get_scheduled_podcast_ids(self, limit: int) -> list[int]:
-        return list(
+    def _get_scheduled_podcast_ids(self, limit: int) -> set[int]:
+        return set(
             scheduler.get_scheduled_podcasts()
             .alias(subscribers=Count("subscriptions"))
             .filter(active=True)
@@ -58,8 +55,7 @@ class Command(BaseCommand):
                 F("promoted").desc(),
                 F("parsed").asc(nulls_first=True),
             )
-            .values_list("pk", flat=True)
-            .distinct()[:limit]
+            .values_list("pk", flat=True)[:limit]
         )
 
     def _parse_feed(self, podcast_id: int) -> None:
