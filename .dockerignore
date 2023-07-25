@@ -27,7 +27,7 @@ Procfile
 README.md
 app.json
 conftest.py
-docker-compose.yaml
+docker-compose.yml
 node_modules
 npm-debug.log
 poetry.lock
