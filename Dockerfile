@@ -10,7 +10,13 @@ COPY ./package-lock.json /app/package-lock.json
 
 RUN npm install
 
-COPY . /app
+COPY ./static/css /app/static/css
+
+COPY ./static/js /app/static/js
+
+COPY ./tailwind.config.js /app/tailwind.config.js
+
+COPY ./templates /app/templates
 
 ENV NODE_ENV=production
 
