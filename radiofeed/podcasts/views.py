@@ -370,6 +370,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseLo
 def _render_subscribe_button(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
 ) -> HttpResponse:
+    # render subscribe button
     return render_blocks_to_response(
         request,
         "podcasts/detail.html",
