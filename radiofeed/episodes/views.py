@@ -242,24 +242,6 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_button(request, episode, is_bookmarked=False)
 
 
-def _render_episode_detail_blocks(
-    request: HttpRequest,
-    episode: Episode,
-    extra_context: dict | None = None,
-    *,
-    use_blocks: list[str] | str,
-):
-    return render_blocks_to_response(
-        request,
-        "episodes/detail.html",
-        {
-            "episode": episode,
-            **(extra_context or {}),
-        },
-        use_blocks=use_blocks,
-    )
-
-
 def _render_audio_player_button(
     request: HttpRequest, audio_log: AudioLog, *, start_player: bool
 ) -> HttpResponse:
@@ -289,4 +271,22 @@ def _render_bookmark_button(
             "is_bookmarked": is_bookmarked,
         },
         use_blocks="bookmark_button",
+    )
+
+
+def _render_episode_detail_blocks(
+    request: HttpRequest,
+    episode: Episode,
+    extra_context: dict | None = None,
+    *,
+    use_blocks: list[str] | str,
+):
+    return render_blocks_to_response(
+        request,
+        "episodes/detail.html",
+        {
+            "episode": episode,
+            **(extra_context or {}),
+        },
+        use_blocks=use_blocks,
     )
