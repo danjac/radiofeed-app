@@ -3,7 +3,6 @@ from concurrent.futures import wait
 
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
-from django.utils import timezone
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
@@ -37,8 +36,6 @@ class Command(BaseCommand):
 
         while True:
             with DatabaseSafeThreadPoolExecutor() as executor:
-                self.stdout.write(f"fetching next {options['limit']} podcasts")
-                start = timezone.now()
                 wait(
                     executor.db_safe_map(
                         self._parse_feed,
@@ -47,8 +44,6 @@ class Command(BaseCommand):
                         ),
                     )
                 )
-                diff = timezone.now() - start
-                self.stdout.write(f"done in {diff.seconds} seconds")
 
             if not options["watch"]:
                 break
