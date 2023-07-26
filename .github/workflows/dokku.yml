@@ -17,3 +17,4 @@ jobs:
               with:
                   git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
                   ssh_private_key: ${{ secrets.DOKKU_PRIVATE_KEY }}
+                  branch: main

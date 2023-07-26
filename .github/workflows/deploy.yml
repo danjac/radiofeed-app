@@ -6,5 +6,6 @@ on:
 jobs:
     runchecks:
         uses: ./.github/workflows/checks.yml
-    deploy:
+    dokku:
+        needs: runchecks
         uses: ./.github/workflows/dokku.yml
