@@ -15,6 +15,6 @@ jobs:
             - name: Push to dokku
               uses: dokku/github-action@master
               with:
-                  git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
+                  git_remote_url: "ssh://dokku@radiofeed.app/radiofeed"
                   ssh_private_key: ${{ secrets.DOKKU_PRIVATE_KEY }}
                   branch: main
