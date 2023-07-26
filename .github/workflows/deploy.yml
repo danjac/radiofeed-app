@@ -4,10 +4,10 @@ on:
     workflow_dispatch:
 
 jobs:
-    # runchecks:
-    #     uses: ./.github/workflows/checks.yml
+    runchecks:
+        uses: ./.github/workflows/checks.yml
     dokku:
-        # needs: runchecks
+        needs: runchecks
         uses: ./.github/workflows/dokku.yml
         secrets:
             dokku_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
