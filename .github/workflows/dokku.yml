@@ -9,6 +9,7 @@ on:
                 required: true
 jobs:
     deploy:
+        runs-on: ubuntu-latest
         steps:
             - name: Cloning repo
               uses: actions/checkout@v3
