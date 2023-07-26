@@ -8,4 +8,5 @@ jobs:
         uses: ./.github/workflows/checks.yml
     dokku:
         needs: runchecks
+        secrets: inherit
         uses: ./.github/workflows/dokku.yml
