@@ -2,7 +2,11 @@ name: dokku-deployment
 
 on:
     workflow_call:
-
+        secrets:
+            dokku_remote_url:
+                required: true
+            dokku_private_key:
+                required: true
 jobs:
     deploy:
         runs-on: ubuntu-latest
@@ -15,6 +19,6 @@ jobs:
             - name: Push to dokku
               uses: dokku/github-action@master
               with:
-                  git_remote_url: "ssh://dokku@radiofeed.app/radiofeed"
-                  ssh_private_key: ${{ secrets.DOKKU_PRIVATE_KEY }}
+                  git_remote_url: ${{ secrets.dokku_remote_url }}
+                  ssh_private_key: ${{ secrets.dokku_private_key }}
                   branch: main

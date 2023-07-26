@@ -8,5 +8,7 @@ jobs:
         uses: ./.github/workflows/checks.yml
     dokku:
         needs: runchecks
-        secrets: inherit
         uses: ./.github/workflows/dokku.yml
+        secrets:
+            dokku_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
+            dokku_private_key: ${{ secrets.DOKKU_PRIVATE_KEY }}
