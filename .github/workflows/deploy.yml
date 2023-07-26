@@ -1,0 +1,10 @@
+name: deply
+
+on:
+    workflow_dispatch:
+
+jobs:
+    runchecks:
+        uses: ./.github/workflows/checks.yml
+    deploy:
+        uses: ./.github/workflows/dokku.yml
