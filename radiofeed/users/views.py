@@ -15,7 +15,6 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
 @require_form_methods
-@require_htmx
 @require_auth
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
@@ -25,7 +24,12 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
     if result.success:
         form.save()
         messages.success(request, "Your preferences have been saved")
-        return HttpResponseLocation(request.path)
+
+        return (
+            HttpResponseLocation(request.path)
+            if request.htmx
+            else HttpResponseRedirect(request.path)
+        )
 
     return render_blocks_to_response(
         request,

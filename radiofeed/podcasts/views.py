@@ -327,7 +327,6 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 
 
 @require_form_methods
-@require_htmx
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
@@ -342,7 +341,11 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
             reverse("podcasts:private_feeds") if is_new else podcast.get_absolute_url()
         )
 
-        return HttpResponseLocation(redirect_url)
+        return (
+            HttpResponseLocation(redirect_url)
+            if request.htmx
+            else HttpResponseRedirect(redirect_url)
+        )
 
     return render_blocks_to_response(
         request,
