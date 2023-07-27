@@ -3,6 +3,7 @@ import pathlib
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
+from pytest_django.asserts import assertRedirects
 
 from radiofeed.episodes.tests.factories import create_audio_log, create_bookmark
 from radiofeed.podcasts.models import Subscription
@@ -36,6 +37,22 @@ class TestUserPreferences:
             {
                 "path": self.url,
             },
+        )
+
+        auth_user.refresh_from_db()
+
+        assert not auth_user.send_email_notifications
+
+    @pytest.mark.django_db()
+    def test_post_not_htmx(self, client, auth_user):
+        assertRedirects(
+            client.post(
+                self.url,
+                {
+                    "send_email_notifications": False,
+                },
+            ),
+            self.url,
         )
 
         auth_user.refresh_from_db()

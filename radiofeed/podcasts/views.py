@@ -17,7 +17,7 @@ from radiofeed.decorators import (
 )
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
-from radiofeed.htmx import render_blocks_to_response
+from radiofeed.htmx import HttpResponseLocationRedirect, render_blocks_to_response
 from radiofeed.http import HttpResponseConflict
 from radiofeed.pagination import render_paginated_list
 from radiofeed.podcasts import itunes
@@ -341,11 +341,7 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
             reverse("podcasts:private_feeds") if is_new else podcast.get_absolute_url()
         )
 
-        return (
-            HttpResponseLocation(redirect_url)
-            if request.htmx
-            else HttpResponseRedirect(redirect_url)
-        )
+        return HttpResponseLocationRedirect(request, redirect_url)
 
     return render_blocks_to_response(
         request,

@@ -10,7 +10,7 @@ from django_htmx.http import HttpResponseLocation
 
 from radiofeed.decorators import require_auth, require_form_methods, require_htmx
 from radiofeed.forms import handle_form
-from radiofeed.htmx import render_blocks_to_response
+from radiofeed.htmx import HttpResponseLocationRedirect, render_blocks_to_response
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -25,11 +25,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         form.save()
         messages.success(request, "Your preferences have been saved")
 
-        return (
-            HttpResponseLocation(request.path)
-            if request.htmx
-            else HttpResponseRedirect(request.path)
-        )
+        return HttpResponseLocationRedirect(request, request.path)
 
     return render_blocks_to_response(
         request,
