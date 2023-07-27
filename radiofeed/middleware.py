@@ -3,10 +3,13 @@ from collections.abc import Callable
 from urllib.parse import urlencode
 
 from django.contrib.messages import get_messages
+from django.core.paginator import Page, Paginator
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
+from django_htmx.http import HttpResponseLocation
 
 
 class BaseMiddleware:
@@ -57,6 +60,17 @@ class HtmxMessagesMiddleware(BaseMiddleware):
                 )
             )
 
+        return response
+
+
+class HtmxRedirectMiddleware(BaseMiddleware):
+    """If HTMX request will send HX-Location response header if HTTP redirect."""
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware implementation"""
+        response = self.get_response(request)
+        if request.htmx and "Location" in response:
+            return HttpResponseLocation(response["Location"])
         return response
 
 
@@ -113,6 +127,10 @@ class Pagination:
         qs = self.request.GET.copy()
         qs[self.param] = page_number
         return f"{self.request.path}?{qs.urlencode()}"
+
+    def get_page(self, object_list: QuerySet, page_size: int = 30, **kwargs) -> Page:
+        """Returns Page object for the queryset for current page number."""
+        return Paginator(object_list, page_size, **kwargs).get_page(self.current)
 
 
 class Search:

@@ -7,7 +7,7 @@
     {% block pagination %}
         {% cache 600 search-episodes request.get_full_path %}
         {% render "_pagination_links.html" as pagination_links %}
-        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+        <div class="divide-y divide-solid" id="pagination">
             {{ pagination_links }}
             {% for episode in page_obj %}
                 {% include "episodes/_episode.html" %}

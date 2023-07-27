@@ -1,7 +1,7 @@
 import pytest
 import requests
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertRedirects
 
 from radiofeed.episodes.tests.factories import create_episode
 from radiofeed.podcasts import itunes
@@ -540,9 +540,8 @@ class TestRemovePrivateFeed:
         response = client.delete(
             reverse("podcasts:remove_private_feed", args=[podcast.pk]),
             {"rss": podcast.rss},
-            HTTP_HX_REQUEST="true",
         )
-        assert_hx_location(response, {"path": reverse("podcasts:private_feeds")})
+        assertRedirects(response, reverse("podcasts:private_feeds"))
 
         assert not Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast

@@ -6,16 +6,15 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import HttpResponseLocation
 
-from radiofeed.decorators import require_auth, require_form_methods, require_htmx
+from radiofeed.decorators import render_htmx, require_auth, require_form_methods
 from radiofeed.forms import handle_form
-from radiofeed.htmx import HttpResponseLocationRedirect, render_blocks_to_response
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
 @require_form_methods
 @require_auth
+@render_htmx(use_blocks="form", target="preferences-form")
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
 
@@ -25,14 +24,12 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         form.save()
         messages.success(request, "Your preferences have been saved")
 
-        return HttpResponseLocationRedirect(request, request.path)
+        return HttpResponseRedirect(reverse("users:preferences"))
 
-    return render_blocks_to_response(
+    return TemplateResponse(
         request,
         "account/preferences.html",
         {"form": form},
-        use_blocks="form",
-        target="preferences-form",
         status=result.status,
     )
 
@@ -51,8 +48,8 @@ def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 
 
 @require_POST
-@require_htmx
 @require_auth
+@render_htmx(use_blocks="import_feeds_form", target="upload_form")
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
@@ -67,16 +64,14 @@ def import_podcast_feeds(
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
-        return HttpResponseLocation(reverse("users:manage_podcast_feeds"))
+        return HttpResponseRedirect(reverse("users:manage_podcast_feeds"))
 
-    return render_blocks_to_response(
+    return TemplateResponse(
         request,
         "account/podcast_feeds.html",
         {
             "upload_form": form,
         },
-        use_blocks="import_feeds_form",
-        target="import-feeds-form",
         status=result.status,
     )
 
