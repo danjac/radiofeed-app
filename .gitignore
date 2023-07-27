@@ -45,5 +45,4 @@ staticfiles
 vars.yml
 venv
 
-static/js/bundle.*
-static/css/bundle.*
+static/**/bundle.*
