@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django_htmx.http import HttpResponseLocation
 from render_block import render_block_to_string
@@ -12,7 +12,7 @@ class HttpResponseLocationRedirect(HttpResponseLocation):
     def __init__(self, request: HttpRequest, redirect_to: str, *args, **kwargs):
         super().__init__(redirect_to, *args, **kwargs)
         if not request.htmx:
-            self.status_code = HttpResponseRedirect.status_code
+            self.status_code = 302
             self["Location"] = redirect_to
             del self["HX-Location"]
 
