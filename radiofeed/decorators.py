@@ -1,5 +1,4 @@
 import functools
-import http
 from collections.abc import Callable
 
 from django.conf import settings
@@ -40,7 +39,7 @@ def require_auth(view: Callable) -> Callable:
 
         # plain non-HTMX AJAX: return a 401
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return HttpResponse(status=http.HTTPStatus.UNAUTHORIZED)
+            return HttpResponse(status=401)
 
         return redirect_to_login(request.get_full_path())
 

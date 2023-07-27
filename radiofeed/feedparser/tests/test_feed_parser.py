@@ -1,5 +1,4 @@
 import dataclasses
-import http
 import pathlib
 from datetime import datetime
 
@@ -115,7 +114,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -183,7 +182,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content("rss_high_num_episodes.xml"),
                 headers={
                     "ETag": "abc123",
@@ -220,7 +219,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -279,7 +278,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -309,7 +308,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -341,7 +340,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content("rss_mock_complete.xml"),
                 headers={
                     "ETag": "abc123",
@@ -396,7 +395,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=self.redirect_rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -426,7 +425,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=other.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -450,7 +449,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
@@ -474,7 +473,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
@@ -496,7 +495,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=http.HTTPStatus.OK,
+                status_code=200,
                 content=self.get_rss_content("rss_empty_mock.xml"),
             ),
         )
@@ -518,9 +517,7 @@ class TestFeedParser:
 
         mocker.patch(
             "requests.get",
-            return_value=MockResponse(
-                url=podcast.rss, status_code=http.HTTPStatus.NOT_MODIFIED
-            ),
+            return_value=MockResponse(url=podcast.rss, status_code=304),
         )
 
         with pytest.raises(NotModifiedError):
@@ -539,9 +536,7 @@ class TestFeedParser:
     def test_parse_http_gone(self, mocker, podcast, categories):
         mocker.patch(
             "requests.get",
-            return_value=MockResponse(
-                url=podcast.rss, status_code=http.HTTPStatus.GONE
-            ),
+            return_value=MockResponse(url=podcast.rss, status_code=410),
         )
 
         with pytest.raises(InaccessibleError):

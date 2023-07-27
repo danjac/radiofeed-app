@@ -1,5 +1,4 @@
 import functools
-import http
 import json
 
 from django.http import HttpResponse
@@ -18,28 +17,17 @@ def assert_hx_location(response: HttpResponse, data: dict) -> None:
     assert data == location, location
 
 
-def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
+def assert_status(response: HttpResponse, status: int) -> None:
     """Assert response status matches."""
     assert response.status_code == status, response.status_code
 
 
-(
-    assert_bad_request,
-    assert_conflict,
-    assert_not_found,
-    assert_no_content,
-    assert_ok,
-    assert_unauthorized,
-    assert_unprocessable_entity,
-) = (
-    functools.partial(assert_status, status=status)
-    for status in (
-        http.HTTPStatus.BAD_REQUEST,
-        http.HTTPStatus.CONFLICT,
-        http.HTTPStatus.NOT_FOUND,
-        http.HTTPStatus.NO_CONTENT,
-        http.HTTPStatus.OK,
-        http.HTTPStatus.UNAUTHORIZED,
-        http.HTTPStatus.UNPROCESSABLE_ENTITY,
-    )
-)
+# Status assert shortcuts
+
+assert_bad_request = functools.partial(assert_status, status=400)
+assert_conflict = functools.partial(assert_status, status=409)
+assert_not_found = functools.partial(assert_status, status=404)
+assert_no_content = functools.partial(assert_status, status=204)
+assert_ok = functools.partial(assert_status, status=200)
+assert_unauthorized = functools.partial(assert_status, status=401)
+assert_unprocessable_entity = functools.partial(assert_status, status=422)

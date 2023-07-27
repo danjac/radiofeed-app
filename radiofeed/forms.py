@@ -1,5 +1,4 @@
 import dataclasses
-import http
 
 from django.forms import Form
 from django.http import HttpRequest
@@ -18,13 +17,9 @@ class FormResult:
         return self.is_bound and self.is_valid
 
     @property
-    def status(self) -> http.HTTPStatus:
+    def status(self) -> int:
         """Return HTTP status based on form result."""
-        return (
-            http.HTTPStatus.UNPROCESSABLE_ENTITY
-            if self.is_bound and not self.is_valid
-            else http.HTTPStatus.OK
-        )
+        return 422 if self.is_bound and not self.is_valid else 200
 
 
 def handle_form(

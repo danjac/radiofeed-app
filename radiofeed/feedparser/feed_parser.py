@@ -1,6 +1,5 @@
 import functools
 import hashlib
-import http
 from collections.abc import Iterator
 from typing import Final
 
@@ -131,17 +130,18 @@ class FeedParser:
                 headers=self._get_feed_headers(),
             )
 
-            if response.status_code == http.HTTPStatus.NOT_MODIFIED:
-                raise NotModifiedError
+            match response.status_code:
+                case 304:
+                    raise NotModifiedError
 
-            if response.status_code in (
-                http.HTTPStatus.FORBIDDEN,
-                http.HTTPStatus.GONE,
-                http.HTTPStatus.METHOD_NOT_ALLOWED,
-                http.HTTPStatus.NOT_FOUND,
-                http.HTTPStatus.UNAUTHORIZED,
-            ):
-                raise InaccessibleError
+                case value if value in (
+                    401,
+                    403,
+                    404,
+                    405,
+                    410,
+                ):
+                    raise InaccessibleError
 
             # check for any other http errors
             response.raise_for_status()
