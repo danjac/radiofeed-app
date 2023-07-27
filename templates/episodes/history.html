@@ -26,7 +26,7 @@
     </header>
     {% block pagination %}
         {% render "_pagination_links.html" as pagination_links %}
-        <div class="divide-y divide-solid" id="{{ pagination_target }}">
+        <div class="divide-y divide-solid" id="pagination">
             {{ pagination_links }}
             {% for audio_log in page_obj %}
                 {% include "episodes/_episode.html" with episode=audio_log.episode %}

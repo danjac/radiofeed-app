@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from django.http import HttpResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
@@ -5,6 +7,7 @@ from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 from radiofeed.middleware import (
     CacheControlMiddleware,
     HtmxMessagesMiddleware,
+    HtmxRedirectMiddleware,
     Ordering,
     OrderingMiddleware,
     Pagination,
@@ -27,6 +30,30 @@ def req(rf):
 @pytest.fixture()
 def htmx_req(rf):
     return rf.get("/", HTTP_HX_REQUEST="true")
+
+
+class TestHtmxRedirectMiddleware:
+    @pytest.fixture()
+    def get_redirect_response(self):
+        def _get_response(req):
+            resp = HttpResponse()
+            resp["Location"] = "/"
+            return resp
+
+        return _get_response
+
+    def test_hx_redirect(self, rf, get_redirect_response):
+        req = rf.get("/")
+        req.htmx = True
+        response = HtmxRedirectMiddleware(get_redirect_response)(req)
+        assert response["HX-Location"] == json.dumps({"path": "/"})
+
+    def test_not_htmx_redirect(self, rf, get_redirect_response):
+        req = rf.get("/")
+        req.htmx = False
+        response = HtmxRedirectMiddleware(get_redirect_response)(req)
+        assert "HX-Location" not in response
+        assert response["Location"] == "/"
 
 
 class TestCacheControlMiddleware:

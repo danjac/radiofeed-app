@@ -59,6 +59,7 @@ MIDDLEWARE: list[str] = [
     "django_htmx.middleware.HtmxMiddleware",
     "radiofeed.middleware.CacheControlMiddleware",
     "radiofeed.middleware.HtmxMessagesMiddleware",
+    "radiofeed.middleware.HtmxRedirectMiddleware",
     "radiofeed.middleware.OrderingMiddleware",
     "radiofeed.middleware.PaginationMiddleware",
     "radiofeed.middleware.SearchMiddleware",
