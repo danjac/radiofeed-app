@@ -145,7 +145,6 @@ select = [
     "D10", # flake8-debugger
     "DJ", # flake8-django
     "E", # pycodestyle (error)
-    "EM", # flake8-errmsg
     "ERA", # eradicate
     "F", # pyflakes
     "FA", # flake8-future-annotations

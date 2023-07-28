@@ -48,8 +48,9 @@ class RSSParser:
                 next(self._parser.iterparse(content, "rss", "channel"))
             )
         except StopIteration as e:
-            msg = "Document does not contain <channel /> element"
-            raise InvalidRSSError(msg) from e
+            raise InvalidRSSError(
+                "Document does not contain <channel /> element"
+            ) from e
         except lxml.etree.XMLSyntaxError as e:
             raise InvalidRSSError from e
 

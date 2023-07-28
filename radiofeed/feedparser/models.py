@@ -68,11 +68,9 @@ class Item:
     @pub_date.validator
     def _check_pub_date(self, attr: attrs.Attribute, value: Any) -> None:
         if value is None:
-            msg = f"{attr=} cannot be None"
-            raise ValueError(msg)
+            raise ValueError(f"{attr=} cannot be None")
         if value > timezone.now():
-            msg = f"{attr=} cannot be in future"
-            raise ValueError(msg)
+            raise ValueError(f"{attr=} cannot be in future")
 
     @keywords.default
     def _default_keywords(self) -> str:

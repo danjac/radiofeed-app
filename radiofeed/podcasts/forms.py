@@ -20,12 +20,10 @@ class PrivateFeedForm(forms.Form):
         if Subscription.objects.filter(
             subscriber=self.user, podcast__rss=value
         ).exists():
-            msg = "You are already subscribed to this podcast"
-            raise forms.ValidationError(msg)
+            raise forms.ValidationError("You are already subscribed to this podcast")
 
         if Podcast.objects.filter(rss=value, private=False).exists():
-            msg = "This is not a private feed"
-            raise forms.ValidationError(msg)
+            raise forms.ValidationError("This is not a private feed")
 
         return value
 

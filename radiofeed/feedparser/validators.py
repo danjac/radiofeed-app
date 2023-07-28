@@ -68,8 +68,7 @@ def required(instance: Any, attr: attrs.Attribute, value: Any) -> None:
         ValueError: any falsy value
     """
     if not value:
-        msg = f"{attr=} cannot be empty or None"
-        raise ValueError(msg)
+        raise ValueError(f"{attr=} cannot be empty or None")
 
 
 def url(instance: Any, attr: attrs.Attribute, value: Any) -> None:
@@ -81,5 +80,4 @@ def url(instance: Any, attr: attrs.Attribute, value: Any) -> None:
     try:
         _url_validator(value)
     except ValidationError as e:
-        msg = f"{attr=} must be a URL"
-        raise ValueError(msg) from e
+        raise ValueError(f"{attr=} must be a URL") from e
