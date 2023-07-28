@@ -52,12 +52,12 @@ class Item:
     duration: str = attrs.field(converter=converters.duration, default=None)
 
     episode_type: str = attrs.field(
-        converter=attrs.converters.default_if_none("full"),  # type: ignore
+        converter=attrs.converters.default_if_none(default="full"),  # type: ignore
         default=None,
     )
 
     description: str = attrs.field(
-        converter=attrs.converters.default_if_none(""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore
         default=None,
     )
 
@@ -84,17 +84,17 @@ class Feed:
     title: str = attrs.field(validator=validators.required)
 
     owner: str = attrs.field(
-        converter=attrs.converters.default_if_none(""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore
         default=None,
     )
     description: str = attrs.field(
-        converter=attrs.converters.default_if_none(""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore
         default=None,
     )
 
     language: str = attrs.field(
         converter=attrs.converters.pipe(  # type: ignore
-            attrs.converters.default_if_none("en"),  # type: ignore
+            attrs.converters.default_if_none(default="en"),  # type: ignore
             converters.language,
         ),
         default=None,
@@ -106,7 +106,7 @@ class Feed:
 
     complete: bool = attrs.field(
         converter=attrs.converters.pipe(  # type: ignore
-            attrs.converters.default_if_none(False),  # type: ignore
+            attrs.converters.default_if_none(default=False),  # type: ignore
             attrs.converters.to_bool,  # type: ignore
         ),
         default=False,
@@ -115,7 +115,7 @@ class Feed:
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
     funding_text: str = attrs.field(
-        converter=attrs.converters.default_if_none(""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore
         default=None,
     )
 
