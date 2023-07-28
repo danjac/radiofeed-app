@@ -20,7 +20,7 @@ def render_template_blocks(
     """
 
     # if matching target/blocks, render template blocks
-    if target is None or target == request.htmx.target:
+    if request.htmx and (target is None or target == request.htmx.target):
         if isinstance(use_blocks, str):
             use_blocks = [use_blocks]
 
