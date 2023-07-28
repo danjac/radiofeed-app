@@ -6,7 +6,6 @@ from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
-from render_block import render_block_to_string
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
@@ -33,53 +32,3 @@ def require_auth(view: Callable) -> Callable:
         return redirect_to_login(request.get_full_path())
 
     return _wrapper
-
-
-def render_htmx(
-    *,
-    use_blocks: list[str] | str,
-    target: str | None = None,
-) -> Callable:
-    """Returns HTMX blocks instead of full template if response is a TemplateResponse instance and request has HX-Request header.
-
-    If `target` is provided will return blocks only if HX-Target header matches this value.
-
-    Adds `use_blocks` to template context if any.
-    """
-
-    if isinstance(use_blocks, str):
-        use_blocks = [use_blocks]
-
-    def _decorator(view: Callable) -> Callable:
-        @functools.wraps(view)
-        def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-            response = view(request, *args, **kwargs)
-
-            # if matching target/blocks, render template blocks
-            if (
-                hasattr(response, "render")
-                and not response.is_rendered
-                and (target is None or target == request.htmx.target)
-            ):
-                context = (response.context_data or {}) | {
-                    "use_blocks": use_blocks,
-                }
-
-                return HttpResponse(
-                    [
-                        render_block_to_string(
-                            response.template_name,
-                            block,
-                            context,
-                            request=request,
-                        )
-                        for block in use_blocks
-                    ],
-                    headers=response.headers,
-                    status=response.status_code,
-                )
-            return response
-
-        return _wrapper
-
-    return _decorator
