@@ -311,7 +311,6 @@ class TestClosePlayer:
 
         assert_ok(response)
 
-        assert not response.context["start_player"]
         assert not response.context["is_playing"]
 
         assert player_episode.id not in client.session

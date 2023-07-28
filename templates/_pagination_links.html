@@ -1,18 +1,17 @@
+{# vim: set filetype=htmldjango #}
 {% if page_obj.has_other_pages %}
     <nav role="navigation"
          aria-label="Pagination"
          class="py-2"
          hx-swap="outerHTML show:window:top"
-         hx-target="#{{ pagination_target|default:"pagination" }}">
+         hx-target="#{{ pagination_target }}">
         <ul class="flex items-center justify-between">
             <li>
                 {% if page_obj.has_previous %}
-                    {% with page_number=page_obj.previous_page_number %}
-                        <a class="link"
-                           href="{% pagination_url page_number %}"
-                           aria-label="Page {{ page_number }}"
-                           title="Page {{ page_number }}">Previous</a>
-                    {% endwith %}
+                    <a class="link"
+                       href="{% pagination_url page_obj.previous_page_number %}"
+                       aria-label="Previous Page"
+                       title="Previous Page">Previous</a>
                 {% else %}
                     <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                           title="First Page"
@@ -21,12 +20,10 @@
             </li>
             <li>
                 {% if page_obj.has_next %}
-                    {% with page_number=page_obj.next_page_number %}
-                        <a class="link"
-                           href="{% pagination_url page_number %}"
-                           aria-label="Page {{ page_number }}"
-                           title="Page {{ page_number }}">Next</a>
-                    {% endwith %}
+                    <a class="link"
+                       aria-label="Next Page"
+                       href="{% pagination_url page_obj.next_page_number %}"
+                       title="Next Page">Next</a>
                 {% else %}
                     <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                           title="Last Page"
