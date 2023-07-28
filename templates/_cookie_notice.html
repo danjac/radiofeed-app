@@ -1,3 +1,4 @@
+{# vim: set filetype=htmldjango #}
 {% if not accept_cookies %}
     <div class="fixed bottom-0 z-50 flex justify-center w-full py-3 text-white bg-black opacity-90"
          id="accept-cookies">
@@ -7,7 +8,7 @@
                     This site uses cookies to ensure you get the best experience.
                 </p>
                 <div class="text-center md:text-start">
-                    <button class="px-4 py-1 text-base border border-white btn btn-primary lg:text-lg"
+                    <button class="px-4 py-1 text-base border border-white btn btn-primary md:text-lg"
                             hx-post="{% url 'accept_cookies' %}"
                             hx-target="#accept-cookies"
                             hx-push-url="false"

@@ -7,7 +7,7 @@
     {% cache 600 episode-nav-header episode.pk %}
     {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
         <header class="pb-3 mb-6 border-b space-y-6">
-            <h1 class="text-lg font-bold lg:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
+            <h1 class="text-lg font-bold md:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
             {% if next_episode or previous_episode %}
                 <nav>
                     <ul class="flex justify-between"
@@ -45,7 +45,7 @@
 {% endcache %}
 {% with podcast=episode.podcast %}
     <article class="space-y-3">
-        <h2 class="text-base lg:text-lg">
+        <h2 class="text-base md:text-lg">
             <a href="{{ podcast.get_episodes_url }}"
                title="See all episodes for {{ podcast.cleaned_title }}"
                class="link">{{ podcast.cleaned_title }}</a>
@@ -60,8 +60,8 @@
             {% endif %}
         {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">
-            {% cover_image episode.get_cover_url 200 podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
-            <div class="flex flex-col place-content-between h-28 lg:h-32">
+            {% cover_image episode.get_cover_url 200 podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 md:h-40 md:w-40" %}
+            <div class="flex flex-col place-content-between h-28 md:h-32">
                 {% block audio_player_button %}
                     <div hx-push-url="false"
                          hx-target="this"

@@ -2,17 +2,17 @@
 {% load cache %}
 {% block content %}
     <header class="mb-3 text-center xl:mb-6 space-y-3">
-        <h1 class="text-lg font-bold lg:text-xl xl:text-2xl">
+        <h1 class="text-lg font-bold md:text-xl xl:text-2xl">
             Welcome to <strong>{{ request.site.name }}</strong>, where you can find the latest and greatest podcasts from around the world.
         </h1>
-        <h2 class="text-base lg:text-lg xl:text-xl text-semibold">
+        <h2 class="text-base md:text-lg xl:text-xl text-semibold">
             We curate a selection of the best podcasts across a range of topics, so there's something for everyone!
         </h2>
     </header>
     <div class="flex flex-wrap justify-center gap-1" hx-disable="true">
         {% cache 3600 podcasts-landing-page %}
         {% for podcast in podcasts %}
-            {% with css_class="h-28 w-28 md:h-48 md:w-48 lg:h-52 lg:w-52 xl:h-56 xl:w-56 hover:grayscale" %}
+            {% with css_class="h-28 w-28 md:h-48 md:w-48 xl:h-56 xl:w-56 hover:grayscale" %}
                 <a href="{{ podcast.get_absolute_url }}"
                    class="{{ css_class }}"
                    title="{{ podcast.cleaned_title }}">
