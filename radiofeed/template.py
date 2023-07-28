@@ -67,8 +67,9 @@ def cookie_notice(context: RequestContext) -> dict:
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
 
+    assert size in COVER_IMAGE_SIZES, f"invalid cover image size:{size}"
+
     if cover_url:
-        _check_cover_image_size(size)
         return (
             reverse(
                 "cover_image",
@@ -86,7 +87,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @functools.cache
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
-    _check_cover_image_size(size)
+    assert size in COVER_IMAGE_SIZES, f"invalid cover image size:{size}"
     return static(f"img/placeholder-{size}.webp")
 
 
@@ -164,9 +165,3 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     scheme = "https" if settings.USE_HTTPS else "http"
 
     return f"{scheme}://{site.domain}{path}"
-
-
-def _check_cover_image_size(size: int) -> None:
-    if size not in COVER_IMAGE_SIZES:
-        msg = f"size:{size} invalid"
-        raise ValueError(msg)
