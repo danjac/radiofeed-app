@@ -111,7 +111,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return _render_audio_player_action(request, audio_log, is_playing=True)
+    return _render_player_action(request, audio_log, is_playing=True)
 
 
 @require_POST
@@ -123,7 +123,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_audio_player_action(request, audio_log, is_playing=False)
+        return _render_player_action(request, audio_log, is_playing=False)
 
     return HttpResponseNoContent()
 
@@ -237,7 +237,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_action(request, episode, is_bookmarked=False)
 
 
-def _render_audio_player_action(
+def _render_player_action(
     request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
 ) -> HttpResponse:
     return render_template_blocks(
