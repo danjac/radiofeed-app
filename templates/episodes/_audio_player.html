@@ -14,8 +14,7 @@
                 metadataTag='{{ METADATA_TAG }}',
                 startPlayer={{ start_player|yesno:'true,false' }},
                 timeUpdateUrl='{% url 'episodes:player_time_update' %}',
-            )"
-                    {# djlint:on #}
+                    )"{# djlint:on #}
                     @keydown.window="shortcuts">
                     <audio x-ref="audio"
                            preload="auto"

@@ -6,7 +6,7 @@ document.addEventListener("alpine:init", () => {
         (
             csrfToken = null,
             currentTime = 0,
-            metadataTag = "audioplayer-metadata",
+            metadataTag = null,
             startPlayer = false,
             timeUpdateUrl = null,
         ) => ({
@@ -23,7 +23,7 @@ document.addEventListener("alpine:init", () => {
                 remaining: "00:00:00",
             },
             init() {
-                if ("mediaSession" in navigator) {
+                if (metadataTag && "mediaSession" in navigator) {
                     navigator.mediaSession.metadata =
                         this.getMediaMetadata(metadataTag);
                 }
