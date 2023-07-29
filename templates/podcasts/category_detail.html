@@ -6,7 +6,7 @@
 {% block content %}
     {% render "_search_form.html" placeholder="Search: "|add:category.name as search_form %}
     {% if request.search %}
-        <header class="pb-3 mb-3 border-b space-y-3">
+        <header class="pb-6 mb-3 border-b space-y-6">
             <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                 {{ category.name }} Podcasts
             </h1>
@@ -22,7 +22,7 @@
             </nav>
         </header>
     {% else %}
-        <header class="items-center justify-between pb-3 mb-3 border-b sm:flex space-y-3 sm:space-y-0">
+        <header class="items-center justify-between pb-6 mb-3 border-b sm:flex space-y-6 sm:space-y-0">
             <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                 {{ category.name }} Podcasts
             </h1>

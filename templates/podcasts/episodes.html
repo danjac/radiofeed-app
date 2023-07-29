@@ -6,7 +6,7 @@
 {% block podcast_content %}
     {% if request.search or page_obj.has_other_pages %}
         <nav class="mb-3">
-            <ul class="items-center justify-between pb-3 border-b sm:flex">
+            <ul class="items-center justify-between pb-3 mb-3 border-b sm:flex">
                 <li class="flex items-center justify-center mb-3 sm:justify-start sm:mb-0">
                     {% if request.search %}
                         <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"

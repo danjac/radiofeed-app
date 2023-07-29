@@ -7,7 +7,7 @@
     {% url 'episodes:index' as index_url %}
     {% url 'episodes:search_episodes' as search_episodes_url %}
     {% render "_search_form.html" placeholder="Search: Episodes" search_url=search_episodes_url as search_form %}
-    <header class="pb-3 mb-3 border-b">
+    <header class="pb-6 mb-3 border-b space-y-6">
         {% if has_subscriptions %}
             <h1 class="flex items-center justify-center mb-3 text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                 New Releases: {{ promoted|yesno:"Promotions,Subscriptions" }}

@@ -4,14 +4,14 @@
     | Sign In
 {% endblock title %}
 {% block content %}
-    <h1 class="flex items-center justify-center pb-3 mb-3 text-lg font-bold border-b sm:justify-start md:text-xl xl:text-2xl">
-        Sign In
-    </h1>
-    <p class="mb-3">
-        If you have not created an account yet, then please
-        <a class="underline hover:text-blue-500" href="{{ signup_url }}">sign up</a> first.
-    </p>
-    <div class="space-y-3">
+    <div class="space-y-6">
+        <h1 class="flex items-center justify-center pb-6 text-lg font-bold border-b sm:justify-start md:text-xl xl:text-2xl">
+            Sign In
+        </h1>
+        <p>
+            If you have not created an account yet, then please
+            <a class="underline hover:text-blue-500" href="{{ signup_url }}">sign up</a> first.
+        </p>
         <form method="post"
               action="{{ request.path }}"
               class="space-y-3"
