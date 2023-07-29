@@ -1,5 +1,6 @@
 import functools
 from collections.abc import Iterator
+from typing import ClassVar
 
 import lxml  # nosec
 from django import forms
@@ -17,11 +18,11 @@ class UserPreferencesForm(forms.ModelForm):
 
         fields = ("send_email_notifications",)
 
-        labels = {
+        labels: ClassVar[dict[str, str]] = {
             "send_email_notifications": "Send email notifications",
         }
 
-        help_texts = {
+        help_texts: ClassVar[dict[str, str]] = {
             "send_email_notifications": "I'd like to receive notications of new content and recommendations."
         }
 

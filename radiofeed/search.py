@@ -1,5 +1,6 @@
 import functools
 import operator
+from typing import ClassVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Q
@@ -21,7 +22,7 @@ class SearchQuerySetMixin(T_QuerySet):
         search_type: PostgreSQL search type
     """
 
-    search_vectors: list[tuple[str, str]] = []
+    search_vectors: ClassVar[list[tuple[str, str]]] = []
     search_vector_field: str = "search_vector"
     search_rank: str = "rank"
     search_type: str = "websearch"

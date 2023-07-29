@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -66,13 +66,13 @@ class Episode(models.Model):
     objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s_podcast_guid",
                 fields=["podcast", "guid"],
             )
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["podcast", "pub_date"]),
             models.Index(fields=["podcast", "-pub_date"]),
             models.Index(fields=["podcast"]),
@@ -165,7 +165,7 @@ class Episode(models.Model):
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Bookmark model."""
 
-    search_vectors = [
+    search_vectors: ClassVar[list] = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -189,13 +189,13 @@ class Bookmark(TimeStampedModel):
     objects = BookmarkQuerySet.as_manager()
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s_user_episode",
                 fields=["user", "episode"],
             )
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["-created"]),
         ]
 
@@ -203,7 +203,7 @@ class Bookmark(TimeStampedModel):
 class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for AudioLog."""
 
-    search_vectors = [
+    search_vectors: ClassVar[list] = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -229,13 +229,13 @@ class AudioLog(TimeStampedModel):
     objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s_user_episode",
                 fields=["user", "episode"],
             ),
         ]
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["-listened"]),
             models.Index(fields=["listened"]),
         ]

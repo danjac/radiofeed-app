@@ -159,6 +159,7 @@ select = [
     "PTH", # flake8-use-pathlib
     "RET", # flake8-return
     "RSE", # flake8-raise
+    "RUF", # ruff-specific
     "S", # flake8-bandit
     "SIM", # flake8-simplify
     "T20", # flake8-print
@@ -190,10 +191,10 @@ ignore = [
 ]
 [tool.ruff.per-file-ignores]
 # ignore pydocstyle rules for tests and migrations
-"**/conftest.py" = ["D101", "D102", "D103", "D105"]
-"**/apps.py" = ["D101", "D102", "D103", "D105"]
-"**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N"]
-"**/tests/**.py" = ["D101", "D102", "D103", "D105"]
+"**/conftest.py" = ["D101", "D102", "D103", "D105", "RUF"]
+"**/apps.py" = ["D101", "D102", "D103", "D105", "RUF"]
+"**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N", "RUF"]
+"**/tests/**.py" = ["D101", "D102", "D103", "D105", "RUF"]
 
 [tool.ruff.isort]
 known-first-party = ["radiofeed"]

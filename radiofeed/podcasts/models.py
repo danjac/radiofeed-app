@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -194,7 +194,7 @@ class Podcast(models.Model):
     objects: models.Manager[Podcast] = PodcastQuerySet.as_manager()
 
     class Meta:
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             models.Index(fields=["promoted"]),
@@ -262,13 +262,13 @@ class Subscription(TimeStampedModel):
     )
 
     class Meta:
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s_user_podcast",
                 fields=["subscriber", "podcast"],
             )
         ]
-        indexes = [models.Index(fields=["-created"])]
+        indexes: ClassVar[list] = [models.Index(fields=["-created"])]
 
 
 class RecommendationQuerySet(models.QuerySet):
@@ -314,12 +314,12 @@ class Recommendation(models.Model):
     objects: models.Manager[Recommendation] = RecommendationQuerySet.as_manager()
 
     class Meta:
-        indexes = [
+        indexes: ClassVar[list] = [
             models.Index(fields=["podcast"]),
             models.Index(fields=["recommended"]),
             models.Index(fields=["-similarity", "-frequency"]),
         ]
-        constraints = [
+        constraints: ClassVar[list] = [
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s",
                 fields=["podcast", "recommended"],
