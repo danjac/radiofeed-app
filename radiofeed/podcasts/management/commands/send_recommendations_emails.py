@@ -16,9 +16,9 @@ class Command(BaseCommand):
         with DatabaseSafeThreadPoolExecutor() as executor:
             executor.db_safe_map(
                 self._send_recommendations_email,
-                User.objects.email_notification_recipients().values_list(
-                    "pk", flat=True
-                ),
+                User.objects.filter(
+                    is_active=True, send_email_notifications=True
+                ).values_list("pk", flat=True),
             )
 
     def _send_recommendations_email(self, user_id: int) -> None:
