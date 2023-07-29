@@ -53,6 +53,7 @@ def search(search_term: str) -> list[Feed]:
     if (feeds := cache.get(cache_key)) is None:
         feeds = list(
             _parse_feeds(
+                _get_session(),
                 "https://itunes.apple.com/search",
                 {
                     "term": search_term,
@@ -87,6 +88,7 @@ class Crawler:
         self._location = location
         self._feed_ids: set[str] = set()
         self._parser = _itunes_parser()
+        self._session = _get_session()
 
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the
@@ -100,6 +102,7 @@ class Crawler:
                 href
                 for href in self._parse_urls(
                     _get_response(
+                        self._session,
                         f"https://itunes.apple.com/{self._location}/genre/podcasts/id26",
                         allow_redirects=True,
                     ).content
@@ -120,6 +123,7 @@ class Crawler:
             _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
             yield from _parse_feeds(
+                self._session,
                 "https://itunes.apple.com/lookup",
                 {
                     "id": ",".join(_feed_ids),
@@ -138,7 +142,11 @@ class Crawler:
                 for podcast_id in (
                     self._parse_podcast_id(href)
                     for href in self._parse_urls(
-                        _get_response(url, allow_redirects=True).content
+                        _get_response(
+                            self._session,
+                            url,
+                            allow_redirects=True,
+                        ).content
                     )
                     if href.startswith(
                         f"https://podcasts.apple.com/{self._location}/podcast/"
@@ -164,29 +172,27 @@ class Crawler:
         return None
 
 
-def _get_response(
-    url: str,
-    params: dict | None = None,
-    headers: dict | None = None,
-    **kwargs,
-) -> requests.Response:
-    response = requests.get(
-        url,
-        params=params,
-        headers=(headers or {}) | {"User-Agent": settings.USER_AGENT},
-        timeout=10,
-        **kwargs,
-    )
+def _get_session() -> requests.Session:
+    session = requests.Session()
+    session.headers.update({"User-Agent": settings.USER_AGENT})
+    return session
+
+
+def _get_response(session: requests.Session, url: str, **kwargs) -> requests.Response:
+    response = session.get(url, timeout=10, **kwargs)
     response.raise_for_status()
     return response
 
 
-def _parse_feeds(url: str, params: dict | None = None) -> Iterator[Feed]:
+def _parse_feeds(
+    session: requests.Session, url: str, params: dict | None = None
+) -> Iterator[Feed]:
     for batch in iterators.batcher(
         _build_feeds_from_json(
             _get_response(
+                session,
                 url,
-                params,
+                params=params,
                 headers={"Accept": "application/json"},
             ).json()
         ),
