@@ -18,7 +18,7 @@
         "@babel/eslint-parser": "^7.22.9",
         "concurrently": "^8.2.0",
         "esbuild": "^0.18.17",
-        "eslint": "^8.45.0",
+        "eslint": "^8.46.0",
         "eslint-plugin-prettier": "^5.0.0",
         "npm-check-updates": "^16.10.17",
         "prettier": "3.0.0",
