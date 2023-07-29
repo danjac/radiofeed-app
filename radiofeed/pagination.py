@@ -18,17 +18,17 @@ def render_pagination_response(
     **response_kwargs,
 ) -> TemplateResponse:
     """Renders template with paginated queryset."""
-    page_obj = Paginator(object_list, page_size).get_page(request.pagination.current)
 
-    context = {
-        "page_obj": page_obj,
-        "pagination_target": target,
-        **(extra_context or {}),
-    }
     return render_template_blocks(
         request,
         template_name,
-        context,
+        {
+            "page_obj": Paginator(object_list, page_size).get_page(
+                request.pagination.current
+            ),
+            "pagination_target": target,
+            **(extra_context or {}),
+        },
         use_blocks=use_blocks,
         target=target,
         **response_kwargs,
