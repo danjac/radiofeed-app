@@ -11,14 +11,14 @@ from radiofeed.users.models import User
 def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
     """Sends email to user with a list of recommended podcasts.
 
-    Recommendations based on their subscriptions and listening history, or latest promoted podcasts.
+    Recommendations based on their subscriptions, bookmarks and listening history, or latest promoted podcasts.
 
     Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
 
     If no matching podcasts are found, no email is sent.
     """
 
-    # listened, bookmark, subscribed
+    # listened, bookmarked, subscribed
 
     podcast_ids = (
         set(
