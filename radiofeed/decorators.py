@@ -9,7 +9,7 @@ from django_htmx.http import HttpResponseClientRedirect
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
-require_DELETE = require_http_methods(["DELETE"])  # noqa
+require_DELETE = require_http_methods(["DELETE"])  # ruff: noqa: N816
 
 
 def require_auth(view: Callable) -> Callable:

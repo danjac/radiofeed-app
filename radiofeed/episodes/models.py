@@ -226,7 +226,7 @@ class AudioLog(TimeStampedModel):
     listened: datetime = models.DateTimeField()
     current_time: int = models.IntegerField(default=0)
 
-    objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()  # pyright: ignore
+    objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()
 
     class Meta:
         constraints = [

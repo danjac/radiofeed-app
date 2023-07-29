@@ -20,7 +20,7 @@ class UserQuerySet(models.QuerySet):
         )
 
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore[misc]
     """Custom Manager for User model."""
 
     def create_user(

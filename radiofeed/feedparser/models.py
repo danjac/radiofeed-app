@@ -17,7 +17,7 @@ class Item:
 
     website: str | None = attrs.field(converter=converters.url, default=None)
 
-    pub_date: datetime = attrs.field(converter=parse_date)  # type: ignore
+    pub_date: datetime = attrs.field(converter=parse_date)  # type: ignore[misc]
 
     media_url: str = attrs.field(validator=validators.url)
     media_type: str = attrs.field(validator=validators.audio)
@@ -25,23 +25,23 @@ class Item:
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
     length: int | None = attrs.field(
-        converter=attrs.converters.optional(  # type: ignore
-            attrs.converters.pipe(float, int),  # type: ignore
+        converter=attrs.converters.optional(  # type: ignore[misc]
+            attrs.converters.pipe(float, int),  # type: ignore[misc]
         ),
         default=None,
     )
 
     season: int | None = attrs.field(
-        converter=attrs.converters.optional(  # type: ignore
-            attrs.converters.pipe(float, int),  # type: ignore
+        converter=attrs.converters.optional(  # type: ignore[misc]
+            attrs.converters.pipe(float, int),  # type: ignore[misc]
         ),
         validator=attrs.validators.optional(validators.pg_integer),
         default=None,
     )
 
     episode: int | None = attrs.field(
-        converter=attrs.converters.optional(  # type: ignore
-            attrs.converters.pipe(float, int),  # type: ignore
+        converter=attrs.converters.optional(  # type: ignore[misc]
+            attrs.converters.pipe(float, int),  # type: ignore[misc]
         ),
         validator=attrs.validators.optional(validators.pg_integer),
         default=None,
@@ -52,12 +52,12 @@ class Item:
     duration: str = attrs.field(converter=converters.duration, default=None)
 
     episode_type: str = attrs.field(
-        converter=attrs.converters.default_if_none(default="full"),  # type: ignore
+        converter=attrs.converters.default_if_none(default="full"),  # type: ignore[misc]
         default=None,
     )
 
     description: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
         default=None,
     )
 
@@ -84,17 +84,17 @@ class Feed:
     title: str = attrs.field(validator=validators.required)
 
     owner: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
         default=None,
     )
     description: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
         default=None,
     )
 
     language: str = attrs.field(
-        converter=attrs.converters.pipe(  # type: ignore
-            attrs.converters.default_if_none(default="en"),  # type: ignore
+        converter=attrs.converters.pipe(  # type: ignore[misc]
+            attrs.converters.default_if_none(default="en"),  # type: ignore[misc]
             converters.language,
         ),
         default=None,
@@ -105,9 +105,9 @@ class Feed:
     cover_url: str | None = attrs.field(converter=converters.url, default=None)
 
     complete: bool = attrs.field(
-        converter=attrs.converters.pipe(  # type: ignore
-            attrs.converters.default_if_none(default=False),  # type: ignore
-            attrs.converters.to_bool,  # type: ignore
+        converter=attrs.converters.pipe(  # type: ignore[misc]
+            attrs.converters.default_if_none(default=False),  # type: ignore[misc]
+            attrs.converters.to_bool,  # type: ignore[misc]
         ),
         default=False,
     )
@@ -115,7 +115,7 @@ class Feed:
     explicit: bool = attrs.field(converter=converters.explicit, default=False)
 
     funding_text: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore
+        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
         default=None,
     )
 

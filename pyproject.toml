@@ -155,6 +155,7 @@ select = [
     "N", # pep8-naming
     "PIE", # flake8-pie
     "PT", # flake8-pytest-style
+    "PGH", # pygrep hooks
     "PTH", # flake8-use-pathlib
     "RET", # flake8-return
     "RSE", # flake8-raise

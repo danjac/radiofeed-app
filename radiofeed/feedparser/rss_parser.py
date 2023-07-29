@@ -80,7 +80,7 @@ class RSSParser:
                         "itunes:author/text()",
                         "itunes:owner/itunes:name/text()",
                     ),
-                    title="title/text()",  # type: ignore
+                    title="title/text()",
                 ),
             )
         except (TypeError, ValueError) as e:
@@ -112,7 +112,7 @@ class RSSParser:
                         media_url=("enclosure//@url", "media:content//@url"),
                         pub_date=("pubDate/text()", "pubdate/text()"),
                         season="itunes:season/text()",
-                        title="title/text()",  # type: ignore
+                        title="title/text()",
                     ),
                 )
             except (TypeError, ValueError):

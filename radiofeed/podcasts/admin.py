@@ -78,7 +78,7 @@ class ParserErrorFilter(admin.SimpleListFilter):
         """Returns filtered queryset."""
 
         match self.value():
-            case value if value in Podcast.ParserError:  # type: ignore
+            case value if value in Podcast.ParserError:  # type: ignore[attr-defined]
                 return queryset.filter(parser_error=value)
             case _:
                 return queryset

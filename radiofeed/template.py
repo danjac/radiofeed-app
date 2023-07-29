@@ -52,7 +52,7 @@ def active_link(
 @register.inclusion_tag("_markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders cleaned HTML/Markdown content."""
-    return {"content": mark_safe(cleaners.clean_html(value or ""))}  # noqa
+    return {"content": mark_safe(cleaners.clean_html(value or ""))}  # ruff: noqa: S308
 
 
 @register.inclusion_tag("_cookie_notice.html", takes_context=True)

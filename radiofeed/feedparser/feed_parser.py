@@ -57,8 +57,8 @@ class FeedParser:
 
     _max_retries: int = 3
 
-    _feed_attrs = attrs.fields(Feed)  # type: ignore
-    _item_attrs = attrs.fields(Item)  # type: ignore
+    _feed_attrs = attrs.fields(Feed)
+    _item_attrs = attrs.fields(Item)
 
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
@@ -108,7 +108,7 @@ class FeedParser:
                 frequency=scheduler.schedule(feed),
                 **attrs.asdict(
                     feed,
-                    filter=attrs.filters.exclude(  # type: ignore
+                    filter=attrs.filters.exclude(
                         self._feed_attrs.categories,
                         self._feed_attrs.complete,
                         self._feed_attrs.items,
@@ -304,8 +304,6 @@ class FeedParser:
             podcast=self._podcast,
             **attrs.asdict(
                 item,
-                filter=attrs.filters.exclude(  # type: ignore
-                    self._item_attrs.categories,
-                ),
+                filter=attrs.filters.exclude(self._item_attrs.categories),
             ),
         )
