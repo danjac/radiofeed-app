@@ -1,7 +1,6 @@
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
-from django.http import HttpRequest
-from django.template.response import TemplateResponse
+from django.http import HttpRequest, HttpResponse
 
 from radiofeed.htmx import render_template_blocks
 
@@ -16,7 +15,7 @@ def render_pagination_response(
     use_blocks: list[str] | str = "pagination",
     target: str = "pagination",
     **response_kwargs,
-) -> TemplateResponse:
+) -> HttpResponse:
     """Renders template with paginated queryset."""
 
     return render_template_blocks(
