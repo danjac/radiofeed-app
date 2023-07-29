@@ -15,18 +15,12 @@ def render_template_blocks(
     """Returns HTMX blocks instead of full template if request has HX-Request header.
 
     If `target` is provided will return blocks only if HX-Target header matches this value.
-
-    Adds `use_blocks` to template context if any.
     """
 
     # if matching target/blocks, render template blocks
     if request.htmx and (target is None or target == request.htmx.target):
         if isinstance(use_blocks, str):
             use_blocks = [use_blocks]
-
-        context = (context or {}) | {
-            "use_blocks": use_blocks,
-        }
 
         return HttpResponse(
             [
