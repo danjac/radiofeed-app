@@ -5,7 +5,6 @@ from typing import Final
 
 import attrs
 import requests
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -13,7 +12,7 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed import iterators, tokenizer
-from radiofeed.client import http_client
+from radiofeed.client import HTTPClient
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -64,7 +63,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self) -> None:
+    def parse(self, client: HTTPClient) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
@@ -76,7 +75,7 @@ class FeedParser:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
         try:
-            response = self._get_response()
+            response = self._get_response(client)
 
             content_hash = make_content_hash(response.content)
 
@@ -122,9 +121,9 @@ class FeedParser:
 
             return None
 
-    def _get_response(self) -> requests.Response:
+    def _get_response(self, client: HTTPClient) -> requests.Response:
         try:
-            response = http_client().get(
+            response = client.get(
                 self._podcast.rss,
                 timeout=10,
                 allow_redirects=True,
@@ -133,8 +132,6 @@ class FeedParser:
 
             if response.status_code == 304:
                 raise NotModifiedError
-
-            return response
 
         except requests.HTTPError as e:
             if e.response.status_code in (
@@ -149,12 +146,11 @@ class FeedParser:
 
         except requests.RequestException as e:
             raise UnavailableError from e
+        else:
+            return response
 
     def _get_feed_headers(self) -> dict[str, str]:
-        headers = {
-            "Accept": _ACCEPT,
-            "User-Agent": settings.USER_AGENT,
-        }
+        headers = {"Accept": _ACCEPT}
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:

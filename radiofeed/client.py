@@ -1,4 +1,5 @@
-import functools
+import contextlib
+from collections.abc import Generator
 
 import requests
 from django.conf import settings
@@ -9,9 +10,8 @@ class HTTPClient:
 
     _DEFAULT_TIMEOUT: int = 10
 
-    def __init__(self):
-        self._session = requests.Session()
-        self._session.headers.update({"User-Agent": settings.USER_AGENT})
+    def __init__(self, session: requests.Session):
+        self.session = session
 
     def get(
         self,
@@ -21,12 +21,22 @@ class HTTPClient:
         **kwargs,
     ) -> requests.Response:
         """Do an HTTP GET request."""
-        response = self._session.get(url, params=params, timeout=timeout, **kwargs)
+        response = self.session.get(url, params=params, timeout=timeout, **kwargs)
         response.raise_for_status()
         return response
 
 
-@functools.cache
-def http_client() -> HTTPClient:
-    """Returns HTTPClient singleton instance."""
-    return HTTPClient()
+@contextlib.contextmanager
+def http_client(headers: dict | None = None) -> Generator[HTTPClient, None, None]:
+    """Returns HTTPClient instance."""
+
+    session = requests.Session()
+    session.headers.update(
+        {
+            "User-Agent": settings.USER_AGENT,
+            **(headers or {}),
+        }
+    )
+
+    with session:
+        yield HTTPClient(session)
