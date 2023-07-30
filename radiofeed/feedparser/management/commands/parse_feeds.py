@@ -2,10 +2,11 @@ from argparse import ArgumentParser
 from collections.abc import Iterator
 from concurrent.futures import wait
 
+import httpx
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 
-from radiofeed.client import HTTPClient, http_client
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.futures import DatabaseSafeThreadPoolExecutor
@@ -35,8 +36,9 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Command handler implementation."""
+
         while True:
-            with http_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
+            with self._get_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
                 futures = executor.db_safe_map(
                     lambda podcast_id: self._parse_feed(client, podcast_id),
                     self._get_scheduled_podcast_ids(
@@ -48,6 +50,13 @@ class Command(BaseCommand):
 
             if not options["watch"]:
                 break
+
+    def _get_client(self) -> httpx.Client:
+        return httpx.Client(
+            headers={
+                "User-Agent": settings.USER_AGENT,
+            }
+        )
 
     def _get_scheduled_podcast_ids(self, limit: int) -> Iterator[int]:
         return (
@@ -63,7 +72,7 @@ class Command(BaseCommand):
             .distinct()[:limit]
         )
 
-    def _parse_feed(self, client: HTTPClient, podcast_id: int) -> None:
+    def _parse_feed(self, client: httpx.Client, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)
         try:
             feed_parser.FeedParser(podcast).parse(client)

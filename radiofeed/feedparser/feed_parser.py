@@ -4,7 +4,7 @@ from collections.abc import Iterator
 from typing import Final
 
 import attrs
-import requests
+import httpx
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -12,7 +12,6 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed import iterators, tokenizer
-from radiofeed.client import HTTPClient
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -63,7 +62,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, client: HTTPClient) -> None:
+    def parse(self, client: httpx.Client) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
@@ -121,33 +120,25 @@ class FeedParser:
 
             return None
 
-    def _get_response(self, client: HTTPClient) -> requests.Response:
+    def _get_response(self, client: httpx.Client) -> httpx.Response:
         try:
             response = client.get(
                 self._podcast.rss,
                 timeout=10,
-                allow_redirects=True,
+                follow_redirects=True,
                 headers=self._get_feed_headers(),
             )
+            response.raise_for_status()
 
-            if response.status_code == 304:
-                raise NotModifiedError
-
-        except requests.HTTPError as e:
-            if e.response.status_code in (
-                401,
-                403,
-                404,
-                405,
-                410,
-            ):
+        except httpx.HTTPStatusError as e:
+            if e.response.is_redirect:
+                raise NotModifiedError from e
+            if e.response.is_client_error:
                 raise InaccessibleError from e
             raise UnavailableError from e
-
-        except requests.RequestException as e:
+        except httpx.HTTPError as e:
             raise UnavailableError from e
-        else:
-            return response
+        return response
 
     def _get_feed_headers(self) -> dict[str, str]:
         headers = {"Accept": _ACCEPT}

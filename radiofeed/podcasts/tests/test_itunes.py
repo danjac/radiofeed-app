@@ -1,7 +1,7 @@
 import pathlib
 
+import httpx
 import pytest
-import requests
 from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
@@ -31,11 +31,15 @@ class MockResponse:
     def json(self):
         return self.json_data
 
+    def raise_for_status(self):
+        if self.exception:
+            raise self.exception
+
 
 @pytest.fixture()
 def mock_good_response(mocker):
     return mocker.patch(
-        "radiofeed.client.HTTPClient.get",
+        "httpx.get",
         return_value=MockResponse(
             json={
                 "results": [MOCK_RESULT],
@@ -47,15 +51,15 @@ def mock_good_response(mocker):
 @pytest.fixture()
 def mock_bad_response(mocker):
     return mocker.patch(
-        "radiofeed.client.HTTPClient.get",
-        side_effect=requests.RequestException("fail"),
+        "httpx.get",
+        side_effect=httpx.HTTPError("fail"),
     )
 
 
 @pytest.fixture()
 def mock_invalid_response(mocker):
     return mocker.patch(
-        "radiofeed.client.HTTPClient.get",
+        "httpx.get",
         return_value=MockResponse(
             json={
                 "results": [
@@ -84,7 +88,7 @@ class TestCrawl:
 
             return MockResponse()
 
-        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
+        mocker.patch("httpx.Client.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -100,11 +104,11 @@ class TestCrawl:
                 return MockResponse(mock_file="podcasts.html")
 
             if "/genre/podcasts" in url:
-                raise requests.RequestException("oops")
+                raise httpx.HTTPError("oops")
 
             return MockResponse()
 
-        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
+        mocker.patch("httpx.Client.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -114,7 +118,7 @@ class TestCrawl:
     def test_crawl_with_parse_feeds_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
-                raise requests.RequestException("oops")
+                raise httpx.HTTPError("oops")
 
             if url.endswith("/genre/podcasts/id26"):
                 return MockResponse(mock_file="podcasts.html")
@@ -124,7 +128,7 @@ class TestCrawl:
 
             return MockResponse()
 
-        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
+        mocker.patch("httpx.Client.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -137,14 +141,14 @@ class TestCrawl:
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
             if url.endswith("/genre/podcasts/id26"):
-                raise requests.RequestException("oops")
+                raise httpx.HTTPError("oops")
 
             if "/genre/podcasts" in url:
                 return MockResponse(mock_file="genre.html")
 
             return MockResponse()
 
-        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
+        mocker.patch("httpx.Client.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -154,7 +158,7 @@ class TestCrawl:
 class TestSearch:
     @pytest.mark.django_db()
     def test_not_ok(self, mock_bad_response):
-        with pytest.raises(requests.RequestException):
+        with pytest.raises(httpx.HTTPError):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 
@@ -193,7 +197,7 @@ class TestSearch:
             ],
         )
 
-        mock_get = mocker.patch("radiofeed.client.HTTPClient.get")
+        mock_get = mocker.patch("httpx.get")
 
         feeds = itunes.search("test")
 

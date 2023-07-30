@@ -31,7 +31,6 @@ redis = "^4.5.1"
 scikit-learn = "^1.2.1"
 sentry-sdk = "^1.15.0"
 whitenoise = "^6.3.0"
-requests = "^2.28.2"
 scipy = "^1.10.1"
 heroicons = {extras = ["django"], version = "^2.2.0"}
 nh3 = "^0.2.9"
@@ -44,6 +43,7 @@ django-render-block = "^0.9.2"
 python-decouple = "^3.8"
 dj-database-url = "^2.0.0"
 django-cacheops = "^7.0.1"
+httpx = "^0.24.1"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
@@ -61,7 +61,6 @@ pytest-randomly = "^3.12.0"
 pytest-sugar = "^0.9.6"
 pytest-xdist = "^3.2.0"
 types-python-dateutil = "^2.8.19.11"
-types-requests = "^2.28.11.14"
 types-urllib3 = "^1.26.25.7"
 django-browser-reload = "^1.6.0"
 ipython = "^8.10.0"
