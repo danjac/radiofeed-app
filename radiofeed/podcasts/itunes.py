@@ -7,12 +7,12 @@ from typing import Final
 from urllib.parse import urlparse
 
 import requests
-from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed import iterators
+from radiofeed.client import http_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
 
@@ -53,7 +53,6 @@ def search(search_term: str) -> list[Feed]:
     if (feeds := cache.get(cache_key)) is None:
         feeds = list(
             _parse_feeds(
-                _get_session(),
                 "https://itunes.apple.com/search",
                 {
                     "term": search_term,
@@ -88,7 +87,6 @@ class Crawler:
         self._location = location
         self._feed_ids: set[str] = set()
         self._parser = _itunes_parser()
-        self._session = _get_session()
 
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the
@@ -101,11 +99,12 @@ class Crawler:
             return [
                 href
                 for href in self._parse_urls(
-                    _get_response(
-                        self._session,
+                    http_client()
+                    .get(
                         f"https://itunes.apple.com/{self._location}/genre/podcasts/id26",
                         allow_redirects=True,
-                    ).content
+                    )
+                    .content
                 )
                 if href.startswith(
                     f"https://podcasts.apple.com/{self._location}/genre/podcasts"
@@ -123,7 +122,6 @@ class Crawler:
             _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
             yield from _parse_feeds(
-                self._session,
                 "https://itunes.apple.com/lookup",
                 {
                     "id": ",".join(_feed_ids),
@@ -142,11 +140,7 @@ class Crawler:
                 for podcast_id in (
                     self._parse_podcast_id(href)
                     for href in self._parse_urls(
-                        _get_response(
-                            self._session,
-                            url,
-                            allow_redirects=True,
-                        ).content
+                        http_client().get(url, allow_redirects=True).content
                     )
                     if href.startswith(
                         f"https://podcasts.apple.com/{self._location}/podcast/"
@@ -172,29 +166,16 @@ class Crawler:
         return None
 
 
-def _get_session() -> requests.Session:
-    session = requests.Session()
-    session.headers.update({"User-Agent": settings.USER_AGENT})
-    return session
-
-
-def _get_response(session: requests.Session, url: str, **kwargs) -> requests.Response:
-    response = session.get(url, timeout=10, **kwargs)
-    response.raise_for_status()
-    return response
-
-
-def _parse_feeds(
-    session: requests.Session, url: str, params: dict | None = None
-) -> Iterator[Feed]:
+def _parse_feeds(url: str, params: dict | None = None) -> Iterator[Feed]:
     for batch in iterators.batcher(
         _build_feeds_from_json(
-            _get_response(
-                session,
+            http_client()
+            .get(
                 url,
-                params=params,
+                params,
                 headers={"Accept": "application/json"},
-            ).json()
+            )
+            .json()
         ),
         100,
     ):
