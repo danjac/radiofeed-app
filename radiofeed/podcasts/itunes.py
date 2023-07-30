@@ -12,7 +12,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed import iterators
-from radiofeed.client import http_client
+from radiofeed.client import HTTPClient, http_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
 
@@ -51,15 +51,17 @@ def search(search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
-        feeds = list(
-            _parse_feeds(
-                "https://itunes.apple.com/search",
-                {
-                    "term": search_term,
-                    "media": "podcast",
-                },
+        with http_client() as client:
+            feeds = list(
+                _parse_feeds(
+                    client,
+                    "https://itunes.apple.com/search",
+                    {
+                        "term": search_term,
+                        "media": "podcast",
+                    },
+                )
             )
-        )
         cache.set(cache_key, feeds)
     return feeds
 
@@ -91,20 +93,19 @@ class Crawler:
     def crawl(self) -> Iterator[Feed]:
         """Crawls through location and finds new feeds, adding any new podcasts to the
         database."""
-        for url in self._parse_genre_urls():
-            yield from self._parse_genre_url(url)
+        with http_client() as client:
+            for url in self._parse_genre_urls(client):
+                yield from self._parse_genre_url(client, url)
 
-    def _parse_genre_urls(self) -> list[str]:
+    def _parse_genre_urls(self, client: HTTPClient) -> list[str]:
         try:
             return [
                 href
                 for href in self._parse_urls(
-                    http_client()
-                    .get(
+                    client.get(
                         f"https://itunes.apple.com/{self._location}/genre/podcasts/id26",
                         allow_redirects=True,
-                    )
-                    .content
+                    ).content
                 )
                 if href.startswith(
                     f"https://podcasts.apple.com/{self._location}/genre/podcasts"
@@ -113,15 +114,16 @@ class Crawler:
         except requests.RequestException:
             return []
 
-    def _parse_genre_url(self, url: str) -> Iterator[Feed]:
-        for feed_ids in iterators.batcher(self._parse_podcast_ids(url), 100):
-            yield from self._parse_feeds(feed_ids)
+    def _parse_genre_url(self, client: HTTPClient, url: str) -> Iterator[Feed]:
+        for feed_ids in iterators.batcher(self._parse_podcast_ids(client, url), 100):
+            yield from self._parse_feeds(client, feed_ids)
 
-    def _parse_feeds(self, feed_ids: list[str]) -> Iterator[Feed]:
+    def _parse_feeds(self, client: HTTPClient, feed_ids: list[str]) -> Iterator[Feed]:
         try:
             _feed_ids: set[str] = set(feed_ids) - self._feed_ids
 
             yield from _parse_feeds(
+                client,
                 "https://itunes.apple.com/lookup",
                 {
                     "id": ",".join(_feed_ids),
@@ -133,14 +135,14 @@ class Crawler:
         except requests.RequestException:
             return
 
-    def _parse_podcast_ids(self, url: str) -> list[str]:
+    def _parse_podcast_ids(self, client: HTTPClient, url: str) -> list[str]:
         try:
             return [
                 podcast_id
                 for podcast_id in (
                     self._parse_podcast_id(href)
                     for href in self._parse_urls(
-                        http_client().get(url, allow_redirects=True).content
+                        client.get(url, allow_redirects=True).content
                     )
                     if href.startswith(
                         f"https://podcasts.apple.com/{self._location}/podcast/"
@@ -166,16 +168,16 @@ class Crawler:
         return None
 
 
-def _parse_feeds(url: str, params: dict | None = None) -> Iterator[Feed]:
+def _parse_feeds(
+    client: HTTPClient, url: str, params: dict | None = None
+) -> Iterator[Feed]:
     for batch in iterators.batcher(
         _build_feeds_from_json(
-            http_client()
-            .get(
+            client.get(
                 url,
                 params,
                 headers={"Accept": "application/json"},
-            )
-            .json()
+            ).json()
         ),
         100,
     ):

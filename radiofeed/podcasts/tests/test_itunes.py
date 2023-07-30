@@ -28,10 +28,6 @@ class MockResponse:
         self.json_data = json
         self.exception = exception
 
-    def raise_for_status(self):
-        if self.exception:
-            raise self.exception
-
     def json(self):
         return self.json_data
 
@@ -39,7 +35,7 @@ class MockResponse:
 @pytest.fixture()
 def mock_good_response(mocker):
     return mocker.patch(
-        "requests.Session.get",
+        "radiofeed.client.HTTPClient.get",
         return_value=MockResponse(
             json={
                 "results": [MOCK_RESULT],
@@ -51,17 +47,15 @@ def mock_good_response(mocker):
 @pytest.fixture()
 def mock_bad_response(mocker):
     return mocker.patch(
-        "requests.Session.get",
-        return_value=MockResponse(
-            exception=requests.RequestException("fail"),
-        ),
+        "radiofeed.client.HTTPClient.get",
+        side_effect=requests.RequestException("fail"),
     )
 
 
 @pytest.fixture()
 def mock_invalid_response(mocker):
     return mocker.patch(
-        "requests.Session.get",
+        "radiofeed.client.HTTPClient.get",
         return_value=MockResponse(
             json={
                 "results": [
@@ -90,7 +84,7 @@ class TestCrawl:
 
             return MockResponse()
 
-        mocker.patch("requests.Session.get", _mock_get)
+        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -106,11 +100,11 @@ class TestCrawl:
                 return MockResponse(mock_file="podcasts.html")
 
             if "/genre/podcasts" in url:
-                return MockResponse(exception=requests.RequestException("oops"))
+                raise requests.RequestException("oops")
 
             return MockResponse()
 
-        mocker.patch("requests.Session.get", _mock_get)
+        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -120,7 +114,7 @@ class TestCrawl:
     def test_crawl_with_parse_feeds_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
-                return MockResponse(exception=requests.RequestException("oops"))
+                raise requests.RequestException("oops")
 
             if url.endswith("/genre/podcasts/id26"):
                 return MockResponse(mock_file="podcasts.html")
@@ -130,7 +124,7 @@ class TestCrawl:
 
             return MockResponse()
 
-        mocker.patch("requests.Session.get", _mock_get)
+        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -143,14 +137,14 @@ class TestCrawl:
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
             if url.endswith("/genre/podcasts/id26"):
-                return MockResponse(exception=requests.RequestException("oops"))
+                raise requests.RequestException("oops")
 
             if "/genre/podcasts" in url:
                 return MockResponse(mock_file="genre.html")
 
             return MockResponse()
 
-        mocker.patch("requests.Session.get", _mock_get)
+        mocker.patch("radiofeed.client.HTTPClient.get", _mock_get)
 
         list(itunes.crawl())
 
@@ -199,7 +193,7 @@ class TestSearch:
             ],
         )
 
-        mock_get = mocker.patch("requests.Session.get")
+        mock_get = mocker.patch("radiofeed.client.HTTPClient.get")
 
         feeds = itunes.search("test")
 

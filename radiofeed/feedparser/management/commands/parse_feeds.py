@@ -5,6 +5,7 @@ from concurrent.futures import wait
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 
+from radiofeed.client import HTTPClient, http_client
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.futures import DatabaseSafeThreadPoolExecutor
@@ -35,9 +36,9 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
         while True:
-            with DatabaseSafeThreadPoolExecutor() as executor:
+            with http_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
                 futures = executor.db_safe_map(
-                    self._parse_feed,
+                    lambda podcast_id: self._parse_feed(client, podcast_id),
                     self._get_scheduled_podcast_ids(
                         options["limit"],
                     ),
@@ -62,10 +63,10 @@ class Command(BaseCommand):
             .distinct()[:limit]
         )
 
-    def _parse_feed(self, podcast_id: int) -> None:
+    def _parse_feed(self, client: HTTPClient, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)
         try:
-            feed_parser.FeedParser(podcast).parse()
+            feed_parser.FeedParser(podcast).parse(client)
             self.stdout.write(self.style.SUCCESS(f"parse feed ok: {podcast}"))
         except FeedParserError as e:
             self.stderr.write(
