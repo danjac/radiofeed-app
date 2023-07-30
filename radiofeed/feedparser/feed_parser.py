@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed import iterators, tokenizer
+from radiofeed.client import http_client
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -123,30 +124,28 @@ class FeedParser:
 
     def _get_response(self) -> requests.Response:
         try:
-            response = requests.get(
+            response = http_client().get(
                 self._podcast.rss,
                 timeout=10,
                 allow_redirects=True,
                 headers=self._get_feed_headers(),
             )
 
-            match response.status_code:
-                case 304:
-                    raise NotModifiedError
-
-                case value if value in (
-                    401,
-                    403,
-                    404,
-                    405,
-                    410,
-                ):
-                    raise InaccessibleError
-
-            # check for any other http errors
-            response.raise_for_status()
+            if response.status_code == 304:
+                raise NotModifiedError
 
             return response
+
+        except requests.HTTPError as e:
+            if e.response.status_code in (
+                401,
+                403,
+                404,
+                405,
+                410,
+            ):
+                raise InaccessibleError from e
+            raise UnavailableError from e
 
         except requests.RequestException as e:
             raise UnavailableError from e
