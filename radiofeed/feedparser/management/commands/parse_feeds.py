@@ -3,7 +3,7 @@ from concurrent.futures import wait
 
 import httpx
 from django.core.management.base import BaseCommand
-from django.db.models import Count, F
+from django.db.models import Count, F, QuerySet
 
 from radiofeed.client import http_client
 from radiofeed.feedparser import feed_parser, scheduler
@@ -39,8 +39,8 @@ class Command(BaseCommand):
         while True:
             with http_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
                 futures = executor.db_safe_map(
-                    lambda podcast_id: self._parse_feed(client, podcast_id),
-                    self._get_scheduled_podcast_ids(options["limit"]),
+                    lambda podcast: self._parse_feed(client, podcast),
+                    self._get_scheduled_podcasts(options["limit"]),
                 )
 
             self.stdout.write("waiting to complete...")
@@ -50,8 +50,8 @@ class Command(BaseCommand):
             if not options["watch"]:
                 break
 
-    def _get_scheduled_podcast_ids(self, limit: int) -> set[int]:
-        return set(
+    def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
+        return (
             scheduler.get_scheduled_podcasts()
             .alias(subscribers=Count("subscriptions"))
             .filter(active=True)
@@ -59,12 +59,10 @@ class Command(BaseCommand):
                 F("subscribers").desc(),
                 F("promoted").desc(),
                 F("parsed").asc(nulls_first=True),
-            )
-            .values_list("pk", flat=True)[:limit]
+            )[:limit]
         )
 
-    def _parse_feed(self, client: httpx.Client, podcast_id: int) -> None:
-        podcast = Podcast.objects.get(pk=podcast_id)
+    def _parse_feed(self, client: httpx.Client, podcast: Podcast) -> None:
         self.stdout.write(f"parsing feed {podcast}")
         try:
             feed_parser.FeedParser(podcast).parse(client)
