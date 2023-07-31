@@ -1,7 +1,6 @@
 import functools
 import hashlib
 from collections.abc import Iterator
-from typing import Final
 
 import attrs
 import httpx
@@ -26,16 +25,6 @@ from radiofeed.feedparser.exceptions import (
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 
-_ACCEPT: Final = (
-    "application/atom+xml,"
-    "application/rdf+xml,"
-    "application/rss+xml,"
-    "application/x-netcdf,"
-    "application/xml;q=0.9,"
-    "text/xml;q=0.2,"
-    "*/*;q=0.1"
-)
-
 
 @functools.cache
 def get_categories() -> dict[str, Category]:
@@ -58,6 +47,16 @@ class FeedParser:
 
     _feed_attrs = attrs.fields(Feed)
     _item_attrs = attrs.fields(Item)
+
+    _accept_header: str = (
+        "application/atom+xml,"
+        "application/rdf+xml,"
+        "application/rss+xml,"
+        "application/x-netcdf,"
+        "application/xml;q=0.9,"
+        "text/xml;q=0.2,"
+        "*/*;q=0.1"
+    )
 
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
@@ -124,7 +123,6 @@ class FeedParser:
         try:
             response = client.get(
                 self._podcast.rss,
-                timeout=10,
                 follow_redirects=True,
                 headers=self._get_feed_headers(),
             )
@@ -136,12 +134,14 @@ class FeedParser:
             if e.response.is_client_error:
                 raise InaccessibleError from e
             raise UnavailableError from e
+
         except httpx.HTTPError as e:
             raise UnavailableError from e
+
         return response
 
     def _get_feed_headers(self) -> dict[str, str]:
-        headers = {"Accept": _ACCEPT}
+        headers = {"Accept": self._accept_header}
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:
