@@ -190,13 +190,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
     try:
         with http_client(timeout=5) as client:
-            response = client.get(
-                cover_url,
-                headers={
-                    "User-Agent": settings.USER_AGENT,
-                },
-                follow_redirects=True,
-            )
+            response = client.get(cover_url, follow_redirects=True)
 
         response.raise_for_status()
 
