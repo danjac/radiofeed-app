@@ -6,6 +6,7 @@ from typing import Final
 from urllib.parse import urlparse
 
 import httpx
+import lxml
 from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
@@ -104,55 +105,50 @@ class ItunesLocaleParser:
         """Parses feeds from specific locale."""
         for feed_ids in iterators.batcher(self._parse_feed_ids(), 100):
             try:
-                response = self._get_response(
-                    "https://itunes.apple.com/lookup",
-                    params={
-                        "id": ",".join(feed_ids),
-                        "entity": "podcast",
-                    },
-                    headers={
-                        "Accept": "application/json",
-                    },
+                yield from _parse_feeds(
+                    self._get_response(
+                        "https://itunes.apple.com/lookup",
+                        params={
+                            "id": ",".join(feed_ids),
+                            "entity": "podcast",
+                        },
+                        headers={
+                            "Accept": "application/json",
+                        },
+                    )
                 )
             except httpx.HTTPError:
                 continue
-            yield from _parse_feeds(response)
 
     def _parse_feed_ids(self) -> Iterator[str]:
-        try:
-            for url in self._parse_urls(
-                f"https://itunes.apple.com/{self._locale}/genre/podcasts/id26",
-                f"https://podcasts.apple.com/{self._locale}/genre/podcasts",
-            ):
-                yield from self._parse_feed_ids_in_category(url)
-        except httpx.HTTPError:
-            return
+        for url in self._parse_urls(
+            f"https://itunes.apple.com/{self._locale}/genre/podcasts/id26",
+            f"https://podcasts.apple.com/{self._locale}/genre/podcasts",
+        ):
+            yield from self._parse_feed_ids_in_category(url)
 
     def _parse_feed_ids_in_category(self, url: str) -> Iterator[str]:
-        try:
-            for href in self._parse_urls(
-                url,
-                f"https://podcasts.apple.com/{self._locale}/podcast/",
-            ):
-                if feed_id := _parse_feed_id(href):
-                    yield feed_id
-        except httpx.HTTPError:
-            return
+        for href in self._parse_urls(
+            url,
+            f"https://podcasts.apple.com/{self._locale}/podcast/",
+        ):
+            if feed_id := _parse_feed_id(href):
+                yield feed_id
 
     def _parse_urls(self, url: str, startswith: str) -> Iterator[str]:
         try:
             response = self._get_response(url, follow_redirects=True)
-        except httpx.HTTPError:
+            for element in self._parser.iterparse(
+                response.content, "{http://www.apple.com/itms/}html", "/apple:html"
+            ):
+                try:
+                    for url in self._parser.itertext(element, "//a//@href"):
+                        if url.startswith(startswith):
+                            yield url
+                finally:
+                    element.clear()
+        except (httpx.HTTPError, lxml.etree.XMLSyntaxError):
             return
-        for element in self._parser.iterparse(
-            response.content, "{http://www.apple.com/itms/}html", "/apple:html"
-        ):
-            try:
-                for url in self._parser.itertext(element, "//a//@href"):
-                    if url.startswith(startswith):
-                        yield url
-            finally:
-                element.clear()
 
     def _get_response(
         self,
