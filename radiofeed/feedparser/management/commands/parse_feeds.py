@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from collections.abc import Iterator
 from concurrent.futures import wait
 
 import httpx
@@ -41,9 +40,7 @@ class Command(BaseCommand):
             with http_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
                 futures = executor.db_safe_map(
                     lambda podcast_id: self._parse_feed(client, podcast_id),
-                    self._get_scheduled_podcast_ids(
-                        options["limit"],
-                    ),
+                    self._get_scheduled_podcast_ids(options["limit"]),
                 )
 
             self.stdout.write("waiting to complete...")
@@ -53,8 +50,8 @@ class Command(BaseCommand):
             if not options["watch"]:
                 break
 
-    def _get_scheduled_podcast_ids(self, limit: int) -> Iterator[int]:
-        return (
+    def _get_scheduled_podcast_ids(self, limit: int) -> set[int]:
+        return set(
             scheduler.get_scheduled_podcasts()
             .alias(subscribers=Count("subscriptions"))
             .filter(active=True)
@@ -63,8 +60,7 @@ class Command(BaseCommand):
                 F("promoted").desc(),
                 F("parsed").asc(nulls_first=True),
             )
-            .values_list("pk", flat=True)
-            .distinct()[:limit]
+            .values_list("pk", flat=True)[:limit]
         )
 
     def _parse_feed(self, client: httpx.Client, podcast_id: int) -> None:
