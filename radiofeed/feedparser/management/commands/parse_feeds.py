@@ -46,7 +46,9 @@ class Command(BaseCommand):
                     ),
                 )
 
+            self.stdout.write("waiting to complete...")
             wait(futures)
+            self.stdout.write("done")
 
             if not options["watch"]:
                 break
@@ -67,6 +69,7 @@ class Command(BaseCommand):
 
     def _parse_feed(self, client: httpx.Client, podcast_id: int) -> None:
         podcast = Podcast.objects.get(pk=podcast_id)
+        self.stdout.write(f"parsing feed {podcast}")
         try:
             feed_parser.FeedParser(podcast).parse(client)
             self.stdout.write(self.style.SUCCESS(f"parse feed ok: {podcast}"))
