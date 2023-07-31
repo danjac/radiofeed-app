@@ -101,6 +101,8 @@ class ItunesLocaleParser:
         self._parser = parser
         self._locale = locale
 
+        self._feed_ids: set[str] = set()
+
     def parse(self) -> Iterator[Feed]:
         """Parses feeds from specific locale."""
         for feed_ids in iterators.batcher(self._parse_feed_ids(), 100):
@@ -127,17 +129,18 @@ class ItunesLocaleParser:
         ):
             yield from self._parse_feed_ids_in_category(url)
 
-    def _parse_feed_ids_in_category(self, url: str) -> Iterator[str]:
-        for href in self._parse_urls(
-            url,
+    def _parse_feed_ids_in_category(self, page_url: str) -> Iterator[str]:
+        for url in self._parse_urls(
+            page_url,
             f"https://podcasts.apple.com/{self._locale}/podcast/",
         ):
-            if feed_id := _parse_feed_id(href):
+            if (feed_id := _parse_feed_id(url)) and feed_id not in self._feed_ids:
+                self._feed_ids.add(feed_id)
                 yield feed_id
 
-    def _parse_urls(self, url: str, startswith: str) -> Iterator[str]:
+    def _parse_urls(self, page_url: str, startswith: str) -> Iterator[str]:
         try:
-            response = self._get_response(url, follow_redirects=True)
+            response = self._get_response(page_url, follow_redirects=True)
             for element in self._parser.iterparse(
                 response.content, "{http://www.apple.com/itms/}html", "/apple:html"
             ):
