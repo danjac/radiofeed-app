@@ -95,7 +95,7 @@ class TestCrawl:
         assert Podcast.objects.count() == 1
 
     @pytest.mark.django_db()
-    def test_crawl_with_parse_genre_error(self, mocker):
+    def test_crawl_with_category_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
@@ -103,7 +103,7 @@ class TestCrawl:
             if url.endswith("/genre/podcasts/id26"):
                 return MockResponse(mock_file="podcasts.html")
 
-            if "/genre/podcasts" in url:
+            if "genre/podcasts-arts" in url:
                 raise httpx.HTTPError("oops")
 
             return MockResponse()
@@ -115,7 +115,7 @@ class TestCrawl:
         assert Podcast.objects.count() == 0
 
     @pytest.mark.django_db()
-    def test_crawl_with_parse_feeds_error(self, mocker):
+    def test_crawl_with_api_lookup_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 raise httpx.HTTPError("oops")
@@ -123,7 +123,7 @@ class TestCrawl:
             if url.endswith("/genre/podcasts/id26"):
                 return MockResponse(mock_file="podcasts.html")
 
-            if "/genre/podcasts" in url:
+            if "/genre/podcasts-" in url:
                 return MockResponse(mock_file="genre.html")
 
             return MockResponse()
@@ -135,7 +135,7 @@ class TestCrawl:
         assert Podcast.objects.count() == 0
 
     @pytest.mark.django_db()
-    def test_crawl_with_podcasts_url_error(self, mocker):
+    def test_crawl_with_parse_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
