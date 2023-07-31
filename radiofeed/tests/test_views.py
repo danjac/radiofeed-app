@@ -80,7 +80,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("httpx.Client.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
@@ -102,7 +102,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 raise httpx.HTTPError("invalid")
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mocker.patch("httpx.Client.get", return_value=MockResponse())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
     @pytest.mark.django_db()
@@ -113,7 +113,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("requests.get", return_value=MockResponse())
+        mocker.patch("httpx.Client.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", side_effect=IOError())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 

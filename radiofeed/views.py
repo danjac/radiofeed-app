@@ -15,6 +15,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
+from radiofeed.client import http_client
 from radiofeed.template import COVER_IMAGE_SIZES
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
@@ -188,14 +189,14 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         raise Http404 from e
 
     try:
-        response = httpx.get(
-            cover_url,
-            headers={
-                "User-Agent": settings.USER_AGENT,
-            },
-            follow_redirects=True,
-            timeout=5,
-        )
+        with http_client(timeout=5) as client:
+            response = client.get(
+                cover_url,
+                headers={
+                    "User-Agent": settings.USER_AGENT,
+                },
+                follow_redirects=True,
+            )
 
         response.raise_for_status()
 

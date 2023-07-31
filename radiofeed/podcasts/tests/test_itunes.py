@@ -39,7 +39,7 @@ class MockResponse:
 @pytest.fixture()
 def mock_good_response(mocker):
     return mocker.patch(
-        "httpx.get",
+        "httpx.Client.get",
         return_value=MockResponse(
             json={
                 "results": [MOCK_RESULT],
@@ -51,7 +51,7 @@ def mock_good_response(mocker):
 @pytest.fixture()
 def mock_bad_response(mocker):
     return mocker.patch(
-        "httpx.get",
+        "httpx.Client.get",
         side_effect=httpx.HTTPError("fail"),
     )
 
@@ -59,7 +59,7 @@ def mock_bad_response(mocker):
 @pytest.fixture()
 def mock_invalid_response(mocker):
     return mocker.patch(
-        "httpx.get",
+        "httpx.Client.get",
         return_value=MockResponse(
             json={
                 "results": [
@@ -197,7 +197,7 @@ class TestSearch:
             ],
         )
 
-        mock_get = mocker.patch("httpx.get")
+        mock_get = mocker.patch("httpx.Client.get")
 
         feeds = itunes.search("test")
 

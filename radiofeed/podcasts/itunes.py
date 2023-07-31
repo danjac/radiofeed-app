@@ -7,12 +7,12 @@ from urllib.parse import urlparse
 
 import httpx
 import lxml
-from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed import iterators
+from radiofeed.client import http_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
 
@@ -51,18 +51,17 @@ def search(search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
-        response = httpx.get(
-            "https://itunes.apple.com/search",
-            params={
-                "term": search_term,
-                "media": "podcast",
-            },
-            headers={
-                "Accept": "application/json",
-                "User-Agent": settings.USER_AGENT,
-            },
-            timeout=10,
-        )
+        with http_client() as client:
+            response = client.get(
+                "https://itunes.apple.com/search",
+                params={
+                    "term": search_term,
+                    "media": "podcast",
+                },
+                headers={
+                    "Accept": "application/json",
+                },
+            )
         response.raise_for_status()
         feeds = list(_parse_feeds(response))
         cache.set(cache_key, feeds)
@@ -80,11 +79,7 @@ def crawl() -> Iterator[Feed]:
 
     parser = XMLParser({"apple": "http://www.apple.com/itms/"})
 
-    with httpx.Client(
-        headers={
-            "User-Agent": settings.USER_AGENT,
-        }
-    ) as client:
+    with http_client() as client:
         for locale in _ITUNES_LOCALES:
             yield from ItunesLocaleParser(
                 client=client,
@@ -158,14 +153,12 @@ class ItunesLocaleParser:
         url,
         params: dict | None = None,
         headers: dict | None = None,
-        timeout: int = 10,
         **kwargs,
     ):
         response = self._client.get(
             url,
             params=params,
             headers=headers,
-            timeout=timeout,
             **kwargs,
         )
         response.raise_for_status()
