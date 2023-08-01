@@ -43,9 +43,7 @@ class Command(BaseCommand):
                     self._get_scheduled_podcasts(options["limit"]),
                 )
 
-            self.stdout.write("waiting to complete...")
-            wait(futures)
-            self.stdout.write("done")
+                wait(futures)
 
             if not options["watch"]:
                 break
