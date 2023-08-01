@@ -24,19 +24,22 @@
                 {% if user.is_authenticated %}
                     <li>
                         <a href="{% url 'users:preferences' %}"
+                           aria-label="Settings for {{ user.username }}"
                            title="Settings for {{ user.username }}"
                            class="flex items-center font-bold">{{ user.username|slice:12 }}</a>
                     </li>
                     <li class="flex items-center xl:hidden">
                         <button class="focus:outline-none transform transition"
-                                title="Toggle Menu"
+                                aria-label="Show Menu"
+                                title="Show Menu"
                                 x-cloak
                                 x-show.transition="!showMenu"
                                 @click="showMenu=true">
                             {% heroicon_outline "bars-3" size=30 title="Toggle Menu" %}
                         </button>
                         <button class="focus:outline-none transform transition"
-                                title="Toggle Menu"
+                                aria-label="Hide Menu"
+                                title="Hide Menu"
                                 x-cloak
                                 x-show.transition="showMenu"
                                 @click="showMenu=false"
@@ -47,6 +50,7 @@
                 {% else %}
                     <li>
                         <a href="{% url 'about' %}"
+                           aria-label="About this Site"
                            title="About this Site"
                            class="flex items-center font-bold space-x-2 hover:text-blue-300">
                             {% heroicon_outline "information-circle" size=30 title="Toggle Menu" %}

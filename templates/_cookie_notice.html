@@ -9,6 +9,8 @@
                 </p>
                 <div class="text-center md:text-start">
                     <button class="px-4 py-1 text-base border border-white btn btn-primary md:text-lg"
+                            aria-label="OK, I accept cookies"
+                            title="OK, I accept cookies"
                             hx-post="{% url 'accept_cookies' %}"
                             hx-target="#accept-cookies"
                             hx-push-url="false"
