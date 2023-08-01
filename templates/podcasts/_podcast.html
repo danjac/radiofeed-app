@@ -7,8 +7,10 @@
         {% cover_image podcast.cover_url 100 podcast.cleaned_title css_class="h-16 w-16 group-hover:grayscale" %}
         <div class="flex flex-col h-16 place-content-between">
             <h2 class="font-bold leading-tight tracking-tight break-words line-clamp-2"
+                aria-label="{{ podcast.cleaned_title }}"
                 title="{{ podcast.cleaned_title }}">
                 <a class="link group-hover:text-blue-600 dark:group-hover:text-blue-300"
+                   aria-label="{{ podcast.cleaned_title }}"
                    href="{{ podcast_url }}">{{ podcast.cleaned_title }}</a>
             </h2>
             <h3 class="text-xs font-semibold leading-tight tracking-tight text-gray-600 truncate w-60 md:w-96 md:text-sm dark:text-gray-300">

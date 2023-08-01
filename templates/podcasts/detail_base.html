@@ -18,6 +18,7 @@
                             <a class="{{ link.css }}"
                                href="{{ link.url }}"
                                {% if link.active %}aria-current="page"{% endif %}
+                               aria-label="{{ podcast.cleaned_title }} | About"
                                title="{{ podcast.cleaned_title }} | About">About</a>
                         </li>
                         {% if num_episodes %}
@@ -26,6 +27,7 @@
                                 <a class="{{ link.css }}"
                                    href="{{ link.url }}"
                                    {% if link.active %}aria-current="page"{% endif %}
+                                   aria-label="{{ podcast.cleaned_title }} | Episodes"
                                    title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
                             </li>
                         {% endif %}
@@ -43,6 +45,7 @@
                                 <a class="{{ link.css }}"
                                    href="{{ link.url }}"
                                    {% if link.active %}aria-current="page"{% endif %}
+                                   aria-label="{{ podcast.cleaned_title }} | Similar"
                                    title="{{ podcast.cleaned_title }} | Similar">Similar</a>
                             </li>
                         {% endif %}

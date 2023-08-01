@@ -35,9 +35,11 @@
                                         <div class="flex flex-col h-16 place-content-between">
                                             <a class="font-bold leading-tight tracking-tight break-words line-clamp-2 hover:text-blue-300"
                                                href="{{ episode.get_absolute_url }}"
+                                               aria-label="{{ episode.cleaned_title }}"
                                                title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
                                             <a class="text-xs leading-tight tracking-tight truncate w-60 lg:w-96 xl:w-128 md:text-sm hover:text-blue-300"
                                                href="{{ podcast.get_episodes_url }}"
+                                               aria-label="{{ podcast.cleaned_title }}: Episodes"
                                                title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title }}
                                             </a>
                                         </div>
@@ -47,6 +49,7 @@
                             <div class="flex flex-col h-16 sm:w-1/2 place-content-end sm:pl-3 space-y-2 sm:space-y-3">
                                 <div class="grid grid-cols-3 place-content-between">
                                     <div x-text="counters.current"
+                                         aria-label="Current Time"
                                          title="Current Time"
                                          class="flex items-center justify-start font-mono text-xs md:text-sm"
                                          :class="isPlaying ? '' : 'text-gray-300'"></div>
@@ -56,25 +59,29 @@
                                         <div class="flex items-center justify-center space-x-6"
                                              x-show="isLoaded"
                                              x-cloak>
-                                            <button title="Skip Back 10 Seconds"
+                                            <button aria-label="Skip Back 10 Seconds"
+                                                    title="Skip Back 10 Seconds"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="skipBack"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
                                                 {% heroicon_outline "backward" size=30 %}
                                             </button>
-                                            <button title="Play"
+                                            <button aria-label="Play"
+                                                    title="Play"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="!isPlaying">
                                                 {% heroicon_outline "play-circle" size=36 %}
                                             </button>
-                                            <button title="Pause"
+                                            <button aria-label="Pause"
+                                                    title="Pause"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="togglePlayPause"
                                                     x-show="isPlaying">
                                                 {% heroicon_outline "pause-circle" size=36 %}
                                             </button>
-                                            <button title="Skip Forward 10 Seconds"
+                                            <button aria-label="Skip Forward 10 Seconds"
+                                                    title="Skip Forward 10 Seconds"
                                                     class="{{ BUTTON_CSS }}"
                                                     @click="skipForward"
                                                     :class="isPlaying || '{{ INACTIVE_CSS }}'">
@@ -83,6 +90,7 @@
                                         </div>
                                     {% endwith %}
                                     <div x-text="counters.remaining"
+                                         aria-label="Time Remaining"
                                          title="Time Remaining"
                                          class="flex items-center justify-end font-mono text-xs md:text-sm"
                                          :class="isPlaying ? '' : 'text-gray-300'"></div>

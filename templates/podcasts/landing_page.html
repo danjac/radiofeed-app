@@ -15,7 +15,8 @@
             {% with css_class="h-28 w-28 md:h-48 md:w-48 xl:h-56 xl:w-56 hover:grayscale" %}
                 <a href="{{ podcast.get_absolute_url }}"
                    class="{{ css_class }}"
-                   title="{{ podcast.cleaned_title }}">
+                   title="{{ podcast.cleaned_title }}"
+                   aria-label="{{ podcast.cleaned_title }}">
                     {% cover_image podcast.cover_url 300 podcast.cleaned_title css_class=css_class %}
                 </a>
             {% endwith %}

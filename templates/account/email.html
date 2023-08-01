@@ -27,9 +27,11 @@
                                        name="email"
                                        {% if emailaddress.primary or num_addresses == 1 %}checked="checked"{% endif %}
                                        value="{{ emailaddress.email }}" />
-                                <span>{{ emailaddress.email }}</span>
                                 {% if emailaddress.verified %}
+                                    <span aria-label="Verified">{{ emailaddress.email }}</span>
                                     {% heroicon_mini "check" class="text-green-600" title="Verified" %}
+                                {% else %}
+                                    <span>{{ emailaddress.email }}</span>
                                 {% endif %}
                             </label>
                         </div>

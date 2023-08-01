@@ -47,6 +47,7 @@
     <article class="space-y-6">
         <h2 class="text-base md:text-lg xl:text-xl">
             <a href="{{ podcast.get_episodes_url }}"
+               aria-label="See all episodes for {{ podcast.cleaned_title }}"
                title="See all episodes for {{ podcast.cleaned_title }}"
                class="link">{{ podcast.cleaned_title }}</a>
         </h2>
@@ -69,7 +70,8 @@
                          hx-indicator="this"
                          hx-swap="outerHTML">
                         {% if is_playing %}
-                            <button title="Close Player"
+                            <button aria-label="Close Player"
+                                    title="Close Player"
                                     class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                     hx-post="{% url 'episodes:close_player' %}"
                                     hx-trigger="click once">
@@ -77,7 +79,8 @@
                                 Close
                             </button>
                         {% else %}
-                            <button title="Open Episode in Player"
+                            <button aria-label="Open Episode in Player"
+                                    title="Open Episode in Player"
                                     class="inline-flex items-center btn btn-primary btn-lg"
                                     hx-post="{% url 'episodes:start_player' episode.pk %}"
                                     hx-trigger="click once">
@@ -93,7 +96,8 @@
                          hx-swap="outerHTML"
                          hx-indicator="this">
                         {% if is_bookmarked %}
-                            <button title="Remove Bookmark"
+                            <button aria-label="Remove Bookmark"
+                                    title="Remove Bookmark"
                                     class="inline-flex items-center btn btn-default btn-outline"
                                     hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
                                     hx-trigger="click once">
@@ -101,7 +105,8 @@
                                 Bookmark
                             </button>
                         {% else %}
-                            <button title="Bookmark"
+                            <button aria-label="Bookmark"
+                                    title="Bookmark"
                                     class="inline-flex items-center btn btn-default"
                                     hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
                                     hx-trigger="click once">
@@ -113,6 +118,7 @@
                 {% endblock bookmark_button %}
                 <div class="flex flex-wrap items-center font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
                     <a download
+                       aria-label="Download audio file to your device"
                        title="Download audio file to your device"
                        href="{{ episode.media_url }}"
                        class="link">Download</a>
