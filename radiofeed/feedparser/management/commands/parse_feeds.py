@@ -38,12 +38,12 @@ class Command(BaseCommand):
 
         while True:
             with http_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
-                futures = executor.db_safe_map(
-                    lambda podcast: self._parse_feed(client, podcast),
-                    self._get_scheduled_podcasts(options["limit"]),
+                wait(
+                    executor.db_safe_map(
+                        lambda podcast: self._parse_feed(client, podcast),
+                        self._get_scheduled_podcasts(options["limit"]),
+                    )
                 )
-
-                wait(futures)
 
             if not options["watch"]:
                 break
