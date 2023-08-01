@@ -23,7 +23,7 @@ repos:
       hooks:
           - id: shellcheck
     - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: "v0.0.280"
+      rev: "v0.0.281"
       hooks:
           - id: ruff
             args: ["--fix"]
@@ -53,7 +53,7 @@ repos:
       hooks:
           - id: hadolint-docker
     - repo: https://github.com/asottile/pyupgrade
-      rev: v3.9.0
+      rev: v3.10.1
       hooks:
           - id: pyupgrade
             args: [--py311-plus]
