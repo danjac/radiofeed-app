@@ -1,6 +1,6 @@
 {# vim: set filetype=htmldjango #}
 {% with podcast_url=podcast.get_absolute_url %}
-    <article class="flex items-center py-2 cursor-pointer group space-x-3"
+    <article class="flex items-center cursor-pointer group space-x-3"
              role="link"
              hx-get="{{ podcast_url }}"
              hx-push-url="true">

@@ -1,0 +1,8 @@
+{% extends "_pagination.html" %}
+{% block pagination_item %}
+    {% if is_fk %}
+        {% include "episodes/_episode.html" with episode=item.episode %}
+    {% else %}
+        {% include "episodes/_episode.html" with episode=item %}
+    {% endif %}
+{% endblock pagination_item %}

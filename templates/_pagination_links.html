@@ -2,7 +2,6 @@
 {% if page_obj.has_other_pages %}
     <nav role="navigation"
          aria-label="Pagination"
-         class="py-2"
          hx-swap="outerHTML show:window:top"
          hx-target="#{{ pagination_target }}">
         <ul class="flex items-center justify-between">

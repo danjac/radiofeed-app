@@ -3,9 +3,11 @@
     {{ block.super }} | Similar
 {% endblock title %}
 {% block podcast_content %}
-    <div class="divide-y divide-solid">
-        {% for recommendation in recommendations %}
-            {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
-        {% endfor %}
-    </div>
+    <ul class="divide-y divide-solid">
+        <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
+            {% for recommendation in recommendations %}
+                {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
+            {% endfor %}
+        </li>
+    </ul>
 {% endblock podcast_content %}

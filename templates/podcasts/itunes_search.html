@@ -3,29 +3,33 @@
     | Search | iTunes
 {% endblock title %}
 {% block search_content %}
-    <div class="divide-y divide-solid">
-        {% for feed in feeds %}
-            {% if feed.podcast and feed.podcast.pub_date %}
-                {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
-            {% else %}
-                <article class="flex items-center py-2 space-x-3">
-                    {% cover_image feed.image 100 feed.title css_class="h-16 w-16" %}
-                    <div class="flex flex-col place-content-between h-14">
-                        <h2 class="font-bold leading-tight tracking-tight break-words line-clamp-2">
-                            <a title="{{ feed.title }}"
-                               aria-label="{{ feed.title }}"
-                               class="font-bold link"
-                               rel="noopener nofollow"
-                               href="{{ feed.url }}">{{ feed.title }}</a>
-                        </h2>
-                        <h3 class="text-xs font-semibold leading-tight tracking-tight text-gray-600 truncate w-60 md:w-96 md:text-sm dark:text-gray-300">
-                            <span class="animate-pulse">Adding podcast to database...</span>
-                        </h3>
-                    </div>
-                </article>
-            {% endif %}
-        {% empty %}
-            {% include "_empty.html" %}
-        {% endfor %}
-    </div>
+    {% if feeds %}
+        <ul class="divide-y divide-solid">
+            {% for feed in feeds %}
+                <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
+                    {% if feed.podcast and feed.podcast.pub_date %}
+                        {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
+                    {% else %}
+                        <article class="flex items-center space-x-3">
+                            {% cover_image feed.image 100 feed.title css_class="h-16 w-16" %}
+                            <div class="flex flex-col place-content-between h-14">
+                                <h2 class="font-bold leading-tight tracking-tight break-words line-clamp-2">
+                                    <a title="{{ feed.title }}"
+                                       aria-label="{{ feed.title }}"
+                                       class="font-bold link"
+                                       rel="noopener nofollow"
+                                       href="{{ feed.url }}">{{ feed.title }}</a>
+                                </h2>
+                                <h3 class="text-xs font-semibold leading-tight tracking-tight text-gray-600 truncate w-60 md:w-96 md:text-sm dark:text-gray-300">
+                                    <span class="animate-pulse">Adding podcast to database...</span>
+                                </h3>
+                            </div>
+                        </article>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {% include "_empty.html" %}
+    {% endif %}
 {% endblock search_content %}

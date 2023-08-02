@@ -12,6 +12,7 @@ module.exports = {
     content: ["./templates/**/*.html"],
     keyframes: true,
     variants: {
+        padding: ["first", "last"],
         textColor: ["responsive", "hover", "focus", "visited", "dark"],
     },
     plugins: [
