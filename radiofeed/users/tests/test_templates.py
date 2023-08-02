@@ -83,6 +83,7 @@ class TestAccount:
     def test_email(self, auth_req):
         create_email_address(user=auth_req.user, primary=True)
         create_email_address(user=auth_req.user, primary=False)
+        create_email_address(user=auth_req.user, primary=False, verified=False)
 
         assert get_template("account/email.html").render(
             {
