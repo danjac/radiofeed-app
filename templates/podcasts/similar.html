@@ -4,10 +4,10 @@
 {% endblock title %}
 {% block podcast_content %}
     <ul class="divide-y divide-solid">
-        <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
-            {% for recommendation in recommendations %}
+        {% for recommendation in recommendations %}
+            <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
                 {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
-            {% endfor %}
-        </li>
+            </li>
+        {% endfor %}
     </ul>
 {% endblock podcast_content %}
