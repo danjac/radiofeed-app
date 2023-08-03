@@ -10,7 +10,7 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed import iterators, tokenizer
+from radiofeed import batcher, tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -242,7 +242,7 @@ class FeedParser:
 
         # update existing content
 
-        for batch in iterators.batcher(self._episodes_for_update(feed, guids), 1000):
+        for batch in batcher.batch(self._episodes_for_update(feed, guids), 1000):
             Episode.objects.fast_update(
                 batch,
                 fields=[
@@ -264,7 +264,7 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in iterators.batcher(self._episodes_for_insert(feed, guids), 100):
+        for batch in batcher.batch(self._episodes_for_insert(feed, guids), 100):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _episodes_for_insert(

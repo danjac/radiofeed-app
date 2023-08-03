@@ -11,7 +11,7 @@ from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from radiofeed import iterators
+from radiofeed import batcher
 from radiofeed.client import http_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
@@ -100,7 +100,7 @@ class ItunesLocaleParser:
 
     def parse(self) -> Iterator[Feed]:
         """Parses feeds from specific locale."""
-        for feed_ids in iterators.batcher(self._parse_feed_ids(), 100):
+        for feed_ids in batcher.batch(self._parse_feed_ids(), 100):
             try:
                 yield from _parse_feeds(
                     self._get_response(
@@ -174,7 +174,7 @@ def _parse_feed_id(url: str) -> str | None:
 def _parse_feeds(
     response: httpx.Response,
 ) -> Iterator[Feed]:
-    for batch in iterators.batcher(
+    for batch in batcher.batch(
         _build_feeds_from_json(response.json()),
         100,
     ):
