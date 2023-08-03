@@ -1,6 +1,6 @@
-{% with has_other_pages=page_obj.has_other_pages %}
-    {% if page_obj.paginator.count %}
-        {% render "_pagination_links.html" as pagination_links %}
+{% if page_obj.paginator.count %}
+    {% render "_pagination_links.html" as pagination_links %}
+    {% with has_other_pages=page_obj.has_other_pages %}
         <ul class="divide-y divide-solid" id="{{ pagination_target }}">
             {% if has_other_pages %}<li class="pb-3">{{ pagination_links }}</li>{% endif %}
             {% for item in page_obj %}
@@ -11,8 +11,8 @@
                 </li>
             {% endfor %}
             {% if has_other_pages %}<li class="pt-3">{{ pagination_links }}</li>{% endif %}
-        </ul>
-    {% else %}
-        {% include "_empty.html" %}
-    {% endif %}
-{% endwith %}
+        {% endwith %}
+    </ul>
+{% else %}
+    {% include "_empty.html" %}
+{% endif %}
