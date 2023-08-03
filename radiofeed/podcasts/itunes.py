@@ -1,4 +1,5 @@
 import dataclasses
+import functools
 import itertools
 import re
 from collections.abc import Iterator
@@ -15,15 +16,6 @@ from radiofeed import batcher
 from radiofeed.client import http_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
-
-_ITUNES_LOCALES: Final = (
-    "de",
-    "fi",
-    "fr",
-    "gb",
-    "se",
-    "us",
-)
 
 _ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
 
@@ -73,30 +65,21 @@ def search_cache_key(search_term: str) -> str:
     return "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
 
 
-def crawl() -> Iterator[Feed]:
+def crawl(client: httpx.Client, locale: str) -> Iterator[Feed]:
     """Crawls iTunes podcast catalog and creates new Podcast instances from any new
     feeds found."""
-
-    parser = XMLParser({"apple": "http://www.apple.com/itms/"})
-
-    with http_client() as client:
-        for locale in _ITUNES_LOCALES:
-            yield from ItunesLocaleParser(
-                client=client,
-                parser=parser,
-                locale=locale,
-            ).parse()
+    return ItunesLocaleParser(client=client, locale=locale).parse()
 
 
 class ItunesLocaleParser:
     """Parses feeds from specific locale."""
 
-    def __init__(self, *, client: httpx.Client, parser: XMLParser, locale: str):
+    def __init__(self, *, client: httpx.Client, locale: str):
         self._client = client
-        self._parser = parser
         self._locale = locale
 
         self._feed_ids: set[str] = set()
+        self._parser = _itunes_parser()
 
     def parse(self) -> Iterator[Feed]:
         """Parses feeds from specific locale."""
@@ -215,3 +198,8 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
             )
         except KeyError:
             continue
+
+
+@functools.cache
+def _itunes_parser() -> XMLParser:
+    return XMLParser({"apple": "http://www.apple.com/itms/"})

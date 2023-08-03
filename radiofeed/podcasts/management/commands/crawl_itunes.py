@@ -1,6 +1,20 @@
+from typing import Final
+
+import httpx
 from django.core.management.base import BaseCommand
 
+from radiofeed.client import http_client
+from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts import itunes
+
+_LOCALES: Final = (
+    "de",
+    "fi",
+    "fr",
+    "gb",
+    "se",
+    "us",
+)
 
 
 class Command(BaseCommand):
@@ -10,6 +24,13 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         """Handle implementation."""
-        for feed in itunes.crawl():
+
+        with http_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
+            executor.db_safe_map(
+                lambda locale: self._crawl_feeds(client, locale), _LOCALES
+            )
+
+    def _crawl_feeds(self, client: httpx.Client, locale: str):
+        for feed in itunes.crawl(client, locale):
             style = self.style.SUCCESS if feed.podcast is None else self.style.NOTICE
             self.stdout.write(style(feed.title))

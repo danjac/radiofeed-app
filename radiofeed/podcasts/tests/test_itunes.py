@@ -90,7 +90,7 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl())
+        list(itunes.crawl(httpx.Client(), "us"))
 
         assert Podcast.objects.count() == 1
 
@@ -110,7 +110,7 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl())
+        list(itunes.crawl(httpx.Client(), "us"))
 
         assert Podcast.objects.count() == 0
 
@@ -130,7 +130,7 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl())
+        list(itunes.crawl(httpx.Client(), "us"))
 
         assert Podcast.objects.count() == 0
 
@@ -150,7 +150,7 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl())
+        list(itunes.crawl(httpx.Client(), "us"))
 
         assert Podcast.objects.count() == 0
 
