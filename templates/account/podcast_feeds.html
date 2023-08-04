@@ -12,7 +12,7 @@
         {% if user.subscriptions.exists %}
             <div class="space-y-3">
                 <h2 class="font-semibold">Export your podcast feeds to an OPML file.</h2>
-                <div class="items-center sm:flex space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-6">
+                <div class="items-center sm:flex space-y-3 sm:space-y-0 sm:space-x-2 md:space-x-6">
                     <a class="flex items-center justify-center sm:inline-flex btn btn-default"
                        href="{% url 'users:export_podcast_feeds' %}"
                        hx-disable="true">

@@ -13,7 +13,7 @@
                 Podcasts: {{ promoted|yesno:"Promotions,Subscriptions" }}
             </h1>
             <nav>
-                <ul class="items-center justify-between sm:flex space-y-2 sm:space-y-0">
+                <ul class="items-center justify-between sm:flex space-y-3 sm:space-y-0">
                     <li class="flex items-center justify-center sm:justify-start">
                         {% if promoted %}
                             <a href="{{ index_url }}" class="link">Subscriptions</a>
@@ -25,7 +25,7 @@
                 </ul>
             </nav>
         {% else %}
-            <div class="items-center justify-between sm:flex space-y-2 sm:space-y-0">
+            <div class="items-center justify-between sm:flex space-y-3 sm:space-y-0">
                 <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Podcasts</h1>
                 <div class="flex items-center justify-center sm:justify-end space-x-3">{{ search_form }}</div>
             </div>
