@@ -1,18 +1,20 @@
 {% extends "base.html" %}
+{% load cache %}
 {% block title %}
     | Categories
 {% endblock title %}
 {% block content %}
-    <header class="sm:flex justify-between items-center mb-3 space-y-3 sm:space-y-0 border-b pb-6">
+    <header class="sm:flex justify-between items-center mb-3 space-y-3 sm:space-y-0 border-b pb-3">
         <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">Categories</h1>
         <div class="flex items-center justify-center sm:justify-end space-x-3">
             {% include "_search_form.html" with placeholder="Search: Categories" %}
         </div>
     </header>
+    {% cache 600 categories request.get_full_path %}
     {% if categories %}
-        <ul class="space-y-3 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 md:grid-cols-3 {% endif %}">
+        <ul class="divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 md:grid-cols-3 {% endif %}">
             {% for category in categories %}
-                <li class="pt-3">
+                <li class="py-3">
                     <a href="{{ category.get_absolute_url }}"
                        class="link font-semibold md:text-lg w-full">
                         <h2>{{ category.name }}</h2>
@@ -29,4 +31,5 @@
             {% endif %}
         </p>
     {% endif %}
+{% endcache %}
 {% endblock content %}
