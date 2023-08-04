@@ -1,8 +1,21 @@
-{% extends "_pagination.html" %}
-{% block pagination_item %}
-    {% if is_fk %}
-        {% include "episodes/_episode.html" with episode=item.episode %}
-    {% else %}
-        {% include "episodes/_episode.html" with episode=item %}
-    {% endif %}
-{% endblock pagination_item %}
+{# vim: set filetype=htmldjango #}
+{% if page_obj.paginator.count %}
+    {% render "_pagination_links.html" as pagination_links %}
+    {% with has_other_pages=page_obj.has_other_pages %}
+        <ul class="divide-y divide-solid" id="{{ pagination_target }}">
+            {% if has_other_pages %}<li class="pb-3">{{ pagination_links }}</li>{% endif %}
+            {% for item in page_obj %}
+                <li class="py-3 first:pt-0 last:pb-0">
+                    {% if is_fk %}
+                        {% include "episodes/_episode.html" with episode=item.episode %}
+                    {% else %}
+                        {% include "episodes/_episode.html" with episode=item %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+            {% if has_other_pages %}<li class="pt-3">{{ pagination_links }}</li>{% endif %}
+        </ul>
+    {% endwith %}
+{% else %}
+    {% include "_empty.html" %}
+{% endif %}
