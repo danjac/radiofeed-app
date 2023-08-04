@@ -7,7 +7,7 @@
     {% url 'podcasts:index' as index_url %}
     {% url 'podcasts:search_podcasts' as search_podcasts_url %}
     {% render "_search_form.html" placeholder="Search: Podcasts" search_url=search_podcasts_url as search_form %}
-    <header class="pb-3 mb-3 border-b space-y-3">
+    <header class="pb-3 mb-3 border-b space-y-6">
         {% if has_subscriptions %}
             <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                 Podcasts: {{ promoted|yesno:"Promotions,Subscriptions" }}
@@ -25,7 +25,7 @@
                 </ul>
             </nav>
         {% else %}
-            <div class="items-center justify-between sm:flex space-y-3 sm:space-y-0">
+            <div class="items-center justify-between sm:flex space-y-6 sm:space-y-0">
                 <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Podcasts</h1>
                 <div class="flex items-center justify-center sm:justify-end space-x-3">{{ search_form }}</div>
             </div>
