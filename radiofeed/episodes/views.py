@@ -17,7 +17,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import render_htmx, require_auth, require_DELETE
-from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.pagination import render_paginated_list
 
@@ -118,7 +118,15 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     request.player.set(episode.id)
 
-    return _render_player_action(request, audio_log, is_playing=True)
+    return _render_episode_detail(
+        request,
+        episode,
+        {
+            "audio_log": audio_log,
+            "is_playing": True,
+            "start_player": True,
+        },
+    )
 
 
 @require_POST
@@ -137,7 +145,14 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_player_action(request, audio_log, is_playing=False)
+        return _render_episode_detail(
+            request,
+            audio_log.episode,
+            {
+                "audio_log": audio_log,
+                "is_playing": False,
+            },
+        )
 
     return HttpResponseNoContent()
 
@@ -236,7 +251,8 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "Added to Bookmarks")
-    return _render_bookmark_action(request, episode, is_bookmarked=True)
+
+    return _render_episode_detail(request, episode, {"is_bookmarked": True})
 
 
 @require_DELETE
@@ -248,7 +264,8 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     request.user.bookmarks.filter(episode=episode).delete()
 
     messages.info(request, "Removed from Bookmarks")
-    return _render_bookmark_action(request, episode, is_bookmarked=False)
+
+    return _render_episode_detail(request, episode, {"is_bookmarked": False})
 
 
 def _render_episode_detail(
@@ -262,31 +279,5 @@ def _render_episode_detail(
         {
             "episode": episode,
             **(extra_context or {}),
-        },
-    )
-
-
-def _render_bookmark_action(
-    request: HttpRequest, episode: Episode, *, is_bookmarked: bool
-) -> TemplateResponse:
-    return _render_episode_detail(
-        request,
-        episode,
-        {
-            "is_bookmarked": is_bookmarked,
-        },
-    )
-
-
-def _render_player_action(
-    request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
-) -> HttpResponse:
-    return _render_episode_detail(
-        request,
-        audio_log.episode,
-        {
-            "audio_log": audio_log,
-            "is_playing": is_playing,
-            "start_player": is_playing,
         },
     )
