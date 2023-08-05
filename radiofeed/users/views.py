@@ -7,14 +7,14 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import require_auth, require_form_methods
+from radiofeed.decorators import render_htmx, require_auth, require_form_methods
 from radiofeed.forms import handle_form
-from radiofeed.htmx import render_template_blocks
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
 @require_form_methods
 @require_auth
+@render_htmx(use_blocks="form", target="preferences-form")
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
 
@@ -26,12 +26,10 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseRedirect(reverse("users:preferences"))
 
-    return render_template_blocks(
+    return TemplateResponse(
         request,
         "account/preferences.html",
         {"form": form},
-        use_blocks="form",
-        target="preferences-form",
         status=result.status,
     )
 
@@ -51,6 +49,7 @@ def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_POST
 @require_auth
+@render_htmx(use_blocks="import_feeds_form", target="upload-form")
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
@@ -67,14 +66,12 @@ def import_podcast_feeds(
 
         return HttpResponseRedirect(reverse("users:manage_podcast_feeds"))
 
-    return render_template_blocks(
+    return TemplateResponse(
         request,
         "account/podcast_feeds.html",
         {
             "upload_form": form,
         },
-        use_blocks="import_feeds_form",
-        target="upload-form",
         status=result.status,
     )
 

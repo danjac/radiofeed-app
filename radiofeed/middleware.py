@@ -3,6 +3,8 @@ from collections.abc import Callable
 from urllib.parse import urlencode
 
 from django.contrib.messages import get_messages
+from django.core.paginator import Page, Paginator
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import force_str
@@ -125,6 +127,10 @@ class Pagination:
         qs = self.request.GET.copy()
         qs[self.param] = page_number
         return f"{self.request.path}?{qs.urlencode()}"
+
+    def get_page(self, object_list: QuerySet, page_size: int = 30, **kwargs) -> Page:
+        """Returns Page object for queryset based on current page."""
+        return Paginator(object_list, page_size).get_page(self.current, **kwargs)
 
 
 class Search:
