@@ -19,6 +19,7 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.decorators import render_htmx, require_auth, require_DELETE
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
+from radiofeed.pagination import render_pagination_response
 
 
 @require_safe
@@ -44,13 +45,13 @@ def index(request: HttpRequest) -> HttpResponse:
 
     episodes = episodes.filter(podcast__promoted=True) if promoted else subscribed
 
-    return TemplateResponse(
+    return render_pagination_response(
         request,
+        episodes,
         "episodes/index.html",
         {
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
-            "page_obj": request.pagination.get_page(episodes),
         },
     )
 
@@ -67,13 +68,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .select_related("podcast")
             .order_by("-rank", "-pub_date")
         )
-        return TemplateResponse(
-            request,
-            "episodes/search.html",
-            {
-                "page_obj": request.pagination.get_page(episodes),
-            },
-        )
+        return render_pagination_response(request, episodes, "episodes/search.html")
     return HttpResponseRedirect(reverse("episodes:index"))
 
 
@@ -188,13 +183,7 @@ def history(request: HttpRequest) -> TemplateResponse:
             "-listened" if request.ordering.is_desc else "listened"
         )
 
-    return TemplateResponse(
-        request,
-        "episodes/history.html",
-        {
-            "page_obj": request.pagination.get_page(audio_logs),
-        },
-    )
+    return render_pagination_response(request, audio_logs, "episodes/history.html")
 
 
 @require_DELETE
@@ -231,13 +220,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.ordering.is_desc else "created"
         )
 
-    return TemplateResponse(
-        request,
-        "episodes/bookmarks.html",
-        {
-            "page_obj": request.pagination.get_page(bookmarks),
-        },
-    )
+    return render_pagination_response(request, bookmarks, "episodes/bookmarks.html")
 
 
 @require_POST
