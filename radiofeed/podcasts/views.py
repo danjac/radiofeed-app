@@ -17,7 +17,7 @@ from radiofeed.decorators import (
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
 from radiofeed.http import HttpResponseConflict
-from radiofeed.pagination import render_pagination_response
+from radiofeed.pagination import render_paginated_list
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -64,7 +64,7 @@ def index(request: HttpRequest) -> TemplateResponse:
     promoted = "promoted" in request.GET or not has_subscriptions
     podcasts = podcasts.filter(promoted=True) if promoted else subscribed
 
-    return render_pagination_response(
+    return render_paginated_list(
         request,
         podcasts,
         "podcasts/index.html",
@@ -90,7 +90,7 @@ def search_podcasts(request: HttpRequest) -> TemplateResponse:
                 "-pub_date",
             )
         )
-        return render_pagination_response(request, podcasts, "podcasts/search.html")
+        return render_paginated_list(request, podcasts, "podcasts/search.html")
 
     return HttpResponseRedirect(reverse("podcasts:index"))
 
@@ -166,7 +166,7 @@ def episodes(
             "-pub_date" if request.ordering.is_desc else "pub_date"
         )
 
-    return render_pagination_response(
+    return render_paginated_list(
         request,
         episodes,
         "podcasts/episodes.html",
@@ -257,7 +257,7 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination_response(
+    return render_paginated_list(
         request,
         podcasts,
         "podcasts/category_detail.html",
@@ -319,7 +319,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination_response(request, podcasts, "podcasts/private_feeds.html")
+    return render_paginated_list(request, podcasts, "podcasts/private_feeds.html")
 
 
 @require_form_methods

@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.template.response import TemplateResponse
 
 
-def render_pagination_response(
+def render_paginated_list(
     request: HttpRequest,
     object_list: QuerySet,
     template_name: str,
