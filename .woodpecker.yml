@@ -1,0 +1,26 @@
+services:
+    database:
+        image: postgres:15.0-bullseye
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        # options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+steps:
+    frontend:
+        image: node:20-buster
+        commands:
+            - npm install
+            - npm run lint
+    backend:
+        image: python:3.11.4-buster
+        commands:
+            - sudo apt-get install libpq-dev
+            - pip install -r requirements-ci.txt
+            - python -m ruff radiofeed
+            - python -m djlint --lint templates/
+            - xargs python -m nltk.downloader < nltk.txt
+            - python -m pytest
