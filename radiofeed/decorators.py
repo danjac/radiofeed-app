@@ -16,6 +16,8 @@ require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 def render_htmx(*, use_blocks: list[str] | str, target: str | None = None) -> Callable:
     """Conditionally render blocks on HTMX request.
 
+    If the response is a `TemplateResponse` instance will render the content using only the selected blocks.
+
     If `target` is provided, will also try to match the `HX-Target` header.
     """
     if isinstance(use_blocks, str):
