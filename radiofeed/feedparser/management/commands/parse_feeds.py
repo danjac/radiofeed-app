@@ -64,7 +64,7 @@ class Command(BaseCommand):
         try:
             feed_parser.FeedParser(podcast).parse(client)
             self.stdout.write(self.style.SUCCESS(f"parse feed ok: {podcast}"))
-        except FeedParserError as e:
+        except FeedParserError as exc:
             self.stderr.write(
-                self.style.ERROR(f"parse feed {e.parser_error}: {podcast}")
+                self.style.ERROR(f"parse feed {exc.parser_error}: {podcast}")
             )

@@ -185,8 +185,8 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     # check cover url is legit
     try:
         cover_url = Signer().unsign(request.GET["url"])
-    except (KeyError, BadSignature) as e:
-        raise Http404 from e
+    except (KeyError, BadSignature) as exc:
+        raise Http404 from exc
 
     try:
         with http_client(timeout=5) as client:

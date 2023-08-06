@@ -87,8 +87,8 @@ class FeedParser:
             ):
                 raise DuplicateError
             feed = rss_parser.parse_rss(response.content)
-        except FeedParserError as e:
-            return self._handle_feed_error(e)
+        except FeedParserError as exc:
+            return self._handle_feed_error(exc)
 
         categories, keywords = self._extract_categories(feed)
 
@@ -128,15 +128,15 @@ class FeedParser:
             )
             response.raise_for_status()
 
-        except httpx.HTTPStatusError as e:
-            if e.response.is_redirect:
-                raise NotModifiedError from e
-            if e.response.is_client_error:
-                raise InaccessibleError from e
-            raise UnavailableError from e
+        except httpx.HTTPStatusError as exc:
+            if exc.response.is_redirect:
+                raise NotModifiedError from exc
+            if exc.response.is_client_error:
+                raise InaccessibleError from exc
+            raise UnavailableError from exc
 
-        except httpx.HTTPError as e:
-            raise UnavailableError from e
+        except httpx.HTTPError as exc:
+            raise UnavailableError from exc
 
         return response
 

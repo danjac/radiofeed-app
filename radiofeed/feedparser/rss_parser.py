@@ -47,12 +47,12 @@ class RSSParser:
             return self._parse_feed(
                 next(self._parser.iterparse(content, "rss", "channel"))
             )
-        except StopIteration as e:
+        except StopIteration as exc:
             raise InvalidRSSError(
                 "Document does not contain <channel /> element"
-            ) from e
-        except lxml.etree.XMLSyntaxError as e:
-            raise InvalidRSSError from e
+            ) from exc
+        except lxml.etree.XMLSyntaxError as exc:
+            raise InvalidRSSError from exc
 
     def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
         """Parse a RSS XML feed."""
@@ -83,8 +83,8 @@ class RSSParser:
                     title="title/text()",
                 ),
             )
-        except (TypeError, ValueError) as e:
-            raise InvalidRSSError from e
+        except (TypeError, ValueError) as exc:
+            raise InvalidRSSError from exc
         finally:
             channel.clear()
 
