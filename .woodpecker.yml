@@ -15,6 +15,9 @@ steps:
         commands:
             - npm install
             - npm run lint
+        when:
+            - event: push
+              branch: main
     backend:
         image: python:3.11.4-buster
         commands:
@@ -24,3 +27,6 @@ steps:
             - python -m djlint --lint templates/
             - xargs python -m nltk.downloader < nltk.txt
             - python -m pytest
+        when:
+            - event: push
+              branch: main
