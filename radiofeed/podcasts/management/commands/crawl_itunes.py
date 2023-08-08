@@ -8,12 +8,23 @@ from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts import itunes
 
 _LOCALES: Final = (
+    "ar",
+    "au",
+    "br",
+    "ca",
     "de",
+    "es",
     "fi",
     "fr",
     "gb",
+    "it",
+    "jp",
+    "no",
+    "nz",
+    "ru",
     "se",
     "us",
+    "za",
 )
 
 
