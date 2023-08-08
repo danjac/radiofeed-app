@@ -3,8 +3,6 @@ services:
         image: postgres:15.0-bullseye
         environment:
             POSTGRES_PASSWORD: password
-        volumes:
-            - pg_data:/var/lib/postgresql/data
         ports:
             - 5432:5432
 steps:
