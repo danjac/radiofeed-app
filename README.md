@@ -77,7 +77,7 @@ A Dockerfile is provided for standard container deployments e.g. on Dokku.
 
 Once you have access to the Django Admin, you should configure the default Site instance with the correct production name and domain.
 
-### Crons
+### Scheduling background tasks
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
 
