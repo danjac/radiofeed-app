@@ -2,9 +2,7 @@ services:
     database:
         image: postgres:15.0-bullseye
         environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: postgres
+            POSTGRES_PASSWORD: password
         ports:
             - 5432:5432
         # needed because the postgres container does not provide a healthcheck
