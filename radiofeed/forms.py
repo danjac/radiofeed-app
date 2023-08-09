@@ -12,7 +12,7 @@ class FormResult:
     is_valid: bool = False
 
     @property
-    def success(self) -> bool:
+    def ok(self) -> bool:
         """Returns `True` if form is bound and valid."""
         return self.is_bound and self.is_valid
 

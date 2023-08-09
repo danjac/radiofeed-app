@@ -20,7 +20,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
     form, result = handle_form(UserPreferencesForm, request, instance=request.user)
 
-    if result.success:
+    if result.ok:
         form.save()
         messages.success(request, "Your preferences have been saved")
 
