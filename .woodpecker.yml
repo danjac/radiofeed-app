@@ -3,8 +3,6 @@ services:
         image: postgres:15.0-bullseye
         environment:
             POSTGRES_PASSWORD: password
-        ports:
-            - 5432:5432
 steps:
     frontend:
         image: node:20-buster

@@ -10,6 +10,7 @@
 !.pylintrc
 !.sonarcloud.properties
 !.tern-project
+!.woodpecker.yml
 **/__pycache__
 **/tests
 .*
