@@ -81,6 +81,13 @@ class ItunesLocaleParser:
         self._feed_ids: set[str] = set()
         self._parser = _itunes_parser()
 
+        self._categories_pattern = re.compile(
+            rf"https://podcasts\.apple.com/{self._locale}/genre/podcasts/*."
+        )
+        self._podcasts_pattern = re.compile(
+            rf"https://podcasts\.apple.com/{self._locale}/podcast/*."
+        )
+
     def parse(self) -> Iterator[Feed]:
         """Parses feeds from specific locale."""
         for feed_ids in batcher.batch(self._parse_feed_ids(), 100):
@@ -102,30 +109,30 @@ class ItunesLocaleParser:
 
     def _parse_feed_ids(self) -> Iterator[str]:
         for url in self._parse_urls(
+            self._categories_pattern,
             f"https://itunes.apple.com/{self._locale}/genre/podcasts/id26",
-            f"https://podcasts.apple.com/{self._locale}/genre/podcasts",
         ):
             yield from self._parse_feed_ids_in_category(url)
 
     def _parse_feed_ids_in_category(self, page_url: str) -> Iterator[str]:
         for url in self._parse_urls(
+            self._podcasts_pattern,
             page_url,
-            f"https://podcasts.apple.com/{self._locale}/podcast/",
         ):
             if (feed_id := _parse_feed_id(url)) and feed_id not in self._feed_ids:
                 self._feed_ids.add(feed_id)
                 yield feed_id
 
-    def _parse_urls(self, page_url: str, startswith: str) -> Iterator[str]:
+    def _parse_urls(self, pattern: re.Pattern, url: str) -> Iterator[str]:
         try:
-            response = self._get_response(page_url, follow_redirects=True)
+            response = self._get_response(url, follow_redirects=True)
             for element in self._parser.iterparse(
                 response.content, "{http://www.apple.com/itms/}html", "/apple:html"
             ):
                 try:
-                    for url in self._parser.itertext(element, "//a//@href"):
-                        if url.startswith(startswith):
-                            yield url
+                    for href in self._parser.itertext(element, "//a//@href"):
+                        if pattern.match(href):
+                            yield href
                 finally:
                     element.clear()
         except (httpx.HTTPError, lxml.etree.XMLSyntaxError):
