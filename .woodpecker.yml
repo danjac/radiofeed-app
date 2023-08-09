@@ -21,6 +21,7 @@ steps:
             - python -m djlint --lint templates/
             - xargs python -m nltk.downloader < nltk.txt
             - sleep 15
+            - DATABASE_URL=postgresql://postgres:password@database:5432/postgres
             - python -m pytest
         when:
             - event: push
