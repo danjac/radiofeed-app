@@ -10,6 +10,7 @@ steps:
             - npm install
             - npm run lint
         when:
+            - event: pull_request
             - event: push
               branch: main
     backend:
