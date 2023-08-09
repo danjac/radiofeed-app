@@ -24,5 +24,6 @@ steps:
             - xargs python -m nltk.downloader < nltk.txt
             - python -m pytest
         when:
+            - event: pull_request
             - event: push
               branch: main
