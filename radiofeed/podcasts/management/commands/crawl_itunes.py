@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from typing import Final
 
 import httpx
@@ -7,22 +8,33 @@ from radiofeed.client import http_client
 from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts import itunes
 
-_LOCALES: Final = (
+_DEFAULT_LOCALES: Final = (
     "ar",
     "au",
     "br",
     "ca",
+    "cn",
     "de",
+    "eg",
     "es",
     "fi",
     "fr",
     "gb",
+    "hk",
+    "hu",
+    "il",
+    "in",
     "it",
     "jp",
     "no",
     "nz",
+    "pl",
     "ru",
     "se",
+    "th",
+    "tr",
+    "tw",
+    "ua",
     "us",
     "za",
 )
@@ -33,12 +45,21 @@ class Command(BaseCommand):
 
     help = """Crawls iTunes for new podcasts."""
 
+    def add_arguments(self, parser: ArgumentParser) -> None:
+        """Parse command args."""
+        parser.add_argument(
+            "--locales",
+            help="List of locales",
+            default=_DEFAULT_LOCALES,
+            nargs="+",
+        )
+
     def handle(self, **options):
         """Handle implementation."""
-
         with http_client() as client, DatabaseSafeThreadPoolExecutor() as executor:
             executor.db_safe_map(
-                lambda locale: self._crawl_feeds(client, locale), _LOCALES
+                lambda locale: self._crawl_feeds(client, locale),
+                options["locales"],
             )
 
     def _crawl_feeds(self, client: httpx.Client, locale: str):
