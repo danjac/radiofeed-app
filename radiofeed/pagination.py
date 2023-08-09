@@ -14,6 +14,7 @@ def render_pagination(
     target: str = "pagination",
 ) -> TemplateResponse:
     """Renders paginated object list."""
+
     return TemplateResponse(
         request,
         template_name,
