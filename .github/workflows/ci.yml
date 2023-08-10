@@ -1,9 +1,0 @@
-name: ci
-
-on:
-    pull_request:
-    workflow_dispatch:
-
-jobs:
-    runchecks:
-        uses: ./.github/workflows/checks.yml
