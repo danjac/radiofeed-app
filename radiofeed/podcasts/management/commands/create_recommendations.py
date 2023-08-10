@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 
 from radiofeed import tokenizer
-from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts import recommender
+from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 
 class Command(BaseCommand):

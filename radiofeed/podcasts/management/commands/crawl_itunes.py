@@ -5,8 +5,8 @@ import httpx
 from django.core.management.base import BaseCommand
 
 from radiofeed.client import http_client
-from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts import itunes
+from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 _DEFAULT_LOCALES: Final = (
     "ar",

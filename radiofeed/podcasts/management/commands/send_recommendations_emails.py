@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts import emails
+from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 from radiofeed.users.models import User
 
 

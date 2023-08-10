@@ -8,8 +8,8 @@ from django.db.models import Count, F, QuerySet
 from radiofeed.client import http_client
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.futures import DatabaseSafeThreadPoolExecutor
 from radiofeed.podcasts.models import Podcast
+from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 
 class Command(BaseCommand):
