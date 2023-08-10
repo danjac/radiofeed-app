@@ -10,7 +10,9 @@ from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 _DEFAULT_LOCALES: Final = (
     "ar",
+    "at",
     "au",
+    "be",
     "br",
     "ca",
     "cn",
@@ -22,10 +24,13 @@ _DEFAULT_LOCALES: Final = (
     "gb",
     "hk",
     "hu",
+    "ie",
     "il",
     "in",
+    "is",
     "it",
     "jp",
+    "nl",
     "no",
     "nz",
     "pl",
