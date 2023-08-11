@@ -661,21 +661,6 @@ files = [
 Django = ">=3.2"
 
 [[package]]
-name = "django-cacheops"
-version = "7.0.1"
-description = "A slick ORM cache with automatic granular event-driven invalidation for Django."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "django-cacheops-7.0.1.tar.gz", hash = "sha256:11ddea87dd039568978a4083d89c89dfb866ea55a7a48fb685a68fc198a8b650"},
-]
-
-[package.dependencies]
-django = ">=3.2"
-funcy = ">=1.8,<2.0"
-redis = ">=3.0.0"
-
-[[package]]
 name = "django-coverage-plugin"
 version = "3.1.0"
 description = "Django template coverage.py plugin"
@@ -914,17 +899,6 @@ files = [
 [package.extras]
 docs = ["furo (>=2023.5.20)", "sphinx (>=7.0.1)", "sphinx-autodoc-typehints (>=1.23,!=1.23.4)"]
 testing = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "diff-cover (>=7.5)", "pytest (>=7.3.1)", "pytest-cov (>=4.1)", "pytest-mock (>=3.10)", "pytest-timeout (>=2.1)"]
-
-[[package]]
-name = "funcy"
-version = "1.18"
-description = "A fancy and practical functional tools"
-optional = false
-python-versions = "*"
-files = [
-    {file = "funcy-1.18-py2.py3-none-any.whl", hash = "sha256:00ce91afc850357a131dc54f0db2ad8a1110d5087f1fa4480d7ea3ba0249f89d"},
-    {file = "funcy-1.18.tar.gz", hash = "sha256:15448d19a8ebcc7a585afe7a384a19186d0bd67cbf56fb42cd1fd0f76313f9b2"},
-]
 
 [[package]]
 name = "gitdb"
@@ -2796,4 +2770,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "59ab0b60feeb40541282382fafc000a5e16652bed4849648106d83e07137dd21"
+content-hash = "bd4f1d2784d44d08c343b54086b8861d6c33169648d173c6e37356c7325a98c3"
