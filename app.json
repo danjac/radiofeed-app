@@ -1,10 +1,6 @@
 {
     "name": "Radiofeed Dokku deployment",
-    "addons": [
-        "dokku-letsencrypt",
-        "dokku-redis",
-        "dokku-postgres"
-    ],
+    "addons": ["dokku-letsencrypt", "dokku-redis", "dokku-postgres"],
     "formation": {
         "web": {
             "quantity": 1
@@ -23,7 +19,7 @@
             "schedule": "15 9 * * 1"
         },
         {
-            "command": "python manage.py crawl_itunes",
+            "command": "python manage.py parse_itunes",
             "schedule": "15 3 * * *"
         },
         {
