@@ -5,7 +5,7 @@ import httpx
 from django.core.management.base import BaseCommand
 
 from radiofeed.client import http_client
-from radiofeed.podcasts import itunes
+from radiofeed.podcasts.itunes import ItunesCatalogParser
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 _DEFAULT_LOCALES: Final = (
@@ -68,6 +68,6 @@ class Command(BaseCommand):
             )
 
     def _crawl_feeds(self, client: httpx.Client, locale: str):
-        for feed in itunes.crawl(client, locale):
+        for feed in ItunesCatalogParser(client=client, locale=locale).parse():
             style = self.style.SUCCESS if feed.podcast is None else self.style.NOTICE
             self.stdout.write(style(feed.title))

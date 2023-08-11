@@ -65,14 +65,8 @@ def search_cache_key(search_term: str) -> str:
     return "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
 
 
-def crawl(client: httpx.Client, locale: str) -> Iterator[Feed]:
-    """Crawls iTunes podcast catalog and creates new Podcast instances from any new
-    feeds found."""
-    return ItunesLocaleParser(client=client, locale=locale).parse()
-
-
-class ItunesLocaleParser:
-    """Parses feeds from specific locale."""
+class ItunesCatalogParser:
+    """Parses feeds from specific locale in iTunes podcast catalog."""
 
     def __init__(self, *, client: httpx.Client, locale: str):
         self._client = client

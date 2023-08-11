@@ -29,11 +29,11 @@ class TestSendRecommendationsEmails:
         patched.assert_called()
 
 
-class TestCrawlItunes:
+class TestParseItunes:
     @pytest.mark.django_db()
     def test_command(self, mocker, podcast):
         patched = mocker.patch(
-            "radiofeed.podcasts.itunes.crawl",
+            "radiofeed.podcasts.itunes.ItunesCatalogParser.parse",
             return_value=[
                 Feed(
                     title="test 1",
@@ -48,5 +48,5 @@ class TestCrawlItunes:
                 ),
             ],
         )
-        call_command("crawl_itunes")
+        call_command("parse_itunes")
         patched.assert_called()

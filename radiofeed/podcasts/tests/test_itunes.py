@@ -5,6 +5,7 @@ import pytest
 from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
+from radiofeed.podcasts.itunes import ItunesCatalogParser
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import create_podcast
 
@@ -73,9 +74,9 @@ def mock_invalid_response(mocker):
     )
 
 
-class TestCrawl:
+class TestItunesCatalogParser:
     @pytest.mark.django_db()
-    def test_crawl(self, mocker):
+    def test_parse(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
@@ -90,12 +91,12 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl(httpx.Client(), "us"))
+        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
 
         assert Podcast.objects.count() == 1
 
     @pytest.mark.django_db()
-    def test_crawl_with_category_error(self, mocker):
+    def test_parse_with_category_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
@@ -110,12 +111,12 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl(httpx.Client(), "us"))
+        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
 
         assert Podcast.objects.count() == 0
 
     @pytest.mark.django_db()
-    def test_crawl_with_api_lookup_error(self, mocker):
+    def test_parse_with_api_lookup_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 raise httpx.HTTPError("oops")
@@ -130,12 +131,12 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl(httpx.Client(), "us"))
+        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
 
         assert Podcast.objects.count() == 0
 
     @pytest.mark.django_db()
-    def test_crawl_with_parse_error(self, mocker):
+    def test_parse_with_parse_error(self, mocker):
         def _mock_get(_self, url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
@@ -150,7 +151,7 @@ class TestCrawl:
 
         mocker.patch("httpx.Client.get", _mock_get)
 
-        list(itunes.crawl(httpx.Client(), "us"))
+        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
 
         assert Podcast.objects.count() == 0
 

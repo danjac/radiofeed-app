@@ -1,6 +1,6 @@
 anyio==3.7.1 ; python_version >= "3.10" and python_version < "3.12"
 asgiref==3.7.2 ; python_version >= "3.10" and python_version < "3.12"
-async-timeout==4.0.2 ; python_version >= "3.10" and python_full_version <= "3.11.2"
+async-timeout==4.0.3 ; python_version >= "3.10" and python_full_version <= "3.11.2"
 attrs==23.1.0 ; python_version >= "3.10" and python_version < "3.12"
 brotli==1.0.9 ; python_version >= "3.10" and python_version < "3.12"
 certifi==2023.7.22 ; python_version >= "3.10" and python_version < "3.12"
