@@ -2,7 +2,7 @@ install: pyinstall npminstall precommitinstall nltkdownload
 
 dbinstall: migrate fixtures
 
-update: pyupdate npmupdate precommitupdate
+update: pyupdate pyexport npmupdate precommitupdate
 
 compose:
 	docker-compose up -d --build
