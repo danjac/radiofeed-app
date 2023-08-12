@@ -17,8 +17,8 @@
     "devDependencies": {
         "@babel/eslint-parser": "^7.22.10",
         "concurrently": "^8.2.0",
-        "esbuild": "^0.19.0",
-        "eslint": "^8.46.0",
+        "esbuild": "^0.19.1",
+        "eslint": "^8.47.0",
         "eslint-plugin-prettier": "^5.0.0",
         "npm-check-updates": "^16.10.18",
         "prettier": "3.0.1",
