@@ -3,7 +3,8 @@ import hashlib
 from collections.abc import Iterator
 
 import attrs
-import httpx
+import requests
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -63,7 +64,7 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self, client: httpx.Client) -> None:
+    def parse(self) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
@@ -75,7 +76,7 @@ class FeedParser:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
         try:
-            response = self._get_response(client)
+            response = self._get_response()
             content_hash = self._check_content_hash(response)
             feed = rss_parser.parse_rss(response.content)
             categories, keywords = self._parse_taxonomy(feed)
@@ -90,7 +91,7 @@ class FeedParser:
         except FeedParserError as exc:
             return self._handle_feed_error(exc)
 
-    def _check_content_hash(self, response: httpx.Response) -> str:
+    def _check_content_hash(self, response: requests.Response) -> str:
         content_hash = make_content_hash(response.content)
 
         if content_hash == self._podcast.content_hash:
@@ -107,7 +108,7 @@ class FeedParser:
     def _save(
         self,
         *,
-        response: httpx.Response,
+        response: requests.Response,
         content_hash: str,
         feed: Feed,
         categories: list[Category],
@@ -141,29 +142,33 @@ class FeedParser:
         except DataError as exc:
             raise InvalidDataError from exc
 
-    def _get_response(self, client: httpx.Client) -> httpx.Response:
+    def _get_response(self) -> requests.Response:
         try:
-            response = client.get(
+            response = requests.get(
                 self._podcast.rss,
-                follow_redirects=True,
+                allow_redirects=True,
                 headers=self._get_feed_headers(),
+                timeout=10,
             )
             response.raise_for_status()
 
-        except httpx.HTTPStatusError as exc:
-            if exc.response.is_redirect:
-                raise NotModifiedError from exc
-            if exc.response.is_client_error:
+            if response.status_code == 304:
+                raise NotModifiedError
+
+        except requests.HTTPError as exc:
+            if exc.response and exc.response.status_code in range(400, 500):
                 raise InaccessibleError from exc
             raise UnavailableError from exc
-
-        except httpx.HTTPError as exc:
+        except requests.RequestException as exc:
             raise UnavailableError from exc
 
         return response
 
     def _get_feed_headers(self) -> dict[str, str]:
-        headers = {"Accept": self._accept_header}
+        headers = {
+            "Accept": self._accept_header,
+            "User-Agent": settings.USER_AGENT,
+        }
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:

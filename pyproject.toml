@@ -43,6 +43,7 @@ django-render-block = "^0.9.2"
 python-decouple = "^3.8"
 dj-database-url = "^2.0.0"
 httpx = "^0.24.1"
+requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
@@ -67,6 +68,7 @@ django-debug-toolbar = "^4.0.0"
 pytest-env = "^0.8.1"
 ruff = "^0.0.281"
 djlint = "^1.31.1"
+types-requests = "^2.31.0.2"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings"
