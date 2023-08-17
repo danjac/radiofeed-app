@@ -87,7 +87,7 @@ class ItunesCatalogParser:
         for feed_ids in batcher.batch(self._parse_feed_ids(), 100):
             try:
                 yield from _parse_feeds(
-                    self._get_response(
+                    _get_response(
                         "https://itunes.apple.com/lookup",
                         params={
                             "id": ",".join(feed_ids),
@@ -119,7 +119,7 @@ class ItunesCatalogParser:
 
     def _parse_urls(self, pattern: re.Pattern, url: str) -> Iterator[str]:
         try:
-            response = self._get_response(url, follow_redirects=True)
+            response = _get_response(url, allow_redirects=True)
             for element in self._parser.iterparse(
                 response.content, "{http://www.apple.com/itms/}html", "/apple:html"
             ):
@@ -131,26 +131,6 @@ class ItunesCatalogParser:
                     element.clear()
         except (requests.RequestException, lxml.etree.XMLSyntaxError):
             return
-
-    def _get_response(
-        self,
-        url,
-        params: dict | None = None,
-        headers: dict | None = None,
-        **kwargs,
-    ):
-        response = requests.get(
-            url,
-            params=params,
-            headers={
-                **(headers or {}),
-                "User-Agent": settings.USER_AGENT,
-            },
-            timeout=10,
-            **kwargs,
-        )
-        response.raise_for_status()
-        return response
 
 
 def _parse_feed_id(url: str) -> str | None:
@@ -203,6 +183,27 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
             )
         except KeyError:
             continue
+
+
+def _get_response(
+    url,
+    params: dict | None = None,
+    headers: dict | None = None,
+    timeout: int = 10,
+    **kwargs,
+):
+    response = requests.get(
+        url,
+        params=params,
+        timeout=timeout,
+        headers={
+            **(headers or {}),
+            "User-Agent": settings.USER_AGENT,
+        },
+        **kwargs,
+    )
+    response.raise_for_status()
+    return response
 
 
 @functools.cache
