@@ -1,4 +1,4 @@
-import httpx
+import requests
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
@@ -104,7 +104,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
         try:
             feeds = itunes.search(request.search.value)
-        except httpx.HTTPError:
+        except requests.RequestException:
             messages.error(request, "Error: iTunes unavailable")
 
         return TemplateResponse(

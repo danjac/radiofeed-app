@@ -6,14 +6,14 @@ from collections.abc import Iterator
 from typing import Final
 from urllib.parse import urlparse
 
-import httpx
 import lxml
+import requests
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed import batcher
-from radiofeed.client import http_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
 
@@ -39,21 +39,22 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(search_term: str) -> list[Feed]:
+def search(search_term: str, timeout: int = 5) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
-        with http_client() as client:
-            response = client.get(
-                "https://itunes.apple.com/search",
-                params={
-                    "term": search_term,
-                    "media": "podcast",
-                },
-                headers={
-                    "Accept": "application/json",
-                },
-            )
+        response = requests.get(
+            "https://itunes.apple.com/search",
+            params={
+                "term": search_term,
+                "media": "podcast",
+            },
+            headers={
+                "Accept": "application/json",
+                "User-Agent": settings.USER_AGENT,
+            },
+            timeout=timeout,
+        )
         response.raise_for_status()
         feeds = list(_parse_feeds(response))
         cache.set(cache_key, feeds)
@@ -68,8 +69,7 @@ def search_cache_key(search_term: str) -> str:
 class ItunesCatalogParser:
     """Parses feeds from specific locale in iTunes podcast catalog."""
 
-    def __init__(self, *, client: httpx.Client, locale: str):
-        self._client = client
+    def __init__(self, *, locale: str):
         self._locale = locale
 
         self._feed_ids: set[str] = set()
@@ -98,7 +98,7 @@ class ItunesCatalogParser:
                         },
                     )
                 )
-            except httpx.HTTPError:
+            except requests.RequestException:
                 continue
 
     def _parse_feed_ids(self) -> Iterator[str]:
@@ -129,7 +129,7 @@ class ItunesCatalogParser:
                             yield href
                 finally:
                     element.clear()
-        except (httpx.HTTPError, lxml.etree.XMLSyntaxError):
+        except (requests.RequestException, lxml.etree.XMLSyntaxError):
             return
 
     def _get_response(
@@ -139,10 +139,14 @@ class ItunesCatalogParser:
         headers: dict | None = None,
         **kwargs,
     ):
-        response = self._client.get(
+        response = requests.get(
             url,
             params=params,
-            headers=headers,
+            headers={
+                **(headers or {}),
+                "User-Agent": settings.USER_AGENT,
+            },
+            timeout=10,
             **kwargs,
         )
         response.raise_for_status()
@@ -156,7 +160,7 @@ def _parse_feed_id(url: str) -> str | None:
 
 
 def _parse_feeds(
-    response: httpx.Response,
+    response: requests.Response,
 ) -> Iterator[Feed]:
     for batch in batcher.batch(
         _build_feeds_from_json(response.json()),

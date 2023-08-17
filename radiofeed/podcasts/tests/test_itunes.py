@@ -1,7 +1,7 @@
 import pathlib
 
-import httpx
 import pytest
+import requests
 from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
@@ -40,7 +40,7 @@ class MockResponse:
 @pytest.fixture()
 def mock_good_response(mocker):
     return mocker.patch(
-        "httpx.Client.get",
+        "requests.get",
         return_value=MockResponse(
             json={
                 "results": [MOCK_RESULT],
@@ -52,15 +52,15 @@ def mock_good_response(mocker):
 @pytest.fixture()
 def mock_bad_response(mocker):
     return mocker.patch(
-        "httpx.Client.get",
-        side_effect=httpx.HTTPError("fail"),
+        "requests.get",
+        side_effect=requests.RequestException("fail"),
     )
 
 
 @pytest.fixture()
 def mock_invalid_response(mocker):
     return mocker.patch(
-        "httpx.Client.get",
+        "requests.get",
         return_value=MockResponse(
             json={
                 "results": [
@@ -77,7 +77,7 @@ def mock_invalid_response(mocker):
 class TestItunesCatalogParser:
     @pytest.mark.django_db()
     def test_parse(self, mocker):
-        def _mock_get(_self, url, *args, **kwargs):
+        def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
@@ -89,15 +89,15 @@ class TestItunesCatalogParser:
 
             return MockResponse()
 
-        mocker.patch("httpx.Client.get", _mock_get)
+        mocker.patch("requests.get", _mock_get)
 
-        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
+        list(ItunesCatalogParser(locale="us").parse())
 
         assert Podcast.objects.count() == 1
 
     @pytest.mark.django_db()
     def test_parse_with_category_error(self, mocker):
-        def _mock_get(_self, url, *args, **kwargs):
+        def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
@@ -105,21 +105,21 @@ class TestItunesCatalogParser:
                 return MockResponse(mock_file="podcasts.html")
 
             if "genre/podcasts-arts" in url:
-                raise httpx.HTTPError("oops")
+                raise requests.RequestException("oops")
 
             return MockResponse()
 
-        mocker.patch("httpx.Client.get", _mock_get)
+        mocker.patch("requests.get", _mock_get)
 
-        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
+        list(ItunesCatalogParser(locale="us").parse())
 
         assert Podcast.objects.count() == 0
 
     @pytest.mark.django_db()
     def test_parse_with_api_lookup_error(self, mocker):
-        def _mock_get(_self, url, *args, **kwargs):
+        def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
-                raise httpx.HTTPError("oops")
+                raise requests.RequestException("oops")
 
             if url.endswith("/genre/podcasts/id26"):
                 return MockResponse(mock_file="podcasts.html")
@@ -129,29 +129,29 @@ class TestItunesCatalogParser:
 
             return MockResponse()
 
-        mocker.patch("httpx.Client.get", _mock_get)
+        mocker.patch("requests.get", _mock_get)
 
-        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
+        list(ItunesCatalogParser(locale="us").parse())
 
         assert Podcast.objects.count() == 0
 
     @pytest.mark.django_db()
     def test_parse_with_parse_error(self, mocker):
-        def _mock_get(_self, url, *args, **kwargs):
+        def _mock_get(url, *args, **kwargs):
             if url == "https://itunes.apple.com/lookup":
                 return MockResponse(json={"results": [MOCK_RESULT]})
 
             if url.endswith("/genre/podcasts/id26"):
-                raise httpx.HTTPError("oops")
+                raise requests.RequestException("oops")
 
             if "/genre/podcasts" in url:
                 return MockResponse(mock_file="genre.html")
 
             return MockResponse()
 
-        mocker.patch("httpx.Client.get", _mock_get)
+        mocker.patch("requests.get", _mock_get)
 
-        list(ItunesCatalogParser(client=httpx.Client(), locale="us").parse())
+        list(ItunesCatalogParser(locale="us").parse())
 
         assert Podcast.objects.count() == 0
 
@@ -159,7 +159,7 @@ class TestItunesCatalogParser:
 class TestSearch:
     @pytest.mark.django_db()
     def test_not_ok(self, mock_bad_response):
-        with pytest.raises(httpx.HTTPError):
+        with pytest.raises(requests.RequestException):
             list(itunes.search("test"))
         assert not Podcast.objects.exists()
 
@@ -198,7 +198,7 @@ class TestSearch:
             ],
         )
 
-        mock_get = mocker.patch("httpx.Client.get")
+        mock_get = mocker.patch("requests.get")
 
         feeds = itunes.search("test")
 
