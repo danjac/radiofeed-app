@@ -76,53 +76,70 @@ class FeedParser:
         """
         try:
             response = self._get_response(client)
-
-            content_hash = make_content_hash(response.content)
-
-            if content_hash == self._podcast.content_hash:
-                raise NotModifiedError
-
-            if (
-                Podcast.objects.exclude(pk=self._podcast.pk)
-                .filter(Q(rss=response.url) | Q(content_hash=content_hash))
-                .exists()
-            ):
-                raise DuplicateError
-
+            content_hash = self._check_content_hash(response)
             feed = rss_parser.parse_rss(response.content)
-            categories, keywords = self._extract_categories(feed)
+            categories, keywords = self._parse_taxonomy(feed)
 
-            try:
-                with transaction.atomic():
-                    self._podcast_update(
-                        num_retries=0,
-                        parser_error=None,
-                        content_hash=content_hash,
-                        keywords=keywords,
-                        rss=response.url,
-                        active=not (feed.complete),
-                        etag=response.headers.get("ETag", ""),
-                        modified=parse_date(response.headers.get("Last-Modified")),
-                        extracted_text=self._extract_text(feed),
-                        frequency=scheduler.schedule(feed),
-                        **attrs.asdict(
-                            feed,
-                            filter=attrs.filters.exclude(
-                                self._feed_attrs.categories,
-                                self._feed_attrs.complete,
-                                self._feed_attrs.items,
-                            ),
-                        ),
-                    )
-
-                    self._podcast.categories.set(categories)
-                    self._episode_updates(feed)
-
-                    return None
-            except DataError as exc:
-                raise InvalidDataError from exc
+            self._save(
+                response=response,
+                feed=feed,
+                categories=categories,
+                keywords=keywords,
+                content_hash=content_hash,
+            )
         except FeedParserError as exc:
             return self._handle_feed_error(exc)
+
+    def _check_content_hash(self, response: httpx.Response) -> str:
+        content_hash = make_content_hash(response.content)
+
+        if content_hash == self._podcast.content_hash:
+            raise NotModifiedError
+
+        if (
+            Podcast.objects.exclude(pk=self._podcast.pk)
+            .filter(Q(rss=response.url) | Q(content_hash=content_hash))
+            .exists()
+        ):
+            raise DuplicateError
+        return content_hash
+
+    def _save(
+        self,
+        *,
+        response: httpx.Response,
+        content_hash: str,
+        feed: Feed,
+        categories: list[Category],
+        keywords: str,
+    ) -> None:
+        try:
+            with transaction.atomic():
+                self._podcast_update(
+                    num_retries=0,
+                    parser_error=None,
+                    content_hash=content_hash,
+                    keywords=keywords,
+                    rss=response.url,
+                    active=not (feed.complete),
+                    etag=response.headers.get("ETag", ""),
+                    modified=parse_date(response.headers.get("Last-Modified")),
+                    extracted_text=self._extract_text(feed),
+                    frequency=scheduler.schedule(feed),
+                    **attrs.asdict(
+                        feed,
+                        filter=attrs.filters.exclude(
+                            self._feed_attrs.categories,
+                            self._feed_attrs.complete,
+                            self._feed_attrs.items,
+                        ),
+                    ),
+                )
+
+                self._podcast.categories.set(categories)
+                self._episode_updates(feed)
+        except DataError as exc:
+            raise InvalidDataError from exc
 
     def _get_response(self, client: httpx.Client) -> httpx.Response:
         try:
@@ -202,7 +219,7 @@ class FeedParser:
             **fields,
         )
 
-    def _extract_categories(self, feed: Feed) -> tuple[list[Category], str]:
+    def _parse_taxonomy(self, feed: Feed) -> tuple[list[Category], str]:
         categories: list[Category] = []
         keywords: str = ""
 
