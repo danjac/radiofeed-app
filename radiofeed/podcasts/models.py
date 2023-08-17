@@ -105,6 +105,7 @@ class Podcast(models.Model):
     class ParserError(models.TextChoices):
         DUPLICATE = "duplicate", "Duplicate"
         INACCESSIBLE = "inaccessible", "Inaccessible"
+        INVALID_DATA = "invalid_data", "Invalid Data"
         INVALID_RSS = "invalid_rss", "Invalid RSS"
         NOT_MODIFIED = "not_modified", "Not Modified"
         UNAVAILABLE = "unavailable", "Unavailable"

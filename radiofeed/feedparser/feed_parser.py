@@ -7,6 +7,7 @@ import httpx
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
+from django.db.utils import DataError
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
@@ -18,6 +19,7 @@ from radiofeed.feedparser.exceptions import (
     DuplicateError,
     FeedParserError,
     InaccessibleError,
+    InvalidDataError,
     InvalidRSSError,
     NotModifiedError,
     UnavailableError,
@@ -86,38 +88,41 @@ class FeedParser:
                 .exists()
             ):
                 raise DuplicateError
+
             feed = rss_parser.parse_rss(response.content)
+            categories, keywords = self._extract_categories(feed)
+
+            try:
+                with transaction.atomic():
+                    self._podcast_update(
+                        num_retries=0,
+                        parser_error=None,
+                        content_hash=content_hash,
+                        keywords=keywords,
+                        rss=response.url,
+                        active=not (feed.complete),
+                        etag=response.headers.get("ETag", ""),
+                        modified=parse_date(response.headers.get("Last-Modified")),
+                        extracted_text=self._extract_text(feed),
+                        frequency=scheduler.schedule(feed),
+                        **attrs.asdict(
+                            feed,
+                            filter=attrs.filters.exclude(
+                                self._feed_attrs.categories,
+                                self._feed_attrs.complete,
+                                self._feed_attrs.items,
+                            ),
+                        ),
+                    )
+
+                    self._podcast.categories.set(categories)
+                    self._episode_updates(feed)
+
+                    return None
+            except DataError as exc:
+                raise InvalidDataError from exc
         except FeedParserError as exc:
             return self._handle_feed_error(exc)
-
-        categories, keywords = self._extract_categories(feed)
-
-        with transaction.atomic():
-            self._podcast_update(
-                num_retries=0,
-                parser_error=None,
-                content_hash=content_hash,
-                keywords=keywords,
-                rss=response.url,
-                active=not (feed.complete),
-                etag=response.headers.get("ETag", ""),
-                modified=parse_date(response.headers.get("Last-Modified")),
-                extracted_text=self._extract_text(feed),
-                frequency=scheduler.schedule(feed),
-                **attrs.asdict(
-                    feed,
-                    filter=attrs.filters.exclude(
-                        self._feed_attrs.categories,
-                        self._feed_attrs.complete,
-                        self._feed_attrs.items,
-                    ),
-                ),
-            )
-
-            self._podcast.categories.set(categories)
-            self._episode_updates(feed)
-
-            return None
 
     def _get_response(self, client: httpx.Client) -> httpx.Response:
         try:
@@ -157,7 +162,7 @@ class FeedParser:
                 # podcast should be discontinued and no longer updated
                 active = False
 
-            case InvalidRSSError() | UnavailableError():
+            case InvalidDataError() | InvalidRSSError() | UnavailableError():
                 # increment num_retries in case a temporary error
                 num_retries += 1
 

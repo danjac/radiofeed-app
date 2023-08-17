@@ -35,3 +35,9 @@ class UnavailableError(FeedParserError):
     """Content is inaccessible due to temporary network issue, 500 error etc."""
 
     parser_error = Podcast.ParserError.UNAVAILABLE
+
+
+class InvalidDataError(FeedParserError):
+    """Error caused by unvalid data e.g. bad date strings."""
+
+    parser_error = Podcast.ParserError.INVALID_DATA

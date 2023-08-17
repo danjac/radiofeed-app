@@ -11,6 +11,7 @@ from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     DuplicateError,
     InaccessibleError,
+    InvalidDataError,
     InvalidRSSError,
     NotModifiedError,
     UnavailableError,
@@ -432,6 +433,28 @@ class TestFeedParser:
         assert podcast.rss == current_rss
         assert not podcast.active
         assert podcast.parsed
+
+    @pytest.mark.django_db()
+    def test_parse_invalid_data(self, mocker, podcast, categories):
+        mocker.patch(
+            "httpx.Client.get",
+            return_value=httpx.Response(
+                request=httpx.Request("GET", url=podcast.rss),
+                status_code=200,
+                content=self.get_rss_content("invalid_dates.xml"),
+            ),
+        )
+
+        with httpx.Client() as client, pytest.raises(InvalidDataError):
+            FeedParser(podcast).parse(client)
+
+        podcast.refresh_from_db()
+
+        assert podcast.parser_error == Podcast.ParserError.INVALID_DATA
+
+        assert podcast.active
+        assert podcast.parsed
+        assert podcast.num_retries == 1
 
     @pytest.mark.django_db()
     def test_parse_no_podcasts(self, mocker, podcast, categories):
