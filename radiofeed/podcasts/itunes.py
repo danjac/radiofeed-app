@@ -43,7 +43,7 @@ def search(search_term: str, timeout: int = 5) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
-        response = requests.get(
+        response = _get_response(
             "https://itunes.apple.com/search",
             params={
                 "term": search_term,
@@ -51,11 +51,9 @@ def search(search_term: str, timeout: int = 5) -> list[Feed]:
             },
             headers={
                 "Accept": "application/json",
-                "User-Agent": settings.USER_AGENT,
             },
             timeout=timeout,
         )
-        response.raise_for_status()
         feeds = list(_parse_feeds(response))
         cache.set(cache_key, feeds)
     return feeds
