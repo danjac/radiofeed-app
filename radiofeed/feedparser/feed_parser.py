@@ -148,7 +148,7 @@ class FeedParser:
                 self._podcast.rss,
                 allow_redirects=True,
                 headers=self._get_feed_headers(),
-                timeout=10,
+                timeout=5,
             )
             response.raise_for_status()
 
