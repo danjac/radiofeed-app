@@ -31,6 +31,7 @@ _DEFAULT_LOCALES: Final = (
     "is",
     "it",
     "jp",
+    "kr",
     "nl",
     "no",
     "nz",
