@@ -81,7 +81,7 @@ class FeedParser:
             feed = rss_parser.parse_rss(response.content)
             categories, keywords = self._parse_taxonomy(feed)
 
-            self._save(
+            self._handle_update(
                 response=response,
                 feed=feed,
                 categories=categories,
@@ -105,7 +105,7 @@ class FeedParser:
             raise DuplicateError
         return content_hash
 
-    def _save(
+    def _handle_update(
         self,
         *,
         response: requests.Response,
