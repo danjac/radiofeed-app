@@ -1,7 +1,7 @@
 import urllib.parse
 
-import httpx
 import pytest
+import requests
 from django.core.signing import Signer
 from django.shortcuts import render
 from django.urls import reverse
@@ -80,7 +80,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("httpx.Client.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
@@ -100,9 +100,9 @@ class TestCoverImage:
     def test_failed_download(self, client, db, mocker):
         class MockResponse:
             def raise_for_status(self):
-                raise httpx.HTTPError("invalid")
+                raise requests.HTTPError("invalid")
 
-        mocker.patch("httpx.Client.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
     @pytest.mark.django_db()
@@ -113,7 +113,7 @@ class TestCoverImage:
             def raise_for_status(self):
                 pass
 
-        mocker.patch("httpx.Client.get", return_value=MockResponse())
+        mocker.patch("requests.get", return_value=MockResponse())
         mocker.patch("PIL.Image.open", side_effect=IOError())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 

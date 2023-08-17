@@ -1,7 +1,7 @@
 import datetime
 import io
 
-import httpx
+import requests
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.signing import BadSignature, Signer
@@ -15,7 +15,6 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.client import http_client
 from radiofeed.template import COVER_IMAGE_SIZES
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
@@ -189,8 +188,12 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         raise Http404 from exc
 
     try:
-        with http_client(timeout=5) as client:
-            response = client.get(cover_url, follow_redirects=True)
+        response = requests.get(
+            cover_url,
+            allow_redirects=True,
+            timeout=5,
+            headers={"User-Agent": settings.USER_AGENT},
+        )
 
         response.raise_for_status()
 
@@ -203,7 +206,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         image.save(output, format="webp", optimize=True, quality=90)
         output.seek(0)
 
-    except (OSError, httpx.HTTPError):
+    except (OSError, requests.RequestException):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 
