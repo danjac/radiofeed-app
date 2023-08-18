@@ -14,7 +14,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 @require_form_methods
 @require_auth
-@render_htmx(use_blocks="form", target="preferences-form")
+@render_htmx(partials="form", target="preferences-form")
 def user_preferences(request: HttpRequest) -> HttpResponse:
     """Allow user to edit their preferences."""
 
@@ -49,7 +49,7 @@ def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_POST
 @require_auth
-@render_htmx(use_blocks="import_feeds_form", target="upload-form")
+@render_htmx(partials="import_feeds_form", target="upload-form")
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:

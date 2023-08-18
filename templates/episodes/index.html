@@ -1,12 +1,14 @@
 {% extends "base.html" %}
+{% load partials %}
+{% startpartial pagination %}
+{% include "episodes/_episodes.html" %}
+{% endpartial pagination %}
 {% block title %}
     | New Releases
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
 {% endblock title %}
 {% block content %}
     {% url 'episodes:index' as index_url %}
-    {% url 'episodes:search_episodes' as search_episodes_url %}
-    {% render "_search_form.html" placeholder="Search: Episodes" search_url=search_episodes_url as search_form %}
     <header class="pb-3 mb-3 border-b space-y-3 sm:space-y-6">
         {% if has_subscriptions %}
             <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
@@ -21,7 +23,9 @@
                             <a href="{{ index_url }}?promoted=true" class="link">Promotions</a>
                         {% endif %}
                     </li>
-                    <li class="flex items-center justify-center sm:justify-end space-x-3">{{ search_form }}</li>
+                    <li class="flex items-center justify-center sm:justify-end space-x-3">
+                        {% include "_search_form.html" with placeholder="Search: Episodes" %}
+                    </li>
                 </ul>
             </nav>
         {% else %}
@@ -29,11 +33,13 @@
                 <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     New Releases
                 </h1>
-                <div class="flex items-center justify-center sm:justify-end space-x-3">{{ search_form }}</div>
+                <nav class="flex items-center justify-center sm:justify-end space-x-3">
+                    <ul>
+                        <li>{% include "_search_form.html" with placeholder="Search: Episodes" %}</li>
+                    </ul>
+                </nav>
             </div>
         {% endif %}
     </header>
-    {% block pagination %}
-        {% include "episodes/_episodes.html" %}
-    {% endblock pagination %}
+    {% partial pagination %}
 {% endblock content %}

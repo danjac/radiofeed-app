@@ -35,6 +35,7 @@ INSTALLED_APPS: list[str] = [
     "django_extensions",
     "django_htmx",
     "heroicons",
+    "template_partials",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
@@ -96,14 +97,16 @@ CACHES = {
     }
 }
 
-# # Templates
+# Templates
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
         "OPTIONS": {
+            "builtins": [
+                "radiofeed.template",
+            ],
             "debug": config("TEMPLATE_DEBUG", default=False, cast=bool),
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -115,8 +118,19 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "builtins": [
-                "radiofeed.template",
+            "loaders": [
+                (
+                    "template_partials.loader.Loader",
+                    [
+                        (
+                            "django.template.loaders.cached.Loader",
+                            [
+                                "django.template.loaders.filesystem.Loader",
+                                "django.template.loaders.app_directories.Loader",
+                            ],
+                        )
+                    ],
+                )
             ],
         },
     }

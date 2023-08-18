@@ -1,5 +1,31 @@
 {% extends "podcasts/detail_base.html" %}
-{% load cache heroicons %}
+{% load cache heroicons partials %}
+{% startpartial subscribe_button %}
+<div hx-target="this"
+     hx-push-url="false"
+     hx-indicator="this"
+     hx-swap="outerHTML">
+    {% if is_subscribed %}
+        <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
+                aria-label="Unsubscribe from this Podcast"
+                title="Unsubscribe from this Podcast"
+                hx-delete="{% url 'podcasts:unsubscribe' podcast.pk %}"
+                hx-trigger="click once">
+            {% heroicon_mini "eye-slash" class="mr-2" %}
+            Unsubscribe
+        </button>
+    {% else %}
+        <button class="inline-flex items-center btn btn-primary btn-lg"
+                aria-label="Subscribe to this Podcast"
+                title="Subscribe to this Podcast"
+                hx-post="{% url 'podcasts:subscribe' podcast.pk %}"
+                hx-trigger="click once">
+            {% heroicon_mini "eye" class="mr-2" %}
+            Subscribe
+        </button>
+    {% endif %}
+</div>
+{% endpartial subscribe_button %}
 {% block podcast_content %}
     <article class="space-y-3">
         {% if podcast.owner %}
@@ -42,32 +68,7 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    {% block subscribe_button %}
-                        <div hx-target="this"
-                             hx-push-url="false"
-                             hx-indicator="this"
-                             hx-swap="outerHTML">
-                            {% if is_subscribed %}
-                                <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
-                                        aria-label="Unsubscribe from this Podcast"
-                                        title="Unsubscribe from this Podcast"
-                                        hx-delete="{% url 'podcasts:unsubscribe' podcast.pk %}"
-                                        hx-trigger="click once">
-                                    {% heroicon_mini "eye-slash" class="mr-2" %}
-                                    Unsubscribe
-                                </button>
-                            {% else %}
-                                <button class="inline-flex items-center btn btn-primary btn-lg"
-                                        aria-label="Subscribe to this Podcast"
-                                        title="Subscribe to this Podcast"
-                                        hx-post="{% url 'podcasts:subscribe' podcast.pk %}"
-                                        hx-trigger="click once">
-                                    {% heroicon_mini "eye" class="mr-2" %}
-                                    Subscribe
-                                </button>
-                            {% endif %}
-                        </div>
-                    {% endblock subscribe_button %}
+                    {% partial subscribe_button %}
                 {% endif %}
                 <nav class="flex items-center space-x-3">
                     {% if podcast.website %}

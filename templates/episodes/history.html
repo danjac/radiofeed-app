@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load partials %}
+{% startpartial pagination %}
+{% include "episodes/_episodes.html" with is_fk=True %}
+{% endpartial pagination %}
 {% block title %}
     | History
 {% endblock title %}
@@ -24,7 +28,5 @@
             </nav>
         {% endif %}
     </header>
-    {% block pagination %}
-        {% include "episodes/_episodes.html" with is_fk=True %}
-    {% endblock pagination %}
+    {% partial pagination %}
 {% endblock content %}

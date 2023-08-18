@@ -1,5 +1,22 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons %}
+{% load heroicons partials %}
+{% startpartial form %}
+<form method="post"
+      action="{{ request.path }}"
+      class="space-y-3"
+      id="preferences-form"
+      hx-swap="outerHTML"
+      hx-target="this">
+    {% csrf_token %}
+    {{ form }}
+    <div>
+        <button class="inline-flex items-center btn btn-primary">
+            {% heroicon_mini "check" class="mr-2" %}
+            Save Changes
+        </button>
+    </div>
+</form>
+{% endpartial form %}
 {% block title %}
     {{ block.super }} | Preferences
 {% endblock title %}
@@ -8,21 +25,5 @@
     Preferences
 {% endblock settings_selected_item %}
 {% block settings_content %}
-    {% block form %}
-        <form method="post"
-              action="{{ request.path }}"
-              class="space-y-3"
-              id="preferences-form"
-              hx-swap="outerHTML"
-              hx-target="this">
-            {% csrf_token %}
-            {{ form }}
-            <div>
-                <button class="inline-flex items-center btn btn-primary">
-                    {% heroicon_mini "check" class="mr-2" %}
-                    Save Changes
-                </button>
-            </div>
-        </form>
-    {% endblock form %}
+    {% partial form %}
 {% endblock settings_content %}

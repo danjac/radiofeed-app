@@ -1,5 +1,10 @@
 {% extends "podcasts/detail_base.html" %}
-{% load cache %}
+{% load cache partials %}
+{% startpartial pagination %}
+{% cache 600 podcast-episodes request.get_full_path %}
+{% include "episodes/_episodes.html" %}
+{% endcache pagination %}
+{% endpartial pagination %}
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
@@ -22,9 +27,5 @@
             </ul>
         </nav>
     {% endif %}
-    {% block pagination %}
-        {% cache 600 podcast-episodes request.get_full_path %}
-        {% include "episodes/_episodes.html" %}
-    {% endcache %}
-{% endblock pagination %}
+    {% partial pagination %}
 {% endblock podcast_content %}
