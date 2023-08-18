@@ -8,7 +8,6 @@
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
 {% endblock title %}
 {% block content %}
-    {% url 'episodes:index' as index_url %}
     <header class="pb-3 mb-3 border-b space-y-3 sm:space-y-6">
         {% if has_subscriptions %}
             <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
@@ -17,6 +16,7 @@
             <nav>
                 <ul class="items-center justify-between sm:flex space-y-3 sm:space-y-0">
                     <li class="flex items-center justify-center sm:justify-start">
+                        {% url 'episodes:index' as index_url %}
                         {% if promoted %}
                             <a href="{{ index_url }}" class="link">Subscriptions</a>
                         {% else %}
