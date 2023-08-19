@@ -77,33 +77,33 @@ class FeedParser:
         """
         try:
             response = self._get_response()
-            content_hash = self._check_content_hash(response)
-            feed = rss_parser.parse_rss(response.content)
-            categories, keywords = self._parse_taxonomy(feed)
-
+            content_hash = self._make_content_hash(response)
+            self._check_duplicates(response, content_hash)
             self._handle_update(
                 response=response,
-                feed=feed,
-                categories=categories,
-                keywords=keywords,
                 content_hash=content_hash,
+                feed=rss_parser.parse_rss(response.content),
             )
         except FeedParserError as exc:
-            return self._handle_feed_error(exc)
+            return self._handle_error(exc)
 
-    def _check_content_hash(self, response: requests.Response) -> str:
+    def _make_content_hash(self, response: requests.Response) -> str:
         content_hash = make_content_hash(response.content)
 
+        # check content hash has changed
         if content_hash == self._podcast.content_hash:
             raise NotModifiedError
 
+        return content_hash
+
+    def _check_duplicates(self, response: requests.Response, content_hash: str) -> None:
+        # check no other podcast with this RSS URL or identical content
         if (
             Podcast.objects.exclude(pk=self._podcast.pk)
             .filter(Q(rss=response.url) | Q(content_hash=content_hash))
             .exists()
         ):
             raise DuplicateError
-        return content_hash
 
     def _handle_update(
         self,
@@ -111,9 +111,9 @@ class FeedParser:
         response: requests.Response,
         content_hash: str,
         feed: Feed,
-        categories: list[Category],
-        keywords: str,
     ) -> None:
+        categories, keywords = self._parse_taxonomy(feed)
+
         try:
             with transaction.atomic():
                 self._podcast_update(
@@ -147,7 +147,7 @@ class FeedParser:
             response = requests.get(
                 self._podcast.rss,
                 allow_redirects=True,
-                headers=self._get_feed_headers(),
+                headers=self._get_headers(),
                 timeout=5,
             )
             response.raise_for_status()
@@ -164,7 +164,7 @@ class FeedParser:
 
         return response
 
-    def _get_feed_headers(self) -> dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         headers = {
             "Accept": self._accept_header,
             "User-Agent": settings.USER_AGENT,
@@ -175,7 +175,7 @@ class FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _handle_feed_error(self, exc: FeedParserError) -> None:
+    def _handle_error(self, exc: FeedParserError) -> None:
         num_retries: int = self._podcast.num_retries
         active: bool = True
 

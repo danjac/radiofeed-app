@@ -67,12 +67,12 @@ class TestFeedParser:
 
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
-        headers = FeedParser(podcast)._get_feed_headers()
+        headers = FeedParser(podcast)._get_headers()
         assert headers["If-None-Match"] == f'"{podcast.etag}"'
 
     def test_is_modified(self):
         podcast = Podcast(modified=timezone.now())
-        headers = FeedParser(podcast)._get_feed_headers()
+        headers = FeedParser(podcast)._get_headers()
         assert headers["If-Modified-Since"]
 
     @pytest.mark.django_db()
@@ -273,6 +273,8 @@ class TestFeedParser:
         content = self.get_rss_content()
         podcast = create_podcast(content_hash=make_content_hash(content))
 
+        mock_parse_rss = mocker.patch("radiofeed.feedparser.rss_parser.parse_rss")
+
         mocker.patch(
             "requests.get",
             return_value=MockResponse(
@@ -297,11 +299,14 @@ class TestFeedParser:
         assert podcast.modified is None
         assert podcast.parsed
 
+        mock_parse_rss.assert_not_called()
+
     @pytest.mark.django_db()
     def test_parse_podcast_another_feed_same_content(self, mocker, podcast, categories):
         content = self.get_rss_content()
 
         create_podcast(content_hash=make_content_hash(content))
+        mock_parse_rss = mocker.patch("radiofeed.feedparser.rss_parser.parse_rss")
 
         mocker.patch(
             "requests.get",
@@ -326,6 +331,8 @@ class TestFeedParser:
         assert podcast.active is False
         assert podcast.modified is None
         assert podcast.parsed
+
+        mock_parse_rss.assert_not_called()
 
     @pytest.mark.django_db()
     def test_parse_complete(self, mocker, podcast, categories):
