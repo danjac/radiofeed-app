@@ -85,7 +85,7 @@ class FeedParser:
                 feed=rss_parser.parse_rss(response.content),
             )
         except FeedParserError as exc:
-            return self._handle_error(exc)
+            self._handle_error(exc)
 
     def _make_content_hash(self, response: requests.Response) -> str:
         content_hash = make_content_hash(response.content)
