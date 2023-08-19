@@ -46,7 +46,7 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partials="pagination", target="pagination")
+@render_htmx(partial="pagination", target="pagination")
 def index(request: HttpRequest) -> TemplateResponse:
     """Render default podcast home page for authenticated users."""
 
@@ -78,7 +78,7 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partials="pagination", target="pagination")
+@render_htmx(partial="pagination", target="pagination")
 def search_podcasts(request: HttpRequest) -> TemplateResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -151,7 +151,7 @@ def podcast_detail(
 
 @require_safe
 @require_auth
-@render_htmx(partials="pagination", target="pagination")
+@render_htmx(partial="pagination", target="pagination")
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -235,7 +235,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partials="pagination", target="pagination")
+@render_htmx(partial="pagination", target="pagination")
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -270,7 +270,7 @@ def category_detail(
 
 @require_POST
 @require_auth
-@render_htmx(partials="subscribe_button")
+@render_htmx(partial="subscribe_button")
 def subscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
@@ -285,7 +285,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
 
 @require_DELETE
 @require_auth
-@render_htmx(partials="subscribe_button")
+@render_htmx(partial="subscribe_button")
 def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
@@ -296,7 +296,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partials="pagination", target="pagination")
+@render_htmx(partial="pagination", target="pagination")
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
     podcasts = Podcast.objects.annotate(
@@ -325,7 +325,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_form_methods
 @require_auth
-@render_htmx(partials="form", target="private-feed-form")
+@render_htmx(partial="form", target="private-feed-form")
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
     form, result = handle_form(PrivateFeedForm, request, user=request.user)

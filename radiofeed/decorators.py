@@ -4,7 +4,6 @@ from collections.abc import Callable
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
-from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
@@ -13,10 +12,10 @@ require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 
 
-def render_htmx(*, partials: list[str] | str, target: str | None = None) -> Callable:
-    """Conditionally render blocks on HTMX request.
+def render_htmx(*, partial: str, target: str | None = None) -> Callable:
+    """Conditionally render a template partial on HTMX request.
 
-    If the response is a `TemplateResponse` instance will render the content using only the selected partial(s).
+    If the response is a `TemplateResponse` instance will render the content using only the selected partial.
 
     If `target` is provided, will also try to match the `HX-Target` header.
     """
@@ -31,22 +30,8 @@ def render_htmx(*, partials: list[str] | str, target: str | None = None) -> Call
                 and request.htmx
                 and (target is None or target == request.htmx.target)
             ):
-                if isinstance(partials, str):
-                    response.template_name = f"{response.template_name}#{partials}"
-                    return response
+                response.template_name = f"{response.template_name}#{partial}"
 
-                return HttpResponse(
-                    [
-                        render_to_string(
-                            f"{response.template_name}#{partial}",
-                            response.context_data,
-                            request=request,
-                        )
-                        for partial in partials
-                    ],
-                    headers=response.headers,
-                    status=response.status_code,
-                )
             return response
 
         return _wrapper

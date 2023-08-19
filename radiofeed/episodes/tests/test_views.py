@@ -238,6 +238,7 @@ class TestStartPlayer:
         response = client.post(
             self.url(episode),
             HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="audio-player-button",
         )
 
         assert_ok(response)
@@ -307,6 +308,7 @@ class TestClosePlayer:
         response = client.post(
             self.url,
             HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="audio-player-button",
         )
 
         assert_ok(response)

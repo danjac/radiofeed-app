@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% load cache heroicons partials %}
 {% startpartial audio_log %}
-<div id="audio-log"
-     {% if request.htmx.target == "audio-player-button" %}hx-swap-oob="true"{% endif %}>
+<div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
     {% if audio_log %}
         <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
             <div class="flex items-center space-x-1">
@@ -29,35 +28,40 @@
     {% endif %}
 </div>
 {% endpartial audio_log %}
-{% startpartial audio_player %}
-{% include "episodes/_audio_player.html" with hx_oob=True %}
-{% endpartial audio_player %}
 {% startpartial audio_player_button %}
-<div id="audio-player-button"
-     hx-push-url="false"
-     hx-target="this"
-     hx-indicator="this"
-     hx-swap="outerHTML">
-    {% if is_playing %}
-        <button aria-label="Close Player"
-                title="Close Player"
-                class="inline-flex items-center btn btn-primary btn-outline btn-lg"
-                hx-post="{% url 'episodes:close_player' %}"
-                hx-trigger="click once">
-            {% heroicon_mini "stop-circle" class="mr-2" %}
-            Close
-        </button>
-    {% else %}
-        <button aria-label="Open Episode in Player"
-                title="Open Episode in Player"
-                class="inline-flex items-center btn btn-primary btn-lg"
-                hx-post="{% url 'episodes:start_player' episode.pk %}"
-                hx-trigger="click once">
-            {% heroicon_mini "play-circle" class="mr-2" %}
-            Play
-        </button>
-    {% endif %}
-</div>
+{% with target="audio-player-button" %}
+    <div id="{{ target }}"
+         hx-push-url="false"
+         hx-target="this"
+         hx-indicator="this"
+         hx-swap="outerHTML">
+        {% if is_playing %}
+            <button aria-label="Close Player"
+                    title="Close Player"
+                    class="inline-flex items-center btn btn-primary btn-outline btn-lg"
+                    hx-post="{% url 'episodes:close_player' %}"
+                    hx-trigger="click once">
+                {% heroicon_mini "stop-circle" class="mr-2" %}
+                Close
+            </button>
+        {% else %}
+            <button aria-label="Open Episode in Player"
+                    title="Open Episode in Player"
+                    class="inline-flex items-center btn btn-primary btn-lg"
+                    hx-post="{% url 'episodes:start_player' episode.pk %}"
+                    hx-trigger="click once">
+                {% heroicon_mini "play-circle" class="mr-2" %}
+                Play
+            </button>
+        {% endif %}
+        {% if request.htmx.target == target %}
+            {% with hx_oob=True %}
+                {% partial audio_log %}
+                {% include "episodes/_audio_player.html" %}
+            {% endwith %}
+        {% endif %}
+    </div>
+{% endwith %}
 {% endpartial audio_player_button %}
 {% startpartial bookmark_button %}
 <div hx-push-url="false"
@@ -190,6 +194,3 @@
     </article>
 {% endwith %}
 {% endblock content %}
-{% if request.htmx.target == "audio-player-button" %}
-    {% partial audio_player %}
-{% endif %}
