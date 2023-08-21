@@ -1,4 +1,5 @@
 import pytest
+from django.template import Context, Template, TemplateSyntaxError
 from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.test import override_settings
@@ -186,6 +187,37 @@ class TestAbsoluteUri:
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
         )
+
+
+class TestCapture:
+    def test_silent(self):
+        tmpl = Template(
+            """
+                {% capture as msg silent %}OK{% endcapture %}
+                {{ msg }}
+                """
+        )
+        result = tmpl.render(Context({}))
+        assert result.count("OK") == 1
+
+    def test_not_silent(self):
+        tmpl = Template(
+            """
+                {% capture as msg %}OK{% endcapture %}
+                {{ msg }}
+                """
+        )
+        result = tmpl.render(Context({}))
+        assert result.count("OK") == 2
+
+    def test_invalid_args(self):
+        with pytest.raises(TemplateSyntaxError):
+            Template(
+                """
+                {% capture %}OK{% endcapture %}
+                {{ msg }}
+                """
+            )
 
 
 class TestBaseTemplates:

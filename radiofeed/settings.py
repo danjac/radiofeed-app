@@ -32,7 +32,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "capture_tag",
     "django_extensions",
     "django_htmx",
     "heroicons",

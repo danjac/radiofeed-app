@@ -1,41 +1,41 @@
-{% load static capture_tags django_htmx heroicons audio_player %}
 {% spaceless %}
-    {% capture as sidebar silent %}
-    {% include "_sidebar.html" %}
-{% endcapture %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>{{ request.site.name }}
-            {# djlint:off #}
+    {% load static django_htmx heroicons audio_player %}
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>{{ request.site.name }}
+                {# djlint:off #}
                 {% block title %}{% endblock title %}
-            {# djlint:on #}
-        </title>
-        <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
-        <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
-        <link rel="stylesheet" type="text/css" href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}">
-        <link rel="manifest" href="{% url 'manifest' %}">
-        <link rel="canonical" href="https://{{ request.site.domain }}/">
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="copyright" content="Dan Jacob {% now "Y" %}">
-        <meta name="cache-control" content="no-cache">
-        <meta name="robots" content="index,follow">
-        <meta name="description" content="Podcast aggregator site">
-        <meta name="keywords" content="podcasts, rss, feeds">
-        <meta name="theme-color" content="#041014">
-    </head>
-    <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth md:text-base"
-          hx-boost="true"
-          hx-target="#content"
-          hx-swap="innerHTML show:window:top"
-          hx-indicator="#hx-indicator"
-          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        {% include "_hx_indicator.html" %}
-        <div class="flex flex-col h-screen">
-            <div class="grow">
+                {# djlint:on #}
+            </title>
+            <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
+            <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+            <link rel="stylesheet" type="text/css" href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}">
+            <link rel="manifest" href="{% url 'manifest' %}">
+            <link rel="canonical" href="https://{{ request.site.domain }}/">
+            <meta charset="UTF-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport"
+                  content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta name="copyright" content="Dan Jacob {% now "Y" %}">
+            <meta name="cache-control" content="no-cache">
+            <meta name="robots" content="index,follow">
+            <meta name="description" content="Podcast aggregator site">
+            <meta name="keywords" content="podcasts, rss, feeds">
+            <meta name="theme-color" content="#041014">
+        </head>
+        <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth md:text-base"
+              hx-boost="true"
+              hx-target="#content"
+              hx-swap="innerHTML show:window:top"
+              hx-indicator="#hx-indicator"
+              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+            {% include "_hx_indicator.html" %}
+            <div class="flex flex-col h-screen">
+                <div class="grow">
+                    {% capture as sidebar silent %}
+                    {% include "_sidebar.html" %}
+                {% endcapture %}
                 {% include "_messages.html" %}
                 {% include "_navbar.html" %}
                 <div class="relative flex min-h-screen p-2 py-6 xl:pt-12 mx-auto xl:w-11/12">

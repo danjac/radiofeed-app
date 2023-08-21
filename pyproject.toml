@@ -43,7 +43,6 @@ python-decouple = "^3.8"
 dj-database-url = "^2.0.0"
 requests = "^2.31.0"
 django-template-partials = "^23.2"
-django-capture-tag = "^1.0"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}

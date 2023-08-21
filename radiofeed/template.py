@@ -1,19 +1,23 @@
+from __future__ import annotations
+
 import functools
 import math
 import urllib.parse
-from typing import Any, Final, TypedDict
+from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.signing import Signer
 from django.shortcuts import resolve_url
-from django.template.context import RequestContext
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from radiofeed import cleaners
+
+if TYPE_CHECKING:
+    from django.template.context import RequestContext
 
 COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
@@ -151,3 +155,38 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     scheme = "https" if settings.USE_HTTPS else "http"
 
     return f"{scheme}://{site.domain}{path}"
+
+
+@register.tag
+def capture(parser, token) -> CaptureNode:
+    """
+    Capture the contents of a tag output.
+    """
+    match tuple(token.split_contents()[1:]):
+        case ["as", varname]:
+            silent = False
+        case ["as", varname, "silent"]:
+            silent = True
+        case _:
+            raise template.TemplateSyntaxError(
+                "'capture' node expects 'as variable' or 'silent' syntax."
+            )
+
+    nodelist = parser.parse(("endcapture",))
+    parser.delete_first_token()
+    return CaptureNode(nodelist, varname, silent=silent)
+
+
+class CaptureNode(template.Node):
+    """Node implementation."""
+
+    def __init__(self, nodelist, varname, *, silent: bool):
+        self.nodelist = nodelist
+        self.varname = varname
+        self.silent = silent
+
+    def render(self, context):
+        """Renders nodelist."""
+        output = self.nodelist.render(context)
+        context[self.varname] = output
+        return "" if self.silent else output
