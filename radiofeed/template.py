@@ -17,6 +17,7 @@ from django.utils.safestring import mark_safe
 from radiofeed import cleaners
 
 if TYPE_CHECKING:
+    from django.template.base import Parser, Token
     from django.template.context import RequestContext
 
 COVER_IMAGE_SIZES: Final = (100, 200, 300)
@@ -158,9 +159,23 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 
 
 @register.tag
-def capture(parser, token) -> CaptureNode:
+def capture(parser: Parser, token: Token) -> CaptureNode:
     """
     Capture the contents of a tag output.
+
+    Syntax:
+
+        # render content immediately
+        {% capture as value %}
+        some content...
+        {% endcapture %}
+        {{ value }}
+
+        # only render content as variable
+        {% capture as value silent %}
+        some content...
+        {% endcapture %}
+        {{ value }}
     """
     match tuple(token.split_contents()[1:]):
         case ["as", varname]:
