@@ -34,9 +34,11 @@
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     {% include "_messages.html" %}
-                    {% capture as sidebar silent %}
-                    {% include "_sidebar.html" %}
-                {% endcapture %}
+                    {% if user.is_authenticated %}
+                        {% capture as sidebar silent %}
+                        {% include "_sidebar.html" %}
+                    {% endcapture %}
+                {% endif %}
                 {% include "_navbar.html" %}
                 <div class="relative flex min-h-screen p-2 py-6 xl:pt-12 mx-auto xl:w-11/12">
                     {% if user.is_authenticated %}
