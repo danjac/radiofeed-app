@@ -632,6 +632,17 @@ files = [
 Django = ">=3.2"
 
 [[package]]
+name = "django-capture-tag"
+version = "1.0"
+description = "A micro-library to capture output in Django templates"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-capture-tag-1.0.tar.gz", hash = "sha256:9c8a531687aac2a705a16a96c33930fb8193c17b641b7c24cd97ff180053d539"},
+    {file = "django_capture_tag-1.0-py2.py3-none-any.whl", hash = "sha256:a996f64996830c00641b5b41503c62616f9613a478c84a303fc414e96bfb4891"},
+]
+
+[[package]]
 name = "django-coverage-plugin"
 version = "3.1.0"
 description = "Django template coverage.py plugin"
@@ -2701,4 +2712,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "f9315d825a7b91fb00c93bd116b11d471ca4db132a6b9c37b5e16b7b394a3937"
+content-hash = "94326884590f2db58b45c0dee2f11a48c4790e39c87c39e41467bfd31a656f78"
