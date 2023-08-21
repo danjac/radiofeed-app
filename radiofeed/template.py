@@ -16,7 +16,7 @@ from django.utils.safestring import mark_safe
 
 from radiofeed import cleaners
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: nocover
     from django.template.base import Parser, Token
     from django.template.context import RequestContext
 
@@ -195,12 +195,12 @@ def capture(parser: Parser, token: Token) -> CaptureNode:
 class CaptureNode(template.Node):
     """Node implementation."""
 
-    def __init__(self, nodelist, varname, *, silent: bool):
+    def __init__(self, nodelist: template.NodeList, varname: str, *, silent: bool):
         self.nodelist = nodelist
         self.varname = varname
         self.silent = silent
 
-    def render(self, context):
+    def render(self, context: template.Context) -> str:
         """Renders nodelist."""
         output = self.nodelist.render(context)
         context[self.varname] = output
