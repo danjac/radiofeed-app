@@ -16,14 +16,14 @@
     },
     "devDependencies": {
         "@babel/eslint-parser": "^7.22.10",
-        "concurrently": "^8.2.0",
+        "concurrently": "^8.2.1",
         "esbuild": "^0.19.2",
         "eslint": "^8.47.0",
         "eslint-plugin-prettier": "^5.0.0",
-        "npm-check-updates": "^16.11.1",
+        "npm-check-updates": "^16.13.0",
         "prettier": "3.0.2",
         "tailwindcss": "^3.3.3",
-        "@tailwindcss/forms": "^0.5.4",
+        "@tailwindcss/forms": "^0.5.5",
         "@tailwindcss/typography": "^0.5.9"
     }
 }
