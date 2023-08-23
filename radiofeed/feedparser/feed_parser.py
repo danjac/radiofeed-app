@@ -144,24 +144,23 @@ class FeedParser:
 
     def _get_response(self) -> requests.Response:
         try:
+            response = requests.get(
+                self._podcast.rss,
+                allow_redirects=True,
+                headers=self._get_headers(),
+                timeout=5,
+            )
             try:
-                response = requests.get(
-                    self._podcast.rss,
-                    allow_redirects=True,
-                    headers=self._get_headers(),
-                    timeout=5,
-                )
                 response.raise_for_status()
-
-                if response.status_code == 304:
-                    raise NotModifiedError
-
-                return response
             except requests.HTTPError as exc:
-                if exc.response and exc.response.status_code in range(400, 500):
+                if exc.response.status_code in range(400, 500):
                     raise InaccessibleError from exc
                 raise
 
+            if response.status_code == 304:
+                raise NotModifiedError
+
+            return response
         except requests.RequestException as exc:
             raise UnavailableError from exc
 
