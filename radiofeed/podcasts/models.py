@@ -95,7 +95,7 @@ class PodcastQuerySet(
                     models.When(pk__in=exact_matches, then=models.Value(1)),
                     default=models.Value(0),
                 )
-            ).distinct()
+            )
         return qs.annotate(exact_match=models.Value(0))
 
 

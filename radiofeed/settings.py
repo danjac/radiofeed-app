@@ -80,6 +80,9 @@ DATABASES = {
         "ATOMIC_REQUESTS": True,
         "CONN_MAX_AGE": CONN_MAX_AGE,
         "CONN_HEALTH_CHECKS": CONN_MAX_AGE > 0,
+        "OPTIONS": {
+            "options": "-c statement_timeout=30s",
+        },
     }
 }
 

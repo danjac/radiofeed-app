@@ -245,9 +245,7 @@ def category_detail(
     """
     category = get_object_or_404(Category, pk=category_id)
 
-    podcasts = category.podcasts.filter(
-        pub_date__isnull=False, private=False
-    ).distinct()
+    podcasts = category.podcasts.filter(pub_date__isnull=False, private=False)
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
