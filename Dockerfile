@@ -1,6 +1,6 @@
 # Production Dockerfile for application
 
-FROM node:20-buster AS assets
+FROM node:20-bookworm-slim AS assets
 
 WORKDIR /app
 
