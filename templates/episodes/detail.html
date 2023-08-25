@@ -180,14 +180,12 @@
             {% with duration=episode.duration_in_seconds %}
                 {% if duration %}<span title="Duration">{{ duration|format_duration }}</span>{% endif %}
             {% endwith %}
-            {% with explicit=episode.is_explicit %}
-                {% if explicit %}
-                    <div title="May contain adult themes and language. Listener discretion advised."
-                         class="flex items-center text-red-600 dark:text-red-500 space-x-2">
-                        {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
-                    </div>
-                {% endif %}
-            {% endwith %}
+            {% if episode.is_explicit %}
+                <div title="May contain adult themes and language. Listener discretion advised."
+                     class="flex items-center text-red-600 dark:text-red-500 space-x-2">
+                    {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
+                </div>
+            {% endif %}
         </div>
         {% partial audio_log %}
         {% markdown episode.description %}
