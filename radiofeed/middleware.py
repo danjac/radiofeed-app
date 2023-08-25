@@ -35,6 +35,14 @@ class CacheControlMiddleware(BaseMiddleware):
 class HtmxMessagesMiddleware(BaseMiddleware):
     """Adds messages to HTMX response"""
 
+    _hx_redirect_headers = frozenset(
+        {
+            "HX-Location",
+            "HX-Redirect",
+            "HX-Refresh",
+        }
+    )
+
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation"""
         response = self.get_response(request)
@@ -42,11 +50,7 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         if not request.htmx:
             return response
 
-        if set(response.headers) & {
-            "HX-Location",
-            "HX-Redirect",
-            "HX-Refresh",
-        }:
+        if set(response.headers) & self._hx_redirect_headers:
             return response
 
         if get_messages(request):
