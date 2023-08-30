@@ -90,8 +90,6 @@ class TestFeedParser:
 
     @pytest.mark.django_db()
     def test_parse_ok(self, mocker, categories):
-        # set date to before latest
-
         podcast = create_podcast(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
@@ -172,6 +170,39 @@ class TestFeedParser:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
+
+    @pytest.mark.django_db()
+    def test_parse_links_as_ids(self, mocker, categories):
+        podcast = create_podcast(
+            rss="https://feeds.feedburner.com/VarsoviaVentoPodkasto"
+        )
+
+        mocker.patch(
+            "requests.get",
+            return_value=MockResponse(
+                url=podcast.rss,
+                status_code=200,
+                content=self.get_rss_content("rss_use_link_ids.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+
+        FeedParser(podcast).parse()
+
+        assert podcast.episodes.count() == 373
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.parser_error is None
+        assert podcast.active
+        assert podcast.num_retries == 0
+        assert podcast.content_hash
+        assert podcast.title == "Varsovia Vento Podkasto"
+        assert podcast.pub_date == parse_date("July 27, 2023 2:00+0000")
 
     @pytest.mark.django_db()
     def test_parse_high_num_episodes(self, mocker, categories):

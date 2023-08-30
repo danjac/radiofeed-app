@@ -105,7 +105,11 @@ class RSSParser:
                         episode="itunes:episode/text()",
                         episode_type="itunes:episodetype/text()",
                         explicit="itunes:explicit/text()",
-                        guid="guid/text()",
+                        guid=(
+                            "guid/text()",
+                            "atom:id/text()",
+                            "link/text()",
+                        ),
                         length=("enclosure//@length", "media:content//@fileSize"),
                         website="link/text()",
                         media_type=("enclosure//@type", "media:content//@type"),
