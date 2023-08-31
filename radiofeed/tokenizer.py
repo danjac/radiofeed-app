@@ -21,6 +21,7 @@ NLTK_LANGUAGES: Final = {
     "de": "german",
     "el": "greek",
     "en": "english",
+    "eo": "esperanto",
     "es": "spanish",
     "fi": "finnish",
     "fr": "french",
