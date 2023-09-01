@@ -15,7 +15,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.template import COVER_IMAGE_SIZES
+from radiofeed.template import ACCEPT_COOKIES_NAME, COVER_IMAGE_SIZES
 
 _cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
 _cache_page = cache_page(60 * 60)
@@ -44,7 +44,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""
     response = HttpResponse()
     response.set_cookie(
-        "accept-cookies",
+        ACCEPT_COOKIES_NAME,
         value="true",
         expires=timezone.now() + datetime.timedelta(days=365),
         secure=True,

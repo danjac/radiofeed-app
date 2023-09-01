@@ -20,6 +20,8 @@ if TYPE_CHECKING:  # pragma: nocover
     from django.template.base import Parser, Token
     from django.template.context import RequestContext
 
+ACCEPT_COOKIES_NAME: Final = "accept-cookies"
+
 COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
 register = template.Library()
@@ -63,7 +65,7 @@ def markdown(value: str | None) -> dict:
 def cookie_notice(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
     "Accept Cookies" button."""
-    return {"accept_cookies": "accept-cookies" in context.request.COOKIES}
+    return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
 
 
 @register.simple_tag
