@@ -244,7 +244,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     )
 
     @admin.display(description="Estimated Next Update")
-    def next_scheduled_update(self, obj: Podcast):
+    def next_scheduled_update(self, obj: Podcast) -> str:
         """Return estimated next update time."""
         if obj.active:
             scheduled = scheduler.next_scheduled_update(obj)
