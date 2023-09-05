@@ -15,7 +15,7 @@
         "htmx.org": "^1.9.5"
     },
     "devDependencies": {
-        "@babel/eslint-parser": "^7.22.11",
+        "@babel/eslint-parser": "^7.22.15",
         "concurrently": "^8.2.1",
         "esbuild": "^0.19.2",
         "eslint": "^8.48.0",
