@@ -148,6 +148,7 @@ select = [
     "F", # pyflakes
     "FA", # flake8-future-annotations
     "FBT", # flake8-boolean-trap
+    "G", # flake8-logging-format
     "I001", # isort
     "INP", # flake8-no-pep420
     "ISC", # flake8-implicit-str-concat
@@ -155,6 +156,7 @@ select = [
     "PIE", # flake8-pie
     "PT", # flake8-pytest-style
     "PGH", # pygrep hooks
+    "PIE", # flake8-pie
     "PTH", # flake8-use-pathlib
     "RET", # flake8-return
     "RSE", # flake8-raise
