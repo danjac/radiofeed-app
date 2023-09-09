@@ -17,17 +17,17 @@ def assert_hx_location(response: HttpResponse, data: dict) -> None:
     assert data == location, location
 
 
-def assert_status(response: HttpResponse, status: int) -> None:
+def assert_http_status(response: HttpResponse, status: int) -> None:
     """Assert response status matches."""
     assert response.status_code == status, response.status_code
 
 
 # Status assert shortcuts
 
-assert_bad_request = functools.partial(assert_status, status=400)
-assert_conflict = functools.partial(assert_status, status=409)
-assert_not_found = functools.partial(assert_status, status=404)
-assert_no_content = functools.partial(assert_status, status=204)
-assert_ok = functools.partial(assert_status, status=200)
-assert_unauthorized = functools.partial(assert_status, status=401)
-assert_unprocessable_entity = functools.partial(assert_status, status=422)
+assert_200 = functools.partial(assert_http_status, status=200)
+assert_204 = functools.partial(assert_http_status, status=204)
+assert_400 = functools.partial(assert_http_status, status=400)
+assert_401 = functools.partial(assert_http_status, status=401)
+assert_404 = functools.partial(assert_http_status, status=404)
+assert_409 = functools.partial(assert_http_status, status=409)
+assert_422 = functools.partial(assert_http_status, status=422)
