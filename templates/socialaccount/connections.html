@@ -1,5 +1,5 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons %}
+{% load heroicons socialaccount %}
 {% block title %}
     {{ block.super }} | Social Logins
 {% endblock title %}
@@ -50,6 +50,7 @@
     {% endif %}
     <h2 class="font-semibold mb-3">Add a 3rd Party Account</h2>
     <ul class="flex items-center">
+        {% get_providers as socialaccount_providers %}
         {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
     </ul>
     {% include "socialaccount/snippets/login_extra.html" %}

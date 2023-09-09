@@ -56,6 +56,7 @@ MIDDLEWARE: list[str] = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "radiofeed.middleware.CacheControlMiddleware",
     "radiofeed.middleware.HtmxMessagesMiddleware",

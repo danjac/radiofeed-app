@@ -1,4 +1,6 @@
 import pytest
+from allauth.socialaccount.models import SocialApp
+from django.contrib.sites.models import Site
 from django.template.loader import get_template
 
 from radiofeed.users.tests.factories import create_email_address
@@ -26,6 +28,13 @@ def auth_req(req, user, player):
     req.player = player
 
     return req
+
+
+@pytest.fixture()
+def social_app():
+    app = SocialApp.objects.create(provider="google", name="Google")
+    app.sites.add(Site.objects.get_current())
+    return app
 
 
 class TestSocialAccount:
@@ -173,12 +182,14 @@ class TestAccount:
     def test_password_set(self, req):
         assert get_template("account/password_set.html").render({}, request=req)
 
-    def test_login(self, req):
+    @pytest.mark.django_db()
+    def test_login(self, req, social_app):
         assert get_template("account/login.html").render(
             {"redirect_field_value": "/"}, request=req
         )
 
-    def test_signup(self, req):
+    @pytest.mark.django_db()
+    def test_signup(self, req, social_app):
         assert get_template("account/signup.html").render(
             {"redirect_field_value": "/"}, request=req
         )
