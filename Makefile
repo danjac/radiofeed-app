@@ -8,10 +8,10 @@ compose:
 	docker-compose up -d --build
 
 pyinstall:
-	poetry install
+	poetry install --no-cache
 
 pyupdate:
-	poetry update
+	poetry update --no-cache
 
 pyexport:
 	poetry export -o requirements.txt --without-hashes
