@@ -15,7 +15,6 @@ maintainers = ["Dan Jacob <danjac2018@gmail.com>"]
 python = ">=3.10,<3.12"
 attrs = "^23.1.0"
 brotli = "^1.0.9"
-django-allauth = "^0.54.0"
 django-extensions = "^3.2.3"
 django-htmx = "^1.13.0"
 django-model-utils = "^4.3.1"
@@ -43,6 +42,7 @@ python-decouple = "^3.8"
 dj-database-url = "^2.0.0"
 requests = "^2.31.0"
 django-template-partials = "^23.2"
+django-allauth = "^0.56.1"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
