@@ -23,12 +23,12 @@ repos:
       hooks:
           - id: shellcheck
     - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: "v0.0.287"
+      rev: "v0.0.289"
       hooks:
           - id: ruff
             args: ["--fix"]
     - repo: https://github.com/ambv/black
-      rev: 23.9.0
+      rev: 23.9.1
       hooks:
           - id: black
             args: [--target-version, "py311", --line-length, "88"]
