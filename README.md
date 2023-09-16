@@ -22,6 +22,12 @@ For ease of local development a `docker-compose.yml` is provided which includes:
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
+Mailhog can also be run on its own Docker container:
+
+```bash
+docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
+```
+
 If you want to use the Docker images just run:
 
 ```bash
