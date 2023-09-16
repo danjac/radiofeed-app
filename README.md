@@ -103,6 +103,12 @@ You can also run this command continuously using the `--watch` flag:
 python manage.py parse_feeds --watch
 ```
 
+Fetch new feeds from the iTunes podcast catalog:
+
+```bash
+12 6 * * * * python manage.py parse_itunes
+```
+
 Generate similar recommendations for each podcast:
 
 ```bash
