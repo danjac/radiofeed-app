@@ -13,5 +13,5 @@ podman run -dt -p 6379:6379 redis:7.0.5-bullseye
 # PostgreSQL
 
 podman run -dt -e POSTGRES_PASSWORD=password \
-    -v pg_data:/var/lib/postgresql/data \
+    -v radiofeed_pg_data:/var/lib/postgresql/data \
     -p 5432:5432 postgres:15.0-bullseye
