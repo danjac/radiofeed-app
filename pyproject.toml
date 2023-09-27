@@ -33,7 +33,7 @@ scipy = "^1.10.1"
 heroicons = {extras = ["django"], version = "^2.2.0"}
 nh3 = "^0.2.9"
 markdown-it-py = {extras = ["linkify"], version = "^3.0.0"}
-django = "^4.2"
+django = { git = "https://github.com/django/django" }
 django-fast-update = "^0.2.2"
 django-anymail = "^10.0"
 python-decouple = "^3.8"
