@@ -28,11 +28,7 @@ If you want to use the Docker images just run:
 docker-compose up --build -d
 ```
 
-Mailhog can also be run in its own Docker container if you want to run other services on your local OS:
-
-```bash
-docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
-```
+If you are using [Podman](https://podman.io/) you can also run `./podman.sh` to start up these containers.
 
 Current tested versions are PostgreSQL 14+ and Redis 6.2+.
 
