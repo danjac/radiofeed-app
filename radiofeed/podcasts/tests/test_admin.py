@@ -118,7 +118,7 @@ class TestPubDateFilter:
     @pytest.mark.django_db()
     def test_no(self, podcasts, podcast_admin, req):
         no_pub_date = create_podcast(pub_date=None)
-        f = PubDateFilter(req, {"pub_date": "no"}, Podcast, podcast_admin)
+        f = PubDateFilter(req, {"pub_date": ["no"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == no_pub_date
@@ -126,7 +126,7 @@ class TestPubDateFilter:
     @pytest.mark.django_db()
     def test_yes(self, podcasts, podcast_admin, req):
         no_pub_date = create_podcast(pub_date=None)
-        f = PubDateFilter(req, {"pub_date": "yes"}, Podcast, podcast_admin)
+        f = PubDateFilter(req, {"pub_date": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert no_pub_date not in qs
@@ -143,7 +143,7 @@ class TestPromotedFilter:
     @pytest.mark.django_db()
     def test_promoted(self, podcasts, podcast_admin, req):
         promoted = create_podcast(promoted=True)
-        f = PromotedFilter(req, {"promoted": "yes"}, Podcast, podcast_admin)
+        f = PromotedFilter(req, {"promoted": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
@@ -160,7 +160,7 @@ class TestPrivateFilter:
     @pytest.mark.django_db()
     def test_true(self, podcasts, podcast_admin, req):
         private = create_podcast(private=True)
-        f = PrivateFilter(req, {"private": "yes"}, Podcast, podcast_admin)
+        f = PrivateFilter(req, {"private": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == private
@@ -177,7 +177,7 @@ class TestActiveFilter:
     @pytest.mark.django_db()
     def test_active(self, podcasts, podcast_admin, req):
         inactive = create_podcast(active=False)
-        f = ActiveFilter(req, {"active": "yes"}, Podcast, podcast_admin)
+        f = ActiveFilter(req, {"active": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert inactive not in qs
@@ -185,7 +185,7 @@ class TestActiveFilter:
     @pytest.mark.django_db()
     def test_inactive(self, podcasts, podcast_admin, req):
         inactive = create_podcast(active=False)
-        f = ActiveFilter(req, {"active": "no"}, Podcast, podcast_admin)
+        f = ActiveFilter(req, {"active": ["no"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert inactive in qs
@@ -206,7 +206,7 @@ class TestParserErrorFilter:
     def test_duplicate(self, podcasts, podcast_admin, req, duplicate):
         f = ParserErrorFilter(
             req,
-            {"parser_error": Podcast.ParserError.DUPLICATE},
+            {"parser_error": [Podcast.ParserError.DUPLICATE]},
             Podcast,
             podcast_admin,
         )
@@ -233,7 +233,7 @@ class TestScheduledFilter:
 
     @pytest.mark.django_db()
     def test_true(self, podcast_admin, req, scheduled, unscheduled):
-        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, podcast_admin)
+        f = ScheduledFilter(req, {"scheduled": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == scheduled
@@ -252,7 +252,7 @@ class TestSubscribedFilter:
 
     @pytest.mark.django_db()
     def test_true(self, podcasts, podcast_admin, req, subscribed):
-        f = SubscribedFilter(req, {"subscribed": "yes"}, Podcast, podcast_admin)
+        f = SubscribedFilter(req, {"subscribed": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed

@@ -1,6 +1,11 @@
 import pytest
+from django.utils.crypto import get_random_string
 
 from radiofeed.users.models import User
+
+
+def _make_random_password():
+    return get_random_string(12)
 
 
 class TestUserManager:
@@ -8,7 +13,7 @@ class TestUserManager:
 
     @pytest.mark.django_db()
     def test_create_user(self):
-        password = User.objects.make_random_password()
+        password = _make_random_password()
 
         user = User.objects.create_user(
             username="tester1", email=self.email, password=password
@@ -17,7 +22,7 @@ class TestUserManager:
 
     @pytest.mark.django_db()
     def test_create_superuser(self):
-        password = User.objects.make_random_password()
+        password = _make_random_password()
 
         user = User.objects.create_superuser(
             username="tester2", email=self.email, password=password
