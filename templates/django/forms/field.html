@@ -20,7 +20,7 @@
                 </label>
                 {{ field }}
             {% endif %}
-            {% include "_errors.html" with errors=field.errors %}
+            {{ field.errors }}
             {% if field.help_text %}<p class="text-gray-600 dark:text-gray-300">{{ field.help_text }}</p>{% endif %}
         </div>
     {% endwith %}
