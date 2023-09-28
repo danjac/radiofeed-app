@@ -28,7 +28,11 @@ If you want to use the Docker images just run:
 docker-compose up --build -d
 ```
 
-If you are using [Podman](https://podman.io/) you can also run `./podman.sh` to start up these containers.
+If you are using [Podman](https://podman.io/) you can also run these containers in the Podman Kube configuration provided:
+
+```bash
+podman play kube podman-kube.yaml
+```
 
 Current tested versions are PostgreSQL 14+ and Redis 6.2+.
 
@@ -54,7 +58,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 ## Deployment
 
-The following environment variables should be set in your production installation (changing `[radiofeed app](radiofeed.app)` for your domain).
+The following environment variables should be set in your production installation (changing _radiofeed.app_ for your domain).
 
 ```
 ALLOWED_HOSTS=radiofeed.app
