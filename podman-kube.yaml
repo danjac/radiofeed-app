@@ -1,7 +1,5 @@
-# Save the output of this file and use kubectl create -f to import
-# it into Kubernetes.
-#
 # Created with podman-4.6.2
+# Intended for local development use
 apiVersion: v1
 kind: Pod
 metadata:
@@ -17,7 +15,6 @@ spec:
                 hostPort: 1025
               - containerPort: 8025
                 hostPort: 8025
-          securityContext: {}
         - name: redis
           image: docker.io/library/redis:7.0.5-bullseye
           ports:
