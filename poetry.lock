@@ -550,15 +550,13 @@ Django = ">=3.2"
 typing-extensions = ">=3.10.0.0"
 
 [[package]]
-name = "django"
-version = "5.0a1"
+name = "Django"
+version = "5.1.dev20230929075239"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
 python-versions = ">=3.10"
-files = [
-    {file = "Django-5.0a1-py3-none-any.whl", hash = "sha256:4b7ee536e8b2bf1e68f6c9bda192300ec94844e32e730076c2e520bc63dac64e"},
-    {file = "Django-5.0a1.tar.gz", hash = "sha256:3a52052fbc5e01f2202c020a8241aa40dc030b16c8fb49dc480cc46ab8735158"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 asgiref = ">=3.7.0"
@@ -568,6 +566,12 @@ tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 [package.extras]
 argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
+
+[package.source]
+type = "git"
+url = "https://github.com/django/django"
+reference = "HEAD"
+resolved_reference = "e99c7d8847e9006f877ab3cea47f1977652af71f"
 
 [[package]]
 name = "django-allauth"
@@ -2732,4 +2736,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "860aa8c49d616eaac1064bf87a0a56ceeea2df98ea2bb0b68c17aaa2affd6dc0"
+content-hash = "670afec1022b7bde8ef128c5a2be0edd5fb7a700cdfb7b1b1211c77bf8b229f1"
