@@ -131,7 +131,7 @@ class Podcast(models.Model):
 
     parser_error: str = models.CharField(
         max_length=30,
-        choices=ParserError.choices,
+        choices=ParserError,
         null=True,
         blank=True,
     )
