@@ -35,7 +35,6 @@ heroicons = {extras = ["django"], version = "^2.2.0"}
 nh3 = "^0.2.9"
 markdown-it-py = {extras = ["linkify"], version = "^3.0.0"}
 django = "^4.2"
-psycopg = {extras = ["binary"], version = "^3.1.8"}
 django-fast-update = "^0.2.2"
 django-anymail = "^10.0"
 python-decouple = "^3.8"
@@ -43,6 +42,7 @@ dj-database-url = "^2.0.0"
 requests = "^2.31.0"
 django-template-partials = "^23.2"
 django-allauth = "^0.56.1"
+psycopg = {extras = ["binary"], version = "^3.1.12"}
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
