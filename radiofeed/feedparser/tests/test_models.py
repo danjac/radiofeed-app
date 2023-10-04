@@ -46,7 +46,7 @@ class TestFeed:
         assert feed.language == "fr"
 
     def test_no_items(self):
-        with pytest.raises(ValueError, match=r"max\(\) arg is an empty sequence"):
+        with pytest.raises(ValueError, match=r"max\(\) iterable argument is empty"):
             Feed(**create_feed(), items=[])
 
     def test_not_complete(self, item):
