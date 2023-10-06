@@ -3,6 +3,8 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.response import TemplateResponse
 
+from radiofeed.htmx import render_htmx
+
 
 def render_pagination(
     request: HttpRequest,
@@ -11,11 +13,12 @@ def render_pagination(
     extra_context: dict | None = None,
     *,
     page_size: int = 30,
+    partial: str = "pagination",
     target: str = "pagination",
 ) -> TemplateResponse:
     """Renders paginated object list."""
 
-    return TemplateResponse(
+    return render_htmx(
         request,
         template_name,
         {
@@ -25,4 +28,6 @@ def render_pagination(
             "pagination_target": target,
             **(extra_context or {}),
         },
+        partial=partial,
+        target=target,
     )

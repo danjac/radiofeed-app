@@ -46,7 +46,6 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def index(request: HttpRequest) -> TemplateResponse:
     """Render default podcast home page for authenticated users."""
 
@@ -78,7 +77,6 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def search_podcasts(request: HttpRequest) -> TemplateResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -151,7 +149,6 @@ def podcast_detail(
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -235,7 +232,6 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -294,7 +290,6 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
     podcasts = Podcast.objects.annotate(
