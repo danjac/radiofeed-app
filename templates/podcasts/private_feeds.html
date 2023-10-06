@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 {% load heroicons partials %}
-{% startpartial pagination %}
-{% include "podcasts/_podcasts.html" %}
-{% endpartial pagination %}
 {% block title %}
     {{ block.super }} | Private Feeds
 {% endblock title %}
@@ -33,5 +30,8 @@
             </ul>
         </nav>
     </header>
-    {% partial pagination %}
+    {% startpartial pagination %}
+    {% include "podcasts/_podcasts.html" %}
+{% endpartial pagination %}
+{% partial pagination %}
 {% endblock content %}

@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 {% load partials %}
-{% startpartial pagination %}
-{% include "episodes/_episodes.html" %}
-{% endpartial pagination %}
 {% block title %}
     | New Releases
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
@@ -41,5 +38,8 @@
             </div>
         {% endif %}
     </header>
-    {% partial pagination %}
+    {% startpartial pagination %}
+    {% include "episodes/_episodes.html" %}
+{% endpartial pagination %}
+{% partial pagination %}
 {% endblock content %}

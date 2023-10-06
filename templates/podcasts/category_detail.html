@@ -1,10 +1,5 @@
 {% extends "base.html" %}
 {% load cache partials %}
-{% startpartial pagination %}
-{% cache 600 category-detail request.get_full_path %}
-{% include "podcasts/_podcasts.html" %}
-{% endcache %}
-{% endpartial pagination %}
 {% block title %}
     | Categories | {{ category.name }} Podcasts
 {% endblock title %}
@@ -42,5 +37,10 @@
             </header>
         {% endif %}
     {% endwith %}
-    {% partial pagination %}
+    {% startpartial pagination %}
+    {% cache 600 category-detail request.get_full_path %}
+    {% include "podcasts/_podcasts.html" %}
+{% endcache %}
+{% endpartial pagination %}
+{% partial pagination %}
 {% endblock content %}

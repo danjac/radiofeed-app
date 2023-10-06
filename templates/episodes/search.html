@@ -1,13 +1,13 @@
 {% extends "search_base.html" %}
 {% load cache partials %}
-{% startpartial pagination %}
-{% cache 600 search-episodes request.get_full_path %}
-{% include "episodes/_episodes.html" %}
-{% endcache %}
-{% endpartial pagination %}
 {% block title %}
     | Search | Episodes
 {% endblock title %}
 {% block search_content %}
-    {% partial pagination %}
+    {% startpartial pagination %}
+    {% cache 600 search-episodes request.get_full_path %}
+    {% include "episodes/_episodes.html" %}
+{% endcache %}
+{% endpartial pagination %}
+{% partial pagination %}
 {% endblock search_content %}

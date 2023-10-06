@@ -1,23 +1,5 @@
 {% extends "base.html" %}
 {% load heroicons partials %}
-{% startpartial form %}
-<form method="post"
-      action="{{ request.path }}"
-      class="space-y-3"
-      id="private-feed-form"
-      hx-post="{{ request.path }}"
-      hx-target="this"
-      hx-swap="outerHTML">
-    {% csrf_token %}
-    {{ form }}
-    <div>
-        <button class="inline-flex items-center btn btn-primary">
-            {% heroicon_mini "plus" class="mr-2" %}
-            Add Feed
-        </button>
-    </div>
-</form>
-{% endpartial form %}
 {% block title %}
     {{ block.super }} | Private Feeds | Add Feed
 {% endblock title %}
@@ -34,5 +16,23 @@
             </ul>
         </nav>
     </header>
-    {% partial form %}
+    {% startpartial form %}
+    <form method="post"
+          action="{{ request.path }}"
+          class="space-y-3"
+          id="private-feed-form"
+          hx-post="{{ request.path }}"
+          hx-target="this"
+          hx-swap="outerHTML">
+        {% csrf_token %}
+        {{ form }}
+        <div>
+            <button class="inline-flex items-center btn btn-primary">
+                {% heroicon_mini "plus" class="mr-2" %}
+                Add Feed
+            </button>
+        </div>
+    </form>
+{% endpartial form %}
+{% partial form %}
 {% endblock content %}

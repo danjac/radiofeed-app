@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 {% load partials %}
-{% startpartial pagination %}
-{% include "podcasts/_podcasts.html" %}
-{% endpartial pagination %}
 {% block title %}
     | Podcasts
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
@@ -37,5 +34,8 @@
             </div>
         {% endif %}
     </header>
-    {% partial pagination %}
+    {% startpartial pagination %}
+    {% include "podcasts/_podcasts.html" %}
+{% endpartial pagination %}
+{% partial pagination %}
 {% endblock content %}
