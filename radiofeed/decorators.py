@@ -12,33 +12,6 @@ require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 
 
-def render_htmx(*, partial: str, target: str | None = None) -> Callable:
-    """Conditionally render a template partial on HTMX request.
-
-    If the response is a `TemplateResponse` instance will render the content using only the selected partial.
-
-    If `target` is provided, will also try to match the `HX-Target` header.
-    """
-
-    def _decorator(view: Callable) -> Callable:
-        @functools.wraps(view)
-        def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-            response = view(request, *args, **kwargs)
-            if (
-                hasattr(response, "render")
-                and not response.is_rendered
-                and request.htmx
-                and (target is None or target == request.htmx.target)
-            ):
-                response.template_name = f"{response.template_name}#{partial}"
-
-            return response
-
-        return _wrapper
-
-    return _decorator
-
-
 def require_auth(view: Callable) -> Callable:
     """Login required decorator also handling HTMX and AJAX views."""
 
