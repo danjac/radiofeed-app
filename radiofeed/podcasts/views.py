@@ -8,14 +8,10 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import (
-    render_htmx,
-    require_auth,
-    require_DELETE,
-    require_form_methods,
-)
+from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
+from radiofeed.htmx import render_htmx
 from radiofeed.http import HttpResponseConflict
 from radiofeed.pagination import render_pagination
 from radiofeed.podcasts import itunes
@@ -264,7 +260,6 @@ def category_detail(
 
 @require_POST
 @require_auth
-@render_htmx(partial="subscribe_button")
 def subscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
@@ -274,18 +269,27 @@ def subscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
         return HttpResponseConflict()
 
     messages.success(request, "Subscribed to Podcast")
-    return _render_podcast_detail(request, podcast, is_subscribed=True)
+    return _render_podcast_detail(
+        request,
+        podcast,
+        is_subscribed=True,
+        partial="subscribe_button",
+    )
 
 
 @require_DELETE
 @require_auth
-@render_htmx(partial="subscribe_button")
 def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Unsubscribed from Podcast")
-    return _render_podcast_detail(request, podcast, is_subscribed=False)
+    return _render_podcast_detail(
+        request,
+        podcast,
+        is_subscribed=False,
+        partial="subscribe_button",
+    )
 
 
 @require_safe
@@ -318,7 +322,6 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_form_methods
 @require_auth
-@render_htmx(partial="form", target="private-feed-form")
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
     form, result = handle_form(PrivateFeedForm, request, user=request.user)
@@ -334,12 +337,14 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
 
         return HttpResponseRedirect(redirect_url)
 
-    return TemplateResponse(
+    return render_htmx(
         request,
         "podcasts/private_feed_form.html",
         {
             "form": form,
         },
+        partial="form",
+        target="private-feed-form",
         status=result.status,
     )
 
@@ -355,13 +360,20 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRe
 
 
 def _render_podcast_detail(
-    request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
+    request: HttpRequest,
+    podcast: Podcast,
+    *,
+    is_subscribed: bool,
+    partial: str | None = None,
+    target: str | None = None,
 ) -> TemplateResponse:
-    return TemplateResponse(
+    return render_htmx(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,
         },
+        partial=partial,
+        target=target,
     )
