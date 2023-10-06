@@ -364,8 +364,7 @@ def _render_podcast_detail(
     podcast: Podcast,
     *,
     is_subscribed: bool,
-    partial: str | None = None,
-    target: str | None = None,
+    **kwargs,
 ) -> TemplateResponse:
     return render_htmx(
         request,
@@ -374,6 +373,5 @@ def _render_podcast_detail(
             "podcast": podcast,
             "is_subscribed": is_subscribed,
         },
-        partial=partial,
-        target=target,
+        **kwargs,
     )

@@ -16,15 +16,15 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import render_htmx, require_auth, require_DELETE
-from radiofeed.episodes.models import Episode
+from radiofeed.decorators import require_auth, require_DELETE
+from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.htmx import render_htmx
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.pagination import render_pagination
 
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
@@ -59,7 +59,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
@@ -96,7 +95,6 @@ def episode_detail(
 
 @require_POST
 @require_auth
-@render_htmx(partial="audio_player_button")
 def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
@@ -113,20 +111,11 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     request.player.set(episode.id)
 
-    return _render_episode_detail(
-        request,
-        episode,
-        {
-            "audio_log": audio_log,
-            "is_playing": True,
-            "start_player": True,
-        },
-    )
+    return _render_audio_player_button(request, audio_log, is_playing=True)
 
 
 @require_POST
 @require_auth
-@render_htmx(partial="audio_player_button")
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
@@ -134,14 +123,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_episode_detail(
-            request,
-            audio_log.episode,
-            {
-                "audio_log": audio_log,
-                "is_playing": False,
-            },
-        )
+        return _render_audio_player_button(request, audio_log, is_playing=False)
 
     return HttpResponseNoContent()
 
@@ -173,7 +155,6 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def history(request: HttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
@@ -192,7 +173,6 @@ def history(request: HttpRequest) -> TemplateResponse:
 
 @require_DELETE
 @require_auth
-@render_htmx(partial="audio_log")
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
@@ -207,12 +187,11 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     audio_log.delete()
 
     messages.info(request, "Removed from History")
-    return _render_episode_detail(request, audio_log.episode)
+    return _render_episode_detail(request, audio_log.episode, partial="audio_log")
 
 
 @require_safe
 @require_auth
-@render_htmx(partial="pagination", target="pagination")
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
@@ -229,7 +208,6 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @require_auth
-@render_htmx(partial="bookmark_button")
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
@@ -241,12 +219,11 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.success(request, "Added to Bookmarks")
 
-    return _render_episode_detail(request, episode, {"is_bookmarked": True})
+    return _render_bookmark_button(request, episode, is_bookmarked=True)
 
 
 @require_DELETE
 @require_auth
-@render_htmx(partial="bookmark_button")
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
@@ -254,19 +231,47 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from Bookmarks")
 
-    return _render_episode_detail(request, episode, {"is_bookmarked": False})
+    return _render_bookmark_button(request, episode, is_bookmarked=False)
 
 
 def _render_episode_detail(
     request: HttpRequest,
     episode: Episode,
     extra_context: dict | None = None,
+    **kwargs,
 ) -> TemplateResponse:
-    return TemplateResponse(
+    return render_htmx(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
             **(extra_context or {}),
         },
+        **kwargs,
+    )
+
+
+def _render_bookmark_button(
+    request: HttpRequest, episode: Episode, *, is_bookmarked: bool
+) -> TemplateResponse:
+    return _render_episode_detail(
+        request,
+        episode,
+        {"is_bookmarked": is_bookmarked},
+        partial="bookmark_button",
+    )
+
+
+def _render_audio_player_button(
+    request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
+):
+    return _render_episode_detail(
+        request,
+        audio_log.episode,
+        {
+            "audio_log": audio_log,
+            "is_playing": is_playing,
+            "start_player": is_playing,
+        },
+        partial="audio_player_button",
     )
