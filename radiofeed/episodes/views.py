@@ -3,15 +3,8 @@ from datetime import timedelta
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
-from django.http import (
-    Http404,
-    HttpRequest,
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseRedirect,
-)
-from django.shortcuts import get_object_or_404
-from django.template.response import TemplateResponse
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
@@ -69,14 +62,14 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .order_by("-rank", "-pub_date")
         )
         return render_pagination(request, episodes, "episodes/search.html")
-    return HttpResponseRedirect(reverse("episodes:index"))
+    return redirect("episodes:index")
 
 
 @require_safe
 @require_auth
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
-) -> TemplateResponse:
+) -> HttpResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
@@ -95,7 +88,7 @@ def episode_detail(
 
 @require_POST
 @require_auth
-def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
+def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
@@ -155,7 +148,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-def history(request: HttpRequest) -> TemplateResponse:
+def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
 
@@ -239,7 +232,7 @@ def _render_episode_detail(
     episode: Episode,
     extra_context: dict | None = None,
     **kwargs,
-) -> TemplateResponse:
+) -> HttpResponse:
     return render_htmx(
         request,
         "episodes/detail.html",
@@ -253,7 +246,7 @@ def _render_episode_detail(
 
 def _render_bookmark_button(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
-) -> TemplateResponse:
+) -> HttpResponse:
     return _render_episode_detail(
         request,
         episode,
@@ -264,7 +257,7 @@ def _render_bookmark_button(
 
 def _render_audio_player_button(
     request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
-):
+) -> HttpResponse:
     return _render_episode_detail(
         request,
         audio_log.episode,

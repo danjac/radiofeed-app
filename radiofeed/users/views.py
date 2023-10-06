@@ -1,9 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
-from django.template.response import TemplateResponse
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
@@ -24,7 +23,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         form.save()
         messages.success(request, "Your preferences have been saved")
 
-        return HttpResponseRedirect(reverse("users:preferences"))
+        return redirect("users:preferences")
 
     return render_htmx(
         request,
@@ -38,9 +37,9 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
+def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
-    return TemplateResponse(
+    return render(
         request,
         "account/podcast_feeds.html",
         {
@@ -65,7 +64,7 @@ def import_podcast_feeds(
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
-        return HttpResponseRedirect(reverse("users:manage_podcast_feeds"))
+        return redirect("users:manage_podcast_feeds")
 
     return render_htmx(
         request,
@@ -81,7 +80,7 @@ def import_podcast_feeds(
 
 @require_safe
 @require_auth
-def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
+def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     subscriptions = (
@@ -90,24 +89,25 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
         .order_by("podcast__title")
     )
 
-    return TemplateResponse(
+    response = render(
         request,
         "account/podcasts.opml",
         {
             "subscriptions": subscriptions,
         },
         content_type="text/x-opml",
-        headers={
-            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-        },
     )
+    response[
+        "Content-Disposition"
+    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+    return response
 
 
 @require_safe
 @require_auth
-def user_stats(request: HttpRequest) -> TemplateResponse:
+def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return TemplateResponse(request, "account/stats.html")
+    return render(request, "account/stats.html")
 
 
 @require_form_methods
@@ -118,5 +118,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return HttpResponseRedirect(reverse("podcasts:landing_page"))
-    return TemplateResponse(request, "account/delete_account.html")
+        return redirect("podcasts:landing_page")
+    return render(request, "account/delete_account.html")
