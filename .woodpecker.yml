@@ -14,11 +14,10 @@ steps:
             - event: push
               branch: main
     backend:
-        image: python:3.11.4-buster
+        image: python:3.11-slim-bookworm
         environment:
             - DATABASE_URL=postgresql://postgres:password@database:5432/postgres
         commands:
-            - apt-get install libpq-dev
             - pip install -r requirements-ci.txt
             - python -m ruff radiofeed
             - python -m djlint --lint templates/
