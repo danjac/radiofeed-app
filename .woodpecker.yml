@@ -5,7 +5,7 @@ services:
             POSTGRES_PASSWORD: password
 steps:
     frontend:
-        image: node:20-buster
+        image: node:20-bookworm-slim
         commands:
             - npm install
             - npm run lint
