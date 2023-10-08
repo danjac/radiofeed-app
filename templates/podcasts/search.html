@@ -4,10 +4,9 @@
     | Search | Podcasts
 {% endblock title %}
 {% block search_content %}
-    {% partialdef pagination %}
+    {% partialdef pagination inline=True %}
     {% cache 600 search-podcasts request.get_full_path %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}
 {% endpartialdef pagination %}
-{% partial pagination %}
 {% endblock search_content %}

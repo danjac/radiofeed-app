@@ -16,7 +16,7 @@
             </ul>
         </nav>
     </header>
-    {% partialdef form %}
+    {% partialdef form inline=True %}
     <form method="post"
           action="{{ request.path }}"
           class="space-y-3"
@@ -34,5 +34,4 @@
         </div>
     </form>
 {% endpartialdef form %}
-{% partial form %}
 {% endblock content %}

@@ -38,8 +38,7 @@
             </div>
         {% endif %}
     </header>
-    {% partialdef pagination %}
+    {% partialdef pagination inline=True %}
     {% include "episodes/_episodes.html" %}
 {% endpartialdef pagination %}
-{% partial pagination %}
 {% endblock content %}

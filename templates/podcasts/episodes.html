@@ -22,10 +22,9 @@
             </ul>
         </nav>
     {% endif %}
-    {% partialdef pagination %}
+    {% partialdef pagination inline=True %}
     {% cache 600 podcast-episodes request.get_full_path %}
     {% include "episodes/_episodes.html" %}
 {% endcache pagination %}
 {% endpartialdef pagination %}
-{% partial pagination %}
 {% endblock podcast_content %}

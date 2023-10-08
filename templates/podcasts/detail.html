@@ -42,7 +42,7 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    {% partialdef subscribe_button %}
+                    {% partialdef subscribe_button inline=True %}
                     <div hx-target="this"
                          hx-push-url="false"
                          hx-indicator="this"
@@ -68,7 +68,6 @@
                         {% endif %}
                     </div>
                 {% endpartialdef subscribe_button %}
-                {% partial subscribe_button %}
             {% endif %}
             <nav class="flex items-center space-x-3">
                 {% if podcast.website %}
