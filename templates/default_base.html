@@ -34,38 +34,33 @@
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     {% include "_messages.html" %}
-                    {% if user.is_authenticated %}
-                        {% capture as sidebar silent %}
-                        {% include "_sidebar.html" %}
-                    {% endcapture %}
-                {% endif %}
-                {% include "_navbar.html" %}
-                <div class="relative flex min-h-screen p-2 py-6 xl:pt-12 mx-auto xl:w-11/12">
-                    {% if user.is_authenticated %}
-                        <aside class="hidden w-full xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-28">
-                            {{ sidebar }}
-                        </aside>
-                    {% endif %}
-                    <main class="w-full mx-auto xl:block xl:w-4/5" id="content" hx-history-elt>
-                        {# djlint:off #}
+                    {% include "_navbar.html" %}
+                    <div class="relative flex min-h-screen p-2 py-6 xl:pt-12 mx-auto xl:w-11/12">
+                        {% if user.is_authenticated %}
+                            <aside class="hidden w-full xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-28">
+                                {% include "_sidebar.html" %}
+                            </aside>
+                        {% endif %}
+                        <main class="w-full mx-auto xl:block xl:w-4/5" id="content" hx-history-elt>
+                            {# djlint:off #}
                             {% block content %}{% endblock content %}
-                        {# djlint:on #}
-                    </main>
+                            {# djlint:on #}
+                        </main>
+                    </div>
+                    {% if user.is_authenticated %}
+                        {% audio_player %}
+                    {% else %}
+                        {% cookie_notice %}
+                    {% endif %}
                 </div>
-                {% if user.is_authenticated %}
-                    {% audio_player %}
-                {% else %}
-                    {% cookie_notice %}
-                {% endif %}
             </div>
-        </div>
-        {% django_htmx_script %}
-        <script defer src="{% static "js/bundle.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
-        <script>
+            {% django_htmx_script %}
+            <script defer src="{% static "js/bundle.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
+            <script>
                 if (typeof navigator.serviceWorker !== 'undefined') {
                     navigator.serviceWorker.register('{% url "service_worker" %}')
                 }
-        </script>
-    </body>
-</html>
+            </script>
+        </body>
+    </html>
 {% endspaceless %}

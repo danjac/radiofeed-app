@@ -17,7 +17,6 @@ from django.utils.safestring import mark_safe
 from radiofeed import cleaners
 
 if TYPE_CHECKING:  # pragma: nocover
-    from django.template.base import Parser, Token
     from django.template.context import RequestContext
 
 ACCEPT_COOKIES_NAME: Final = "accept-cookies"
@@ -158,52 +157,3 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     scheme = "https" if settings.USE_HTTPS else "http"
 
     return f"{scheme}://{site.domain}{path}"
-
-
-@register.tag
-def capture(parser: Parser, token: Token) -> CaptureNode:
-    """
-    Capture the contents of a tag output.
-
-    Syntax:
-
-        # render content immediately
-        {% capture as value %}
-        some content...
-        {% endcapture %}
-        {{ value }}
-
-        # only render content as variable
-        {% capture as value silent %}
-        some content...
-        {% endcapture %}
-        {{ value }}
-    """
-    match tuple(token.split_contents()[1:]):
-        case ["as", varname]:
-            silent = False
-        case ["as", varname, "silent"]:
-            silent = True
-        case _:
-            raise template.TemplateSyntaxError(
-                "'capture' node expects 'as variable' or 'silent' syntax."
-            )
-
-    nodelist = parser.parse(("endcapture",))
-    parser.delete_first_token()
-    return CaptureNode(nodelist, varname, silent=silent)
-
-
-class CaptureNode(template.Node):
-    """Node implementation."""
-
-    def __init__(self, nodelist: template.NodeList, varname: str, *, silent: bool):
-        self.nodelist = nodelist
-        self.varname = varname
-        self.silent = silent
-
-    def render(self, context: template.Context) -> str:
-        """Renders nodelist."""
-        output = self.nodelist.render(context)
-        context[self.varname] = output
-        return "" if self.silent else output
