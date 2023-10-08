@@ -37,10 +37,10 @@
             </header>
         {% endif %}
     {% endwith %}
-    {% startpartial pagination %}
+    {% partialdef pagination %}
     {% cache 600 category-detail request.get_full_path %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}
-{% endpartial pagination %}
+{% endpartialdef pagination %}
 {% partial pagination %}
 {% endblock content %}

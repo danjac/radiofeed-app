@@ -25,7 +25,7 @@
         {% endif %}
         <div class="space-y-3">
             <h2 class="font-semibold">Import feeds from an OPML file into your collection.</h2>
-            {% startpartial import_feeds_form %}
+            {% partialdef import_feeds_form %}
             <form class="space-y-3"
                   id="import-feeds-form"
                   hx-encoding="multipart/form-data"
@@ -41,7 +41,7 @@
                     </button>
                 </div>
             </form>
-        {% endpartial import_feeds_form %}
+        {% endpartialdef import_feeds_form %}
         {% partial import_feeds_form %}
     </div>
 </div>

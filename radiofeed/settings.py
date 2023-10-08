@@ -122,20 +122,6 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "loaders": [
-                (
-                    "template_partials.loader.Loader",
-                    [
-                        (
-                            "django.template.loaders.cached.Loader",
-                            [
-                                "django.template.loaders.filesystem.Loader",
-                                "django.template.loaders.app_directories.Loader",
-                            ],
-                        )
-                    ],
-                )
-            ],
         },
     }
 ]

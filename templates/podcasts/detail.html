@@ -42,7 +42,7 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    {% startpartial subscribe_button %}
+                    {% partialdef subscribe_button %}
                     <div hx-target="this"
                          hx-push-url="false"
                          hx-indicator="this"
@@ -67,7 +67,7 @@
                             </button>
                         {% endif %}
                     </div>
-                {% endpartial subscribe_button %}
+                {% endpartialdef subscribe_button %}
                 {% partial subscribe_button %}
             {% endif %}
             <nav class="flex items-center space-x-3">

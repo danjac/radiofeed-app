@@ -16,7 +16,7 @@
             </ul>
         </nav>
     </header>
-    {% startpartial form %}
+    {% partialdef form %}
     <form method="post"
           action="{{ request.path }}"
           class="space-y-3"
@@ -33,6 +33,6 @@
             </button>
         </div>
     </form>
-{% endpartial form %}
+{% endpartialdef form %}
 {% partial form %}
 {% endblock content %}

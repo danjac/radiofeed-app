@@ -30,8 +30,8 @@
             </ul>
         </nav>
     </header>
-    {% startpartial pagination %}
+    {% partialdef pagination %}
     {% include "podcasts/_podcasts.html" %}
-{% endpartial pagination %}
+{% endpartialdef pagination %}
 {% partial pagination %}
 {% endblock content %}

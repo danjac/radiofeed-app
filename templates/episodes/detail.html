@@ -63,7 +63,7 @@
         <div class="flex items-center space-x-3 sm:space-x-6">
             {% cover_image episode.get_cover_url 200 podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 md:h-40 md:w-40" %}
             <div class="flex flex-col place-content-between h-28 md:h-32">
-                {% startpartial audio_player_button %}
+                {% partialdef audio_player_button %}
                 {% with target="audio-player-button" %}
                     <div id="{{ target }}"
                          hx-push-url="false"
@@ -97,9 +97,9 @@
                         {% endif %}
                     </div>
                 {% endwith %}
-            {% endpartial audio_player_button %}
+            {% endpartialdef audio_player_button %}
             {% partial audio_player_button %}
-            {% startpartial bookmark_button %}
+            {% partialdef bookmark_button %}
             <div hx-push-url="false"
                  hx-target="this"
                  hx-swap="outerHTML"
@@ -124,7 +124,7 @@
                     </button>
                 {% endif %}
             </div>
-        {% endpartial bookmark_button %}
+        {% endpartialdef bookmark_button %}
         {% partial bookmark_button %}
         <div class="flex flex-wrap items-center font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
             <a download
@@ -159,7 +159,7 @@
         </div>
     {% endif %}
 </div>
-{% startpartial audio_log %}
+{% partialdef audio_log %}
 <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
     {% if audio_log %}
         <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
@@ -186,7 +186,7 @@
         </div>
     {% endif %}
 </div>
-{% endpartial audio_log %}
+{% endpartialdef audio_log %}
 {% partial audio_log %}
 {% markdown episode.description %}
 </article>
