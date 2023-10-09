@@ -268,11 +268,11 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
     messages.success(request, "Subscribed to Podcast")
-    return _render_podcast_detail(
+
+    return _render_subscribe_button(
         request,
         podcast,
         is_subscribed=True,
-        partial="subscribe_button",
     )
 
 
@@ -283,11 +283,10 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Unsubscribed from Podcast")
-    return _render_podcast_detail(
+    return _render_subscribe_button(
         request,
         podcast,
         is_subscribed=False,
-        partial="subscribe_button",
     )
 
 
@@ -369,4 +368,15 @@ def _render_podcast_detail(
             "is_subscribed": is_subscribed,
         },
         **kwargs,
+    )
+
+
+def _render_subscribe_button(
+    request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
+) -> HttpResponse:
+    return _render_podcast_detail(
+        request,
+        podcast,
+        is_subscribed=is_subscribed,
+        partial="subscribe_button",
     )
