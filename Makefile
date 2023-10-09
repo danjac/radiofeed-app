@@ -4,9 +4,6 @@ dbinstall: migrate fixtures
 
 update: pyupdate pyexport npmupdate precommitupdate
 
-compose:
-	docker-compose up -d --build
-
 pyinstall:
 	poetry install --no-cache
 
