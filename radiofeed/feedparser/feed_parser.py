@@ -153,7 +153,7 @@ class FeedParser:
             try:
                 response.raise_for_status()
             except requests.HTTPError as exc:
-                if exc.response.status_code in range(400, 500):
+                if exc.response and exc.response.status_code in range(400, 500):
                     raise InaccessibleError from exc
                 raise
 
