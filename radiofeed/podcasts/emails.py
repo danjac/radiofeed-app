@@ -1,8 +1,6 @@
-from django.conf import settings
-from django.core.mail import send_mail
 from django.db.models import Case, Value, When
-from django.template import loader
 
+from radiofeed.emails import send_email
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.models import User
@@ -75,18 +73,12 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
     if podcasts:
         user.recommended_podcasts.add(*podcasts)
 
-        context = {
-            "podcasts": podcasts,
-            "recipient": user,
-        }
-
-        send_mail(
+        send_email(
             f"Hi {user.first_name or user.username}, here are some new podcasts you might like!",
-            loader.render_to_string("podcasts/emails/recommendations.txt", context),
-            settings.DEFAULT_FROM_EMAIL,
             [user.email],
-            html_message=loader.render_to_string(
-                "podcasts/emails/recommendations.html", context
-            ),
-            fail_silently=False,
+            "podcasts/emails/recommendations.html",
+            {
+                "podcasts": podcasts,
+                "recipient": user,
+            },
         )
