@@ -28,7 +28,7 @@ class EpisodeAdmin(FastCountAdminMixin, admin.ModelAdmin):
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str
-    ) -> QuerySet[Episode]:
+    ) -> tuple[QuerySet[Episode], bool]:
         """Search episodes."""
         return (
             (queryset.search(search_term).order_by("-rank", "-pub_date"), False)
