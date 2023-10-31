@@ -41,7 +41,7 @@ services:
         ports:
             - "6379:6379"
 
-    mailhog:
+    mailpit:
         image: axllent/mailpit:v1.9
         mem_limit: 100m
         stop_grace_period: "3s"
