@@ -18,7 +18,7 @@ For ease of local development a `docker-compose.yml` is provided which includes:
 
 * PostgreSQL
 * Redis
-* Mailhog (for local email testing and development)
+* [Mailpit](https://mailpit.axllent.org/) (for local email testing and development)
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 

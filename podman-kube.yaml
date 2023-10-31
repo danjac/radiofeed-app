@@ -8,8 +8,8 @@ metadata:
     name: radiofeed-pod
 spec:
     containers:
-        - name: mailhog
-          image: docker.io/mailhog/mailhog:latest
+        - name: mailpit
+          image: docker.io/axllent/mailpit:v1.9
           ports:
               - containerPort: 1025
                 hostPort: 1025
