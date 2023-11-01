@@ -151,7 +151,6 @@ select = [
     "G", # flake8-logging-format
     "I001", # isort
     "INP", # flake8-no-pep420
-    "ISC", # flake8-implicit-str-concat
     "N", # pep8-naming
     "PIE", # flake8-pie
     "PT", # flake8-pytest-style
@@ -187,7 +186,6 @@ ignore = [
     "D413",
     "E501",
     "E701",
-    "ISC001",
     "Q000",
     "S101",
 ]
