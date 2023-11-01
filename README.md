@@ -62,7 +62,6 @@ The following environment variables should be set in your production installatio
 
 ```
 ALLOWED_HOSTS=radiofeed.app
-CONN_MAX_AGE=360
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>

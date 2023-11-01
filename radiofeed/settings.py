@@ -69,7 +69,7 @@ MIDDLEWARE: list[str] = [
 
 # Databases
 
-CONN_MAX_AGE = config("CONN_MAX_AGE", default=0, cast=int)
+CONN_MAX_AGE = config("CONN_MAX_AGE", default=360, cast=int)
 
 DATABASES = {
     "default": config(
