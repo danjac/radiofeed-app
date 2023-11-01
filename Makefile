@@ -5,6 +5,7 @@ dbinstall: migrate fixtures
 update: pyupdate pyexport npmupdate precommitupdate
 
 pyinstall:
+	poetry env use 3.12
 	poetry install --no-cache
 
 pyupdate:

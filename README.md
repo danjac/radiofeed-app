@@ -10,7 +10,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 Radiofeed requires the following basic dependencies to get started:
 
-* Python 3.10+
+* Python 3.12
 * Node 16+
 * [Poetry](https://github.com/python-poetry/poetry)
 
@@ -38,13 +38,12 @@ Current tested versions are PostgreSQL 14+ and Redis 6.2+.
 
 Next copy `.env.example` to `.env`. The default settings should work with the Docker services provided, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
 
-You should run your development environment inside a virtualenv e.g.:
+You should run your development environment inside a virtualenv: Poetry should do this for you automatically:
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
+poetry env use 3.12
+poetry install
 ```
-
-Poetry should create the virtualenv for you automatically.
 
 The `Makefile` has some convenient shortcuts for local development, including:
 
