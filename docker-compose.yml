@@ -12,7 +12,7 @@ x-deploy: &default-deploy
 
 services:
     postgres:
-        image: postgres:15.0-bullseye
+        image: postgres:16.0-bookworm
         environment:
             - POSTGRES_PASSWORD=password
         volumes:
@@ -29,7 +29,7 @@ services:
             - "5432:5432"
 
     redis:
-        image: redis:7.0.5-bullseye
+        image: redis:7.2-bookworm
         stop_grace_period: "3s"
         deploy: *default-deploy
         logging: *default-logging

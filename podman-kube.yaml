@@ -16,7 +16,7 @@ spec:
               - containerPort: 8025
                 hostPort: 8025
         - name: redis
-          image: docker.io/library/redis:7.0.5-bullseye
+          image: docker.io/library/redis:7.2-bookworm
           ports:
               - containerPort: 6379
                 hostPort: 6379
@@ -24,7 +24,7 @@ spec:
           env:
               - name: POSTGRES_PASSWORD
                 value: password
-          image: docker.io/library/postgres:15.0-bullseye
+          image: docker.io/library/postgres:16.0-bookworm
           ports:
               - containerPort: 5432
                 hostPort: 5432
