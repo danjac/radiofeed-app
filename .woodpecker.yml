@@ -14,7 +14,7 @@ steps:
             - event: push
               branch: main
     backend:
-        image: python:3.11-slim-bookworm
+        image: python:3.12-bookworm
         environment:
             - DATABASE_URL=postgresql://postgres:password@database:5432/postgres
         commands:

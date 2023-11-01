@@ -20,7 +20,7 @@ ENV NODE_ENV=production
 
 RUN npm run build
 
-FROM python:3.12-bullseye AS app
+FROM python:3.12-bookworm AS app
 
 ENV PYTHONUNBUFFERED=1
 
