@@ -70,6 +70,16 @@ class TestPodcastManager:
         assert Podcast.objects.search("test").count() == 1
 
     @pytest.mark.django_db()
+    def test_search_owner(self):
+        create_podcast(owner="tester")
+        assert Podcast.objects.search("tester").count() == 1
+
+    @pytest.mark.django_db()
+    def test_search_keywords(self):
+        create_podcast(keywords="test")
+        assert Podcast.objects.search("test").count() == 1
+
+    @pytest.mark.django_db()
     def test_search_if_empty(self):
         create_podcast(title="testing")
         assert Podcast.objects.search("").count() == 0

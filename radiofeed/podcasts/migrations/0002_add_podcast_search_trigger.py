@@ -12,9 +12,9 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             sql="""
 CREATE TRIGGER podcast_update_search_trigger
-BEFORE INSERT OR UPDATE OF title, keywords, search_vector ON podcasts_podcast
+BEFORE INSERT OR UPDATE OF title, owner, keywords, search_vector ON podcasts_podcast
 FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger(
-search_vector, 'pg_catalog.english', title, keywords);
+    search_vector, 'pg_catalog.english', title, owner, keywords);
 UPDATE podcasts_podcast SET search_vector = NULL;""",
             reverse_sql="DROP TRIGGER IF EXISTS podcast_update_search_trigger ON podcasts_podcast;",
         ),
