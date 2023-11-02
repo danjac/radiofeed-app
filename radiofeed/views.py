@@ -3,7 +3,6 @@ import io
 
 import requests
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.signing import BadSignature, Signer
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -85,8 +84,6 @@ def manifest(request: HttpRequest) -> JsonResponse:
     start_url = reverse("podcasts:landing_page")
     theme_color = "#26323C"
 
-    site = Site.objects.get_current()
-
     icon = {
         "src": static("img/wave.png"),
         "type": "image/png",
@@ -100,8 +97,8 @@ def manifest(request: HttpRequest) -> JsonResponse:
             "description": "Podcast aggregator site",
             "dir": "ltr",
             "display": "standalone",
-            "name": site.name,
-            "short_name": truncatechars(site.name, 12),
+            "name": request.site.name,
+            "short_name": truncatechars(request.site.name, 12),
             "orientation": "any",
             "scope": start_url,
             "start_url": start_url,
