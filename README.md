@@ -38,16 +38,18 @@ Current tested versions are PostgreSQL 14+ and Redis 6.2+.
 
 Next copy `.env.example` to `.env`. The default settings should work with the Docker services provided, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
 
-You should run your development environment inside a virtualenv: Poetry should do this for you automatically:
+You should run your development environment inside a virtualenv. Poetry should do this for you automatically:
 
 ```bash
 poetry env use 3.12
 poetry install
 ```
 
+Alternatively you can just run `make install` (see below) which will install your Poetry environment in addition to other dependencies. 
+
 The `Makefile` has some convenient shortcuts for local development, including:
 
-* `make install`: download and install front and backend dependencies
+* `make install`: download and install front and backend Javascript and Python dependencies
 * `make dbinstall`: run migrations and install sample fixtures
 * `make test`: run unit tests
 * `make update`: update all front and backend dependencies to latest available versions
