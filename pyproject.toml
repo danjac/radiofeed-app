@@ -75,6 +75,8 @@ DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = [
     "-v",
     "-x",
+    "-n",
+    "auto",
     "-p no:warnings",
     "--ff",
     "--mypy",
