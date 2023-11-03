@@ -174,9 +174,11 @@ class TestDefaultForm:
 
 
 class TestAbsoluteUri:
+    @pytest.mark.django_db()
     def test_plain_url(self):
         assert absolute_uri("/podcasts/") == "http://example.com/podcasts/"
 
+    @pytest.mark.django_db()
     @override_settings(USE_HTTPS=True)
     def test_https(self):
         assert absolute_uri("/podcasts/") == "https://example.com/podcasts/"

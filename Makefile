@@ -51,7 +51,7 @@ watch:
 	npm run watch
 
 test:
-	python -m pytest
+	python -m pytest -n auto
 
 clean:
 	git clean -Xdf
