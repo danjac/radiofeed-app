@@ -228,7 +228,7 @@ class TestPodcastSimilar:
         create_batch(create_episode, 3, podcast=podcast)
         create_batch(create_recommendation, 3, podcast=podcast)
         response = client.get(
-            reverse("podcasts:podcast_similar", args=[podcast.id, podcast.slug])
+            reverse("podcasts:podcast_similar", args=[podcast.pk, podcast.slug])
         )
         assert_200(response)
         assert response.context["podcast"] == podcast
@@ -290,7 +290,7 @@ class TestPodcastDetail:
     @pytest.mark.django_db()
     def test_get_podcast_admin(self, client, staff_user, podcast):
         response = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
+            reverse("podcasts:podcast_detail", args=[podcast.pk, podcast.slug])
         )
         assert_200(response)
         assert response.context["podcast"] == podcast
@@ -301,7 +301,7 @@ class TestPodcastEpisodes:
     def url(self, podcast):
         return reverse(
             "podcasts:podcast_episodes",
-            args=[podcast.id, podcast.slug],
+            args=[podcast.pk, podcast.slug],
         )
 
     @pytest.mark.django_db()
@@ -422,7 +422,7 @@ class TestCategoryDetail:
 
 class TestSubscribe:
     def url(self, podcast):
-        return reverse("podcasts:subscribe", args=[podcast.id])
+        return reverse("podcasts:subscribe", args=[podcast.pk])
 
     @pytest.mark.django_db()
     def test_subscribe(self, client, podcast, auth_user):
@@ -470,7 +470,7 @@ class TestSubscribe:
 
 class TestUnsubscribe:
     def url(self, podcast):
-        return reverse("podcasts:unsubscribe", args=[podcast.id])
+        return reverse("podcasts:unsubscribe", args=[podcast.pk])
 
     @pytest.mark.django_db()
     def test_unsubscribe(self, client, auth_user, podcast):

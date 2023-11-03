@@ -218,7 +218,7 @@ class FeedParser:
     def _podcast_update(self, **fields) -> None:
         now = timezone.now()
 
-        Podcast.objects.filter(pk=self._podcast.id).update(
+        Podcast.objects.filter(pk=self._podcast.pk).update(
             updated=now,
             parsed=now,
             **fields,

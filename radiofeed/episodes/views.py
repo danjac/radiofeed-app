@@ -81,7 +81,7 @@ def episode_detail(
         {
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
-            "is_playing": request.player.has(episode.id),
+            "is_playing": request.player.has(episode.pk),
         },
     )
 
@@ -102,7 +102,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         },
     )
 
-    request.player.set(episode.id)
+    request.player.set(episode.pk)
 
     return _render_audio_player_button(request, audio_log, is_playing=True)
 

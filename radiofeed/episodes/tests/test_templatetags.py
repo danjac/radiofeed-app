@@ -91,7 +91,7 @@ class TestAudioPlayer:
         req.session = {}
 
         req.player = Player(req)
-        req.player.set(log.episode.id)
+        req.player.set(log.episode.pk)
 
         assert audio_player(RequestContext(req)) == {
             **defaults,

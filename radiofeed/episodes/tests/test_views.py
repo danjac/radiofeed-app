@@ -30,7 +30,7 @@ def player_episode(auth_user, client, episode):
     create_audio_log(user=auth_user, episode=episode)
 
     session = client.session
-    session[Player.session_key] = episode.id
+    session[Player.session_key] = episode.pk
     session.save()
 
     return episode
@@ -231,7 +231,7 @@ class TestEpisodeDetail:
 
 class TestStartPlayer:
     def url(self, episode):
-        return reverse("episodes:start_player", args=[episode.id])
+        return reverse("episodes:start_player", args=[episode.pk])
 
     @pytest.mark.django_db()
     def test_play_from_start(self, client, auth_user, episode):
@@ -248,7 +248,7 @@ class TestStartPlayer:
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        assert client.session[Player.session_key] == episode.id
+        assert client.session[Player.session_key] == episode.pk
 
     @pytest.mark.django_db()
     def test_play_private_subscribed(self, client, auth_user):
@@ -263,7 +263,7 @@ class TestStartPlayer:
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        assert client.session[Player.session_key] == episode.id
+        assert client.session[Player.session_key] == episode.pk
 
     @pytest.mark.django_db()
     def test_another_episode_in_player(self, client, auth_user, player_episode):
@@ -278,7 +278,7 @@ class TestStartPlayer:
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        assert client.session[Player.session_key] == episode.id
+        assert client.session[Player.session_key] == episode.pk
 
     @pytest.mark.django_db()
     def test_resume(self, client, auth_user, player_episode):
@@ -289,7 +289,7 @@ class TestStartPlayer:
             ),
         )
 
-        assert client.session[Player.session_key] == player_episode.id
+        assert client.session[Player.session_key] == player_episode.pk
 
 
 class TestClosePlayer:
@@ -315,7 +315,7 @@ class TestClosePlayer:
 
         assert not response.context["is_playing"]
 
-        assert player_episode.id not in client.session
+        assert player_episode.pk not in client.session
 
 
 class TestPlayerTimeUpdate:
@@ -337,7 +337,7 @@ class TestPlayerTimeUpdate:
     @pytest.mark.django_db()
     def test_player_log_missing(self, client, auth_user, episode):
         session = client.session
-        session[Player.session_key] = episode.id
+        session[Player.session_key] = episode.pk
         session.save()
 
         assert_204(
@@ -418,7 +418,7 @@ class TestBookmarks:
 
 class TestAddBookmark:
     def url(self, episode):
-        return reverse("episodes:add_bookmark", args=[episode.id])
+        return reverse("episodes:add_bookmark", args=[episode.pk])
 
     @pytest.mark.django_db()
     def test_post(self, client, auth_user, episode):
@@ -444,7 +444,7 @@ class TestAddBookmark:
 
 class TestRemoveBookmark:
     def url(self, episode):
-        return reverse("episodes:remove_bookmark", args=[episode.id])
+        return reverse("episodes:remove_bookmark", args=[episode.pk])
 
     @pytest.mark.django_db()
     def test_post(self, client, auth_user, episode):
@@ -501,7 +501,7 @@ class TestHistory:
 
 class TestRemoveAudioLog:
     def url(self, episode):
-        return reverse("episodes:remove_audio_log", args=[episode.id])
+        return reverse("episodes:remove_audio_log", args=[episode.pk])
 
     @pytest.mark.django_db()
     def test_ok(self, client, auth_user, episode):

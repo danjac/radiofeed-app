@@ -137,5 +137,5 @@ class TestPodcastModel:
     def test_get_latest_episode_url(self, podcast):
         url = podcast.get_latest_episode_url()
         assert url == reverse(
-            "podcasts:latest_episode", args=[podcast.id, podcast.slug]
+            "podcasts:latest_episode", args=[podcast.pk, podcast.slug]
         )
