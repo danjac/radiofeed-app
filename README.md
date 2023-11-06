@@ -109,6 +109,8 @@ Fetch new feeds from the iTunes podcast catalog:
 12 6 * * * * python manage.py parse_itunes
 ```
 
+**Note:** this job will use a lot of disk space, do not run if you want to keep your deployment small.
+
 Generate similar recommendations for each podcast:
 
 ```bash
