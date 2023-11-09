@@ -3,7 +3,7 @@ from email.utils import getaddresses
 
 import dj_database_url
 import sentry_sdk
-from decouple import Csv, config
+from decouple import Choices, Csv, config
 from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
@@ -221,7 +221,18 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_PREVENT_ENUMERATION = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+ACCOUNT_EMAIL_VERIFICATION = config(
+    "ACCOUNT_EMAIL_VERIFICATION",
+    cast=Choices(
+        [
+            "mandatory",
+            "none",
+            "optional",
+        ]
+    ),
+    default="none",
+)
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
