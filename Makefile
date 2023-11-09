@@ -66,6 +66,5 @@ podstop:
 	podman pod stop radiofeed-pod
 
 podclean:
-	podman pod stop radiofeed-pod
 	podman pod rm radiofeed-pod
 	podman volume rm radiofeed_pg_data
