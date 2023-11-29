@@ -19,7 +19,7 @@
         "@tailwindcss/forms": "^0.5.7",
         "@tailwindcss/typography": "^0.5.10",
         "concurrently": "^8.2.2",
-        "esbuild": "^0.19.7",
+        "esbuild": "^0.19.8",
         "eslint": "^8.54.0",
         "eslint-plugin-prettier": "^5.0.1",
         "npm-check-updates": "^16.14.11",
