@@ -55,3 +55,16 @@ test:
 
 clean:
 	git clean -Xdf
+
+podbuild:
+	podman play kube podman-kube.yaml
+
+podstart:
+	podman pod start radiofeed-pod
+
+podstop:
+	podman pod stop radiofeed-pod
+
+podclean:
+	podman pod rm radiofeed-pod
+	podman volume rm radiofeed_pg_data

@@ -8,11 +8,11 @@
     Email Addresses
 {% endblock settings_selected_item %}
 {% block settings_content %}
-    <div class="space-y-3">
+    <div class="space-y-6">
         {% with emailaddresses=user.emailaddress_set.all num_addresses=user.emailaddress_set.count %}
             {% if num_addresses %}
                 <p>The following e-mail addresses are associated with your account:</p>
-                <form class="space-y-3"
+                <form class="space-y-6"
                       hx-disable="true"
                       method="post"
                       id="email-addresses"
@@ -71,7 +71,7 @@
             <h2 class="font-semibold">Add New E-mail Address</h2>
             <form method="post"
                   action="{{ request.path }}"
-                  class="space-y-3"
+                  class="space-y-6"
                   hx-disable="true">
                 {% csrf_token %}
                 {{ form }}
