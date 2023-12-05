@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 
 class HttpResponseNoContent(HttpResponse):
-    """304 No Content response."""
+    """204 No Content response."""
 
     status_code = http.HTTPStatus.NO_CONTENT
 
