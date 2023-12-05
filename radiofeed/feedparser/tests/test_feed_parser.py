@@ -1,4 +1,5 @@
 import dataclasses
+import http
 import pathlib
 from datetime import datetime
 
@@ -29,12 +30,13 @@ from radiofeed.podcasts.tests.factories import create_category, create_podcast
 @dataclasses.dataclass
 class MockResponse:
     url: str
-    status_code: int
+    status_code: http.HTTPStatus
     content: bytes = b""
     headers: dict = dataclasses.field(default_factory=dict)
 
     def raise_for_status(self):
-        if self.status_code > 399:
+        status = http.HTTPStatus(self.status_code)
+        if status.is_client_error or status.is_server_error:
             raise requests.HTTPError("error", response=self)
 
 
@@ -111,7 +113,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -181,7 +183,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_use_link_ids.xml"),
                 headers={
                     "ETag": "abc123",
@@ -212,7 +214,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_high_num_episodes.xml"),
                 headers={
                     "ETag": "abc123",
@@ -249,7 +251,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -310,7 +312,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -343,7 +345,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url="https//example.com/other.rss",
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=content,
                 headers={
                     "ETag": "abc123",
@@ -377,7 +379,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_mock_complete.xml"),
                 headers={
                     "ETag": "abc123",
@@ -432,7 +434,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=self.redirect_rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -463,7 +465,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=other.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
@@ -487,7 +489,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content("invalid_dates.xml"),
             ),
         )
@@ -509,7 +511,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
@@ -533,7 +535,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
@@ -555,7 +557,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=200,
+                status_code=http.HTTPStatus.OK,
                 content=self.get_rss_content("rss_empty_mock.xml"),
             ),
         )
@@ -579,7 +581,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=304,
+                status_code=http.HTTPStatus.NOT_MODIFIED,
             ),
         )
 
@@ -601,7 +603,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=410,
+                status_code=http.HTTPStatus.GONE,
             ),
         )
 
@@ -621,7 +623,7 @@ class TestFeedParser:
             "requests.get",
             return_value=MockResponse(
                 url=podcast.rss,
-                status_code=500,
+                status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
             ),
         )
 

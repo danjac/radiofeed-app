@@ -1,5 +1,6 @@
 import functools
 import hashlib
+import http
 from collections.abc import Iterator
 
 import attrs
@@ -153,11 +154,14 @@ class FeedParser:
             try:
                 response.raise_for_status()
             except requests.HTTPError as exc:
-                if exc.response and exc.response.status_code in range(400, 500):
+                if (
+                    exc.response
+                    and http.HTTPStatus(exc.response.status_code).is_client_error
+                ):
                     raise InaccessibleError from exc
                 raise
 
-            if response.status_code == 304:
+            if response.status_code == http.HTTPStatus.NOT_MODIFIED:
                 raise NotModifiedError
 
             return response
