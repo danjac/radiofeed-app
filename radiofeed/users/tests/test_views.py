@@ -9,9 +9,9 @@ from radiofeed.episodes.tests.factories import create_audio_log, create_bookmark
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
 from radiofeed.tests.asserts import (
-    assert_200,
-    assert_422,
+    assert_client_error,
     assert_hx_location,
+    assert_ok,
 )
 from radiofeed.tests.factories import create_batch
 from radiofeed.users.models import User
@@ -22,7 +22,7 @@ class TestUserPreferences:
 
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
-        assert_200(client.get(self.url, HTTP_HX_REQUEST="true"))
+        assert_ok(client.get(self.url, HTTP_HX_REQUEST="true"))
 
     @pytest.mark.django_db()
     def test_post(self, client, auth_user):
@@ -67,7 +67,7 @@ class TestUserStats:
         create_audio_log(user=auth_user)
         create_bookmark(user=auth_user)
 
-        assert_200(client.get(reverse("users:stats")))
+        assert_ok(client.get(reverse("users:stats")))
 
     @pytest.mark.django_db()
     def test_stats_plural(self, client, auth_user):
@@ -75,14 +75,14 @@ class TestUserStats:
         create_batch(create_bookmark, 3, user=auth_user)
         create_batch(create_subscription, 3, subscriber=auth_user)
 
-        assert_200(client.get(reverse("users:stats")))
+        assert_ok(client.get(reverse("users:stats")))
 
 
 class TestManagePodcastFeeds:
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
         create_subscription(subscriber=auth_user)
-        assert_200(client.get(reverse("users:manage_podcast_feeds")))
+        assert_ok(client.get(reverse("users:manage_podcast_feeds")))
 
 
 class TestImportPodcastFeeds:
@@ -119,7 +119,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_invalid_form(self, client, auth_user):
-        assert_422(
+        assert_client_error(
             client.post(
                 self.url,
                 data={"opml": "test.xml"},
@@ -132,7 +132,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_podcast_not_in_db(self, client, auth_user, upload_file):
-        assert_200(
+        assert_ok(
             client.post(
                 self.url,
                 data={"opml": upload_file},
@@ -152,7 +152,7 @@ class TestImportPodcastFeeds:
             subscriber=auth_user,
         )
 
-        assert_200(
+        assert_ok(
             client.post(
                 self.url,
                 data={"opml": upload_file},
@@ -165,7 +165,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_is_empty(self, client, auth_user, upload_file):
-        assert_200(
+        assert_ok(
             client.post(
                 self.url,
                 data={"opml": upload_file},
@@ -192,12 +192,12 @@ class TestDeleteAccount:
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
         # make sure we don't accidentally delete account on get request
-        assert_200(client.get(self.url))
+        assert_ok(client.get(self.url))
         assert User.objects.exists()
 
     @pytest.mark.django_db()
     def test_post_unconfirmed(self, client, auth_user):
-        assert_200(client.post(self.url))
+        assert_ok(client.post(self.url))
         assert User.objects.exists()
 
     @pytest.mark.django_db()
