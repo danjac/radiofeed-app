@@ -9,6 +9,12 @@ class HttpResponseNoContent(HttpResponse):
     status_code = http.HTTPStatus.NO_CONTENT
 
 
+class HttpResponseUnauthorized(HttpResponse):
+    """401 Unauthorized response."""
+
+    status_code = http.HTTPStatus.UNAUTHORIZED
+
+
 class HttpResponseConflict(HttpResponse):
     """409 Conflict response."""
 
