@@ -22,7 +22,7 @@ For ease of local development a `docker-compose.yml` is provided which includes:
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
-Current tested versions are PostgreSQL 14+ and Redis 6.2+.
+Current tested versions are PostgreSQL 15+ and Redis 6.2+.
 
 If you want to use the Docker images just run:
 
