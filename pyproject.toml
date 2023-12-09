@@ -36,7 +36,6 @@ markdown-it-py = {extras = ["linkify"], version = "^3.0.0"}
 django-anymail = "^10.0"
 python-decouple = "^3.8"
 dj-database-url = "^2.0.0"
-requests = "^2.31.0"
 django-template-partials = "^23.2"
 django-allauth = "^0.56.1"
 psycopg = {extras = ["binary"], version = "^3.1.12"}
@@ -69,7 +68,6 @@ django-debug-toolbar = "^4.0.0"
 pytest-env = "^0.8.1"
 ruff = "^0.0.281"
 djlint = "^1.31.1"
-types-requests = "^2.31.0.2"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings"
