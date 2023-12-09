@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from concurrent.futures import wait
 
+import httpx
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F, QuerySet
 
@@ -34,11 +35,13 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
 
+        client = feed_parser.FeedParser.get_client()
+
         while True:
             with DatabaseSafeThreadPoolExecutor() as executor:
                 wait(
                     executor.db_safe_map(
-                        self._parse_feed,
+                        lambda podcast: self._parse_feed(podcast, client),
                         self._get_scheduled_podcasts(options["limit"]),
                     )
                 )
@@ -58,9 +61,9 @@ class Command(BaseCommand):
             )[:limit]
         )
 
-    def _parse_feed(self, podcast: Podcast) -> None:
+    def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
         try:
-            feed_parser.FeedParser(podcast).parse()
+            feed_parser.FeedParser(podcast).parse(client)
             self.stdout.write(self.style.SUCCESS(f"parse feed ok: {podcast}"))
         except FeedParserError as exc:
             self.stderr.write(

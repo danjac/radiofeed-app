@@ -4,7 +4,7 @@ import http
 from collections.abc import Iterator
 
 import attrs
-import requests
+import httpx
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
@@ -48,6 +48,7 @@ class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _max_retries: int = 3
+    _request_timeout: int = 5
 
     _feed_attrs = attrs.fields(Feed)
     _item_attrs = attrs.fields(Item)
@@ -65,7 +66,16 @@ class FeedParser:
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
 
-    def parse(self) -> None:
+    @classmethod
+    def get_client(cls, **kwargs) -> httpx.Client:
+        """Returns Client instance for making requests."""
+        return httpx.Client(
+            timeout=cls._request_timeout,
+            follow_redirects=True,
+            **kwargs,
+        )
+
+    def parse(self, client: httpx.Client) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
@@ -77,7 +87,7 @@ class FeedParser:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
         try:
-            response = self._get_response()
+            response = self._get_response(client)
             content_hash = self._make_content_hash(response)
             self._check_duplicates(response, content_hash)
             self._handle_update(
@@ -88,7 +98,7 @@ class FeedParser:
         except FeedParserError as exc:
             self._handle_error(exc)
 
-    def _make_content_hash(self, response: requests.Response) -> str:
+    def _make_content_hash(self, response: httpx.Response) -> str:
         content_hash = make_content_hash(response.content)
 
         # check content hash has changed
@@ -97,7 +107,7 @@ class FeedParser:
 
         return content_hash
 
-    def _check_duplicates(self, response: requests.Response, content_hash: str) -> None:
+    def _check_duplicates(self, response: httpx.Response, content_hash: str) -> None:
         # check no other podcast with this RSS URL or identical content
         if (
             Podcast.objects.exclude(pk=self._podcast.pk)
@@ -109,7 +119,7 @@ class FeedParser:
     def _handle_update(
         self,
         *,
-        response: requests.Response,
+        response: httpx.Response,
         content_hash: str,
         feed: Feed,
     ) -> None:
@@ -143,29 +153,20 @@ class FeedParser:
         except DataError as exc:
             raise InvalidDataError from exc
 
-    def _get_response(self) -> requests.Response:
+    def _get_response(self, client: httpx.Client) -> httpx.Response:
         try:
-            response = requests.get(
-                self._podcast.rss,
-                allow_redirects=True,
-                headers=self._get_headers(),
-                timeout=5,
-            )
+            response = client.get(self._podcast.rss, headers=self._get_headers())
             try:
                 response.raise_for_status()
-            except requests.HTTPError as exc:
-                if (
-                    exc.response
-                    and http.HTTPStatus(exc.response.status_code).is_client_error
-                ):
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code == http.HTTPStatus.NOT_MODIFIED:
+                    raise NotModifiedError from exc
+                if exc.response.is_client_error:
                     raise InaccessibleError from exc
                 raise
 
-            if response.status_code == http.HTTPStatus.NOT_MODIFIED:
-                raise NotModifiedError
-
             return response
-        except requests.RequestException as exc:
+        except httpx.HTTPError as exc:
             raise UnavailableError from exc
 
     def _get_headers(self) -> dict[str, str]:
