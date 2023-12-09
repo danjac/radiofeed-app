@@ -38,7 +38,7 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(client: httpx.Client, search_term: str, timeout: int = 5) -> list[Feed]:
+def search(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
@@ -52,7 +52,6 @@ def search(client: httpx.Client, search_term: str, timeout: int = 5) -> list[Fee
             headers={
                 "Accept": "application/json",
             },
-            timeout=timeout,
         )
         feeds = list(_parse_feeds(response))
         cache.set(cache_key, feeds)
@@ -195,13 +194,11 @@ def _get_response(
     url,
     params: dict | None = None,
     headers: dict | None = None,
-    timeout: int = 10,
     **kwargs,
 ):
     response = client.get(
         url,
         params=params,
-        timeout=timeout,
         headers=headers,
         **kwargs,
     )
