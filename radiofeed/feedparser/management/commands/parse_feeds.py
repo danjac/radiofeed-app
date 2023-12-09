@@ -5,6 +5,7 @@ import httpx
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F, QuerySet
 
+from radiofeed.client import get_client
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.podcasts.models import Podcast
@@ -35,7 +36,7 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
 
-        client = feed_parser.FeedParser.get_client()
+        client = get_client()
 
         while True:
             with DatabaseSafeThreadPoolExecutor() as executor:

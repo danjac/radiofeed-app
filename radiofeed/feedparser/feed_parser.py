@@ -12,7 +12,6 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed import batcher, tokenizer
-from radiofeed.client import get_client
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -63,16 +62,6 @@ class FeedParser:
 
     def __init__(self, podcast: Podcast):
         self._podcast = podcast
-
-    @classmethod
-    def get_client(cls, **kwargs) -> httpx.Client:
-        """Returns Client instance for making requests."""
-        return get_client(
-            headers={
-                "Accept": cls._accept_header,
-            },
-            **kwargs,
-        )
 
     def parse(self, client: httpx.Client) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
@@ -169,7 +158,7 @@ class FeedParser:
             raise UnavailableError from exc
 
     def _get_headers(self) -> dict[str, str]:
-        headers = {}
+        headers = {"Accept": self._accept_header}
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:
