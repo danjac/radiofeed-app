@@ -1,3 +1,4 @@
+import http
 import urllib.parse
 
 import httpx
@@ -74,13 +75,11 @@ class TestCoverImage:
 
     @pytest.mark.django_db()
     def test_ok(self, client, db, mocker):
-        class MockResponse:
-            content = b"content"
+        def _handler(request):
+            return httpx.Response(http.HTTPStatus.OK, content=b"")
 
-            def raise_for_status(self):
-                pass
-
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
+        mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
@@ -100,22 +99,21 @@ class TestCoverImage:
 
     @pytest.mark.django_db()
     def test_failed_download(self, client, db, mocker):
-        class MockResponse:
-            def raise_for_status(self):
-                raise httpx.HTTPError("invalid")
+        def _handler(request):
+            raise httpx.HTTPError("invalid")
 
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
+        mocker.patch("radiofeed.views.get_client", return_value=mock_client)
+
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 
     @pytest.mark.django_db()
     def test_failed_process(self, client, db, mocker):
-        class MockResponse:
-            content = b"content"
+        def _handler(request):
+            return httpx.Response(http.HTTPStatus.OK, content=b"")
 
-            def raise_for_status(self):
-                pass
-
-        mocker.patch("httpx.get", return_value=MockResponse())
+        mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
+        mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
 

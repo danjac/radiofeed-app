@@ -4,7 +4,6 @@ from collections.abc import Iterator
 
 import attrs
 import httpx
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -26,6 +25,7 @@ from radiofeed.feedparser.exceptions import (
     UnavailableError,
 )
 from radiofeed.feedparser.models import Feed, Item
+from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -47,7 +47,6 @@ class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _max_retries: int = 3
-    _request_timeout: int = 5
 
     _feed_attrs = attrs.fields(Feed)
     _item_attrs = attrs.fields(Item)
@@ -68,12 +67,9 @@ class FeedParser:
     @classmethod
     def get_client(cls, **kwargs) -> httpx.Client:
         """Returns Client instance for making requests."""
-        return httpx.Client(
-            timeout=cls._request_timeout,
-            follow_redirects=True,
+        return get_client(
             headers={
                 "Accept": cls._accept_header,
-                "User-Agent": settings.USER_AGENT,
             },
             **kwargs,
         )

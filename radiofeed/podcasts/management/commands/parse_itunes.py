@@ -4,6 +4,7 @@ from typing import Final
 import httpx
 from django.core.management.base import BaseCommand
 
+from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
@@ -65,7 +66,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         """Handle implementation."""
-        client = itunes.get_client()
+        client = get_client()
         with DatabaseSafeThreadPoolExecutor() as executor:
             executor.db_safe_map(
                 lambda locale: self._crawl_feeds(locale, client), options["locales"]

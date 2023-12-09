@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 
 import httpx
 import lxml
-from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -18,18 +17,6 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
 
 _ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
-
-
-def get_client(timeout: int = 10, **kwargs) -> httpx.Client:
-    """Returns client for iTunes requests."""
-    return httpx.Client(
-        timeout=timeout,
-        follow_redirects=True,
-        headers={
-            "User-Agent": settings.USER_AGENT,
-        },
-        **kwargs,
-    )
 
 
 @dataclasses.dataclass(frozen=True)

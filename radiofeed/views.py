@@ -15,6 +15,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
+from radiofeed.http_client import get_client
 from radiofeed.template import ACCEPT_COOKIES_NAME, COVER_IMAGE_SIZES
 
 _PWA_THEME_COLOR: Final = "#26323C"
@@ -187,12 +188,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         raise Http404 from exc
 
     try:
-        response = httpx.get(
-            cover_url,
-            follow_redirects=True,
-            timeout=5,
-            headers={"User-Agent": settings.USER_AGENT},
-        )
+        response = get_client().get(cover_url)
         response.raise_for_status()
 
         image = Image.open(io.BytesIO(response.content)).resize(

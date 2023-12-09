@@ -12,6 +12,7 @@ from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
 from radiofeed.htmx import render_htmx
 from radiofeed.http import HttpResponseConflict
+from radiofeed.http_client import get_client
 from radiofeed.pagination import render_pagination
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -97,7 +98,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         feeds: list[itunes.Feed] = []
 
         try:
-            feeds = itunes.search(itunes.get_client(timeout=5), request.search.value)
+            feeds = itunes.search(get_client(), request.search.value)
         except httpx.HTTPError:
             messages.error(request, "Error: iTunes unavailable")
 
