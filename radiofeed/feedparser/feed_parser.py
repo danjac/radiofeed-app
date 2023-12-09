@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
 from radiofeed import batcher, tokenizer
+from radiofeed.client import get_client
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -25,7 +26,6 @@ from radiofeed.feedparser.exceptions import (
     UnavailableError,
 )
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Category, Podcast
 
 

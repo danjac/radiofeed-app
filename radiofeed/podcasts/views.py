@@ -7,12 +7,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.client import get_client
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.forms import handle_form
 from radiofeed.htmx import render_htmx
 from radiofeed.http import HttpResponseConflict
-from radiofeed.http_client import get_client
 from radiofeed.pagination import render_pagination
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm

@@ -4,7 +4,7 @@ from typing import Final
 import httpx
 from django.core.management.base import BaseCommand
 
-from radiofeed.http_client import get_client
+from radiofeed.client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
