@@ -2,7 +2,7 @@ import datetime
 import io
 from typing import Final
 
-import requests
+import httpx
 from django.conf import settings
 from django.core.signing import BadSignature, Signer
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
@@ -187,13 +187,12 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         raise Http404 from exc
 
     try:
-        response = requests.get(
+        response = httpx.get(
             cover_url,
-            allow_redirects=True,
+            follow_redirects=True,
             timeout=5,
             headers={"User-Agent": settings.USER_AGENT},
         )
-
         response.raise_for_status()
 
         image = Image.open(io.BytesIO(response.content)).resize(
@@ -205,7 +204,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         image.save(output, format="webp", optimize=True, quality=90)
         output.seek(0)
 
-    except (OSError, requests.RequestException):
+    except (OSError, httpx.HTTPError):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 

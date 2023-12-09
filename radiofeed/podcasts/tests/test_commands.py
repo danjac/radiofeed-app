@@ -33,7 +33,7 @@ class TestParseItunes:
     @pytest.mark.django_db()
     def test_command(self, mocker, podcast):
         patched = mocker.patch(
-            "radiofeed.podcasts.itunes.ItunesCatalogParser.parse",
+            "radiofeed.podcasts.itunes.CatalogParser.parse",
             return_value=[
                 Feed(
                     title="test 1",

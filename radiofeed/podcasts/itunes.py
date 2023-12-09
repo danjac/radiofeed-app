@@ -6,8 +6,8 @@ from collections.abc import Iterator
 from typing import Final
 from urllib.parse import urlparse
 
+import httpx
 import lxml
-import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
@@ -18,6 +18,18 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.xml_parser import XMLParser
 
 _ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
+
+
+def get_client(timeout: int = 10, **kwargs) -> httpx.Client:
+    """Returns client for iTunes requests."""
+    return httpx.Client(
+        timeout=timeout,
+        follow_redirects=True,
+        headers={
+            "User-Agent": settings.USER_AGENT,
+        },
+        **kwargs,
+    )
 
 
 @dataclasses.dataclass(frozen=True)
@@ -39,11 +51,12 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(search_term: str, timeout: int = 5) -> list[Feed]:
+def search(client: httpx.Client, search_term: str, timeout: int = 5) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
     cache_key = search_cache_key(search_term)
     if (feeds := cache.get(cache_key)) is None:
         response = _get_response(
+            client,
             "https://itunes.apple.com/search",
             params={
                 "term": search_term,
@@ -64,7 +77,7 @@ def search_cache_key(search_term: str) -> str:
     return "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
 
 
-class ItunesCatalogParser:
+class CatalogParser:
     """Parses feeds from specific locale in iTunes podcast catalog."""
 
     def __init__(self, *, locale: str):
@@ -80,12 +93,13 @@ class ItunesCatalogParser:
             rf"https://podcasts\.apple.com/{self._locale}/podcast/*."
         )
 
-    def parse(self) -> Iterator[Feed]:
+    def parse(self, client: httpx.Client) -> Iterator[Feed]:
         """Parses feeds from specific locale."""
-        for feed_ids in batcher.batch(self._parse_feed_ids(), 100):
+        for feed_ids in batcher.batch(self._parse_feed_ids(client), 100):
             try:
                 yield from _parse_feeds(
                     _get_response(
+                        client,
                         "https://itunes.apple.com/lookup",
                         params={
                             "id": ",".join(feed_ids),
@@ -96,18 +110,22 @@ class ItunesCatalogParser:
                         },
                     )
                 )
-            except requests.RequestException:
+            except httpx.HTTPError:
                 continue
 
-    def _parse_feed_ids(self) -> Iterator[str]:
+    def _parse_feed_ids(self, client: httpx.Client) -> Iterator[str]:
         for url in self._parse_urls(
+            client,
             self._categories_pattern,
             f"https://itunes.apple.com/{self._locale}/genre/podcasts/id26",
         ):
-            yield from self._parse_feed_ids_in_category(url)
+            yield from self._parse_feed_ids_in_category(client, url)
 
-    def _parse_feed_ids_in_category(self, page_url: str) -> Iterator[str]:
+    def _parse_feed_ids_in_category(
+        self, client: httpx.Client, page_url: str
+    ) -> Iterator[str]:
         for url in self._parse_urls(
+            client,
             self._podcasts_pattern,
             page_url,
         ):
@@ -115,9 +133,11 @@ class ItunesCatalogParser:
                 self._feed_ids.add(feed_id)
                 yield feed_id
 
-    def _parse_urls(self, pattern: re.Pattern, url: str) -> Iterator[str]:
+    def _parse_urls(
+        self, client: httpx.Client, pattern: re.Pattern, url: str
+    ) -> Iterator[str]:
         try:
-            response = _get_response(url, allow_redirects=True)
+            response = _get_response(client, url)
             for element in self._parser.iterparse(
                 response.content, "{http://www.apple.com/itms/}html", "/apple:html"
             ):
@@ -127,7 +147,7 @@ class ItunesCatalogParser:
                             yield href
                 finally:
                     element.clear()
-        except (requests.RequestException, lxml.etree.XMLSyntaxError):
+        except (httpx.HTTPError, lxml.etree.XMLSyntaxError):
             return
 
 
@@ -138,7 +158,7 @@ def _parse_feed_id(url: str) -> str | None:
 
 
 def _parse_feeds(
-    response: requests.Response,
+    response: httpx.Response,
 ) -> Iterator[Feed]:
     for batch in batcher.batch(
         _build_feeds_from_json(response.json()),
@@ -184,20 +204,18 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
 
 
 def _get_response(
+    client: httpx.Client,
     url,
     params: dict | None = None,
     headers: dict | None = None,
     timeout: int = 10,
     **kwargs,
 ):
-    response = requests.get(
+    response = client.get(
         url,
         params=params,
         timeout=timeout,
-        headers={
-            **(headers or {}),
-            "User-Agent": settings.USER_AGENT,
-        },
+        headers=headers,
         **kwargs,
     )
     response.raise_for_status()

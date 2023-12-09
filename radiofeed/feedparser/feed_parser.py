@@ -71,6 +71,10 @@ class FeedParser:
         return httpx.Client(
             timeout=cls._request_timeout,
             follow_redirects=True,
+            headers={
+                "Accept": cls._accept_header,
+                "User-Agent": settings.USER_AGENT,
+            },
             **kwargs,
         )
 
@@ -169,10 +173,7 @@ class FeedParser:
             raise UnavailableError from exc
 
     def _get_headers(self) -> dict[str, str]:
-        headers = {
-            "Accept": self._accept_header,
-            "User-Agent": settings.USER_AGENT,
-        }
+        headers = {}
         if self._podcast.etag:
             headers["If-None-Match"] = quote_etag(self._podcast.etag)
         if self._podcast.modified:

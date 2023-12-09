@@ -1,9 +1,10 @@
 from argparse import ArgumentParser
 from typing import Final
 
+import httpx
 from django.core.management.base import BaseCommand
 
-from radiofeed.podcasts.itunes import ItunesCatalogParser
+from radiofeed.podcasts import itunes
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 _DEFAULT_LOCALES: Final = (
@@ -64,10 +65,13 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         """Handle implementation."""
+        client = itunes.get_client()
         with DatabaseSafeThreadPoolExecutor() as executor:
-            executor.db_safe_map(self._crawl_feeds, options["locales"])
+            executor.db_safe_map(
+                lambda locale: self._crawl_feeds(locale, client), options["locales"]
+            )
 
-    def _crawl_feeds(self, locale: str):
-        for feed in ItunesCatalogParser(locale=locale).parse():
+    def _crawl_feeds(self, locale: str, client: httpx.Client):
+        for feed in itunes.CatalogParser(locale=locale).parse(client):
             style = self.style.SUCCESS if feed.podcast is None else self.style.NOTICE
             self.stdout.write(style(feed.title))
