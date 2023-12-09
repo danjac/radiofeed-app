@@ -46,28 +46,30 @@ class TestCatalogParser:
 
     def _get_client(self, *, json_ok=True, category_ok=True, genre_ok=True):
         def _handler(request):
-            if request.url.path.endswith("/lookup"):
-                if json_ok:
-                    return httpx.Response(
-                        http.HTTPStatus.OK, json={"results": [MOCK_RESULT]}
-                    )
-                raise httpx.HTTPError("could not do lookup")
+            match request.url.path.split("/"):
+                case [*_, "lookup"]:
+                    if json_ok:
+                        return httpx.Response(
+                            http.HTTPStatus.OK, json={"results": [MOCK_RESULT]}
+                        )
+                    raise httpx.HTTPError("could not do lookup")
 
-            if request.url.path.endswith("/genre/podcasts/id26"):
-                if category_ok:
-                    return httpx.Response(
-                        http.HTTPStatus.OK, content=_mock_page("podcasts.html")
-                    )
-                raise httpx.HTTPError("could not parse podcasts page")
+                case [*_, "genre", "podcasts", "id26"]:
+                    if category_ok:
+                        return httpx.Response(
+                            http.HTTPStatus.OK, content=_mock_page("podcasts.html")
+                        )
+                    raise httpx.HTTPError("could not parse podcasts page")
 
-            if "/genre/podcasts" in request.url.path:
-                if genre_ok:
-                    return httpx.Response(
-                        http.HTTPStatus.OK, content=_mock_page("genre.html")
-                    )
-                raise httpx.HTTPError("could not parse genre page")
+                case [*_, "genre", _, _]:
+                    if genre_ok:
+                        return httpx.Response(
+                            http.HTTPStatus.OK, content=_mock_page("genre.html")
+                        )
+                    raise httpx.HTTPError("could not parse genre page")
 
-            return httpx.Response(http.HTTPStatus.OK)
+                case _:
+                    return httpx.Response(http.HTTPStatus.OK)
 
         return httpx.Client(transport=httpx.MockTransport(_handler))
 
