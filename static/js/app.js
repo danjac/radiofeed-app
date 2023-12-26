@@ -13,12 +13,3 @@ htmx.config.useTemplateFragments = true;
 window.Alpine = Alpine;
 
 Alpine.start();
-
-document.body.addEventListener("htmx:beforeSwap", function (event) {
-    // allow invalid form responses to swap as we are using this as a signal that
-    // a form was submitted with bad data and want to rerender with the errors
-    if (event.detail.xhr.status === 422) {
-        event.detail.shouldSwap = true;
-        event.detail.isError = false;
-    }
-});

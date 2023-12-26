@@ -10,7 +10,6 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.client import get_client
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
-from radiofeed.forms import handle_form
 from radiofeed.htmx import render_htmx
 from radiofeed.http import HttpResponseConflict
 from radiofeed.pagination import render_pagination
@@ -323,14 +322,16 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(request: HttpRequest) -> HttpResponse:
     """Add new private feed to collection."""
-    form, result = handle_form(PrivateFeedForm, request, user=request.user)
+    if request.method == "POST":
+        form = PrivateFeedForm(request.user, request.POST)
+        if form.is_valid():
+            podcast, is_new = form.save()
 
-    if result.is_ok:
-        podcast, is_new = form.save()
+            messages.success(request, "Added to Private Feeds")
 
-        messages.success(request, "Added to Private Feeds")
-
-        return redirect("podcasts:private_feeds" if is_new else podcast)
+            return redirect("podcasts:private_feeds" if is_new else podcast)
+    else:
+        form = PrivateFeedForm(request.user)
 
     return render_htmx(
         request,
@@ -340,7 +341,6 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
         },
         partial="form",
         target="private-feed-form",
-        status=result.status,
     )
 
 
