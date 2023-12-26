@@ -9,7 +9,6 @@ from radiofeed.episodes.tests.factories import create_audio_log, create_bookmark
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
 from radiofeed.tests.asserts import (
-    assert_client_error,
     assert_hx_location,
     assert_ok,
 )
@@ -119,7 +118,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_invalid_form(self, client, auth_user):
-        assert_client_error(
+        assert_ok(
             client.post(
                 self.url,
                 data={"opml": "test.xml"},

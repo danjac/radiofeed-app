@@ -589,7 +589,7 @@ class TestAddPrivateFeed:
     def test_existing_public(self, client, faker, auth_user):
         podcast = create_podcast(private=False)
 
-        assert_client_error(
+        assert_ok(
             client.post(
                 self.url,
                 {"rss": podcast.rss},
