@@ -54,7 +54,7 @@ class TestAbout:
 
 class TestAcceptCookies:
     @pytest.mark.django_db()
-    def test_post(self, client, db):
+    def test_post(self, client):
         response = client.post(reverse("accept_cookies"))
         assert_ok(response)
         assert "accept-cookies" in response.cookies
