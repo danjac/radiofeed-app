@@ -12,7 +12,7 @@ authors = ["Dan Jacob <danjac2018@gmail.com>"]
 maintainers = ["Dan Jacob <danjac2018@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.12"
+python = "^3.12"
 attrs = "^23.1.0"
 brotli = "^1.0.9"
 django-extensions = "^3.2.3"
