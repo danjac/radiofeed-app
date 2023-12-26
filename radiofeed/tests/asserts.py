@@ -1,3 +1,4 @@
+import functools
 import http
 import json
 
@@ -17,9 +18,38 @@ def assert_hx_location(response: HttpResponse, data: dict) -> None:
     assert data == location, location
 
 
-def assert_ok(response: HttpResponse) -> None:
-    assert http.HTTPStatus(response.status_code).is_success
+def assert_response_status(response: HttpResponse, status: http.HTTPStatus) -> None:
+    """Checks expected HTTP response status."""
+    assert response.status_code == status
 
 
-def assert_client_error(response: HttpResponse) -> None:
-    assert http.HTTPStatus(response.status_code).is_client_error
+assert_200 = functools.partial(
+    assert_response_status,
+    status=http.HTTPStatus.OK,
+)
+
+assert_204 = functools.partial(
+    assert_response_status,
+    status=http.HTTPStatus.NO_CONTENT,
+)
+
+assert_400 = functools.partial(
+    assert_response_status,
+    status=http.HTTPStatus.BAD_REQUEST,
+)
+
+
+assert_401 = functools.partial(
+    assert_response_status,
+    status=http.HTTPStatus.UNAUTHORIZED,
+)
+
+assert_404 = functools.partial(
+    assert_response_status,
+    status=http.HTTPStatus.NOT_FOUND,
+)
+
+assert_409 = functools.partial(
+    assert_response_status,
+    status=http.HTTPStatus.CONFLICT,
+)
