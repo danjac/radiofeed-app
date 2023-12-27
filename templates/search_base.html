@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-    <header class="pb-3 mb-3 border-b space-y-3">
-        <h1 class="flex items-center justify-center mb-3 text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
+    <header class="pb-3 mb-3 border-b space-y-6">
+        <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
             Search {{ request.site.name }}
         </h1>
-        <nav class="justify-between sm:flex">
-            <ul class="flex items-center justify-center mb-3 overflow-x-auto sm:mb-0 space-x-6 sm:justify-start md:overflow-none whitespace-nowrap md:whitespace-none">
+        <nav class="justify-between sm:flex space-y-3 sm:space-y-0">
+            <ul class="flex items-center justify-center overflow-x-auto space-x-6 sm:justify-start md:overflow-none whitespace-nowrap md:whitespace-none">
                 {% with search_qs="?"|add:request.search.qs %}
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
