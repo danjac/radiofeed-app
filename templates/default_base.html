@@ -35,13 +35,13 @@
                 <div class="grow">
                     {% include "_messages.html" %}
                     {% include "_navbar.html" %}
-                    <div class="relative flex min-h-screen p-2 py-6 xl:pt-12 mx-auto xl:w-11/12">
+                    <div class="relative flex min-h-screen p-2 py-6 xl:pt-12 mx-auto">
                         {% if user.is_authenticated %}
-                            <aside class="hidden w-full xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-28">
+                            <aside class="hidden w-full xl:block xl:w-1/6 xl:sticky xl:h-full xl:top-28">
                                 {% include "_sidebar.html" %}
                             </aside>
                         {% endif %}
-                        <main class="w-full mx-auto xl:block xl:w-4/5" id="content" hx-history-elt>
+                        <main class="w-full mx-auto xl:w-5/6" id="content" hx-history-elt>
                             {# djlint:off #}
                             {% block content %}{% endblock content %}
                             {# djlint:on #}
