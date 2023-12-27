@@ -20,7 +20,7 @@ ENV NODE_ENV=production
 
 RUN npm run build
 
-FROM python:3.12.0-bookworm AS app
+FROM python:3.12.1-bookworm AS app
 
 ENV PYTHONUNBUFFERED=1
 
