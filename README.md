@@ -1,7 +1,4 @@
 **NOTE**
-
-This project has moved to [Codeberg](https://codeberg.org/danjac/radiofeed-app). Please file issues and pull requests there!
-
 This is the source code for a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself. The application is intended to be run in production in Heroku or a Heroku-like PAAS such as Dokku or Railway; however it should be quite easy to adapt it to run in other environments such as AWS EC2.
 
 ![desktop](/screenshots/desktop.png?raw=True)
@@ -46,7 +43,7 @@ poetry env use 3.12
 poetry install
 ```
 
-Alternatively you can just run `make install` (see below) which will install your Poetry environment in addition to other dependencies. 
+Alternatively you can just run `make install` (see below) which will install your Poetry environment in addition to other dependencies.
 
 The `Makefile` has some convenient shortcuts for local development, including:
 
