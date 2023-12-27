@@ -318,6 +318,23 @@
             color: theme("colors.blue.300");
         }
     }
+
+    /* MESSAGES */
+    .message-error {
+        background-color: theme("colors.red.500");
+    }
+
+    .message-info {
+        background-color: theme("colors.blue.500");
+    }
+
+    .message-success {
+        background-color: theme("colors.green.500");
+    }
+
+    .message-warning {
+        background-color: theme("colors.yellow.500");
+    }
 }
 
 @layer utilities {

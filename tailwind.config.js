@@ -10,6 +10,12 @@ module.exports = {
         purgeLayersByDefault: true,
     },
     content: ["./templates/**/*.html"],
+    safelist: [
+        "message-error",
+        "message-info",
+        "message-success",
+        "message-warning",
+    ],
     keyframes: true,
     variants: {
         padding: ["first", "last"],
