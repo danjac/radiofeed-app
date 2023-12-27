@@ -1,0 +1,33 @@
+name: Radiofeed Project CI/CD
+on: [pull_request, push]
+run-name: ${{ github.actor }} is running checks
+jobs:
+    frontend:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+            - run: npm install
+            - run: npm run lint
+            - run: npm run build
+    backend:
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:16
+                env:
+                    POSTGRES_PASSWORD: password
+                ports: ["5432:5432"]
+                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12.1"
+            - run: pip install -r requirements-ci.txt
+            - run: python -m ruff radiofeed
+            - run: python -m djlint --lint templates/
+            - run: xargs python -m nltk.downloader < nltk.txt
+            - run: python -m pytest
