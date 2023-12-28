@@ -36,18 +36,18 @@ class FastCountQuerySetMixin(T_QuerySet):
         Returns:
             number of rows
         """
-        if any(
-            (
-                self._query.distinct,
-                self._query.group_by,
-                self._query.where,
-            )
-        ) or self.fast_count_row_limit > (
-            count := get_reltuple_count(self.db, self.model._meta.db_table)
+        if (
+            self._query.distinct
+            or self._query.group_by
+            or self._query.where
+            or self.fast_count_row_limit > (count := self._get_reltuple_count())
         ):
             return super().count()
 
         return count
+
+    def _get_reltuple_count(self) -> int:
+        return get_reltuple_count(self.db, self.model._meta.db_table)
 
 
 class FastCountPaginator(Paginator):
