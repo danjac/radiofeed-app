@@ -148,11 +148,10 @@ SITE_ID = 1
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
-SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True
+CSRF_USE_SESSIONS = True
 
+SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
 
 # Email configuration
 
@@ -292,8 +291,6 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # Secure settings
 # https://docs.djangoproject.com/en/4.1/topics/security/
-
-CSRF_USE_SESSIONS = True
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
