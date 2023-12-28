@@ -293,6 +293,8 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 # Secure settings
 # https://docs.djangoproject.com/en/4.1/topics/security/
 
+CSRF_USE_SESSIONS = True
+
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
