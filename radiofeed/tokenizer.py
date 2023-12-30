@@ -1,4 +1,6 @@
 import datetime
+import functools
+import pathlib
 import re
 from collections.abc import Iterator
 from datetime import date, timedelta
@@ -113,7 +115,7 @@ def _get_date_stopwords(language: str) -> Iterator[str]:
 
 
 def _get_extra_stopwords(language: str) -> list[str]:
-    path = settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"
+    path = _stopwords_path(language)
 
     return (
         [
@@ -141,3 +143,8 @@ def _lemmatized_tokens(text: str) -> Iterator[str]:
 
 def _format_date(value: date, fmt: str) -> str:
     return date_format(value, fmt).casefold()
+
+
+@functools.lru_cache
+def _stopwords_path(language: str) -> pathlib.Path:
+    return settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"

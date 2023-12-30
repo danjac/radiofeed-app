@@ -1,5 +1,7 @@
 import datetime
+import functools
 import io
+import pathlib
 from typing import Final
 
 import httpx
@@ -63,9 +65,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def favicon(request: HttpRequest) -> FileResponse:
     """Generates favicon file."""
-    return FileResponse(
-        (settings.BASE_DIR / "static" / "img" / "wave-ico.png").open("rb")
-    )
+    return FileResponse(_favicon_path().open("rb"))
 
 
 @require_safe
@@ -187,6 +187,8 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     except (KeyError, BadSignature) as exc:
         raise Http404 from exc
 
+    output: io.BufferedIOBase
+
     try:
         response = get_client().get(cover_url)
         response.raise_for_status()
@@ -204,8 +206,16 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 
-        output = (
-            settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp"
-        ).open("rb")
+        output = _placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
+
+
+@functools.lru_cache
+def _placeholder_path(size: int) -> pathlib.Path:
+    return settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp"
+
+
+@functools.lru_cache
+def _favicon_path() -> pathlib.Path:
+    return settings.BASE_DIR / "static" / "img" / "wave-ico.png"
