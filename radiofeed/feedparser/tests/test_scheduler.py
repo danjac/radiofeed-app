@@ -73,41 +73,44 @@ class TestGetScheduledForUpdate:
     @pytest.mark.parametrize(
         ("kwargs", "exists"),
         [
-            # no pub date: yes
-            ({}, True),
-            # just parsed: no
-            (
+            pytest.param(
+                {},
+                True,
+                id="no pub date",
+            ),
+            pytest.param(
                 {
                     "parsed": timedelta(seconds=1200),
                     "pub_date": timedelta(days=3),
                 },
                 False,
+                id="just parsed",
             ),
-            # parsed before pub date+frequency: yes
-            (
+            pytest.param(
                 {
                     "parsed": timedelta(hours=3),
                     "pub_date": timedelta(days=3),
                 },
                 True,
+                id="parsed before pub date+frequency",
             ),
-            # parsed just before max frequency: yes
-            (
+            pytest.param(
                 {
                     "parsed": timedelta(days=8),
                     "pub_date": timedelta(days=8),
                     "frequency": timedelta(days=15),
                 },
                 True,
+                id="parsed just before max frequency",
             ),
-            # parsed before max frequency: yes
-            (
+            pytest.param(
                 {
                     "parsed": timedelta(days=30),
                     "pub_date": timedelta(days=90),
                     "frequency": timedelta(days=30),
                 },
                 True,
+                id="parsed before max frequency",
             ),
         ],
     )

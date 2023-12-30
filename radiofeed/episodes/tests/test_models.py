@@ -158,10 +158,10 @@ class TestEpisodeModel:
     @pytest.mark.parametrize(
         ("episode_type", "expected"),
         [
-            (None, None),
-            ("full", None),
-            ("FULL", None),
-            ("trailer", "trailer"),
+            pytest.param(None, None, id="none"),
+            pytest.param("full", None, id="full lowercase"),
+            pytest.param("FULL", None, id="full uppercase"),
+            pytest.param("trailer", "trailer", id="trailer"),
         ],
     )
     def test_get_episode_type(self, episode_type, expected):

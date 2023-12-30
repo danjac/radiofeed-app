@@ -26,11 +26,14 @@ class TestCleanHtml:
 
 class TestStripHtml:
     @pytest.mark.parametrize(
-        ("value", "expected"),
+        (
+            "value",
+            "expected",
+        ),
         [
-            ("", ""),
-            ("  ", ""),
-            ("<p>this &amp; that</p>", "this & that"),
+            pytest.param("", "", id="empty"),
+            pytest.param("  ", "", id="spaces"),
+            pytest.param("<p>this &amp; that</p>", "this & that", id="html"),
         ],
     )
     def test_strip_html(self, value, expected):

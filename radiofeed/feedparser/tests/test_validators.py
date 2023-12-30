@@ -7,9 +7,9 @@ class TestRequired:
     @pytest.mark.parametrize(
         ("value", "raises"),
         [
-            ("ok", False),
-            ("", True),
-            (None, True),
+            pytest.param("ok", False, id="has value"),
+            pytest.param("", True, id="empty"),
+            pytest.param(None, True, id="none"),
         ],
     )
     def test_required(self, value, raises):
@@ -24,9 +24,9 @@ class TestUrl:
     @pytest.mark.parametrize(
         ("value", "raises"),
         [
-            ("http://example.com", False),
-            ("https://example.com", False),
-            ("example", True),
+            pytest.param("http://example.com", False, id="valid HTTP URL"),
+            pytest.param("https://example.com", False, id="valid HTTPS URL"),
+            pytest.param("example", True, id="invalid URL"),
         ],
     )
     def test_url(self, value, raises):

@@ -46,13 +46,13 @@ class TestDuration:
     @pytest.mark.parametrize(
         ("value", "expected"),
         [
-            (None, ""),
-            ("", ""),
-            ("invalid", ""),
-            ("300", "300"),
-            ("10:30", "10:30"),
-            ("10:30:59", "10:30:59"),
-            ("10:30:99", "10:30"),
+            pytest.param(None, "", id="none"),
+            pytest.param("", "", id="empty"),
+            pytest.param("invalid", "", id="invalid"),
+            pytest.param("300", "300", id="seconds only"),
+            pytest.param("10:30", "10:30", id="minutes and seconds"),
+            pytest.param("10:30:59", "10:30:59", id="hours, minutes and seconds"),
+            pytest.param("10:30:99", "10:30", id="hours, minutes and invalid seconds"),
         ],
     )
     def test_parse_duration(self, value, expected):

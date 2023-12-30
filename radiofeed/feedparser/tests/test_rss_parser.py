@@ -37,43 +37,65 @@ class TestParseRss:
     @pytest.mark.parametrize(
         ("filename", "title", "num_items"),
         [
-            ("rss_missing_enc_length.xml", "The Vanilla JS Podcast", 71),
-            (
-                "rss_bad_urls.xml",
-                "1972",
-                3,
-            ),
-            (
-                "rss_bad_pub_date.xml",
-                "Old Time Radio Mystery Theater",
-                69,
-            ),
-            (
-                "rss_mock_large.xml",
-                "AAA United Public Radio & UFO Paranormal Radio Network",
-                8641,
-            ),
-            ("rss_mock_iso_8859-1.xml", "Thunder & Lightning", 643),
-            (
-                "rss_mock_small.xml",
-                "ABC News Update",
-                1,
-            ),
-            (
+            pytest.param(
                 "rss_mock.xml",
                 "Mysterious Universe",
                 20,
+                id="default XML content",
             ),
-            ("rss_invalid_duration.xml", "At The Races with Steve Byk", 450),
-            (
-                "rss_bad_cover_urls.xml",
-                "TED Talks Daily",
-                327,
+            pytest.param(
+                "rss_mock_large.xml",
+                "AAA United Public Radio & UFO Paranormal Radio Network",
+                8641,
+                id="large XML content",
             ),
-            (
+            pytest.param(
+                "rss_mock_small.xml",
+                "ABC News Update",
+                1,
+                id="small XML content",
+            ),
+            pytest.param(
                 "rss_superfeedr.xml",
                 "The Chuck ToddCast: Meet the Press",
                 296,
+                id="Superfeedr XML",
+            ),
+            pytest.param(
+                "rss_mock_iso_8859-1.xml",
+                "Thunder & Lightning",
+                643,
+                id="ISO-8859-1 encoding",
+            ),
+            pytest.param(
+                "rss_missing_enc_length.xml",
+                "The Vanilla JS Podcast",
+                71,
+                id="missing enclosure length",
+            ),
+            pytest.param(
+                "rss_bad_urls.xml",
+                "1972",
+                3,
+                id="bad urls",
+            ),
+            pytest.param(
+                "rss_bad_pub_date.xml",
+                "Old Time Radio Mystery Theater",
+                69,
+                id="invalid pub date",
+            ),
+            pytest.param(
+                "rss_invalid_duration.xml",
+                "At The Races with Steve Byk",
+                450,
+                id="invalid duration",
+            ),
+            pytest.param(
+                "rss_bad_cover_urls.xml",
+                "TED Talks Daily",
+                327,
+                id="invalid image URLs",
             ),
         ],
     )

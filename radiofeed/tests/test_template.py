@@ -31,12 +31,12 @@ class TestFormatDuration:
     @pytest.mark.parametrize(
         ("duration", "expected"),
         [
-            (None, ""),
-            (0, ""),
-            (30, ""),
-            (540, "9min"),
-            (2400, "40min"),
-            (9000, "2h 30min"),
+            pytest.param(None, "", id="none"),
+            pytest.param(0, "", id="zero"),
+            pytest.param(30, "", id="30 seconds"),
+            pytest.param(540, "9min", id="9 minutes"),
+            pytest.param(2400, "40min", id="40 minutes"),
+            pytest.param(9000, "2h 30min", id="2 hours 30 minutes"),
         ],
     )
     def test_format_duration(self, duration, expected):
@@ -86,17 +86,17 @@ class TestMarkdown:
     @pytest.mark.parametrize(
         ("value", "expected"),
         [
-            (None, ""),
-            ("", ""),
-            ("   ", ""),
-            ("test", "test"),
-            ("<p>test</p>", "<p>test</p>"),
-            ("<p>test</p>   ", "<p>test</p>"),
-            ("<script>test</script>", "test"),
+            pytest.param(None, "", id="none"),
+            pytest.param("", "", id="empty"),
+            pytest.param("test", "<p>test</p>\n", id="text"),
+            pytest.param("   ", "", id="space"),
+            pytest.param("<p>test</p>", "<p>test</p>", id="html"),
+            pytest.param("<p>test</p>   ", "<p>test</p>", id="html and spaces"),
+            pytest.param("<script>test</script>", "", id="unsafe html"),
         ],
     )
     def test_markdown(self, value, expected):
-        return markdown(value) == {"content": expected}
+        assert markdown(value) == {"content": expected}
 
 
 class TestNavbar:
