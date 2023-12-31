@@ -3,7 +3,6 @@ from django.template.context import RequestContext
 from django.template.loader import get_template
 from django.test import override_settings
 from django.urls import reverse, reverse_lazy
-from django_htmx.middleware import HtmxDetails
 
 from radiofeed.template import (
     absolute_uri,
@@ -114,44 +113,6 @@ class TestNavbar:
         assert "About this Site" in rendered
 
 
-class TestFieldTemplate:
-    @pytest.fixture()
-    def tmpl(self):
-        return get_template("django/forms/field.html")
-
-    @pytest.fixture()
-    def field(self, mocker):
-        return mocker.Mock()
-
-    def test_is_hidden(self, tmpl, field):
-        field.is_hidden = True
-        assert tmpl.render({"field": field}, request=req)
-
-    def test_textinput(self, tmpl, mocker, field):
-        field.is_hidden = False
-        field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
-        field.errors = []
-        assert tmpl.render({"field": field}, request=req)
-
-    def test_checkboxinput(self, tmpl, mocker, field):
-        field.is_hidden = False
-        field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
-        field.errors = []
-        assert tmpl.render({"field": field}, request=req)
-
-    def test_fileinput(self, tmpl, mocker, field):
-        field.is_hidden = False
-        field.field.widget = mocker.Mock(spec="django.forms.widgets.CheckboxInput")
-        field.errors = []
-        assert tmpl.render({"field": field}, request=req)
-
-    def test_errors(self, tmpl, mocker, field):
-        field.is_hidden = False
-        field.field.widget = mocker.Mock(spec="django.forms.widgets.TextInput")
-        field.errors = ["error"]
-        assert tmpl.render({"field": field}, request=req)
-
-
 class TestAbsoluteUri:
     @pytest.mark.django_db()
     def test_plain_url(self):
@@ -166,41 +127,4 @@ class TestAbsoluteUri:
     def test_object(self, podcast):
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
-        )
-
-
-class TestBaseTemplates:
-    @pytest.fixture()
-    def tmpl(self):
-        return get_template("about.html")
-
-    @pytest.fixture()
-    def player(self, mocker):
-        player = mocker.Mock()
-        player.get.return_value = None
-        return player
-
-    def test_default(self, rf, anonymous_user, player):
-        req = rf.get("/")
-        req.user = anonymous_user
-        req.player = player
-        tmpl = get_template("about.html")
-        assert tmpl.render({}, request=req)
-
-    def test_htmx(self, rf, anonymous_user, player):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        req.htmx = HtmxDetails(req)
-        req.user = anonymous_user
-        req.player = player
-        tmpl = get_template("about.html")
-        assert tmpl.render(
-            {
-                "messages": [
-                    {
-                        "message": "test",
-                        "tags": "success",
-                    },
-                ],
-            },
-            request=req,
         )

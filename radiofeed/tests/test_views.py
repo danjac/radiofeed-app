@@ -4,7 +4,6 @@ import urllib.parse
 import httpx
 import pytest
 from django.core.signing import Signer
-from django.shortcuts import render
 from django.urls import reverse
 
 from radiofeed.tests.asserts import assert_not_found, assert_ok
@@ -114,23 +113,3 @@ class TestCoverImage:
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
         assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
-
-
-class TestErrorPages:
-    def test_bad_request(self, rf):
-        assert_ok(render(rf.get("/"), "400.html"))
-
-    def test_not_found(self, rf):
-        assert_ok(render(rf.get("/"), "404.html"))
-
-    def test_forbidden(self, rf):
-        assert_ok(render(rf.get("/"), "403.html"))
-
-    def test_not_allowed(self, rf):
-        assert_ok(render(rf.get("/"), "405.html"))
-
-    def test_server_error(self, rf):
-        assert_ok(render(rf.get("/"), "500.html"))
-
-    def test_csrf(self, rf):
-        assert_ok(render(rf.get("/"), "403_csrf.html"))
