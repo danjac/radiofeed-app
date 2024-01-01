@@ -165,6 +165,7 @@ if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
 
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
+    # For European domains: https://api.eu.mailgun.net/v3
     MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
 
     ANYMAIL = {
