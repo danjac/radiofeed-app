@@ -40,7 +40,7 @@ class TestParseOpml:
     @pytest.mark.django_db()
     def test_command(self, mocker, filename):
         patched = mocker.patch(
-            "radiofeed.podcasts.management.commands.parse_opml.parse_opml",
+            "radiofeed.podcasts.opml.parse_opml",
             return_value=iter(["https://example.com"]),
         )
         call_command("parse_opml", filename)
@@ -50,7 +50,7 @@ class TestParseOpml:
     @pytest.mark.django_db()
     def test_empty(self, mocker, filename):
         patched = mocker.patch(
-            "radiofeed.podcasts.management.commands.parse_opml.parse_opml",
+            "radiofeed.podcasts.opml.parse_opml",
             return_value=iter([]),
         )
         call_command("parse_opml", filename)
