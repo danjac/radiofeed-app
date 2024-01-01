@@ -4,9 +4,9 @@
         x-data="{showMenu: false, scrolling: false}"
         @scroll.window="scrolling = window.pageYOffset > 0"
         @htmx:before-request.window="showMenu=false">
-    <nav class="flex items-center justify-between p-2">
+    <nav class="flex justify-between items-center p-2">
         {% with site_name=request.site.name %}
-            <div class="flex items-center flex-shrink-0">
+            <div class="flex flex-shrink-0 items-center">
                 <a class="inline-flex items-center text-lg font-bold md:text-xl xl:text-2xl"
                    href="{% if user.is_authenticated %}{% url 'podcasts:index' %}{% else %}{% url 'podcasts:landing_page' %}{% endif %}"
                    title="{{ site_name }}: Home Page">
@@ -14,7 +14,7 @@
                          height="100"
                          width="100"
                          alt="{{ site_name }}"
-                         class="w-6 h-6 mr-3 lg:h-8 lg:w-8"
+                         class="mr-3 w-6 h-6 lg:w-8 lg:h-8"
                          title="{{ site_name }}"
                          aria-hidden="true">
                     {{ site_name }}
@@ -30,13 +30,13 @@
                        class="flex items-center font-bold">{{ user.username|slice:12 }}</a>
                 </li>
                 <li class="flex items-center xl:hidden">
-                    <button class="focus:outline-none transform transition"
+                    <button class="transition transform focus:outline-none"
                             aria-label="Show Menu"
                             title="Show Menu"
                             x-cloak
                             x-show.transition="!showMenu"
                             @click="showMenu=true">{% heroicon_outline "bars-3" size=30 title="Toggle Menu" %}</button>
-                    <button class="focus:outline-none transform transition"
+                    <button class="transition transform focus:outline-none"
                             aria-label="Hide Menu"
                             title="Hide Menu"
                             x-cloak
@@ -51,7 +51,7 @@
                     <a href="{% url 'about' %}"
                        aria-label="About this Site"
                        title="About this Site"
-                       class="flex items-center font-bold space-x-2 hover:text-blue-300">
+                       class="flex items-center space-x-2 font-bold hover:text-blue-300">
                         {% heroicon_outline "information-circle" size=30 title="Toggle Menu" %}
                         <span class="hidden md:inline-block">About</span>
                     </a>
@@ -60,7 +60,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated %}
-        <div class="absolute left-0 z-50 w-full py-6 bg-white shadow-xl xl:hidden dark:bg-black"
+        <div class="absolute left-0 z-50 py-6 w-full bg-white shadow-xl xl:hidden dark:bg-black"
              x-cloak
              x-show.transition="showMenu"
              x-transition:enter="transition ease-out duration-75"

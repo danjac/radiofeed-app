@@ -4,9 +4,9 @@
     | Categories
 {% endblock title %}
 {% block content %}
-    <header class="sm:flex justify-between items-center mb-6 space-y-3 sm:space-y-0 border-b pb-3">
-        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl xl:text-2xl">Categories</h1>
-        <div class="flex items-center justify-center sm:justify-end space-x-3">
+    <header class="justify-between items-center pb-3 mb-6 space-y-3 border-b sm:flex sm:space-y-0">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Categories</h1>
+        <div class="flex justify-center items-center space-x-3 sm:justify-end">
             {% include "_search_form.html" with placeholder="Search: Categories" %}
         </div>
     </header>
@@ -16,7 +16,7 @@
             {% for category in categories %}
                 <li class="py-3">
                     <a href="{{ category.get_absolute_url }}"
-                       class="link font-semibold md:text-lg w-full">
+                       class="w-full font-semibold md:text-lg link">
                         <h2>{{ category.name }}</h2>
                     </a>
                 </li>

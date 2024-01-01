@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-    <header class="pb-3 mb-3 border-b space-y-6">
-        <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
+    <header class="pb-3 mb-3 space-y-6 border-b">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
             Search {{ request.site.name }}
         </h1>
-        <nav class="justify-between sm:flex space-y-3 sm:space-y-0">
-            <ul class="flex items-center justify-center overflow-x-auto space-x-6 sm:justify-start md:overflow-none whitespace-nowrap md:whitespace-none">
+        <nav class="justify-between space-y-3 sm:flex sm:space-y-0">
+            <ul class="flex overflow-x-auto justify-center items-center space-x-6 whitespace-nowrap sm:justify-start md:overflow-none md:whitespace-none">
                 {% with search_qs="?"|add:request.search.qs %}
                     {% active_link 'podcasts:search_podcasts' as link %}
                     <li>
@@ -27,7 +27,7 @@
                     </li>
                 {% endwith %}
             </ul>
-            <ul class="flex items-center justify-center sm:justify-end">
+            <ul class="flex justify-center items-center sm:justify-end">
                 <li>{% include "_search_form.html" with placeholder="Search..." %}</li>
             </ul>
         </nav>

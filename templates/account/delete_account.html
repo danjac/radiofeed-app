@@ -8,7 +8,7 @@
     Delete Account
 {% endblock settings_selected_item %}
 {% block settings_content %}
-    <div class="w-full space-y-3">
+    <div class="space-y-3 w-full">
         <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
         <div>
             <form method="post"
@@ -17,7 +17,7 @@
                   onSubmit="return confirm('Are you sure?')">
                 {% csrf_token %}
                 <div>
-                    <button class="btn btn-danger inline-flex items-center"
+                    <button class="inline-flex items-center btn btn-danger"
                             name="confirm-delete"
                             value="true">
                         {% heroicon_mini "trash" class="mr-2" %}

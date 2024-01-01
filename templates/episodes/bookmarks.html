@@ -4,12 +4,12 @@
     | Bookmarks
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-6 border-b space-y-3 sm:space-y-6">
+    <header class="pb-3 mb-6 space-y-3 border-b sm:space-y-6">
         <h1 class="flex justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Bookmarks</h1>
         {% if request.search or page_obj.has_other_pages %}
             <nav>
-                <ul class="items-center justify-between sm:flex space-y-3 sm:space-y-0">
-                    <li class="flex items-center justify-center sm:justify-start">
+                <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
+                    <li class="flex justify-center items-center sm:justify-start">
                         {% if request.search %}
                             <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                                class="link">Search All Podcasts</a>
@@ -18,7 +18,7 @@
                                class="link">{{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}</a>
                         {% endif %}
                     </li>
-                    <li class="flex items-center justify-center sm:justify-end">
+                    <li class="flex justify-center items-center sm:justify-end">
                         {% include "_search_form.html" with placeholder="Search: Bookmarks" %}
                     </li>
                 </ul>

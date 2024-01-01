@@ -4,13 +4,13 @@
     {{ block.super }} | Private Feeds | Add Feed
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-6 border-b space-y-3 sm:space-y-0 sm:flex items-center justify-between">
-        <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
+    <header class="justify-between items-center pb-3 mb-6 space-y-3 border-b sm:flex sm:space-y-0">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
             Add Private Feed
         </h1>
         <nav>
-            <ul class="items-center justify-between sm:flex space-y-3 sm:space-y-0">
-                <li class="flex items-center justify-center mb-3 sm:justify-start sm:mb-0">
+            <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
+                <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
                     <a href="{% url "podcasts:private_feeds" %}" class="link">Private Feeds</a>
                 </li>
             </ul>

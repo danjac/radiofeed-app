@@ -6,7 +6,7 @@
 {% block content %}
     {% cache 600 episode-nav-header episode.pk %}
     {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
-        <header class="pb-3 mb-6 border-b space-y-6">
+        <header class="pb-3 mb-6 space-y-6 border-b">
             <h1 class="text-lg font-bold md:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
             {% if next_episode or previous_episode %}
                 <nav>
@@ -53,7 +53,7 @@
         </h2>
         {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
             {% if episode_type or episode_num or season %}
-                <div class="flex items-center font-semibold text-gray-800 space-x-3 dark:text-gray-300">
+                <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
                     {% if episode_type %}{{ episode_type|capfirst }}{% endif %}
                     {% if episode_num %}Episode {{ episode_num }}{% endif %}
                     {% if season %}Season {{ season }}{% endif %}
@@ -124,7 +124,7 @@
                 {% endif %}
             </div>
         {% endpartialdef bookmark_button %}
-        <div class="flex flex-wrap items-center font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
+        <div class="flex flex-wrap items-center space-x-2 font-semibold text-gray-800 sm:space-x-3 dark:text-gray-300">
             <a download
                aria-label="Download audio file to your device"
                title="Download audio file to your device"
@@ -142,7 +142,7 @@
         </div>
     </div>
 </div>
-<div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
+<div class="flex items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
     {% include "_date.html" with value=episode.pub_date title="Release Date" %}
     {% with file_size=episode.get_file_size %}
         {% if file_size %}<div title="Size">{{ file_size }}</div>{% endif %}
@@ -152,7 +152,7 @@
     {% endwith %}
     {% if episode.is_explicit %}
         <div title="May contain adult themes and language. Listener discretion advised."
-             class="flex items-center text-red-600 dark:text-red-500 space-x-2">
+             class="flex items-center space-x-2 text-red-600 dark:text-red-500">
             {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
         </div>
     {% endif %}
@@ -160,7 +160,7 @@
 {% partialdef audio_log inline=True %}
 <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
     {% if audio_log %}
-        <div class="flex flex-wrap items-center font-semibold text-gray-600 space-x-3 dark:text-gray-300">
+        <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
             <div class="flex items-center space-x-1">
                 <span>Listened</span>
                 {% include "_date.html" with value=audio_log.listened title="Listened" %}
@@ -169,7 +169,7 @@
                 {% if current_time and current_time > 60 %}<div title="Timestamp">{{ current_time|format_duration }}</div>{% endif %}
             {% endwith %}
             {% if not is_playing %}
-                <button class="inline-flex items-center text-xs btn btn-danger lg:text-sm"
+                <button class="inline-flex items-center text-xs lg:text-sm btn btn-danger"
                         title="Remove episode from your History"
                         hx-target="#audio-log"
                         hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"

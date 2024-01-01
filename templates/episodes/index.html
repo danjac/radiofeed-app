@@ -5,14 +5,14 @@
     {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-6 border-b space-y-3 sm:space-y-6">
+    <header class="pb-3 mb-6 space-y-3 border-b sm:space-y-6">
         {% if has_subscriptions %}
-            <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                 New Releases: {{ promoted|yesno:"Promotions,Subscriptions" }}
             </h1>
             <nav>
-                <ul class="items-center justify-between sm:flex space-y-3 sm:space-y-0">
-                    <li class="flex items-center justify-center sm:justify-start">
+                <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
+                    <li class="flex justify-center items-center sm:justify-start">
                         {% url 'episodes:index' as index_url %}
                         {% if promoted %}
                             <a href="{{ index_url }}" class="link">Subscriptions</a>
@@ -20,17 +20,17 @@
                             <a href="{{ index_url }}?promoted=true" class="link">Promotions</a>
                         {% endif %}
                     </li>
-                    <li class="flex items-center justify-center sm:justify-end space-x-3">
+                    <li class="flex justify-center items-center space-x-3 sm:justify-end">
                         {% include "_search_form.html" with placeholder="Search: Episodes" %}
                     </li>
                 </ul>
             </nav>
         {% else %}
-            <div class="items-center justify-between sm:flex space-y-6 sm:space-y-0">
-                <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            <div class="justify-between items-center space-y-6 sm:flex sm:space-y-0">
+                <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     New Releases
                 </h1>
-                <nav class="flex items-center justify-center sm:justify-end space-x-3">
+                <nav class="flex justify-center items-center space-x-3 sm:justify-end">
                     <ul>
                         <li>{% include "_search_form.html" with placeholder="Search: Episodes" %}</li>
                     </ul>

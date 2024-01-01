@@ -24,7 +24,7 @@
             <meta name="keywords" content="podcasts, rss, feeds">
             <meta name="theme-color" content="#041014">
         </head>
-        <body class="mx-auto font-sans text-sm antialiased container-xl scroll-smooth md:text-base"
+        <body class="mx-auto font-sans text-sm antialiased md:text-base container-xl scroll-smooth"
               hx-boost="true"
               hx-target="#content"
               hx-swap="innerHTML show:window:top"
@@ -35,13 +35,13 @@
                 <div class="grow">
                     {% include "_messages.html" %}
                     {% include "_navbar.html" %}
-                    <div class="relative flex min-h-screen p-2 py-6 xl:pt-12 mx-auto">
+                    <div class="flex relative p-2 py-6 mx-auto min-h-screen xl:pt-12">
                         {% if user.is_authenticated %}
-                            <aside class="hidden w-full xl:block xl:w-1/6 xl:sticky xl:h-full xl:top-28">
+                            <aside class="hidden w-full xl:block xl:sticky xl:top-28 xl:w-1/6 xl:h-full">
                                 {% include "_sidebar.html" %}
                             </aside>
                         {% endif %}
-                        <main class="w-full mx-auto xl:w-5/6" id="content" hx-history-elt>
+                        <main class="mx-auto w-full xl:w-5/6" id="content" hx-history-elt>
                             {# djlint:off #}
                             {% block content %}{% endblock content %}
                             {# djlint:on #}

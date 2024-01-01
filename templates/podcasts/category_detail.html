@@ -6,30 +6,30 @@
 {% block content %}
     {% with search_placeholder="Search: "|add:category.name %}
         {% if request.search %}
-            <header class="pb-3 mb-3 border-b space-y-3">
-                <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            <header class="pb-3 mb-3 space-y-3 border-b">
+                <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     {{ category.name }} Podcasts
                 </h1>
                 <nav>
-                    <ul class="items-center justify-center space-y-3 sm:space-y-0 sm:flex sm:justify-between">
-                        <li class="flex items-center justify-center sm:mb-0 sm:justify-start">
+                    <ul class="justify-center items-center space-y-3 sm:flex sm:justify-between sm:space-y-0">
+                        <li class="flex justify-center items-center sm:justify-start sm:mb-0">
                             <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
                                aria-label="Search Podcasts"
                                title="Search Podcasts"
                                class="link">Search All Categories</a>
                         </li>
-                        <li class="flex items-center justify-center sm:justify-end">
+                        <li class="flex justify-center items-center sm:justify-end">
                             {% include "_search_form.html" with placeholder=search_placeholder %}
                         </li>
                     </ul>
                 </nav>
             </header>
         {% else %}
-            <header class="items-center justify-between pb-3 mb-3 border-b sm:flex space-y-3 sm:space-y-0">
-                <h1 class="flex items-center justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">
+                <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     {{ category.name }} Podcasts
                 </h1>
-                <nav class="flex items-center justify-center sm:justify-end">
+                <nav class="flex justify-center items-center sm:justify-end">
                     <ul>
                         <li>{% include "_search_form.html" with placeholder=search_placeholder %}</li>
                     </ul>

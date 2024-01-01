@@ -6,8 +6,8 @@
 {% block podcast_content %}
     {% if request.search or page_obj.has_other_pages %}
         <nav class="mb-6">
-            <ul class="items-center justify-between pb-3 mb-3 border-b sm:flex">
-                <li class="flex items-center justify-center mb-3 sm:justify-start sm:mb-0">
+            <ul class="justify-between items-center pb-3 mb-3 border-b sm:flex">
+                <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
                     {% if request.search %}
                         <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                            class="link">Search All Podcasts</a>
@@ -16,7 +16,7 @@
                            class="link">{{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}</a>
                     {% endif %}
                 </li>
-                <li class="flex items-center justify-center sm:justify-end">
+                <li class="flex justify-center items-center sm:justify-end">
                     {% include "_search_form.html" with placeholder="Search: Episodes" %}
                 </li>
             </ul>
