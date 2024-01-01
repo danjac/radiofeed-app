@@ -1,13 +1,10 @@
-import functools
-from collections.abc import Iterator
 from typing import ClassVar
 
-import lxml  # nosec
 from django import forms
 
 from radiofeed.podcasts.models import Podcast, Subscription
+from radiofeed.podcasts.opml import parse_opml
 from radiofeed.users.models import User
-from radiofeed.xml_parser import XMLParser
 
 
 class UserPreferencesForm(forms.ModelForm):
@@ -47,8 +44,9 @@ class OpmlUploadForm(forms.Form):
         Returns:
             number of subscribed feeds
         """
+        self.cleaned_data["opml"].seek(0)
 
-        if urls := set(self._parse_opml()) - set(
+        if urls := set(parse_opml(self.cleaned_data["opml"])) - set(
             Subscription.objects.filter(subscriber=user)
             .select_related("podcast")
             .values_list("podcast__rss", flat=True)
@@ -68,25 +66,3 @@ class OpmlUploadForm(forms.Form):
             )
 
         return []
-
-    def _parse_opml(self) -> Iterator[str]:
-        parser = _opml_parser()
-
-        self.cleaned_data["opml"].seek(0)
-
-        try:
-            for element in parser.iterparse(
-                self.cleaned_data["opml"].read(), "opml", "body"
-            ):
-                try:
-                    yield from parser.itertext(element, "//outline//@xmlUrl")
-                finally:
-                    element.clear()
-        except lxml.etree.XMLSyntaxError:
-            return
-
-
-@functools.cache
-def _opml_parser() -> XMLParser:
-    """Returns cached XMLParser instance."""
-    return XMLParser()
