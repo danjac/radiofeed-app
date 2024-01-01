@@ -1,7 +1,10 @@
+import pathlib
+
 import pytest
 from django.core.management import call_command
 
 from radiofeed.podcasts.itunes import Feed
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import create_recommendation
 from radiofeed.tests.factories import create_batch
 from radiofeed.users.tests.factories import create_user
@@ -26,6 +29,32 @@ class TestSendRecommendationsEmails:
         create_user(send_email_notifications=True, is_active=True)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
         call_command("send_recommendations_emails")
+        patched.assert_called()
+
+
+class TestParseOpml:
+    @pytest.fixture()
+    def filename(self):
+        return pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
+
+    @pytest.mark.django_db()
+    def test_command(self, mocker, filename):
+        patched = mocker.patch(
+            "radiofeed.podcasts.management.commands.parse_opml.parse_opml",
+            return_value=iter(["https://example.com"]),
+        )
+        call_command("parse_opml", filename)
+        assert Podcast.objects.count() == 1
+        patched.assert_called()
+
+    @pytest.mark.django_db()
+    def test_empty(self, mocker, filename):
+        patched = mocker.patch(
+            "radiofeed.podcasts.management.commands.parse_opml.parse_opml",
+            return_value=iter([]),
+        )
+        call_command("parse_opml", filename)
+        assert Podcast.objects.count() == 0
         patched.assert_called()
 
 
