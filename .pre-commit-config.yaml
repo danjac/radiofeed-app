@@ -18,6 +18,16 @@ repos:
           - id: file-contents-sorter
             args: ["--ignore-case", "--unique"]
             exclude: .gitignore|.dockerignore|requirements[-\w]*.txt
+    - repo: local
+      hooks:
+          - id: rustywind
+            name: rustywind Tailwind CSS class linter
+            language: node
+            additional_dependencies:
+                - rustywind@0.21.0
+            entry: rustywind
+            args: [--write]
+            types_or: [html]
     - repo: https://github.com/koalaman/shellcheck-precommit
       rev: v0.9.0
       hooks:
