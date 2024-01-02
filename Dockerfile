@@ -1,6 +1,6 @@
 # Production Dockerfile for application
 
-FROM node:20-bookworm-slim AS assets
+FROM node:20-bookworm-slim AS frontend
 
 WORKDIR /app
 
@@ -20,7 +20,9 @@ ENV NODE_ENV=production
 
 RUN npm run build
 
-FROM python:3.12.1-bookworm AS app
+# Python
+
+FROM python:3.12.1-bookworm AS backend
 
 ENV PYTHONUNBUFFERED=1
 
@@ -50,7 +52,7 @@ COPY . /app
 
 # Build and copy over assets
 
-COPY --from=assets /app/static /app/static
+COPY --from=frontend /app/static /app/static
 
 # Collect static files for Whitenoise
 
