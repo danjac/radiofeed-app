@@ -3,9 +3,6 @@
     "formation": {
         "web": {
             "quantity": 1
-        },
-        "feedparser": {
-            "quantity": 1
         }
     },
     "cron": [
