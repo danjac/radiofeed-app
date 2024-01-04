@@ -1,6 +1,5 @@
 {
     "name": "Radiofeed Dokku deployment",
-    "addons": ["dokku-letsencrypt", "dokku-redis", "dokku-postgres"],
     "formation": {
         "web": {
             "quantity": 1
@@ -10,6 +9,10 @@
         }
     },
     "cron": [
+        {
+            "command": "python manage.py parse_feeds --limit=360",
+            "schedule": "*/6 * * * *"
+        },
         {
             "command": "python manage.py create_recommendations",
             "schedule": "15 6 * * *"
