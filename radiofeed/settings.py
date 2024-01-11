@@ -34,6 +34,13 @@ INSTALLED_APPS: list[str] = [
     "allauth.socialaccount.providers.google",
     "django_extensions",
     "django_htmx",
+    "health_check",
+    "health_check.db",
+    "health_check.cache",
+    "health_check.storage",
+    "health_check.contrib.migrations",
+    "health_check.contrib.psutil",
+    "health_check.contrib.redis",
     "heroicons",
     "template_partials",
     "radiofeed.episodes",
@@ -372,6 +379,13 @@ LOGGING = {
     },
 }
 
+# Health checks
+# https://pypi.org/project/django-health-check/
+
+HEALTH_CHECK = {
+    "DISK_USAGE_MAX": 90,  # percent
+    "MEMORY_MIN": 100,  # in MB
+}
 
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/

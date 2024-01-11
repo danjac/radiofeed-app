@@ -7,3 +7,5 @@ set -o errexit
 ./manage.py migrate
 
 ./manage.py clear_cache
+
+./manage.py health_check

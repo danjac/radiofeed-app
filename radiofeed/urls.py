@@ -13,7 +13,6 @@ urlpatterns = [
     path("", include("radiofeed.users.urls")),
     path("account/", include("allauth.urls")),
     path("about/", views.about_page, name="about"),
-    path("health-check/", views.health_check, name="health_check"),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
     path("covers/<int:size>/cover.webp", views.cover_image, name="cover_image"),
     path("robots.txt", views.robots, name="robots"),
@@ -21,6 +20,7 @@ urlpatterns = [
     path("manifest.json", views.manifest, name="manifest"),
     path("favicon.ico", views.favicon, name="favicon"),
     path(".well-known/security.txt", views.security, name="security"),
+    path("ht/", include("health_check.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 

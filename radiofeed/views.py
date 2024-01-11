@@ -38,12 +38,6 @@ def about_page(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_safe
-def health_check(request: HttpRequest) -> HttpResponse:
-    """Simple ping to check uptime."""
-    return HttpResponse("OK")
-
-
 @require_POST
 def accept_cookies(request: HttpRequest) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""

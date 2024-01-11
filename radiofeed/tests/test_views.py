@@ -33,12 +33,6 @@ class TestRobots:
         assert_ok(client.get(reverse("robots")))
 
 
-class TestHealthCheck:
-    @pytest.mark.django_db()
-    def test_get(self, client):
-        assert_ok(client.get(reverse("health_check")))
-
-
 class TestSecurty:
     @pytest.mark.django_db()
     def test_get(self, client):
