@@ -66,7 +66,6 @@ def index(request: HttpRequest) -> HttpResponse:
             "has_subscriptions": has_subscriptions,
             "promoted": promoted,
             "search_url": reverse("podcasts:search_podcasts"),
-            "clear_search_url": request.path,
         },
     )
 
@@ -90,8 +89,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             podcasts,
             "podcasts/search.html",
             {
-                "search_url": request.path,
-                "clear_search_url": request.path,
+                "clear_search_url": reverse("podcasts:index"),
             },
         )
 
@@ -115,7 +113,6 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             "podcasts/itunes_search.html",
             {
                 "feeds": feeds,
-                "search_url": request.path,
                 "clear_search_url": reverse("podcasts:index"),
             },
         )
@@ -176,8 +173,6 @@ def episodes(
         {
             "podcast": podcast,
             "is_podcast_detail": True,
-            "search_url": request.path,
-            "clear_search_url": request.path,
         },
     )
 
@@ -233,8 +228,6 @@ def category_list(request: HttpRequest) -> HttpResponse:
         "podcasts/categories.html",
         {
             "categories": categories,
-            "search_url": request.path,
-            "clear_search_url": request.path,
         },
     )
 
@@ -267,8 +260,6 @@ def category_detail(
         "podcasts/category_detail.html",
         {
             "category": category,
-            "search_url": request.path,
-            "clear_search_url": request.path,
         },
     )
 
@@ -335,10 +326,6 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
         request,
         podcasts,
         "podcasts/private_feeds.html",
-        {
-            "search_url": request.path,
-            "clear_search_url": request.path,
-        },
     )
 
 

@@ -20,9 +20,7 @@
                             <a href="{{ index_url }}?promoted=true" class="link">Promotions</a>
                         {% endif %}
                     </li>
-                    <li class="flex justify-center items-center space-x-3 sm:justify-end">
-                        {% include "_search_form.html" with placeholder="Search: Episodes" %}
-                    </li>
+                    <li class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: Episodes" %}</li>
                 </ul>
             </nav>
         {% else %}
@@ -32,7 +30,7 @@
                 </h1>
                 <nav class="flex justify-center items-center space-x-3 sm:justify-end">
                     <ul>
-                        <li>{% include "_search_form.html" with placeholder="Search: Episodes" %}</li>
+                        <li>{% search_form "Search: Episodes" %}</li>
                     </ul>
                 </nav>
             </div>

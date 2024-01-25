@@ -16,9 +16,7 @@
                            class="link">{{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}</a>
                     {% endif %}
                 </li>
-                <li class="flex justify-center items-center sm:justify-end">
-                    {% include "_search_form.html" with placeholder="Search: Episodes" %}
-                </li>
+                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Episodes" %}</li>
             </ul>
         </nav>
     {% endif %}

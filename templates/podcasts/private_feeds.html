@@ -23,9 +23,7 @@
                     {% endif %}
                 </li>
                 {% if request.search or page_obj.has_other_pages %}
-                    <li class="flex justify-center items-center sm:justify-end">
-                        {% include "_search_form.html" with placeholder="Search: Private Feeds" %}
-                    </li>
+                    <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Private Feeds" %}</li>
                 {% endif %}
             </ul>
         </nav>

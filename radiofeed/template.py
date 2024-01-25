@@ -67,6 +67,22 @@ def cookie_notice(context: RequestContext) -> dict:
     return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
 
 
+@register.inclusion_tag("_search_form.html", takes_context=True)
+def search_form(
+    context: RequestContext,
+    placeholder: str,
+    search_url: str = "",
+    clear_search_url: str = "",
+) -> dict:
+    """Renders search form component."""
+    return {
+        "placeholder": placeholder,
+        "search_url": search_url or context.request.path,
+        "clear_search_url": clear_search_url or context.request.path,
+        "request": context.request,
+    }
+
+
 @register.simple_tag
 @functools.cache
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
