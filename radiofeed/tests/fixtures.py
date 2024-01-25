@@ -2,8 +2,14 @@ from collections.abc import Callable, Generator
 
 import pytest
 from django.conf import Settings
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
+
+
+@pytest.fixture()
+def site():
+    return Site.objects.get_current()
 
 
 @pytest.fixture(autouse=True)

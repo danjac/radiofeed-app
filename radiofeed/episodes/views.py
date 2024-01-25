@@ -46,6 +46,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
             "search_url": reverse("episodes:search_episodes"),
+            "clear_search_url": request.path,
         },
     )
 
@@ -61,7 +62,15 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .select_related("podcast")
             .order_by("-rank", "-pub_date")
         )
-        return render_pagination(request, episodes, "episodes/search.html")
+        return render_pagination(
+            request,
+            episodes,
+            "episodes/search.html",
+            {
+                "search_url": request.path,
+                "clear_search_url": reverse("episodes:index"),
+            },
+        )
     return redirect("episodes:index")
 
 
@@ -161,7 +170,15 @@ def history(request: HttpRequest) -> HttpResponse:
             "-listened" if request.ordering.is_desc else "listened"
         )
 
-    return render_pagination(request, audio_logs, "episodes/history.html")
+    return render_pagination(
+        request,
+        audio_logs,
+        "episodes/history.html",
+        {
+            "search_url": request.path,
+            "clear_search_url": request.path,
+        },
+    )
 
 
 @require_DELETE
@@ -196,7 +213,15 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.ordering.is_desc else "created"
         )
 
-    return render_pagination(request, bookmarks, "episodes/bookmarks.html")
+    return render_pagination(
+        request,
+        bookmarks,
+        "episodes/bookmarks.html",
+        {
+            "search_url": request.path,
+            "clear_search_url": request.path,
+        },
+    )
 
 
 @require_POST

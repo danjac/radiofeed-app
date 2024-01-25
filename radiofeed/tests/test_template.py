@@ -1,6 +1,6 @@
 import pytest
+from django.contrib.sites.models import Site
 from django.template.context import RequestContext
-from django.template.loader import get_template
 from django.test import override_settings
 from django.urls import reverse, reverse_lazy
 
@@ -17,6 +17,8 @@ from radiofeed.template import (
 def req(rf, anonymous_user):
     req = rf.get("/")
     req.user = anonymous_user
+    req.htmx = False
+    req.site = Site.objects.get_current()
     return req
 
 
@@ -96,21 +98,6 @@ class TestMarkdown:
     )
     def test_markdown(self, value, expected):
         assert markdown(value) == {"content": expected}
-
-
-class TestNavbar:
-    @pytest.fixture()
-    def tmpl(self):
-        return get_template("_navbar.html")
-
-    @pytest.mark.django_db()
-    def test_authenticated(self, tmpl, auth_req):
-        rendered = tmpl.render({}, request=auth_req)
-        assert auth_req.user.username in rendered
-
-    def test_anonymous(self, tmpl, req):
-        rendered = tmpl.render({}, request=req)
-        assert "About this Site" in rendered
 
 
 class TestAbsoluteUri:

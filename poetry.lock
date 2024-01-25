@@ -689,6 +689,19 @@ files = [
 Django = ">=3.2"
 
 [[package]]
+name = "django-fastdev"
+version = "1.8.0"
+description = "Django-fastdev is an app that makes it faster and more fun to develop Django apps"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-fastdev-1.8.0.tar.gz", hash = "sha256:6eb4ba20637034e0e250e874de4b64a455d70f25ea0b87b8f2c49984532497ea"},
+]
+
+[package.dependencies]
+Django = ">=2.0"
+
+[[package]]
 name = "django-health-check"
 version = "3.17.0"
 description = "Run checks on services like databases, queue servers, celery processes, etc."
@@ -2845,4 +2858,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "38399dfb1778b633b58a38ed76bb9e0d13a8a8388547911fafdf8f4b34af5698"
+content-hash = "b868c69f9f348cba2be45ad5ea4e940affea6018f25a1bc998dfdc9543bf8986"

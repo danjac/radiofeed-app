@@ -1,6 +1,5 @@
 import pytest
 from allauth.socialaccount.models import SocialApp
-from django.contrib.sites.models import Site
 from django.template.loader import get_template
 
 from radiofeed.users.tests.factories import create_email_address
@@ -14,10 +13,12 @@ def player(mocker):
 
 
 @pytest.fixture()
-def req(rf, anonymous_user, player):
+def req(rf, anonymous_user, player, site):
     req = rf.get("/")
     req.player = player
     req.user = anonymous_user
+    req.htmx = False
+    req.site = site
     return req
 
 
@@ -31,33 +32,57 @@ def auth_req(req, user, player):
 
 
 @pytest.fixture()
-def social_app():
+def social_app(site):
     app = SocialApp.objects.create(provider="google", name="Google")
-    app.sites.add(Site.objects.get_current())
+    app.sites.add(site)
     return app
 
 
 class TestSocialAccount:
     """Test overridden allauth account templates."""
 
-    def test_signup(self, req):
+    @pytest.mark.django_db()
+    def test_signup(self, req, mocker, site):
         assert get_template("socialaccount/signup.html").render(
-            {"redirect_field_value": "/"}, request=req
+            {
+                "redirect_field_name": "redirect",
+                "redirect_field_value": "/",
+                "site": site,
+                "account": mocker.Mock(),
+                "form": mocker.Mock(),
+            },
+            request=req,
         )
 
-    def test_login(self, req):
+    @pytest.mark.django_db()
+    def test_login(self, req, site, mocker):
         assert get_template("socialaccount/login.html").render(
-            {"redirect_field_value": "/"}, request=req
+            {
+                "redirect_field_name": "redirect",
+                "redirect_field_value": "/",
+                "site": site,
+                "account": mocker.Mock(),
+                "form": mocker.Mock(),
+                "provider": mocker.Mock(),
+            },
+            request=req,
         )
 
-    def test_authentication_error(self, req):
+    @pytest.mark.django_db()
+    def test_authentication_error(self, req, mocker):
         assert get_template("socialaccount/authentication_error.html").render(
-            {}, request=req
+            {"auth_error": mocker.Mock()},
+            request=req,
         )
 
-    def test_login_connect(self, req):
+    @pytest.mark.django_db()
+    def test_login_connect(self, req, mocker):
         assert get_template("socialaccount/login.html").render(
-            {"process": "connect"}, request=req
+            {
+                "process": "connect",
+                "provider": mocker.Mock(),
+            },
+            request=req,
         )
 
     @pytest.mark.django_db()
@@ -80,6 +105,7 @@ class TestSocialAccount:
 class TestAccount:
     """Test overridden allauth account templates."""
 
+    @pytest.mark.django_db()
     def test_email_verification_required(self, req):
         assert get_template("account/verified_email_required.html").render(
             {}, request=req
@@ -89,7 +115,7 @@ class TestAccount:
         assert get_template("account/verification_sent.html").render({}, request=req)
 
     @pytest.mark.django_db()
-    def test_email(self, auth_req):
+    def test_email(self, auth_req, mocker):
         create_email_address(user=auth_req.user, primary=True)
         create_email_address(user=auth_req.user, primary=False)
         create_email_address(user=auth_req.user, primary=False, verified=False)
@@ -98,16 +124,18 @@ class TestAccount:
             {
                 "user": auth_req.user,
                 "can_add_email": True,
+                "form": mocker.Mock(),
             },
             request=auth_req,
         )
 
     @pytest.mark.django_db()
-    def test_email_no_emails(self, auth_req):
+    def test_email_no_emails(self, auth_req, mocker):
         assert get_template("account/email.html").render(
             {
                 "user": auth_req.user,
                 "can_add_email": True,
+                "form": mocker.Mock(),
             },
             request=auth_req,
         )
@@ -134,13 +162,19 @@ class TestAccount:
         assert get_template("account/account_inactive.html").render({}, request=req)
 
     @pytest.mark.django_db()
-    def test_password_change(self, auth_req):
-        assert get_template("account/password_change.html").render({}, request=auth_req)
+    def test_password_change(self, auth_req, mocker):
+        assert get_template("account/password_change.html").render(
+            {
+                "form": mocker.Mock(),
+            },
+            request=auth_req,
+        )
 
     @pytest.mark.django_db()
-    def test_password_reset(self, auth_req):
+    def test_password_reset(self, auth_req, mocker):
         assert get_template("account/password_reset.html").render(
             {
+                "form": mocker.Mock(),
                 "user": auth_req.user,
             },
             request=auth_req,
@@ -183,13 +217,30 @@ class TestAccount:
         assert get_template("account/password_set.html").render({}, request=req)
 
     @pytest.mark.django_db()
-    def test_login(self, req, social_app):
+    def test_login(self, req, social_app, mocker):
         assert get_template("account/login.html").render(
-            {"redirect_field_value": "/"}, request=req
+            {
+                "redirect_field_name": "redirect",
+                "redirect_field_value": "/",
+                "signup_url": "/signup/",
+                "auth_params": {},
+                "form": mocker.Mock(),
+                "scope": mocker.Mock(),
+            },
+            request=req,
         )
 
     @pytest.mark.django_db()
-    def test_signup(self, req, social_app):
+    def test_signup(self, req, social_app, mocker, site):
         assert get_template("account/signup.html").render(
-            {"redirect_field_value": "/"}, request=req
+            {
+                "redirect_field_name": "redirect",
+                "redirect_field_value": "/",
+                "login_url": "/login/",
+                "auth_params": {},
+                "site": site,
+                "form": mocker.Mock(),
+                "scope": mocker.Mock(),
+            },
+            request=req,
         )

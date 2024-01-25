@@ -23,6 +23,7 @@ django-coverage-plugin==3.1.0 ; python_version >= "3.12" and python_version < "4
 django-debug-toolbar==4.2.0 ; python_version >= "3.12" and python_version < "4.0"
 django-extensions==3.2.3 ; python_version >= "3.12" and python_version < "4.0"
 django-fast-update==0.2.3 ; python_version >= "3.12" and python_version < "4.0"
+django-fastdev==1.8.0 ; python_version >= "3.12" and python_version < "4.0"
 django-health-check==3.17.0 ; python_version >= "3.12" and python_version < "4.0"
 django-htmx==1.17.2 ; python_version >= "3.12" and python_version < "4.0"
 django-model-utils==4.3.1 ; python_version >= "3.12" and python_version < "4.0"

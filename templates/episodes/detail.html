@@ -130,7 +130,7 @@
                title="Download audio file to your device"
                href="{{ episode.media_url }}"
                class="link">Download</a>
-            {% with website=episode.webside|default:podcast.website %}
+            {% with website=episode.website|default:podcast.website %}
                 {% if website %}
                     <a href="{{ website }}"
                        target="_blank"
