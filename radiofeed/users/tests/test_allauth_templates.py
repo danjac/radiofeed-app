@@ -111,6 +111,7 @@ class TestAccount:
             {}, request=req
         )
 
+    @pytest.mark.django_db()
     def test_verification_sent(self, req):
         assert get_template("account/verification_sent.html").render({}, request=req)
 
@@ -140,24 +141,29 @@ class TestAccount:
             request=auth_req,
         )
 
+    @pytest.mark.django_db()
     def test_email_confirm(self, req, mocker):
         confirmation = mocker.Mock()
         confirmation.key = "test"
         assert get_template("account/email_confirm.html").render(
             {
                 "confirmation": confirmation,
+                "form": mocker.Mock(),
             },
             request=req,
         )
 
-    def test_email_confirm_no_confirmation(self, req):
+    @pytest.mark.django_db()
+    def test_email_confirm_no_confirmation(self, req, mocker):
         assert get_template("account/email_confirm.html").render(
             {
                 "confirmation": None,
+                "form": mocker.Mock(),
             },
             request=req,
         )
 
+    @pytest.mark.django_db()
     def test_account_inactive(self, req):
         assert get_template("account/account_inactive.html").render({}, request=req)
 
@@ -189,6 +195,7 @@ class TestAccount:
             request=auth_req,
         )
 
+    @pytest.mark.django_db()
     def test_password_reset_from_key(self, req, mocker):
         form = mocker.Mock()
 
@@ -196,6 +203,7 @@ class TestAccount:
             {"form": form}, request=req
         )
 
+    @pytest.mark.django_db()
     def test_password_reset_from_key_token_fail(self, req, mocker):
         form = mocker.Mock()
 
@@ -203,18 +211,26 @@ class TestAccount:
             {"form": form, "token_fail": True}, request=req
         )
 
+    @pytest.mark.django_db()
     def test_password_reset_from_key_no_form(self, req, mocker):
         assert get_template("account/password_reset_from_key.html").render(
             {}, request=req
         )
 
+    @pytest.mark.django_db()
     def test_password_reset_from_key_done(self, req):
         assert get_template("account/password_reset_from_key_done.html").render(
             {}, request=req
         )
 
-    def test_password_set(self, req):
-        assert get_template("account/password_set.html").render({}, request=req)
+    @pytest.mark.django_db()
+    def test_password_set(self, req, mocker):
+        assert get_template("account/password_set.html").render(
+            {
+                "form": mocker.Mock(),
+            },
+            request=req,
+        )
 
     @pytest.mark.django_db()
     def test_login(self, req, social_app, mocker):
