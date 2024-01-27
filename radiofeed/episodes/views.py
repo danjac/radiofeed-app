@@ -26,20 +26,22 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date", "-id")
     )
 
-    has_subscriptions: bool = False
-    promoted: bool = True
-
-    if request.user.is_authenticated:
-        subscribed = episodes.annotate(
+    subscribed_episodes = (
+        episodes.annotate(
             is_subscribed=Exists(
                 request.user.subscriptions.filter(podcast=OuterRef("podcast"))
             )
         ).filter(is_subscribed=True)
+        if request.user.is_authenticated
+        else Episode.objects.none()
+    )
 
-        has_subscriptions = subscribed.exists()
-        promoted = "promoted" in request.GET or not has_subscriptions
+    has_subscriptions = subscribed_episodes.exists()
+    promoted = "promoted" in request.GET or not has_subscriptions
 
-    episodes = episodes.filter(podcast__promoted=True) if promoted else subscribed
+    episodes = (
+        episodes.filter(podcast__promoted=True) if promoted else subscribed_episodes
+    )
 
     return render_pagination(
         request,
@@ -49,7 +51,6 @@ def index(request: HttpRequest) -> HttpResponse:
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
             "search_url": reverse("episodes:search_episodes"),
-            "clear_search_url": request.path,
         },
     )
 
@@ -69,7 +70,6 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             episodes,
             "episodes/search.html",
             {
-                "search_url": request.path,
                 "clear_search_url": reverse("episodes:index"),
             },
         )
@@ -109,6 +109,9 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         pk=episode_id,
     )
 
+    audio_log = None
+    current_time = 0
+
     if request.user.is_authenticated:
         audio_log, _ = request.user.audio_logs.update_or_create(
             episode=episode,
@@ -117,10 +120,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             },
         )
         current_time = audio_log.current_time
-        # get current time from audio log
-    else:
-        audio_log = None
-        current_time = 0
 
     request.player.set(episode.pk, current_time)
 
@@ -138,13 +137,14 @@ def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
         episode = get_object_or_404(Episode, pk=episode_id)
-        if request.user.is_authenticated:
-            audio_log = get_object_or_404(
+        audio_log = (
+            get_object_or_404(
                 request.user.audio_logs.select_related("episode"),
                 episode__pk=episode_id,
             )
-        else:
-            audio_log = None
+            if request.user.is_authenticated
+            else None
+        )
         return _render_audio_player_button(
             request,
             episode,
@@ -199,15 +199,7 @@ def history(request: HttpRequest) -> HttpResponse:
             "-listened" if request.ordering.is_desc else "listened"
         )
 
-    return render_pagination(
-        request,
-        audio_logs,
-        "episodes/history.html",
-        {
-            "search_url": request.path,
-            "clear_search_url": request.path,
-        },
-    )
+    return render_pagination(request, audio_logs, "episodes/history.html")
 
 
 @require_DELETE
@@ -242,15 +234,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
             "-created" if request.ordering.is_desc else "created"
         )
 
-    return render_pagination(
-        request,
-        bookmarks,
-        "episodes/bookmarks.html",
-        {
-            "search_url": request.path,
-            "clear_search_url": request.path,
-        },
-    )
+    return render_pagination(request, bookmarks, "episodes/bookmarks.html")
 
 
 @require_POST
