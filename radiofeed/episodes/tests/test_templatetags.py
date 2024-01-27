@@ -2,12 +2,11 @@ import pytest
 from django.template.context import RequestContext
 
 from radiofeed.episodes.middleware import Player
-from radiofeed.episodes.models import SessionAudioLog
 from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
 )
-from radiofeed.episodes.tests.factories import create_audio_log, create_episode
+from radiofeed.episodes.tests.factories import create_episode
 from radiofeed.podcasts.tests.factories import create_podcast
 from radiofeed.template import get_placeholder_cover_url
 
@@ -57,7 +56,7 @@ class TestAudioPlayer:
         return {
             "is_playing": False,
             "start_player": False,
-            "audio_log": None,
+            "current_time": None,
         }
 
     @pytest.mark.django_db()
@@ -69,7 +68,6 @@ class TestAudioPlayer:
         assert audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
-            "user": req.user,
         }
 
     @pytest.mark.django_db()
@@ -81,26 +79,23 @@ class TestAudioPlayer:
         assert audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
-            "user": req.user,
         }
 
     @pytest.mark.django_db()
     def test_is_playing(self, rf, user, episode, defaults):
-        log = create_audio_log(episode=episode, user=user)
-
         req = rf.get("/")
         req.user = user
         req.session = {}
 
         req.player = Player(req)
-        req.player.set(log.episode.pk)
+        req.player.set(episode.pk, 10)
 
         assert audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
-            "user": req.user,
-            "audio_log": log,
+            "episode": episode,
             "is_playing": True,
+            "current_time": 10,
         }
 
     @pytest.mark.django_db()
@@ -110,13 +105,12 @@ class TestAudioPlayer:
         req.session = {}
 
         req.player = Player(req)
-        req.player.set(episode.pk)
-        req.player.set_current_time(10)
+        req.player.set(episode.pk, 10)
 
         assert audio_player(RequestContext(req)) == {
             **defaults,
+            "episode": episode,
             "request": req,
-            "user": req.user,
-            "audio_log": SessionAudioLog(episode, current_time=10),
+            "current_time": 10,
             "is_playing": True,
         }

@@ -1,8 +1,7 @@
 from django import template
-from django.http import HttpRequest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.models import AudioLog, Episode, SessionAudioLog
+from radiofeed.episodes.models import Episode
 from radiofeed.template import (
     COVER_IMAGE_SIZES,
     get_cover_image_url,
@@ -44,41 +43,22 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
 
-    # TBD: We don't need to fetch audio log: just use the session player + current time consistently.
-
     defaults = {
         "request": context.request,
-        "user": context.request.user,
         "is_playing": False,
         "start_player": False,
-        "audio_log": None,
+        "current_time": None,
     }
-
-    if audio_log := _get_audio_player_log(context.request):
+    if (episode_id := context.request.player.get()) and (
+        episode := Episode.objects.filter(pk=episode_id)
+        .select_related("podcast")
+        .first()
+    ):
         return {
             **defaults,
-            "audio_log": audio_log,
+            "episode": episode,
+            "current_time": context.request.player.get_current_time(),
             "is_playing": True,
         }
 
     return defaults
-
-
-def _get_audio_player_log(request: HttpRequest) -> AudioLog | SessionAudioLog | None:
-    if episode_id := request.player.get():
-        if request.user.is_authenticated:
-            return (
-                request.user.audio_logs.filter(episode__pk=episode_id)
-                .select_related("episode", "episode__podcast")
-                .first()
-            )
-        if (
-            episode := Episode.objects.filter(pk=episode_id)
-            .select_related("podcast")
-            .first()
-        ):
-            return SessionAudioLog(
-                episode, current_time=request.player.get_current_time()
-            )
-
-    return None

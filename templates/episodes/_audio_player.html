@@ -1,7 +1,7 @@
 {% load heroicons audio_player %}
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
-    {% if audio_log and is_playing %}
-        {% with episode=audio_log.episode METADATA_TAG="audioplayer-metadata" %}
+    {% if episode and is_playing %}
+        {% with METADATA_TAG="audioplayer-metadata" %}
             {% get_media_metadata episode as metadata %}
             {% if metadata %}{{ metadata|json_script:METADATA_TAG }}{% endif %}
             <div class="h-40 sm:h-28"
@@ -9,7 +9,7 @@
                 x-data="
                 audioPlayer(
                     csrfToken='{{ csrf_token }}',
-                    currentTime={{ audio_log.current_time|default:0 }},
+                    currentTime={{ current_time|default:0 }},
                     metadataTag='{{ METADATA_TAG }}',
                     startPlayer={{ start_player|yesno:'true,false' }},
                     timeUpdateUrl='{% url 'episodes:player_time_update' %}',

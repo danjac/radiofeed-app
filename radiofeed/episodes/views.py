@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
-from radiofeed.episodes.models import AudioLog, Episode, SessionAudioLog
+from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.htmx import render_htmx
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.pagination import render_pagination
@@ -116,29 +116,41 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
                 "listened": timezone.now(),
             },
         )
+        current_time = audio_log.current_time
         # get current time from audio log
     else:
-        audio_log = SessionAudioLog(episode)
-        # current time will always be zero
+        audio_log = None
+        current_time = 0
 
-    request.player.set(episode.pk)
+    request.player.set(episode.pk, current_time)
 
-    return _render_audio_player_button(request, audio_log, is_playing=True)
+    return _render_audio_player_button(
+        request,
+        episode,
+        is_playing=True,
+        current_time=current_time,
+        audio_log=audio_log,
+    )
 
 
 @require_POST
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
+        episode = get_object_or_404(Episode, pk=episode_id)
         if request.user.is_authenticated:
             audio_log = get_object_or_404(
                 request.user.audio_logs.select_related("episode"),
                 episode__pk=episode_id,
             )
         else:
-            episode = get_object_or_404(Episode, pk=episode_id)
-            audio_log = SessionAudioLog(episode)
-        return _render_audio_player_button(request, audio_log, is_playing=False)
+            audio_log = None
+        return _render_audio_player_button(
+            request,
+            episode,
+            audio_log=audio_log,
+            is_playing=False,
+        )
 
     return HttpResponseNoContent()
 
@@ -156,6 +168,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         try:
             current_time = int(request.POST["current_time"])
             request.player.set_current_time(current_time)
+
             if request.user.is_authenticated:
                 request.user.audio_logs.update_or_create(
                     episode=get_object_or_404(Episode, pk=episode_id),
@@ -297,18 +310,20 @@ def _render_bookmark_button(
 
 def _render_audio_player_button(
     request: HttpRequest,
-    audio_log: AudioLog | SessionAudioLog,
+    episode: Episode,
     *,
     is_playing: bool,
+    current_time: int | None = None,
+    audio_log: AudioLog | None = None,
 ) -> HttpResponse:
-    # audio log not needed here: can use episode  + current time
     return _render_episode_detail(
         request,
-        audio_log.episode,
+        episode,
         {
             "audio_log": audio_log,
             "is_playing": is_playing,
             "start_player": is_playing,
+            "current_time": current_time,
         },
         partial="audio_player_button",
     )
