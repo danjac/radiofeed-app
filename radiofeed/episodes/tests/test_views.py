@@ -36,6 +36,16 @@ def player_episode(auth_user, client, episode):
     return episode
 
 
+@pytest.fixture()
+def player_episode_anonymous(client, episode):
+    session = client.session
+    session[Player.session_key] = episode.pk
+    session[Player.current_time_key] = 10
+    session.save()
+
+    return episode
+
+
 class TestNewEpisodes:
     @pytest.mark.django_db()
     def test_no_episodes(self, client, auth_user):
@@ -43,6 +53,18 @@ class TestNewEpisodes:
         assert_ok(response)
 
         assert len(response.context["page_obj"].object_list) == 0
+
+    @pytest.mark.django_db()
+    def test_not_authenticated(self, client):
+        promoted = create_podcast(promoted=True)
+        create_episode(podcast=promoted)
+        create_batch(create_episode, 3)
+        response = client.get(episodes_url)
+        assert_ok(response)
+
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
 
     @pytest.mark.django_db()
     def test_not_subscribed(self, client, auth_user):
@@ -166,6 +188,18 @@ class TestEpisodeDetail:
         assert response.context["episode"] == episode
 
     @pytest.mark.django_db()
+    def test_not_authenticated(
+        self,
+        client,
+        episode,
+        prev_episode,
+        next_episode,
+    ):
+        response = client.get(episode.get_absolute_url())
+        assert_ok(response)
+        assert response.context["episode"] == episode
+
+    @pytest.mark.django_db()
     def test_listened(
         self,
         client,
@@ -175,7 +209,10 @@ class TestEpisodeDetail:
         next_episode,
     ):
         create_audio_log(
-            episode=episode, user=auth_user, current_time=900, listened=timezone.now()
+            episode=episode,
+            user=auth_user,
+            current_time=900,
+            listened=timezone.now(),
         )
 
         response = client.get(episode.get_absolute_url())
@@ -187,24 +224,14 @@ class TestEpisodeDetail:
         assertContains(response, "Listened")
 
     @pytest.mark.django_db()
-    def test_no_prev_next_episde(
-        self,
-        client,
-        auth_user,
-        episode,
-    ):
+    def test_no_prev_next_episde(self, client, episode):
         response = client.get(episode.get_absolute_url())
         assert_ok(response)
         assert response.context["episode"] == episode
         assertNotContains(response, "No More Episodes")
 
     @pytest.mark.django_db()
-    def test_no_next_episode(
-        self,
-        client,
-        auth_user,
-        episode,
-    ):
+    def test_no_next_episode(self, client, episode):
         create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=30)
         )
@@ -214,12 +241,7 @@ class TestEpisodeDetail:
         assertContains(response, "Last Episode")
 
     @pytest.mark.django_db()
-    def test_no_previous_episode(
-        self,
-        client,
-        auth_user,
-        episode,
-    ):
+    def test_no_previous_episode(self, client, episode):
         create_episode(
             podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=30)
         )
@@ -249,6 +271,24 @@ class TestStartPlayer:
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
         assert client.session[Player.session_key] == episode.pk
+
+    @pytest.mark.django_db()
+    def test_play_from_start_not_authenticated(self, client, episode):
+        response = client.post(
+            self.url(episode),
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="audio-player-button",
+        )
+
+        assert_ok(response)
+
+        assert response.context["start_player"]
+        assert response.context["is_playing"]
+
+        assert not AudioLog.objects.exists()
+
+        assert client.session[Player.session_key] == episode.pk
+        assert client.session[Player.current_time_key] == 0
 
     @pytest.mark.django_db()
     def test_play_private_subscribed(self, client, auth_user):
@@ -317,6 +357,27 @@ class TestClosePlayer:
 
         assert player_episode.pk not in client.session
 
+    @pytest.mark.django_db()
+    def test_close_not_authenticated(
+        self,
+        client,
+        episode,
+    ):
+        session = client.session
+        session[Player.session_key] = episode.pk
+        session.save()
+
+        response = client.post(
+            self.url,
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="audio-player-button",
+        )
+
+        assert_ok(response)
+
+        assert not response.context["is_playing"]
+        assert episode.pk not in client.session
+
 
 class TestPlayerTimeUpdate:
     url = reverse_lazy("episodes:player_time_update")
@@ -333,6 +394,17 @@ class TestPlayerTimeUpdate:
         log = AudioLog.objects.first()
 
         assert log.current_time == 1030
+
+    @pytest.mark.django_db()
+    def test_is_running_not_authenticated(self, client, player_episode_anonymous):
+        assert_no_content(
+            client.post(
+                self.url,
+                {"current_time": "1030"},
+            )
+        )
+
+        assert client.session[Player.current_time_key] == 1030
 
     @pytest.mark.django_db()
     def test_player_log_missing(self, client, auth_user, episode):

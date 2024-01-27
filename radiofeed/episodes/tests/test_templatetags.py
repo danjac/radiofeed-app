@@ -3,6 +3,7 @@ from django.template.context import RequestContext
 
 from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.templatetags.audio_player import (
+    SessionAudioLog,
     audio_player,
     get_media_metadata,
 )
@@ -55,6 +56,7 @@ class TestAudioPlayer:
     def defaults(self):
         return {
             "is_playing": False,
+            "start_player": False,
             "audio_log": None,
         }
 
@@ -98,5 +100,23 @@ class TestAudioPlayer:
             "request": req,
             "user": req.user,
             "audio_log": log,
+            "is_playing": True,
+        }
+
+    @pytest.mark.django_db()
+    def test_is_anonymous_is_playing(self, rf, anonymous_user, episode, defaults):
+        req = rf.get("/")
+        req.user = anonymous_user
+        req.session = {}
+
+        req.player = Player(req)
+        req.player.set(episode.pk)
+        req.player.set_current_time(10)
+
+        assert audio_player(RequestContext(req)) == {
+            **defaults,
+            "request": req,
+            "user": req.user,
+            "audio_log": SessionAudioLog(episode, current_time=10),
             "is_playing": True,
         }

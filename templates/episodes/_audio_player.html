@@ -1,12 +1,11 @@
 {% load heroicons audio_player %}
-{% if user.is_authenticated %}
-    <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
-        {% if audio_log and is_playing %}
-            {% with episode=audio_log.episode METADATA_TAG="audioplayer-metadata" %}
-                {% get_media_metadata episode as metadata %}
-                {% if metadata %}{{ metadata|json_script:METADATA_TAG }}{% endif %}
-                <div class="h-40 sm:h-28"
-                    {# djlint:off #}
+<div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+    {% if audio_log and is_playing %}
+        {% with episode=audio_log.episode METADATA_TAG="audioplayer-metadata" %}
+            {% get_media_metadata episode as metadata %}
+            {% if metadata %}{{ metadata|json_script:METADATA_TAG }}{% endif %}
+            <div class="h-40 sm:h-28"
+                {# djlint:off #}
                 x-data="
                 audioPlayer(
                     csrfToken='{{ csrf_token }}',
@@ -15,105 +14,104 @@
                     startPlayer={{ start_player|yesno:'true,false' }},
                     timeUpdateUrl='{% url 'episodes:player_time_update' %}',
                 )"
-                    {# djlint:on #}
-                    @keydown.window="shortcuts">
-                    <audio x-ref="audio"
-                           preload="auto"
-                           @loadedmetadata="loaded"
-                           @ended="ended"
-                           @timeupdate="timeUpdate"
-                           @play="play"
-                           @pause="pause"
-                           @error.prevent="error">
-                        <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
-                    </audio>
-                    <div class="fixed bottom-0 z-10 p-2 w-full font-semibold text-white bg-gradient-to-b from-violet-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                        <div class="items-center space-y-2 w-full divide-y divide-gray-500 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x">
-                            <div class="sm:w-1/2" hx-swap="innerHTML show:window:top">
-                                {% with podcast=episode.podcast %}
-                                    <div class="flex items-center pr-2 space-x-2 lg:space-x-3">
-                                        {% cover_image podcast.cover_url 100 podcast.cleaned_title url=podcast.get_absolute_url css_class="w-16 h-16" %}
-                                        <div class="flex flex-col place-content-between h-16">
-                                            <a class="font-bold tracking-tight leading-tight break-words hover:text-blue-300 line-clamp-2"
-                                               href="{{ episode.get_absolute_url }}"
-                                               aria-label="{{ episode.cleaned_title }}"
-                                               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
-                                            <a class="w-60 text-xs tracking-tight leading-tight md:text-sm lg:w-96 hover:text-blue-300 truncate xl:w-128"
-                                               href="{{ podcast.get_episodes_url }}"
-                                               aria-label="{{ podcast.cleaned_title }}: Episodes"
-                                               title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title }}
-                                            </a>
-                                        </div>
+                {# djlint:on #}
+                @keydown.window="shortcuts">
+                <audio x-ref="audio"
+                       preload="auto"
+                       @loadedmetadata="loaded"
+                       @ended="ended"
+                       @timeupdate="timeUpdate"
+                       @play="play"
+                       @pause="pause"
+                       @error.prevent="error">
+                    <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
+                </audio>
+                <div class="fixed bottom-0 z-10 p-2 w-full font-semibold text-white bg-gradient-to-b from-violet-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                    <div class="items-center space-y-2 w-full divide-y divide-gray-500 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x">
+                        <div class="sm:w-1/2" hx-swap="innerHTML show:window:top">
+                            {% with podcast=episode.podcast %}
+                                <div class="flex items-center pr-2 space-x-2 lg:space-x-3">
+                                    {% cover_image podcast.cover_url 100 podcast.cleaned_title url=podcast.get_absolute_url css_class="w-16 h-16" %}
+                                    <div class="flex flex-col place-content-between h-16">
+                                        <a class="font-bold tracking-tight leading-tight break-words hover:text-blue-300 line-clamp-2"
+                                           href="{{ episode.get_absolute_url }}"
+                                           aria-label="{{ episode.cleaned_title }}"
+                                           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
+                                        <a class="w-60 text-xs tracking-tight leading-tight md:text-sm lg:w-96 hover:text-blue-300 truncate xl:w-128"
+                                           href="{{ podcast.get_episodes_url }}"
+                                           aria-label="{{ podcast.cleaned_title }}: Episodes"
+                                           title="{{ podcast.cleaned_title }}: Episodes">{{ podcast.cleaned_title }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        </div>
+                        <div class="flex flex-col place-content-end space-y-2 h-16 sm:pl-3 sm:space-y-3 sm:w-1/2">
+                            <div class="grid grid-cols-3 place-content-between">
+                                <div x-text="counters.current"
+                                     aria-label="Current Time"
+                                     title="Current Time"
+                                     class="flex justify-start items-center font-mono text-xs md:text-sm"
+                                     :class="isPlaying ? '' : 'text-gray-300'"></div>
+                                <div class="flex justify-center items-center space-x-6 opacity-75 animate-pulse"
+                                     x-show="!isLoaded">Loading...</div>
+                                {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                    <div class="flex justify-center items-center space-x-6"
+                                         x-show="isLoaded"
+                                         x-cloak>
+                                        <button aria-label="Skip Back 10 Seconds"
+                                                title="Skip Back 10 Seconds"
+                                                class="{{ BUTTON_CSS }}"
+                                                @click="skipBack"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                            {% heroicon_outline "backward" size=30 %}
+                                        </button>
+                                        <button aria-label="Play"
+                                                title="Play"
+                                                class="{{ BUTTON_CSS }}"
+                                                @click="togglePlayPause"
+                                                x-show="!isPlaying">
+                                            {% heroicon_outline "play-circle" size=36 %}
+                                        </button>
+                                        <button aria-label="Pause"
+                                                title="Pause"
+                                                class="{{ BUTTON_CSS }}"
+                                                @click="togglePlayPause"
+                                                x-show="isPlaying">
+                                            {% heroicon_outline "pause-circle" size=36 %}
+                                        </button>
+                                        <button aria-label="Skip Forward 10 Seconds"
+                                                title="Skip Forward 10 Seconds"
+                                                class="{{ BUTTON_CSS }}"
+                                                @click="skipForward"
+                                                :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                            {% heroicon_outline "forward" size=30 %}
+                                        </button>
                                     </div>
                                 {% endwith %}
+                                <div x-text="counters.remaining"
+                                     aria-label="Time Remaining"
+                                     title="Time Remaining"
+                                     class="flex justify-end items-center font-mono text-xs md:text-sm"
+                                     :class="isPlaying ? '' : 'text-gray-300'"></div>
                             </div>
-                            <div class="flex flex-col place-content-end space-y-2 h-16 sm:pl-3 sm:space-y-3 sm:w-1/2">
-                                <div class="grid grid-cols-3 place-content-between">
-                                    <div x-text="counters.current"
-                                         aria-label="Current Time"
-                                         title="Current Time"
-                                         class="flex justify-start items-center font-mono text-xs md:text-sm"
-                                         :class="isPlaying ? '' : 'text-gray-300'"></div>
-                                    <div class="flex justify-center items-center space-x-6 opacity-75 animate-pulse"
-                                         x-show="!isLoaded">Loading...</div>
-                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                        <div class="flex justify-center items-center space-x-6"
-                                             x-show="isLoaded"
-                                             x-cloak>
-                                            <button aria-label="Skip Back 10 Seconds"
-                                                    title="Skip Back 10 Seconds"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    @click="skipBack"
-                                                    :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "backward" size=30 %}
-                                            </button>
-                                            <button aria-label="Play"
-                                                    title="Play"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    @click="togglePlayPause"
-                                                    x-show="!isPlaying">
-                                                {% heroicon_outline "play-circle" size=36 %}
-                                            </button>
-                                            <button aria-label="Pause"
-                                                    title="Pause"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    @click="togglePlayPause"
-                                                    x-show="isPlaying">
-                                                {% heroicon_outline "pause-circle" size=36 %}
-                                            </button>
-                                            <button aria-label="Skip Forward 10 Seconds"
-                                                    title="Skip Forward 10 Seconds"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    @click="skipForward"
-                                                    :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "forward" size=30 %}
-                                            </button>
-                                        </div>
-                                    {% endwith %}
-                                    <div x-text="counters.remaining"
-                                         aria-label="Time Remaining"
-                                         title="Time Remaining"
-                                         class="flex justify-end items-center font-mono text-xs md:text-sm"
-                                         :class="isPlaying ? '' : 'text-gray-300'"></div>
-                                </div>
-                                <div class="w-full">
-                                    <input type="range"
-                                           aria-label="Progress"
-                                           title="Progress"
-                                           min="0"
-                                           x-ref="range"
-                                           x-model="runtime"
-                                           @change="skip"
-                                           :max="duration"
-                                           :disabled="!isPlaying"
-                                           class="flex items-center mx-auto w-full bg-transparent focus:outline-none"
-                                           :class="isPlaying ? 'cursor-pointer' : 'cursor-not-allowed'">
-                                </div>
+                            <div class="w-full">
+                                <input type="range"
+                                       aria-label="Progress"
+                                       title="Progress"
+                                       min="0"
+                                       x-ref="range"
+                                       x-model="runtime"
+                                       @change="skip"
+                                       :max="duration"
+                                       :disabled="!isPlaying"
+                                       class="flex items-center mx-auto w-full bg-transparent focus:outline-none"
+                                       :class="isPlaying ? 'cursor-pointer' : 'cursor-not-allowed'">
                             </div>
                         </div>
                     </div>
                 </div>
-            {% endwith %}
-        {% endif %}
-    </div>
-{% endif %}
+            </div>
+        {% endwith %}
+    {% endif %}
+</div>

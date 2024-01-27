@@ -150,15 +150,17 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             sendTimeUpdate() {
-                fetch(this.timeUpdateUrl, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": this.csrfToken,
-                    },
-                    body: new URLSearchParams({
-                        current_time: this.runtime,
-                    }),
-                });
+                if (timeUpdateUrl) {
+                    fetch(this.timeUpdateUrl, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": this.csrfToken,
+                        },
+                        body: new URLSearchParams({
+                            current_time: this.runtime,
+                        }),
+                    });
+                }
             },
             formatCounter(value) {
                 if (isNaN(value) || value < 0) {

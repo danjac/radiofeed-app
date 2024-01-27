@@ -26,18 +26,29 @@ class TestPlayer:
     def test_get_if_none(self, player):
         assert player.get() is None
 
+    def test_set_current_time(self, player):
+        player.set_current_time(10)
+        assert player.get_current_time() == 10
+
+    def test_set_current_time_invalid(self, player):
+        player.set_current_time("argh")
+        assert player.get_current_time() == 0
+
     def test_get_if_not_none(self, player):
         player.set(self.episode_id)
         assert player.get() == self.episode_id
 
     def test_pop_if_none(self, player):
         assert player.pop() is None
+        assert player.get_current_time() == 0
 
     def test_pop_if_not_none(self, player):
         player.set(self.episode_id)
+        player.set_current_time(10)
 
         assert player.pop() == self.episode_id
         assert player.get() is None
+        assert player.get_current_time() == 0
 
     def test_has_false(self, player):
         assert not player.has(self.episode_id)

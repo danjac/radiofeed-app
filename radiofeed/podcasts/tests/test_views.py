@@ -79,6 +79,18 @@ class TestPodcasts:
         assert response.context["promoted"]
 
     @pytest.mark.django_db()
+    def test_user_not_authenticated(self, client):
+        """If user is not subscribed any podcasts, just show general feed"""
+
+        create_batch(create_podcast, 3, promoted=True)
+        response = client.get(reverse("podcasts:index"), {"promoted": True})
+        assert_ok(response)
+
+        assert len(response.context["page_obj"].object_list) == 3
+        assert response.context["promoted"]
+        assert not response.context["has_subscriptions"]
+
+    @pytest.mark.django_db()
     def test_user_is_subscribed_promoted(self, client, auth_user):
         """If user is not subscribed any podcasts, just show general feed"""
 
@@ -261,6 +273,14 @@ class TestPodcastDetail:
         assert_ok(response)
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is True
+
+    @pytest.mark.django_db()
+    def test_not_authenticated(self, client, podcast):
+        podcast.categories.set(create_batch(create_category, 3))
+        response = client.get(podcast.get_absolute_url())
+        assert_ok(response)
+        assert response.context["podcast"] == podcast
+        assert response.context["is_subscribed"] is False
 
     @pytest.mark.django_db()
     def test_get_podcast_private_subscribed(self, client, auth_user):

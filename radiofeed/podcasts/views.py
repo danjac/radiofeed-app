@@ -40,23 +40,28 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 
 
 @require_safe
-@require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
-    subscribed = podcasts.annotate(
-        is_subscribed=Exists(
-            request.user.subscriptions.filter(
-                podcast=OuterRef("pk"),
+    if request.user.is_authenticated:
+        subscribed = podcasts.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(
+                    podcast=OuterRef("pk"),
+                )
             )
-        )
-    ).filter(is_subscribed=True)
+        ).filter(is_subscribed=True)
 
-    has_subscriptions = subscribed.exists()
-    promoted = "promoted" in request.GET or not has_subscriptions
-    podcasts = podcasts.filter(promoted=True) if promoted else subscribed
+        has_subscriptions = subscribed.exists()
+        promoted = "promoted" in request.GET or not has_subscriptions
+        podcasts = podcasts.filter(promoted=True) if promoted else subscribed
+
+    else:
+        has_subscriptions = False
+        subscribed = podcasts
+        promoted = True
 
     return render_pagination(
         request,
@@ -71,7 +76,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -97,7 +101,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if request.search:
@@ -121,7 +124,6 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -137,20 +139,22 @@ def latest_episode(
 
 
 @require_safe
-@require_auth
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Details for a single podcast."""
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
+    is_subscribed = (
+        request.user.subscriptions.filter(podcast=podcast).exists()
+        if request.user.is_authenticated
+        else False
+    )
 
     return _render_podcast_detail(request, podcast, is_subscribed=is_subscribed)
 
 
 @require_safe
-@require_auth
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -178,7 +182,6 @@ def episodes(
 
 
 @require_safe
-@require_auth
 def similar(
     request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
 ) -> HttpResponse:
@@ -203,7 +206,6 @@ def similar(
 
 
 @require_safe
-@require_auth
 def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
@@ -233,7 +235,6 @@ def category_list(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> HttpResponse:

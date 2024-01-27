@@ -1,3 +1,6 @@
+import dataclasses
+from datetime import datetime
+
 from django import template
 from django.http import HttpRequest
 from django.template.context import RequestContext
@@ -10,6 +13,15 @@ from radiofeed.template import (
 )
 
 register = template.Library()
+
+
+@dataclasses.dataclass
+class SessionAudioLog:
+    """Replaces AudioLog model for anonymous users."""
+
+    episode: Episode
+    current_time: int = 0
+    listened: datetime | None = None
 
 
 @register.simple_tag(takes_context=True)
@@ -48,6 +60,7 @@ def audio_player(context: RequestContext) -> dict:
         "request": context.request,
         "user": context.request.user,
         "is_playing": False,
+        "start_player": False,
         "audio_log": None,
     }
 
@@ -61,12 +74,21 @@ def audio_player(context: RequestContext) -> dict:
     return defaults
 
 
-def _get_audio_player_log(request: HttpRequest) -> AudioLog | None:
-    if request.user.is_authenticated and (episode_id := request.player.get()):
-        return (
-            request.user.audio_logs.filter(episode__pk=episode_id)
-            .select_related("episode", "episode__podcast")
+def _get_audio_player_log(request: HttpRequest) -> AudioLog | SessionAudioLog | None:
+    if episode_id := request.player.get():
+        if request.user.is_authenticated:
+            return (
+                request.user.audio_logs.filter(episode__pk=episode_id)
+                .select_related("episode", "episode__podcast")
+                .first()
+            )
+        if (
+            episode := Episode.objects.filter(pk=episode_id)
+            .select_related("podcast")
             .first()
-        )
+        ):
+            return SessionAudioLog(
+                episode, current_time=request.player.get_current_time()
+            )
 
     return None
