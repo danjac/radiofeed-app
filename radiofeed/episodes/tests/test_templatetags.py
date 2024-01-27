@@ -2,8 +2,8 @@ import pytest
 from django.template.context import RequestContext
 
 from radiofeed.episodes.middleware import Player
+from radiofeed.episodes.models import SessionAudioLog
 from radiofeed.episodes.templatetags.audio_player import (
-    SessionAudioLog,
     audio_player,
     get_media_metadata,
 )

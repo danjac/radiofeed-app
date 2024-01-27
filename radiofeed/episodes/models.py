@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
@@ -239,3 +240,12 @@ class AudioLog(TimeStampedModel):
             models.Index(fields=["-listened"]),
             models.Index(fields=["listened"]),
         ]
+
+
+@dataclasses.dataclass
+class SessionAudioLog:
+    """Replaces AudioLog model for anonymous users."""
+
+    episode: Episode
+    current_time: int = 0
+    listened: datetime | None = None

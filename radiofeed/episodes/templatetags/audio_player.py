@@ -1,11 +1,8 @@
-import dataclasses
-from datetime import datetime
-
 from django import template
 from django.http import HttpRequest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.episodes.models import AudioLog, Episode, SessionAudioLog
 from radiofeed.template import (
     COVER_IMAGE_SIZES,
     get_cover_image_url,
@@ -13,15 +10,6 @@ from radiofeed.template import (
 )
 
 register = template.Library()
-
-
-@dataclasses.dataclass
-class SessionAudioLog:
-    """Replaces AudioLog model for anonymous users."""
-
-    episode: Episode
-    current_time: int = 0
-    listened: datetime | None = None
 
 
 @register.simple_tag(takes_context=True)
@@ -55,6 +43,8 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
+
+    # TBD: We don't need to fetch audio log: just use the session player + current time consistently.
 
     defaults = {
         "request": context.request,

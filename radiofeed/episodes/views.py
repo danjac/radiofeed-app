@@ -10,8 +10,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
-from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.episodes.templatetags.audio_player import SessionAudioLog
+from radiofeed.episodes.models import AudioLog, Episode, SessionAudioLog
 from radiofeed.htmx import render_htmx
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
 from radiofeed.pagination import render_pagination
@@ -117,8 +116,10 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
                 "listened": timezone.now(),
             },
         )
+        # get current time from audio log
     else:
         audio_log = SessionAudioLog(episode)
+        # current time will always be zero
 
     request.player.set(episode.pk)
 
@@ -154,6 +155,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     if episode_id := request.player.get():
         try:
             current_time = int(request.POST["current_time"])
+            request.player.set_current_time(current_time)
             if request.user.is_authenticated:
                 request.user.audio_logs.update_or_create(
                     episode=get_object_or_404(Episode, pk=episode_id),
@@ -162,8 +164,6 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
                         "listened": timezone.now(),
                     },
                 )
-            else:
-                request.player.set_current_time(current_time)
         except (KeyError, ValueError):
             return HttpResponseBadRequest()
 
@@ -301,6 +301,7 @@ def _render_audio_player_button(
     *,
     is_playing: bool,
 ) -> HttpResponse:
+    # audio log not needed here: can use episode  + current time
     return _render_episode_detail(
         request,
         audio_log.episode,
