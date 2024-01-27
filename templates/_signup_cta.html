@@ -7,7 +7,7 @@
                 <a class="{{ css_class }}" href="{% url 'account_signup' %}">Sign up</a>
                 or
                 <a class="{{ css_class }}" href="{% url 'account_login' %}">log in</a>
-                to follow your favorite podcasts and episodes!
+                to follow your favorite <a class="{{ css_class }}" href="{% url 'podcasts:index' %}">podcasts</a> and <a class="{{ css_class }}" href="{% url 'episodes:index' %}">episodes</a>!
             {% endwith %}
         </div>
     {% endwith %}
