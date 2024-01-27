@@ -6,6 +6,7 @@
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-6 space-y-3 border-b sm:space-y-6">
+        {% url "episodes:search_episodes" as search_episodes_url %}
         {% if has_subscriptions %}
             <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                 New Releases: {{ promoted|yesno:"Promotions,Subscriptions" }}
@@ -20,7 +21,9 @@
                             <a href="{{ index_url }}?promoted=true" class="link">Promotions</a>
                         {% endif %}
                     </li>
-                    <li class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: Episodes" %}</li>
+                    <li class="flex justify-center items-center space-x-3 sm:justify-end">
+                        {% search_form "Search: Episodes" search_url=search_episodes_url %}
+                    </li>
                 </ul>
             </nav>
         {% else %}
@@ -30,7 +33,7 @@
                 </h1>
                 <nav class="flex justify-center items-center space-x-3 sm:justify-end">
                     <ul>
-                        <li>{% search_form "Search: Episodes" %}</li>
+                        <li>{% search_form "Search: Episodes" search_url=search_episodes_url %}</li>
                     </ul>
                 </nav>
             </div>
