@@ -57,6 +57,7 @@ class TestAudioPlayer:
             "is_playing": False,
             "start_player": False,
             "current_time": None,
+            "player_episode": None,
         }
 
     @pytest.mark.django_db()
@@ -93,7 +94,7 @@ class TestAudioPlayer:
         assert audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
-            "episode": episode,
+            "player_episode": episode,
             "is_playing": True,
             "current_time": 10,
         }
@@ -109,7 +110,7 @@ class TestAudioPlayer:
 
         assert audio_player(RequestContext(req)) == {
             **defaults,
-            "episode": episode,
+            "player_episode": episode,
             "request": req,
             "current_time": 10,
             "is_playing": True,

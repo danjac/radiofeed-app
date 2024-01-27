@@ -309,6 +309,7 @@ def _render_audio_player_button(
             "is_playing": is_playing,
             "start_player": is_playing,
             "current_time": current_time,
+            "player_episode": episode,
         },
         partial="audio_player_button",
     )
