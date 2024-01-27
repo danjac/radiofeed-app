@@ -26,6 +26,9 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date", "-id")
     )
 
+    has_subscriptions: bool = False
+    promoted: bool = True
+
     if request.user.is_authenticated:
         subscribed = episodes.annotate(
             is_subscribed=Exists(
@@ -35,10 +38,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
         has_subscriptions = subscribed.exists()
         promoted = "promoted" in request.GET or not has_subscriptions
-
-    else:
-        has_subscriptions = False
-        promoted = True
 
     episodes = episodes.filter(podcast__promoted=True) if promoted else subscribed
 

@@ -45,23 +45,21 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
-    if request.user.is_authenticated:
-        subscribed = podcasts.annotate(
+    subscribed_podcasts = (
+        podcasts.annotate(
             is_subscribed=Exists(
                 request.user.subscriptions.filter(
                     podcast=OuterRef("pk"),
                 )
             )
         ).filter(is_subscribed=True)
+        if request.user.is_authenticated
+        else Podcast.objects.none()
+    )
 
-        has_subscriptions = subscribed.exists()
-        promoted = "promoted" in request.GET or not has_subscriptions
-        podcasts = podcasts.filter(promoted=True) if promoted else subscribed
-
-    else:
-        has_subscriptions = False
-        subscribed = podcasts
-        promoted = True
+    has_subscriptions = subscribed_podcasts.exists()
+    promoted = "promoted" in request.GET or not has_subscriptions
+    podcasts = podcasts.filter(promoted=True) if promoted else subscribed_podcasts
 
     return render_pagination(
         request,
@@ -145,6 +143,7 @@ def podcast_detail(
     """Details for a single podcast."""
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
+
     is_subscribed = (
         request.user.subscriptions.filter(podcast=podcast).exists()
         if request.user.is_authenticated
