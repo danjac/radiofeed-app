@@ -166,8 +166,9 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     """
     if episode_id := request.player.get():
         try:
-            current_time = int(request.POST["current_time"])
-            request.player.set_current_time(current_time)
+            request.player.current_time = current_time = int(
+                request.POST["current_time"]
+            )
 
             if request.user.is_authenticated:
                 request.user.audio_logs.update_or_create(

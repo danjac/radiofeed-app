@@ -57,7 +57,7 @@ def audio_player(context: RequestContext) -> dict:
         return {
             **defaults,
             "episode": episode,
-            "current_time": context.request.player.get_current_time(),
+            "current_time": context.request.player.current_time,
             "is_playing": True,
         }
 
