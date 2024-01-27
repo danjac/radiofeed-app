@@ -95,6 +95,7 @@ def episode_detail(
 
     if request.user.is_authenticated:
         context = {
+            **context,
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
         }
