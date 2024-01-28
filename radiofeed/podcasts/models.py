@@ -217,19 +217,43 @@ class Podcast(models.Model):
 
     def get_detail_url(self) -> str:
         """Absolute URL of podcast detail page."""
-        return reverse("podcasts:podcast_detail", args=[self.pk, self.slug])
+        return reverse(
+            "podcasts:podcast_detail",
+            kwargs={
+                "podcast_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     def get_episodes_url(self) -> str:
         """Absolute URL of podcast episode list page."""
-        return reverse("podcasts:podcast_episodes", args=[self.pk, self.slug])
+        return reverse(
+            "podcasts:podcast_episodes",
+            kwargs={
+                "podcast_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     def get_similar_url(self) -> str:
         """Absolute URL of podcast similar recommendations page."""
-        return reverse("podcasts:podcast_similar", args=[self.pk, self.slug])
+        return reverse(
+            "podcasts:podcast_similar",
+            kwargs={
+                "podcast_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     def get_latest_episode_url(self) -> str:
         """Absolute URL to latest episode redirect."""
-        return reverse("podcasts:latest_episode", args=[self.pk, self.slug])
+        return reverse(
+            "podcasts:latest_episode",
+            kwargs={
+                "podcast_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     @cached_property
     def cleaned_title(self) -> str:

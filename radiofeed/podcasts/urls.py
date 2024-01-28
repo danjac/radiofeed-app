@@ -8,22 +8,22 @@ urlpatterns = [
     path("", views.landing_page, name="landing_page"),
     path("podcasts/", views.index, name="index"),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/",
+        "podcasts/<slug:slug>-<int:podcast_id>/",
         views.podcast_detail,
         name="podcast_detail",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/latest/",
+        "podcasts/<slug:slug>-<int:podcast_id>/latest/",
         views.latest_episode,
         name="latest_episode",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
+        "podcasts/<slug:slug>-<int:podcast_id>/episodes/",
         views.episodes,
         name="podcast_episodes",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/similar/",
+        "podcasts/<slug:slug>-<int:podcast_id>/similar/",
         views.similar,
         name="podcast_similar",
     ),

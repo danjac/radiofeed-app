@@ -238,9 +238,7 @@ class TestPodcastSimilar:
     def test_get(self, client, auth_user, podcast):
         create_batch(create_episode, 3, podcast=podcast)
         create_batch(create_recommendation, 3, podcast=podcast)
-        response = client.get(
-            reverse("podcasts:podcast_similar", args=[podcast.pk, podcast.slug])
-        )
+        response = client.get(podcast.get_similar_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
         assert len(response.context["recommendations"]) == 3
@@ -308,9 +306,7 @@ class TestPodcastDetail:
 
     @pytest.mark.django_db()
     def test_get_podcast_admin(self, client, staff_user, podcast):
-        response = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.pk, podcast.slug])
-        )
+        response = client.get(podcast.get_absolute_url())
         assert_ok(response)
         assert response.context["podcast"] == podcast
         assertContains(response, "Admin")
@@ -318,10 +314,7 @@ class TestPodcastDetail:
 
 class TestPodcastEpisodes:
     def url(self, podcast):
-        return reverse(
-            "podcasts:podcast_episodes",
-            args=[podcast.pk, podcast.slug],
-        )
+        return podcast.get_episodes_url()
 
     @pytest.mark.django_db()
     def test_get_episodes(self, client, auth_user, podcast):
