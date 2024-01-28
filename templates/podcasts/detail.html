@@ -104,15 +104,17 @@
                     </div>
                 {% endif %}
             </nav>
-            <div class="flex flex-wrap">
-                <a href="{{ podcast.get_latest_episode_url }}"
-                   class="link"
-                   aria-label="Latest Episode"
-                   title="Latest Episode">
-                    Latest episode
-                    {% include "_date.html" with value=podcast.pub_date title="Release Date" %}
-                </a>
-            </div>
+            {% if podcast.pub_date %}
+                <div class="flex flex-wrap">
+                    <a href="{{ podcast.get_latest_episode_url }}"
+                       class="link"
+                       aria-label="Latest Episode"
+                       title="Latest Episode">
+                        Latest episode
+                        {% include "_date.html" with value=podcast.pub_date title="Release Date" %}
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
     {% if podcast.funding_url %}
