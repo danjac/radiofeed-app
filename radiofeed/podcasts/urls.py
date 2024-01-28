@@ -45,7 +45,7 @@ urlpatterns = [
         name="category_list",
     ),
     path(
-        "categories/<int:category_id>/<slug:slug>/",
+        "categories/<slug:slug>-<int:category_id>/",
         views.category_detail,
         name="category_detail",
     ),
