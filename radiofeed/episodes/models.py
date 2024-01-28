@@ -89,7 +89,13 @@ class Episode(models.Model):
 
     def get_absolute_url(self) -> str:
         """URL of episode detail page."""
-        return reverse("episodes:episode_detail", args=[self.pk, self.slug])
+        return reverse(
+            "episodes:episode_detail",
+            kwargs={
+                "episode_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     def get_next_episode(self) -> Episode | None:
         """Returns the next episode in this podcast."""

@@ -9,7 +9,7 @@ urlpatterns = [
     path("new/", views.index, name="index"),
     path("search/episodes/", views.search_episodes, name="search_episodes"),
     path(
-        "episodes/<int:episode_id>/<slug:slug>/",
+        "episodes/<slug:slug>-<int:episode_id>/",
         views.episode_detail,
         name="episode_detail",
     ),
