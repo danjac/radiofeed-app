@@ -1,0 +1,10 @@
+admin_url: /my-admin-url/
+admins: admin@radiofeed.app
+allowed_hosts: .radiofeed.app
+domain: radiofeed.app
+email_host: mg.radiofeed.app
+letsencrypt_email: admin@radiofeed.app
+mailgun_api_key: SECRET
+mailgun_api_url: SECRET
+secret_key: SECRET
+sentry_url: SECRET
