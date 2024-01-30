@@ -42,7 +42,7 @@ media/
 node_modules/
 npm-debug.log*
 staticfiles
-vars.yml
+vars.yaml
 venv
 
 static/**/bundle.*
