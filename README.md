@@ -84,6 +84,33 @@ A Dockerfile is provided for standard container deployments e.g. on Dokku.
 
 Once you have access to the Django Admin, you should configure the default Site instance with the correct production name and domain.
 
+### Ansible Dokku deployment
+
+An Ansible Playbook, _ansible-dokku.yaml_, has been included for easier deployment of Dokku to a VM.
+
+This Playbook requires the **ansible_dokku** role:
+
+```
+bash
+ansible-galaxy role install dokku_bot.ansible_dokku
+```
+
+First, copy _vars.yaml.example_ to _vars.yaml_, edit the file as needed (see the section on environment variables above), and make sure to encrypt it with **ansible-vault**:
+
+```bash
+ansible-vault encrypt vars.yaml
+```
+
+Then copy the file `hosts.example` to `hosts` and again edit as needed.
+
+To deploy your application on the VM:
+
+```bash
+ansible-playbook -i hosts ansible-dokku.yaml --user USER --ask-vault-pass
+```
+
+**USER** here should be user who has permissions to install Dokku on that server.
+
 ### Scheduling background tasks
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
