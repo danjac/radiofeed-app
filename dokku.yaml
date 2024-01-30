@@ -15,6 +15,10 @@
           - name: letsencrypt
             url: https://github.com/dokku/dokku-letsencrypt.git
   tasks:
+      - name: set dokku app
+        dokku_app:
+            app: "{{ appname }}"
+            state: present
       - name: clear domains
         dokku_domains:
             app: "{{ appname }}"
@@ -24,12 +28,6 @@
         dokku_domains:
             app: "{{ appname }}"
             domains: "{{ domain }}"
-      - name: create app
-        dokku_clone:
-            app: "{{ appname }}"
-            repository: https://github.com/danjac/radiofeed-app
-            version: main
-            build: false
       - name: postgres:create
         dokku_service_create:
             name: radiofeed
@@ -56,3 +54,22 @@
             - name: letsencrypt
               dokku_letsencrypt:
                   app: "{{ appname }}"
+      - name: set environment variables
+        dokku_config:
+            app: "{{ appname }}"
+            restart: false
+            config:
+                ADMIN_URL: "{{ admin_url }}"
+                ADMINS: "{{ admins }}"
+                ALLOWED_HOSTS: "{{ allowed_hosts }}"
+                EMAIL_HOST: "{{ email_host }}"
+                MAILGUN_API_KEY: "{{ mailgun_api_key }}"
+                MAILGUN_API_URL: "{{ mailgun_api_url }}"
+                SECRET_KEY: "{{ secret_key }}"
+                SENTRY_URL: "{{ sentry_url }}"
+      - name: create app
+        dokku_clone:
+            app: "{{ appname }}"
+            repository: https://github.com/danjac/radiofeed-app
+            version: main
+            build: true
