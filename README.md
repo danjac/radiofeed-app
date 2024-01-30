@@ -90,8 +90,7 @@ An Ansible Playbook, _ansible-dokku.yaml_, has been included for easier deployme
 
 This Playbook requires the **ansible_dokku** role:
 
-```
-bash
+```bash
 ansible-galaxy role install dokku_bot.ansible_dokku
 ```
 
