@@ -28,7 +28,8 @@ Procfile
 README.md
 conftest.py
 docker-compose.yml
-dokku.yaml
+ansible-dokku.yaml
+hosts
 node_modules
 npm-debug.log
 poetry.lock
