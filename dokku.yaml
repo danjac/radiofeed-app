@@ -1,0 +1,28 @@
+- name: Install Dokku
+  hosts: server
+  gather_facts: yes
+  roles:
+      - dokku_bot.ansible_dokku
+  vars:
+      dokku_plugins:
+          - name: postgres
+            url: https://github.com/dokku/dokku-postgres.git
+          - name: redis
+            url: https://github.com/dokku/dokku-redis.git
+          - name: letsencrypt
+            url: https://github.com/dokku/dokku-letsencrypt.git
+  tasks:
+      - name: create app
+        dokku_clone:
+            app: radiofeed
+            repository: https://github.com/danjac/radiofeed-app
+            version: main
+      - name: postgres:create
+        dokku_service_create:
+            name: radiofeed
+            service: postgres
+      - name: postgres:link
+        dokku_service_link:
+            app: radiofeed
+            name: radiofeed
+            service: postgres
