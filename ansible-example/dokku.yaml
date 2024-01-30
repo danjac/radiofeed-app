@@ -7,7 +7,7 @@
   roles:
       - dokku_bot.ansible_dokku
   vars:
-      appname: radiofeed
+      appname: "{{ appname }}"
       dokku_plugins:
           - name: postgres
             url: https://github.com/dokku/dokku-postgres.git
@@ -31,21 +31,21 @@
             domains: "{{ domain }}"
       - name: postgres:create
         dokku_service_create:
-            name: radiofeed
+            name: "{{ appname }}-postgres"
             service: postgres
       - name: postgres:link
         dokku_service_link:
             app: "{{ appname }}"
-            name: radiofeed
+            name: "{{ appname }}-postgres"
             service: postgres
       - name: redis:create
         dokku_service_create:
-            name: radiofeed
+            name: "{{ appname }}-redis"
             service: redis
       - name: redis:link
         dokku_service_link:
             app: "{{ appname }}"
-            name: radiofeed
+            name: "{{ appname }}-redis"
             service: redis
       - name: set letsencrypt email and request certificate
         block:
