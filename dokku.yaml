@@ -6,7 +6,6 @@
       - dokku_bot.ansible_dokku
   vars:
       appname: radiofeed
-      dokku_hostname: "{{ domain }}"
       dokku_plugins:
           - name: postgres
             url: https://github.com/dokku/dokku-postgres.git
