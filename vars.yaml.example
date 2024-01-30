@@ -1,4 +1,4 @@
-admin_url: /my-admin-url/
+admin_url: my-admin-url/
 admins: admin@radiofeed.app
 allowed_hosts: .radiofeed.app
 domain: radiofeed.app
