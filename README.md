@@ -86,7 +86,7 @@ Once you have access to the Django Admin, you should configure the default Site 
 
 ### Ansible Dokku deployment
 
-An Ansible Playbook, _ansible-dokku.yaml_, has been included for easier deployment of Dokku to a VM.
+An Ansible Playbook has been included for easier deployment of Dokku to a VM.
 
 This Playbook requires the **ansible_dokku** role:
 
@@ -94,7 +94,7 @@ This Playbook requires the **ansible_dokku** role:
 ansible-galaxy role install dokku_bot.ansible_dokku
 ```
 
-First, copy _ansible-example_ to _ansible_, and edit the files as needed, in particular _ansible/vars/secrets.yaml_ and _ansible/vars/users.yaml_. You should encrypt these files with **ansible-vault**:
+First, copy _ansible-example_ to _ansible_, and edit the files as needed, in particular _ansible/vars/secrets.yaml_ and _ansible/vars/users.yaml_. You should encrypt these two files with **ansible-vault**:
 
 ```bash
 ansible-vault encrypt vars.yaml
