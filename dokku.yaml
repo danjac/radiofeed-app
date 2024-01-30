@@ -17,6 +17,7 @@
             app: radiofeed
             repository: https://github.com/danjac/radiofeed-app
             version: main
+            build: false
       - name: postgres:create
         dokku_service_create:
             name: radiofeed
@@ -26,3 +27,12 @@
             app: radiofeed
             name: radiofeed
             service: postgres
+      - name: redis:create
+        dokku_service_create:
+            name: radiofeed
+            service: redis
+      - name: redis:link
+        dokku_service_link:
+            app: radiofeed
+            name: radiofeed
+            service: redis
