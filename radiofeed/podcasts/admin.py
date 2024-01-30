@@ -223,11 +223,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "parsed",
     )
 
-    list_editable = (
-        "active",
-        "promoted",
-    )
-
     search_fields = ("title", "rss")
 
     raw_id_fields = ("recipients",)
