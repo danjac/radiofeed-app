@@ -8,3 +8,7 @@ mailgun_api_key: SECRET
 mailgun_api_url: SECRET
 secret_key: SECRET
 sentry_url: SECRET
+dokku_users:
+    - name: My Name
+      username: myusername
+      ssh_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
