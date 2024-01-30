@@ -7,7 +7,7 @@
   roles:
       - dokku_bot.ansible_dokku
   vars:
-      appname: "{{ appname }}"
+      appname: radiofeed
       dokku_plugins:
           - name: postgres
             url: https://github.com/dokku/dokku-postgres.git
