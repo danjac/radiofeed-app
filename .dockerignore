@@ -13,6 +13,8 @@
 !.woodpecker.yml
 **/__pycache__
 **/tests
+ansible
+ansible-example
 .*
 .git
 .github
@@ -29,7 +31,6 @@ README.md
 conftest.py
 docker-compose.yml
 ansible-dokku.yaml
-hosts
 node_modules
 npm-debug.log
 poetry.lock

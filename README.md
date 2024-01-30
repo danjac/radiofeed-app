@@ -94,18 +94,16 @@ This Playbook requires the **ansible_dokku** role:
 ansible-galaxy role install dokku_bot.ansible_dokku
 ```
 
-First, copy _vars.yaml.example_ to _vars.yaml_, edit the file as needed (see the section on environment variables above), and make sure to encrypt it with **ansible-vault**:
+First, copy _ansible-example_ to _ansible_, and edit the files as needed, in particular _ansible/vars/secrets.yaml_ and _ansible/vars/users.yaml_. You should encrypt these files with **ansible-vault**:
 
 ```bash
 ansible-vault encrypt vars.yaml
 ```
 
-Then copy the file `hosts.example` to `hosts` and again edit as needed.
-
 To deploy your application on the VM:
 
 ```bash
-ansible-playbook -i hosts ansible-dokku.yaml --user USER --ask-vault-pass
+ansible-playbook -i ./ansible/hosts ./ansible/dokku.yaml --user USER --ask-vault-pass
 ```
 
 **USER** here should be user who has permissions to install Dokku on that server.

@@ -39,6 +39,7 @@ dist/
 hosts
 logs
 media/
+ansible/
 node_modules/
 npm-debug.log*
 staticfiles

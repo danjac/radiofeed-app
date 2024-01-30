@@ -1,6 +1,8 @@
 - name: Install Dokku
   hosts: server
-  vars_files: ./vars.yaml
+  vars_files:
+      - ./vars/secrets.yaml
+      - ./vars/users.yaml
   gather_facts: true
   roles:
       - dokku_bot.ansible_dokku
