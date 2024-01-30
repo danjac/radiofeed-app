@@ -30,11 +30,9 @@ Procfile
 README.md
 conftest.py
 docker-compose.yml
-ansible-dokku.yaml
 node_modules
 npm-debug.log
 poetry.lock
 pyproject.toml
 requirements-ci.txt
 screenshots
-vars.yaml

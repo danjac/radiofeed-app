@@ -43,7 +43,6 @@ ansible/
 node_modules/
 npm-debug.log*
 staticfiles
-vars.yaml
 venv
 
 static/**/bundle.*
