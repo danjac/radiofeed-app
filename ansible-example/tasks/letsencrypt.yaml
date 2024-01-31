@@ -1,0 +1,16 @@
+- name: clear domains
+  dokku_domains:
+      app: "{{ appname }}"
+      domains: "{{ appname }}.dokku.me"
+      state: absent
+- name: add domain
+  dokku_domains:
+      app: "{{ appname }}"
+      domains: "{{ domain }}"
+- name: set letsencrypt email and request certificate
+  block:
+      - name: set letsencrypt email
+        ansible.builtin.shell: dokku letsencrypt:set {{ appname }} email {{ letsencrypt_email }}
+      - name: run letsencrypt
+        dokku_letsencrypt:
+            app: "{{ appname }}"

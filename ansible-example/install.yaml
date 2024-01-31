@@ -1,3 +1,14 @@
-- import_playbook: dokku.yaml
-- import_playbook: letsencrypt.yaml
-- import_playbook: fixtures.yaml
+- name: Install application
+  hosts: server
+  vars_files:
+      - ./vars/common.yaml
+      - ./vars/secrets.yaml
+      - ./vars/users.yaml
+  gather_facts: true
+  roles:
+      - dokku_bot.ansible_dokku
+  tasks:
+      - import_tasks: ./tasks/dokku.yaml
+      - import_tasks: ./tasks/letsencrypt.yaml
+      - import_tasks: ./tasks/config.yaml
+      - import_tasks: ./tasks/fixtures.yaml

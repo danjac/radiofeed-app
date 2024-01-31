@@ -1,22 +1,7 @@
 - name: Install data fixtures
   hosts: server
   vars_files:
-      - ./vars/secrets.yaml
+      - ./vars/common.yaml
   gather_facts: true
-  vars:
-      appname: radiofeed
   tasks:
-    - name: add categories
-      ansible.builtin.shell:
-          dokku run {{ appname }} ./manage.py loaddata \
-          ./radiofeed/podcasts/fixtures/categories.json.gz
-    - name: add podcasts
-      ansible.builtin.shell:
-          dokku run {{ appname }} ./manage.py loaddata \
-          ./radiofeed/podcasts/fixtures/podcasts.json.gz
-    - name: create superuser
-      ansible.builtin.shell:
-          dokku run {{ appname }} ./manage.py createsuperuser \
-          --noinput \
-          --username={{ superuser_username }} \
-          --email={{ superuser_email }}
+      - import_tasks: ./tasks/fixtures.yaml

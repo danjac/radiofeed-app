@@ -1,0 +1,10 @@
+appname: radiofeed
+postgres_service: radiofeed-postgres
+redis_service: radiofeed-redis
+dokku_plugins:
+    - name: postgres
+      url: https://github.com/dokku/dokku-postgres.git
+    - name: redis
+      url: https://github.com/dokku/dokku-redis.git
+    - name: letsencrypt
+      url: https://github.com/dokku/dokku-letsencrypt.git
