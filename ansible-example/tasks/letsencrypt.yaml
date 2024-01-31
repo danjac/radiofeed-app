@@ -11,6 +11,10 @@
   block:
       - name: set letsencrypt email
         ansible.builtin.shell: dokku letsencrypt:set {{ appname }} email {{ letsencrypt_email }}
+        become: true
       - name: run letsencrypt
         dokku_letsencrypt:
             app: "{{ appname }}"
+      - name: Schedule the dokku-letsencrypt auto renewal cron-job
+        ansible.builtin.shell: "dokku letsencrypt:cron-job --add"
+        become: true
