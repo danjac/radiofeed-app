@@ -76,3 +76,10 @@
             repository: https://github.com/danjac/radiofeed-app
             version: main
             build: true
+      - name: install data fixtures
+        block:
+            - name: add categories
+              ansible.builtin.shell: dokku run {{ appname }} ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+
+            - name: add podcasts
+              ansible.builtin.shell: dokku run {{ appname }} ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
