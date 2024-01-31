@@ -94,7 +94,7 @@ This Playbook requires the [ansible_dokku](https://github.com/dokku/ansible-dokk
 ansible-galaxy role install dokku_bot.ansible_dokku
 ```
 
-First, copy `ansible-example` to `ansible`, and edit the files as needed, in particular `ansible/vars/secrets.yaml` and `ansible/vars/users.yaml`. You should encrypt these two files with [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html):
+First, copy `ansible-example` to `ansible`, and edit the files as needed, in particular the vars files under `ansible/vars`. You should encrypt any sensitive files with [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html):
 
 ```bash
 ansible-vault encrypt vars.yaml
@@ -106,7 +106,7 @@ To deploy your application on the VM:
 ansible-playbook -i ./ansible/hosts ./ansible/install.yaml --user USER --ask-vault-pass
 ```
 
-**USER** here should be user who has permissions to install Dokku on that server.
+**USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible documentation for more details.
 
 ### Scheduling background tasks
 
