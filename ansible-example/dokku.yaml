@@ -86,9 +86,9 @@
               ansible.builtin.shell:
                   dokku run {{ appname }} ./manage.py loaddata \
                   ./radiofeed/podcasts/fixtures/podcasts.json.gz
-      - name: create super user
-        ansible.builtin.shell:
-            dokku run {{ appname }} ./manage.py createsuperuser \
-            --noinput \
-            --username={{ superuser_username }} \
-            --email={{ superuser_email }}
+            - name: create super user
+              ansible.builtin.shell:
+                  dokku run {{ appname }} ./manage.py createsuperuser \
+                  --noinput \
+                  --username={{ superuser_username }} \
+                  --email={{ superuser_email }}
