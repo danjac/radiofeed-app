@@ -1,14 +1,20 @@
 - name: Install application
   hosts: server
   vars_files:
-      - ./vars/common.yaml
+      - ./vars/dokku.yaml
       - ./vars/secrets.yaml
+      - ./vars/site.yaml
       - ./vars/users.yaml
   gather_facts: true
   roles:
       - dokku_bot.ansible_dokku
   tasks:
-      - import_tasks: ./tasks/dokku.yaml
+      - name: set dokku app
+        dokku_app:
+            app: "{{ appname }}"
+            state: present
+      - import_tasks: ./tasks/services.yaml
       - import_tasks: ./tasks/letsencrypt.yaml
       - import_tasks: ./tasks/config.yaml
+      - import_tasks: ./tasks/build.yaml
       - import_tasks: ./tasks/fixtures.yaml

@@ -1,7 +1,0 @@
-- name: Install data fixtures
-  hosts: server
-  vars_files:
-      - ./vars/common.yaml
-  gather_facts: true
-  tasks:
-      - import_tasks: ./tasks/fixtures.yaml

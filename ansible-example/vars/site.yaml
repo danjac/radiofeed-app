@@ -1,0 +1,6 @@
+admin_url: my-admin-url/
+admins: admin@radiofeed.app
+allowed_hosts: .radiofeed.app
+domain: radiofeed.app
+email_host: mg.radiofeed.app
+letsencrypt_email: admin@radiofeed.app
