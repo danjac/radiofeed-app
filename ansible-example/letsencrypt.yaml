@@ -1,0 +1,29 @@
+- name: Install Letsencrypt
+  hosts: server
+  vars_files:
+      - ./vars/secrets.yaml
+  gather_facts: true
+  roles:
+      - dokku_bot.ansible_dokku
+  vars:
+      appname: radiofeed
+      dokku_plugins:
+          - name: letsencrypt
+            url: https://github.com/dokku/dokku-letsencrypt.git
+  tasks:
+      - name: clear domains
+        dokku_domains:
+            app: "{{ appname }}"
+            domains: "{{ appname }}.dokku.me"
+            state: absent
+      - name: add domain
+        dokku_domains:
+            app: "{{ appname }}"
+            domains: "{{ domain }}"
+      - name: set letsencrypt email and request certificate
+        block:
+          - name: set letsencrypt email
+            ansible.builtin.shell: dokku letsencrypt:set {{ appname }} email {{ letsencrypt_email }}
+          - name: letsencrypt
+            dokku_letsencrypt:
+                app: "{{ appname }}"

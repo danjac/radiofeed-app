@@ -15,8 +15,6 @@
             url: https://github.com/dokku/dokku-postgres.git
           - name: redis
             url: https://github.com/dokku/dokku-redis.git
-          - name: letsencrypt
-            url: https://github.com/dokku/dokku-letsencrypt.git
   tasks:
       - name: set dokku app
         dokku_app:
@@ -49,13 +47,6 @@
             app: "{{ appname }}"
             name: "{{ redis_service }}"
             service: redis
-      - name: set letsencrypt email and request certificate
-        block:
-            - name: set letsencrypt email
-              ansible.builtin.shell: dokku letsencrypt:set {{ appname }} email {{ letsencrypt_email }}
-            - name: letsencrypt
-              dokku_letsencrypt:
-                  app: "{{ appname }}"
       - name: set environment variables
         dokku_config:
             app: "{{ appname }}"
@@ -75,19 +66,3 @@
             repository: https://github.com/danjac/radiofeed-app
             version: main
             build: true
-      - name: install data fixtures
-        block:
-            - name: add categories
-              ansible.builtin.shell:
-                  dokku run {{ appname }} ./manage.py loaddata \
-                  ./radiofeed/podcasts/fixtures/categories.json.gz
-            - name: add podcasts
-              ansible.builtin.shell:
-                  dokku run {{ appname }} ./manage.py loaddata \
-                  ./radiofeed/podcasts/fixtures/podcasts.json.gz
-            - name: create superuser
-              ansible.builtin.shell:
-                  dokku run {{ appname }} ./manage.py createsuperuser \
-                  --noinput \
-                  --username={{ superuser_username }} \
-                  --email={{ superuser_email }}
