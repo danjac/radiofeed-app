@@ -103,7 +103,7 @@ ansible-vault encrypt vars.yaml
 To deploy your application on the VM:
 
 ```bash
-ansible-playbook -i ./ansible/hosts ./ansible/install.yaml --user USER --ask-vault-pass
+ansible-playbook -i ./ansible/hosts ./ansible/dokku.yaml --user USER --ask-vault-pass
 ```
 
 **USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible documentation for more details.
