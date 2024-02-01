@@ -128,6 +128,7 @@ module="*.migrations.*"
 ignore_errors = true
 
 [tool.djlint]
+profile = "django"
 ignore = "H030,H031,H017,H021"
 
 [tool.ruff]
