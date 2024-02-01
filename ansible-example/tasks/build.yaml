@@ -1,6 +1,6 @@
 - name: rebuild app
   dokku_clone:
       app: "{{ appname }}"
-      repository: https://github.com/danjac/radiofeed-app
+      repository: "{{ repo }}"
       version: main
       build: true

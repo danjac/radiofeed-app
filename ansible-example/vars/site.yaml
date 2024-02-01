@@ -4,3 +4,4 @@ allowed_hosts: .radiofeed.app
 domain: radiofeed.app
 email_host: mg.radiofeed.app
 letsencrypt_email: admin@radiofeed.app
+repo: https://github.com/danjac/radiofeed-app
