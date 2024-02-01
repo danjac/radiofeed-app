@@ -3,6 +3,7 @@
       app: "{{ appname }}"
       restart: false
       config:
+          ADMIN_SITE_HEADER: "{{ admin_site_header }}"
           ADMIN_URL: "{{ admin_url }}"
           ADMINS: "{{ admins }}"
           ALLOWED_HOSTS: "{{ allowed_hosts }}"
