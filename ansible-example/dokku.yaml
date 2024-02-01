@@ -9,10 +9,7 @@
   roles:
       - dokku_bot.ansible_dokku
   tasks:
-      - name: set dokku app
-        dokku_app:
-            app: "{{ appname }}"
-            state: present
+      - import_tasks: ./tasks/app.yaml
       - import_tasks: ./tasks/services.yaml
       - import_tasks: ./tasks/letsencrypt.yaml
       - import_tasks: ./tasks/config.yaml
