@@ -8,6 +8,7 @@
         width="{{ size }}"
         height="{{ size }}"
         src="{{ cover_url|default:placeholder }}"
+        {# djlint:off #}
         {% if url %}
             role="link"
             hx-get="{{ url }}"
@@ -15,14 +16,13 @@
             hx-trigger="click consume"
         {% endif %}
         {% if cover_url %}
-            {# djlint:off #}
             x-data="{
-            isLoaded: false,
-            src: '{{ cover_url|escapejs }}',
-            placeholder: '{{ placeholder|escapejs }}'}"
-            {# djlint:on #}
+                isLoaded: false,
+                src: '{{ cover_url|escapejs }}',
+                placeholder: '{{ placeholder|escapejs }}'
+            }"
             @load.once="isLoaded=true;"
             @error.once="src=placeholder;isLoaded=true;"
             :src="isLoaded ? src : placeholder"
-        {% endif %}>
+        {% endif %}{# djlint:on #}>
     {% endspaceless %}
