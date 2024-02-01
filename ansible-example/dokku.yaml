@@ -1,5 +1,5 @@
 - name: Install application
-  hosts: server
+  hosts: webservers
   vars_files:
       - ./vars/dokku.yaml
       - ./vars/secrets.yaml
