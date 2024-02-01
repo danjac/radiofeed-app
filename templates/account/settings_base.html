@@ -18,9 +18,8 @@
                             @keyup.escape.window="showDropdown=false"
                             class="flex items-center py-1 px-2 rounded-lg border sm:justify-end focus:ring focus:outline-none link md:hover:bg-transparent">
                         <span class="inline-flex items-center">
-                            {# djlint:off #}
-                            {% block settings_selected_item %}{% endblock settings_selected_item %}
-                            {# djlint:on #}
+                            {% block settings_selected_item %}
+                            {% endblock settings_selected_item %}
                         </span>
                         {% heroicon_mini "chevron-down" class="ml-3" %}
                     </button>
@@ -79,7 +78,6 @@
             </div>
         </header>
     {% endif %}
-    {# djlint:off #}
-    {% block settings_content %}{% endblock settings_content %}
-    {# djlint:on #}
+    {% block settings_content %}
+    {% endblock settings_content %}
 {% endblock content %}

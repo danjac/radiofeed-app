@@ -4,9 +4,8 @@
     <html lang="en">
         <head>
             <title>
-                {# djlint:off #}
-                {% block title %}{% endblock title %}
-                {# djlint:on #}
+                {% block title %}
+                {% endblock title %}
             </title>
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,9 +42,8 @@
             </header>
             <main class="flex justify-center mt-12 w-full min-h-screen">
                 <div class="justify-center w-full text-center md:w-4/5 xl:w-1/3">
-                    {# djlint:off #}
-                    {% block content %}{% endblock content %}
-                    {# djlint:on #}
+                    {% block content %}
+                    {% endblock content %}
                 </div>
             </main>
         </body>

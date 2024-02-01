@@ -1,11 +1,9 @@
 {% spaceless %}
     <title>
         {{ request.site.name }}
-        {# djlint:off #}
-        {% block title %}{% endblock title %}
-        {# djlint:on #}
+        {% block title %}
+        {% endblock title %}
     </title>
-    {# djlint:off #}
-    {% block content %}{% endblock content %}
-    {# djlint:on #}
+    {% block content %}
+    {% endblock content %}
 {% endspaceless %}
