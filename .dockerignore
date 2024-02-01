@@ -32,7 +32,7 @@ conftest.py
 docker-compose.yml
 node_modules
 npm-debug.log
-podman-kube.yaml
+podman-kube.yml
 poetry.lock
 pyproject.toml
 requirements-ci.txt

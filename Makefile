@@ -57,7 +57,7 @@ clean:
 	git clean -Xdf
 
 podbuild:
-	podman play kube podman-kube.yaml
+	podman play kube podman-kube.yml
 
 podstart:
 	podman pod start radiofeed-pod
