@@ -14,4 +14,6 @@
       - import_tasks: ./tasks/letsencrypt.yaml
       - import_tasks: ./tasks/config.yaml
       - import_tasks: ./tasks/build.yaml
+      - import_tasks: ./tasks/default_site.yaml
+      - import_tasks: ./tasks/superuser.yaml
       - import_tasks: ./tasks/fixtures.yaml

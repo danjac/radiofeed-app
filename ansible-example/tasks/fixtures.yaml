@@ -1,22 +1,9 @@
-- name: set default site
-  run_once: true
-  become: true
-  ansible.builtin.shell: dokku run {{ appname }} ./manage.py set_default_site \
-      --name={{ site_name }} \
-      --domain={{ domain }}
-- name: create superuser
-  run_once: true
-  become: true
-  ansible.builtin.shell: dokku run {{ appname }} ./manage.py createsuperuser \
-      --noinput \
-      --username={{ superuser_username }} \
-      --email={{ superuser_email }}
 - name: add categories
   run_once: true
   become: true
   ansible.builtin.shell: dokku run {{ appname }} ./manage.py loaddata \
       ./radiofeed/podcasts/fixtures/categories.json.gz
-- name: add podcasts
+- name: podcasts
   run_once: true
   become: true
   ansible.builtin.shell: dokku run {{ appname }} ./manage.py loaddata \
