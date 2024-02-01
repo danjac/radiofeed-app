@@ -51,7 +51,6 @@ django-fastdev = "^1.8.0"
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
 coverage = {extras = ["toml"], version = "^7.2.0"}
-django-coverage-plugin = "^3.0.0"
 faker = "^19.1.0"
 mypy = "^1.0.1"
 pytest = "^7.2.1"
@@ -105,13 +104,6 @@ omit=[
     "*/settings.py",
     "*/wsgi.py",
 ]
-
-plugins = [
-    "django_coverage_plugin"
-]
-
-[tool.django_coverage_plugin]
-template_extensions = ["html"]
 
 
 [tool.mypy]
