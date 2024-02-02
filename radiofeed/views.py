@@ -39,7 +39,7 @@ def about_page(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def accept_cookies(request: HttpRequest) -> HttpResponse:
+def accept_cookies(_) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""
     response = HttpResponse()
     response.set_cookie(
@@ -57,7 +57,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def favicon(request: HttpRequest) -> FileResponse:
+def favicon(_) -> FileResponse:
     """Generates favicon file."""
     return FileResponse(_favicon_path().open("rb"))
 
@@ -125,7 +125,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def robots(request: HttpRequest) -> HttpResponse:
+def robots(_) -> HttpResponse:
     """Generates robots.txt file."""
     return HttpResponse(
         "\n".join(
@@ -151,7 +151,7 @@ def robots(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def security(request: HttpRequest) -> HttpResponse:
+def security(_) -> HttpResponse:
     """Generates security.txt file containing contact details etc."""
     return HttpResponse(
         "\n".join(
