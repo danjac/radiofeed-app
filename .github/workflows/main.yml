@@ -2,6 +2,12 @@ name: Radiofeed Project CI/CD
 on: [pull_request, push]
 run-name: ${{ github.actor }} is running checks
 jobs:
+    docker:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: docker build -t radiofeed-app .
+
     frontend:
         runs-on: ubuntu-latest
         steps:
