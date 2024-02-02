@@ -24,13 +24,14 @@ RUN npm run build
 
 FROM python:3.12.1-bookworm AS backend
 
-ENV PYTHONUNBUFFERED=1
-
-ENV PYTHONDONTWRITEBYTECODE=1
-
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-
-ENV PIP_ROOT_USER_ACTION=ignore
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=random \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONFAULTHANDLER=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_ROOT_USER_ACTION=ignore
 
 WORKDIR /app
 
@@ -38,7 +39,7 @@ WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
 
-RUN pip install -r /app/requirements.txt --no-cache-dir
+RUN pip install -r /app/requirements.txt
 
 # Download NLTK files
 
