@@ -46,7 +46,6 @@ django = "^5.0"
 httpx = "^0.25.2"
 django-health-check = "^3.17.0"
 psutil = "^5.9.7"
-django-fastdev = "^1.8.0"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {extras = ["toml"], version = "^1.7.4"}
@@ -67,6 +66,7 @@ types-urllib3 = "^1.26.25.7"
 django-browser-reload = "^1.6.0"
 ipython = "^8.10.0"
 django-debug-toolbar = "^4.0.0"
+django-fastdev = "^1.8.0"
 pytest-env = "^0.8.1"
 ruff = "^0.0.281"
 djlint = "^1.31.1"
