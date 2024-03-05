@@ -1,5 +1,6 @@
 import functools
 import hashlib
+import itertools
 from collections.abc import Iterator
 
 import attrs
@@ -11,7 +12,7 @@ from django.db.utils import DataError
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 
-from radiofeed import batcher, tokenizer
+from radiofeed import tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_parser, scheduler
 from radiofeed.feedparser.date_parser import parse_date
@@ -259,7 +260,7 @@ class FeedParser:
 
         # update existing content
 
-        for batch in batcher.batch(self._episodes_for_update(feed, guids), 1000):
+        for batch in itertools.batched(self._episodes_for_update(feed, guids), 1000):
             Episode.objects.fast_update(
                 batch,
                 fields=[
@@ -281,7 +282,7 @@ class FeedParser:
 
         # add new episodes
 
-        for batch in batcher.batch(self._episodes_for_insert(feed, guids), 100):
+        for batch in itertools.batched(self._episodes_for_insert(feed, guids), 100):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _episodes_for_insert(

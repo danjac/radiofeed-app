@@ -11,7 +11,7 @@ from django.utils import timezone
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from radiofeed import batcher, tokenizer
+from radiofeed import tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 
@@ -47,7 +47,7 @@ class Recommender:
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
-        for batch in batcher.batch(self._build_matches_dict().items(), 1000):
+        for batch in itertools.batched(self._build_matches_dict().items(), 1000):
             Recommendation.objects.bulk_create(
                 (
                     Recommendation(
@@ -68,7 +68,7 @@ class Recommender:
         matches = collections.defaultdict(list)
 
         for category in get_categories():
-            for batch in batcher.batch(
+            for batch in itertools.batched(
                 self._get_podcasts(category)
                 .values_list("id", "extracted_text")
                 .iterator(),
