@@ -8,7 +8,7 @@ Radiofeed requires the following basic dependencies to get started:
 
 * Python 3.12
 * Node 16+
-* [Poetry](https://github.com/python-poetry/poetry)
+* [uv](https://github.com/astral-sh/uv)
 
 For ease of local development a `docker-compose.yml` is provided which includes:
 
@@ -35,14 +35,14 @@ podman play kube podman-kube.yaml
 
 Next copy `.env.example` to `.env`. The default settings should work with the Docker services provided, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
 
-You should run your development environment inside a virtualenv. Poetry should do this for you automatically:
+You should run your development environment inside a virtualenv:
 
 ```bash
-poetry env use 3.12
-poetry install
+uv venv
+uv pip install -r requirements-ci.txt
 ```
 
-Alternatively you can just run `make install` (see below) which will install your Poetry environment in addition to other dependencies.
+Alternatively you can just run `make install` (see below) which will install your Python and other dependencies.
 
 The `Makefile` has some convenient shortcuts for local development, including:
 
