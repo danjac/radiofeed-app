@@ -8,16 +8,14 @@ pyinstall:
 	uv venv && source .venv/bin/activate
 	uv pip install -r requirements-ci.txt
 
-pysync:
-	uv pip sync requirements-ci.txt
-
-pyupdate:
+pydeps:
 	uv pip compile pyproject.toml --upgrade -o requirements.txt
 	uv pip compile pyproject.toml --upgrade --extra dev -o requirements-ci.txt
 
-pyexport:
-	uv pip compile pyproject.toml -o requirements.txt
-	uv pip compile pyproject.toml --extra dev -o requirements-ci.txt
+pysync:
+	uv pip sync requirements-ci.txt
+
+pyupdate: pydeps pysync
 
 npminstall:
 	npm ci
