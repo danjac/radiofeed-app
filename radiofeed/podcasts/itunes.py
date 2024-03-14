@@ -120,7 +120,7 @@ class CatalogParser:
     ) -> Iterator[str]:
         try:
             response = _get_response(client, url)
-            soup = bs4.BeautifulSoup(response.content)
+            soup = bs4.BeautifulSoup(response.content, features="lxml")
             for anchor in soup.find_all("a", href=pattern):
                 yield anchor["href"]
         except httpx.HTTPError:
