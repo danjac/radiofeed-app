@@ -1,5 +1,6 @@
 import functools
 import itertools
+from collections.abc import Iterable
 
 import bs4
 
@@ -101,14 +102,12 @@ def _find(
     *names: str,
     attr: str | None = None,
     recursive=False,
-):
+) -> str | None:
     for name in names:
-        if element := parent.find(name, recursive=recursive):
-            if attr:
-                if value := element.get(attr):
-                    return value.strip()
-            elif element.text:
-                return element.text.strip()
+        if (element := parent.find(name, recursive=recursive)) and (
+            value := _parse_value(element, attr)
+        ):
+            return value
     return None
 
 
@@ -117,10 +116,15 @@ def _findall(
     *names: str,
     attr: str | None = None,
     recursive=False,
-):
+) -> Iterable[str]:
     for element in parent.find_all(list(names), recursive=recursive):
-        if attr:
-            if value := element.get(attr):
-                yield value.strip()
-        elif element.text:
-            yield element.text.strip()
+        if value := _parse_value(element, attr):
+            yield value
+
+
+def _parse_value(element: bs4.element.Tag, attr: str | None = None) -> str | None:
+    if attr and (value := element.get(attr)):
+        return value.strip()
+    if element.text:
+        return element.text.strip()
+    return None
