@@ -101,10 +101,9 @@ def _find(
     parent: bs4.element.Tag,
     *names: str,
     attr: str | None = None,
-    recursive=False,
 ) -> str | None:
     for name in names:
-        if (element := parent.find(name, recursive=recursive)) and (
+        if (element := parent.find(name, recursive=False)) and (
             value := _parse_value(element, attr)
         ):
             return value
@@ -115,9 +114,8 @@ def _findall(
     parent: bs4.element.Tag,
     *names: str,
     attr: str | None = None,
-    recursive=False,
 ) -> Iterable[str]:
-    for element in parent.find_all(list(names), recursive=recursive):
+    for element in parent.find_all(list(names), recursive=False):
         if value := _parse_value(element, attr):
             yield value
 
