@@ -1,4 +1,3 @@
-import functools
 import itertools
 from collections.abc import Iterable
 
@@ -28,19 +27,19 @@ def parse_rss(content: bytes) -> Feed:
 
 
 def _parse_channel(channel):
-    find = functools.partial(_find, channel)
     try:
         return Feed(
             items=list(_parse_items(channel)),
             categories=list(_parse_categories(channel)),
             owner=_parse_owner(channel),
-            complete=find("itunes:complete"),
-            cover_url=find("itunes:image", attr="href") or _find("image/url"),
-            description=find("description", "itunes:summary"),
-            explicit=find("itunes:explicit"),
-            language=find("language"),
-            website=find("link"),
-            title=find("title"),
+            complete=_find(channel, "itunes:complete"),
+            cover_url=_find(channel, "itunes:image", attr="href")
+            or _find(channel, "image/url"),
+            description=_find(channel, "description", "itunes:summary"),
+            explicit=_find(channel, "itunes:explicit"),
+            language=_find(channel, "language"),
+            website=_find(channel, "link"),
+            title=_find(channel, "title"),
         )
     except (TypeError, ValueError) as exc:
         raise InvalidRSSError from exc
@@ -61,10 +60,11 @@ def _parse_categories(parent):
         _findall(parent, "category", attr="text"),
         _findall(parent, "media:category", attr="label"),
         _findall(parent, "media:category"),
+        *(
+            _parse_categories(category)
+            for category in parent.find_all("itunes:category")
+        ),
     )
-
-    for category in parent.find_all("itunes:category"):
-        yield from _parse_categories(category)
 
 
 def _parse_items(channel):
@@ -76,24 +76,23 @@ def _parse_items(channel):
 
 
 def _parse_item(item):
-    find = functools.partial(_find, item)
     return Item(
         categories=_findall(item, "category"),
-        cover_url=find("itunes:image", attr="href"),
-        website=find("link"),
-        description=find("content:encoded", "description", "itunes:summary"),
-        duration=find("itunes:duration"),
-        episode=find("itunes:episode"),
-        episode_type=find("itunes:episodetype"),
-        explicit=find("itunes:explicit"),
-        guid=find("guid", "atom:id", "link"),
-        length=find("enclosure", attr="length")
-        or _find("media:content", attr="fileSize"),
-        media_type=find("enclosure", "media:content", attr="type"),
-        media_url=find("enclosure", "media:content", attr="url"),
-        pub_date=find("pubDate", "pubdate"),
-        title=find("title"),
-        season=find("itunes:season"),
+        cover_url=_find(item, "itunes:image", attr="href"),
+        website=_find(item, "link"),
+        description=_find(item, "content:encoded", "description", "itunes:summary"),
+        duration=_find(item, "itunes:duration"),
+        episode=_find(item, "itunes:episode"),
+        episode_type=_find(item, "itunes:episodetype"),
+        explicit=_find(item, "itunes:explicit"),
+        guid=_find(item, "guid", "atom:id", "link"),
+        length=_find(item, "enclosure", attr="length")
+        or _find(item, "media:content", attr="fileSize"),
+        media_type=_find(item, "enclosure", "media:content", attr="type"),
+        media_url=_find(item, "enclosure", "media:content", attr="url"),
+        pub_date=_find(item, "pubDate", "pubdate"),
+        title=_find(item, "title"),
+        season=_find(item, "itunes:season"),
     )
 
 
