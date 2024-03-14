@@ -121,9 +121,8 @@ class CatalogParser:
         try:
             response = _get_response(client, url)
             soup = bs4.BeautifulSoup(response.content)
-            for anchor in soup.find_all("a"):
-                if (href := anchor.get("href")) and pattern.match(href):
-                    yield href
+            for anchor in soup.find_all("a", href=pattern):
+                yield anchor["href"]
         except httpx.HTTPError:
             return
 
