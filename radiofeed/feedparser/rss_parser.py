@@ -75,10 +75,7 @@ def _parse_items(channel: bs4.element.Tag) -> Iterator[Item]:
                 cover_url=_parse(item, "itunes:image", attr="href"),
                 website=_parse(item, "link"),
                 description=_parse(
-                    item,
-                    "content:encoded",
-                    "description",
-                    "itunes:summary",
+                    item, "content:encoded", "description", "itunes:summary"
                 ),
                 duration=_parse(item, "itunes:duration"),
                 episode=_parse(item, "itunes:episode"),
@@ -87,18 +84,8 @@ def _parse_items(channel: bs4.element.Tag) -> Iterator[Item]:
                 explicit=_parse(item, "itunes:explicit"),
                 length=_parse(item, "enclosure", attr="length")
                 or _parse(item, "media:content", attr="fileSize"),
-                media_type=_parse(
-                    item,
-                    "enclosure",
-                    "media:content",
-                    attr="type",
-                ),  # type: ignore[arg-type]
-                media_url=_parse(
-                    item,
-                    "enclosure",
-                    "media:content",
-                    attr="url",
-                ),  # type: ignore[arg-type]
+                media_type=_parse(item, "enclosure", "media:content", attr="type"),  # type: ignore[arg-type]
+                media_url=_parse(item, "enclosure", "media:content", attr="url"),  # type: ignore[arg-type]
                 pub_date=_parse(item, "pubDate", "pubdate"),
                 title=_parse(item, "title"),  # type: ignore[arg-type]
                 guid=_parse(item, "guid", "atom:id") or _parse(item, "link"),  # type: ignore[arg-type]
