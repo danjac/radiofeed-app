@@ -1,19 +1,17 @@
 import dataclasses
-import functools
 import itertools
 import re
 from collections.abc import Iterator
 from typing import Final
 from urllib.parse import urlparse
 
+import bs4
 import httpx
-import lxml
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.podcasts.models import Podcast
-from radiofeed.xml_parser import XMLParser
 
 _ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
 
@@ -69,7 +67,6 @@ class CatalogParser:
         self._locale = locale
 
         self._feed_ids: set[str] = set()
-        self._parser = _itunes_parser()
 
         self._categories_pattern = re.compile(
             rf"https://podcasts\.apple.com/{self._locale}/genre/podcasts/*."
@@ -123,16 +120,11 @@ class CatalogParser:
     ) -> Iterator[str]:
         try:
             response = _get_response(client, url)
-            for element in self._parser.iterparse(
-                response.content, "{http://www.apple.com/itms/}html", "/apple:html"
-            ):
-                try:
-                    for href in self._parser.itertext(element, "//a//@href"):
-                        if pattern.match(href):
-                            yield href
-                finally:
-                    element.clear()
-        except (httpx.HTTPError, lxml.etree.XMLSyntaxError):
+            soup = bs4.BeautifulSoup(response.content)
+            for anchor in soup.find_all("a"):
+                if (href := anchor.get("href")) and pattern.match(href):
+                    yield href
+        except httpx.HTTPError:
             return
 
 
@@ -203,8 +195,3 @@ def _get_response(
     )
     response.raise_for_status()
     return response
-
-
-@functools.cache
-def _itunes_parser() -> XMLParser:
-    return XMLParser({"apple": "http://www.apple.com/itms/"})

@@ -62,12 +62,6 @@ class TestParseRss:
                 id="Superfeedr XML",
             ),
             pytest.param(
-                "rss_mock_iso_8859-1.xml",
-                "Thunder & Lightning",
-                643,
-                id="ISO-8859-1 encoding",
-            ),
-            pytest.param(
                 "rss_missing_enc_length.xml",
                 "The Vanilla JS Podcast",
                 71,

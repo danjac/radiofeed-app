@@ -13,6 +13,7 @@ authors = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
 maintainers = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
 dependencies =[
     "attrs",
+    "beautifulsoup4",
     "brotli",
     "dj-database-url",
     "django",
@@ -189,14 +190,14 @@ lint.ignore = [
     "Q000",
     "S101",
 ]
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 # ignore pydocstyle rules for tests and migrations
 "**/conftest.py" = ["D101", "D102", "D103", "D105", "RUF"]
 "**/apps.py" = ["D101", "D102", "D103", "D105", "RUF"]
 "**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N", "RUF"]
 "**/tests/**.py" = ["D101", "D102", "D103", "D105", "RUF"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["radiofeed"]
 
 [tool.pyright]

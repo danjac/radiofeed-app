@@ -1,11 +1,10 @@
 import functools
-from collections.abc import Iterator
+import itertools
 
-import lxml.etree  # nosec
+import bs4
 
 from radiofeed.feedparser.exceptions import InvalidRSSError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.xml_parser import XMLParser
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -18,113 +17,110 @@ def parse_rss(content: bytes) -> Feed:
         InvalidRSSError: if XML content is unparseable, or the feed is otherwise invalid
         or empty.
     """
-    return _rss_parser().parse(content)
+
+    soup = bs4.BeautifulSoup(content, features="xml")
+
+    if channel := soup.find("channel"):
+        return _parse_channel(channel)
+
+    raise InvalidRSSError("<channel /> not found in RSS document")
 
 
-class RSSParser:
-    """Parses RSS or Atom feed and returns the feed details and individual episodes."""
-
-    def __init__(self):
-        self._parser = XMLParser(
-            {
-                "atom": "http://www.w3.org/2005/Atom",
-                "content": "http://purl.org/rss/1.0/modules/content/",
-                "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-                "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-                "media": "http://search.yahoo.com/mrss/",
-                "podcast": "https://podcastindex.org/namespace/1.0",
-            }
+def _parse_channel(channel):
+    find = functools.partial(_find, channel)
+    try:
+        return Feed(
+            items=list(_parse_items(channel)),
+            categories=list(_parse_categories(channel)),
+            owner=_parse_owner(channel),
+            complete=find("itunes:complete"),
+            cover_url=find("itunes:image", attr="href") or _find("image/url"),
+            description=find("description", "itunes:summary"),
+            explicit=find("itunes:explicit"),
+            language=find("language"),
+            website=find("link"),
+            title=find("title"),
         )
+    except (TypeError, ValueError) as exc:
+        raise InvalidRSSError from exc
 
-    def parse(self, content: bytes) -> Feed:
-        """Parses RSS feed.
 
-        Raises:
-            InvalidRSSError: if XML content is unparseable, or the feed is otherwise invalid
-            or empty.
-        """
+def _parse_owner(channel):
+    if author := _find(channel, "author"):
+        return author
+
+    if owner := channel.find("itunes:owner"):
+        return _find(owner, "itunes:name")
+
+    return None
+
+
+def _parse_categories(parent):
+    yield from itertools.chain(
+        _findall(parent, "category", attr="text"),
+        _findall(parent, "media:category", attr="label"),
+        _findall(parent, "media:category"),
+    )
+
+    for category in parent.find_all("itunes:category"):
+        yield from _parse_categories(category)
+
+
+def _parse_items(channel):
+    for item in channel.find_all("item"):
         try:
-            return self._parse_feed(
-                next(self._parser.iterparse(content, "rss", "channel"))
-            )
-        except StopIteration as exc:
-            raise InvalidRSSError(
-                "Document does not contain <channel /> element"
-            ) from exc
-        except lxml.etree.XMLSyntaxError as exc:
-            raise InvalidRSSError from exc
-
-    def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
-        """Parse a RSS XML feed."""
-        try:
-            return Feed(
-                items=list(self._parse_items(channel)),
-                categories=self._parser.aslist(
-                    channel,
-                    "//googleplay:category/@text",
-                    "//itunes:category/@text",
-                    "//media:category/@label",
-                    "//media:category/text()",
-                ),
-                **self._parser.asdict(
-                    channel,
-                    complete="itunes:complete/text()",
-                    cover_url=("itunes:image/@href", "image/url/text()"),
-                    description=("description/text()", "itunes:summary/text()"),
-                    explicit="itunes:explicit/text()",
-                    funding_text="podcast:funding/text()",
-                    funding_url="podcast:funding/@url",
-                    language="language/text()",
-                    website="link/text()",
-                    owner=(
-                        "itunes:author/text()",
-                        "itunes:owner/itunes:name/text()",
-                    ),
-                    title="title/text()",
-                ),
-            )
-        except (TypeError, ValueError) as exc:
-            raise InvalidRSSError from exc
-        finally:
-            channel.clear()
-
-    def _parse_items(self, channel: lxml.etree.Element) -> Iterator[Item]:
-        for item in self._parser.iterpaths(channel, "item"):
-            try:
-                yield Item(
-                    categories=self._parser.aslist(item, "category/text()"),
-                    **self._parser.asdict(
-                        item,
-                        cover_url="itunes:image/@href",
-                        description=(
-                            "content:encoded/text()",
-                            "description/text()",
-                            "itunes:summary/text()",
-                        ),
-                        duration="itunes:duration/text()",
-                        episode="itunes:episode/text()",
-                        episode_type="itunes:episodetype/text()",
-                        explicit="itunes:explicit/text()",
-                        guid=(
-                            "guid/text()",
-                            "atom:id/text()",
-                            "link/text()",
-                        ),
-                        length=("enclosure//@length", "media:content//@fileSize"),
-                        website="link/text()",
-                        media_type=("enclosure//@type", "media:content//@type"),
-                        media_url=("enclosure//@url", "media:content//@url"),
-                        pub_date=("pubDate/text()", "pubdate/text()"),
-                        season="itunes:season/text()",
-                        title="title/text()",
-                    ),
-                )
-            except (TypeError, ValueError):
-                continue
-            finally:
-                item.clear()
+            yield _parse_item(item)
+        except (TypeError, ValueError):
+            continue
 
 
-@functools.cache
-def _rss_parser() -> RSSParser:
-    return RSSParser()
+def _parse_item(item):
+    find = functools.partial(_find, item)
+    return Item(
+        categories=_findall(item, "category"),
+        cover_url=find("itunes:image", attr="href"),
+        website=find("link"),
+        description=find("content:encoded", "description", "itunes:summary"),
+        duration=find("itunes:duration"),
+        episode=find("itunes:episode"),
+        episode_type=find("itunes:episodetype"),
+        explicit=find("itunes:explicit"),
+        guid=find("guid", "atom:id", "link"),
+        length=find("enclosure", attr="length")
+        or _find("media:content", attr="fileSize"),
+        media_type=find("enclosure", "media:content", attr="type"),
+        media_url=find("enclosure", "media:content", attr="url"),
+        pub_date=find("pubDate", "pubdate"),
+        title=find("title"),
+        season=find("itunes:season"),
+    )
+
+
+def _find(
+    parent: bs4.element.Tag,
+    *names: str,
+    attr: str | None = None,
+    recursive=False,
+):
+    for name in names:
+        if element := parent.find(name, recursive=recursive):
+            if attr:
+                if value := element.get(attr):
+                    return value.strip()
+            elif element.text:
+                return element.text.strip()
+    return None
+
+
+def _findall(
+    parent: bs4.element.Tag,
+    *names: str,
+    attr: str | None = None,
+    recursive=False,
+):
+    for element in parent.find_all(list(names), recursive=recursive):
+        if attr:
+            if value := element.get(attr):
+                yield value.strip()
+        elif element.text:
+            yield element.text.strip()
