@@ -68,11 +68,16 @@ class CatalogParser:
 
         self._feed_ids: set[str] = set()
 
-        self._categories_pattern = re.compile(
-            rf"https://podcasts\.apple.com/{self._locale}/genre/podcasts/*."
+        self._categories = bs4.SoupStrainer(
+            "a",
+            href=re.compile(
+                rf"https://podcasts\.apple.com/{self._locale}/genre/podcasts/*."
+            ),
         )
-        self._podcasts_pattern = re.compile(
-            rf"https://podcasts\.apple.com/{self._locale}/podcast/*."
+
+        self._podcasts = bs4.SoupStrainer(
+            "a",
+            href=re.compile(rf"https://podcasts\.apple.com/{self._locale}/podcast/*."),
         )
 
     def parse(self, client: httpx.Client) -> Iterator[Feed]:
@@ -98,7 +103,7 @@ class CatalogParser:
     def _parse_feed_ids(self, client: httpx.Client) -> Iterator[str]:
         for url in self._parse_urls(
             client,
-            self._categories_pattern,
+            self._categories,
             f"https://itunes.apple.com/{self._locale}/genre/podcasts/id26",
         ):
             yield from self._parse_feed_ids_in_category(client, url)
@@ -108,7 +113,7 @@ class CatalogParser:
     ) -> Iterator[str]:
         for url in self._parse_urls(
             client,
-            self._podcasts_pattern,
+            self._podcasts,
             page_url,
         ):
             if (feed_id := _parse_feed_id(url)) and feed_id not in self._feed_ids:
@@ -116,12 +121,16 @@ class CatalogParser:
                 yield feed_id
 
     def _parse_urls(
-        self, client: httpx.Client, pattern: re.Pattern, url: str
+        self, client: httpx.Client, strainer: bs4.SoupStrainer, url: str
     ) -> Iterator[str]:
         try:
             response = _get_response(client, url)
-            soup = bs4.BeautifulSoup(response.content, features="lxml")
-            for anchor in soup.find_all("a", href=pattern):
+            soup = bs4.BeautifulSoup(
+                response.content,
+                features="lxml",
+                parse_only=strainer,
+            )
+            for anchor in soup.find_all():
                 yield anchor["href"]
         except httpx.HTTPError:
             return
