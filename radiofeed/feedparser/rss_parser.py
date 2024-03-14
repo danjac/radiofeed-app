@@ -1,5 +1,5 @@
 import itertools
-from collections.abc import Iterable
+from collections.abc import Iterator
 
 import bs4
 
@@ -21,12 +21,12 @@ def parse_rss(content: bytes) -> Feed:
     soup = bs4.BeautifulSoup(content, features="xml")
 
     if channel := soup.find("channel"):
-        return _parse_channel(channel)
+        return _parse_feed(channel)
 
     raise InvalidRSSError("<channel /> not found in RSS document")
 
 
-def _parse_channel(channel):
+def _parse_feed(channel: bs4.element.Tag) -> Feed:
     try:
         return Feed(
             items=list(_parse_items(channel)),
@@ -39,13 +39,13 @@ def _parse_channel(channel):
             explicit=_find(channel, "itunes:explicit"),
             language=_find(channel, "language"),
             website=_find(channel, "link"),
-            title=_find(channel, "title"),
+            title=_find(channel, "title") or "",
         )
     except (TypeError, ValueError) as exc:
         raise InvalidRSSError from exc
 
 
-def _parse_owner(channel):
+def _parse_owner(channel: bs4.element.Tag) -> str | None:
     if author := _find(channel, "author"):
         return author
 
@@ -55,7 +55,7 @@ def _parse_owner(channel):
     return None
 
 
-def _parse_categories(parent):
+def _parse_categories(parent: bs4.element.Tag) -> Iterator[str]:
     yield from itertools.chain(
         _findall(parent, "category", attr="text"),
         _findall(parent, "media:category", attr="label"),
@@ -67,7 +67,7 @@ def _parse_categories(parent):
     )
 
 
-def _parse_items(channel):
+def _parse_items(channel: bs4.element.Tag) -> Iterator[Item]:
     for item in channel.find_all("item"):
         try:
             yield _parse_item(item)
@@ -75,9 +75,9 @@ def _parse_items(channel):
             continue
 
 
-def _parse_item(item):
+def _parse_item(item: bs4.element.Tag) -> Item:
     return Item(
-        categories=_findall(item, "category"),
+        categories=list(_findall(item, "category")),
         cover_url=_find(item, "itunes:image", attr="href"),
         website=_find(item, "link"),
         description=_find(item, "content:encoded", "description", "itunes:summary"),
@@ -85,13 +85,13 @@ def _parse_item(item):
         episode=_find(item, "itunes:episode"),
         episode_type=_find(item, "itunes:episodetype"),
         explicit=_find(item, "itunes:explicit"),
-        guid=_find(item, "guid", "atom:id", "link"),
+        guid=_find(item, "guid", "atom:id", "link") or "",
         length=_find(item, "enclosure", attr="length")
         or _find(item, "media:content", attr="fileSize"),
-        media_type=_find(item, "enclosure", "media:content", attr="type"),
-        media_url=_find(item, "enclosure", "media:content", attr="url"),
+        media_type=_find(item, "enclosure", "media:content", attr="type") or "",
+        media_url=_find(item, "enclosure", "media:content", attr="url") or "",
         pub_date=_find(item, "pubDate", "pubdate"),
-        title=_find(item, "title"),
+        title=_find(item, "title") or "",
         season=_find(item, "itunes:season"),
     )
 
@@ -100,20 +100,21 @@ def _find(
     parent: bs4.element.Tag,
     *names: str,
     attr: str | None = None,
+    default: str | None = None,
 ) -> str | None:
     for name in names:
         if (element := parent.find(name, recursive=False)) and (
             value := _parse_value(element, attr)
         ):
             return value
-    return None
+    return default
 
 
 def _findall(
     parent: bs4.element.Tag,
     *names: str,
     attr: str | None = None,
-) -> Iterable[str]:
+) -> Iterator[str]:
     for element in parent.find_all(list(names), recursive=False):
         if value := _parse_value(element, attr):
             yield value
