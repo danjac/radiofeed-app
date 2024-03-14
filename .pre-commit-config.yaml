@@ -67,24 +67,3 @@ repos:
       hooks:
           - id: django-upgrade
             args: [--target-version, "5.0"]
-    - repo: https://github.com/python-poetry/poetry
-      rev: "1.8.0"
-      hooks:
-          - id: poetry-check
-          - id: poetry-lock
-    - repo: https://github.com/python-poetry/poetry-plugin-export
-      rev: "1.6.0"
-      hooks:
-          - id: poetry-export
-            args: ["-o", "requirements.txt", "--without-hashes"]
-            verbose: true
-          - id: poetry-export
-            args:
-                [
-                    "-o",
-                    "requirements-ci.txt",
-                    "--with",
-                    "dev",
-                    "--without-hashes",
-                ]
-            verbose: true

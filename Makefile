@@ -5,15 +5,16 @@ dbinstall: migrate fixtures
 update: pyupdate pyexport npmupdate precommitupdate
 
 pyinstall:
-	poetry env use 3.12
-	poetry install --no-cache
+	uv venv && source .venv/bin/activate
+	uv pip install -r requirements-ci.txt
 
 pyupdate:
-	poetry update --no-cache
+	uv pip compile pyproject.toml --upgrade --generate-hashes -o requirements.txt
+	uv pip compile pyproject.toml --upgrade --generate-hashes --extra dev -o requirements-ci.txt
 
 pyexport:
-	poetry export -o requirements.txt --without-hashes
-	poetry export -o requirements-ci.txt --with=dev --without-hashes
+	uv pip compile pyproject.toml --generate-hashes -o requirements.txt
+	uv pip compile pyproject.toml --generate-hashes --extra dev -o requirements-ci.txt
 
 npminstall:
 	npm ci
@@ -28,7 +29,7 @@ precommitupdate:
 	pre-commit autoupdate
 
 nltkdownload:
-	xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
+	xargs -I{} .venv/bin/python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 migrate:
 	python ./manage.py migrate
