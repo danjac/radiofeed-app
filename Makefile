@@ -8,13 +8,16 @@ pyinstall:
 	uv venv && source .venv/bin/activate
 	uv pip install -r requirements-ci.txt
 
+pysync:
+	uv pip sync requirements-ci.txt
+
 pyupdate:
-	uv pip compile pyproject.toml --upgrade --generate-hashes -o requirements.txt
-	uv pip compile pyproject.toml --upgrade --generate-hashes --extra dev -o requirements-ci.txt
+	uv pip compile pyproject.toml --upgrade -o requirements.txt
+	uv pip compile pyproject.toml --upgrade --extra dev -o requirements-ci.txt
 
 pyexport:
-	uv pip compile pyproject.toml --generate-hashes -o requirements.txt
-	uv pip compile pyproject.toml --generate-hashes --extra dev -o requirements-ci.txt
+	uv pip compile pyproject.toml -o requirements.txt
+	uv pip compile pyproject.toml --extra dev -o requirements-ci.txt
 
 npminstall:
 	npm ci
@@ -53,6 +56,10 @@ watch:
 
 test:
 	python -m pytest
+
+
+droptestdb:
+	python ./manage.py drop_test_database --no-input
 
 clean:
 	git clean -Xdf
