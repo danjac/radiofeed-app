@@ -39,7 +39,7 @@ def _parse_feed(channel: bs4.element.Tag) -> Feed:
             explicit=_parse(channel, "itunes:explicit"),
             language=_parse(channel, "language"),
             website=_parse(channel, "link"),
-            title=_parse(channel, "title") or "",
+            title=_parse(channel, "title"),  # type: ignore[arg-type]
         )
     except (TypeError, ValueError) as exc:
         raise InvalidRSSError from exc
@@ -70,53 +70,57 @@ def _parse_categories(parent: bs4.element.Tag) -> Iterator[str]:
 def _parse_items(channel: bs4.element.Tag) -> Iterator[Item]:
     for item in channel.find_all("item"):
         try:
-            yield _parse_item(item)
+            yield Item(
+                categories=list(_iterparse(item, "category")),
+                cover_url=_parse(item, "itunes:image", attr="href"),
+                website=_parse(item, "link"),
+                description=_parse(
+                    item,
+                    "content:encoded",
+                    "description",
+                    "itunes:summary",
+                ),
+                duration=_parse(item, "itunes:duration"),
+                episode=_parse(item, "itunes:episode"),
+                episode_type=_parse(item, "itunes:episodetype"),
+                season=_parse(item, "itunes:season"),
+                explicit=_parse(item, "itunes:explicit"),
+                length=_parse(item, "enclosure", attr="length")
+                or _parse(item, "media:content", attr="fileSize"),
+                media_type=_parse(
+                    item,
+                    "enclosure",
+                    "media:content",
+                    attr="type",
+                ),  # type: ignore[arg-type]
+                media_url=_parse(
+                    item,
+                    "enclosure",
+                    "media:content",
+                    attr="url",
+                ),  # type: ignore[arg-type]
+                pub_date=_parse(item, "pubDate", "pubdate"),
+                title=_parse(item, "title"),  # type: ignore[arg-type]
+                guid=_parse(item, "guid", "atom:id") or _parse(item, "link"),  # type: ignore[arg-type]
+            )
+
         except (TypeError, ValueError):
             continue
 
 
-def _parse_item(item: bs4.element.Tag) -> Item:
-    return Item(
-        categories=list(_iterparse(item, "category")),
-        cover_url=_parse(item, "itunes:image", attr="href"),
-        website=_parse(item, "link"),
-        description=_parse(item, "content:encoded", "description", "itunes:summary"),
-        duration=_parse(item, "itunes:duration"),
-        episode=_parse(item, "itunes:episode"),
-        episode_type=_parse(item, "itunes:episodetype"),
-        explicit=_parse(item, "itunes:explicit"),
-        guid=_parse(item, "guid", "atom:id", "link") or "",
-        length=_parse(item, "enclosure", attr="length")
-        or _parse(item, "media:content", attr="fileSize"),
-        media_type=_parse(item, "enclosure", "media:content", attr="type") or "",
-        media_url=_parse(item, "enclosure", "media:content", attr="url") or "",
-        pub_date=_parse(item, "pubDate", "pubdate"),
-        title=_parse(item, "title") or "",
-        season=_parse(item, "itunes:season"),
-    )
-
-
-def _parse(
-    parent: bs4.element.Tag,
-    *names: str,
-    attr: str | None = None,
-) -> str | None:
-    for name in names:
-        if (element := parent.find(name, recursive=False)) and (
-            value := _parse_value(element, attr)
-        ):
-            return value
-    return None
-
-
 def _iterparse(
-    parent: bs4.element.Tag,
-    *names: str,
-    attr: str | None = None,
+    parent: bs4.element.Tag, *names: str, attr: str | None = None
 ) -> Iterator[str]:
     for element in parent.find_all(list(names), recursive=False):
         if value := _parse_value(element, attr):
             yield value
+
+
+def _parse(parent: bs4.element.Tag, *names: str, attr: str | None = None) -> str | None:
+    try:
+        return next(_iterparse(parent, *names, attr=attr))
+    except StopIteration:
+        return None
 
 
 def _parse_value(element: bs4.element.Tag, attr: str | None = None) -> str | None:
