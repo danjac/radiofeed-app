@@ -1,7 +1,9 @@
-import itertools
+import functools
+import io
 from collections.abc import Iterator
+from typing import Final
 
-import bs4
+import lxml.etree
 
 from radiofeed.feedparser.exceptions import InvalidRSSError
 from radiofeed.feedparser.models import Feed, Item
@@ -17,116 +19,148 @@ def parse_rss(content: bytes) -> Feed:
         InvalidRSSError: if XML content is unparseable, or the feed is otherwise invalid
         or empty.
     """
-    return RSSParser.parse(content)
+    return _rss_parser().parse(content)
 
 
 class RSSParser:
     """Parses RSS or Atom document."""
 
-    def __init__(self, channel: bs4.element.Tag):
-        self._channel = channel
+    _NAMESPACES: Final = {
+        "atom": "http://www.w3.org/2005/Atom",
+        "content": "http://purl.org/rss/1.0/modules/content/",
+        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+        "media": "http://search.yahoo.com/mrss/",
+        "podcast": "https://podcastindex.org/namespace/1.0",
+    }
 
-    @classmethod
-    def parse(cls, content: bytes) -> Feed:
-        """Parses content of RSS document."""
-        soup = bs4.BeautifulSoup(content, features="xml")
+    def __init__(self) -> None:
+        self._xpaths: dict[str, lxml.etree.XPath] = {}
 
-        if channel := soup.find("channel"):
-            return cls(channel).parse_feed()
+    def parse(self, content: bytes) -> Feed:
+        """Parse content into Feed instance."""
 
-        raise InvalidRSSError("<channel /> not found in RSS document")
+        try:
+            return self._parse_feed(next(self._parse_content(content)))
+        except StopIteration as exc:
+            raise InvalidRSSError("<channel /> not found in RSS document") from exc
 
-    def parse_feed(self) -> Feed:
-        """Parses RSS feed."""
+    def _parse_content(self, content: bytes) -> lxml.etree.Element:
+        for _, element in lxml.etree.iterparse(
+            io.BytesIO(content),
+            tag="rss",
+            encoding="utf-8",
+            no_network=True,
+            resolve_entities=False,
+            recover=True,
+            events=("end",),
+        ):
+            yield from self._iterparse(element, "channel")
+
+    def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
         try:
             return Feed(
-                complete=self._parse(self._channel, "itunes:complete"),
-                cover_url=self._parse(self._channel, "itunes:image", attr="href")
-                or self._parse(self._channel, "image/url"),
-                description=self._parse(self._channel, "description", "itunes:summary"),
-                explicit=self._parse(self._channel, "itunes:explicit"),
-                language=self._parse(self._channel, "language"),
-                website=self._parse(self._channel, "link"),
-                title=self._parse(self._channel, "title"),  # type: ignore[arg-type]
-                categories=list(self._parse_categories(self._channel)),
-                items=list(self._parse_items()),
-                owner=self._parse_owner(),
+                complete=self._parse(channel, "itunes:complete/text()"),
+                cover_url=self._parse(
+                    channel, "itunes:image/@href", "image/url/text()"
+                ),
+                description=self._parse(
+                    channel,
+                    "description/text()",
+                    "itunes:summary/text()",
+                ),
+                funding_text=self._parse(channel, "podcast:funding/text()"),
+                funding_url=self._parse(channel, "podcast:funding/@url"),
+                explicit=self._parse(channel, "itunes:explicit/text()"),
+                language=self._parse(channel, "language/text()"),
+                website=self._parse(channel, "link/text()"),
+                title=self._parse(channel, "title/text()"),  # type: ignore[arg-type]
+                categories=list(
+                    self._iterparse(
+                        channel,
+                        "//googleplay:category/@text",
+                        "//itunes:category/@text",
+                        "//media:category/@label",
+                        "//media:category/text()",
+                    )
+                ),
+                owner=self._parse(
+                    channel,
+                    "itunes:author/text()",
+                    "itunes:owner/itunes:name/text()",
+                ),
+                items=list(self._parse_items(channel)),
             )
         except (TypeError, ValueError) as exc:
             raise InvalidRSSError from exc
 
-    def _parse_items(self) -> Iterator[Item]:
-        for item in self._channel.find_all("item"):
+    def _parse_items(self, channel: lxml.etree.Element) -> Iterator[Item]:
+        for item in self._iterparse(channel, "item"):
             try:
-                yield Item(
-                    cover_url=self._parse(item, "itunes:image", attr="href"),
-                    website=self._parse(item, "link"),
-                    description=self._parse(
-                        item, "content:encoded", "description", "itunes:summary"
-                    ),
-                    duration=self._parse(item, "itunes:duration"),
-                    episode=self._parse(item, "itunes:episode"),
-                    episode_type=self._parse(item, "itunes:episodetype"),
-                    season=self._parse(item, "itunes:season"),
-                    explicit=self._parse(item, "itunes:explicit"),
-                    length=self._parse(item, "enclosure", attr="length")
-                    or self._parse(item, "media:content", attr="fileSize"),
-                    media_type=self._parse(
-                        item, "enclosure", "media:content", attr="type"
-                    ),  # type: ignore[arg-type]
-                    media_url=self._parse(
-                        item, "enclosure", "media:content", attr="url"
-                    ),  # type: ignore[arg-type]
-                    pub_date=self._parse(item, "pubDate", "pubdate"),
-                    title=self._parse(item, "title"),  # type: ignore[arg-type]
-                    guid=self._parse(item, "guid", "atom:id")
-                    or self._parse(item, "link"),  # type: ignore[arg-type]
-                    categories=list(self._parse_categories(item)),
-                )
-
+                yield self._parse_item(item)
             except (TypeError, ValueError):
                 continue
 
-    def _parse_owner(self) -> str | None:
-        if author := self._parse(self._channel, "author"):
-            return author
-
-        if owner := self._channel.find("itunes:owner"):
-            return self._parse(owner, "itunes:name")
-
-        return None
-
-    def _parse_categories(self, parent: bs4.element.Tag) -> Iterator[str]:
-        yield from itertools.chain(
-            self._iterparse(parent, "category", attr="text"),
-            self._iterparse(parent, "media:category", attr="label"),
-            self._iterparse(parent, "media:category"),
-            *(
-                self._parse_categories(category)
-                for category in parent.find_all("category", recursive=False)
+    def _parse_item(self, item: lxml.etree.Element) -> Item:
+        return Item(
+            categories=list(
+                self._iterparse(
+                    item,
+                    "//itunes:category/@text",
+                )
             ),
+            description=self._parse(
+                item,
+                "content:encoded/text()",
+                "description/text()",
+                "itunes:summary/text()",
+            ),
+            cover_url=self._parse(item, "itunes:image/@href"),
+            duration=self._parse(item, "itunes:duration/text()"),
+            episode=self._parse(item, "itunes:episode/text()"),
+            episode_type=self._parse(item, "itunes:episodetype/text()"),
+            explicit=self._parse(item, "itunes:explicit/text()"),
+            guid=self._parse(
+                item,
+                "guid/text()",
+                "atom:id/text()",
+                "link/text()",
+            ),  # type: ignore[arg-type]
+            length=self._parse(item, "enclosure//@length", "media:content//@fileSize"),
+            website=self._parse(item, "link/text()"),
+            media_type=self._parse(
+                item,
+                "enclosure//@type",
+                "media:content//@type",
+            ),  # type: ignore[arg-type]
+            media_url=self._parse(
+                item,
+                "enclosure//@url",
+                "media:content//@url",
+            ),  # type: ignore[arg-type]
+            pub_date=self._parse(item, "pubDate/text()", "pubdate/text()"),
+            season=self._parse(item, "itunes:season/text()"),
+            title=self._parse(item, "title/text()"),  # type: ignore[arg-type]
         )
 
-    def _iterparse(
-        self, parent: bs4.element.Tag, *names: str, attr: str | None = None
-    ) -> Iterator[str]:
-        for element in parent.find_all(list(names), recursive=False):
-            if value := self._parse_value(element, attr):
-                yield value
+    def _iterparse(self, element: lxml.etree.Element, *paths) -> Iterator:
+        for path in paths:
+            yield from self._xpath(path)(element)
 
-    def _parse(
-        self, parent: bs4.element.Tag, *names: str, attr: str | None = None
-    ) -> str | None:
+    def _parse(self, element: lxml.etree.Element, *paths) -> str | None:
         try:
-            return next(self._iterparse(parent, *names, attr=attr))
+            return next(self._iterparse(element, *paths))
         except StopIteration:
             return None
 
-    def _parse_value(
-        self, element: bs4.element.Tag, attr: str | None = None
-    ) -> str | None:
-        if attr and (value := element.get(attr)):
-            return value.strip()
-        if element.text:
-            return element.text.strip()
-        return None
+    def _xpath(self, path: str) -> lxml.etree.XPath:
+        if path in self._xpaths:
+            return self._xpaths[path]
+
+        xpath = self._xpaths[path] = lxml.etree.XPath(path, namespaces=self._NAMESPACES)
+        return xpath
+
+
+@functools.cache
+def _rss_parser() -> RSSParser:
+    return RSSParser()
