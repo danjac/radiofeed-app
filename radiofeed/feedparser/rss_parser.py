@@ -1,3 +1,4 @@
+import functools
 import itertools
 from collections.abc import Iterator
 
@@ -17,102 +18,116 @@ def parse_rss(content: bytes) -> Feed:
         InvalidRSSError: if XML content is unparseable, or the feed is otherwise invalid
         or empty.
     """
-
-    soup = bs4.BeautifulSoup(content, features="xml")
-
-    if channel := soup.find("channel"):
-        return _parse_feed(channel)
-
-    raise InvalidRSSError("<channel /> not found in RSS document")
+    return _rss_parser().parse(content)
 
 
-def _parse_feed(channel: bs4.element.Tag) -> Feed:
-    try:
-        return Feed(
-            items=list(_parse_items(channel)),
-            categories=list(_parse_categories(channel)),
-            owner=_parse_owner(channel),
-            complete=_parse(channel, "itunes:complete"),
-            cover_url=_parse(channel, "itunes:image", attr="href")
-            or _parse(channel, "image/url"),
-            description=_parse(channel, "description", "itunes:summary"),
-            explicit=_parse(channel, "itunes:explicit"),
-            language=_parse(channel, "language"),
-            website=_parse(channel, "link"),
-            title=_parse(channel, "title"),  # type: ignore[arg-type]
-        )
-    except (TypeError, ValueError) as exc:
-        raise InvalidRSSError from exc
+class RSSParser:
+    """Parses RSS or Atom document."""
 
+    def parse(self, content: bytes) -> Feed:
+        """Parses content of RSS document."""
+        soup = bs4.BeautifulSoup(content, features="xml")
 
-def _parse_owner(channel: bs4.element.Tag) -> str | None:
-    if author := _parse(channel, "author"):
-        return author
+        if channel := soup.find("channel"):
+            return self._parse_feed(channel)
 
-    if owner := channel.find("itunes:owner"):
-        return _parse(owner, "itunes:name")
+        raise InvalidRSSError("<channel /> not found in RSS document")
 
-    return None
-
-
-def _parse_categories(parent: bs4.element.Tag) -> Iterator[str]:
-    yield from itertools.chain(
-        _iterparse(parent, "category", attr="text"),
-        _iterparse(parent, "media:category", attr="label"),
-        _iterparse(parent, "media:category"),
-        *(
-            _parse_categories(category)
-            for category in parent.find_all("itunes:category")
-        ),
-    )
-
-
-def _parse_items(channel: bs4.element.Tag) -> Iterator[Item]:
-    for item in channel.find_all("item"):
+    def _parse_feed(self, channel: bs4.element.Tag) -> Feed:
         try:
-            yield Item(
-                categories=list(_iterparse(item, "category")),
-                cover_url=_parse(item, "itunes:image", attr="href"),
-                website=_parse(item, "link"),
-                description=_parse(
-                    item, "content:encoded", "description", "itunes:summary"
-                ),
-                duration=_parse(item, "itunes:duration"),
-                episode=_parse(item, "itunes:episode"),
-                episode_type=_parse(item, "itunes:episodetype"),
-                season=_parse(item, "itunes:season"),
-                explicit=_parse(item, "itunes:explicit"),
-                length=_parse(item, "enclosure", attr="length")
-                or _parse(item, "media:content", attr="fileSize"),
-                media_type=_parse(item, "enclosure", "media:content", attr="type"),  # type: ignore[arg-type]
-                media_url=_parse(item, "enclosure", "media:content", attr="url"),  # type: ignore[arg-type]
-                pub_date=_parse(item, "pubDate", "pubdate"),
-                title=_parse(item, "title"),  # type: ignore[arg-type]
-                guid=_parse(item, "guid", "atom:id") or _parse(item, "link"),  # type: ignore[arg-type]
+            return Feed(
+                items=list(self._parse_items(channel)),
+                categories=list(self._parse_categories(channel)),
+                owner=self._parse_owner(channel),
+                complete=self._parse(channel, "itunes:complete"),
+                cover_url=self._parse(channel, "itunes:image", attr="href")
+                or self._parse(channel, "image/url"),
+                description=self._parse(channel, "description", "itunes:summary"),
+                explicit=self._parse(channel, "itunes:explicit"),
+                language=self._parse(channel, "language"),
+                website=self._parse(channel, "link"),
+                title=self._parse(channel, "title"),  # type: ignore[arg-type]
             )
+        except (TypeError, ValueError) as exc:
+            raise InvalidRSSError from exc
 
-        except (TypeError, ValueError):
-            continue
+    def _parse_owner(self, channel: bs4.element.Tag) -> str | None:
+        if author := self._parse(channel, "author"):
+            return author
 
+        if owner := channel.find("itunes:owner"):
+            return self._parse(owner, "itunes:name")
 
-def _iterparse(
-    parent: bs4.element.Tag, *names: str, attr: str | None = None
-) -> Iterator[str]:
-    for element in parent.find_all(list(names), recursive=False):
-        if value := _parse_value(element, attr):
-            yield value
+        return None
 
+    def _parse_categories(self, parent: bs4.element.Tag) -> Iterator[str]:
+        yield from itertools.chain(
+            self._iterparse(parent, "category", attr="text"),
+            self._iterparse(parent, "media:category", attr="label"),
+            self._iterparse(parent, "media:category"),
+            *(
+                self._parse_categories(category)
+                for category in parent.find_all("itunes:category")
+            ),
+        )
 
-def _parse(parent: bs4.element.Tag, *names: str, attr: str | None = None) -> str | None:
-    try:
-        return next(_iterparse(parent, *names, attr=attr))
-    except StopIteration:
+    def _parse_items(self, channel: bs4.element.Tag) -> Iterator[Item]:
+        for item in channel.find_all("item"):
+            try:
+                yield Item(
+                    categories=list(self._iterparse(item, "category")),
+                    cover_url=self._parse(item, "itunes:image", attr="href"),
+                    website=self._parse(item, "link"),
+                    description=self._parse(
+                        item, "content:encoded", "description", "itunes:summary"
+                    ),
+                    duration=self._parse(item, "itunes:duration"),
+                    episode=self._parse(item, "itunes:episode"),
+                    episode_type=self._parse(item, "itunes:episodetype"),
+                    season=self._parse(item, "itunes:season"),
+                    explicit=self._parse(item, "itunes:explicit"),
+                    length=self._parse(item, "enclosure", attr="length")
+                    or self._parse(item, "media:content", attr="fileSize"),
+                    media_type=self._parse(
+                        item, "enclosure", "media:content", attr="type"
+                    ),  # type: ignore[arg-type]
+                    media_url=self._parse(
+                        item, "enclosure", "media:content", attr="url"
+                    ),  # type: ignore[arg-type]
+                    pub_date=self._parse(item, "pubDate", "pubdate"),
+                    title=self._parse(item, "title"),  # type: ignore[arg-type]
+                    guid=self._parse(item, "guid", "atom:id")
+                    or self._parse(item, "link"),  # type: ignore[arg-type]
+                )
+
+            except (TypeError, ValueError):
+                continue
+
+    def _iterparse(
+        self, parent: bs4.element.Tag, *names: str, attr: str | None = None
+    ) -> Iterator[str]:
+        for element in parent.find_all(list(names), recursive=False):
+            if value := self._parse_value(element, attr):
+                yield value
+
+    def _parse(
+        self, parent: bs4.element.Tag, *names: str, attr: str | None = None
+    ) -> str | None:
+        try:
+            return next(self._iterparse(parent, *names, attr=attr))
+        except StopIteration:
+            return None
+
+    def _parse_value(
+        self, element: bs4.element.Tag, attr: str | None = None
+    ) -> str | None:
+        if attr and (value := element.get(attr)):
+            return value.strip()
+        if element.text:
+            return element.text.strip()
         return None
 
 
-def _parse_value(element: bs4.element.Tag, attr: str | None = None) -> str | None:
-    if attr and (value := element.get(attr)):
-        return value.strip()
-    if element.text:
-        return element.text.strip()
-    return None
+@functools.cache
+def _rss_parser() -> RSSParser:
+    return RSSParser()
