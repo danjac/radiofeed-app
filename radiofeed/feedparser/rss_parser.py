@@ -46,16 +46,19 @@ class RSSParser:
             raise InvalidRSSError("<channel /> not found in RSS document") from exc
 
     def _parse_content(self, content: bytes) -> lxml.etree.Element:
-        for _, element in lxml.etree.iterparse(
-            io.BytesIO(content),
-            tag="rss",
-            encoding="utf-8",
-            no_network=True,
-            resolve_entities=False,
-            recover=True,
-            events=("end",),
-        ):
-            yield from self._iterparse(element, "channel")
+        try:
+            for _, element in lxml.etree.iterparse(
+                io.BytesIO(content),
+                tag="rss",
+                encoding="utf-8",
+                no_network=True,
+                resolve_entities=False,
+                recover=True,
+                events=("end",),
+            ):
+                yield from self._iterparse(element, "channel")
+        except lxml.etree.XMLSyntaxError as exc:
+            raise InvalidRSSError from exc
 
     def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
         try:
@@ -149,7 +152,7 @@ class RSSParser:
 
     def _parse(self, element: lxml.etree.Element, *paths) -> str | None:
         try:
-            return next(self._iterparse(element, *paths))
+            return next(self._iterparse(element, *paths)).strip()
         except StopIteration:
             return None
 
@@ -157,7 +160,8 @@ class RSSParser:
         if path in self._xpaths:
             return self._xpaths[path]
 
-        xpath = self._xpaths[path] = lxml.etree.XPath(path, namespaces=self._NAMESPACES)
+        xpath = lxml.etree.XPath(path, namespaces=self._NAMESPACES)
+        self._xpaths[path] = xpath
         return xpath
 
 
