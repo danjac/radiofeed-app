@@ -1,3 +1,4 @@
+import contextlib
 import functools
 import io
 from collections.abc import Iterator
@@ -150,9 +151,15 @@ class RSSParser:
         for path in paths:
             yield from self._xpath(path)(element)
 
+    def _iterstrings(self, element: lxml.etree.Element, *paths) -> Iterator[str]:
+        with contextlib.suppress(UnicodeDecodeError):
+            for value in self._iterparse(element, *paths):
+                if isinstance(value, str) and (cleaned := value.strip()):
+                    yield cleaned
+
     def _parse(self, element: lxml.etree.Element, *paths) -> str | None:
         try:
-            return next(self._iterparse(element, *paths)).strip()
+            return next(self._iterstrings(element, *paths))
         except StopIteration:
             return None
 
