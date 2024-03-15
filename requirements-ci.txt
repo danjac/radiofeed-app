@@ -219,7 +219,7 @@ requests-oauthlib==1.4.0
     # via django-allauth
 rich==13.7.1
     # via bandit
-ruff==0.3.2
+ruff==0.3.3
 scikit-learn==1.4.1.post1
 scipy==1.12.0
     # via scikit-learn
@@ -257,7 +257,7 @@ traitlets==5.14.2
     # via
     #   ipython
     #   matplotlib-inline
-types-python-dateutil==2.8.19.20240311
+types-python-dateutil==2.9.0.20240315
 types-urllib3==1.26.25.14
 typing-extensions==4.10.0
     # via

@@ -2,7 +2,7 @@ install: pyinstall npminstall precommitinstall nltkdownload
 
 dbinstall: migrate fixtures
 
-update: pyupdate pyexport npmupdate precommitupdate
+update: pyupdate npmupdate precommitupdate
 
 pyinstall:
 	uv venv && source .venv/bin/activate
@@ -54,7 +54,6 @@ watch:
 
 test:
 	python -m pytest
-
 
 droptestdb:
 	python ./manage.py drop_test_database --no-input
