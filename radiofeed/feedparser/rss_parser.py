@@ -48,34 +48,12 @@ class RSSParser:
                 language=self._parse(self._channel, "language"),
                 website=self._parse(self._channel, "link"),
                 title=self._parse(self._channel, "title"),  # type: ignore[arg-type]
+                categories=list(self._parse_categories(self._channel)),
                 items=list(self._parse_items()),
-                categories=list(self._parse_categories()),
                 owner=self._parse_owner(),
             )
         except (TypeError, ValueError) as exc:
             raise InvalidRSSError from exc
-
-    def _parse_owner(self) -> str | None:
-        if author := self._parse(self._channel, "author"):
-            return author
-
-        if owner := self._channel.find("itunes:owner"):
-            return self._parse(owner, "itunes:name")
-
-        return None
-
-    def _parse_categories(self, parent: bs4.element.Tag | None = None) -> Iterator[str]:
-        parent = parent or self._channel
-
-        yield from itertools.chain(
-            self._iterparse(parent, "category", attr="text"),
-            self._iterparse(parent, "media:category", attr="label"),
-            self._iterparse(parent, "media:category"),
-            *(
-                self._parse_categories(category)
-                for category in parent.find_all("category", recursive=False)
-            ),
-        )
 
     def _parse_items(self) -> Iterator[Item]:
         for item in self._channel.find_all("item"):
@@ -108,6 +86,26 @@ class RSSParser:
 
             except (TypeError, ValueError):
                 continue
+
+    def _parse_owner(self) -> str | None:
+        if author := self._parse(self._channel, "author"):
+            return author
+
+        if owner := self._channel.find("itunes:owner"):
+            return self._parse(owner, "itunes:name")
+
+        return None
+
+    def _parse_categories(self, parent: bs4.element.Tag) -> Iterator[str]:
+        yield from itertools.chain(
+            self._iterparse(parent, "category", attr="text"),
+            self._iterparse(parent, "media:category", attr="label"),
+            self._iterparse(parent, "media:category"),
+            *(
+                self._parse_categories(category)
+                for category in parent.find_all("category", recursive=False)
+            ),
+        )
 
     def _iterparse(
         self, parent: bs4.element.Tag, *names: str, attr: str | None = None
