@@ -18,7 +18,7 @@ class Player:
     session_key: str = "player_episode"
     current_time_key: str = "current_time"
 
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request: HttpRequest) -> None:
         self.request = request
 
     def get(self) -> int | None:

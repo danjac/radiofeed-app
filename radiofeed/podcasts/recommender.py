@@ -34,7 +34,7 @@ class Recommender:
     _num_matches: int = 12
     _since: timedelta = timedelta(days=90)
 
-    def __init__(self, language: str):
+    def __init__(self, language: str) -> None:
         self._language = language
 
         self._vectorizer = HashingVectorizer(

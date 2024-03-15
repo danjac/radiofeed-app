@@ -61,7 +61,7 @@ class FeedParser:
         "*/*;q=0.1"
     )
 
-    def __init__(self, podcast: Podcast):
+    def __init__(self, podcast: Podcast) -> None:
         self._podcast = podcast
 
     def parse(self, client: httpx.Client) -> None:

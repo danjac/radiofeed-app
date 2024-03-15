@@ -9,7 +9,7 @@ class PrivateFeedForm(forms.Form):
 
     rss = forms.URLField(max_length=300, label="Feed RSS")
 
-    def __init__(self, user: User, *args, **kwargs):
+    def __init__(self, user: User, *args, **kwargs) -> None:
         self.user = user
         super().__init__(*args, **kwargs)
 

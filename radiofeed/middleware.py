@@ -108,7 +108,7 @@ class Pagination:
 
     param: str = "page"
 
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request: HttpRequest) -> None:
         self.request = request
 
     def __str__(self) -> str:
@@ -136,7 +136,7 @@ class Search:
 
     param: str = "query"
 
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request: HttpRequest) -> None:
         self.request = request
 
     def __str__(self) -> str:
@@ -168,7 +168,7 @@ class Ordering:
     param: str = "order"
     default: str = Choices.DESC
 
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request: HttpRequest) -> None:
         self.request = request
 
     def __str__(self) -> str:

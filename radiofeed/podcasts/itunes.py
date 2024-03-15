@@ -63,7 +63,7 @@ def search_cache_key(search_term: str) -> str:
 class CatalogParser:
     """Parses feeds from specific locale in iTunes podcast catalog."""
 
-    def __init__(self, *, locale: str):
+    def __init__(self, *, locale: str) -> None:
         self._locale = locale
 
         self._feed_ids: set[str] = set()
