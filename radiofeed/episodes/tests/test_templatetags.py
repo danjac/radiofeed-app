@@ -1,6 +1,7 @@
 import pytest
 from django.template.context import RequestContext
 
+from radiofeed.defaulttags import get_placeholder_cover_url
 from radiofeed.episodes.middleware import Player
 from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
@@ -8,7 +9,6 @@ from radiofeed.episodes.templatetags.audio_player import (
 )
 from radiofeed.episodes.tests.factories import create_episode
 from radiofeed.podcasts.tests.factories import create_podcast
-from radiofeed.template import get_placeholder_cover_url
 
 
 class TestMediaMetadata:

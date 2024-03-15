@@ -4,7 +4,7 @@ from django.template.context import RequestContext
 from django.test import override_settings
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.template import (
+from radiofeed.defaulttags import (
     absolute_uri,
     active_link,
     cover_image,
