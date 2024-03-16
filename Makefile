@@ -46,6 +46,9 @@ serve:
 shell:
 	python ./manage.py shell_plus
 
+parsefeeds:
+	python ./manage.py parse_feeds
+
 build:
 	npm run build
 
