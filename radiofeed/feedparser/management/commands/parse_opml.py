@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         """Handle implementation."""
         podcasts = Podcast.objects.bulk_create(
-            [Podcast(rss=rss) for rss in parse_opml(options["input"])],
+            [Podcast(rss=rss) for rss in parse_opml(options["input"].read())],
             ignore_conflicts=True,
         )
 

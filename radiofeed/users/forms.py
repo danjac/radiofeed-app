@@ -46,7 +46,7 @@ class OpmlUploadForm(forms.Form):
         """
         self.cleaned_data["opml"].seek(0)
 
-        if urls := set(parse_opml(self.cleaned_data["opml"])) - set(
+        if urls := set(parse_opml(self.cleaned_data["opml"].read())) - set(
             Subscription.objects.filter(subscriber=user)
             .select_related("podcast")
             .values_list("podcast__rss", flat=True)
