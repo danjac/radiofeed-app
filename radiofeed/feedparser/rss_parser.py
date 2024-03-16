@@ -6,7 +6,7 @@ import lxml.etree
 
 from radiofeed.feedparser.exceptions import InvalidRSSError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.xpath_parser import XPathParser
+from radiofeed.feedparser.xpath_parser import XPathParser
 
 
 def parse_rss(content: bytes) -> Feed:

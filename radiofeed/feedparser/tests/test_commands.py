@@ -1,8 +1,33 @@
+import pathlib
+
 import pytest
 from django.core.management import call_command
 
 from radiofeed.feedparser.exceptions import DuplicateError
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import create_podcast
+
+
+class TestParseOpml:
+    patched = "radiofeed.feedparser.management.commands.parse_opml.parse_opml"
+
+    @pytest.fixture()
+    def filename(self):
+        return pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
+
+    @pytest.mark.django_db()
+    def test_command(self, mocker, filename):
+        patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
+        call_command("parse_opml", filename)
+        assert Podcast.objects.count() == 1
+        patched.assert_called()
+
+    @pytest.mark.django_db()
+    def test_empty(self, mocker, filename):
+        patched = mocker.patch(self.patched, return_value=iter([]))
+        call_command("parse_opml", filename)
+        assert Podcast.objects.count() == 0
+        patched.assert_called()
 
 
 class TestParseFeeds:

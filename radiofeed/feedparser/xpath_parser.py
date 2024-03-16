@@ -12,7 +12,9 @@ class XPathParser:
         self._xpaths: dict[str, lxml.etree.XPath] = {}
         self._namespaces = namespaces
 
-    def iterparse(self, content: bytes, tag: str, *paths: str) -> Iterator:
+    def iterparse(
+        self, content: bytes, tag: str | None = None, *paths: str
+    ) -> Iterator:
         """Parses document into iterable of paths."""
         for _, element in lxml.etree.iterparse(
             io.BytesIO(content),

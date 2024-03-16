@@ -1,19 +1,13 @@
 import dataclasses
 import itertools
-import re
 from collections.abc import Iterator
-from typing import Final
-from urllib.parse import urlparse
 
-import bs4
 import httpx
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.podcasts.models import Podcast
-
-_ITUNES_PODCAST_ID: Final = re.compile(r"id(?P<id>\d+)")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -58,88 +52,6 @@ def search(client: httpx.Client, search_term: str) -> list[Feed]:
 def search_cache_key(search_term: str) -> str:
     """Cache key based on search term."""
     return "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
-
-
-class CatalogParser:
-    """Parses feeds from specific locale in iTunes podcast catalog."""
-
-    def __init__(self, *, locale: str) -> None:
-        self._locale = locale
-
-        self._feed_ids: set[str] = set()
-
-        self._categories = bs4.SoupStrainer(
-            "a",
-            href=re.compile(
-                rf"https://podcasts\.apple.com/{self._locale}/genre/podcasts/*."
-            ),
-        )
-
-        self._podcasts = bs4.SoupStrainer(
-            "a",
-            href=re.compile(rf"https://podcasts\.apple.com/{self._locale}/podcast/*."),
-        )
-
-    def parse(self, client: httpx.Client) -> Iterator[Feed]:
-        """Parses feeds from specific locale."""
-        for feed_ids in itertools.batched(self._parse_feed_ids(client), 100):
-            try:
-                yield from _parse_feeds(
-                    _get_response(
-                        client,
-                        "https://itunes.apple.com/lookup",
-                        params={
-                            "id": ",".join(feed_ids),
-                            "entity": "podcast",
-                        },
-                        headers={
-                            "Accept": "application/json",
-                        },
-                    )
-                )
-            except httpx.HTTPError:
-                continue
-
-    def _parse_feed_ids(self, client: httpx.Client) -> Iterator[str]:
-        for url in self._parse_urls(
-            client,
-            self._categories,
-            f"https://itunes.apple.com/{self._locale}/genre/podcasts/id26",
-        ):
-            yield from self._parse_feed_ids_in_category(client, url)
-
-    def _parse_feed_ids_in_category(
-        self, client: httpx.Client, page_url: str
-    ) -> Iterator[str]:
-        for url in self._parse_urls(
-            client,
-            self._podcasts,
-            page_url,
-        ):
-            if (feed_id := _parse_feed_id(url)) and feed_id not in self._feed_ids:
-                self._feed_ids.add(feed_id)
-                yield feed_id
-
-    def _parse_urls(
-        self, client: httpx.Client, strainer: bs4.SoupStrainer, url: str
-    ) -> Iterator[str]:
-        try:
-            response = _get_response(client, url)
-            soup = bs4.BeautifulSoup(
-                response.content,
-                features="lxml",
-                parse_only=strainer,
-            )
-            for anchor in soup.find_all():
-                yield anchor["href"]
-        except httpx.HTTPError:
-            return
-
-
-def _parse_feed_id(url: str) -> str | None:
-    if match := _ITUNES_PODCAST_ID.search(urlparse(url).path.split("/")[-1]):
-        return match.group("id")
-    return None
 
 
 def _parse_feeds(

@@ -2,8 +2,8 @@ from typing import ClassVar
 
 from django import forms
 
+from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.podcasts.models import Podcast, Subscription
-from radiofeed.podcasts.opml import parse_opml
 from radiofeed.users.models import User
 
 

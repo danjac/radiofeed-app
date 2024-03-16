@@ -3,12 +3,14 @@ import sys
 
 from django.core.management.base import BaseCommand
 
-from radiofeed.podcasts import opml
+from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
     """Django management command."""
+
+    # TBD : move to feedparser
 
     help = """Create new podcast feeds from OPML document."""
 
@@ -25,7 +27,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         """Handle implementation."""
         podcasts = Podcast.objects.bulk_create(
-            [Podcast(rss=rss) for rss in opml.parse_opml(options["input"])],
+            [Podcast(rss=rss) for rss in parse_opml(options["input"])],
             ignore_conflicts=True,
         )
 

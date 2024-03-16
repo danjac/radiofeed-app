@@ -13,7 +13,6 @@ authors = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
 maintainers = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
 dependencies =[
     "attrs",
-    "beautifulsoup4",
     "brotli",
     "dj-database-url",
     "django",

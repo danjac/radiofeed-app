@@ -6,7 +6,6 @@ import pytest
 from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.itunes import CatalogParser
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import create_podcast
 
@@ -20,58 +19,6 @@ MOCK_RESULT = {
 
 def _mock_page(mock_file):
     return (pathlib.Path(__file__).parent / "mocks" / mock_file).read_bytes()
-
-
-class TestCatalogParser:
-    @pytest.mark.django_db()
-    def test_parse(self):
-        list(CatalogParser(locale="us").parse(self._get_client()))
-
-        assert Podcast.objects.count() == 1
-
-    @pytest.mark.django_db()
-    def test_parse_with_category_error(self):
-        list(CatalogParser(locale="us").parse(self._get_client(category_ok=False)))
-        assert Podcast.objects.count() == 0
-
-    @pytest.mark.django_db()
-    def test_parse_with_genre_error(self):
-        list(CatalogParser(locale="us").parse(self._get_client(genre_ok=False)))
-        assert Podcast.objects.count() == 0
-
-    @pytest.mark.django_db()
-    def test_parse_with_api_lookup_error(self):
-        list(CatalogParser(locale="us").parse(self._get_client(json_ok=False)))
-        assert Podcast.objects.count() == 0
-
-    def _get_client(self, *, json_ok=True, category_ok=True, genre_ok=True):
-        def _handler(request):
-            match request.url.path.split("/"):
-                case [*_, "lookup"]:
-                    if json_ok:
-                        return httpx.Response(
-                            http.HTTPStatus.OK, json={"results": [MOCK_RESULT]}
-                        )
-                    raise httpx.HTTPError("could not do lookup")
-
-                case [*_, "genre", "podcasts", "id26"]:
-                    if category_ok:
-                        return httpx.Response(
-                            http.HTTPStatus.OK, content=_mock_page("podcasts.html")
-                        )
-                    raise httpx.HTTPError("could not parse podcasts page")
-
-                case [*_, "genre", _, _]:
-                    if genre_ok:
-                        return httpx.Response(
-                            http.HTTPStatus.OK, content=_mock_page("genre.html")
-                        )
-                    raise httpx.HTTPError("could not parse genre page")
-
-                case _:
-                    return httpx.Response(http.HTTPStatus.OK)
-
-        return httpx.Client(transport=httpx.MockTransport(_handler))
 
 
 class TestSearch:
