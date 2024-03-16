@@ -2,7 +2,7 @@ import contextlib
 import io
 from collections.abc import Iterator
 
-import lxml
+import lxml.etree
 
 
 class XPathParser:
