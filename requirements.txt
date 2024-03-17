@@ -9,7 +9,6 @@ asgiref==3.7.2
     #   django
     #   django-htmx
     #   django-permissions-policy
-attrs==23.2.0
 brotli==1.1.0
 certifi==2024.2.2
     # via
