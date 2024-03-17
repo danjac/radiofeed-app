@@ -5,14 +5,21 @@ from typing import Annotated, Any
 
 from django.core.validators import URLValidator
 from django.utils import timezone
-from pydantic import BaseModel, Field, TypeAdapter, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    Field,
+    TypeAdapter,
+    field_validator,
+    model_validator,
+)
 
 from radiofeed.feedparser import converters, validators
 from radiofeed.feedparser.date_parser import parse_date
 
 _url_validator = URLValidator(["http", "https"])
 
-Explicit = Annotated[bool, converters.explicit]
+Explicit = Annotated[bool, BeforeValidator(converters.explicit)]
 Complete = Annotated[bool, TypeAdapter(bool).validate_python("yes")]
 
 
