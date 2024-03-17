@@ -51,42 +51,42 @@ class RSSParser:
         try:
             return Feed.parse_obj(
                 {
-                    "complete": self._parser.string(
+                    "complete": self._parser.value(
                         channel,
                         "itunes:complete/text()",
                         default=False,
                     ),
-                    "cover_url": self._parser.string(
+                    "cover_url": self._parser.value(
                         channel,
                         "itunes:image/@href",
                         "image/url/text()",
                     ),
-                    "description": self._parser.string(
+                    "description": self._parser.value(
                         channel,
                         "description/text()",
                         "itunes:summary/text()",
                         default="",
                     ),
-                    "funding_text": self._parser.string(
+                    "funding_text": self._parser.value(
                         channel,
                         "podcast:funding/text()",
                         default="",
                     ),
-                    "funding_url": self._parser.string(channel, "podcast:funding/@url"),
-                    "explicit": self._parser.string(
+                    "funding_url": self._parser.value(channel, "podcast:funding/@url"),
+                    "explicit": self._parser.value(
                         channel,
                         "itunes:explicit/text()",
                         default=False,
                     ),
-                    "language": self._parser.string(
+                    "language": self._parser.value(
                         channel,
                         "language/text()",
                         default="en",
                     ),
-                    "website": self._parser.string(channel, "link/text()"),
-                    "title": self._parser.string(channel, "title/text()"),
+                    "website": self._parser.value(channel, "link/text()"),
+                    "title": self._parser.value(channel, "title/text()"),
                     "categories": list(
-                        self._parser.iterstrings(
+                        self._parser.itervalues(
                             channel,
                             ".//googleplay:category/@text",
                             ".//itunes:category/@text",
@@ -94,7 +94,7 @@ class RSSParser:
                             ".//media:category/text()",
                         )
                     ),
-                    "owner": self._parser.string(
+                    "owner": self._parser.value(
                         channel,
                         "itunes:author/text()",
                         "itunes:owner/itunes:name/text()",
@@ -117,56 +117,56 @@ class RSSParser:
         return Item.parse_obj(
             {
                 "categories": list(
-                    self._parser.iterstrings(
+                    self._parser.itervalues(
                         item,
                         "//itunes:category/@text",
                     )
                 ),
-                "description": self._parser.string(
+                "description": self._parser.value(
                     item,
                     "content:encoded/text()",
                     "description/text()",
                     "itunes:summary/text()",
                     default="",
                 ),
-                "cover_url": self._parser.string(item, "itunes:image/@href"),
-                "duration": self._parser.string(item, "itunes:duration/text()"),
-                "episode": self._parser.string(item, "itunes:episode/text()"),
-                "episode_type": self._parser.string(
+                "cover_url": self._parser.value(item, "itunes:image/@href"),
+                "duration": self._parser.value(item, "itunes:duration/text()"),
+                "episode": self._parser.value(item, "itunes:episode/text()"),
+                "episode_type": self._parser.value(
                     item,
                     "itunes:episodetype/text()",
                     default="full",
                 ),
-                "explicit": self._parser.string(
+                "explicit": self._parser.value(
                     item,
                     "itunes:explicit/text()",
                     default=False,
                 ),
-                "guid": self._parser.string(
+                "guid": self._parser.value(
                     item,
                     "guid/text()",
                     "atom:id/text()",
                     "link/text()",
                 ),
-                "length": self._parser.string(
+                "length": self._parser.value(
                     item, "enclosure/@length", "media:content/@fileSize"
                 ),
-                "website": self._parser.string(item, "link/text()"),
-                "media_type": self._parser.string(
+                "website": self._parser.value(item, "link/text()"),
+                "media_type": self._parser.value(
                     item,
                     "enclosure/@type",
                     "media:content/@type",
                 ),
-                "media_url": self._parser.string(
+                "media_url": self._parser.value(
                     item,
                     "enclosure/@url",
                     "media:content/@url",
                 ),
-                "pub_date": self._parser.string(
+                "pub_date": self._parser.value(
                     item, "pubDate/text()", "pubdate/text()"
                 ),
-                "season": self._parser.string(item, "itunes:season/text()"),
-                "title": self._parser.string(item, "title/text()"),
+                "season": self._parser.value(item, "itunes:season/text()"),
+                "title": self._parser.value(item, "title/text()"),
             }
         )
 

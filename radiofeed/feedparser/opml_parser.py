@@ -22,7 +22,7 @@ class OPMLParser:
         """Parse OPML content."""
         try:
             for element in self._parser.iterparse(content, "opml", "body"):
-                yield from self._parser.iterstrings(element, ".//outline/@xmlUrl")
+                yield from self._parser.itervalues(element, ".//outline/@xmlUrl")
         except lxml.etree.XMLSyntaxError:
             return
 
