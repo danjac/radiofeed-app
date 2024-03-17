@@ -118,18 +118,18 @@ class RSSParser:
                 "link/text()",
             ),  # type: ignore[arg-type]
             length=self._parser.string(
-                item, "enclosure//@length", "media:content//@fileSize"
+                item, "enclosure/@length", "media:content/@fileSize"
             ),
             website=self._parser.string(item, "link/text()"),
             media_type=self._parser.string(
                 item,
-                "enclosure//@type",
-                "media:content//@type",
+                "enclosure/@type",
+                "media:content/@type",
             ),  # type: ignore[arg-type]
             media_url=self._parser.string(
                 item,
-                "enclosure//@url",
-                "media:content//@url",
+                "enclosure/@url",
+                "media:content/@url",
             ),  # type: ignore[arg-type]
             pub_date=self._parser.string(item, "pubDate/text()", "pubdate/text()"),
             season=self._parser.string(item, "itunes:season/text()"),
