@@ -94,7 +94,8 @@ class Feed(BaseModel):
 
     pub_date: datetime | None = None
 
-    language: str = "en"
+    language: Annotated[str, AfterValidator(validators.language)] = "en"
+
     website: OptionalUrl = None
     cover_url: OptionalUrl = None
 
@@ -102,23 +103,20 @@ class Feed(BaseModel):
     funding_url: OptionalUrl = None
 
     explicit: Explicit = False
-    complete: bool = False
+
+    complete: Annotated[
+        bool,
+        BeforeValidator(
+            functools.partial(
+                validators.one_of,
+                values=("yes",),
+            )
+        ),
+    ] = False
 
     items: list[Item]
 
     categories: list[str] = Field(default_factory=list)
-
-    @field_validator("complete", mode="before")
-    @classmethod
-    def validate_complete(cls, value: Any) -> bool:
-        """Validates complete."""
-        return validators.complete(value)
-
-    @field_validator("language", mode="after")
-    @classmethod
-    def validate_language(cls, value: Any) -> str:
-        """Validates language."""
-        return validators.language(value)
 
     @model_validator(mode="after")
     def validate_pub_date(self) -> Feed:
