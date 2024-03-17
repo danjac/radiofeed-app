@@ -2,16 +2,9 @@ from __future__ import annotations
 
 import functools
 from datetime import datetime  # noqa: TCH003
-from typing import Annotated, Any
+from typing import Annotated
 
-from pydantic import (
-    AfterValidator,
-    BaseModel,
-    BeforeValidator,
-    Field,
-    field_validator,
-    model_validator,
-)
+from pydantic import AfterValidator, BaseModel, BeforeValidator, Field, model_validator
 
 from radiofeed.feedparser import validators
 
@@ -23,6 +16,8 @@ Explicit = Annotated[
         functools.partial(validators.one_of, values=("clean", "yes")),
     ),
 ]
+
+PgInteger = Annotated[str | None, AfterValidator(validators.pg_integer)]
 
 
 class Item(BaseModel):
@@ -52,31 +47,14 @@ class Item(BaseModel):
 
     explicit: Explicit = False
 
-    length: int | None = None
+    length: PgInteger = None
+
     duration: Annotated[str | None, AfterValidator(validators.duration)] = None
 
-    season: int | None = None
-    episode: int | None = None
+    season: PgInteger = None
+    episode: PgInteger = None
 
     episode_type: str = "full"
-
-    @field_validator("length", mode="after")
-    @classmethod
-    def validate_length(cls, value: Any) -> int | None:
-        """Validates length."""
-        return validators.pg_integer(value)
-
-    @field_validator("season", mode="after")
-    @classmethod
-    def validate_season(cls, value: Any) -> int | None:
-        """Validates season."""
-        return validators.pg_integer(value)
-
-    @field_validator("episode", mode="after")
-    @classmethod
-    def validate_episode(cls, value: Any) -> int | None:
-        """Validates episode."""
-        return validators.pg_integer(value)
 
     @model_validator(mode="after")
     def validate_keywords(self) -> Item:
