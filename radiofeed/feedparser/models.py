@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import contextlib
 import functools
-from datetime import datetime  # noqa: TCH003
+from datetime import datetime
 from typing import Annotated, Any, Final
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
-from pydantic import BaseModel, BeforeValidator, Field, field_validator, model_validator
+from pydantic import BaseModel, BeforeValidator, Field, model_validator
 
 from radiofeed.feedparser.date_parser import parse_date
 
@@ -152,6 +152,16 @@ def audio_mime_type(value: Any) -> str:
     raise ValueError(f"{value} is not an audio mime type")
 
 
+def pub_date(value: Any) -> datetime:
+    """Checks is valid datetime value and not in the future."""
+    value = parse_date(value)
+    if value is None:
+        raise ValueError("pub_date cannot be none")
+    if value > timezone.now():
+        raise ValueError("pub_date cannot be in future")
+    return value
+
+
 Explicit = Annotated[
     bool,
     BeforeValidator(
@@ -181,6 +191,8 @@ Language = Annotated[str, BeforeValidator(language)]
 
 PgInteger = Annotated[int | None, BeforeValidator(pg_integer)]
 
+PubDate = Annotated[datetime, BeforeValidator(pub_date)]
+
 Url = Annotated[str | None, BeforeValidator(url)]
 
 
@@ -195,7 +207,7 @@ class Item(BaseModel):
     description: str = ""
     keywords: str = ""
 
-    pub_date: datetime
+    pub_date: PubDate
 
     media_url: Url
     media_type: AudioMimeType
@@ -213,17 +225,6 @@ class Item(BaseModel):
     episode_type: str = "full"
 
     cover_url: Url | None = None
-
-    @field_validator("pub_date", mode="before")
-    @classmethod
-    def validate_pub_date(cls, value: Any) -> datetime:
-        """Validates pub date."""
-        value = parse_date(value)
-        if value is None:
-            raise ValueError("pub_date cannot be none")
-        if value > timezone.now():
-            raise ValueError("pub_date cannot be in future")
-        return value
 
     @model_validator(mode="after")
     def validate_keywords(self) -> Item:
