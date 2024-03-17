@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import pytest
 from django.utils import timezone
+from pydantic import ValidationError
 
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.feedparser.tests.factories import create_feed, create_item
@@ -9,15 +10,15 @@ from radiofeed.feedparser.tests.factories import create_feed, create_item
 
 class TestItem:
     def test_pub_date_none(self):
-        with pytest.raises(ValueError, match=r"cannot be None"):
+        with pytest.raises(ValidationError):
             Item(**create_item(pub_date=None))
 
     def test_pub_date_in_future(self):
-        with pytest.raises(ValueError, match=r"cannot be in future"):
+        with pytest.raises(ValidationError):
             Item(**create_item(pub_date=timezone.now() + timedelta(days=1)))
 
     def test_not_audio_mimetype(self):
-        with pytest.raises(ValueError, match=r"'media_type' must be in"):
+        with pytest.raises(ValidationError):
             Item(**create_item(media_type="video/mpeg"))
 
     def test_default_keywords_from_categories(self):
@@ -46,7 +47,7 @@ class TestFeed:
         assert feed.language == "fr"
 
     def test_no_items(self):
-        with pytest.raises(ValueError, match=r"max\(\) iterable argument is empty"):
+        with pytest.raises(ValidationError):
             Feed(**create_feed(), items=[])
 
     def test_not_complete(self, item):

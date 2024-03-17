@@ -1,135 +1,169 @@
-from datetime import datetime
-from typing import Any
+from __future__ import annotations
 
-import attrs
+from typing import TYPE_CHECKING, Annotated, Any
+
+from django.core.validators import URLValidator
 from django.utils import timezone
+from pydantic import BaseModel, Field, TypeAdapter, field_validator, model_validator
 
 from radiofeed.feedparser import converters, validators
 from radiofeed.feedparser.date_parser import parse_date
 
+_url_validator = URLValidator(["http", "https"])
 
-@attrs.define(kw_only=True, frozen=True)
-class Item:
+Explicit = Annotated[bool, converters.explicit]
+Complete = Annotated[bool, TypeAdapter(bool).validate_python("yes")]
+
+if TYPE_CHECKING:  # pragma: no cover
+    from datetime import datetime
+
+
+def validate_url(value: Any) -> str:
+    """Checks if value is a valid URL.
+
+    Raises:
+        ValueError: invalid URL
+    """
+    if value:
+        _url_validator(value)
+    return value
+
+
+class Item(BaseModel):
     """Individual item or episode in RSS or Atom podcast feed."""
 
-    guid: str = attrs.field(validator=validators.required)
-    title: str = attrs.field(validator=validators.required)
+    guid: str = Field(..., min_length=1)
+    title: str = Field(..., min_length=1)
 
-    website: str | None = attrs.field(converter=converters.url, default=None)
+    categories: list[str] = Field(default_factory=list)
 
-    pub_date: datetime = attrs.field(converter=parse_date)  # type: ignore[misc]
+    description: str = ""
+    keywords: str = ""
 
-    media_url: str = attrs.field(validator=validators.url)
-    media_type: str = attrs.field(validator=validators.audio)
+    pub_date: datetime
 
-    explicit: bool = attrs.field(converter=converters.explicit, default=False)
+    media_url: str
+    media_type: str
 
-    length: int | None = attrs.field(
-        converter=attrs.converters.optional(  # type: ignore[misc]
-            attrs.converters.pipe(float, int),  # type: ignore[misc]
-        ),
-        default=None,
-    )
+    website: str | None = None
 
-    season: int | None = attrs.field(
-        converter=attrs.converters.optional(  # type: ignore[misc]
-            attrs.converters.pipe(float, int),  # type: ignore[misc]
-        ),
-        validator=attrs.validators.optional(validators.pg_integer),
-        default=None,
-    )
+    explicit: Explicit = False
 
-    episode: int | None = attrs.field(
-        converter=attrs.converters.optional(  # type: ignore[misc]
-            attrs.converters.pipe(float, int),  # type: ignore[misc]
-        ),
-        validator=attrs.validators.optional(validators.pg_integer),
-        default=None,
-    )
+    length: int | None = None
+    duration: str | None = None
 
-    cover_url: str | None = attrs.field(converter=converters.url, default=None)
+    season: int | None = None
+    episode: int | None = None
+    episode_type: str = "full"
 
-    duration: str = attrs.field(converter=converters.duration, default=None)
+    cover_url: str | None = None
 
-    episode_type: str = attrs.field(
-        converter=attrs.converters.default_if_none(default="full"),  # type: ignore[misc]
-        default=None,
-    )
-
-    description: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
-        default=None,
-    )
-
-    categories: list[str] = attrs.field(default=attrs.Factory(list))
-
-    keywords: str = attrs.field()
-
-    @pub_date.validator
-    def _check_pub_date(self, attr: attrs.Attribute, value: Any) -> None:
+    @field_validator("pub_date", mode="before")
+    @classmethod
+    def validate_pub_date(cls, value: Any) -> datetime:
+        """Validates pub date."""
+        value = parse_date(value)
         if value is None:
-            raise ValueError(f"{attr=} cannot be None")
+            raise ValueError("pub_date cannot be none")
         if value > timezone.now():
-            raise ValueError(f"{attr=} cannot be in future")
+            raise ValueError("pub_date cannot be in the future")
+        return value
 
-    @keywords.default
-    def _default_keywords(self) -> str:
-        return " ".join(filter(None, self.categories))
+    @field_validator("length", mode="before")
+    @classmethod
+    def validate_length(cls, value: Any) -> int | None:
+        """Validates length."""
+        try:
+            return int(value) if value else None
+        except ValueError:
+            return None
+
+    @field_validator("media_type", mode="before")
+    @classmethod
+    def validate_media_type(cls, value: Any) -> str:
+        """Validates media type."""
+        assert value in validators._AUDIO_MIMETYPES
+        return value
+
+    @field_validator("media_url", mode="before")
+    @classmethod
+    def validate_media_url(cls, value: Any) -> str:
+        """Validates media url."""
+        if not (value := converters.url(value)):
+            raise ValueError("media_url required")
+        return validate_url(value)
+
+    @field_validator("cover_url", mode="before")
+    @classmethod
+    def validate_cover_url(cls, value: Any) -> str:
+        """Validates media url."""
+        return validate_url(converters.url(value))
+
+    @field_validator("website", mode="before")
+    @classmethod
+    def validate_website(cls, value: Any) -> str | None:
+        """Validate website."""
+        if website := converters.url(value):
+            return website
+        return None
+
+    @field_validator("duration", mode="before")
+    @classmethod
+    def validate_duration(cls, value: Any) -> str:
+        """Validate duration"""
+        return converters.duration(value)
+
+    @model_validator(mode="after")
+    def validate_keywords(self) -> Item:
+        """Set default keywords."""
+        self.keywords = " ".join(filter(None, self.categories))
+        return self
 
 
-@attrs.define(kw_only=True, frozen=True)
-class Feed:
-    """RSS or Atom podcast feed."""
+class Feed(BaseModel):
+    """RSS/Atom Feed model."""
 
-    title: str = attrs.field(validator=validators.required)
+    title: str = Field(..., min_length=1)
+    owner: str = ""
+    description: str = ""
 
-    owner: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
-        default=None,
-    )
-    description: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
-        default=None,
-    )
+    items: list[Item]
+    pub_date: datetime | None = None
 
-    language: str = attrs.field(
-        converter=attrs.converters.pipe(  # type: ignore[misc]
-            attrs.converters.default_if_none(default="en"),  # type: ignore[misc]
-            converters.language,
-        ),
-        default=None,
-    )
+    language: str = "en"
+    website: str | None = None
+    cover_url: str | None = None
 
-    website: str | None = attrs.field(converter=converters.url, default=None)
+    funding_text: str = ""
+    funding_url: str | None = None
 
-    cover_url: str | None = attrs.field(converter=converters.url, default=None)
+    explicit: Explicit = False
+    complete: Complete = False
 
-    complete: bool = attrs.field(
-        converter=attrs.converters.pipe(  # type: ignore[misc]
-            attrs.converters.default_if_none(default=False),  # type: ignore[misc]
-            attrs.converters.to_bool,  # type: ignore[misc]
-        ),
-        default=False,
-    )
+    categories: list[str] = Field(default_factory=list)
 
-    explicit: bool = attrs.field(converter=converters.explicit, default=False)
+    @field_validator("cover_url", mode="before")
+    @classmethod
+    def validate_cover_url(cls, value: Any) -> str:
+        """Validates media url."""
+        return validate_url(converters.url(value))
 
-    funding_text: str = attrs.field(
-        converter=attrs.converters.default_if_none(default=""),  # type: ignore[misc]
-        default=None,
-    )
+    @field_validator("language", mode="before")
+    @classmethod
+    def validate_language(cls, value: Any) -> str:
+        """Validates media url."""
+        return converters.language(value) if value else "en"
 
-    funding_url: str | None = attrs.field(converter=converters.url, default=None)
+    @field_validator("website", mode="before")
+    @classmethod
+    def validate_website(cls, value: Any) -> str | None:
+        """Validate website."""
+        if website := converters.url(value):
+            return website
+        return None
 
-    categories: list[str] = attrs.field(default=attrs.Factory(list))
-
-    items: list[Item] = attrs.field(
-        default=attrs.Factory(list),
-        validator=validators.required,
-    )
-
-    pub_date: datetime = attrs.field()
-
-    @pub_date.default
-    def _default_pub_date(self) -> datetime:
-        return max(item.pub_date for item in self.items)
+    @model_validator(mode="after")
+    def validate_pub_date(self) -> Feed:
+        """Set default pub date based on number of items."""
+        self.pub_date = max(item.pub_date for item in self.items)
+        return self

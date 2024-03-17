@@ -3,7 +3,6 @@ import hashlib
 import itertools
 from collections.abc import Iterator
 
-import attrs
 import httpx
 from django.db import transaction
 from django.db.models import Q
@@ -47,9 +46,6 @@ class FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _max_retries: int = 3
-
-    _feed_attrs = attrs.fields(Feed)
-    _item_attrs = attrs.fields(Item)
 
     _accept_header: str = (
         "application/atom+xml,"
@@ -127,13 +123,12 @@ class FeedParser:
                     modified=parse_date(response.headers.get("Last-Modified")),
                     extracted_text=self._extract_text(feed),
                     frequency=scheduler.schedule(feed),
-                    **attrs.asdict(
-                        feed,
-                        filter=attrs.filters.exclude(
-                            self._feed_attrs.categories,
-                            self._feed_attrs.complete,
-                            self._feed_attrs.items,
-                        ),
+                    **feed.model_dump(
+                        exclude={
+                            "categories",
+                            "complete",
+                            "items",
+                        }
                     ),
                 )
 
@@ -306,8 +301,5 @@ class FeedParser:
         return Episode(
             pk=episode_id,
             podcast=self._podcast,
-            **attrs.asdict(
-                item,
-                filter=attrs.filters.exclude(self._item_attrs.categories),
-            ),
+            **item.model_dump(exclude={"categories"}),
         )

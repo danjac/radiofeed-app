@@ -43,12 +43,12 @@ class XPathParser:
                 if isinstance(value, str) and (cleaned := value.strip()):
                     yield cleaned
 
-    def string(self, element: lxml.etree.Element, *paths) -> str | None:
-        """Returns first non-empty string value or None if not found."""
+    def string(self, element: lxml.etree.Element, *paths, default=None) -> str | None:
+        """Returns first non-empty string value or `default` if not found."""
         try:
             return next(self.iterstrings(element, *paths))
         except StopIteration:
-            return None
+            return default
 
     @functools.lru_cache(maxsize=60)  # noqa: B019
     def _xpath(self, path: str) -> lxml.etree.XPath:
