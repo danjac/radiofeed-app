@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import contextlib
 from datetime import datetime  # noqa: TCH003
 from typing import Annotated, Any, Final
 
+from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 from pydantic import (
@@ -14,7 +16,6 @@ from pydantic import (
     model_validator,
 )
 
-from radiofeed.feedparser import converters
 from radiofeed.feedparser.date_parser import parse_date
 
 _PG_INTEGER_RANGE: Final = range(
@@ -71,7 +72,7 @@ _AUDIO_MIMETYPES: Final = frozenset(
 _url_validator = URLValidator(["http", "https"])
 
 
-def validate_int(value: Any) -> int | None:
+def pg_integer(value: Any) -> int | None:
     """Check is an integer, and ensure within Postgres integer range values."""
     try:
         value = int(value) if value else None
@@ -81,22 +82,76 @@ def validate_int(value: Any) -> int | None:
         return None
 
 
-Explicit = Annotated[bool, BeforeValidator(converters.explicit)]
-Language = Annotated[str | None, BeforeValidator(converters.language)]
-PgInteger = Annotated[int | None, BeforeValidator(validate_int)]
-Url = Annotated[str, BeforeValidator(converters.url)]
-Complete = Annotated[bool, TypeAdapter(bool).validate_python("yes")]
+def language(value: str) -> str:
+    """Returns two-character language code."""
+    return value[:2].casefold()
 
 
-def validate_url(value: Any) -> str:
-    """Checks if value is a valid URL.
+def explicit(value: str | None) -> bool:
+    """Checks if podcast or episode explicit."""
+    return bool(value and value.casefold() in ("clean", "yes"))
 
-    Raises:
-        ValueError: invalid URL
+
+def url(value: str | None) -> str | None:
+    """Returns a URL value. Will try to prefix with https:// if only domain provided.
+
+    If cannot resolve as a valid URL will return None.
+
+    Args:
+        value (str | None)
+
+    Returns:
+        str | None
     """
     if value:
-        _url_validator(value)
-    return value
+        if not value.startswith("http"):
+            value = f"http://{value}"
+
+        with contextlib.suppress(ValidationError):
+            _url_validator(value)
+            return value
+    return None
+
+
+def duration(value: str | None) -> str:
+    """Given a duration value will ensure all values fall within range.
+
+    Examples:
+        - 3600 (plain int) -> "3600"
+        - 3:60:50:1000 -> "3:60:50"
+
+    Return empty string if cannot resolve.
+
+    Args:
+        value (str | None)
+
+    Returns:
+        str
+    """
+    if not value:
+        return ""
+
+    try:
+        # plain seconds value
+        return str(int(value))
+    except ValueError:
+        pass
+
+    try:
+        return ":".join(
+            [str(v) for v in [int(v) for v in value.split(":")[:3]] if v in range(60)]
+        )
+
+    except ValueError:
+        return ""
+
+
+Explicit = Annotated[bool, BeforeValidator(explicit)]
+Language = Annotated[str, BeforeValidator(language)]
+PgInteger = Annotated[int | None, BeforeValidator(pg_integer)]
+Duration = Annotated[str | None, BeforeValidator(duration)]
+Url = Annotated[str, BeforeValidator(url)]
+Complete = Annotated[bool, TypeAdapter(bool).validate_python("yes")]
 
 
 class Item(BaseModel):
@@ -120,7 +175,7 @@ class Item(BaseModel):
     explicit: Explicit = False
 
     length: PgInteger | None = None
-    duration: str | None = None
+    duration: Duration = None
 
     season: PgInteger | None = None
     episode: PgInteger | None = None
@@ -146,12 +201,6 @@ class Item(BaseModel):
         """Validates media type."""
         assert value in _AUDIO_MIMETYPES
         return value
-
-    @field_validator("duration", mode="before")
-    @classmethod
-    def validate_duration(cls, value: Any) -> str:
-        """Validate duration"""
-        return converters.duration(value)
 
     @model_validator(mode="after")
     def validate_keywords(self) -> Item:
@@ -181,20 +230,6 @@ class Feed(BaseModel):
     complete: Complete = False
 
     categories: list[str] = Field(default_factory=list)
-
-    @field_validator("cover_url", mode="before")
-    @classmethod
-    def validate_cover_url(cls, value: Any) -> str:
-        """Validates media url."""
-        return validate_url(converters.url(value))
-
-    @field_validator("website", mode="before")
-    @classmethod
-    def validate_website(cls, value: Any) -> str | None:
-        """Validate website."""
-        if website := converters.url(value):
-            return website
-        return None
 
     @model_validator(mode="after")
     def validate_pub_date(self) -> Feed:
