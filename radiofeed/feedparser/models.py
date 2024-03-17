@@ -13,7 +13,7 @@ OptionalUrl = Annotated[str | None, AfterValidator(validators.url)]
 Explicit = Annotated[
     bool,
     BeforeValidator(
-        functools.partial(validators.one_of, values=("clean", "yes")),
+        functools.partial(validators.one_of, values=("clean", "yes", "true")),
     ),
 ]
 
@@ -87,7 +87,7 @@ class Feed(BaseModel):
         BeforeValidator(
             functools.partial(
                 validators.one_of,
-                values=("yes",),
+                values=("yes", "true"),
             )
         ),
     ] = False
