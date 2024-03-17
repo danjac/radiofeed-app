@@ -82,8 +82,8 @@ def validate_int(value: Any) -> int | None:
 
 
 Explicit = Annotated[bool, BeforeValidator(converters.explicit)]
-Language = Annotated[str, BeforeValidator(converters.language)]
-PgInteger = Annotated[int, BeforeValidator(validate_int)]
+Language = Annotated[str | None, BeforeValidator(converters.language)]
+PgInteger = Annotated[int | None, BeforeValidator(validate_int)]
 Url = Annotated[str, BeforeValidator(converters.url)]
 Complete = Annotated[bool, TypeAdapter(bool).validate_python("yes")]
 
@@ -170,9 +170,9 @@ class Feed(BaseModel):
     items: list[Item]
     pub_date: datetime | None = None
 
-    language: str = "en"
-    website: str | None = None
-    cover_url: str | None = None
+    language: Language = "en"
+    website: Url | None = None
+    cover_url: Url | None = None
 
     funding_text: str = ""
     funding_url: str | None = None
@@ -187,12 +187,6 @@ class Feed(BaseModel):
     def validate_cover_url(cls, value: Any) -> str:
         """Validates media url."""
         return validate_url(converters.url(value))
-
-    @field_validator("language", mode="before")
-    @classmethod
-    def validate_language(cls, value: Any) -> str:
-        """Validates media url."""
-        return converters.language(value) if value else "en"
 
     @field_validator("website", mode="before")
     @classmethod
