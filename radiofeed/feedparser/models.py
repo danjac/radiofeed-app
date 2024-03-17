@@ -99,18 +99,30 @@ class Feed(BaseModel):
 
     language: Language = "en"
     website: Url | None = None
-    cover_url: Url | None = None
+    cover_url: str | None = None
 
     funding_text: str = ""
-    funding_url: Url | None = None
+    funding_url: str | None = None
 
     explicit: Explicit = False
     complete: Complete = False
 
     categories: list[str] = Field(default_factory=list)
 
+    @field_validator("cover_url", mode="after")
+    @classmethod
+    def validate_cover_url(cls, value: Any) -> str | None:
+        """Validates cover url."""
+        return validators.url(value)
+
+    @field_validator("funding_url", mode="after")
+    @classmethod
+    def validate_funding_url(cls, value: Any) -> str | None:
+        """Validates funding url."""
+        return validators.url(value)
+
     @model_validator(mode="after")
     def validate_pub_date(self) -> Feed:
-        """Set default pub date based on number of items."""
+        """Set default pub date based on max items pub date."""
         self.pub_date = max(item.pub_date for item in self.items)
         return self
