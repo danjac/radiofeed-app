@@ -53,18 +53,12 @@ class Item(BaseModel):
     explicit: Explicit = False
 
     length: int | None = None
-    duration: str | None = None
+    duration: Annotated[str | None, AfterValidator(validators.duration)] = None
 
     season: int | None = None
     episode: int | None = None
 
     episode_type: str = "full"
-
-    @field_validator("duration", mode="after")
-    @classmethod
-    def validate_duration(cls, value: Any) -> str | None:
-        """Validates duration."""
-        return validators.duration(value)
 
     @field_validator("length", mode="after")
     @classmethod
