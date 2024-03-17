@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Any
+from datetime import datetime  # noqa: TCH003
+from typing import Annotated, Any
 
 from django.core.validators import URLValidator
 from django.utils import timezone
@@ -13,9 +14,6 @@ _url_validator = URLValidator(["http", "https"])
 
 Explicit = Annotated[bool, converters.explicit]
 Complete = Annotated[bool, TypeAdapter(bool).validate_python("yes")]
-
-if TYPE_CHECKING:  # pragma: no cover
-    from datetime import datetime
 
 
 def validate_url(value: Any) -> str:
