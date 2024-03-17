@@ -76,7 +76,7 @@ class TestParseRss:
             pytest.param(
                 "rss_bad_pub_date.xml",
                 "Old Time Radio Mystery Theater",
-                69,
+                70,
                 id="invalid pub date",
             ),
             pytest.param(

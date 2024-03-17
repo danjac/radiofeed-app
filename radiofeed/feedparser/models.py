@@ -145,6 +145,13 @@ def accepted_value(value: Any, *, accepted: tuple[str]) -> bool:
     return bool(value and value.casefold() in accepted)
 
 
+def audio_mime_type(value: Any) -> str:
+    """Checks if an audio mime type"""
+    if value in _AUDIO_MIMETYPES:
+        return value
+    raise ValueError(f"{value} is not an audio mime type")
+
+
 Explicit = Annotated[
     bool,
     BeforeValidator(
@@ -166,11 +173,13 @@ Complete = Annotated[
 ]
 
 
+AudioMimeType = Annotated[str, BeforeValidator(audio_mime_type)]
+
+Duration = Annotated[str | None, BeforeValidator(duration)]
+
 Language = Annotated[str, BeforeValidator(language)]
 
 PgInteger = Annotated[int | None, BeforeValidator(pg_integer)]
-
-Duration = Annotated[str | None, BeforeValidator(duration)]
 
 Url = Annotated[str | None, BeforeValidator(url)]
 
@@ -189,7 +198,7 @@ class Item(BaseModel):
     pub_date: datetime
 
     media_url: Url
-    media_type: str
+    media_type: AudioMimeType
 
     website: Url | None = None
 
@@ -213,14 +222,7 @@ class Item(BaseModel):
         if value is None:
             raise ValueError("pub_date cannot be none")
         if value > timezone.now():
-            raise ValueError("pub_date cannot be in the future")
-        return value
-
-    @field_validator("media_type", mode="before")
-    @classmethod
-    def validate_media_type(cls, value: Any) -> str:
-        """Validates media type."""
-        assert value in _AUDIO_MIMETYPES
+            raise ValueError("pub_date cannot be in future")
         return value
 
     @model_validator(mode="after")
