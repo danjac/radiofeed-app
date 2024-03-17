@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from datetime import datetime  # noqa: TCH003
-from typing import Any
+from typing import Annotated, Any
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import AfterValidator, BaseModel, Field, field_validator, model_validator
 
 from radiofeed.feedparser import validators
+
+RequiredUrl = Annotated[str, AfterValidator(validators.required_url)]
+OptionalUrl = Annotated[str | None, AfterValidator(validators.url)]
 
 
 class Item(BaseModel):
@@ -21,11 +24,11 @@ class Item(BaseModel):
 
     pub_date: datetime
 
-    media_url: str
+    media_url: RequiredUrl
     media_type: str
 
-    cover_url: str | None = None
-    website: str | None = None
+    cover_url: OptionalUrl = None
+    website: OptionalUrl = None
 
     explicit: bool = False
 
@@ -36,12 +39,6 @@ class Item(BaseModel):
     episode: int | None = None
 
     episode_type: str = "full"
-
-    @field_validator("media_url", mode="before")
-    @classmethod
-    def validate_media_url(cls, value: Any) -> str:
-        """Validates media url."""
-        return validators.required_url(value)
 
     @field_validator("media_type", mode="after")
     @classmethod
@@ -54,18 +51,6 @@ class Item(BaseModel):
     def validate_pub_date(cls, value: Any) -> datetime:
         """Validates pub date."""
         return validators.pub_date(value)
-
-    @field_validator("cover_url", mode="after")
-    @classmethod
-    def validate_cover_url(cls, value: Any) -> str | None:
-        """Validates cover url."""
-        return validators.url(value)
-
-    @field_validator("website", mode="after")
-    @classmethod
-    def validate_website(cls, value: Any) -> str | None:
-        """Validates website."""
-        return validators.url(value)
 
     @field_validator("explicit", mode="before")
     @classmethod
@@ -114,11 +99,11 @@ class Feed(BaseModel):
     pub_date: datetime | None = None
 
     language: str = "en"
-    website: str | None = None
-    cover_url: str | None = None
+    website: OptionalUrl = None
+    cover_url: OptionalUrl = None
 
     funding_text: str = ""
-    funding_url: str | None = None
+    funding_url: OptionalUrl = None
 
     explicit: bool = False
     complete: bool = False
@@ -144,24 +129,6 @@ class Feed(BaseModel):
     def validate_language(cls, value: Any) -> str:
         """Validates language."""
         return validators.language(value)
-
-    @field_validator("cover_url", mode="after")
-    @classmethod
-    def validate_cover_url(cls, value: Any) -> str | None:
-        """Validates cover url."""
-        return validators.url(value)
-
-    @field_validator("website", mode="after")
-    @classmethod
-    def validate_website(cls, value: Any) -> str | None:
-        """Validates website."""
-        return validators.url(value)
-
-    @field_validator("funding_url", mode="after")
-    @classmethod
-    def validate_funding_url(cls, value: Any) -> str | None:
-        """Validates funding url."""
-        return validators.url(value)
 
     @model_validator(mode="after")
     def validate_pub_date(self) -> Feed:
