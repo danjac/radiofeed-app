@@ -1,4 +1,5 @@
 import contextlib
+import functools
 import io
 from collections.abc import Iterator
 
@@ -9,7 +10,6 @@ class XPathParser:
     """Parses XML document using XPath."""
 
     def __init__(self, namespaces: dict[str, str] | None = None) -> None:
-        self._xpaths: dict[str, lxml.etree.XPath] = {}
         self._namespaces = namespaces
 
     def iterparse(
@@ -50,10 +50,6 @@ class XPathParser:
         except StopIteration:
             return None
 
+    @functools.lru_cache(maxsize=60)  # noqa: B019
     def _xpath(self, path: str) -> lxml.etree.XPath:
-        if path in self._xpaths:
-            return self._xpaths[path]
-
-        xpath = lxml.etree.XPath(path, namespaces=self._namespaces)
-        self._xpaths[path] = xpath
-        return xpath
+        return lxml.etree.XPath(path, namespaces=self._namespaces)
