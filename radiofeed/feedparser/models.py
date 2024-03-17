@@ -53,14 +53,15 @@ class Item(BaseModel):
     description: str = ""
     keywords: str = ""
 
-    pub_date: PubDate
+    pub_date: datetime
 
     media_url: str
     media_type: AudioMimeType
 
-    website: Url | None = None
+    cover_url: str | None = None
+    website: str | None = None
 
-    explicit: Explicit = False
+    explicit: bool = False
 
     length: PgInteger | None = None
     duration: Duration = None
@@ -70,15 +71,35 @@ class Item(BaseModel):
 
     episode_type: str = "full"
 
-    cover_url: Url | None = None
-
     @field_validator("media_url", mode="before")
     @classmethod
     def validate_media_url(cls, value: Any) -> str:
         """Validates media url."""
-        if (url := validators.url(value)) is None:
-            raise ValueError("media_url cannot be None")
-        return url
+        return validators.required_url(value)
+
+    @field_validator("pub_date", mode="before")
+    @classmethod
+    def validate_pub_date(cls, value: Any) -> datetime:
+        """Validates pub date."""
+        return validators.pub_date(value)
+
+    @field_validator("cover_url", mode="after")
+    @classmethod
+    def validate_cover_url(cls, value: Any) -> str | None:
+        """Validates cover url."""
+        return validators.url(value)
+
+    @field_validator("website", mode="after")
+    @classmethod
+    def validate_website(cls, value: Any) -> str | None:
+        """Validates website."""
+        return validators.url(value)
+
+    @field_validator("explicit", mode="before")
+    @classmethod
+    def validate_explicit(cls, value: Any) -> bool:
+        """Validates explicit."""
+        return validators.explicit(value)
 
     @model_validator(mode="after")
     def validate_keywords(self) -> Item:

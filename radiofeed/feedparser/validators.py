@@ -99,6 +99,13 @@ def url(value: str | None) -> str | None:
     return None
 
 
+def required_url(value: str | None) -> str:
+    """Parses required url."""
+    if (value := url(value)) is None:
+        raise ValueError("URL cannot be none")
+    return value
+
+
 def duration(value: str | None) -> str:
     """Given a duration value will ensure all values fall within range.
 

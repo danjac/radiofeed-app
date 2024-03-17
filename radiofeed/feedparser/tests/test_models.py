@@ -17,6 +17,10 @@ class TestItem:
         with pytest.raises(ValidationError):
             Item(**create_item(pub_date=timezone.now() + timedelta(days=1)))
 
+    def test_pub_date_not_valid(self):
+        with pytest.raises(ValidationError):
+            Item(**create_item(pub_date="a string"))
+
     def test_not_audio_mimetype(self):
         with pytest.raises(ValidationError):
             Item(**create_item(media_type="video/mpeg"))
