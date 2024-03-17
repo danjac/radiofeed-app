@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import functools
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 
-from pydantic import BaseModel, BeforeValidator, Field, model_validator
+from pydantic import BaseModel, BeforeValidator, Field, field_validator, model_validator
 
 from radiofeed.feedparser import validators
 
@@ -55,7 +55,7 @@ class Item(BaseModel):
 
     pub_date: PubDate
 
-    media_url: Url
+    media_url: str
     media_type: AudioMimeType
 
     website: Url | None = None
@@ -71,6 +71,14 @@ class Item(BaseModel):
     episode_type: str = "full"
 
     cover_url: Url | None = None
+
+    @field_validator("media_url", mode="before")
+    @classmethod
+    def validate_media_url(cls, value: Any) -> str:
+        """Validates media url."""
+        if (url := validators.url(value)) is None:
+            raise ValueError("media_url cannot be None")
+        return url
 
     @model_validator(mode="after")
     def validate_keywords(self) -> Item:
