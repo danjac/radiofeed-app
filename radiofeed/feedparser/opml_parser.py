@@ -12,7 +12,7 @@ def parse_opml(content: bytes) -> Iterator[str]:
     return _opml_parser().parse(content)
 
 
-class OPMLParser:
+class _OPMLParser:
     """Parse OPML document."""
 
     def __init__(self) -> None:
@@ -28,5 +28,5 @@ class OPMLParser:
 
 
 @functools.cache
-def _opml_parser() -> OPMLParser:
-    return OPMLParser()
+def _opml_parser() -> _OPMLParser:
+    return _OPMLParser()

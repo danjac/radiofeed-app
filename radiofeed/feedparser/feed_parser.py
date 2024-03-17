@@ -42,7 +42,12 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-class FeedParser:
+def parse_feed(podcast: Podcast, client: httpx.Client) -> None:
+    """Updates a Podcast instance with its RSS or Atom feed source."""
+    _FeedParser(podcast).parse(client)
+
+
+class _FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _max_retries: int = 3

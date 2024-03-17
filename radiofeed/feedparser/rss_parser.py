@@ -23,7 +23,7 @@ def parse_rss(content: bytes) -> Feed:
     return _rss_parser().parse(content)
 
 
-class RSSParser:
+class _RSSParser:
     """Parses RSS or Atom document."""
 
     _NAMESPACES: Final = {
@@ -172,5 +172,5 @@ class RSSParser:
 
 
 @functools.cache
-def _rss_parser() -> RSSParser:
-    return RSSParser()
+def _rss_parser() -> _RSSParser:
+    return _RSSParser()

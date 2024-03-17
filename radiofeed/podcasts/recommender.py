@@ -24,10 +24,10 @@ def recommend(language: str) -> None:
     Only podcasts matching certain languages and updated within the past 90 days are
     included.
     """
-    Recommender(language).recommend()
+    _Recommender(language).recommend()
 
 
-class Recommender:
+class _Recommender:
     """Creates recommendations for given language, based around text content and common
     categories."""
 

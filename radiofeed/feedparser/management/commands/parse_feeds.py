@@ -64,7 +64,7 @@ class Command(BaseCommand):
 
     def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
         try:
-            feed_parser.FeedParser(podcast).parse(client)
+            feed_parser.parse_feed(podcast, client)
             self.stdout.write(self.style.SUCCESS(f"parse feed ok: {podcast}"))
         except FeedParserError as exc:
             self.stderr.write(

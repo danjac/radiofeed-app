@@ -34,13 +34,13 @@ class TestParseFeeds:
     @pytest.fixture()
     def mock_parse_ok(self, mocker):
         return mocker.patch(
-            "radiofeed.feedparser.feed_parser.FeedParser.parse",
+            "radiofeed.feedparser.feed_parser.parse_feed",
         )
 
     @pytest.fixture()
     def mock_parse_fail(self, mocker):
         return mocker.patch(
-            "radiofeed.feedparser.feed_parser.FeedParser.parse",
+            "radiofeed.feedparser.feed_parser.parse_feed",
             side_effect=DuplicateError(),
         )
 

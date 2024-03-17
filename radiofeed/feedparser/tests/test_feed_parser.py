@@ -18,9 +18,10 @@ from radiofeed.feedparser.exceptions import (
     UnavailableError,
 )
 from radiofeed.feedparser.feed_parser import (
-    FeedParser,
+    _FeedParser,
     get_categories,
     make_content_hash,
+    parse_feed,
 )
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import create_category, create_podcast
@@ -72,23 +73,22 @@ class TestFeedParser:
 
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
-        headers = FeedParser(podcast)._get_headers()
+        headers = _FeedParser(podcast)._get_headers()
         assert headers["If-None-Match"] == f'"{podcast.etag}"'
 
     def test_is_modified(self):
         podcast = Podcast(modified=timezone.now())
-        headers = FeedParser(podcast)._get_headers()
+        headers = _FeedParser(podcast)._get_headers()
         assert headers["If-Modified-Since"]
 
     @pytest.mark.django_db()
     def test_parse_unhandled_exception(self, podcast, mocker):
-        mocker.patch(
-            "radiofeed.feedparser.feed_parser.FeedParser.parse",
-            side_effect=ValueError("oops"),
-        )
+        def _handle(request):
+            raise ValueError("oops")
 
+        client = httpx.Client(transport=httpx.MockTransport(_handle))
         with pytest.raises(ValueError, match="oops"):
-            FeedParser(podcast).parse()
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
         assert podcast.active
@@ -122,7 +122,7 @@ class TestFeedParser:
             },
         )
 
-        FeedParser(podcast).parse(client)
+        parse_feed(podcast, client)
 
         # new episodes: 19
         assert podcast.episodes.count() == 20
@@ -188,7 +188,7 @@ class TestFeedParser:
             },
         )
 
-        FeedParser(podcast).parse(client)
+        parse_feed(podcast, client)
 
         assert podcast.episodes.count() == 373
 
@@ -215,7 +215,7 @@ class TestFeedParser:
             },
         )
 
-        FeedParser(podcast).parse(client)
+        parse_feed(podcast, client)
 
         assert Episode.objects.count() == 4940
 
@@ -249,7 +249,7 @@ class TestFeedParser:
             },
         )
 
-        FeedParser(podcast).parse(client)
+        parse_feed(podcast, client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -307,7 +307,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(NotModifiedError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -337,7 +337,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(DuplicateError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -366,7 +366,7 @@ class TestFeedParser:
             },
         )
 
-        FeedParser(podcast).parse(client)
+        parse_feed(podcast, client)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -418,7 +418,7 @@ class TestFeedParser:
             },
         )
 
-        FeedParser(podcast).parse(client)
+        parse_feed(podcast, client)
 
         assert Episode.objects.filter(podcast=podcast).count() == 20
 
@@ -447,7 +447,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(DuplicateError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -463,7 +463,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(InvalidDataError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -481,7 +481,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(InvalidRSSError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -501,7 +501,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(InvalidRSSError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -519,7 +519,7 @@ class TestFeedParser:
         )
 
         with pytest.raises(InvalidRSSError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -538,7 +538,7 @@ class TestFeedParser:
         podcast.num_retries = 1
 
         with pytest.raises(NotModifiedError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -555,7 +555,7 @@ class TestFeedParser:
             status_code=http.HTTPStatus.GONE,
         )
         with pytest.raises(InaccessibleError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -570,7 +570,7 @@ class TestFeedParser:
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
         with pytest.raises(UnavailableError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -585,7 +585,7 @@ class TestFeedParser:
         client = _mock_error_client(httpx.HTTPError("fail"))
 
         with pytest.raises(UnavailableError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -602,7 +602,7 @@ class TestFeedParser:
         client = _mock_error_client(httpx.HTTPError("fail"))
 
         with pytest.raises(UnavailableError):
-            FeedParser(podcast).parse(client)
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
