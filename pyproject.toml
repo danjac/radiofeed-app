@@ -37,6 +37,7 @@ dependencies =[
     "pillow",
     "psutil",
     "psycopg[binary]",
+    "pydantic",
     "python-dateutil",
     "python-decouple",
     "redis",
