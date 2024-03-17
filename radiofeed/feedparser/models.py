@@ -1,14 +1,28 @@
 from __future__ import annotations
 
+import functools
 from datetime import datetime  # noqa: TCH003
 from typing import Annotated, Any
 
-from pydantic import AfterValidator, BaseModel, Field, field_validator, model_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    BeforeValidator,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 from radiofeed.feedparser import validators
 
-RequiredUrl = Annotated[str, AfterValidator(validators.required_url)]
 OptionalUrl = Annotated[str | None, AfterValidator(validators.url)]
+
+Explicit = Annotated[
+    bool,
+    BeforeValidator(
+        functools.partial(validators.one_of, values=("clean", "yes")),
+    ),
+]
 
 
 class Item(BaseModel):
@@ -24,13 +38,14 @@ class Item(BaseModel):
 
     pub_date: datetime
 
-    media_url: RequiredUrl
+    media_url: Annotated[str, AfterValidator(validators.required_url)]
+
     media_type: str
 
     cover_url: OptionalUrl = None
     website: OptionalUrl = None
 
-    explicit: bool = False
+    explicit: Explicit = False
 
     length: int | None = None
     duration: str | None = None
@@ -51,12 +66,6 @@ class Item(BaseModel):
     def validate_pub_date(cls, value: Any) -> datetime:
         """Validates pub date."""
         return validators.pub_date(value)
-
-    @field_validator("explicit", mode="before")
-    @classmethod
-    def validate_explicit(cls, value: Any) -> bool:
-        """Validates explicit."""
-        return validators.explicit(value)
 
     @field_validator("duration", mode="after")
     @classmethod
@@ -105,18 +114,12 @@ class Feed(BaseModel):
     funding_text: str = ""
     funding_url: OptionalUrl = None
 
-    explicit: bool = False
+    explicit: Explicit = False
     complete: bool = False
 
     items: list[Item]
 
     categories: list[str] = Field(default_factory=list)
-
-    @field_validator("explicit", mode="before")
-    @classmethod
-    def validate_explicit(cls, value: Any) -> bool:
-        """Validates explicit."""
-        return validators.explicit(value)
 
     @field_validator("complete", mode="before")
     @classmethod
