@@ -1,20 +1,14 @@
 from __future__ import annotations
 
 import contextlib
+import functools
 from datetime import datetime  # noqa: TCH003
 from typing import Annotated, Any, Final
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
-from pydantic import (
-    BaseModel,
-    BeforeValidator,
-    Field,
-    TypeAdapter,
-    field_validator,
-    model_validator,
-)
+from pydantic import BaseModel, BeforeValidator, Field, field_validator, model_validator
 
 from radiofeed.feedparser.date_parser import parse_date
 
@@ -146,12 +140,39 @@ def duration(value: str | None) -> str:
         return ""
 
 
-Explicit = Annotated[bool, BeforeValidator(explicit)]
+def accepted_value(value: Any, *, accepted: tuple[str]) -> bool:
+    """Checks if value in list."""
+    return bool(value and value.casefold() in accepted)
+
+
+Explicit = Annotated[
+    bool,
+    BeforeValidator(
+        functools.partial(
+            accepted_value,
+            accepted=("yes", "clean"),
+        )
+    ),
+]
+
+Complete = Annotated[
+    bool,
+    BeforeValidator(
+        functools.partial(
+            accepted_value,
+            accepted=("yes",),
+        )
+    ),
+]
+
+
 Language = Annotated[str, BeforeValidator(language)]
+
 PgInteger = Annotated[int | None, BeforeValidator(pg_integer)]
+
 Duration = Annotated[str | None, BeforeValidator(duration)]
-Url = Annotated[str, BeforeValidator(url)]
-Complete = Annotated[bool, TypeAdapter(bool).validate_python("yes")]
+
+Url = Annotated[str | None, BeforeValidator(url)]
 
 
 class Item(BaseModel):
