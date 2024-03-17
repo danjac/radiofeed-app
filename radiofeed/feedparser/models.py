@@ -36,11 +36,16 @@ class Item(BaseModel):
     description: str = ""
     keywords: str = ""
 
-    pub_date: datetime
+    pub_date: Annotated[datetime, BeforeValidator(validators.pub_date)]
 
-    media_url: Annotated[str, AfterValidator(validators.required_url)]
+    media_url: Annotated[
+        str,
+        AfterValidator(
+            functools.partial(validators.url, required=True),
+        ),
+    ]
 
-    media_type: str
+    media_type: Annotated[str, AfterValidator(validators.audio_mimetype)]
 
     cover_url: OptionalUrl = None
     website: OptionalUrl = None
@@ -54,18 +59,6 @@ class Item(BaseModel):
     episode: int | None = None
 
     episode_type: str = "full"
-
-    @field_validator("media_type", mode="after")
-    @classmethod
-    def validate_media_type(cls, value: Any) -> str:
-        """Validates media type."""
-        return validators.audio_mimetype(value)
-
-    @field_validator("pub_date", mode="before")
-    @classmethod
-    def validate_pub_date(cls, value: Any) -> datetime:
-        """Validates pub date."""
-        return validators.pub_date(value)
 
     @field_validator("duration", mode="after")
     @classmethod

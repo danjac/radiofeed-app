@@ -80,16 +80,10 @@ def language(value: str) -> str:
     return value[:2].casefold()
 
 
-def url(value: str | None) -> str | None:
+def url(value: str | None, *, required: bool = False) -> str | None:
     """Returns a URL value. Will try to prefix with https:// if only domain provided.
 
     If cannot resolve as a valid URL will return None.
-
-    Args:
-        value (str | None)
-
-    Returns:
-        str | None
     """
     if value:
         if not value.startswith("http"):
@@ -98,14 +92,9 @@ def url(value: str | None) -> str | None:
         with contextlib.suppress(ValidationError):
             _url_validator(value)
             return value
+    if required:
+        raise ValueError("url is required")
     return None
-
-
-def required_url(value: str | None) -> str:
-    """Parses required url."""
-    if (value := url(value)) is None:
-        raise ValueError("URL cannot be none")
-    return value
 
 
 def duration(value: str | None) -> str:
