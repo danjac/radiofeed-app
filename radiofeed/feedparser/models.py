@@ -247,7 +247,7 @@ class Feed(BaseModel):
     cover_url: Url | None = None
 
     funding_text: str = ""
-    funding_url: str | None = None
+    funding_url: Url | None = None
 
     explicit: Explicit = False
     complete: Complete = False
