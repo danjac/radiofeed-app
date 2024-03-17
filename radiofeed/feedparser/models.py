@@ -17,7 +17,7 @@ Explicit = Annotated[
     ),
 ]
 
-PgInteger = Annotated[str | None, AfterValidator(validators.pg_integer)]
+PgInteger = Annotated[int | None, BeforeValidator(validators.pg_integer)]
 
 
 class Item(BaseModel):
