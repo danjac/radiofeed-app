@@ -94,25 +94,50 @@ class Feed(BaseModel):
     owner: str = ""
     description: str = ""
 
-    items: list[Item]
     pub_date: datetime | None = None
 
-    language: Language = "en"
-    website: Url | None = None
+    language: str = "en"
+    website: str | None = None
     cover_url: str | None = None
 
     funding_text: str = ""
     funding_url: str | None = None
 
-    explicit: Explicit = False
-    complete: Complete = False
+    explicit: bool = False
+    complete: bool = False
+
+    items: list[Item]
 
     categories: list[str] = Field(default_factory=list)
+
+    @field_validator("explicit", mode="before")
+    @classmethod
+    def validate_explicit(cls, value: Any) -> bool:
+        """Validates explicit."""
+        return validators.explicit(value)
+
+    @field_validator("complete", mode="before")
+    @classmethod
+    def validate_complete(cls, value: Any) -> bool:
+        """Validates complete."""
+        return validators.complete(value)
+
+    @field_validator("language", mode="after")
+    @classmethod
+    def validate_language(cls, value: Any) -> str:
+        """Validates language."""
+        return validators.language(value)
 
     @field_validator("cover_url", mode="after")
     @classmethod
     def validate_cover_url(cls, value: Any) -> str | None:
         """Validates cover url."""
+        return validators.url(value)
+
+    @field_validator("website", mode="after")
+    @classmethod
+    def validate_website(cls, value: Any) -> str | None:
+        """Validates website."""
         return validators.url(value)
 
     @field_validator("funding_url", mode="after")

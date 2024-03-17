@@ -1,17 +1,13 @@
-from __future__ import annotations
-
 import contextlib
-from typing import TYPE_CHECKING, Any, Final
+import functools
+from datetime import datetime
+from typing import Any, Final
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 
 from radiofeed.feedparser.date_parser import parse_date
-
-if TYPE_CHECKING:  # pragma: nocover
-    from datetime import datetime
-
 
 _PG_INTEGER_RANGE: Final = range(
     -2147483648,
@@ -82,11 +78,6 @@ def language(value: str) -> str:
     return value[:2].casefold()
 
 
-def explicit(value: str | None) -> bool:
-    """Checks if podcast or episode explicit."""
-    return bool(value and value.casefold() in ("clean", "yes"))
-
-
 def url(value: str | None) -> str | None:
     """Returns a URL value. Will try to prefix with https:// if only domain provided.
 
@@ -144,6 +135,11 @@ def duration(value: str | None) -> str:
 def one_of(value: str | None, *, values: tuple[str]) -> bool:
     """Checks if value in list."""
     return bool(value and value.casefold() in values)
+
+
+explicit = functools.partial(one_of, values=("yes", "clean"))
+
+complete = functools.partial(one_of, values=("yes"))
 
 
 def audio_mime_type(value: Any) -> str:
