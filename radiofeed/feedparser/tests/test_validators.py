@@ -1,6 +1,12 @@
 import pytest
 
-from radiofeed.feedparser.validators import duration, explicit, language, url
+from radiofeed.feedparser.validators import (
+    duration,
+    explicit,
+    language,
+    pg_integer,
+    url,
+)
 
 
 class TestLanguage:
@@ -42,6 +48,21 @@ class TestUrl:
         assert url(None) is None
 
 
+class TestPgInteger:
+    @pytest.mark.parametrize(
+        ("value", "expected"),
+        [
+            pytest.param(None, None, id="none"),
+            pytest.param("100000000000000000000000", None, id="very large number"),
+            pytest.param("1000", 1000, id="small number"),
+            pytest.param("1000.50", None, id="float"),
+            pytest.param("invalid", None, id="not a number"),
+        ],
+    )
+    def test_pg_integer(self, value, expected):
+        assert pg_integer(value) == expected
+
+
 class TestDuration:
     @pytest.mark.parametrize(
         ("value", "expected"),
@@ -55,5 +76,5 @@ class TestDuration:
             pytest.param("10:30:99", "10:30", id="hours, minutes and invalid seconds"),
         ],
     )
-    def test_parse_duration(self, value, expected):
+    def test_duration(self, value, expected):
         assert duration(value) == expected

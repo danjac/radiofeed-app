@@ -82,7 +82,7 @@ class TestParseRss:
             pytest.param(
                 "rss_invalid_duration.xml",
                 "At The Races with Steve Byk",
-                450,
+                449,
                 id="invalid duration",
             ),
             pytest.param(

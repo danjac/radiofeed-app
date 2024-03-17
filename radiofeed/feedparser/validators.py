@@ -66,11 +66,13 @@ _url_validator = URLValidator(["http", "https"])
 def pg_integer(value: Any) -> int | None:
     """Check is an integer, and ensure within Postgres integer range values."""
     try:
-        value = int(value) if value else None
-        assert value in _PG_INTEGER_RANGE
-        return value
-    except ValueError:
+        value = int(value)
+    except (TypeError, ValueError):
         return None
+
+    if value not in _PG_INTEGER_RANGE:
+        return None
+    return value
 
 
 def language(value: str) -> str:
@@ -149,7 +151,7 @@ explicit = functools.partial(one_of, values=("yes", "clean"))
 complete = functools.partial(one_of, values=("yes"))
 
 
-def audio_mime_type(value: Any) -> str:
+def audio_mimetype(value: Any) -> str:
     """Checks if an audio mime type"""
     if value in _AUDIO_MIMETYPES:
         return value
