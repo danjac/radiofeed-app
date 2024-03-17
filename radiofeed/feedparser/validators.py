@@ -1,5 +1,4 @@
 import contextlib
-import functools
 from datetime import datetime
 from typing import Any, Final
 
@@ -133,11 +132,6 @@ def duration(value: str | None) -> str:
 def one_of(value: str | None, *, values: tuple[str]) -> bool:
     """Checks if value in list."""
     return bool(value and value.casefold() in values)
-
-
-explicit = functools.partial(one_of, values=("yes", "clean"))
-
-complete = functools.partial(one_of, values=("yes"))
 
 
 def audio_mimetype(value: Any) -> str:

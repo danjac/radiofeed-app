@@ -1,12 +1,6 @@
 import pytest
 
-from radiofeed.feedparser.validators import (
-    duration,
-    explicit,
-    language,
-    pg_integer,
-    url,
-)
+from radiofeed.feedparser.validators import duration, language, pg_integer, url
 
 
 class TestLanguage:
@@ -15,17 +9,6 @@ class TestLanguage:
 
     def test_uppercase(self):
         assert language("FI") == "fi"
-
-
-class TestExplicit:
-    def test_true(self):
-        assert explicit("yes") is True
-
-    def test_false(self):
-        assert explicit("no") is False
-
-    def test_none(self):
-        assert explicit(None) is False
 
 
 class TestUrl:
