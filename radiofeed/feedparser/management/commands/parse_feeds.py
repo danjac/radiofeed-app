@@ -20,13 +20,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Parse command args."""
         parser.add_argument(
-            "--watch",
-            help="Watch continuously",
-            default=False,
-            action="store_true",
-        )
-
-        parser.add_argument(
             "--limit",
             help="Number of feeds to process",
             type=int,
@@ -38,17 +31,13 @@ class Command(BaseCommand):
 
         client = get_client()
 
-        while True:
-            with DatabaseSafeThreadPoolExecutor() as executor:
-                wait(
-                    executor.db_safe_map(
-                        lambda podcast: self._parse_feed(podcast, client),
-                        self._get_scheduled_podcasts(options["limit"]),
-                    )
+        with DatabaseSafeThreadPoolExecutor() as executor:
+            wait(
+                executor.db_safe_map(
+                    lambda podcast: self._parse_feed(podcast, client),
+                    self._get_scheduled_podcasts(options["limit"]),
                 )
-
-            if not options["watch"]:
-                break
+            )
 
     def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
         return (
