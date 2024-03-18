@@ -49,7 +49,7 @@ class Item(BaseModel):
 
     length: PgInteger = None
 
-    duration: Annotated[str | None, AfterValidator(validators.duration)] = None
+    duration: Annotated[str, AfterValidator(validators.duration)] = ""
 
     season: PgInteger = None
     episode: PgInteger = None
