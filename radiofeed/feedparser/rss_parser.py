@@ -85,14 +85,12 @@ class _RSSParser:
                     ),
                     "website": self._parser.value(channel, "link/text()"),
                     "title": self._parser.value(channel, "title/text()"),
-                    "categories": list(
-                        self._parser.itervalues(
-                            channel,
-                            ".//googleplay:category/@text",
-                            ".//itunes:category/@text",
-                            ".//media:category/@label",
-                            ".//media:category/text()",
-                        )
+                    "categories": self._parser.itervalues(
+                        channel,
+                        ".//googleplay:category/@text",
+                        ".//itunes:category/@text",
+                        ".//media:category/@label",
+                        ".//media:category/text()",
                     ),
                     "owner": self._parser.value(
                         channel,
@@ -100,7 +98,7 @@ class _RSSParser:
                         "itunes:owner/itunes:name/text()",
                         default="",
                     ),
-                    "items": list(self._parse_items(channel)),
+                    "items": self._parse_items(channel),
                 }
             )
         except ValidationError as exc:
@@ -116,11 +114,9 @@ class _RSSParser:
     def _parse_item(self, item: lxml.etree.Element) -> Item:
         return Item.parse_obj(
             {
-                "categories": list(
-                    self._parser.itervalues(
-                        item,
-                        "//itunes:category/@text",
-                    )
+                "categories": self._parser.itervalues(
+                    item,
+                    "//itunes:category/@text",
                 ),
                 "description": self._parser.value(
                     item,
