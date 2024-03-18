@@ -25,6 +25,18 @@ class TestItem:
         with pytest.raises(ValidationError):
             Item(**create_item(media_type="video/mpeg"))
 
+    def test_length_too_long(self):
+        item = Item(**create_item(length="3147483647"))
+        assert item.length is None
+
+    def test_length_invalid(self):
+        item = Item(**create_item(length="invalid"))
+        assert item.length is None
+
+    def test_length_valid(self):
+        item = Item(**create_item(length="1000"))
+        assert item.length == 1000
+
     def test_default_keywords_from_categories(self):
         item = Item(**create_item(), categories=["Gaming", "Hobbies", "Video Games"])
         assert item.keywords == "Gaming Hobbies Video Games"
@@ -35,6 +47,21 @@ class TestItem:
         assert item.episode_type == "full"
         assert item.categories == []
         assert item.keywords == ""
+
+    @pytest.mark.parametrize(
+        ("value", "expected"),
+        [
+            pytest.param(None, "", id="none"),
+            pytest.param("", "", id="empty"),
+            pytest.param("invalid", "", id="invalid"),
+            pytest.param("300", "300", id="seconds only"),
+            pytest.param("10:30", "10:30", id="minutes and seconds"),
+            pytest.param("10:30:59", "10:30:59", id="hours, minutes and seconds"),
+            pytest.param("10:30:99", "10:30", id="hours, minutes and invalid seconds"),
+        ],
+    )
+    def test_duration(self, value, expected):
+        assert Item(**create_item(), duration=value).duration == expected
 
 
 class TestFeed:
