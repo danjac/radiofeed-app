@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 import functools
 from datetime import datetime  # noqa: TCH003
-from typing import TYPE_CHECKING, Annotated, Any, Final
+from typing import TYPE_CHECKING, Annotated, Any, ClassVar, Final, TypeVar
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -18,6 +18,8 @@ from pydantic import (
 )
 
 from radiofeed.feedparser.date_parser import parse_date
+
+T = TypeVar("T")
 
 if TYPE_CHECKING:  # pragma: nocover
     from collections.abc import Iterable
@@ -91,6 +93,10 @@ def _one_of(value: str | None, *, values: Iterable[str]) -> bool:
     return bool(value and value.casefold() in values)
 
 
+def _default_if_none(value: Any, *, default: T) -> T:
+    return default if value is None else value
+
+
 def _url(value: str | None) -> str | None:
     if value:
         if not value.startswith("http"):
@@ -113,17 +119,23 @@ Explicit = Annotated[
     ),
 ]
 
+EmptyIfNone = Annotated[
+    str, BeforeValidator(functools.partial(_default_if_none, default=""))
+]
+
 
 class Item(BaseModel):
     """Individual item or episode in RSS or Atom podcast feed."""
+
+    DEFAULT_EPISODE_TYPE: ClassVar = "full"
 
     guid: str = Field(..., min_length=1)
     title: str = Field(..., min_length=1)
 
     categories: list[str] = Field(default_factory=list)
 
-    description: str = ""
-    keywords: str = ""
+    description: EmptyIfNone = ""
+    keywords: EmptyIfNone = ""
 
     pub_date: datetime
 
@@ -142,7 +154,12 @@ class Item(BaseModel):
     season: PgInteger = None
     episode: PgInteger = None
 
-    episode_type: str = "full"
+    episode_type: Annotated[
+        str,
+        BeforeValidator(
+            functools.partial(_default_if_none, default=DEFAULT_EPISODE_TYPE),
+        ),
+    ] = DEFAULT_EPISODE_TYPE
 
     @field_validator("pub_date", mode="before")
     @classmethod
@@ -212,17 +229,20 @@ class Item(BaseModel):
 class Feed(BaseModel):
     """RSS/Atom Feed model."""
 
-    title: str = Field(..., min_length=1)
-    owner: str = ""
-    description: str = ""
-    language: str = "en"
+    DEFAULT_LANGUAGE: ClassVar = "en"
 
+    title: str = Field(..., min_length=1)
+
+    owner: EmptyIfNone = ""
+    description: EmptyIfNone = ""
+
+    language: str = DEFAULT_LANGUAGE
     pub_date: datetime | None = None
 
     website: OptionalUrl = None
     cover_url: OptionalUrl = None
 
-    funding_text: str = ""
+    funding_text: EmptyIfNone = ""
     funding_url: OptionalUrl = None
 
     explicit: Explicit = False
@@ -236,7 +256,9 @@ class Feed(BaseModel):
     @classmethod
     def validate_language(cls, value: Any) -> str:
         """Validate media type."""
-        return value.casefold()[:2] if value else "en"
+        return (
+            value.casefold()[:2] if value and len(value) > 1 else cls.DEFAULT_LANGUAGE
+        )
 
     @field_validator("complete", mode="before")
     @classmethod

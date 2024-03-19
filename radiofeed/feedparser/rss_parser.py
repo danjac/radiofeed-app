@@ -54,7 +54,6 @@ class _RSSParser:
                     "complete": self._parser.value(
                         channel,
                         "itunes:complete/text()",
-                        default=False,
                     ),
                     "cover_url": self._parser.value(
                         channel,
@@ -65,23 +64,19 @@ class _RSSParser:
                         channel,
                         "description/text()",
                         "itunes:summary/text()",
-                        default="",
                     ),
                     "funding_text": self._parser.value(
                         channel,
                         "podcast:funding/text()",
-                        default="",
                     ),
                     "funding_url": self._parser.value(channel, "podcast:funding/@url"),
                     "explicit": self._parser.value(
                         channel,
                         "itunes:explicit/text()",
-                        default=False,
                     ),
                     "language": self._parser.value(
                         channel,
                         "language/text()",
-                        default="en",
                     ),
                     "website": self._parser.value(channel, "link/text()"),
                     "title": self._parser.value(channel, "title/text()"),
@@ -96,7 +91,6 @@ class _RSSParser:
                         channel,
                         "itunes:author/text()",
                         "itunes:owner/itunes:name/text()",
-                        default="",
                     ),
                     "items": self._parse_items(channel),
                 }
@@ -123,7 +117,6 @@ class _RSSParser:
                     "content:encoded/text()",
                     "description/text()",
                     "itunes:summary/text()",
-                    default="",
                 ),
                 "cover_url": self._parser.value(item, "itunes:image/@href"),
                 "duration": self._parser.value(item, "itunes:duration/text()"),
@@ -131,12 +124,10 @@ class _RSSParser:
                 "episode_type": self._parser.value(
                     item,
                     "itunes:episodetype/text()",
-                    default="full",
                 ),
                 "explicit": self._parser.value(
                     item,
                     "itunes:explicit/text()",
-                    default=False,
                 ),
                 "guid": self._parser.value(
                     item,
