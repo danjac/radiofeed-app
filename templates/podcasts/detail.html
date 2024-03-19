@@ -129,7 +129,7 @@
         {% if categories %}
             <div class="flex flex-wrap items-center space-x-2 max-w-prose leading-loose sm:space-x-3">
                 {% for category in categories %}
-                    <a class="inline-flex items-center btn-link"
+                    <a class="inline-flex items-center link"
                        aria-label="{{ category.name }} Podcasts"
                        title="{{ category.name }} Podcasts"
                        href="{{ category.get_absolute_url }}">
