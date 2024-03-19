@@ -77,6 +77,14 @@ class TestFeed:
         )
         assert feed.language == "fr"
 
+    def test_language_empty(self, item):
+        feed = Feed(**create_feed(language="", items=[item]))
+        assert feed.language == "en"
+
+    def test_language_none(self, item):
+        feed = Feed(**create_feed(language=None, items=[item]))
+        assert feed.language == "en"
+
     def test_no_items(self):
         with pytest.raises(ValidationError):
             Feed(**create_feed(), items=[])
