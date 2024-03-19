@@ -82,7 +82,7 @@ execnet==2.0.2
     # via pytest-xdist
 executing==2.0.1
     # via stack-data
-faker==24.2.0
+faker==24.3.0
 filelock==3.13.1
     # via pytest-mypy
 gunicorn==21.2.0
