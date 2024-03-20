@@ -86,7 +86,7 @@ Once you have access to the Django Admin, you should configure the default Site 
 
 ### Ansible Dokku deployment
 
-An Ansible Playbook has been included for easier deployment of [Dokku](https://dokku.com/) to a VM.
+An [Ansible](https://www.ansible.com/) Playbook has been included for easier deployment of [Dokku](https://dokku.com/) to a VM.
 
 This Playbook requires the [ansible_dokku](https://github.com/dokku/ansible-dokku) role:
 
@@ -106,7 +106,7 @@ To deploy your application on the VM:
 ansible-playbook -i ./ansible/hosts ./ansible/dokku.yaml --user USER --ask-vault-pass
 ```
 
-**USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible documentation for more details.
+**USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible and Dokku documentation for more details.
 
 ### Scheduling background tasks
 
