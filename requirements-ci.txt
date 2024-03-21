@@ -4,7 +4,7 @@ annotated-types==0.6.0
     # via pydantic
 anyio==4.3.0
     # via httpx
-asgiref==3.7.2
+asgiref==3.8.0
     # via
     #   django
     #   django-browser-reload
@@ -227,7 +227,7 @@ ruff==0.3.3
 scikit-learn==1.4.1.post1
 scipy==1.12.0
     # via scikit-learn
-sentry-sdk==1.42.0
+sentry-sdk==1.43.0
 setuptools==69.2.0
 six==1.16.0
     # via
@@ -249,7 +249,7 @@ stevedore==5.2.0
     # via bandit
 termcolor==2.4.0
     # via pytest-sugar
-threadpoolctl==3.3.0
+threadpoolctl==3.4.0
     # via scikit-learn
 tqdm==4.66.2
     # via
