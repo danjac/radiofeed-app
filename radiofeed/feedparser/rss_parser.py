@@ -49,7 +49,7 @@ class _RSSParser:
 
     def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
         try:
-            return Feed.parse_obj(
+            return Feed.model_validate(
                 {
                     "complete": self._parser.value(
                         channel,
@@ -106,7 +106,7 @@ class _RSSParser:
                 continue
 
     def _parse_item(self, item: lxml.etree.Element) -> Item:
-        return Item.parse_obj(
+        return Item.model_validate(
             {
                 "categories": self._parser.itervalues(
                     item,
