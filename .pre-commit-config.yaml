@@ -61,7 +61,7 @@ repos:
       rev: v3.15.1
       hooks:
           - id: pyupgrade
-            args: [--py311-plus]
+            args: [--py312]
     - repo: https://github.com/adamchainz/django-upgrade
       rev: "1.16.0"
       hooks:
