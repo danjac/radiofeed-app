@@ -4,7 +4,7 @@ annotated-types==0.6.0
     # via pydantic
 anyio==4.3.0
     # via httpx
-asgiref==3.8.0
+asgiref==3.8.1
     # via
     #   django
     #   django-htmx
@@ -109,7 +109,7 @@ requests==2.31.0
     #   django-allauth
     #   django-anymail
     #   requests-oauthlib
-requests-oauthlib==1.4.0
+requests-oauthlib==2.0.0
     # via django-allauth
 scikit-learn==1.4.1.post1
 scipy==1.12.0
