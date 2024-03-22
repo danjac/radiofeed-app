@@ -21,7 +21,6 @@ from radiofeed.podcasts.models import Category, Podcast
 @require_safe
 def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
     """Render default site home page for anonymous users.
-
     Redirects authenticated users to podcast index page.
     """
     if request.user.is_authenticated:
