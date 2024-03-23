@@ -2,8 +2,7 @@
   hosts: webservers
   vars_files:
       - ./vars/dokku.yml
-      - ./vars/secrets.yml
-      - ./vars/site.yml
+      - ./vars/django.yml
       - ./vars/users.yml
   gather_facts: true
   roles:
