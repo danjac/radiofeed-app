@@ -7,8 +7,6 @@ from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
-
 env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(
@@ -38,6 +36,8 @@ env = environ.Env(
     USE_HSTS=(bool, False),
     USE_HTTPS=(bool, True),
 )
+
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
 environ.Env.read_env(BASE_DIR / ".env")
 
