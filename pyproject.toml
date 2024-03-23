@@ -51,7 +51,6 @@ dependencies =[
 dev =[
     "bandit[toml]",
     "coverage[toml]",
-    "coverage-badge",
     "django-browser-reload",
     "django-debug-toolbar",
     "django-fastdev",
