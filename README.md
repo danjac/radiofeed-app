@@ -106,7 +106,7 @@ ansible-vault encrypt ansible/vars/django.yml
 To deploy your application on the VM:
 
 ```bash
-ansible-playbook -i ./ansible/hosts ./ansible/dokku.yaml --user USER --ask-vault-pass
+ansible-playbook -i ./ansible/hosts ./ansible/dokku.yml --user USER --ask-vault-pass
 ```
 
 **USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible and Dokku documentation for more details.
