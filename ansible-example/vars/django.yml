@@ -2,8 +2,6 @@ admin_site_header: Radiofeed [Production]
 admin_url: my-admin-url/
 admins: admin@radiofeed.app
 allowed_hosts: .radiofeed.app
-domain: radiofeed.app
-letsencrypt_email: admin@radiofeed.app
 mailgun_api_key: SECRET
 mailgun_api_url: https://api.eu.mailgun.net/v3
 mailgun_sender_domain: mg.radiofeed.app
