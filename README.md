@@ -100,7 +100,7 @@ ansible-galaxy role install dokku_bot.ansible_dokku
 First, copy `ansible-example` to `ansible`, and edit the files as needed, in particular the vars files under `ansible/vars`. You should encrypt any sensitive files with [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html):
 
 ```bash
-ansible-vault encrypt ansible/vars/django.yaml
+ansible-vault encrypt ansible/vars/django.yml
 ```
 
 To deploy your application on the VM:
