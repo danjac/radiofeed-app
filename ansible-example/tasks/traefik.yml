@@ -1,0 +1,21 @@
+- name: clear domains
+  dokku_domains:
+      app: "{{ appname }}"
+      domains: "{{ appname }}.dokku.me"
+      state: absent
+- name: add domain
+  dokku_domains:
+      app: "{{ appname }}"
+      domains: "{{ domain }}"
+- name: stop nginx
+  ansible.builtin.shell: dokku nginx:stop
+  become: true
+- name: set traefik
+  ansible.builtin.shell: dokku proxy:set {{ appname }} traefik
+  become: true
+- name: letsencrypt setup
+  ansible.builtin.shell: dokku traefik:set --global letsencrypt-email {{ letsencrypt_email }}
+  become: true
+- name: start traefik
+  ansible.builtin.shell: dokku traefik:start
+  become: true
