@@ -10,5 +10,6 @@
           EMAIL_HOST: "{{ email_host }}"
           MAILGUN_API_KEY: "{{ mailgun_api_key }}"
           MAILGUN_API_URL: "{{ mailgun_api_url }}"
+          MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
           SECRET_KEY: "{{ secret_key }}"
           SENTRY_URL: "{{ sentry_url }}"
