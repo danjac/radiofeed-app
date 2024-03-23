@@ -103,7 +103,6 @@ CACHES = {"default": env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0")}
 # Required for health check
 REDIS_URL = CACHES["default"]["LOCATION"]
 
-
 # Templates
 
 TEMPLATES = [
