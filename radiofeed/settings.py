@@ -97,7 +97,7 @@ DATABASES = {
 
 # Caches
 
-CACHES = {"default": env.cache(default="redis://127.0.0.1:6379/0")}
+CACHES = {"default": env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0")}
 
 # Templates
 
