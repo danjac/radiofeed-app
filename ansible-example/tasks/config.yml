@@ -7,7 +7,6 @@
           ADMIN_URL: "{{ admin_url }}"
           ADMINS: "{{ admins }}"
           ALLOWED_HOSTS: "{{ allowed_hosts }}"
-          EMAIL_HOST: "{{ email_host }}"
           MAILGUN_API_KEY: "{{ mailgun_api_key }}"
           MAILGUN_API_URL: "{{ mailgun_api_url }}"
           MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
