@@ -170,6 +170,6 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 
     site = get_site()
     path = resolve_url(to, *args, **kwargs) if to else ""
-    scheme = "https" if settings.USE_HTTPS else "http"
+    scheme = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
     return f"{scheme}://{site.domain}{path}"

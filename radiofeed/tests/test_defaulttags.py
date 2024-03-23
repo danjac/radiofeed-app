@@ -1,7 +1,6 @@
 import pytest
 from django.contrib.sites.models import Site
 from django.template.context import RequestContext
-from django.test import override_settings
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.defaulttags import (
@@ -106,8 +105,8 @@ class TestAbsoluteUri:
         assert absolute_uri("/podcasts/") == "http://example.com/podcasts/"
 
     @pytest.mark.django_db()
-    @override_settings(USE_HTTPS=True)
-    def test_https(self):
+    def test_https(self, settings):
+        settings.SECURE_SSL_REDIRECT = True
         assert absolute_uri("/podcasts/") == "https://example.com/podcasts/"
 
     @pytest.mark.django_db()
