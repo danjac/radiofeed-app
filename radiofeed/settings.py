@@ -1,21 +1,48 @@
 import pathlib
 from email.utils import getaddresses
 
-import dj_database_url
+import environ
 import sentry_sdk
-from decouple import Choices, Csv, config
 from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
-DEBUG = config("DEBUG", default=False, cast=bool)
-
-SECRET_KEY = config(
-    "SECRET_KEY",
-    default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
+env = environ.Env(
+    DEBUG=(bool, False),
+    SECRET_KEY=(
+        str,
+        "django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
+    ),
+    ACCOUNT_EMAIL_VERIFICATION=(str, "none"),
+    ADMIN_SITE_HEADER=(str, "Radiofeed Admin"),
+    ADMIN_URL=(str, "admin/"),
+    CONN_MAX_AGE=(int, 360),
+    EMAIL_USE_SSL=(bool, False),
+    EMAIL_USE_TLS=(bool, False),
+    MAILGUN_API_KEY=(str, None),
+    MAILGUN_API_URL=(str, "https://api.mailgun.net/v3"),
+    SECURE_HSTS_INCLUDE_SUBDOMAINS=(bool, True),
+    SECURE_HSTS_PRELOAD=(bool, True),
+    SECURE_HSTS_SECONDS=(int, 15768001),
+    SECURE_PROXY_SSL_HEADER=(str, "HTTP_X_FORWARDED_PROTO,https"),
+    SENTRY_URL=(str, None),
+    STATIC_URL=(str, "/static/"),
+    TEMPLATE_DEBUG=(bool, False),
+    USER_AGENT=(str, "Radiofeed/0.0.0"),
+    USE_BROWSER_RELOAD=(bool, False),
+    USE_DEBUG_TOOLBAR=(bool, False),
+    USE_COLLECTSTATIC=(bool, True),
+    USE_FASTDEV=(bool, False),
+    USE_HSTS=(bool, False),
+    USE_HTTPS=(bool, True),
 )
+
+environ.Env.read_env(BASE_DIR / ".env")
+
+DEBUG = env("DEBUG")
+SECRET_KEY = env("SECRET_KEY")
 
 INSTALLED_APPS: list[str] = [
     "django.contrib.admin",
@@ -76,13 +103,11 @@ MIDDLEWARE: list[str] = [
 
 # Databases
 
-CONN_MAX_AGE = config("CONN_MAX_AGE", default=360, cast=int)
+CONN_MAX_AGE = env("CONN_MAX_AGE")
 
 DATABASES = {
-    "default": config(
-        "DATABASE_URL",
+    "default": env.db(
         default="postgresql://postgres:password@127.0.0.1:5432/postgres",
-        cast=dj_database_url.parse,
     )
     | {
         "ATOMIC_REQUESTS": True,
@@ -96,18 +121,7 @@ DATABASES = {
 
 # Caches
 
-REDIS_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/0")
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "IGNORE_EXCEPTIONS": True,
-        },
-    }
-}
+CACHES = {"default": env.cache(default="redis://127.0.0.1:6379/0")}
 
 # Templates
 
@@ -119,7 +133,7 @@ TEMPLATES = [
             "builtins": [
                 "radiofeed.defaulttags",
             ],
-            "debug": config("TEMPLATE_DEBUG", default=False, cast=bool),
+            "debug": env("TEMPLATE_DEBUG"),
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -135,7 +149,7 @@ TEMPLATES = [
 ]
 
 # https://github.com/boxed/django-fastdev
-if USE_FASTDEV := config("USE_FASTDEV", default=False):
+if USE_FASTDEV := env("USE_FASTDEV"):
     INSTALLED_APPS += ["django_fastdev"]
     FASTDEV_STRICT_TEMPLATE_CHECKING = True
 
@@ -146,12 +160,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ROOT_URLCONF = "radiofeed.urls"
 
-ALLOWED_HOSTS: list[str] = config(
-    "ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv()
-)
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 # User-Agent header for API calls from this site
-USER_AGENT = config("USER_AGENT", default="Radiofeed/0.0.0")
+USER_AGENT = env("USER_AGENT")
 
 SITE_ID = 1
 
@@ -166,42 +178,38 @@ SESSION_COOKIE_SECURE = True
 
 # Email configuration
 
-EMAIL_HOST = config("EMAIL_HOST", default="127.0.0.1")
-
 # Mailgun
 # https://anymail.dev/en/v9.0/esps/mailgun/
 
-if MAILGUN_API_KEY := config("MAILGUN_API_KEY", default=None):
+if MAILGUN_API_KEY := env("MAILGUN_API_KEY"):
     INSTALLED_APPS += ["anymail"]
 
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
     # For European domains: https://api.eu.mailgun.net/v3
-    MAILGUN_API_URL = config("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+    MAILGUN_API_URL = env("MAILGUN_API_URL")
+    MAILGUN_SENDER_DOMAIN = EMAIL_HOST = env("MAILGUN_SENDER_DOMAIN")
 
     ANYMAIL = {
         "MAILGUN_API_KEY": MAILGUN_API_KEY,
         "MAILGUN_API_URL": MAILGUN_API_URL,
-        "MAILGUN_SENDER_DOMAIN": EMAIL_HOST,
+        "MAILGUN_SENDER_DOMAIN": MAILGUN_SENDER_DOMAIN,
     }
 else:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_CONFIG = env.email(default="smtp://localhost:1025")
 
-    EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
+    EMAIL_HOST = EMAIL_CONFIG["EMAIL_HOST"]
 
-    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default=None)
-    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default=None)
+    vars().update(EMAIL_CONFIG)
 
-    EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
-    EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
+    EMAIL_USE_SSL = env("EMAIL_USE_SSL")
+    EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 
-ADMINS = getaddresses(config("ADMINS", default="", cast=Csv()))
+ADMINS = getaddresses([ADMINS]) if (ADMINS := env("ADMINS", default="")) else []
 
-SERVER_EMAIL = config("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
-
-# email shown in about page etc
-CONTACT_EMAIL = config("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
+SERVER_EMAIL = env("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
+CONTACT_EMAIL = env("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
 
 # authentication settings
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
@@ -234,17 +242,7 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_PREVENT_ENUMERATION = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 
-ACCOUNT_EMAIL_VERIFICATION = config(
-    "ACCOUNT_EMAIL_VERIFICATION",
-    cast=Choices(
-        [
-            "mandatory",
-            "none",
-            "optional",
-        ]
-    ),
-    default="none",
-)
+ACCOUNT_EMAIL_VERIFICATION = env("ACCOUNT_EMAIL_VERIFICATION")
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -260,9 +258,9 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # admin settings
 
-ADMIN_URL = config("ADMIN_URL", default="admin/")
+ADMIN_URL = env("ADMIN_URL")
 
-ADMIN_SITE_HEADER = config("ADMIN_SITE_HEADER", default="Radiofeed Admin")
+ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER")
 
 # Internationalization/Localization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -277,7 +275,7 @@ USE_TZ = True
 
 # Static files
 
-STATIC_URL = config("STATIC_URL", default="/static/")
+STATIC_URL = env("STATIC_URL")
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -285,7 +283,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://whitenoise.readthedocs.io/en/latest/django.html
 #
 
-if USE_COLLECTSTATIC := config("USE_COLLECTSTATIC", default=True, cast=bool):
+if USE_COLLECTSTATIC := env("USE_COLLECTSTATIC"):
     STORAGES = {
         "staticfiles": {
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -307,23 +305,20 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-if USE_HTTPS := config("USE_HTTPS", default=True, cast=bool):
-    SECURE_PROXY_SSL_HEADER = config(
-        "SECURE_PROXY_SSL_HEADER",
-        default="HTTP_X_FORWARDED_PROTO, https",
-        cast=Csv(post_process=tuple),
-    )
+if USE_HTTPS := env("USE_HTTPS"):
     SECURE_SSL_REDIRECT = True
+
+    SECURE_PROXY_SSL_HEADER = env.tuple(
+        "SECURE_PROXY_SSL_HEADER", default=("HTTP_X_FORWARDED_PROTO", "https")
+    )
 
 # make sure to enable USE_HSTS if your load balancer is not using HSTS in production,
 # otherwise leave disabled.
 
-if USE_HSTS := config("USE_HSTS", default=False, cast=bool):
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
-        "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True, cast=bool
-    )
-    SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", default=True, cast=bool)
-    SECURE_HSTS_SECONDS = config("SECURE_HSTS_SECONDS", default=15768001, cast=int)
+if USE_HSTS := env("USE_HSTS"):
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env("SECURE_HSTS_INCLUDE_SUBDOMAINS")
+    SECURE_HSTS_PRELOAD = env("SECURE_HSTS_PRELOAD")
+    SECURE_HSTS_SECONDS = env("SECURE_HSTS_SECONDS")
 #
 # Permissions Policy
 # https://pypi.org/project/django-permissions-policy/
@@ -394,7 +389,7 @@ HEALTH_CHECK = {
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
-if SENTRY_URL := config("SENTRY_URL", default=None):
+if SENTRY_URL := env("SENTRY_URL"):
     ignore_logger("django.security.DisallowedHost")
 
     sentry_sdk.init(
@@ -409,7 +404,7 @@ if SENTRY_URL := config("SENTRY_URL", default=None):
 # Django browser reload
 # https://github.com/adamchainz/django-browser-reload
 
-if USE_BROWSER_RELOAD := config("USE_BROWSER_RELOAD", default=False, cast=bool):
+if USE_BROWSER_RELOAD := env("USE_BROWSER_RELOAD"):
     INSTALLED_APPS += ["django_browser_reload"]
 
     MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
@@ -417,10 +412,10 @@ if USE_BROWSER_RELOAD := config("USE_BROWSER_RELOAD", default=False, cast=bool):
 # Debug toolbar
 # https://github.com/jazzband/django-debug-toolbar
 
-if USE_DEBUG_TOOLBAR := config("USE_DEBUG_TOOLBAR", default=False, cast=bool):
+if USE_DEBUG_TOOLBAR := env("USE_DEBUG_TOOLBAR"):
     INSTALLED_APPS += ["debug_toolbar"]
 
     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
     # INTERNAL_IPS required for debug toolbar
-    INTERNAL_IPS = config("INTERNAL_IPS", default="127.0.0.1", cast=Csv())
+    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])

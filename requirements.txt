@@ -43,6 +43,7 @@ django==5.0.3
     #   heroicons
 django-allauth==0.61.1
 django-anymail==10.3
+django-environ==0.11.2
 django-extensions==3.2.3
 django-fast-update==0.2.3
 django-health-check==3.18.1
@@ -97,7 +98,6 @@ pydantic-core==2.16.3
 pyjwt==2.8.0
     # via django-allauth
 python-dateutil==2.9.0.post0
-python-decouple==3.8
 python3-openid==3.2.0
     # via django-allauth
 redis==5.0.3
