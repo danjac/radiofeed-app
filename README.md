@@ -100,7 +100,7 @@ ansible-galaxy role install dokku_bot.ansible_dokku
 First, copy `ansible-example` to `ansible`, and edit the files as needed, in particular the vars files under `ansible/vars`. You should encrypt any sensitive files with [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html):
 
 ```bash
-ansible-vault encrypt vars.yaml
+ansible-vault encrypt vars/secrets.yaml
 ```
 
 To deploy your application on the VM:
@@ -110,6 +110,8 @@ ansible-playbook -i ./ansible/hosts ./ansible/dokku.yaml --user USER --ask-vault
 ```
 
 **USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible and Dokku documentation for more details.
+
+Once you have deployed your Dokku application on the server, further updates are as easy as `git push dokku main`.
 
 ### Scheduling background tasks
 
