@@ -1,4 +1,5 @@
 appname: radiofeed
+repo: https://github.com/danjac/radiofeed-app
 postgres_service: radiofeed-postgres
 redis_service: radiofeed-redis
 dokku_plugins:
