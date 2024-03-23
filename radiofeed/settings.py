@@ -41,7 +41,7 @@ BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
 environ.Env.read_env(BASE_DIR / ".env")
 
-DEBUG = env.bool("DEBUG")
+DEBUG = env("DEBUG")
 SECRET_KEY = env("SECRET_KEY")
 
 INSTALLED_APPS: list[str] = [
@@ -133,7 +133,7 @@ TEMPLATES = [
             "builtins": [
                 "radiofeed.defaulttags",
             ],
-            "debug": env.bool("TEMPLATE_DEBUG"),
+            "debug": env("TEMPLATE_DEBUG"),
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -149,7 +149,7 @@ TEMPLATES = [
 ]
 
 # https://github.com/boxed/django-fastdev
-if USE_FASTDEV := env.bool("USE_FASTDEV"):
+if USE_FASTDEV := env("USE_FASTDEV"):
     INSTALLED_APPS += ["django_fastdev"]
     FASTDEV_STRICT_TEMPLATE_CHECKING = True
 
@@ -202,8 +202,8 @@ else:
 
     vars().update(EMAIL_CONFIG)
 
-    EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL")
-    EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS")
+    EMAIL_USE_SSL = env("EMAIL_USE_SSL")
+    EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 
 ADMINS = getaddresses([ADMINS]) if (ADMINS := env("ADMINS", default="")) else []
 
@@ -283,7 +283,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://whitenoise.readthedocs.io/en/latest/django.html
 #
 
-if USE_COLLECTSTATIC := env.bool("USE_COLLECTSTATIC"):
+if USE_COLLECTSTATIC := env("USE_COLLECTSTATIC"):
     STORAGES = {
         "staticfiles": {
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -305,7 +305,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-if USE_HTTPS := env.bool("USE_HTTPS"):
+if USE_HTTPS := env("USE_HTTPS"):
     SECURE_SSL_REDIRECT = True
 
     SECURE_PROXY_SSL_HEADER = env.tuple(
@@ -315,7 +315,7 @@ if USE_HTTPS := env.bool("USE_HTTPS"):
 # make sure to enable USE_HSTS if your load balancer is not using HSTS in production,
 # otherwise leave disabled.
 
-if USE_HSTS := env.bool("USE_HSTS"):
+if USE_HSTS := env("USE_HSTS"):
     SECURE_HSTS_INCLUDE_SUBDOMAINS = env("SECURE_HSTS_INCLUDE_SUBDOMAINS")
     SECURE_HSTS_PRELOAD = env("SECURE_HSTS_PRELOAD")
     SECURE_HSTS_SECONDS = env("SECURE_HSTS_SECONDS")
@@ -404,7 +404,7 @@ if SENTRY_URL := env("SENTRY_URL"):
 # Django browser reload
 # https://github.com/adamchainz/django-browser-reload
 
-if USE_BROWSER_RELOAD := env.bool("USE_BROWSER_RELOAD"):
+if USE_BROWSER_RELOAD := env("USE_BROWSER_RELOAD"):
     INSTALLED_APPS += ["django_browser_reload"]
 
     MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
@@ -412,7 +412,7 @@ if USE_BROWSER_RELOAD := env.bool("USE_BROWSER_RELOAD"):
 # Debug toolbar
 # https://github.com/jazzband/django-debug-toolbar
 
-if USE_DEBUG_TOOLBAR := env.bool("USE_DEBUG_TOOLBAR"):
+if USE_DEBUG_TOOLBAR := env("USE_DEBUG_TOOLBAR"):
     INSTALLED_APPS += ["debug_toolbar"]
 
     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
