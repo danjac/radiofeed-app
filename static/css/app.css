@@ -296,11 +296,13 @@
 
     /* LINKS */
 
+    .form-control a,
     .link {
         color: theme("colors.gray.800");
         font-weight: theme("fontWeight.semibold");
     }
-
+    .form-control a:active,
+    .form-control a:hover,
     .link.active,
     .link:hover {
         color: theme("colors.blue.600");
@@ -311,10 +313,13 @@
             color-scheme: dark;
         }
 
+        .form-control a,
         .link {
             color: theme("colors.gray.100");
         }
 
+        .form-control a:active,
+        .form-control a:hover,
         .link.active,
         .link:hover {
             color: theme("colors.blue.300");
