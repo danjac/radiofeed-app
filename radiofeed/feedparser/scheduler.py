@@ -77,10 +77,9 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
 
 def next_scheduled_update(podcast: Podcast) -> datetime:
     """Returns estimated next update."""
-    now = timezone.now()
 
     if podcast.pub_date is None or podcast.parsed is None:
-        return now
+        return timezone.now()
 
     return min(
         podcast.parsed + _MAX_FREQUENCY,
