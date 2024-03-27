@@ -75,7 +75,7 @@ lxml==5.1.0
 markdown-it-py==3.0.0
 mdurl==0.1.2
     # via markdown-it-py
-nh3==0.2.15
+nh3==0.2.17
 nltk==3.8.1
 numpy==1.26.4
     # via
