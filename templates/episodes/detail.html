@@ -104,8 +104,8 @@
                  hx-swap="outerHTML"
                  hx-indicator="this">
                 {% if is_bookmarked %}
-                    <button aria-label="Remove episode from your Bookmarks"
-                            title="Remove episode from your Bookmarks"
+                    <button aria-label="Remove Episode from your Bookmarks"
+                            title="Remove Episode from your Bookmarks"
                             class="inline-flex items-center btn btn-default btn-outline"
                             hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
                             hx-trigger="click once">
@@ -113,8 +113,8 @@
                         Bookmark
                     </button>
                 {% else %}
-                    <button aria-label="Add episode to your Bookmarks"
-                            title="Add episode to your Bookmarks"
+                    <button aria-label="Add Episode to your Bookmarks"
+                            title="Add Episode to your Bookmarks"
                             class="inline-flex items-center btn btn-default"
                             hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
                             hx-trigger="click once">
