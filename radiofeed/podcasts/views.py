@@ -39,6 +39,7 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 
 
 @require_safe
+@require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
 
@@ -73,6 +74,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@require_auth
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -98,6 +100,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@require_auth
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if request.search:
@@ -121,6 +124,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@require_auth
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -136,6 +140,7 @@ def latest_episode(
 
 
 @require_safe
+@require_auth
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -153,6 +158,7 @@ def podcast_detail(
 
 
 @require_safe
+@require_auth
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -180,6 +186,7 @@ def episodes(
 
 
 @require_safe
+@require_auth
 def similar(
     request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
 ) -> HttpResponse:
@@ -204,6 +211,7 @@ def similar(
 
 
 @require_safe
+@require_auth
 def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
@@ -233,6 +241,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@require_auth
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> HttpResponse:

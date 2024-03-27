@@ -98,45 +98,32 @@
                     </div>
                 {% endwith %}
             {% endpartialdef audio_player_button %}
-            {% if user.is_authenticated %}
-                {% partialdef bookmark_button inline=True %}
-                <div hx-push-url="false"
-                     hx-target="this"
-                     hx-swap="outerHTML"
-                     hx-indicator="this">
-                    {% if is_bookmarked %}
-                        <button aria-label="Remove episode from your Bookmarks"
-                                title="Remove episode from your Bookmarks"
-                                class="inline-flex items-center btn btn-default btn-outline"
-                                hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
-                                hx-trigger="click once">
-                            {% heroicon_mini "bookmark-slash" class="mr-2" %}
-                            Bookmark
-                        </button>
-                    {% else %}
-                        <button aria-label="Add episode to your Bookmarks"
-                                title="Add episode to your Bookmarks"
-                                class="inline-flex items-center btn btn-default"
-                                hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
-                                hx-trigger="click once">
-                            {% heroicon_mini "bookmark" class="mr-2" %}
-                            Bookmark
-                        </button>
-                    {% endif %}
-                </div>
-            {% endpartialdef bookmark_button %}
-        {% else %}
-            <div class="flex items-center">
-                <a aria-label="Log in to add episode to your Bookmarks"
-                   title="Log in to add episode to your Bookmarks"
-                   class="inline-flex items-center btn btn-default"
-                   hx-disable="true"
-                   href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">
-                    {% heroicon_mini "bookmark" class="mr-2" %}
-                    Bookmark
-                </a>
+            {% partialdef bookmark_button inline=True %}
+            <div hx-push-url="false"
+                 hx-target="this"
+                 hx-swap="outerHTML"
+                 hx-indicator="this">
+                {% if is_bookmarked %}
+                    <button aria-label="Remove episode from your Bookmarks"
+                            title="Remove episode from your Bookmarks"
+                            class="inline-flex items-center btn btn-default btn-outline"
+                            hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
+                            hx-trigger="click once">
+                        {% heroicon_mini "bookmark-slash" class="mr-2" %}
+                        Bookmark
+                    </button>
+                {% else %}
+                    <button aria-label="Add episode to your Bookmarks"
+                            title="Add episode to your Bookmarks"
+                            class="inline-flex items-center btn btn-default"
+                            hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
+                            hx-trigger="click once">
+                        {% heroicon_mini "bookmark" class="mr-2" %}
+                        Bookmark
+                    </button>
+                {% endif %}
             </div>
-        {% endif %}
+        {% endpartialdef bookmark_button %}
         <div class="flex flex-wrap items-center space-x-2 font-semibold text-gray-800 sm:space-x-3 dark:text-gray-300">
             <a download
                aria-label="Download audio file to your device"
@@ -170,36 +157,34 @@
         </div>
     {% endif %}
 </div>
-{% if user.is_authenticated %}
-    {% partialdef audio_log inline=True %}
-    <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
-        {% if audio_log %}
-            <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
-                <div class="flex items-center space-x-1">
-                    <span>Listened</span>
-                    {% include "_date.html" with value=audio_log.listened title="Listened" %}
-                </div>
-                {% with current_time=audio_log.current_time %}
-                    {% if current_time and current_time > 60 %}<div title="Timestamp">{{ current_time|format_duration }}</div>{% endif %}
-                {% endwith %}
-                {% if not is_playing %}
-                    <button class="inline-flex items-center text-xs lg:text-sm btn btn-danger"
-                            title="Remove episode from your History"
-                            hx-target="#audio-log"
-                            hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
-                            hx-indicator="this"
-                            hx-push-url="false"
-                            hx-swap="outerHTML"
-                            hx-confirm="Are you sure you want to remove this episode from your History?">
-                        {% heroicon_mini "trash" class="mr-2" %}
-                        Remove
-                    </button>
-                {% endif %}
+{% partialdef audio_log inline=True %}
+<div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
+    {% if audio_log %}
+        <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
+            <div class="flex items-center space-x-1">
+                <span>Listened</span>
+                {% include "_date.html" with value=audio_log.listened title="Listened" %}
             </div>
-        {% endif %}
-    </div>
+            {% with current_time=audio_log.current_time %}
+                {% if current_time and current_time > 60 %}<div title="Timestamp">{{ current_time|format_duration }}</div>{% endif %}
+            {% endwith %}
+            {% if not is_playing %}
+                <button class="inline-flex items-center text-xs lg:text-sm btn btn-danger"
+                        title="Remove episode from your History"
+                        hx-target="#audio-log"
+                        hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                        hx-indicator="this"
+                        hx-push-url="false"
+                        hx-swap="outerHTML"
+                        hx-confirm="Are you sure you want to remove this episode from your History?">
+                    {% heroicon_mini "trash" class="mr-2" %}
+                    Remove
+                </button>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
 {% endpartialdef audio_log %}
-{% endif %}
 {% markdown episode.description %}
 </article>
 {% endwith %}

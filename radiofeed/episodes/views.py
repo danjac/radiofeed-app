@@ -17,6 +17,7 @@ from radiofeed.pagination import render_pagination
 
 
 @require_safe
+@require_auth
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
@@ -55,6 +56,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@require_auth
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
@@ -76,6 +78,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@require_auth
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -85,22 +88,19 @@ def episode_detail(
         pk=episode_id,
     )
 
-    context: dict = {
-        "audio_log": None,
-        "is_playing": request.player.has(episode.pk),
-        "is_bookmarked": False,
-    }
-
-    if request.user.is_authenticated:
-        context = {
-            **context,
+    return _render_episode_detail(
+        request,
+        episode,
+        {
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
-        }
-    return _render_episode_detail(request, episode, context)
+            "is_playing": request.player.has(episode.pk),
+        },
+    )
 
 
 @require_POST
+@require_auth
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
@@ -132,6 +132,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
+@require_auth
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
@@ -155,6 +156,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
+@require_auth
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode.
 
