@@ -337,7 +337,10 @@ def add_private_feed(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             podcast, is_new = form.save()
 
-            messages.success(request, "Added to Private Feeds")
+            messages.success(
+                request,
+                "Podcast added to your Private Feeds and will appear here soon.",
+            )
 
             return redirect("podcasts:private_feeds" if is_new else podcast)
     else:
