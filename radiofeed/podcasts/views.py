@@ -45,17 +45,13 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
-    subscribed_podcasts = (
-        podcasts.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(
-                    podcast=OuterRef("pk"),
-                )
+    subscribed_podcasts = podcasts.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(
+                podcast=OuterRef("pk"),
             )
-        ).filter(is_subscribed=True)
-        if request.user.is_authenticated
-        else Podcast.objects.none()
-    )
+        )
+    ).filter(is_subscribed=True)
 
     has_subscriptions = subscribed_podcasts.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
@@ -148,11 +144,7 @@ def podcast_detail(
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
-    is_subscribed = (
-        request.user.subscriptions.filter(podcast=podcast).exists()
-        if request.user.is_authenticated
-        else False
-    )
+    is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
     return _render_podcast_detail(request, podcast, is_subscribed=is_subscribed)
 

@@ -27,15 +27,11 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date", "-id")
     )
 
-    subscribed_episodes = (
-        episodes.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-            )
-        ).filter(is_subscribed=True)
-        if request.user.is_authenticated
-        else Episode.objects.none()
-    )
+    subscribed_episodes = episodes.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+        )
+    ).filter(is_subscribed=True)
 
     has_subscriptions = subscribed_episodes.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
@@ -108,25 +104,20 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         pk=episode_id,
     )
 
-    audio_log = None
-    current_time = 0
+    audio_log, _ = request.user.audio_logs.update_or_create(
+        episode=episode,
+        defaults={
+            "listened": timezone.now(),
+        },
+    )
 
-    if request.user.is_authenticated:
-        audio_log, _ = request.user.audio_logs.update_or_create(
-            episode=episode,
-            defaults={
-                "listened": timezone.now(),
-            },
-        )
-        current_time = audio_log.current_time
-
-    request.player.set(episode.pk, current_time)
+    request.player.set(episode.pk, audio_log.current_time)
 
     return _render_audio_player_action(
         request,
         episode,
         is_playing=True,
-        current_time=current_time,
+        current_time=audio_log.current_time,
         audio_log=audio_log,
     )
 
@@ -137,13 +128,9 @@ def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
         episode = get_object_or_404(Episode, pk=episode_id)
-        audio_log = (
-            get_object_or_404(
-                request.user.audio_logs.select_related("episode"),
-                episode__pk=episode_id,
-            )
-            if request.user.is_authenticated
-            else None
+        audio_log = get_object_or_404(
+            request.user.audio_logs.select_related("episode"),
+            episode__pk=episode_id,
         )
         return _render_audio_player_action(
             request,
@@ -171,14 +158,13 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
                 request.POST["current_time"]
             )
 
-            if request.user.is_authenticated:
-                request.user.audio_logs.update_or_create(
-                    episode=get_object_or_404(Episode, pk=episode_id),
-                    defaults={
-                        "current_time": current_time,
-                        "listened": timezone.now(),
-                    },
-                )
+            request.user.audio_logs.update_or_create(
+                episode=get_object_or_404(Episode, pk=episode_id),
+                defaults={
+                    "current_time": current_time,
+                    "listened": timezone.now(),
+                },
+            )
         except (KeyError, ValueError):
             return HttpResponseBadRequest()
 
