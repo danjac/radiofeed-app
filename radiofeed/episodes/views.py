@@ -122,7 +122,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.pk, current_time)
 
-    return _render_audio_player_button(
+    return _render_audio_player_action(
         request,
         episode,
         is_playing=True,
@@ -145,7 +145,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             if request.user.is_authenticated
             else None
         )
-        return _render_audio_player_button(
+        return _render_audio_player_action(
             request,
             episode,
             audio_log=audio_log,
@@ -251,7 +251,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.success(request, "Added to Bookmarks")
 
-    return _render_bookmark_button(request, episode, is_bookmarked=True)
+    return _render_bookmark_action(request, episode, is_bookmarked=True)
 
 
 @require_DELETE
@@ -263,7 +263,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from Bookmarks")
 
-    return _render_bookmark_button(request, episode, is_bookmarked=False)
+    return _render_bookmark_action(request, episode, is_bookmarked=False)
 
 
 def _render_episode_detail(
@@ -283,7 +283,7 @@ def _render_episode_detail(
     )
 
 
-def _render_bookmark_button(
+def _render_bookmark_action(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> HttpResponse:
     return _render_episode_detail(
@@ -294,7 +294,7 @@ def _render_bookmark_button(
     )
 
 
-def _render_audio_player_button(
+def _render_audio_player_action(
     request: HttpRequest,
     episode: Episode,
     *,
