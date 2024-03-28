@@ -4,9 +4,9 @@ from django.conf import settings
 
 def get_client(
     *,
-    headers=None,
-    follow_redirects=True,
-    timeout=5,
+    headers: dict | None = None,
+    follow_redirects: bool = True,
+    timeout: int = 5,
     **kwargs,
 ) -> httpx.Client:
     """Returns HTTP client with default settings."""
