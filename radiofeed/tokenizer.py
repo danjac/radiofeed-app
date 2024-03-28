@@ -4,7 +4,6 @@ import pathlib
 import re
 from collections.abc import Iterator
 from datetime import date, timedelta
-from functools import lru_cache
 from typing import Final
 
 from django.conf import settings
@@ -56,7 +55,7 @@ _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
 
 
-@lru_cache
+@functools.cache
 def get_stopwords(language: str) -> frozenset[str]:
     """Return all stopwords for a language, if available.
 
@@ -145,6 +144,6 @@ def _format_date(value: date, fmt: str) -> str:
     return date_format(value, fmt).casefold()
 
 
-@functools.lru_cache
+@functools.cache
 def _stopwords_path(language: str) -> pathlib.Path:
     return settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"
