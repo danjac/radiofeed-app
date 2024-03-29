@@ -13,8 +13,7 @@
 !.woodpecker.yml
 **/__pycache__
 **/tests
-ansible
-ansible-example
+**/cookiecutters
 .*
 .git
 .github

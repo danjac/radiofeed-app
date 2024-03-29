@@ -382,6 +382,10 @@ if SENTRY_URL := env("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
+if env.bool("USE_ANSIBLE", default=False):
+    INSTALLED_APPS += ["radiofeed.ansible"]
+
+
 # Django browser reload
 # https://github.com/adamchainz/django-browser-reload
 
