@@ -1,8 +1,8 @@
-{% raw %}
+{% raw -%}
 - name: create superuser
   become: true
   ansible.builtin.shell: dokku run {{ appname }} ./manage.py createsuperuser \
       --noinput \
       --username={{ superuser_username }} \
       --email={{ superuser_email }}
-{% endraw %}
+{%- endraw %}

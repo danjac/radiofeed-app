@@ -1,4 +1,4 @@
-{% raw %}
+{% raw -%}
 - name: add categories
   run_once: true
   become: true
@@ -9,4 +9,4 @@
   become: true
   ansible.builtin.shell: dokku run {{ appname }} ./manage.py loaddata \
       ./radiofeed/podcasts/fixtures/podcasts.json.gz
-{% endraw %}
+{%- endraw %}

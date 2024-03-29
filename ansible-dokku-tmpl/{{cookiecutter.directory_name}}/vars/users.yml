@@ -1,6 +1,4 @@
 dokku_users:
     - name: "{{cookiecutter.full_name}}"
       username: "{{cookiecutter.username}}"
-{% raw %}
-      ssh_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
-{% endraw %}
+      {% raw -%}ssh_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"{%- endraw %}

@@ -1,4 +1,4 @@
-{% raw %}
+{% raw -%}
 - name: set environment variables
   dokku_config:
       app: "{{ appname }}"
@@ -13,4 +13,4 @@
           MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
           SECRET_KEY: "{{ secret_key }}"
           SENTRY_URL: "{{ sentry_url }}"
-{% endraw %}
+{%- endraw %}

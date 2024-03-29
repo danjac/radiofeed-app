@@ -1,6 +1,6 @@
-{% raw %}
+{% raw -%}
 - name: set dokku app
   dokku_app:
       app: "{{ appname }}"
       state: present
-{% endraw %}
+{%- endraw %}
