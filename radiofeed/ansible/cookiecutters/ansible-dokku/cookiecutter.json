@@ -1,10 +1,10 @@
 {
     "directory_name": "ansible-dokku",
     "appname": "radiofeed",
-    "domain": "",
+    "domain": "radiofeed.app",
     "username": "",
-    "full_name": "",
     "email": "",
+    "full_name": "",
     "secret_key": "{{ cookiecutter.secret_key }}",
     "site_name": "Radiofeed",
     "admin_site_header": "Radiofeed [Production]",
