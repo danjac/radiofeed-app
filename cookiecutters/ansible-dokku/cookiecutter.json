@@ -1,0 +1,19 @@
+{
+    "directory_name": "ansible-dokku",
+    "domain": null,
+    "appname": "radiofeed",
+    "username": "",
+    "full_name": "",
+    "email": null,
+    "secret_key": "{{ cookiecutter.secret_key }}",
+    "site_name": "Radiofeed",
+    "admin_site_header": "Radiofeed [Production]",
+    "admin_url": "admin/",
+    "letsencrypt_email": "{{ cookiecutter.email }}",
+    "mailgun_api_key": "",
+    "mailgun_api_url": "https://api.eu.mailgun.net/v3",
+    "mailgun_sender_domain": "mg.{{ cookiecutter.domain }}",
+    "sentry_url": "",
+    "superuser_email": "{{ cookiecutter.email }}",
+    "superuser_username": "{{ cookiecutter.username }}"
+}

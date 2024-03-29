@@ -1,0 +1,20 @@
+{% raw -%}
+- name: postgres:create
+  dokku_service_create:
+      name: "{{ postgres_service }}"
+      service: postgres
+- name: postgres:link
+  dokku_service_link:
+      app: "{{ appname }}"
+      name: "{{ postgres_service }}"
+      service: postgres
+- name: redis:create
+  dokku_service_create:
+      name: "{{ redis_service }}"
+      service: redis
+- name: redis:link
+  dokku_service_link:
+      app: "{{ appname }}"
+      name: "{{ redis_service }}"
+      service: redis
+{%- endraw %}

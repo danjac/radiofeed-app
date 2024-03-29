@@ -1,0 +1,13 @@
+appname: "{{ cookiecutter.appname }}"
+domain: "{{ cookiecutter.domain }}"
+repo: https://github.com/danjac/radiofeed-app
+letsencrypt_email: "{{ cookiecutter.letsencrypt_email }}"
+postgres_service: "{{cookiecutter.appname}}-postgres"
+redis_service: "{{cookiecutter.appname}}-redis"
+dokku_plugins:
+    - name: postgres
+      url: https://github.com/dokku/dokku-postgres.git
+    - name: redis
+      url: https://github.com/dokku/dokku-redis.git
+    - name: letsencrypt
+      url: https://github.com/dokku/dokku-letsencrypt.git
