@@ -9,11 +9,11 @@
     "site_name": "Radiofeed",
     "admin_site_header": "Radiofeed [Production]",
     "admin_url": "admin/",
+    "superuser_email": "{{ cookiecutter.email }}",
+    "superuser_username": "{{ cookiecutter.username }}",
     "letsencrypt_email": "{{ cookiecutter.email }}",
     "mailgun_api_key": "",
     "mailgun_api_url": "https://api.eu.mailgun.net/v3",
     "mailgun_sender_domain": "mg.{{ cookiecutter.domain }}",
-    "superuser_email": "{{ cookiecutter.email }}",
-    "superuser_username": "{{ cookiecutter.username }}",
     "sentry_url": ""
 }
