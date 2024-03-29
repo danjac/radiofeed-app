@@ -1,9 +1,9 @@
-appname: radiofeed
-domain: radiofeed.app
+appname: "{{ cookiecutter.appname }}"
+domain: "{{ cookiecutter.domain }}"
 repo: https://github.com/danjac/radiofeed-app
-letsencrypt_email: admin@radiofeed.app
-postgres_service: radiofeed-postgres
-redis_service: radiofeed-redis
+letsencrypt_email: "{{ cookiecutter.letsencrypt_email }}"
+postgres_service: "{{cookiecutter.appname}}-postgres"
+redis_service: "{{cookiecutter.appname}}-redis"
 dokku_plugins:
     - name: postgres
       url: https://github.com/dokku/dokku-postgres.git
