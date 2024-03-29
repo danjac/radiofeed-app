@@ -1,7 +1,0 @@
-{% raw -%}
-- name: set default site
-  become: true
-  ansible.builtin.shell: dokku run {{ appname }} ./manage.py set_default_site \
-      --name={{ site_name }} \
-      --domain={{ domain }}
-{%- endraw %}

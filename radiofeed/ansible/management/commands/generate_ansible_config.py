@@ -29,17 +29,15 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
 
+        cookiecutter_name = options["cookiecutter"]
+
         cookiecutter_path = pathlib.Path(
-            settings.BASE_DIR
-            / "radiofeed"
-            / "ansible"
-            / "cookiecutters"
-            / options["cookiecutter"]
+            settings.BASE_DIR / "cookiecutters" / cookiecutter_name
         )
 
         if not cookiecutter_path.exists():
             raise CommandError(
-                f"{options['cookiecutter']} not found in cookiecutters directory"
+                f"{cookiecutter_name} not found in cookiecutters directory"
             )
 
         cookiecutter(

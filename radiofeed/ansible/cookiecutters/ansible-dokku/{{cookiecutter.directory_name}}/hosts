@@ -1,4 +1,0 @@
-{{cookiecutter.domain}}
-
-[webservers]
-{{cookiecutter.domain}}
