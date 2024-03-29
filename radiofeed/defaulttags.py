@@ -87,9 +87,7 @@ def search_form(
 @functools.cache
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Returns signed cover image URL."""
-
-    assert size in COVER_IMAGE_SIZES, f"invalid cover image size:{size}"
-
+    _assert_cover_size(size)
     if cover_url:
         return (
             reverse(
@@ -108,7 +106,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @functools.cache
 def get_placeholder_cover_url(size: int) -> str:
     """Return placeholder cover image URL."""
-    assert size in COVER_IMAGE_SIZES, f"invalid cover image size:{size}"
+    _assert_cover_size(size)
     return static(f"img/placeholder-{size}.webp")
 
 
@@ -173,3 +171,7 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     scheme = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
     return f"{scheme}://{site.domain}{path}"
+
+
+def _assert_cover_size(size: int) -> None:
+    assert size in COVER_IMAGE_SIZES, f"invalid cover image size:{size}"
