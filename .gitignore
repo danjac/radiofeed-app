@@ -44,5 +44,4 @@ node_modules/
 npm-debug.log*
 staticfiles
 venv
-
 static/**/bundle.*

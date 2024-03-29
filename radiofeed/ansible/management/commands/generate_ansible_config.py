@@ -1,10 +1,8 @@
-import pathlib
 from argparse import ArgumentParser
 
 from cookiecutter.main import cookiecutter
-from django.conf import settings
 from django.contrib.auth.management import get_system_username
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.core.management.utils import get_random_secret_key
 
 
@@ -17,7 +15,7 @@ class Command(BaseCommand):
         """Parse command args."""
         parser.add_argument(
             "cookiecutter",
-            help="Name of cookiecutter",
+            help="Path to cookiecutter template",
         )
 
         parser.add_argument(
@@ -29,19 +27,8 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         """Command handler implementation."""
 
-        cookiecutter_name = options["cookiecutter"]
-
-        cookiecutter_path = pathlib.Path(
-            settings.BASE_DIR / "cookiecutters" / cookiecutter_name
-        )
-
-        if not cookiecutter_path.exists():
-            raise CommandError(
-                f"{cookiecutter_name} not found in cookiecutters directory"
-            )
-
         cookiecutter(
-            str(cookiecutter_path),
+            options["cookiecutter"],
             overwrite_if_exists=options["overwrite"],
             extra_context={
                 "secret_key": get_random_secret_key(),
