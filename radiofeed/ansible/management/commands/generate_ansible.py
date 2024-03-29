@@ -3,7 +3,8 @@ from argparse import ArgumentParser
 
 from cookiecutter.main import cookiecutter
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.contrib.auth.management import get_system_username
+from django.core.management.base import BaseCommand, CommandError
 from django.core.management.utils import get_random_secret_key
 
 
@@ -16,7 +17,7 @@ class Command(BaseCommand):
         """Parse command args."""
         parser.add_argument(
             "cookiecutter",
-            help="Name of cookiecutter.",
+            help="Name of cookiecutter",
         )
 
         parser.add_argument(
@@ -36,10 +37,16 @@ class Command(BaseCommand):
             / options["cookiecutter"]
         )
 
+        if not cookiecutter_path.exists():
+            raise CommandError(
+                f"{options['cookiecutter']} not found in cookiecutters directory"
+            )
+
         cookiecutter(
             str(cookiecutter_path),
             overwrite_if_exists=options["overwrite"],
             extra_context={
                 "secret_key": get_random_secret_key(),
+                "username": get_system_username(),
             },
         )
