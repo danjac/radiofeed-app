@@ -1,0 +1,12 @@
+admin_site_header: "{{ cookiecutter.admin_site_header }}"
+admin_url: "{{ cookiecutter.admin_url }}"
+admins: "{{ cookiecutter.email }}"
+allowed_hosts: .{{cookiecutter.domain}}
+mailgun_api_key: "{{ cookiecutter.mailgun_api_key }}"
+mailgun_api_url: "{{ cookiecutter.mailgun_api_url }}"
+mailgun_sender_domain: "{{ cookiecutter.mailgun_sender_domain }}"
+sentry_url: "{{ cookiecutter.sentry_url }}"
+site_name: "{{ cookiecutter.site_name }}"
+superuser_email: "{{ cookiecutter.email }}"
+superuser_username: "{{ cookiecutter.username }}"
+secret_key: "{{ cookiecutter.secret_key }}"
