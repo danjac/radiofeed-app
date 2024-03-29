@@ -382,6 +382,7 @@ if SENTRY_URL := env("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
+# Ansible cookiecutter generators
 if env.bool("USE_ANSIBLE", default=False):
     INSTALLED_APPS += ["radiofeed.ansible"]
 
