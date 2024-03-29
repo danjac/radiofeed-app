@@ -13,7 +13,7 @@
     "mailgun_api_key": "",
     "mailgun_api_url": "https://api.eu.mailgun.net/v3",
     "mailgun_sender_domain": "mg.{{ cookiecutter.domain }}",
-    "sentry_url": "",
     "superuser_email": "{{ cookiecutter.email }}",
-    "superuser_username": "{{ cookiecutter.username }}"
+    "superuser_username": "{{ cookiecutter.username }}",
+    "sentry_url": ""
 }
