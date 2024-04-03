@@ -85,7 +85,7 @@ oauthlib==3.2.2
     # via requests-oauthlib
 packaging==24.0
     # via gunicorn
-pillow==10.2.0
+pillow==10.3.0
 psutil==5.9.8
 psycopg==3.1.18
 psycopg-binary==3.1.18
