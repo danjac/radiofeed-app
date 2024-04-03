@@ -11,6 +11,7 @@
                     <button class="py-1 px-4 text-base border border-white md:text-lg btn btn-primary"
                             aria-label="OK, I accept cookies"
                             title="OK, I accept cookies"
+                            hx-disabled-elt="this"
                             hx-post="{% url 'accept_cookies' %}"
                             hx-target="#accept-cookies"
                             hx-push-url="false"

@@ -21,6 +21,7 @@
           action="{{ request.path }}"
           class="space-y-3"
           id="private-feed-form"
+          hx-disabled-elt="this"
           hx-post="{{ request.path }}"
           hx-target="this"
           hx-swap="outerHTML">

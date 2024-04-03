@@ -66,6 +66,7 @@
                 {% partialdef audio_player_button inline=True %}
                 {% with target="audio-player-button" %}
                     <div id="{{ target }}"
+                         hx-disabled-elt="this"
                          hx-push-url="false"
                          hx-target="this"
                          hx-indicator="this"
@@ -74,6 +75,7 @@
                             <button aria-label="Close Player"
                                     title="Close Player"
                                     class="inline-flex items-center btn btn-primary btn-outline btn-lg"
+                                    hx-disabled-elt="this"
                                     hx-post="{% url 'episodes:close_player' %}"
                                     hx-trigger="click once">
                                 {% heroicon_mini "stop-circle" class="mr-2" %}
@@ -83,6 +85,7 @@
                             <button aria-label="Open Episode in Player"
                                     title="Open Episode in Player"
                                     class="inline-flex items-center btn btn-primary btn-lg"
+                                    hx-disabled-elt="this"
                                     hx-post="{% url 'episodes:start_player' episode.pk %}"
                                     hx-trigger="click once">
                                 {% heroicon_mini "play-circle" class="mr-2" %}
@@ -107,6 +110,7 @@
                     <button aria-label="Remove Episode from your Bookmarks"
                             title="Remove Episode from your Bookmarks"
                             class="inline-flex items-center btn btn-default btn-outline"
+                            hx-disabled-elt="this"
                             hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
                             hx-trigger="click once">
                         {% heroicon_mini "bookmark-slash" class="mr-2" %}
@@ -116,6 +120,7 @@
                     <button aria-label="Add Episode to your Bookmarks"
                             title="Add Episode to your Bookmarks"
                             class="inline-flex items-center btn btn-default"
+                            hx-disabled-elt="this"
                             hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
                             hx-trigger="click once">
                         {% heroicon_mini "bookmark" class="mr-2" %}
@@ -171,6 +176,7 @@
             {% if not is_playing %}
                 <button class="inline-flex items-center text-xs lg:text-sm btn btn-danger"
                         title="Remove episode from your History"
+                        hx-disabled-elt="this"
                         hx-target="#audio-log"
                         hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                         hx-indicator="this"

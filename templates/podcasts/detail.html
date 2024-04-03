@@ -25,6 +25,7 @@
                             <button class="inline-flex items-center btn btn-danger btn-lg"
                                     aria-label="Remove podcast from your private feeds"
                                     title="Remove podcast from your private feeds"
+                                    hx-disabled-elt="this"
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast? You can't undo this action!"
                                     hx-delete="{% url 'podcasts:remove_private_feed' podcast.pk %}">
@@ -51,6 +52,7 @@
                             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                     aria-label="Unsubscribe from this Podcast"
                                     title="Unsubscribe from this Podcast"
+                                    hx-disabled-elt="this"
                                     hx-delete="{% url 'podcasts:unsubscribe' podcast.pk %}"
                                     hx-trigger="click once">
                                 {% heroicon_mini "eye-slash" class="mr-2" %}
@@ -60,6 +62,7 @@
                             <button class="inline-flex items-center btn btn-primary btn-lg"
                                     aria-label="Subscribe to this Podcast"
                                     title="Subscribe to this Podcast"
+                                    hx-disabled-elt="this"
                                     hx-post="{% url 'podcasts:subscribe' podcast.pk %}"
                                     hx-trigger="click once">
                                 {% heroicon_mini "eye" class="mr-2" %}
