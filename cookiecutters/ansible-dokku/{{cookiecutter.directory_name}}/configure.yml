@@ -1,6 +1,7 @@
 - name: Update Django configuration
   hosts: webservers
   vars_files:
+      - ./vars/dokku.yml
       - ./vars/django.yml
   gather_facts: true
   roles:
