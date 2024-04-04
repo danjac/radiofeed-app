@@ -1,0 +1,9 @@
+- name: Update Django configuration
+  hosts: webservers
+  vars_files:
+      - ./vars/django.yml
+  gather_facts: true
+  roles:
+      - dokku_bot.ansible_dokku
+  tasks:
+      - import_tasks: ./tasks/config.yml
