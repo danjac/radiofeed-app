@@ -101,7 +101,7 @@ ansible-galaxy role install dokku_bot.ansible_dokku
 To generate this configuration, run the following command:
 
 ```bash
-./configure_deployment.py ./cookiecutters/ansible-dokku
+./configure_deployment.py ansible-dokku
 ```
 
 This will prompt for relevant information, but you can edit the files afterwards if needed. You should encrypt any sensitive files with [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html):
