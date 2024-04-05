@@ -18,7 +18,7 @@ class _OPMLParser:
 
     def parse(self, content: bytes) -> Iterator[str]:
         """Parse OPML content."""
-        if body := self._parser.parse(content, "opml", "body"):
+        if (body := self._parser.parse(content, "opml", "body")) is not None:
             yield from self._parser.itervalues(body, ".//outline/@xmlUrl")
 
 
