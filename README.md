@@ -118,9 +118,14 @@ ansible-playbook -i ./ansible-dokku/hosts ./ansible-dokku/dokku.yml --user USER 
 
 **USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible and Dokku documentation for more details.
 
-Once you have deployed your Dokku application on the server, further updates are as easy as `git push dokku main`.
+Once you have deployed your Dokku application on the server, further deployments can be done through Git:
 
-The Ansible configuration also includes a `manage` script to run Django management commands remotely on your Dokku server: 
+```bash
+git remote add dokku dokku@radiofeed.app:radiofeed
+git push dokku main
+```
+
+The Ansible configuration also includes a `manage` script to run Django management commands remotely on your Dokku server:
 
 ```bash
 ./ansible-dokku/manage shell_plus
