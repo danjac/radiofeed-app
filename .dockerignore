@@ -27,6 +27,7 @@ LICENSE
 Makefile
 Procfile
 README.md
+configure_deployment.py
 conftest.py
 docker-compose.yml
 node_modules

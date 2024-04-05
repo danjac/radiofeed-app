@@ -102,7 +102,6 @@ env = [
 source=["radiofeed", "templates"]
 omit=[
     "**/migrations/*",
-    "*/ansible/*",
     "*/nltk/*",
     "*/static/*",
     "*/tests/*",
