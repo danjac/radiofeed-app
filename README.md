@@ -120,6 +120,12 @@ ansible-playbook -i ./ansible-dokku/hosts ./ansible-dokku/dokku.yml --user USER 
 
 Once you have deployed your Dokku application on the server, further updates are as easy as `git push dokku main`.
 
+The Ansible configuration also includes a `manage` script to run Django management commands remotely on your Dokku server: 
+
+```bash
+./ansible-dokku/manage shell_plus
+```
+
 ### Scheduling background tasks
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
