@@ -1,8 +1,6 @@
 import functools
 from collections.abc import Iterator
 
-import lxml.etree
-
 from radiofeed.feedparser.xpath_parser import XPathParser
 
 
@@ -20,11 +18,8 @@ class _OPMLParser:
 
     def parse(self, content: bytes) -> Iterator[str]:
         """Parse OPML content."""
-        try:
-            for element in self._parser.iterparse(content, "opml", "body"):
-                yield from self._parser.itervalues(element, ".//outline/@xmlUrl")
-        except lxml.etree.XMLSyntaxError:
-            return
+        if body := self._parser.parse(content, "opml", "body"):
+            yield from self._parser.itervalues(body, ".//outline/@xmlUrl")
 
 
 @functools.cache

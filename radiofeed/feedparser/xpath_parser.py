@@ -31,6 +31,13 @@ class XPathParser:
             finally:
                 element.clear()
 
+    def parse(self, *args, **kwargs) -> lxml.etree._Element | None:
+        """Returns first matching element, or None if not found."""
+        try:
+            return next(self.iterparse(*args, **kwargs))
+        except (StopIteration, lxml.etree.XMLSyntaxError):
+            return None
+
     def iterfind(self, element: lxml.etree.Element, *paths) -> Iterator:
         """Iterate through paths."""
         for path in paths:
