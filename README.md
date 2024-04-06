@@ -102,16 +102,18 @@ To generate this configuration, run the following command:
 ./configure_deployment.py ansible-dokku
 ```
 
+This will generate a set of Ansible playbooks under the `deployments` directory.
+
 This will prompt for relevant information, but you can edit the files afterwards if needed. You should encrypt any sensitive files with [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html):
 
 ```bash
-ansible-vault encrypt ansible-dokku/vars/django.yml
+ansible-vault encrypt ./deployments/ansible-dokku/vars/django.yml
 ```
 
 To deploy your application on the VM:
 
 ```bash
-ansible-playbook -i ./ansible-dokku/hosts ./ansible-dokku/dokku.yml --user USER --ask-vault-pass
+ansible-playbook -i ./deployments/ansible-dokku/hosts ./deployments/ansible-dokku/dokku.yml --user USER [--ask-vault-pass]
 ```
 
 **USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible and Dokku documentation for more details.
@@ -126,7 +128,7 @@ git push dokku main
 The Ansible configuration also includes a `manage` script to run Django management commands remotely on your Dokku server:
 
 ```bash
-./ansible-dokku/manage shell_plus
+./deployments/ansible-dokku/manage shell_plus
 ```
 
 ### Scheduling background tasks

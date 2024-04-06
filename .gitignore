@@ -39,7 +39,7 @@ dist/
 hosts
 logs
 media/
-ansible-dokku/
+deployments/
 node_modules/
 npm-debug.log*
 staticfiles

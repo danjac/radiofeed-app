@@ -3,6 +3,8 @@
 
 import os
 import pathlib
+import shutil
+import sys
 from argparse import ArgumentParser
 
 from cookiecutter.main import cookiecutter
@@ -38,15 +40,34 @@ def main() -> None:
             "forget to activate a virtual environment?"
         ) from exc
     args = parser.parse_args()
+
+    cookiecutter_dir = pathlib.Path(settings.BASE_DIR / "cookiecutters")
+
+    dest_dir = settings.BASE_DIR / "deployments"
+    dest_dir.mkdir(exist_ok=True)
+
+    target_dir = dest_dir / args.cookiecutter
+
+    if target_dir.exists() and not args.overwrite:
+        sys.stderr.write(f"{target_dir} already exists\n")
+        sys.exit(1)
+
     cookiecutter(
-        str(pathlib.Path(settings.BASE_DIR / "cookiecutters")),
+        str(cookiecutter_dir),
         directory=args.cookiecutter,
-        overwrite_if_exists=args.overwrite,
+        overwrite_if_exists=True,
         extra_context={
             "secret_key": get_random_secret_key(),
             "username": get_system_username(),
         },
     )
+
+    new_dir = settings.BASE_DIR / args.cookiecutter
+
+    if args.overwrite:
+        shutil.rmtree(target_dir)
+
+    new_dir.replace(target_dir)
 
 
 if __name__ == "__main__":
