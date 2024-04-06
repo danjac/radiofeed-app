@@ -32,12 +32,6 @@ precommitupdate:
 nltkdownload:
 	xargs -I{} .venv/bin/python -c "import nltk; nltk.download('{}')" < nltk.txt
 
-build:
-	npm run build
-
-watch:
-	npm run watch
-
 clean:
 	git clean -Xdf
 
@@ -53,27 +47,6 @@ podstop:
 podclean:
 	podman pod rm radiofeed-pod
 	podman volume rm radiofeed_pg_data
-
-test:
-	python -m pytest
-
-serve:
-	python ./manage.py runserver
-
-shell:
-	python ./manage.py shell_plus
-
-parsefeeds:
-	python ./manage.py parse_feeds
-
-droptestdb:
-	python ./manage.py drop_test_database --no-input
-
-clearcache:
-	python ./manage.py clear_cache
-
-migrate:
-	python ./manage.py migrate
 
 fixtures:
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz

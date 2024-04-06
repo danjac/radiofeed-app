@@ -51,11 +51,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 * `make install`: download and install front and backend Javascript and Python dependencies
 * `make dbinstall`: run migrations and install sample fixtures
-* `make test`: run unit tests
 * `make update`: update all front and backend dependencies to latest available versions
-* `make watch`: compile JavaScript and CSS assets on the fly
-* `make serve`: run Django development server (on 127.0.0.1:8000)
-* `make shell`: run Django shell on iPython
 
 ## Deployment
 
