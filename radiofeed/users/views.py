@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.htmx import HtmxTemplateResponse
+from radiofeed.htmx import render_htmx_response
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -16,7 +16,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_auth
 def user_preferences(
     request: HttpRequest,
-) -> HtmxTemplateResponse | HttpResponseRedirect:
+) -> TemplateResponse | HttpResponseRedirect:
     """Allow user to edit their preferences."""
 
     if request.method == "POST":
@@ -30,7 +30,7 @@ def user_preferences(
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return HtmxTemplateResponse(
+    return render_htmx_response(
         request,
         "account/preferences.html",
         {"form": form},
@@ -70,7 +70,7 @@ def import_podcast_feeds(
 
         return HttpResponseRedirect(reverse("users:manage_podcast_feeds"))
 
-    return HtmxTemplateResponse(
+    return render_htmx_response(
         request,
         "account/podcast_feeds.html",
         {

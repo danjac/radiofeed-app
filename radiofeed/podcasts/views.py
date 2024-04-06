@@ -11,9 +11,9 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.client import get_client
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
-from radiofeed.htmx import HtmxTemplateResponse
+from radiofeed.htmx import render_htmx_response
 from radiofeed.http import HttpResponseConflict
-from radiofeed.pagination import PaginationResponse
+from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -43,7 +43,7 @@ def landing_page(
 
 @require_safe
 @require_auth
-def index(request: HttpRequest) -> PaginationResponse:
+def index(request: HttpRequest) -> TemplateResponse:
     """Render default podcast home page for authenticated users."""
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
@@ -60,7 +60,7 @@ def index(request: HttpRequest) -> PaginationResponse:
     promoted = "promoted" in request.GET or not has_subscriptions
     podcasts = podcasts.filter(promoted=True) if promoted else subscribed_podcasts
 
-    return PaginationResponse(
+    return render_pagination_response(
         request,
         podcasts,
         "podcasts/index.html",
@@ -74,7 +74,7 @@ def index(request: HttpRequest) -> PaginationResponse:
 
 @require_safe
 @require_auth
-def search_podcasts(request: HttpRequest) -> PaginationResponse | HttpResponseRedirect:
+def search_podcasts(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
         podcasts = (
@@ -86,7 +86,7 @@ def search_podcasts(request: HttpRequest) -> PaginationResponse | HttpResponseRe
                 "-pub_date",
             )
         )
-        return PaginationResponse(
+        return render_pagination_response(
             request,
             podcasts,
             "podcasts/search.html",
@@ -142,7 +142,7 @@ def latest_episode(
 @require_auth
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HtmxTemplateResponse:
+) -> TemplateResponse:
     """Details for a single podcast."""
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
@@ -156,7 +156,7 @@ def podcast_detail(
 @require_auth
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> PaginationResponse:
+) -> TemplateResponse:
     """Render episodes for a single podcast."""
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
@@ -169,7 +169,7 @@ def episodes(
             "-pub_date" if request.ordering.is_desc else "pub_date"
         )
 
-    return PaginationResponse(
+    return render_pagination_response(
         request,
         episodes,
         "podcasts/episodes.html",
@@ -239,7 +239,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 @require_auth
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
-) -> PaginationResponse:
+) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -257,7 +257,7 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return PaginationResponse(
+    return render_pagination_response(
         request,
         podcasts,
         "podcasts/category_detail.html",
@@ -269,7 +269,7 @@ def category_detail(
 
 @require_POST
 @require_auth
-def subscribe(request: HttpRequest, podcast_id: int) -> HtmxTemplateResponse:
+def subscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     try:
@@ -288,7 +288,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HtmxTemplateResponse:
 
 @require_DELETE
 @require_auth
-def unsubscribe(request: HttpRequest, podcast_id: int) -> HtmxTemplateResponse:
+def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
@@ -302,7 +302,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HtmxTemplateResponse:
 
 @require_safe
 @require_auth
-def private_feeds(request: HttpRequest) -> PaginationResponse:
+def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = Podcast.objects.annotate(
         is_subscribed=Exists(
@@ -325,7 +325,7 @@ def private_feeds(request: HttpRequest) -> PaginationResponse:
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return PaginationResponse(
+    return render_pagination_response(
         request,
         podcasts,
         "podcasts/private_feeds.html",
@@ -336,7 +336,7 @@ def private_feeds(request: HttpRequest) -> PaginationResponse:
 @require_auth
 def add_private_feed(
     request: HttpRequest,
-) -> HtmxTemplateResponse | HttpResponseRedirect:
+) -> TemplateResponse | HttpResponseRedirect:
     """Add new private feed to collection."""
     if request.method == "POST":
         form = PrivateFeedForm(request.user, request.POST)
@@ -356,7 +356,7 @@ def add_private_feed(
     else:
         form = PrivateFeedForm(request.user)
 
-    return HtmxTemplateResponse(
+    return render_htmx_response(
         request,
         "podcasts/private_feed_form.html",
         {
@@ -387,8 +387,8 @@ def _render_podcast_detail(
     *,
     is_subscribed: bool,
     **kwargs,
-) -> HtmxTemplateResponse:
-    return HtmxTemplateResponse(
+) -> TemplateResponse:
+    return render_htmx_response(
         request,
         "podcasts/detail.html",
         {
@@ -401,7 +401,7 @@ def _render_podcast_detail(
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
-) -> HtmxTemplateResponse:
+) -> TemplateResponse:
     return _render_podcast_detail(
         request,
         podcast,
