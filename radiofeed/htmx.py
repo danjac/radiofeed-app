@@ -14,7 +14,7 @@ class HtmxTemplateResponse(TemplateResponse):
         self,
         request: HttpRequest,
         template_name: str,
-        context: dict | None,
+        context: dict | None = None,
         *,
         partial: str | None = None,
         target: str | None = None,
