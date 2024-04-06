@@ -40,9 +40,7 @@ class _RSSParser:
 
     def parse(self, content: bytes) -> Feed:
         """Parse content into Feed instance."""
-        if (channel := self._parser.parse(content, "rss", "channel")) is not None:
-            return self._parse_feed(channel)
-        raise InvalidRSSError("Invalid RSS document")
+        return self._parse_feed(self._parser.parse(content, "rss", "channel"))
 
     def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
         try:

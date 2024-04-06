@@ -31,6 +31,11 @@ class XPathParser:
             finally:
                 element.clear()
 
+    def iterfind(self, element: lxml.etree._Element, *paths) -> Iterator:
+        """Iterate through paths."""
+        for path in paths:
+            yield from self._xpath(path)(element)
+
     def parse(self, *args, **kwargs) -> lxml.etree._Element | None:
         """Returns first matching element, or None if not found."""
         try:
@@ -38,19 +43,16 @@ class XPathParser:
         except (StopIteration, lxml.etree.XMLSyntaxError):
             return None
 
-    def iterfind(self, element: lxml.etree.Element, *paths) -> Iterator:
-        """Iterate through paths."""
-        for path in paths:
-            yield from self._xpath(path)(element)
-
-    def itervalues(self, element: lxml.etree.Element, *paths) -> Iterator[str]:
+    def itervalues(self, element: lxml.etree._Element | None, *paths) -> Iterator[str]:
         """Find matching non-empty strings from attributes or text."""
+        if element is None:
+            return
         with contextlib.suppress(UnicodeDecodeError):
             for value in self.iterfind(element, *paths):
                 if isinstance(value, str) and (cleaned := value.strip()):
                     yield cleaned
 
-    def value(self, element: lxml.etree.Element, *paths) -> str | None:
+    def value(self, element: lxml.etree._Element, *paths) -> str | None:
         """Returns first non-empty string value or None if not found."""
         try:
             return next(self.itervalues(element, *paths))
