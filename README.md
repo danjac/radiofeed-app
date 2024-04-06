@@ -53,6 +53,8 @@ The `Makefile` has some convenient shortcuts for local development, including:
 * `make dbinstall`: run migrations and install sample fixtures
 * `make update`: update all front and backend dependencies to latest available versions
 
+To run unit tests, just run `pytest`.
+
 ## Deployment
 
 The following environment variables should be set in your production installation (changing _radiofeed.app_ for your domain).
