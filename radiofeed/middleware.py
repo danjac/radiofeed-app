@@ -81,7 +81,7 @@ class PaginationMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.pagination = Pagination(request)
+        request.pagination = PaginationDetails(request)
         return self.get_response(request)
 
 
@@ -90,7 +90,7 @@ class SearchMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.search = Search(request)
+        request.search = SearchDetails(request)
         return self.get_response(request)
 
 
@@ -99,11 +99,11 @@ class OrderingMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.ordering = Ordering(request)
+        request.ordering = OrderingDetails(request)
         return self.get_response(request)
 
 
-class Pagination:
+class PaginationDetails:
     """Handles pagination parameters in request."""
 
     param: str = "page"
@@ -131,7 +131,7 @@ class Pagination:
         return f"{self.request.path}?{qs.urlencode()}"
 
 
-class Search:
+class SearchDetails:
     """Handles search parameters in request."""
 
     param: str = "query"
@@ -158,7 +158,7 @@ class Search:
         return urlencode({self.param: self.value}) if self.value else ""
 
 
-class Ordering:
+class OrderingDetails:
     """Handles ordering parameters in request."""
 
     class Choices(enum.StrEnum):

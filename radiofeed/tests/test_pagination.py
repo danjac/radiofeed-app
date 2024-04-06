@@ -1,7 +1,7 @@
 import pytest
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.middleware import Pagination
+from radiofeed.middleware import PaginationDetails
 from radiofeed.pagination import PaginationResponse
 from radiofeed.podcasts.tests.factories import create_podcast
 from radiofeed.tests.factories import create_batch
@@ -17,7 +17,7 @@ class TestPaginationResponse:
         req = rf.get("/")
         req.htmx = False
 
-        req.pagination = Pagination(req)
+        req.pagination = PaginationDetails(req)
 
         response = PaginationResponse(req, podcasts, "index.html")
         assert response.template_name == "index.html"
@@ -29,7 +29,7 @@ class TestPaginationResponse:
         req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="pagination")
 
         req.htmx = HtmxDetails(req)
-        req.pagination = Pagination(req)
+        req.pagination = PaginationDetails(req)
 
         response = PaginationResponse(req, podcasts, "index.html")
         assert response.template_name == "index.html#pagination"
