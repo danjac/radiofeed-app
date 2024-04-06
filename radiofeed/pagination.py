@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
+from django.template.response import TemplateResponse
 
 from radiofeed.htmx import render_htmx
 
@@ -14,7 +15,7 @@ def render_pagination(
     page_size: int = 30,
     partial: str = "pagination",
     target: str = "pagination",
-) -> HttpResponse:
+) -> TemplateResponse:
     """Renders paginated object list."""
 
     return render_htmx(
