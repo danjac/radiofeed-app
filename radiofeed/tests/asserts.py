@@ -23,35 +23,35 @@ def assert_response_status(response: HttpResponse, status: http.HTTPStatus) -> N
     assert response.status_code == status
 
 
-assert_bad_request = functools.partial(
+assert_response_bad_request = functools.partial(
     assert_response_status,
     status=http.HTTPStatus.BAD_REQUEST,
 )
 
 
-assert_conflict = functools.partial(
+assert_response_conflict = functools.partial(
     assert_response_status,
     status=http.HTTPStatus.CONFLICT,
 )
 
-assert_no_content = functools.partial(
+assert_response_no_content = functools.partial(
     assert_response_status,
     status=http.HTTPStatus.NO_CONTENT,
 )
 
 
-assert_not_found = functools.partial(
+assert_response_not_found = functools.partial(
     assert_response_status,
     status=http.HTTPStatus.NOT_FOUND,
 )
 
-assert_ok = functools.partial(
+assert_response_ok = functools.partial(
     assert_response_status,
     status=http.HTTPStatus.OK,
 )
 
 
-assert_unauthorized = functools.partial(
+assert_response_unauthorized = functools.partial(
     assert_response_status,
     status=http.HTTPStatus.UNAUTHORIZED,
 )

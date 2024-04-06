@@ -6,8 +6,8 @@ from django_htmx.middleware import HtmxDetails
 from radiofeed.decorators import require_auth
 from radiofeed.tests.asserts import (
     assert_hx_redirect,
-    assert_ok,
-    assert_unauthorized,
+    assert_response_ok,
+    assert_response_unauthorized,
 )
 
 
@@ -33,10 +33,10 @@ class TestRequireAuth:
         req.user = anonymous_user
         req.htmx = False
         resp = view(req)
-        assert_unauthorized(resp)
+        assert_response_unauthorized(resp)
 
     @pytest.mark.django_db()
     def test_authenticated(self, rf, user, view):
         req = rf.get("/")
         req.user = user
-        assert_ok(view(req))
+        assert_response_ok(view(req))

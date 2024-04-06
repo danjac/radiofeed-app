@@ -6,50 +6,50 @@ import pytest
 from django.core.signing import Signer
 from django.urls import reverse
 
-from radiofeed.tests.asserts import assert_not_found, assert_ok
+from radiofeed.tests.asserts import assert_response_not_found, assert_response_ok
 
 
 class TestManifest:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_ok(client.get(reverse("manifest")))
+        assert_response_ok(client.get(reverse("manifest")))
 
 
 class TestServiceWorker:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_ok(client.get(reverse("service_worker")))
+        assert_response_ok(client.get(reverse("service_worker")))
 
 
 class TestFavicon:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_ok(client.get(reverse("favicon")))
+        assert_response_ok(client.get(reverse("favicon")))
 
 
 class TestRobots:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_ok(client.get(reverse("robots")))
+        assert_response_ok(client.get(reverse("robots")))
 
 
 class TestSecurty:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_ok(client.get(reverse("security")))
+        assert_response_ok(client.get(reverse("security")))
 
 
 class TestAbout:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_ok(client.get(reverse("about")))
+        assert_response_ok(client.get(reverse("about")))
 
 
 class TestAcceptCookies:
     @pytest.mark.django_db()
     def test_post(self, client):
         response = client.post(reverse("accept_cookies"))
-        assert_ok(response)
+        assert_response_ok(response)
         assert "accept-cookies" in response.cookies
 
 
@@ -74,19 +74,25 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
-        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
+        assert_response_ok(
+            client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        )
 
     @pytest.mark.django_db()
     def test_not_accepted_size(self, client, db, mocker):
-        assert_not_found(client.get(self.get_url(500, self.encode_url(self.cover_url))))
+        assert_response_not_found(
+            client.get(self.get_url(500, self.encode_url(self.cover_url)))
+        )
 
     @pytest.mark.django_db()
     def test_missing_url_param(self, client, db, mocker):
-        assert_not_found(client.get(reverse("cover_image", kwargs={"size": 100})))
+        assert_response_not_found(
+            client.get(reverse("cover_image", kwargs={"size": 100}))
+        )
 
     @pytest.mark.django_db()
     def test_unsigned_url(self, client, db):
-        assert_not_found(client.get(self.get_url(100, self.cover_url)))
+        assert_response_not_found(client.get(self.get_url(100, self.cover_url)))
 
     @pytest.mark.django_db()
     def test_failed_download(self, client, db, mocker):
@@ -96,7 +102,9 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
 
-        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
+        assert_response_ok(
+            client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        )
 
     @pytest.mark.django_db()
     def test_failed_process(self, client, db, mocker):
@@ -106,4 +114,6 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
-        assert_ok(client.get(self.get_url(100, self.encode_url(self.cover_url))))
+        assert_response_ok(
+            client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        )
