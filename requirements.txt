@@ -51,7 +51,7 @@ django-htmx==1.17.3
 django-model-utils==4.5.0
 django-permissions-policy==4.19.0
 django-redis==5.4.0
-django-template-partials==23.4
+django-template-partials==24.1
 gunicorn==21.2.0
 h11==0.14.0
     # via httpcore
@@ -128,7 +128,7 @@ threadpoolctl==3.4.0
     # via scikit-learn
 tqdm==4.66.2
     # via nltk
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   dj-database-url
     #   psycopg
