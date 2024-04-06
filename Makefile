@@ -1,7 +1,5 @@
 install: pyinstall npminstall precommitinstall nltkdownload
 
-dbinstall: migrate fixtures
-
 update: pyupdate npmupdate precommitupdate
 
 pyinstall:
@@ -48,7 +46,8 @@ podclean:
 	podman pod rm radiofeed-pod
 	podman volume rm radiofeed_pg_data
 
-fixtures:
+dbinstall:
+	python ./manage.py migrate
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
 	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 	python ./manage.py loaddata ./radiofeed/users/fixtures/users.json.gz
