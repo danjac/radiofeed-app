@@ -2,12 +2,11 @@ import functools
 from collections.abc import Iterator
 from typing import Final
 
-import lxml.etree
 from pydantic import ValidationError
 
 from radiofeed.feedparser.exceptions import InvalidRSSError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.feedparser.xpath_parser import XPathParser
+from radiofeed.feedparser.xpath_parser import OptionalXMLElement, XPathParser
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -42,7 +41,7 @@ class _RSSParser:
         """Parse content into Feed instance."""
         return self._parse_feed(self._parser.parse(content, "rss", "channel"))
 
-    def _parse_feed(self, channel: lxml.etree.Element) -> Feed:
+    def _parse_feed(self, channel: OptionalXMLElement) -> Feed:
         try:
             return Feed.model_validate(
                 {
@@ -93,14 +92,14 @@ class _RSSParser:
         except ValidationError as exc:
             raise InvalidRSSError from exc
 
-    def _parse_items(self, channel: lxml.etree.Element) -> Iterator[Item]:
+    def _parse_items(self, channel: OptionalXMLElement) -> Iterator[Item]:
         for item in self._parser.iterfind(channel, "item"):
             try:
                 yield self._parse_item(item)
             except ValidationError:
                 continue
 
-    def _parse_item(self, item: lxml.etree.Element) -> Item:
+    def _parse_item(self, item: OptionalXMLElement) -> Item:
         return Item.model_validate(
             {
                 "categories": self._parser.itervalues(

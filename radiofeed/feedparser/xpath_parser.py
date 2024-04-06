@@ -2,8 +2,11 @@ import contextlib
 import functools
 import io
 from collections.abc import Iterator
+from typing import TypeAlias
 
 import lxml.etree
+
+OptionalXMLElement: TypeAlias = lxml.etree._Element | None
 
 
 class XPathParser:
@@ -31,28 +34,28 @@ class XPathParser:
             finally:
                 element.clear()
 
-    def iterfind(self, element: lxml.etree._Element, *paths) -> Iterator:
-        """Iterate through paths."""
-        for path in paths:
-            yield from self._xpath(path)(element)
-
-    def parse(self, *args, **kwargs) -> lxml.etree._Element | None:
+    def parse(self, *args, **kwargs) -> OptionalXMLElement:
         """Returns first matching element, or None if not found."""
         try:
             return next(self.iterparse(*args, **kwargs))
         except (StopIteration, lxml.etree.XMLSyntaxError):
             return None
 
-    def itervalues(self, element: lxml.etree._Element | None, *paths) -> Iterator[str]:
-        """Find matching non-empty strings from attributes or text."""
+    def iterfind(self, element: OptionalXMLElement, *paths) -> Iterator:
+        """Iterate through paths."""
         if element is None:
             return
+        for path in paths:
+            yield from self._xpath(path)(element)
+
+    def itervalues(self, element: OptionalXMLElement, *paths) -> Iterator[str]:
+        """Find matching non-empty strings from attributes or text."""
         with contextlib.suppress(UnicodeDecodeError):
             for value in self.iterfind(element, *paths):
                 if isinstance(value, str) and (cleaned := value.strip()):
                     yield cleaned
 
-    def value(self, element: lxml.etree._Element, *paths) -> str | None:
+    def value(self, element: OptionalXMLElement, *paths) -> str | None:
         """Returns first non-empty string value or None if not found."""
         try:
             return next(self.itervalues(element, *paths))
