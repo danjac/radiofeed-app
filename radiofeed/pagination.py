@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.template.response import TemplateResponse
 
 from radiofeed.htmx import render_htmx_response
 
@@ -15,7 +16,7 @@ def render_pagination_response(
     partial: str = "pagination",
     target: str = "pagination",
     **kwargs,
-):
+) -> TemplateResponse:
     """Renders paginated object list.
 
     Will render partial if HTMX request matching target.
