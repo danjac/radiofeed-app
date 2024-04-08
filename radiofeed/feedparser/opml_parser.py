@@ -19,7 +19,7 @@ class _OPMLParser:
     def parse(self, content: bytes) -> Iterator[str]:
         """Parse OPML content."""
         yield from self._parser.itervalues(
-            self._parser.parse(content, "opml", "body"),
+            self._parser.find(content, "opml", "body"),
             ".//outline/@xmlUrl",
         )
 

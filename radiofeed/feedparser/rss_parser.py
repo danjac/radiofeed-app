@@ -39,7 +39,7 @@ class _RSSParser:
 
     def parse(self, content: bytes) -> Feed:
         """Parse content into Feed instance."""
-        return self._parse_feed(self._parser.parse(content, "rss", "channel"))
+        return self._parse_feed(self._parser.find(content, "rss", "channel"))
 
     def _parse_feed(self, channel: OptionalXMLElement) -> Feed:
         try:

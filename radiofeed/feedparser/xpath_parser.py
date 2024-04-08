@@ -34,7 +34,7 @@ class XPathParser:
             finally:
                 element.clear()
 
-    def parse(self, *args, **kwargs) -> OptionalXMLElement:
+    def find(self, *args, **kwargs) -> OptionalXMLElement:
         """Returns first matching element, or None if not found."""
         try:
             return next(self.iterparse(*args, **kwargs))
