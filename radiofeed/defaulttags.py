@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Any, Final, TypedDict
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.paginator import Page, Paginator
 from django.core.signing import Signer
 from django.shortcuts import resolve_url
 from django.templatetags.static import static
@@ -18,6 +17,7 @@ from django.utils.safestring import mark_safe
 from radiofeed import cleaners
 
 if TYPE_CHECKING:  # pragma: nocover
+    from django.core.paginator import Page
     from django.db.models import QuerySet
     from django.template.context import RequestContext
 
@@ -53,16 +53,6 @@ def active_link(
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url
         else ActiveLink(active=False, css=css, url=url)
-    )
-
-
-@register.simple_tag(takes_context=True)
-def paginate(
-    context: RequestContext, object_list: QuerySet, *, page_size: int = 30
-) -> Page:
-    """Returns paginated object list."""
-    return Paginator(object_list, page_size).get_page(
-        context.request.pagination.current
     )
 
 
@@ -164,6 +154,12 @@ def format_duration(total_seconds: int | None) -> str:
 def pagination_url(context: RequestContext, page_number: int) -> str:
     """Returns URL for next/previous page."""
     return context.request.pagination.url(page_number)
+
+
+@register.simple_tag(takes_context=True)
+def paginate(context: RequestContext, object_list: QuerySet, **kwargs) -> Page:
+    """Returns paginated object list."""
+    return context.request.pagination.get_page(object_list, **kwargs)
 
 
 @register.simple_tag
