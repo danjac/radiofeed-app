@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
@@ -17,6 +17,7 @@ from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
 
 _index_url = reverse_lazy("podcasts:index")
+_private_feeds_url = reverse_lazy("podcasts:private_feeds")
 
 
 @require_safe
@@ -354,7 +355,9 @@ def add_private_feed(
                 "Podcast added to your Private Feeds and will appear here soon.",
             )
 
-            return redirect("podcasts:private_feeds" if is_new else podcast)
+            return HttpResponseRedirect(
+                _private_feeds_url if is_new else podcast.get_absolute_url()
+            )
     else:
         form = PrivateFeedForm(request.user)
 
@@ -374,7 +377,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRe
     podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Removed from Private Feeds")
-    return redirect("podcasts:private_feeds")
+    return HttpResponseRedirect(_private_feeds_url)
 
 
 def _render_subscribe_action(
