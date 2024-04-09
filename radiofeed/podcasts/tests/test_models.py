@@ -7,13 +7,12 @@ from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
 )
-from radiofeed.tests.factories import create_batch
 
 
 class TestRecommendationManager:
     @pytest.mark.django_db()
     def test_bulk_delete(self):
-        create_batch(RecommendationFactory, 3)
+        RecommendationFactory.create_batch(3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
 

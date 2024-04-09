@@ -5,44 +5,44 @@ from django.utils import timezone
 from pydantic import ValidationError
 
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.feedparser.tests.factories import create_feed, create_item
+from radiofeed.feedparser.tests.factories import FeedFactory, ItemFactory
 
 
 class TestItem:
     def test_pub_date_none(self):
         with pytest.raises(ValidationError):
-            Item(**create_item(pub_date=None))
+            Item(**ItemFactory(pub_date=None))
 
     def test_pub_date_in_future(self):
         with pytest.raises(ValidationError):
-            Item(**create_item(pub_date=timezone.now() + timedelta(days=1)))
+            Item(**ItemFactory(pub_date=timezone.now() + timedelta(days=1)))
 
     def test_pub_date_not_valid(self):
         with pytest.raises(ValidationError):
-            Item(**create_item(pub_date="a string"))
+            Item(**ItemFactory(pub_date="a string"))
 
     def test_not_audio_mimetype(self):
         with pytest.raises(ValidationError):
-            Item(**create_item(media_type="video/mpeg"))
+            Item(**ItemFactory(media_type="video/mpeg"))
 
     def test_length_too_long(self):
-        item = Item(**create_item(length="3147483647"))
+        item = Item(**ItemFactory(length="3147483647"))
         assert item.length is None
 
     def test_length_invalid(self):
-        item = Item(**create_item(length="invalid"))
+        item = Item(**ItemFactory(length="invalid"))
         assert item.length is None
 
     def test_length_valid(self):
-        item = Item(**create_item(length="1000"))
+        item = Item(**ItemFactory(length="1000"))
         assert item.length == 1000
 
     def test_default_keywords_from_categories(self):
-        item = Item(**create_item(), categories=["Gaming", "Hobbies", "Video Games"])
+        item = Item(**ItemFactory(categories=["Gaming", "Hobbies", "Video Games"]))
         assert item.keywords == "Gaming Hobbies Video Games"
 
     def test_defaults(self):
-        item = Item(**create_item())
+        item = Item(**ItemFactory())
         assert item.explicit is False
         assert item.episode_type == "full"
         assert item.categories == []
@@ -61,57 +61,42 @@ class TestItem:
         ],
     )
     def test_duration(self, value, expected):
-        assert Item(**create_item(), duration=value).duration == expected
+        assert Item(**ItemFactory(duration=value)).duration == expected
 
 
 class TestFeed:
     @pytest.fixture()
     def item(self):
-        return Item(**create_item())
+        return Item(**ItemFactory())
 
     def test_language(self, item):
-        feed = Feed(
-            **create_feed(),
-            language="fr-CA",
-            items=[item],
-        )
+        feed = Feed(**FeedFactory(language="fr-CA", items=[item]))
         assert feed.language == "fr"
 
     def test_language_empty(self, item):
-        feed = Feed(**create_feed(language="", items=[item]))
+        feed = Feed(**FeedFactory(language="", items=[item]))
         assert feed.language == "en"
 
     def test_language_none(self, item):
-        feed = Feed(**create_feed(language=None, items=[item]))
+        feed = Feed(**FeedFactory(language=None, items=[item]))
         assert feed.language == "en"
 
     def test_no_items(self):
         with pytest.raises(ValidationError):
-            Feed(**create_feed(), items=[])
+            Feed(**FeedFactory(items=[]))
 
     def test_not_complete(self, item):
-        feed = Feed(
-            **create_feed(),
-            items=[item],
-            complete="no",
-        )
+        feed = Feed(**FeedFactory(items=[item], complete="no"))
 
         assert feed.complete is False
 
     def test_complete(self, item):
-        feed = Feed(
-            **create_feed(),
-            items=[item],
-            complete="yes",
-        )
+        feed = Feed(**FeedFactory(items=[item], complete="yes"))
 
         assert feed.complete is True
 
     def test_defaults(self, item):
-        feed = Feed(
-            **create_feed(),
-            items=[item],
-        )
+        feed = Feed(**FeedFactory(items=[item]))
 
         assert feed.complete is False
         assert feed.explicit is False

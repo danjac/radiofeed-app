@@ -14,7 +14,6 @@ from radiofeed.episodes.tests.factories import (
     EpisodeFactory,
 )
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
-from radiofeed.tests.factories import create_batch
 
 episodes_url = reverse_lazy("episodes:index")
 
@@ -51,7 +50,7 @@ class TestNewEpisodes:
     def test_not_subscribed(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
-        create_batch(EpisodeFactory, 3)
+        EpisodeFactory.create_batch(3)
         response = client.get(episodes_url)
 
         assert response.status_code == http.HTTPStatus.OK
@@ -64,7 +63,7 @@ class TestNewEpisodes:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
-        create_batch(EpisodeFactory, 3)
+        EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
         SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
@@ -82,7 +81,7 @@ class TestNewEpisodes:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
-        create_batch(EpisodeFactory, 3)
+        EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
         SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
@@ -110,7 +109,7 @@ class TestSearchEpisodes:
 
     @pytest.mark.django_db()
     def test_search(self, auth_user, client, faker):
-        create_batch(EpisodeFactory, 3, title="zzzz", keywords="zzzz")
+        EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(self.url, {"query": episode.title})
         assert response.status_code == http.HTTPStatus.OK
@@ -373,7 +372,7 @@ class TestBookmarks:
 
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
-        create_batch(BookmarkFactory, 33, user=auth_user)
+        BookmarkFactory.create_batch(33, user=auth_user)
 
         response = client.get(self.url)
 
@@ -382,7 +381,7 @@ class TestBookmarks:
 
     @pytest.mark.django_db()
     def test_ascending(self, client, auth_user):
-        create_batch(BookmarkFactory, 33, user=auth_user)
+        BookmarkFactory.create_batch(33, user=auth_user)
 
         response = client.get(self.url, {"order": "asc"})
 
@@ -454,7 +453,7 @@ class TestHistory:
 
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
-        create_batch(AudioLogFactory, 33, user=auth_user)
+        AudioLogFactory.create_batch(33, user=auth_user)
         response = client.get(self.url)
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 30
@@ -467,7 +466,7 @@ class TestHistory:
 
     @pytest.mark.django_db()
     def test_ascending(self, client, auth_user):
-        create_batch(AudioLogFactory, 33, user=auth_user)
+        AudioLogFactory.create_batch(33, user=auth_user)
 
         response = client.get(self.url, {"order": "asc"})
         assert response.status_code == http.HTTPStatus.OK

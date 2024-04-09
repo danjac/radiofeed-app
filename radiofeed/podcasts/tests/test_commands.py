@@ -2,7 +2,6 @@ import pytest
 from django.core.management import call_command
 
 from radiofeed.podcasts.tests.factories import RecommendationFactory
-from radiofeed.tests.factories import create_batch
 from radiofeed.users.tests.factories import UserFactory
 
 
@@ -12,7 +11,7 @@ class TestCreateRecommendations:
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",
             return_value=[
-                ("en", create_batch(RecommendationFactory, 3)),
+                ("en", RecommendationFactory.create_batch(3)),
             ],
         )
         call_command("create_recommendations")

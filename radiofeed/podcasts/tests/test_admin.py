@@ -18,7 +18,6 @@ from radiofeed.podcasts.admin import (
 )
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
-from radiofeed.tests.factories import create_batch
 
 
 @pytest.fixture(scope="module")
@@ -33,7 +32,7 @@ def podcast_admin():
 
 @pytest.fixture()
 def podcasts():
-    return create_batch(PodcastFactory, 3, active=True, promoted=False)
+    return PodcastFactory.create_batch(3, active=True, promoted=False)
 
 
 @pytest.fixture()

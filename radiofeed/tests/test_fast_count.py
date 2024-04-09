@@ -3,13 +3,12 @@ import pytest
 from radiofeed.fast_count import FastCountPaginator
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
-from radiofeed.tests.factories import create_batch
 
 
 class TestFastCountPaginator:
     @pytest.mark.django_db()
     def test_with_fast_count(self):
-        create_batch(PodcastFactory, 30)
+        PodcastFactory.create_batch(30)
         paginator = FastCountPaginator(Podcast.objects.all(), 10)
         assert paginator.count == 30
 

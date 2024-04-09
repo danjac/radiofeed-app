@@ -6,21 +6,20 @@ from radiofeed.podcasts.tests.factories import (
     RecommendationFactory,
     SubscriptionFactory,
 )
-from radiofeed.tests.factories import create_batch
 
 
 class TestRecommendations:
     @pytest.mark.django_db()
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
-        create_batch(PodcastFactory, 3)
+        PodcastFactory.create_batch(3)
 
         assert not emails.send_recommendations_email(user)
         assert len(mailoutbox) == 0
 
     @pytest.mark.django_db()
     def test_send_promoted(self, user, mailoutbox):
-        create_batch(PodcastFactory, 3, promoted=True)
+        PodcastFactory.create_batch(3, promoted=True)
         emails.send_recommendations_email(user)
         assert len(mailoutbox) == 1
 

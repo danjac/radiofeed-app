@@ -5,7 +5,6 @@ from radiofeed.episodes.admin import EpisodeAdmin
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts.tests.factories import PodcastFactory
-from radiofeed.tests.factories import create_batch
 
 
 class TestEpisodeAdmin:
@@ -35,13 +34,13 @@ class TestEpisodeAdmin:
 
     @pytest.mark.django_db()
     def test_get_search_results_no_search_term(self, rf, admin):
-        create_batch(EpisodeFactory, 3)
+        EpisodeFactory.create_batch(3)
         qs, _ = admin.get_search_results(rf.get("/"), Episode.objects.all(), "")
         assert qs.count() == 3
 
     @pytest.mark.django_db()
     def test_get_search_results(self, rf, admin):
-        create_batch(EpisodeFactory, 3)
+        EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory(title="testing python")
 

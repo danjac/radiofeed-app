@@ -1,34 +1,53 @@
 import uuid
-from datetime import datetime
 
+import factory
 from django.utils import timezone
-from faker import Faker
-
-from radiofeed.tests.factories import NotSet, resolve
-
-_faker = Faker()
 
 
-def create_item(
-    guid: str = NotSet,
-    title: str = NotSet,
-    media_url: str = NotSet,
-    media_type: str = NotSet,
-    pub_date: datetime = NotSet,
-    **kwargs,
-) -> dict:
-    return {
-        "guid": resolve(guid, lambda: uuid.uuid4().hex),
-        "title": resolve(title, _faker.text),
-        "pub_date": resolve(pub_date, timezone.now),
-        "media_url": resolve(
-            media_url,
-            lambda: _faker.unique.url() + _faker.unique.file_name("audio"),
-        ),
-        "media_type": resolve(media_type, _faker.mime_type("audio")),
-        **kwargs,
-    }
+class ItemFactory(factory.DictFactory):
+    title = factory.Faker("text")
+    guid = factory.LazyFunction(lambda: uuid.uuid4().hex)
+    pub_date = factory.LazyFunction(timezone.now)
+    categories = factory.LazyFunction(list)
+
+    media_url = "https://example.com/sample.mpg"
+    media_type = "audio/mpeg"
+
+    description = ""
+    keywords = ""
+
+    cover_url = None
+    website = None
+
+    explicit = "no"
+
+    length = ""
+
+    duration = "100"
+
+    season = None
+    episode = None
+
+    episode_type = "full"
 
 
-def create_feed(title: str = NotSet, **kwargs) -> dict:
-    return {"title": resolve(title, _faker.text), **kwargs}
+class FeedFactory(factory.DictFactory):
+    title = factory.Faker("text")
+    pub_date = factory.LazyFunction(timezone.now)
+
+    categories = factory.LazyFunction(list)
+    items = factory.LazyFunction(list)
+
+    owner = ""
+    description = ""
+
+    language = "en"
+
+    website = ""
+    cover_url = ""
+
+    funding_text = ""
+    funding_url = None
+
+    explicit = "no"
+    complete = "no"

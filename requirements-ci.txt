@@ -92,9 +92,9 @@ execnet==2.1.1
 executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
-faker==24.7.1
+faker==24.8.0
     # via factory-boy
-filelock==3.13.3
+filelock==3.13.4
     # via pytest-mypy
 gunicorn==21.2.0
 h11==0.14.0

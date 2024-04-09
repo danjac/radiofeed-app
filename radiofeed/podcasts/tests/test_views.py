@@ -14,7 +14,6 @@ from radiofeed.podcasts.tests.factories import (
     RecommendationFactory,
     SubscriptionFactory,
 )
-from radiofeed.tests.factories import create_batch
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -218,8 +217,8 @@ class TestSearchItunes:
 class TestPodcastSimilar:
     @pytest.mark.django_db()
     def test_get(self, client, auth_user, podcast):
-        create_batch(EpisodeFactory, 3, podcast=podcast)
-        create_batch(RecommendationFactory, 3, podcast=podcast)
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        RecommendationFactory.create_batch(3, podcast=podcast)
         response = client.get(podcast.get_similar_url())
         assert response.status_code == http.HTTPStatus.OK
         assert response.context["podcast"] == podcast
@@ -292,7 +291,7 @@ class TestPodcastEpisodes:
 
     @pytest.mark.django_db()
     def test_get_episodes(self, client, auth_user, podcast):
-        create_batch(EpisodeFactory, 33, podcast=podcast)
+        EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(self.url(podcast))
         assert response.status_code == http.HTTPStatus.OK
@@ -307,7 +306,7 @@ class TestPodcastEpisodes:
 
     @pytest.mark.django_db()
     def test_ascending(self, client, auth_user, podcast):
-        create_batch(EpisodeFactory, 33, podcast=podcast)
+        EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(
             self.url(podcast),
@@ -319,7 +318,7 @@ class TestPodcastEpisodes:
 
     @pytest.mark.django_db()
     def test_search(self, client, auth_user, podcast, faker):
-        create_batch(EpisodeFactory, 3, podcast=podcast)
+        EpisodeFactory.create_batch(3, podcast=podcast)
 
         episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
 

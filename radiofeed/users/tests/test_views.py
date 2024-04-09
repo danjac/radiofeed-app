@@ -9,7 +9,6 @@ from pytest_django.asserts import assertRedirects
 from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
-from radiofeed.tests.factories import create_batch
 from radiofeed.users.models import User
 
 
@@ -64,9 +63,9 @@ class TestUserStats:
 
     @pytest.mark.django_db()
     def test_stats_plural(self, client, auth_user):
-        create_batch(AudioLogFactory, 3, user=auth_user)
-        create_batch(BookmarkFactory, 3, user=auth_user)
-        create_batch(SubscriptionFactory, 3, subscriber=auth_user)
+        AudioLogFactory.create_batch(3, user=auth_user)
+        BookmarkFactory.create_batch(3, user=auth_user)
+        SubscriptionFactory.create_batch(3, subscriber=auth_user)
         response = client.get(reverse("users:stats"))
         assert response.status_code == http.HTTPStatus.OK
 

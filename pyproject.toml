@@ -57,7 +57,6 @@ dev =[
     "django-fastdev",
     "djlint",
     "factory_boy",
-    "faker",
     "ipython",
     "mypy",
     "pytest",
