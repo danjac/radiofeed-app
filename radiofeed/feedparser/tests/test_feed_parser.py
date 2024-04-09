@@ -7,7 +7,7 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
-from radiofeed.episodes.tests.factories import create_episode
+from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     DuplicateError,
@@ -24,7 +24,7 @@ from radiofeed.feedparser.feed_parser import (
     parse_feed,
 )
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.tests.factories import create_category, create_podcast
+from radiofeed.podcasts.tests.factories import CategoryFactory, PodcastFactory
 
 
 def _mock_client(*, url="https://example.com", **response_kwargs):
@@ -55,7 +55,7 @@ class TestFeedParser:
         get_categories.cache_clear()
 
         return [
-            create_category(name=name)
+            CategoryFactory(name=name)
             for name in (
                 "Philosophy",
                 "Science",
@@ -95,7 +95,7 @@ class TestFeedParser:
 
     @pytest.mark.django_db()
     def test_parse_ok(self, categories):
-        podcast = create_podcast(
+        podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
@@ -107,10 +107,10 @@ class TestFeedParser:
         episode_title = "original title"
 
         # test updated
-        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
+        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
         # add episode to remove in update
-        extra = create_episode(podcast=podcast)
+        extra = EpisodeFactory(podcast=podcast)
 
         client = _mock_client(
             url=podcast.rss,
@@ -175,7 +175,7 @@ class TestFeedParser:
 
     @pytest.mark.django_db()
     def test_parse_links_as_ids(self, categories):
-        podcast = create_podcast(
+        podcast = PodcastFactory(
             rss="https://feeds.feedburner.com/VarsoviaVentoPodkasto"
         )
         client = _mock_client(
@@ -204,7 +204,7 @@ class TestFeedParser:
 
     @pytest.mark.django_db()
     def test_parse_high_num_episodes(self, categories):
-        podcast = create_podcast()
+        podcast = PodcastFactory()
         client = _mock_client(
             url=podcast.rss,
             status_code=http.HTTPStatus.OK,
@@ -229,7 +229,7 @@ class TestFeedParser:
 
     @pytest.mark.django_db()
     def test_parse_ok_no_pub_date(self, categories):
-        podcast = create_podcast(pub_date=None)
+        podcast = PodcastFactory(pub_date=None)
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
 
@@ -237,7 +237,7 @@ class TestFeedParser:
         episode_title = "original title"
 
         # test updated
-        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
+        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
         client = _mock_client(
             url=podcast.rss,
@@ -293,7 +293,7 @@ class TestFeedParser:
     @pytest.mark.django_db()
     def test_parse_same_content(self, mocker, categories):
         content = self.get_rss_content()
-        podcast = create_podcast(content_hash=make_content_hash(content))
+        podcast = PodcastFactory(content_hash=make_content_hash(content))
 
         mock_parse_rss = mocker.patch("radiofeed.feedparser.rss_parser.parse_rss")
 
@@ -323,7 +323,7 @@ class TestFeedParser:
     def test_parse_podcast_another_feed_same_content(self, mocker, podcast, categories):
         content = self.get_rss_content()
 
-        create_podcast(content_hash=make_content_hash(content))
+        PodcastFactory(content_hash=make_content_hash(content))
         mock_parse_rss = mocker.patch("radiofeed.feedparser.rss_parser.parse_rss")
 
         client = _mock_client(
@@ -355,7 +355,7 @@ class TestFeedParser:
         episode_title = "original title"
 
         # test updated
-        create_episode(podcast=podcast, guid=episode_guid, title=episode_title)
+        EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
@@ -433,7 +433,7 @@ class TestFeedParser:
 
     @pytest.mark.django_db()
     def test_parse_permanent_redirect_url_taken(self, podcast, categories):
-        other = create_podcast(rss=self.redirect_rss)
+        other = PodcastFactory(rss=self.redirect_rss)
         current_rss = podcast.rss
 
         client = _mock_client(

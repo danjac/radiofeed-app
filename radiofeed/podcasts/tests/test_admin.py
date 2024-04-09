@@ -17,7 +17,7 @@ from radiofeed.podcasts.admin import (
     SubscribedFilter,
 )
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
+from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.tests.factories import create_batch
 
 
@@ -33,7 +33,7 @@ def podcast_admin():
 
 @pytest.fixture()
 def podcasts():
-    return create_batch(create_podcast, 3, active=True, promoted=False)
+    return create_batch(PodcastFactory, 3, active=True, promoted=False)
 
 
 @pytest.fixture()
@@ -60,7 +60,7 @@ class TestPodcastAdmin:
 
     @pytest.mark.django_db()
     def test_get_search_results(self, podcasts, podcast_admin, req):
-        podcast = create_podcast(title="Indie Hackers")
+        podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = podcast_admin.get_search_results(
             req, Podcast.objects.all(), "Indie Hackers"
         )
@@ -103,21 +103,21 @@ class TestPodcastAdmin:
 
     @pytest.mark.django_db()
     def test_next_scheduled_update_inactive(self, mocker, podcast_admin):
-        podcast = create_podcast(active=False)
+        podcast = PodcastFactory(active=False)
         assert podcast_admin.next_scheduled_update(podcast) == "-"
 
 
 class TestPubDateFilter:
     @pytest.mark.django_db()
     def test_none(self, podcasts, podcast_admin, req):
-        create_podcast(pub_date=None)
+        PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db()
     def test_no(self, podcasts, podcast_admin, req):
-        no_pub_date = create_podcast(pub_date=None)
+        no_pub_date = PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {"pub_date": ["no"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -125,7 +125,7 @@ class TestPubDateFilter:
 
     @pytest.mark.django_db()
     def test_yes(self, podcasts, podcast_admin, req):
-        no_pub_date = create_podcast(pub_date=None)
+        no_pub_date = PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {"pub_date": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
@@ -135,14 +135,14 @@ class TestPubDateFilter:
 class TestPromotedFilter:
     @pytest.mark.django_db()
     def test_none(self, podcasts, podcast_admin, req):
-        create_podcast(promoted=False)
+        PodcastFactory(promoted=False)
         f = PromotedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db()
     def test_promoted(self, podcasts, podcast_admin, req):
-        promoted = create_podcast(promoted=True)
+        promoted = PodcastFactory(promoted=True)
         f = PromotedFilter(req, {"promoted": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -152,14 +152,14 @@ class TestPromotedFilter:
 class TestPrivateFilter:
     @pytest.mark.django_db()
     def test_none(self, podcasts, podcast_admin, req):
-        create_podcast(private=False)
+        PodcastFactory(private=False)
         f = PrivateFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db()
     def test_true(self, podcasts, podcast_admin, req):
-        private = create_podcast(private=True)
+        private = PodcastFactory(private=True)
         f = PrivateFilter(req, {"private": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -169,14 +169,14 @@ class TestPrivateFilter:
 class TestActiveFilter:
     @pytest.mark.django_db()
     def test_none(self, podcasts, podcast_admin, req):
-        create_podcast(active=False)
+        PodcastFactory(active=False)
         f = ActiveFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db()
     def test_active(self, podcasts, podcast_admin, req):
-        inactive = create_podcast(active=False)
+        inactive = PodcastFactory(active=False)
         f = ActiveFilter(req, {"active": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
@@ -184,7 +184,7 @@ class TestActiveFilter:
 
     @pytest.mark.django_db()
     def test_inactive(self, podcasts, podcast_admin, req):
-        inactive = create_podcast(active=False)
+        inactive = PodcastFactory(active=False)
         f = ActiveFilter(req, {"active": ["no"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
@@ -194,7 +194,7 @@ class TestActiveFilter:
 class TestParserErrorFilter:
     @pytest.fixture()
     def duplicate(self):
-        return create_podcast(parser_error=Podcast.ParserError.DUPLICATE)
+        return PodcastFactory(parser_error=Podcast.ParserError.DUPLICATE)
 
     @pytest.mark.django_db()
     def test_all(self, podcasts, podcast_admin, req, duplicate):
@@ -218,12 +218,12 @@ class TestParserErrorFilter:
 class TestScheduledFilter:
     @pytest.fixture()
     def scheduled(self):
-        return create_podcast(pub_date=None, parsed=None)
+        return PodcastFactory(pub_date=None, parsed=None)
 
     @pytest.fixture()
     def unscheduled(self):
         now = timezone.now()
-        return create_podcast(pub_date=now, parsed=now)
+        return PodcastFactory(pub_date=now, parsed=now)
 
     @pytest.mark.django_db()
     def test_none(self, podcast_admin, req, scheduled, unscheduled):
@@ -242,7 +242,7 @@ class TestScheduledFilter:
 class TestSubscribedFilter:
     @pytest.fixture()
     def subscribed(self):
-        return create_subscription().podcast
+        return SubscriptionFactory().podcast
 
     @pytest.mark.django_db()
     def test_none(self, podcasts, podcast_admin, req, subscribed):

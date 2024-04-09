@@ -1,3 +1,4 @@
+import factory
 from allauth.account.models import EmailAddress
 from faker import Faker
 
@@ -5,6 +6,23 @@ from radiofeed.tests.factories import NotSet, resolve
 from radiofeed.users.models import User
 
 _faker = Faker()
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    username = factory.Sequence(lambda n: f"user-{n}")
+    email = factory.Sequence(lambda n: f"user-{n}@example.com")
+    password = factory.django.Password("testpass")
+
+    class Meta:
+        model = User
+
+
+class EmailAddressFactory(factory.django.DjangoModelFactory):
+    email = factory.Sequence(lambda n: f"{n}@example.com")
+    user = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = EmailAddress
 
 
 def create_user(

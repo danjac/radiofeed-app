@@ -7,15 +7,15 @@ from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
 )
-from radiofeed.episodes.tests.factories import create_episode
-from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.episodes.tests.factories import EpisodeFactory
+from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 class TestMediaMetadata:
     @pytest.mark.django_db()
     def test_get_media_metadata(self, rf):
-        episode = create_episode(
-            podcast=create_podcast(cover_url="https://mysite.com/test.jpg")
+        episode = EpisodeFactory(
+            podcast=PodcastFactory(cover_url="https://mysite.com/test.jpg")
         )
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.title
@@ -34,7 +34,7 @@ class TestMediaMetadata:
     def test_get_media_metadata_no_cover_url(self, rf):
         get_placeholder_cover_url.cache_clear()
 
-        episode = create_episode(podcast=create_podcast(cover_url=None))
+        episode = EpisodeFactory(podcast=PodcastFactory(cover_url=None))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title

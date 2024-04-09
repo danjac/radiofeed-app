@@ -7,7 +7,7 @@ from radiofeed.feedparser import scheduler
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.feedparser.tests.factories import create_feed, create_item
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 class TestNextScheduledUpdate:
@@ -123,7 +123,7 @@ class TestGetScheduledForUpdate:
 
         pub_date = kwargs.get("pub_date", None)
 
-        create_podcast(
+        PodcastFactory(
             frequency=frequency,
             parsed=now - parsed if parsed else None,
             pub_date=now - pub_date if pub_date else None,

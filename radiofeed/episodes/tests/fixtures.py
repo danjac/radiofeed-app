@@ -1,9 +1,9 @@
 import pytest
 
 from radiofeed.episodes.models import Episode
-from radiofeed.episodes.tests.factories import create_episode
+from radiofeed.episodes.tests.factories import EpisodeFactory
 
 
 @pytest.fixture()
 def episode() -> Episode:
-    return create_episode()
+    return EpisodeFactory()

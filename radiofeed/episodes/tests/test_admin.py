@@ -3,8 +3,8 @@ from django.contrib.admin.sites import AdminSite
 
 from radiofeed.episodes.admin import EpisodeAdmin
 from radiofeed.episodes.models import Episode
-from radiofeed.episodes.tests.factories import create_episode
-from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.episodes.tests.factories import EpisodeFactory
+from radiofeed.podcasts.tests.factories import PodcastFactory
 from radiofeed.tests.factories import create_batch
 
 
@@ -15,12 +15,12 @@ class TestEpisodeAdmin:
 
     @pytest.mark.django_db()
     def test_episode_title(self, admin):
-        episode = create_episode(title="testing")
+        episode = EpisodeFactory(title="testing")
         assert admin.episode_title(episode) == "testing"
 
     @pytest.mark.django_db()
     def test_podcast_title(self, admin):
-        episode = create_episode(podcast=create_podcast(title="testing"))
+        episode = EpisodeFactory(podcast=PodcastFactory(title="testing"))
         assert admin.podcast_title(episode) == "testing"
 
     @pytest.mark.django_db()
@@ -35,15 +35,15 @@ class TestEpisodeAdmin:
 
     @pytest.mark.django_db()
     def test_get_search_results_no_search_term(self, rf, admin):
-        create_batch(create_episode, 3)
+        create_batch(EpisodeFactory, 3)
         qs, _ = admin.get_search_results(rf.get("/"), Episode.objects.all(), "")
         assert qs.count() == 3
 
     @pytest.mark.django_db()
     def test_get_search_results(self, rf, admin):
-        create_batch(create_episode, 3)
+        create_batch(EpisodeFactory, 3)
 
-        episode = create_episode(title="testing python")
+        episode = EpisodeFactory(title="testing python")
 
         qs, _ = admin.get_search_results(
             rf.get("/"), Episode.objects.all(), "testing python"

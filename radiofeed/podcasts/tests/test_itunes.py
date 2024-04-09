@@ -7,7 +7,7 @@ from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.podcasts.tests.factories import PodcastFactory
 
 MOCK_RESULT = {
     "feedUrl": "https://feeds.fireside.fm/testandcode/rss",
@@ -106,7 +106,7 @@ class TestSearch:
 
     @pytest.mark.django_db()
     def test_podcast_exists(self, good_client):
-        create_podcast(rss="https://feeds.fireside.fm/testandcode/rss")
+        PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
 
         feeds = list(itunes.search(good_client, "test"))
         assert len(feeds) == 1

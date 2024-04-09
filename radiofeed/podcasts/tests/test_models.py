@@ -3,9 +3,9 @@ from django.urls import reverse
 
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.podcasts.tests.factories import (
-    create_category,
-    create_podcast,
-    create_recommendation,
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
 )
 from radiofeed.tests.factories import create_batch
 
@@ -13,13 +13,13 @@ from radiofeed.tests.factories import create_batch
 class TestRecommendationManager:
     @pytest.mark.django_db()
     def test_bulk_delete(self):
-        create_batch(create_recommendation, 3)
+        create_batch(RecommendationFactory, 3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
 
     @pytest.mark.django_db()
     def test_with_relevance(self):
-        create_recommendation(similarity=0.5, frequency=3)
+        RecommendationFactory(similarity=0.5, frequency=3)
         recommendation = Recommendation.objects.with_relevance().first()
         assert recommendation.relevance == 1.5
 
@@ -32,7 +32,7 @@ class TestRecommendationModel:
 class TestCategoryManager:
     @pytest.fixture()
     def category(self):
-        return create_category(name="testing")
+        return CategoryFactory(name="testing")
 
     @pytest.mark.django_db()
     def test_search_empty(self, category):
@@ -56,46 +56,46 @@ class TestCategoryModel:
 class TestPodcastManager:
     @pytest.mark.django_db()
     def test_search(self):
-        create_podcast(title="testing")
+        PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
     @pytest.mark.django_db()
     def test_search_no_results(self):
-        create_podcast(title="testing")
+        PodcastFactory(title="testing")
         assert Podcast.objects.search("random").count() == 0
 
     @pytest.mark.django_db()
     def test_search_partial(self):
-        create_podcast(title="testing")
+        PodcastFactory(title="testing")
         assert Podcast.objects.search("test").count() == 1
 
     @pytest.mark.django_db()
     def test_search_owner(self):
-        create_podcast(owner="tester")
+        PodcastFactory(owner="tester")
         assert Podcast.objects.search("tester").count() == 1
 
     @pytest.mark.django_db()
     def test_search_keywords(self):
-        create_podcast(keywords="test")
+        PodcastFactory(keywords="test")
         assert Podcast.objects.search("test").count() == 1
 
     @pytest.mark.django_db()
     def test_search_if_empty(self):
-        create_podcast(title="testing")
+        PodcastFactory(title="testing")
         assert Podcast.objects.search("").count() == 0
 
     @pytest.mark.django_db()
     def test_search_title_fallback(self):
         # usually "the" would be removed by stemmer
-        create_podcast(title="the")
+        PodcastFactory(title="the")
         podcasts = Podcast.objects.search("the")
         assert podcasts.count() == 1
         assert podcasts.first().exact_match == 1
 
     @pytest.mark.django_db()
     def test_compare_exact_and_partial_matches_in_search(self):
-        create_podcast(title="the testing")
-        create_podcast(title="testing")
+        PodcastFactory(title="the testing")
+        PodcastFactory(title="testing")
 
         podcasts = Podcast.objects.search("testing").order_by("-exact_match")
 

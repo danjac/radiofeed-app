@@ -1,68 +1,49 @@
-from datetime import datetime
-
+import factory
 from django.utils import timezone
 from faker import Faker
 
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
-from radiofeed.tests.factories import NotSet, resolve
-from radiofeed.users.models import User
-from radiofeed.users.tests.factories import create_user
+from radiofeed.users.tests.factories import UserFactory
 
 _faker = Faker()
 
 
-def create_category(*, name: str = NotSet, **kwargs) -> Category:
-    return Category.objects.create(
-        name=resolve(name, _faker.unique.domain_word), **kwargs
-    )
+class CategoryFactory(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: f"Category {n}")
+
+    class Meta:
+        model = Category
 
 
-def create_podcast(
-    *,
-    rss: str = NotSet,
-    title: str = NotSet,
-    pub_date: datetime | None = NotSet,
-    cover_url: str | None = NotSet,
-    description: str = NotSet,
-    categories: list[Category] | None = None,
-    **kwargs,
-) -> Podcast:
-    podcast = Podcast.objects.create(
-        rss=resolve(rss, _faker.unique.url),
-        title=resolve(title, _faker.text),
-        description=resolve(description, _faker.text),
-        pub_date=resolve(pub_date, timezone.now),
-        cover_url=resolve(cover_url, "https://example.com/cover.jpg"),
-        **kwargs,
-    )
+class PodcastFactory(factory.django.DjangoModelFactory):
+    title = factory.Faker("text")
+    rss = factory.Sequence(lambda n: f"https://{n}.example.com")
+    pub_date = factory.LazyFunction(timezone.now)
+    cover_url = "https://example.com/cover.jpg"
 
-    if categories:
-        podcast.categories.set(categories)
+    class Meta:
+        model = Podcast
 
-    return podcast
+    @factory.post_generation
+    def categories(self, create, extracted, **kwargs):
+        if create and extracted:
+            self.categories.set(extracted)
 
 
-def create_recommendation(
-    *,
-    podcast: Podcast = NotSet,
-    recommended: Podcast = NotSet,
-    frequency: int = NotSet,
-    similarity: float = NotSet,
-) -> Recommendation:
-    return Recommendation.objects.create(
-        podcast=resolve(podcast, create_podcast),
-        recommended=resolve(recommended, create_podcast),
-        frequency=resolve(frequency, 3),
-        similarity=resolve(similarity, 0.5),
-    )
+class RecommendationFactory(factory.django.DjangoModelFactory):
+    frequency = 3
+    similarity = 5
+
+    podcast = factory.SubFactory(PodcastFactory)
+    recommended = factory.SubFactory(PodcastFactory)
+
+    class Meta:
+        model = Recommendation
 
 
-def create_subscription(
-    *,
-    subscriber: User = NotSet,
-    podcast: Podcast = NotSet,
-) -> Subscription:
-    return Subscription.objects.create(
-        subscriber=resolve(subscriber, create_user),
-        podcast=resolve(podcast, create_podcast),
-    )
+class SubscriptionFactory(factory.django.DjangoModelFactory):
+    subscriber = factory.SubFactory(UserFactory)
+    podcast = factory.SubFactory(PodcastFactory)
+
+    class Meta:
+        model = Subscription

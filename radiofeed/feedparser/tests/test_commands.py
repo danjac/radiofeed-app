@@ -5,7 +5,7 @@ from django.core.management import call_command
 
 from radiofeed.feedparser.exceptions import DuplicateError
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.tests.factories import create_podcast
+from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 class TestParseOpml:
@@ -46,18 +46,18 @@ class TestParseFeeds:
 
     @pytest.mark.django_db()(transaction=True)
     def test_ok(self, mock_parse_ok):
-        create_podcast(pub_date=None)
+        PodcastFactory(pub_date=None)
         call_command("parse_feeds")
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db()(transaction=True)
     def test_not_scheduled(self, mock_parse_ok):
-        create_podcast(active=False)
+        PodcastFactory(active=False)
         call_command("parse_feeds")
         mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)
     def test_feed_parser_error(self, mock_parse_fail):
-        create_podcast(pub_date=None)
+        PodcastFactory(pub_date=None)
         call_command("parse_feeds")
         mock_parse_fail.assert_called()

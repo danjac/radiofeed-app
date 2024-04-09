@@ -6,9 +6,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertRedirects
 
-from radiofeed.episodes.tests.factories import create_audio_log, create_bookmark
+from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.models import Subscription
-from radiofeed.podcasts.tests.factories import create_podcast, create_subscription
+from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.tests.factories import create_batch
 from radiofeed.users.models import User
 
@@ -55,18 +55,18 @@ class TestUserPreferences:
 class TestUserStats:
     @pytest.mark.django_db()
     def test_stats(self, client, auth_user):
-        create_subscription(subscriber=auth_user)
-        create_audio_log(user=auth_user)
-        create_bookmark(user=auth_user)
+        SubscriptionFactory(subscriber=auth_user)
+        AudioLogFactory(user=auth_user)
+        BookmarkFactory(user=auth_user)
 
         response = client.get(reverse("users:stats"))
         assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db()
     def test_stats_plural(self, client, auth_user):
-        create_batch(create_audio_log, 3, user=auth_user)
-        create_batch(create_bookmark, 3, user=auth_user)
-        create_batch(create_subscription, 3, subscriber=auth_user)
+        create_batch(AudioLogFactory, 3, user=auth_user)
+        create_batch(BookmarkFactory, 3, user=auth_user)
+        create_batch(SubscriptionFactory, 3, subscriber=auth_user)
         response = client.get(reverse("users:stats"))
         assert response.status_code == http.HTTPStatus.OK
 
@@ -74,7 +74,7 @@ class TestUserStats:
 class TestManagePodcastFeeds:
     @pytest.mark.django_db()
     def test_get(self, client, auth_user):
-        create_subscription(subscriber=auth_user)
+        SubscriptionFactory(subscriber=auth_user)
 
         response = client.get(reverse("users:manage_podcast_feeds"))
         assert response.status_code == http.HTTPStatus.OK
@@ -94,7 +94,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_has_new_feeds(self, client, auth_user, upload_file):
-        podcast = create_podcast(
+        podcast = PodcastFactory(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
         )
 
@@ -134,8 +134,8 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db()
     def test_post_has_no_new_feeds(self, client, auth_user, upload_file):
-        create_subscription(
-            podcast=create_podcast(
+        SubscriptionFactory(
+            podcast=PodcastFactory(
                 rss="https://feeds.99percentinvisible.org/99percentinvisible"
             ),
             subscriber=auth_user,
