@@ -3,7 +3,7 @@ from django.core.management import call_command
 
 from radiofeed.podcasts.tests.factories import RecommendationFactory
 from radiofeed.tests.factories import create_batch
-from radiofeed.users.tests.factories import create_user
+from radiofeed.users.tests.factories import UserFactory
 
 
 class TestCreateRecommendations:
@@ -22,7 +22,7 @@ class TestCreateRecommendations:
 class TestSendRecommendationsEmails:
     @pytest.mark.django_db()(transaction=True)
     def test_send_emails(self, mocker):
-        create_user(send_email_notifications=True, is_active=True)
+        UserFactory(send_email_notifications=True, is_active=True)
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
         call_command("send_recommendations_emails")
         patched.assert_called()
