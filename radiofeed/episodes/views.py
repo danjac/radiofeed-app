@@ -6,7 +6,6 @@ from django.db.models import Exists, OuterRef
 from django.http import (
     Http404,
     HttpRequest,
-    HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
 )
@@ -60,7 +59,7 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @require_auth
-def search_episodes(request: HttpRequest) -> HttpResponse:
+def search_episodes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
         episodes = (
@@ -84,7 +83,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 @require_auth
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
@@ -105,7 +104,7 @@ def episode_detail(
 
 @require_POST
 @require_auth
-def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
@@ -137,7 +136,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @require_auth
-def close_player(request: HttpRequest) -> HttpResponse:
+def close_player(request: HttpRequest) -> TemplateResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
         audio_log = get_object_or_404(
@@ -160,7 +159,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 @require_auth
 def player_time_update(
     request: HttpRequest,
-) -> HttpResponse:
+) -> HttpResponseBadRequest | HttpResponseNoContent:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.

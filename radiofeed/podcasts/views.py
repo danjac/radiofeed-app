@@ -21,7 +21,9 @@ _private_feeds_url = reverse_lazy("podcasts:private_feeds")
 
 
 @require_safe
-def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
+def landing_page(
+    request: HttpRequest, limit: int = 30
+) -> TemplateResponse | HttpResponseRedirect:
     """Render default site home page for anonymous users.
     Redirects authenticated users to podcast index page.
     """
@@ -73,7 +75,7 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @require_auth
-def search_podcasts(request: HttpRequest) -> HttpResponse:
+def search_podcasts(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
         podcasts = (
@@ -99,7 +101,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @require_auth
-def search_itunes(request: HttpRequest) -> TemplateResponse:
+def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if request.search:
         feeds: list[itunes.Feed] = []
@@ -244,7 +246,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
 @require_auth
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -274,7 +276,7 @@ def category_detail(
 
 @require_POST
 @require_auth
-def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def subscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     try:
@@ -293,7 +295,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_DELETE
 @require_auth
-def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
@@ -307,7 +309,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_safe
 @require_auth
-def private_feeds(request: HttpRequest) -> HttpResponse:
+def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = Podcast.objects.annotate(
         is_subscribed=Exists(
@@ -343,7 +345,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 @require_auth
 def add_private_feed(
     request: HttpRequest,
-) -> HttpResponse:
+) -> TemplateResponse | HttpResponseRedirect:
     """Add new private feed to collection."""
     if request.method == "POST":
         form = PrivateFeedForm(request.user, request.POST)
@@ -382,7 +384,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRe
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
-) -> HttpResponse:
+) -> TemplateResponse:
     return TemplateResponse(
         request,
         "podcasts/detail.html#subscribe_button",
