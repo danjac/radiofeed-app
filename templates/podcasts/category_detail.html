@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% load cache partials %}
+{% load cache %}
 {% block title %}
     | Categories | {{ category.name }} Podcasts
 {% endblock title %}
 {% block content %}
+    {% cache 600 category-detail request.get_full_path %}
     {% with search_placeholder="Search: "|add:category.name %}
         {% if request.search %}
             <header class="pb-3 mb-3 space-y-3 border-b">
@@ -35,9 +36,7 @@
             </header>
         {% endif %}
     {% endwith %}
-    {% partialdef pagination inline=True %}
-    {% cache 600 category-detail request.get_full_path %}
+    {% paginate podcasts as page_obj %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}
-{% endpartialdef pagination %}
 {% endblock content %}

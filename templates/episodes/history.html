@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% load partials %}
 {% block title %}
     | History
 {% endblock title %}
 {% block content %}
+    {% paginate audio_logs as page_obj %}
     <header class="pb-3 mb-6 space-y-3 border-b sm:space-y-6">
         <h1 class="flex justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">History</h1>
         {% if request.search or page_obj.has_other_pages %}
@@ -23,7 +23,5 @@
             </nav>
         {% endif %}
     </header>
-    {% partialdef pagination inline=True %}
     {% include "episodes/_episodes.html" with is_fk=True %}
-{% endpartialdef pagination %}
 {% endblock content %}

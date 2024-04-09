@@ -1,13 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
+from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_form_methods
-from radiofeed.htmx import render_htmx
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -15,7 +15,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @require_auth
 def user_preferences(
     request: HttpRequest,
-) -> HttpResponse:
+) -> TemplateResponse:
     """Allow user to edit their preferences."""
 
     if request.method == "POST":
@@ -24,25 +24,23 @@ def user_preferences(
             form.save()
             messages.success(request, "Your preferences have been saved")
 
-            return redirect("users:preferences")
+            return HttpResponseRedirect(reverse("users:preferences"))
 
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return render_htmx(
+    return TemplateResponse(
         request,
         "account/preferences.html",
         {"form": form},
-        partial="form",
-        target="preferences-form",
     )
 
 
 @require_safe
 @require_auth
-def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def manage_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Renders import/export page."""
-    return render(
+    return TemplateResponse(
         request,
         "account/podcast_feeds.html",
         {
@@ -67,22 +65,20 @@ def import_podcast_feeds(
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
-        return redirect("users:manage_podcast_feeds")
+        return HttpResponseRedirect(reverse("users:manage_podcast_feeds"))
 
-    return render_htmx(
+    return TemplateResponse(
         request,
-        "account/podcast_feeds.html",
+        "account/podcast_feeds.html#import_feeds_form",
         {
             "upload_form": form,
         },
-        partial="import_feeds_form",
-        target="upload-form",
     )
 
 
 @require_safe
 @require_auth
-def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     subscriptions = (
@@ -91,25 +87,24 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .order_by("podcast__title")
     )
 
-    response = render(
+    return TemplateResponse(
         request,
         "account/podcasts.opml",
         {
             "subscriptions": subscriptions,
         },
         content_type="text/x-opml",
+        headers={
+            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+        },
     )
-    response["Content-Disposition"] = (
-        f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-    )
-    return response
 
 
 @require_safe
 @require_auth
-def user_stats(request: HttpRequest) -> HttpResponse:
+def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return render(request, "account/stats.html")
+    return TemplateResponse(request, "account/stats.html")
 
 
 @require_form_methods
@@ -120,5 +115,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect("podcasts:landing_page")
-    return render(request, "account/delete_account.html")
+        return HttpResponseRedirect(reverse("podcasts:landing_page"))
+    return TemplateResponse(request, "account/delete_account.html")

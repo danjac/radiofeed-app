@@ -1,9 +1,11 @@
 {% extends "podcasts/detail_base.html" %}
-{% load cache partials %}
+{% load cache %}
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
 {% block podcast_content %}
+    {% cache 600 podcast-episodes request.get_full_path %}
+    {% paginate episodes as page_obj %}
     {% if request.search or page_obj.has_other_pages %}
         <nav class="mb-6">
             <ul class="justify-between items-center pb-3 mb-3 border-b sm:flex">
@@ -20,9 +22,6 @@
             </ul>
         </nav>
     {% endif %}
-    {% partialdef pagination inline=True %}
-    {% cache 600 podcast-episodes request.get_full_path %}
-    {% include "episodes/_episodes.html" %}
-{% endcache pagination %}
-{% endpartialdef pagination %}
+    {% include "episodes/_episodes.html" with is_podcast_detail=True %}
+{% endcache %}
 {% endblock podcast_content %}

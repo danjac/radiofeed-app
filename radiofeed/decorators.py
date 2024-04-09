@@ -18,7 +18,7 @@ def require_auth(view: Callable) -> Callable:
     """Login required decorator also handling HTMX and AJAX views."""
 
     @functools.wraps(view)
-    def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+    def _view(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
@@ -33,4 +33,4 @@ def require_auth(view: Callable) -> Callable:
 
         return redirect_to_login(request.get_full_path())
 
-    return _wrapper
+    return _view

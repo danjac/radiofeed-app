@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load heroicons partials %}
+{% load heroicons %}
 {% block title %}
     {{ block.super }} | Private Feeds | Add Feed
 {% endblock title %}
@@ -16,15 +16,10 @@
             </ul>
         </nav>
     </header>
-    {% partialdef form inline=True %}
     <form method="post"
           action="{{ request.path }}"
           class="space-y-3"
-          id="private-feed-form"
-          hx-disabled-elt="this"
-          hx-post="{{ request.path }}"
-          hx-target="this"
-          hx-swap="outerHTML">
+          id="private-feed-form">
         {% csrf_token %}
         {{ form }}
         <div>
@@ -34,5 +29,4 @@
             </button>
         </div>
     </form>
-{% endpartialdef form %}
 {% endblock content %}

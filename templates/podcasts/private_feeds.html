@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% load heroicons partials %}
+{% load heroicons %}
 {% block title %}
     {{ block.super }} | Private Feeds
 {% endblock title %}
 {% block content %}
+    {% paginate podcasts as page_obj %}
     <header class="pb-3 mb-6 border-b space-y-3 {% if not page_obj.has_other_pages %}sm:space-y-0 sm:flex items-center justify-between{% endif %}">
         <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
             Private Feeds
@@ -28,7 +29,5 @@
             </ul>
         </nav>
     </header>
-    {% partialdef pagination inline=True %}
     {% include "podcasts/_podcasts.html" %}
-{% endpartialdef pagination %}
 {% endblock content %}

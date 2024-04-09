@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Final, TypedDict
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.paginator import Page, Paginator
 from django.core.signing import Signer
 from django.shortcuts import resolve_url
 from django.templatetags.static import static
@@ -17,6 +18,7 @@ from django.utils.safestring import mark_safe
 from radiofeed import cleaners
 
 if TYPE_CHECKING:  # pragma: nocover
+    from django.db.models import QuerySet
     from django.template.context import RequestContext
 
 ACCEPT_COOKIES_NAME: Final = "accept-cookies"
@@ -51,6 +53,16 @@ def active_link(
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url
         else ActiveLink(active=False, css=css, url=url)
+    )
+
+
+@register.simple_tag(takes_context=True)
+def paginate(
+    context: RequestContext, object_list: QuerySet, *, page_size: int = 30
+) -> Page:
+    """Returns paginated object list."""
+    return Paginator(object_list, page_size).get_page(
+        context.request.pagination.current
     )
 
 
