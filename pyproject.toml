@@ -56,6 +56,7 @@ dev =[
     "django-debug-toolbar",
     "django-fastdev",
     "djlint",
+    "factory_boy",
     "faker",
     "ipython",
     "mypy",

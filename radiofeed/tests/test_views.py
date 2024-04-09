@@ -6,50 +6,54 @@ import pytest
 from django.core.signing import Signer
 from django.urls import reverse
 
-from radiofeed.tests.asserts import assert_response_not_found, assert_response_ok
-
 
 class TestManifest:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_response_ok(client.get(reverse("manifest")))
+        response = client.get(reverse("manifest"))
+        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestServiceWorker:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_response_ok(client.get(reverse("service_worker")))
+        response = client.get(reverse("service_worker"))
+        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestFavicon:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_response_ok(client.get(reverse("favicon")))
+        response = client.get(reverse("favicon"))
+        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestRobots:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_response_ok(client.get(reverse("robots")))
+        response = client.get(reverse("robots"))
+        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestSecurty:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_response_ok(client.get(reverse("security")))
+        response = client.get(reverse("security"))
+        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestAbout:
     @pytest.mark.django_db()
     def test_get(self, client):
-        assert_response_ok(client.get(reverse("about")))
+        response = client.get(reverse("about"))
+        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestAcceptCookies:
     @pytest.mark.django_db()
     def test_post(self, client):
         response = client.post(reverse("accept_cookies"))
-        assert_response_ok(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert "accept-cookies" in response.cookies
 
 
@@ -74,25 +78,23 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
-        assert_response_ok(
-            client.get(self.get_url(100, self.encode_url(self.cover_url)))
-        )
+        response = client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db()
     def test_not_accepted_size(self, client, db, mocker):
-        assert_response_not_found(
-            client.get(self.get_url(500, self.encode_url(self.cover_url)))
-        )
+        response = client.get(self.get_url(500, self.encode_url(self.cover_url)))
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
     @pytest.mark.django_db()
     def test_missing_url_param(self, client, db, mocker):
-        assert_response_not_found(
-            client.get(reverse("cover_image", kwargs={"size": 100}))
-        )
+        response = client.get(reverse("cover_image", kwargs={"size": 100}))
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
     @pytest.mark.django_db()
     def test_unsigned_url(self, client, db):
-        assert_response_not_found(client.get(self.get_url(100, self.cover_url)))
+        response = client.get(self.get_url(100, self.cover_url))
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
     @pytest.mark.django_db()
     def test_failed_download(self, client, db, mocker):
@@ -102,9 +104,8 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
 
-        assert_response_ok(
-            client.get(self.get_url(100, self.encode_url(self.cover_url)))
-        )
+        response = client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db()
     def test_failed_process(self, client, db, mocker):
@@ -114,6 +115,5 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
-        assert_response_ok(
-            client.get(self.get_url(100, self.encode_url(self.cover_url)))
-        )
+        response = client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        assert response.status_code == http.HTTPStatus.OK
