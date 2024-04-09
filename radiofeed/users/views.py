@@ -65,7 +65,7 @@ def import_podcast_feeds(
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
-        return HttpResponseRedirect(request.path)
+        return HttpResponseRedirect(reverse("users:manage_podcast_feeds"))
 
     return TemplateResponse(
         request,
