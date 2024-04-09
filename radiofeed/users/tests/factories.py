@@ -1,9 +1,6 @@
 import factory
-from faker import Faker
 
 from radiofeed.users.models import User
-
-_faker = Faker()
 
 
 class UserFactory(factory.django.DjangoModelFactory):

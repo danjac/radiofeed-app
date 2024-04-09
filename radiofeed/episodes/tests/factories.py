@@ -2,13 +2,10 @@ import uuid
 
 import factory
 from django.utils import timezone
-from faker import Faker
 
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.tests.factories import PodcastFactory
 from radiofeed.users.tests.factories import UserFactory
-
-_faker = Faker()
 
 
 class EpisodeFactory(factory.django.DjangoModelFactory):

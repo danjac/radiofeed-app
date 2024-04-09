@@ -1,11 +1,8 @@
 import factory
 from django.utils import timezone
-from faker import Faker
 
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.users.tests.factories import UserFactory
-
-_faker = Faker()
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
