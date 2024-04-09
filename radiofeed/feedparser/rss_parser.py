@@ -39,7 +39,9 @@ class _RSSParser:
 
     def parse(self, content: bytes) -> Feed:
         """Parse content into Feed instance."""
-        return self._parse_feed(self._parser.find(content, "rss", "channel"))
+        if (channel := self._parser.find(content, "rss", "channel")) is None:
+            raise InvalidRSSError("No <channel /> element found in RSS feed.")
+        return self._parse_feed(channel)
 
     def _parse_feed(self, channel: OptionalXMLElement) -> Feed:
         try:
