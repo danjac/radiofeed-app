@@ -24,7 +24,7 @@ def user_preferences(
             form.save()
             messages.success(request, "Your preferences have been saved")
 
-            return HttpResponseRedirect(reverse("users:preferences"))
+            return HttpResponseRedirect(request.path)
 
     else:
         form = UserPreferencesForm(instance=request.user)
@@ -65,7 +65,7 @@ def import_podcast_feeds(
         else:
             messages.info(request, "No new podcasts found in uploaded file")
 
-        return HttpResponseRedirect(reverse("users:manage_podcast_feeds"))
+        return HttpResponseRedirect(request.path)
 
     return TemplateResponse(
         request,
