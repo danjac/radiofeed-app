@@ -42,7 +42,7 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 
 @require_safe
 @require_auth
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> TemplateResponse:
     """Render default podcast home page for authenticated users."""
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
