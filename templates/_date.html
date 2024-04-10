@@ -1,2 +1,4 @@
-<time {% if title %}title="{{ title }}"{% endif %}
+{# vim: set filetype=htmldjango #}
+<time class="font-semibold"
+      {% if title %}title="{{ title }}"{% endif %}
       datetime="{{ value|date:"c" }}">{{ value|date:"j M Y" }}</time>

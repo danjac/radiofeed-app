@@ -146,25 +146,29 @@
         </div>
     </div>
 </div>
-<div class="flex items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
-    {% include "_date.html" with value=episode.pub_date title="Release Date" %}
-    {% with file_size=episode.get_file_size %}
-        {% if file_size %}<div title="Size">{{ file_size }}</div>{% endif %}
-    {% endwith %}
+{% if episode.is_explicit %}
+    <div title="May contain adult themes and language. Listener discretion advised."
+         class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
+        {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
+    </div>
+{% endif %}
+<div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
+    <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
     {% with duration=episode.duration_in_seconds %}
-        {% if duration %}<span title="Duration">{{ duration|format_duration }}</span>{% endif %}
-    {% endwith %}
-    {% if episode.is_explicit %}
-        <div title="May contain adult themes and language. Listener discretion advised."
-             class="flex items-center space-x-2 text-red-600 dark:text-red-500">
-            {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
+        {% if duration %}
+            <div title="Duration">
+                {{ duration|format_duration }}
+            {% endif %}
         </div>
-    {% endif %}
+    {% endwith %}
+    {% with file_size=episode.get_file_size %}
+        {% if file_size %}<div title="File Size">{{ file_size }}</div>{% endif %}
+    {% endwith %}
 </div>
 {% partialdef audio_log inline=True %}
 <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
     {% if audio_log %}
-        <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
+        <div class="flex-wrap items-center space-y-3 font-semibold text-gray-600 sm:flex sm:space-y-0 sm:space-x-3 dark:text-gray-300">
             <div class="flex items-center space-x-1">
                 <span>Listened</span>
                 {% include "_date.html" with value=audio_log.listened title="Listened" %}

@@ -34,9 +34,10 @@ class TestFormatDuration:
             pytest.param(None, "", id="none"),
             pytest.param(0, "", id="zero"),
             pytest.param(30, "", id="30 seconds"),
-            pytest.param(540, "9min", id="9 minutes"),
-            pytest.param(2400, "40min", id="40 minutes"),
-            pytest.param(9000, "2h 30min", id="2 hours 30 minutes"),
+            pytest.param(60, "1 minute", id="1 minute"),
+            pytest.param(540, "9 minutes", id="9 minutes"),
+            pytest.param(2400, "40 minutes", id="40 minutes"),
+            pytest.param(9000, "2 hours 30 minutes", id="2 hours 30 minutes"),
         ],
     )
     def test_format_duration(self, duration, expected):

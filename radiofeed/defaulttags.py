@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.signing import Signer
 from django.shortcuts import resolve_url
+from django.template.defaultfilters import pluralize
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -142,10 +143,10 @@ def format_duration(total_seconds: int | None) -> str:
     rv: list[str] = []
 
     if total_hours := math.floor(total_seconds / 3600):
-        rv.append(f"{total_hours}h")
+        rv.append(f"{total_hours} hour{pluralize(total_hours)}")
 
     if total_minutes := round((total_seconds % 3600) / 60):
-        rv.append(f"{total_minutes}min")
+        rv.append(f"{total_minutes} minute{pluralize(total_minutes)}")
 
     return " ".join(rv)
 
