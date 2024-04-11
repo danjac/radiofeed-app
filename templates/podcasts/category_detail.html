@@ -5,6 +5,7 @@
 {% endblock title %}
 {% block content %}
     {% cache 600 category-detail request.get_full_path %}
+    {% paginate podcasts as page_obj %}
     {% with search_placeholder="Search: "|add:category.name %}
         {% if request.search %}
             <header class="pb-3 mb-3 space-y-3 border-b">
@@ -28,15 +29,16 @@
                 <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
                     {{ category.name }} Podcasts
                 </h1>
-                <nav class="flex justify-center items-center sm:justify-end">
-                    <ul>
-                        <li>{% search_form search_placeholder %}</li>
-                    </ul>
-                </nav>
+                {% if page_obj.has_other_pages %}
+                    <nav class="flex justify-center items-center sm:justify-end">
+                        <ul>
+                            <li>{% search_form search_placeholder %}</li>
+                        </ul>
+                    </nav>
+                {% endif %}
             </header>
         {% endif %}
     {% endwith %}
-    {% paginate podcasts as page_obj %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}
 {% endblock content %}
