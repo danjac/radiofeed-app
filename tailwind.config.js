@@ -1,8 +1,8 @@
 /* eslint-disable */
 
-const plugin = require("tailwindcss/plugin");
+import plugin from "tailwindcss/plugin";
 
-module.exports = {
+export default {
     mode: "jit",
     darkMode: "media",
     future: {
