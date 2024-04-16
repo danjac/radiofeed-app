@@ -19,7 +19,7 @@ npminstall:
 	npm ci
 
 npmupdate:
-	npm run check-updates && npm install
+	npm run check-updates && npm install npm-update-all && npx update-browserslist-db@latest
 
 precommitinstall:
 	pre-commit install
