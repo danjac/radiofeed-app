@@ -5,7 +5,7 @@ from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.client import get_client
@@ -18,6 +18,7 @@ from radiofeed.podcasts.models import Category, Podcast
 
 _index_url = reverse_lazy("podcasts:index")
 _private_feeds_url = reverse_lazy("podcasts:private_feeds")
+_search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
 
 
 @require_safe
@@ -66,7 +67,7 @@ def index(request: HttpRequest) -> TemplateResponse:
             "podcasts": podcasts,
             "has_subscriptions": has_subscriptions,
             "promoted": promoted,
-            "search_url": reverse("podcasts:search_podcasts"),
+            "search_podcasts_url": _search_podcasts_url,
         },
     )
 
