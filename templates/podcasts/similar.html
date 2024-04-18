@@ -1,8 +1,10 @@
 {% extends "podcasts/detail_base.html" %}
+{% load cache %}
 {% block title %}
     {{ block.super }} | Similar
 {% endblock title %}
 {% block podcast_content %}
+    {% cache 600 similar-podcasts %}
     <ul class="divide-y divide-solid">
         {% for recommendation in recommendations %}
             <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
@@ -10,4 +12,5 @@
             </li>
         {% endfor %}
     </ul>
+{% endcache %}
 {% endblock podcast_content %}
