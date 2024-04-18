@@ -133,7 +133,7 @@ class PaginationDetails:
         return f"{self.request.path}?{qs.urlencode()}"
 
     def get_page(self, object_list: QuerySet, *, page_size: int = 30) -> Page:
-        """Returns pagination object."""
+        """Returns paginated object list for the current page."""
         return Paginator(object_list, page_size).get_page(self.current)
 
 
