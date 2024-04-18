@@ -328,19 +328,19 @@
 
     /* MESSAGES */
     .message-error {
-        background-color: theme("colors.red.500");
+        background-color: theme("colors.red.600");
     }
 
     .message-info {
-        background-color: theme("colors.blue.500");
+        background-color: theme("colors.blue.600");
     }
 
     .message-success {
-        background-color: theme("colors.green.500");
+        background-color: theme("colors.green.600");
     }
 
     .message-warning {
-        background-color: theme("colors.yellow.500");
+        background-color: theme("colors.yellow.600");
     }
 }
 
