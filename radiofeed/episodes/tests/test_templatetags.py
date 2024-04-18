@@ -2,12 +2,12 @@ import pytest
 from django.template.context import RequestContext
 
 from radiofeed.defaulttags import get_placeholder_cover_url
-from radiofeed.episodes.middleware import Player
+from radiofeed.episodes.middleware import AudioPlayer
 from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
 )
-from radiofeed.episodes.tests.factories import EpisodeFactory
+from radiofeed.episodes.tests.factories import AudioLogFactory, EpisodeFactory
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
@@ -60,12 +60,16 @@ class TestAudioPlayer:
             "episode": None,
         }
 
+    @pytest.fixture()
+    def audio_log(self, user, episode):
+        return AudioLogFactory(episode=episode, user=user)
+
     @pytest.mark.django_db()
     def test_is_anonymous(self, rf, anonymous_user, defaults):
         req = rf.get("/")
         req.user = anonymous_user
         req.session = {}
-        req.player = Player(req)
+        req.audio_player = AudioPlayer(req)
         assert audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
@@ -76,27 +80,24 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = user
         req.session = {}
-        req.player = Player(req)
-        assert audio_player(RequestContext(req)) == {
-            **defaults,
-            "request": req,
-        }
+        req.audio_player = AudioPlayer(req)
+        assert audio_player(RequestContext(req)) == {**defaults, "request": req}
 
     @pytest.mark.django_db()
-    def test_is_playing(self, rf, user, episode, defaults):
+    def test_is_playing(self, rf, user, audio_log, defaults):
         req = rf.get("/")
         req.user = user
         req.session = {}
 
-        req.player = Player(req)
-        req.player.set(episode.pk, 10)
+        req.audio_player = AudioPlayer(req)
+        req.audio_player.set(audio_log.episode.pk)
 
         assert audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
-            "episode": episode,
+            "episode": audio_log.episode,
             "is_playing": True,
-            "current_time": 10,
+            "current_time": 1000,
         }
 
     @pytest.mark.django_db()
@@ -105,13 +106,7 @@ class TestAudioPlayer:
         req.user = anonymous_user
         req.session = {}
 
-        req.player = Player(req)
-        req.player.set(episode.pk, 10)
+        req.audio_player = AudioPlayer(req)
+        req.audio_player.set(episode.pk)
 
-        assert audio_player(RequestContext(req)) == {
-            **defaults,
-            "episode": episode,
-            "request": req,
-            "current_time": 10,
-            "is_playing": True,
-        }
+        assert audio_player(RequestContext(req)) == {**defaults, "request": req}

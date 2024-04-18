@@ -50,15 +50,19 @@ def audio_player(context: RequestContext) -> dict:
         "start_player": False,
         "request": context.request,
     }
-    if (episode_id := context.request.player.get()) and (
-        episode := Episode.objects.filter(pk=episode_id)
-        .select_related("podcast")
-        .first()
+    if (
+        context.request.user.is_authenticated
+        and (episode_id := context.request.audio_player.get())
+        and (
+            audio_log := context.request.user.audio_logs.filter(episode__pk=episode_id)
+            .select_related("episode", "episode__podcast")
+            .first()
+        )
     ):
         return {
             **defaults,
-            "episode": episode,
-            "current_time": context.request.player.current_time,
+            "episode": audio_log.episode,
+            "current_time": audio_log.current_time,
             "is_playing": True,
         }
 

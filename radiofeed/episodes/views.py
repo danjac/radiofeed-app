@@ -99,7 +99,7 @@ def episode_detail(
             "episode": episode,
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
-            "is_playing": request.player.has(episode.pk),
+            "is_playing": request.audio_player.has(episode.pk),
         },
     )
 
@@ -120,7 +120,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
         },
     )
 
-    request.player.set(episode.pk, audio_log.current_time)
+    request.audio_player.set(episode.pk)
 
     return TemplateResponse(
         request,
@@ -139,7 +139,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 @require_auth
 def close_player(request: HttpRequest) -> TemplateResponse:
     """Closes audio player."""
-    if episode_id := request.player.pop():
+    if episode_id := request.audio_player.pop():
         audio_log = get_object_or_404(
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
@@ -168,16 +168,12 @@ def player_time_update(
     Returns:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
-    if episode_id := request.player.get():
+    if episode_id := request.audio_player.get():
         try:
-            request.player.current_time = current_time = int(
-                request.POST["current_time"]
-            )
-
             request.user.audio_logs.update_or_create(
                 episode=get_object_or_404(Episode, pk=episode_id),
                 defaults={
-                    "current_time": current_time,
+                    "current_time": int(request.POST["current_time"]),
                     "listened": timezone.now(),
                 },
             )
@@ -216,7 +212,7 @@ def history(request: HttpRequest) -> TemplateResponse:
 def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
-    if request.player.has(episode_id):
+    if request.audio_player.has(episode_id):
         raise Http404
 
     audio_log = get_object_or_404(
