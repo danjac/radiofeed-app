@@ -81,7 +81,7 @@ class TestAudioPlayer:
         req.user = user
         req.session = {}
         req.audio_player = AudioPlayer(req)
-        assert audio_player(RequestContext(req)) == {**defaults, "request": req}
+        assert audio_player(RequestContext(req)) == defaults | {"request": req}
 
     @pytest.mark.django_db()
     def test_is_playing(self, rf, user, audio_log, defaults):
@@ -109,4 +109,4 @@ class TestAudioPlayer:
         req.audio_player = AudioPlayer(req)
         req.audio_player.set(episode.pk)
 
-        assert audio_player(RequestContext(req)) == {**defaults, "request": req}
+        assert audio_player(RequestContext(req)) == defaults | {"request": req}

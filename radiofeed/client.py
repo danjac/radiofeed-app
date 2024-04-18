@@ -15,7 +15,7 @@ def get_client(
         follow_redirects=follow_redirects,
         headers={
             "User-Agent": settings.USER_AGENT,
-            **(headers or {}),
-        },
+        }
+        | (headers or {}),
         **kwargs,
     )

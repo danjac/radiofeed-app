@@ -113,8 +113,8 @@ def manifest(request: HttpRequest) -> JsonResponse:
             ],
             "icons": [
                 icon,
-                {**icon, "purpose": "any"},
-                {**icon, "purpose": "maskable"},
+                icon | {"purpose": "maskable"},
+                icon | {"purpose": "any"},
             ],
             "shortcuts": [],
             "lang": "en",

@@ -59,8 +59,7 @@ def audio_player(context: RequestContext) -> dict:
             .first()
         )
     ):
-        return {
-            **defaults,
+        return defaults | {
             "episode": audio_log.episode,
             "current_time": audio_log.current_time,
             "is_playing": True,

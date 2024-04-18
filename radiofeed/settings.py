@@ -98,8 +98,8 @@ DATABASES = {
 # Caches
 
 CACHES = {
-    "default": {
-        **env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0"),
+    "default": env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0")
+    | {
         "OPTIONS": {
             "PARSER_CLASS": "redis.connection._HiredisParser",
         },
