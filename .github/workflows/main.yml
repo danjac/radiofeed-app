@@ -2,7 +2,27 @@ name: Radiofeed Project CI/CD
 on: [pull_request, push]
 run-name: ${{ github.actor }} is running checks
 jobs:
-    main:
+    precommit:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12.1"
+                  cache: "pip"
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+            # install eslint dependencies etc first
+            - run: npm install
+            - uses: pre-commit/action@v3.0.1
+    docker:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: docker build -t radiofeed-app .
+    unittests:
         runs-on: ubuntu-latest
         services:
             postgres:
@@ -17,19 +37,6 @@ jobs:
               with:
                   python-version: "3.12.1"
                   cache: "pip"
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-                  cache: "npm"
-            # install eslint dependencies etc first
-            - run: npm install
-            # precommit checks
-            - uses: pre-commit/action@v3.0.1
             - run: pip install -r requirements-ci.txt
             - run: xargs python -m nltk.downloader < nltk.txt
             - run: python -m pytest
-    docker:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - run: docker build -t radiofeed-app .
