@@ -409,6 +409,3 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
 
     # INTERNAL_IPS required for debug toolbar
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
-
-    # HTMX integration
-    DEBUG_TOOLBAR_CONFIG = {"ROOT_TAG_EXTRA_ATTRS": "hx-preserve"}
