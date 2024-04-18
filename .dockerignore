@@ -13,7 +13,6 @@
 !.woodpecker.yml
 **/__pycache__
 **/tests
-**/cookiecutters
 .*
 .git
 .github
@@ -27,7 +26,6 @@ LICENSE
 Makefile
 Procfile
 README.md
-configure_deployment.py
 conftest.py
 docker-compose.yml
 node_modules
