@@ -137,7 +137,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 @require_POST
 @require_auth
-def close_player(request: HttpRequest) -> TemplateResponse:
+def close_player(request: HttpRequest) -> TemplateResponse | HttpResponseNoContent:
     """Closes audio player."""
     if episode_id := request.audio_player.pop():
         audio_log = get_object_or_404(
