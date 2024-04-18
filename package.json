@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "alpinejs": "^3.13.8",
-        "htmx.org": "^1.9.11",
+        "htmx.org": "^1.9.12",
         "npm-update-all": "^1.0.1"
     },
     "devDependencies": {

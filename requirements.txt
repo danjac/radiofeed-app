@@ -52,7 +52,7 @@ django-model-utils==4.5.0
 django-permissions-policy==4.19.0
 django-redis==5.4.0
 django-template-partials==24.2
-gunicorn==21.2.0
+gunicorn==22.0.0
 h11==0.14.0
     # via httpcore
 heroicons==2.6.0
@@ -102,7 +102,7 @@ python3-openid==3.2.0
     # via django-allauth
 redis==5.0.3
     # via django-redis
-regex==2023.12.25
+regex==2024.4.16
     # via nltk
 requests==2.31.0
     # via
