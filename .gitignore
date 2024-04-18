@@ -1,9 +1,3 @@
-# *.mo
-# Ansible
-# Common typos
-# Django media/static dirs
-# Translations
-'
 *.bak
 *.db
 *.DS_Store
@@ -14,8 +8,8 @@
 *.sqlite3
 *.swp
 *log
+.disk_cache
 .ruff_cache
-.cache
 .coverage
 .coverage*
 .data
@@ -28,6 +22,7 @@
 .venv
 .vim/
 .vscode/
+'
 :
 :w
 codealike.json
@@ -44,4 +39,4 @@ node_modules/
 npm-debug.log*
 staticfiles
 venv
-static/**/bundle.*
+static/dist/

@@ -35,3 +35,4 @@ poetry.lock
 pyproject.toml
 requirements-ci.txt
 screenshots
+static/dist

@@ -9,7 +9,7 @@
             </title>
             <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
             <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
-            <link rel="stylesheet" type="text/css" href="{% static "css/bundle.css" %}{% if debug %}?{% now "U" %}{% endif %}">
+            <link rel="stylesheet" type="text/css" href="{% static "dist/app.css" %}{% if debug %}?{% now "U" %}{% endif %}">
             <link rel="manifest" href="{% url 'manifest' %}">
             <link rel="canonical" href="https://{{ request.site.domain }}/">
             <meta charset="UTF-8" />
@@ -50,7 +50,7 @@
                 </div>
             </div>
             {% django_htmx_script %}
-            <script defer src="{% static "js/bundle.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
+            <script defer src="{% static "dist/app.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
             <script>
                 if (typeof navigator.serviceWorker !== 'undefined') {
                     navigator.serviceWorker.register('{% url "service_worker" %}')
