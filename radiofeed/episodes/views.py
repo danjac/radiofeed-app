@@ -20,6 +20,7 @@ from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
 
 _index_url = reverse_lazy("episodes:index")
+_search_episodes_url = reverse_lazy("episodes:search_episodes")
 
 
 @require_safe
@@ -53,6 +54,7 @@ def index(request: HttpRequest) -> TemplateResponse:
             "episodes": episodes,
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
+            "search_episodes_url": _search_episodes_url,
         },
     )
 
