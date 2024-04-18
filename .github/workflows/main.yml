@@ -25,8 +25,11 @@ jobs:
             - run: npm install
             # precommit checks
             - uses: pre-commit/action@v3.0.1
-            # check Docker builds OK
-            - run: docker build -t radiofeed-app .
             - run: pip install -r requirements-ci.txt
             - run: xargs python -m nltk.downloader < nltk.txt
             - run: python -m pytest
+    docker:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: docker build -t radiofeed-app .
