@@ -12,13 +12,9 @@ repos:
           - id: check-shebang-scripts-are-executable
           - id: check-toml
           - id: check-yaml
-            exclude: cookiecutters
           - id: debug-statements
           - id: destroyed-symlinks
           - id: detect-private-key
-          - id: file-contents-sorter
-            args: ["--ignore-case", "--unique"]
-            exclude: .gitignore|.dockerignore|requirements[-\w]*.txt
     - repo: local
       hooks:
           - id: rustywind
@@ -47,19 +43,20 @@ repos:
       rev: v9.0.0
       hooks:
           - id: eslint
-            files: \.(|js)$
-            exclude: bundle.js|bundle.js.map|service_worker.js
+            files: ^static/
+            exclude: bundle.js|bundle.js.map
     - repo: https://github.com/pre-commit/mirrors-prettier
       rev: v4.0.0-alpha.8
       hooks:
           - id: prettier
-            files: \.(|js|css)$
-            exclude: bundle.js|bundle.js.map|bundle.css|service_worker.js
+            files: ^static/
+            exclude: bundle.js|bundle.js.map|bundle.css
     - repo: https://github.com/Riverside-Healthcare/djLint
       rev: v1.34.1
       hooks:
           - id: djlint-django
             args: ["--lint", "--reformat"]
+            exclude: ^static/
     - repo: https://github.com/hadolint/hadolint
       rev: v2.12.1-beta
       hooks:
