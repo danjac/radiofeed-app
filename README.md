@@ -85,52 +85,6 @@ A Dockerfile is provided for standard container deployments e.g. on Dokku.
 
 Once you have access to the Django Admin, you should configure the default Site instance with the correct production name and domain.
 
-### Ansible Dokku deployment
-
-An [Ansible](https://www.ansible.com/) Playbook has been included for easier deployment of [Dokku](https://dokku.com/) to a VM.
-
-
-This Playbook requires the [ansible_dokku](https://github.com/dokku/ansible-dokku) role:
-
-```bash
-ansible-galaxy role install dokku_bot.ansible_dokku
-```
-
-To generate this configuration, run the following command:
-
-```bash
-./configure_deployment.py ansible-dokku
-```
-
-This will generate a set of Ansible playbooks under the `deployments` directory.
-
-This will prompt for relevant information, but you can edit the files afterwards if needed. You should encrypt any sensitive files with [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html):
-
-```bash
-ansible-vault encrypt ./deployments/ansible-dokku/vars/django.yml
-```
-
-To deploy your application on the VM:
-
-```bash
-ansible-playbook -i ./deployments/ansible-dokku/hosts ./deployments/ansible-dokku/dokku.yml --user USER [--ask-vault-pass]
-```
-
-**USER** here should be user who has permissions to install Dokku on that server. Consult the Ansible and Dokku documentation for more details.
-
-Once you have deployed your Dokku application on the server, further deployments can be done through Git:
-
-```bash
-git remote add dokku dokku@radiofeed.app:radiofeed
-git push dokku main
-```
-
-The Ansible configuration also includes a `manage` script to run Django management commands remotely on your Dokku server:
-
-```bash
-./deployments/ansible-dokku/manage shell_plus
-```
-
 ### Scheduling background tasks
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):

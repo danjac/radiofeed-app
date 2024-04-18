@@ -1,8 +1,0 @@
-{% raw -%}
-- name: rebuild app
-  dokku_clone:
-      app: "{{ appname }}"
-      repository: "{{ repo }}"
-      version: main
-      build: true
-{%- endraw %}

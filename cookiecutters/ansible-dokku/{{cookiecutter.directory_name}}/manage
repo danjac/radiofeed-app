@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-
-ssh -t "dokku@{{ cookiecutter.domain }}" -- run "{{ cookiecutter.appname }}" ./manage.py "$@"

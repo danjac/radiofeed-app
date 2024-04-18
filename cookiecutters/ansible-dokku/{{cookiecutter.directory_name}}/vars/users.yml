@@ -1,4 +1,0 @@
-dokku_users:
-    - username: "{{cookiecutter.username}}"
-      {% raw -%}ssh_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"{%- endraw %}
-      {% if cookiecutter.full_name -%}name: "{{cookiecutter.full_name}}"{%- endif %}

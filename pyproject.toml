@@ -50,7 +50,6 @@ dependencies =[
 [project.optional-dependencies]
 dev =[
     "bandit[toml]",
-    "cookiecutter",
     "coverage[toml]",
     "django-browser-reload",
     "django-debug-toolbar",
