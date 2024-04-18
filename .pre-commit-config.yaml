@@ -48,13 +48,13 @@ repos:
       hooks:
           - id: eslint
             files: \.(|js)$
-            exclude: bundle.js|bundle.js.map
+            exclude: bundle.js|bundle.js.map|service_worker.js
     - repo: https://github.com/pre-commit/mirrors-prettier
       rev: v4.0.0-alpha.8
       hooks:
           - id: prettier
             files: \.(|js|css)$
-            exclude: bundle.js|bundle.js.map|bundle.css
+            exclude: bundle.js|bundle.js.map|bundle.css|service_worker.js
     - repo: https://github.com/Riverside-Healthcare/djLint
       rev: v1.34.1
       hooks:
