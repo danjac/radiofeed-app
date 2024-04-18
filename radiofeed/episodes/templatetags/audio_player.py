@@ -44,10 +44,10 @@ def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
 
     defaults = {
+        "current_time": None,
+        "episode": None,
         "is_playing": False,
         "start_player": False,
-        "current_time": None,
-        "player_episode": None,
         "request": context.request,
     }
     if (episode_id := context.request.player.get()) and (
@@ -57,7 +57,7 @@ def audio_player(context: RequestContext) -> dict:
     ):
         return {
             **defaults,
-            "player_episode": episode,
+            "episode": episode,
             "current_time": context.request.player.current_time,
             "is_playing": True,
         }

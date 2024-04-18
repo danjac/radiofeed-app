@@ -131,7 +131,6 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
             "is_playing": True,
             "start_player": True,
             "current_time": audio_log.current_time,
-            "player_episode": episode,
         },
     )
 
