@@ -54,7 +54,6 @@ dev =[
     "django-browser-reload",
     "django-debug-toolbar",
     "django-fastdev",
-    "djlint",
     "factory_boy",
     "ipython",
     "mypy",
@@ -68,7 +67,6 @@ dev =[
     "pytest-randomly",
     "pytest-sugar",
     "pytest-xdist",
-    "ruff",
     "types-python-dateutil",
     "types-urllib3",
 ]
