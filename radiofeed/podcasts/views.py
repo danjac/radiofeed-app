@@ -343,13 +343,16 @@ def add_private_feed(
         if form.is_valid():
             podcast, is_new = form.save()
 
-            messages.success(
-                request,
-                "Podcast added to your Private Feeds and will appear here soon.",
-            )
+            if is_new:
+                message = (
+                    "Podcast added to your Private Feeds and will appear here soon"
+                )
+                redirect_url = _private_feeds_url
+            else:
+                message = "Podcast added to your Private Feeds"
+                redirect_url = podcast.get_absolute_url()
 
-            redirect_url = _private_feeds_url if is_new else podcast.get_absolute_url()
-
+            messages.success(request, message)
             return HttpResponseRedirect(redirect_url)
 
     else:
