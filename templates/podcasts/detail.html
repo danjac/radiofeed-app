@@ -44,9 +44,11 @@
                     </div>
                 {% else %}
                     {% partialdef subscribe_button inline=True %}
-                    <div hx-target="this"
+                    <div id="subscribe-button"
+                         hx-target="this"
                          hx-push-url="false"
                          hx-indicator="this"
+                         hx-select="#subscribe-button"
                          hx-swap="outerHTML">
                         {% if is_subscribed %}
                             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"

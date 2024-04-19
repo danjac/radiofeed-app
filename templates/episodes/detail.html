@@ -68,6 +68,7 @@
                     <div id="{{ target }}"
                          hx-push-url="false"
                          hx-target="this"
+                         hx-select="#{{ target }}"
                          hx-indicator="this"
                          hx-swap="outerHTML">
                         {% if is_playing %}
@@ -101,8 +102,10 @@
                 {% endwith %}
             {% endpartialdef audio_player_button %}
             {% partialdef bookmark_button inline=True %}
-            <div hx-push-url="false"
+            <div id="bookmark-button"
+                 hx-push-url="false"
                  hx-target="this"
+                 hx-select="#bookmark-button"
                  hx-swap="outerHTML"
                  hx-indicator="this">
                 {% if is_bookmarked %}
@@ -181,6 +184,7 @@
                         title="Remove episode from your History"
                         hx-disabled-elt="this"
                         hx-target="#audio-log"
+                        hx-select="#audio-log"
                         hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                         hx-indicator="this"
                         hx-push-url="false"

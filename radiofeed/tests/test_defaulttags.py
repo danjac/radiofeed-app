@@ -6,6 +6,7 @@ from django.urls import reverse, reverse_lazy
 from radiofeed.defaulttags import (
     absolute_uri,
     active_link,
+    active_link_re,
     cover_image,
     format_duration,
     markdown,
@@ -78,6 +79,32 @@ class TestActiveLink:
 
         assert active_link(RequestContext(req), self.episodes_url) == {
             "url": self.episodes_url,
+            "css": "link active",
+            "active": True,
+        }
+
+
+class TestActiveLinkRe:
+    preferences_url = reverse_lazy("users:preferences")
+    pattern = "^/account/*"
+
+    def test_active_link_no_match(self, rf):
+        url = reverse("podcasts:index")
+        req = rf.get(url)
+
+        assert active_link_re(RequestContext(req), self.pattern, url) == {
+            "url": url,
+            "css": "link",
+            "active": False,
+        }
+
+    def test_active_link_match(self, rf):
+        req = rf.get(self.preferences_url)
+
+        assert active_link_re(
+            RequestContext(req), self.pattern, self.preferences_url
+        ) == {
+            "url": self.preferences_url,
             "css": "link active",
             "active": True,
         }

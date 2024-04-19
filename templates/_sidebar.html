@@ -1,81 +1,78 @@
 {% load heroicons %}
-{% with SIDEBAR_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3 lg:mr-6" %}
+{% load cache %}
+{% with sidebar_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
     <nav class="pl-3 text-base md:text-lg lg:text-xl xl:pt-12 xl:pl-0">
         <ul class="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
+            {% cache 600 sidebar request.path %}
             <li>
-                <a href="{% url 'podcasts:index' %}"
-                   accesskey="p"
-                   class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "rss" class=ICON_CSS %}
+                {% active_link "podcasts:index" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="p" class="{{ link.css }}">
+                    {% heroicon_outline "rss" class=icon_css %}
                     Podcasts
                 </a>
             </li>
             <li>
-                <a href="{% url 'episodes:index' %}"
-                   accesskey="n"
-                   class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "sparkles" class=ICON_CSS %}
+                {% active_link "episodes:index" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="n" class="{{ link.css }}">
+                    {% heroicon_outline "sparkles" class=icon_css %}
                     New Releases
                 </a>
             </li>
             <li>
-                <a href="{% url 'podcasts:category_list' %}"
-                   accesskey="c"
-                   class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "tag" class=ICON_CSS %}
+                {% active_link "podcasts:category_list" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="c" class="{{ link.css }}">
+                    {% heroicon_outline "tag" class=icon_css %}
                     Categories
                 </a>
             </li>
             <li>
-                <a href="{% url 'episodes:bookmarks' %}"
-                   accesskey="b"
-                   class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "bookmark" class=ICON_CSS %}
+                {% active_link "episodes:bookmarks" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="b" class="{{ link.css }}">
+                    {% heroicon_outline "bookmark" class=icon_css %}
                     Bookmarks
                 </a>
             </li>
             <li>
-                <a href="{% url 'episodes:history' %}"
-                   accesskey="h"
-                   class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "clock" class=ICON_CSS %}
+                {% active_link "episodes:history" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="h" class="{{ link.css }}">
+                    {% heroicon_outline "clock" class=icon_css %}
                     History
                 </a>
             </li>
             <li>
-                <a href="{% url 'podcasts:private_feeds' %}"
-                   accesskey="f"
-                   class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "lock-closed" class=ICON_CSS %}
+                {% active_link "podcasts:private_feeds" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="f" class="{{ link.css }}">
+                    {% heroicon_outline "lock-closed" class=icon_css %}
                     Private Feeds
                 </a>
             </li>
             <li>
-                <a href="{% url 'users:preferences' %}"
-                   accesskey="s"
-                   class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "cog-6-tooth" class=ICON_CSS %}
+                {% active_link_re "^/account/*" "users:preferences" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="s" class="{{ link.css }}">
+                    {% heroicon_outline "cog-6-tooth" class=icon_css %}
                     Settings
                 </a>
             </li>
             <li>
-                <a href="{% url 'about' %}" accesskey="a" class="{{ SIDEBAR_CSS }}">
-                    {% heroicon_outline "information-circle" class=ICON_CSS %}
+                {% active_link "about" css=sidebar_css as link %}
+                <a href="{{ link.url }}" accesskey="a" class="{{ link.css }}">
+                    {% heroicon_outline "information-circle" class=icon_css %}
                     About
                 </a>
             </li>
-            <li>
-                <form class="{{ SIDEBAR_CSS }}"
-                      hx-disable="true"
-                      action="{% url 'account_logout' %}"
-                      method="post">
-                    {% csrf_token %}
-                    <button accesskey="l" class="{{ SIDEBAR_CSS }}">
-                        {% heroicon_outline "arrow-left-on-rectangle" class=ICON_CSS %}
-                        Logout
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </nav>
+        {% endcache %}
+        <li>
+            <form class="{{ sidebar_css }}"
+                  hx-disable="true"
+                  action="{% url 'account_logout' %}"
+                  method="post">
+                {% csrf_token %}
+                <button accesskey="l" class="{{ sidebar_css }} link">
+                    {% heroicon_outline "arrow-left-on-rectangle" class=icon_css %}
+                    Logout
+                </button>
+            </form>
+        </li>
+    </ul>
+</nav>
 {% endwith %}
