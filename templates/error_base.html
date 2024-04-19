@@ -15,7 +15,7 @@
             <meta name="robots" content="nofollow" />
             <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
             <link rel="apple-touch-icon image_src" href="{% static "img/apple-touch-icon.png" %}">
-            <link href="{% static "static/dist/app.css" %}{% if debug %}?{% now "U" %}{% endif %}" rel="stylesheet" type="text/css" media="screen">
+            <link href="{% static "dist/app.css" %}{% if debug %}?{% now "U" %}{% endif %}" rel="stylesheet" type="text/css" media="screen">
         </head>
         <body class="mx-auto font-sans text-sm antialiased md:text-base dark:text-white container-xl scroll-smooth dark:bg-zinc-900">
             {% url 'podcasts:index' as home_url %}
