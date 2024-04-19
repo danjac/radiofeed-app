@@ -28,7 +28,8 @@
                                     hx-disabled-elt="this"
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast? You can't undo this action!"
-                                    hx-delete="{% url 'podcasts:remove_private_feed' podcast.pk %}">
+                                    hx-delete="{% url 'podcasts:remove_private_feed' podcast.pk %}"
+                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
                             </button>
