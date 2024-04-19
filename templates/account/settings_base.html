@@ -28,45 +28,45 @@
                          x-show="showDropdown"
                          x-transition.scape.origin.top>
                         <ul class="py-1 list-none" aria-labelledby="settings-dropdown-btn">
-                            {% with DROPDOWN_CSS="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800" ACTIVE_CSS="font-bold" %}
+                            {% with dropdown_css="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800" active_css="font-bold" %}
                                 <li>
-                                    {% active_link 'users:preferences' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    {% active_link 'users:preferences' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}" tabindex="1" class="{{ link.css }}">
                                         {% heroicon_mini "adjustments-horizontal" class="mr-2" %}
                                     Preferences</a>
                                 </li>
                                 <li>
-                                    {% active_link 'users:stats' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    {% active_link 'users:stats' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}" tabindex="2" class="{{ link.css }}">
                                         {% heroicon_mini "chart-bar" class="mr-2" %}
                                     Statistics</a>
                                 </li>
                                 <li>
-                                    {% active_link 'users:manage_podcast_feeds' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    {% active_link 'users:manage_podcast_feeds' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}" tabindex="3" class="{{ link.css }}">
                                         {% heroicon_mini "rss" class="mr-2" %}
                                     Import/Export Feeds</a>
                                 </li>
                                 <li>
-                                    {% active_link 'account_email' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    {% active_link 'account_email' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}" tabindex="4" class="{{ link.css }}">
                                         {% heroicon_mini "envelope" class="mr-2" %}
                                     Email Addresses</a>
                                 </li>
                                 <li>
-                                    {% active_link 'account_change_password' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    {% active_link 'account_change_password' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}" tabindex="5" class="{{ link.css }}">
                                         {% heroicon_mini "key" class="mr-2" %}
                                     Change Password</a>
                                 </li>
                                 <li>
-                                    {% active_link 'socialaccount_connections' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    {% active_link 'socialaccount_connections' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}" tabindex="6" class="{{ link.css }}">
                                         {% heroicon_mini "user-group" class="mr-2" %}
                                     Social Logins</a>
                                 </li>
                                 <li>
-                                    {% active_link 'users:delete_account' css=DROPDOWN_CSS active_css=ACTIVE_CSS as link %}
+                                    {% active_link 'users:delete_account' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}" tabindex="7" class="{{ link.css }}">
                                         {% heroicon_mini "trash" class="mr-2" %}
                                     Delete Account</a>
