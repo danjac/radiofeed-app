@@ -1,9 +1,7 @@
 {% load heroicons %}
-{% load cache %}
 {% with sidebar_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
     <nav class="pl-3 text-base md:text-lg lg:text-xl xl:pt-12 xl:pl-0">
         <ul class="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
-            {% cache 600 sidebar request.path %}
             <li>
                 {% active_link "podcasts:index" css=sidebar_css as link %}
                 <a href="{{ link.url }}" accesskey="p" class="{{ link.css }}">
@@ -60,19 +58,18 @@
                     About
                 </a>
             </li>
-        {% endcache %}
-        <li>
-            <form class="{{ sidebar_css }}"
-                  hx-disable="true"
-                  action="{% url 'account_logout' %}"
-                  method="post">
-                {% csrf_token %}
-                <button accesskey="l" class="{{ sidebar_css }} link">
-                    {% heroicon_outline "arrow-left-on-rectangle" class=icon_css %}
-                    Logout
-                </button>
-            </form>
-        </li>
-    </ul>
-</nav>
+            <li>
+                <form class="{{ sidebar_css }}"
+                      hx-disable="true"
+                      action="{% url 'account_logout' %}"
+                      method="post">
+                    {% csrf_token %}
+                    <button accesskey="l" class="{{ sidebar_css }} link">
+                        {% heroicon_outline "arrow-left-on-rectangle" class=icon_css %}
+                        Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
 {% endwith %}
