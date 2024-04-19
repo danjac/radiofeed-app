@@ -43,9 +43,9 @@
             {% django_htmx_script %}
             <script defer src="{% static "dist/app.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
             <script>
-        if (typeof navigator.serviceWorker !== 'undefined') {
-            navigator.serviceWorker.register('{% url "service_worker" %}')
-        }
+                if (typeof navigator.serviceWorker !== 'undefined') {
+                    navigator.serviceWorker.register('{% url "service_worker" %}')
+                }
             </script>
         </body>
     </html>
