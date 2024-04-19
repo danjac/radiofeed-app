@@ -30,7 +30,6 @@
                   id="import-feeds-form"
                   hx-encoding="multipart/form-data"
                   hx-target="this"
-                  hx-select="#import-feeds-form"
                   hx-swap="outerHTML"
                   hx-post="{% url 'users:import_podcast_feeds' %}">
                 {% csrf_token %}
