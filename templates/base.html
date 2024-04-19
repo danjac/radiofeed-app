@@ -30,8 +30,7 @@
               hx-target="#content"
               hx-select="#content"
               hx-swap="outerHTML show:window:top"
-              hx-indicator="#hx-indicator"
-              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+              hx-indicator="#hx-indicator">
             {% if not request.htmx %}
                 {% include "_hx_indicator.html" %}
                 {% include "_messages.html" %}

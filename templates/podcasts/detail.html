@@ -49,7 +49,8 @@
                          hx-push-url="false"
                          hx-indicator="this"
                          hx-select="#subscribe-button"
-                         hx-swap="outerHTML">
+                         hx-swap="outerHTML"
+                         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                         {% if is_subscribed %}
                             <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                     aria-label="Unsubscribe from this Podcast"
