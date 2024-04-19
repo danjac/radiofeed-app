@@ -3,57 +3,63 @@
     <nav class="pl-3 text-base md:text-lg lg:text-xl xl:pt-12 xl:pl-0">
         <ul class="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
             <li>
-                {% active_link "podcasts:index" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="p" class="{{ link.css }}">
+                <a href="{% url "podcasts:index" %}"
+                   accesskey="p"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "rss" class=icon_css %}
                     Podcasts
                 </a>
             </li>
             <li>
-                {% active_link "episodes:index" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="n" class="{{ link.css }}">
+                <a href="{% url "episodes:index" %}"
+                   accesskey="n"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "sparkles" class=icon_css %}
                     New Releases
                 </a>
             </li>
             <li>
-                {% active_link "podcasts:category_list" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="c" class="{{ link.css }}">
+                <a href="{% url "podcasts:category_list" %}"
+                   accesskey="c"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "tag" class=icon_css %}
                     Categories
                 </a>
             </li>
             <li>
-                {% active_link "episodes:bookmarks" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="b" class="{{ link.css }}">
+                <a href="{% url "episodes:bookmarks" %}"
+                   accesskey="b"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "bookmark" class=icon_css %}
                     Bookmarks
                 </a>
             </li>
             <li>
-                {% active_link "episodes:history" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="h" class="{{ link.css }}">
+                <a href="{% url "episodes:history" %}"
+                   accesskey="h"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "clock" class=icon_css %}
                     History
                 </a>
             </li>
             <li>
-                {% active_link "podcasts:private_feeds" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="f" class="{{ link.css }}">
+                <a href="{% url "podcasts:private_feeds" %}"
+                   accesskey="f"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "lock-closed" class=icon_css %}
                     Private Feeds
                 </a>
             </li>
             <li>
-                {% active_link_re "^/account/*" "users:preferences" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="s" class="{{ link.css }}">
+                <a href="{% url "users:preferences" %}"
+                   accesskey="s"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "cog-6-tooth" class=icon_css %}
                     Settings
                 </a>
             </li>
             <li>
-                {% active_link "about" css=sidebar_css as link %}
-                <a href="{{ link.url }}" accesskey="a" class="{{ link.css }}">
+                <a href="{% url "about" %}" accesskey="a" class="{{ sidebar_css }}">
                     {% heroicon_outline "information-circle" class=icon_css %}
                     About
                 </a>
@@ -64,7 +70,7 @@
                       action="{% url 'account_logout' %}"
                       method="post">
                     {% csrf_token %}
-                    <button accesskey="l" class="{{ sidebar_css }} link">
+                    <button accesskey="l" class="{{ sidebar_css }}">
                         {% heroicon_outline "arrow-left-on-rectangle" class=icon_css %}
                         Logout
                     </button>

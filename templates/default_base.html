@@ -1,52 +1,58 @@
-{# djlint:off H016 #}
-{% extends "hx_base.html" %}
 {% load static django_htmx audio_player %}
-{% block page %}
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            {% block header %}
-                {{ block.super }}
-                <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
-                <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
-                <link rel="stylesheet" type="text/css" href="{% static "dist/app.css" %}{% if debug %}?{% now "U" %}{% endif %}">
-                <link rel="manifest" href="{% url 'manifest' %}">
-                <link rel="canonical" href="https://{{ request.site.domain }}/">
-                <meta charset="UTF-8" />
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport"
-                      content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <meta name="copyright" content="Dan Jacob {% now " Y" %}">
-                <meta name="cache-control" content="no-cache">
-                <meta name="robots" content="index,follow">
-                <meta name="description" content="Podcast aggregator site">
-                <meta name="keywords" content="podcasts, rss, feeds">
-                <meta name="theme-color" content="#041014">
-            {% endblock header %}
-        </head>
-        <body class="mx-auto font-sans text-sm antialiased md:text-base container-xl scroll-smooth"
-              hx-boost="true"
-              hx-target="#container"
-              hx-swap="innerHTML show:window:top"
-              hx-indicator="#hx-indicator">
-            {% include "_hx_indicator.html" %}
-            {% include "_messages.html" %}
-            <div class="flex flex-col h-screen">
-                <div class="grow" id="container" hx-history-alt>
-                    {% block container %}
-                        {{ block.super }}
-                    {% endblock container %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{{ request.site.name }}
+            {% block title %}
+            {% endblock title %}
+        </title>
+        <link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}">
+        <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static "dist/app.css" %}{% if debug %}?{% now "U" %}{% endif %}">
+        <link rel="manifest" href="{% url 'manifest' %}">
+        <link rel="canonical" href="https://{{ request.site.domain }}/">
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="copyright" content="Dan Jacob {% now " Y" %}">
+        <meta name="cache-control" content="no-cache">
+        <meta name="robots" content="index,follow">
+        <meta name="description" content="Podcast aggregator site">
+        <meta name="keywords" content="podcasts, rss, feeds">
+        <meta name="theme-color" content="#041014">
+    </head>
+    <body class="mx-auto font-sans text-sm antialiased md:text-base container-xl scroll-smooth"
+          hx-boost="true"
+          hx-target="#content"
+          hx-swap="innerHTML show:window:top"
+          hx-indicator="#hx-indicator">
+        {% include "_hx_indicator.html" %}
+        {% include "_messages.html" %}
+        <div class="flex flex-col h-screen">
+            <div class="grow">
+                {% include "_navbar.html" %}
+                <div class="flex relative p-2 py-6 mx-auto min-h-screen xl:pt-12">
+                    {% if user.is_authenticated %}
+                        <aside class="hidden w-full xl:block xl:sticky xl:top-28 xl:w-1/6 xl:h-full">
+                            {% include "_sidebar.html" %}
+                        </aside>
+                    {% endif %}
+                    <main class="mx-auto w-full xl:w-5/6" id="content" hx-history-alt>
+                        {% block content %}
+                        {% endblock content %}
+                    </main>
                 </div>
-                {% audio_player %}
-                {% cookie_notice %}
             </div>
-            {% django_htmx_script %}
-            <script defer src="{% static "dist/app.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
-            <script>
-                if (typeof navigator.serviceWorker !== 'undefined') {
-                    navigator.serviceWorker.register('{% url "service_worker" %}')
-                }
-            </script>
-        </body>
-    </html>
-{% endblock page %}
+            {% audio_player %}
+            {% cookie_notice %}
+        </div>
+        {% django_htmx_script %}
+        <script defer src="{% static "dist/app.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
+        <script>
+            if (typeof navigator.serviceWorker !== 'undefined') {
+                navigator.serviceWorker.register('{% url "service_worker" %}')
+            }
+        </script>
+    </body>
+</html>
