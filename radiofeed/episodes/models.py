@@ -61,6 +61,12 @@ class Episode(models.Model):
 
     explicit: bool = models.BooleanField(default=False)
 
+    recipients: models.QuerySet[User] = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="recommended_episodes",
+    )
+
     search_vector: str | None = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()
