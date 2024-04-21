@@ -13,20 +13,16 @@ from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
 
-class BaseMiddleware:
-    """Base class for middleware"""
-
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
-        self.get_response = get_response
-
-
-class HtmxHeadersMiddleware(BaseMiddleware):
+class HtmxHeadersMiddleware:
     """Workarounds for https://github.com/bigskysoftware/htmx/issues/497.
 
     Sets Cache-Control and Vary headers to ensure full page is rendered.
 
     Place after HtmxMiddleware.
     """
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -37,7 +33,7 @@ class HtmxHeadersMiddleware(BaseMiddleware):
         return response
 
 
-class HtmxMessagesMiddleware(BaseMiddleware):
+class HtmxMessagesMiddleware:
     """Adds messages to HTMX response"""
 
     _hx_redirect_headers = frozenset(
@@ -47,6 +43,9 @@ class HtmxMessagesMiddleware(BaseMiddleware):
             "HX-Refresh",
         }
     )
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation"""
@@ -70,8 +69,11 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         return response
 
 
-class HtmxRedirectMiddleware(BaseMiddleware):
+class HtmxRedirectMiddleware:
     """If HTMX request will send HX-Location response header if HTTP redirect."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation"""
@@ -81,8 +83,11 @@ class HtmxRedirectMiddleware(BaseMiddleware):
         return response
 
 
-class PaginationMiddleware(BaseMiddleware):
+class PaginationMiddleware:
     """Adds `Pagination` instance as `request.pagination`."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -90,8 +95,11 @@ class PaginationMiddleware(BaseMiddleware):
         return self.get_response(request)
 
 
-class SearchMiddleware(BaseMiddleware):
+class SearchMiddleware:
     """Adds `Search` instance as `request.search`."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
@@ -99,8 +107,11 @@ class SearchMiddleware(BaseMiddleware):
         return self.get_response(request)
 
 
-class OrderingMiddleware(BaseMiddleware):
+class OrderingMiddleware:
     """Adds `Ordering` instance as `request.ordering`."""
+
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
