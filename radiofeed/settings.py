@@ -218,8 +218,7 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
 ]
 
 LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
-
-LOGIN_URL = "account_login"
+LOGIN_URL = reverse_lazy("account_login")
 
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 

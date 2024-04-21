@@ -22,10 +22,9 @@ def require_auth(view: Callable) -> Callable:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
+        # redirect to the login url without "next", so we don't have to deal with redirecting to a partial
         if request.htmx:
-            return HttpResponseClientRedirect(
-                redirect_to_login(settings.LOGIN_REDIRECT_URL).url
-            )
+            return HttpResponseClientRedirect(settings.LOGIN_URL)
 
         # plain non-HTMX AJAX: return a 401
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
