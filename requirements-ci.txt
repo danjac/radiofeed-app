@@ -134,7 +134,7 @@ pbr==6.0.0
 pexpect==4.9.0
     # via ipython
 pillow==10.3.0
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
 pprintpp==0.4.0
     # via pytest-icdiff
@@ -225,7 +225,7 @@ threadpoolctl==3.4.0
     # via scikit-learn
 tqdm==4.66.2
     # via nltk
-traitlets==5.14.2
+traitlets==5.14.3
     # via
     #   ipython
     #   matplotlib-inline
