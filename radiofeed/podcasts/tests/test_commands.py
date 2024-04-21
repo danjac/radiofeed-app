@@ -2,7 +2,6 @@ import pytest
 from django.core.management import call_command
 
 from radiofeed.podcasts.tests.factories import RecommendationFactory
-from radiofeed.users.tests.factories import UserFactory
 
 
 class TestCreateRecommendations:
@@ -20,8 +19,7 @@ class TestCreateRecommendations:
 
 class TestSendRecommendationsEmails:
     @pytest.mark.django_db()(transaction=True)
-    def test_send_emails(self, mocker):
-        UserFactory(send_email_notifications=True, is_active=True)
+    def test_send_emails(self, mocker, user):
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
         call_command("send_recommendations_emails")
         patched.assert_called()
