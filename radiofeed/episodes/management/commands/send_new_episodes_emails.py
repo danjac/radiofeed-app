@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "--since",
-            help="Episodes published since n hours ago",
+            help="Episodes published since n hours ago.",
             type=int,
             default=24,
         )
