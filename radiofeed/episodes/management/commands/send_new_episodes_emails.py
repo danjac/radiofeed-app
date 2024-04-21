@@ -21,7 +21,7 @@ class Command(BaseCommand):
             "--num_episodes",
             help="Max number of episodes per email.",
             type=int,
-            default=30,
+            default=12,
         )
 
         parser.add_argument(
