@@ -94,6 +94,12 @@ Parse podcast RSS feeds:
 */6 * * * * python manage.py parse_feeds
 ```
 
+Notify users of new episodes from their subscribed podcasts:
+
+```bash
+*/12 * * * * python manage.py send_new_episodes_emails
+```
+
 Generate similar recommendations for each podcast:
 
 ```bash
