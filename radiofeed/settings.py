@@ -68,7 +68,7 @@ MIDDLEWARE: list[str] = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "radiofeed.middleware.HtmxHeadersMiddleware",
+    "radiofeed.middleware.HtmxResponseHeadersMiddleware",
     "radiofeed.middleware.HtmxMessagesMiddleware",
     "radiofeed.middleware.HtmxRedirectMiddleware",
     "radiofeed.middleware.OrderingMiddleware",

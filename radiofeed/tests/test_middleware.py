@@ -5,9 +5,9 @@ from django.http import HttpResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
 from radiofeed.middleware import (
-    HtmxHeadersMiddleware,
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
+    HtmxResponseHeadersMiddleware,
     OrderingDetails,
     OrderingMiddleware,
     PaginationDetails,
@@ -56,10 +56,10 @@ class TestHtmxRedirectMiddleware:
         assert response["Location"] == "/"
 
 
-class TestHtmxHeadersMiddleware:
+class TestHtmxResponseHeadersMiddleware:
     @pytest.fixture()
     def cache_mw(self, get_response):
-        return HtmxHeadersMiddleware(get_response)
+        return HtmxResponseHeadersMiddleware(get_response)
 
     def test_is_htmx_request_cache_control_already_set(self, rf):
         def _get_response(request):
@@ -71,7 +71,7 @@ class TestHtmxHeadersMiddleware:
         req = rf.get("/")
         req.htmx = True
 
-        resp = HtmxHeadersMiddleware(_get_response)(req)
+        resp = HtmxResponseHeadersMiddleware(_get_response)(req)
         assert resp.headers["Cache-Control"] == "max-age=3600"
         assert resp.headers["Vary"] == "HX-Request"
 

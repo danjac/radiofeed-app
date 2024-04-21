@@ -14,7 +14,7 @@ from django_htmx.http import HttpResponseLocation
 from radiofeed.types import HttpRequestResponse
 
 
-class HtmxHeadersMiddleware:
+class HtmxResponseHeadersMiddleware:
     """Workarounds for https://github.com/bigskysoftware/htmx/issues/497.
 
     Sets Cache-Control and Vary headers to ensure full page is rendered.
