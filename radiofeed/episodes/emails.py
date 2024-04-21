@@ -12,6 +12,7 @@ from radiofeed.users.models import User
 def send_new_episodes_email(
     user: User,
     *,
+    num_episodes: int = 30,
     since: timedelta = timedelta(hours=24),
 ) -> None:
     """Sends notifications for podcasts you listen to the most (based on history)."""
@@ -58,7 +59,7 @@ def send_new_episodes_email(
         Episode.objects.filter(pk__in=latest_episode_ids)
         .order_by("-pub_date")
         .select_related("podcast")
-    )
+    )[:num_episodes]
 
     if episodes.exists():
         send_email(
