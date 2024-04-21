@@ -1,4 +1,7 @@
+from collections.abc import Callable
 from typing import TYPE_CHECKING, TypeAlias, TypeVar
+
+from django.http import HttpRequest, HttpResponse
 
 if TYPE_CHECKING:  # pragma: no cover
     from django.contrib import admin
@@ -12,3 +15,5 @@ else:
     T_Model = object
     T_ModelAdmin = object
     T_QuerySet = object
+
+HttpRequestResponse = Callable[[HttpRequest], HttpResponse]

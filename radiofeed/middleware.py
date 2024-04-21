@@ -1,5 +1,4 @@
 import enum
-from collections.abc import Callable
 from urllib.parse import urlencode
 
 from django.contrib.messages import get_messages
@@ -12,6 +11,8 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
+from radiofeed.types import HttpRequestResponse
+
 
 class HtmxHeadersMiddleware:
     """Workarounds for https://github.com/bigskysoftware/htmx/issues/497.
@@ -21,7 +22,7 @@ class HtmxHeadersMiddleware:
     Place after HtmxMiddleware.
     """
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+    def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
@@ -44,7 +45,7 @@ class HtmxMessagesMiddleware:
         }
     )
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+    def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
@@ -72,7 +73,7 @@ class HtmxMessagesMiddleware:
 class HtmxRedirectMiddleware:
     """If HTMX request will send HX-Location response header if HTTP redirect."""
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+    def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
@@ -86,7 +87,7 @@ class HtmxRedirectMiddleware:
 class PaginationMiddleware:
     """Adds `Pagination` instance as `request.pagination`."""
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+    def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
@@ -98,7 +99,7 @@ class PaginationMiddleware:
 class SearchMiddleware:
     """Adds `Search` instance as `request.search`."""
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+    def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
@@ -110,7 +111,7 @@ class SearchMiddleware:
 class OrderingMiddleware:
     """Adds `Ordering` instance as `request.ordering`."""
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
+    def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
