@@ -7,6 +7,7 @@ from django.core.paginator import Page, Paginator
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
+from django.utils.cache import patch_vary_headers
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
@@ -19,8 +20,10 @@ class BaseMiddleware:
         self.get_response = get_response
 
 
-class CacheControlMiddleware(BaseMiddleware):
-    """Workaround for https://github.com/bigskysoftware/htmx/issues/497.
+class HtmxHeadersMiddleware(BaseMiddleware):
+    """Workarounds for https://github.com/bigskysoftware/htmx/issues/497.
+
+    Sets Cache-Control and Vary headers to ensure full page is rendered.
 
     Place after HtmxMiddleware.
     """
@@ -29,7 +32,7 @@ class CacheControlMiddleware(BaseMiddleware):
         """Middleware implementation."""
         response = self.get_response(request)
         if request.htmx:
-            # don't override if cache explicitly set
+            patch_vary_headers(response, ["HX-Request"])
             response.setdefault("Cache-Control", "no-store, max-age=0")
         return response
 
