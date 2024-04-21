@@ -26,10 +26,8 @@ def send_new_episodes_email(
 
     # exclude any I have listened to or bookmarked
 
-    exclude_episode_ids = (
-        set(user.bookmarks.values_list("episode", flat=True))
-        | set(user.audio_logs.values_list("episode", flat=True))
-        | set(user.recommended_episodes.values_list("pk", flat=True))
+    exclude_episode_ids = set(user.bookmarks.values_list("episode", flat=True)) | set(
+        user.audio_logs.values_list("episode", flat=True)
     )
 
     # we want to have just one episode/podcast
@@ -62,8 +60,6 @@ def send_new_episodes_email(
         .order_by("-pub_date")
         .select_related("podcast")
     )[:num_episodes]:
-        user.recommended_episodes.add(*episodes)
-
         send_email(
             f"Hi {user.first_name or user.username}, here are some new episodes you might like!",
             [user.email],
