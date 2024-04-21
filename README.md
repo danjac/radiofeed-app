@@ -13,7 +13,7 @@ Radiofeed requires the following basic dependencies to get started:
 * Node 16+
 * [uv](https://github.com/astral-sh/uv)
 
-For ease of local development a `docker-compose.yml` is provided which includes:
+For ease of local development a [Podman](https://podman.io/) configuration file is provided which includes Docker images:
 
 * PostgreSQL
 * Redis
@@ -21,22 +21,21 @@ For ease of local development a `docker-compose.yml` is provided which includes:
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
-Current tested versions are PostgreSQL 15+ and Redis 6.2+.
+Current tested versions are PostgreSQL 16 and Redis 7.
 
 If you want to use the Docker images just run:
-
-```bash
-docker-compose up --build -d
-```
-
-If you are using [Podman](https://podman.io/) you can also run these containers in the Podman Kube configuration provided:
 
 ```bash
 podman play kube podman-kube.yaml
 ```
 
+Or run the `Makefile` commands:
 
-Next copy `.env.example` to `.env`. The default settings should work with the Docker services provided, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
+```bash
+make podbuild podstart
+```
+
+Next copy `.env.example` to `.env`. The default settings should work with the forementioned Docker services, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
 
 You should run your development environment inside a virtualenv:
 
