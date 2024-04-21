@@ -158,11 +158,7 @@
 <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
     <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
     {% with duration=episode.duration_in_seconds %}
-        {% if duration %}
-            <div title="Duration">
-                {{ duration|format_duration }}
-            {% endif %}
-        </div>
+        {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
     {% endwith %}
     {% with file_size=episode.get_file_size %}
         {% if file_size %}<div title="File Size">{{ file_size }}</div>{% endif %}
