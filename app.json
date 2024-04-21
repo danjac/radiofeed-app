@@ -12,7 +12,7 @@
         },
         {
             "command": "python manage.py send_new_episodes_emails",
-            "schedule": "*/12 * * * *"
+            "schedule": "15 12 * * *"
         },
         {
             "command": "python manage.py create_recommendations",
