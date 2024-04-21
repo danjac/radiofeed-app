@@ -4,7 +4,7 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.episodes.emails import send_new_episodes_email
-from radiofeed.episodes.tests.factories import EpisodeFactory
+from radiofeed.episodes.tests.factories import AudioLogFactory, EpisodeFactory
 from radiofeed.podcasts.tests.factories import SubscriptionFactory
 
 
@@ -16,6 +16,15 @@ class TestNewEpisodesEmail:
         send_new_episodes_email(user)
 
         assert len(mailoutbox) == 1
+
+    @pytest.mark.django_db()
+    def test_already_listened(self, user, episode, mailoutbox):
+        SubscriptionFactory(podcast=episode.podcast, subscriber=user)
+        AudioLogFactory(user=user, episode=episode)
+
+        send_new_episodes_email(user)
+
+        assert len(mailoutbox) == 0
 
     @pytest.mark.django_db()
     def test_not_subscribed(self, user, episode, mailoutbox):

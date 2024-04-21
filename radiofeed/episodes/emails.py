@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from django.db.models import OuterRef, Subquery
+from django.db.models import Count, OuterRef, Subquery
 from django.utils import timezone
 
 from radiofeed.emails import send_email
@@ -55,9 +55,19 @@ def send_new_episodes_email(
     if not latest_episode_ids:
         return
 
+    # prioritize user's favorite podcasts based on history
+
     episodes = (
-        Episode.objects.filter(pk__in=latest_episode_ids)
-        .order_by("-pub_date")
+        Episode.objects.annotate(
+            num_listens=Count(
+                user.audio_logs.filter(episode__podcast=OuterRef("podcast")).values(
+                    "episode__podcast"
+                )
+            ),
+        )
+        .filter(pk__in=latest_episode_ids)
+        .exclude(pk__in=exclude_episode_ids)
+        .order_by("-num_listens", "-pub_date")
         .select_related("podcast")
     )[:num_episodes]
 
