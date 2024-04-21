@@ -35,26 +35,26 @@ def send_new_episodes_email(
     # we want to have just one episode/podcast
     # for example, if a podcast has 3 episodes in past 24 hours, just show the latest
 
-    if not (
-        latest_episode_ids := set(
-            Podcast.objects.annotate(
-                latest_episode=Subquery(
-                    Episode.objects.filter(
-                        podcast=OuterRef("pk"),
-                        pub_date__gte=timezone.now() - since,
-                    )
-                    .exclude(pk__in=exclude_episode_ids)
-                    .order_by("-pub_date")
-                    .values("pk")[:1]
-                ),
-            )
-            .filter(
-                pk__in=subscribed_podcast_ids,
-                latest_episode__isnull=False,
-            )
-            .values_list("latest_episode", flat=True)
+    latest_episode_ids = set(
+        Podcast.objects.annotate(
+            latest_episode=Subquery(
+                Episode.objects.filter(
+                    podcast=OuterRef("pk"),
+                    pub_date__gte=timezone.now() - since,
+                )
+                .exclude(pk__in=exclude_episode_ids)
+                .order_by("-pub_date")
+                .values("pk")[:1]
+            ),
         )
-    ):
+        .filter(
+            pk__in=subscribed_podcast_ids,
+            latest_episode__isnull=False,
+        )
+        .values_list("latest_episode", flat=True)
+    )
+
+    if not latest_episode_ids:
         return
 
     if episodes := (
