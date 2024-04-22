@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Final, TypedDict
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.paginator import Page, Paginator
 from django.core.signing import Signer
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
@@ -157,9 +158,14 @@ def pagination_url(context: RequestContext, page_number: int) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def paginate(context: RequestContext, object_list: QuerySet, **kwargs) -> Page:
+def paginate(
+    context: RequestContext, object_list: QuerySet, page_size: int = 30, **kwargs
+) -> Page:
     """Returns paginated object list."""
-    return context.request.pagination.get_page(object_list, **kwargs)
+
+    return Paginator(object_list, page_size).get_page(
+        context.request.pagination.current, **kwargs
+    )
 
 
 @register.simple_tag

@@ -2,8 +2,6 @@ import enum
 from urllib.parse import urlencode
 
 from django.contrib.messages import get_messages
-from django.core.paginator import Page, Paginator
-from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
 from django.utils.cache import patch_vary_headers
@@ -146,10 +144,6 @@ class PaginationDetails:
         qs = self.request.GET.copy()
         qs[self.param] = page_number
         return f"{self.request.path}?{qs.urlencode()}"
-
-    def get_page(self, object_list: QuerySet, *, page_size: int = 30) -> Page:
-        """Returns paginated object list for the current page."""
-        return Paginator(object_list, page_size).get_page(self.current)
 
 
 class SearchDetails:
