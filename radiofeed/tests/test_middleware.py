@@ -229,12 +229,12 @@ class TestOrderingDetails:
         ordering = OrderingDetails(req)
         assert str(ordering) == "desc"
 
-    def test_qs_reversed_if_asc(self, rf):
+    def test_order_qs_if_asc(self, rf):
         req = rf.get("/", {"order": "asc"})
         ordering = OrderingDetails(req)
-        assert ordering.qs_reversed == "order=desc"
+        assert ordering.order_qs == "order=desc"
 
-    def test_qs_reversed_if_desc(self, rf):
+    def test_order_qs_if_desc(self, rf):
         req = rf.get("/", {"order": "desc"})
         ordering = OrderingDetails(req)
-        assert ordering.qs_reversed == "order=asc"
+        assert ordering.order_qs == "order=asc"

@@ -206,7 +206,7 @@ class OrderingDetails:
         return self.value == self.Choices.DESC
 
     @cached_property
-    def qs_reversed(self) -> str:
+    def order_qs(self) -> str:
         """Returns ascending query string parameter/value if current url descending
         and vice versa."""
         return urlencode(
