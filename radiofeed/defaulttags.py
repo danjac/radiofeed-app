@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import functools
 import math
-import re
 import urllib.parse
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
@@ -50,31 +49,10 @@ def active_link(
 ) -> ActiveLink:
     """Returns url with active link info if matching URL."""
     url = resolve_url(to, **kwargs)
-    return _active_link(
-        url,
-        css,
-        active_css,
-        matches=context.request.path == url,
-    )
-
-
-@register.simple_tag(takes_context=True)
-def active_link_re(
-    context: RequestContext,
-    pattern: str,
-    to: str,
-    *,
-    css: str = "link",
-    active_css: str = "active",
-    **kwargs,
-) -> ActiveLink:
-    """Returns url with active link info if url pattern matches."""
-    url = resolve_url(to, **kwargs)
-    return _active_link(
-        url,
-        css,
-        active_css,
-        matches=_active_link_re_matches(pattern, context.request.path),
+    return (
+        ActiveLink(active=True, css=f"{css} {active_css}", url=url)
+        if context.request.path == url
+        else ActiveLink(active=False, css=css, url=url)
     )
 
 
@@ -205,16 +183,3 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 
 def _assert_cover_size(size: int) -> None:
     assert size in COVER_IMAGE_SIZES, f"invalid cover image size:{size}"
-
-
-def _active_link(url: str, css: str, active_css: str, *, matches: bool) -> ActiveLink:
-    return (
-        ActiveLink(active=True, css=f"{css} {active_css}", url=url)
-        if matches
-        else ActiveLink(active=False, css=css, url=url)
-    )
-
-
-@functools.cache
-def _active_link_re_matches(pattern: str, url: str) -> bool:
-    return re.compile(pattern).match(url) is not None
