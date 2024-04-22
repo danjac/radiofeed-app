@@ -11,7 +11,7 @@
         "check-updates": "ncu -u"
     },
     "dependencies": {
-        "alpinejs": "^3.13.8",
+        "alpinejs": "^3.13.9",
         "htmx.org": "^1.9.12"
     },
     "devDependencies": {
