@@ -195,7 +195,7 @@ def history(request: HttpRequest) -> TemplateResponse:
             "-rank", "-listened"
         )
     else:
-        audio_logs = audio_logs.order_by("listened" if ordering_asc else "listened")
+        audio_logs = audio_logs.order_by("listened" if ordering_asc else "-listened")
 
     return TemplateResponse(
         request,
@@ -244,7 +244,7 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
     if request.search:
         bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
     else:
-        bookmarks = bookmarks.order_by("-created" if ordering_asc else "created")
+        bookmarks = bookmarks.order_by("created" if ordering_asc else "-created")
 
     return TemplateResponse(
         request,
