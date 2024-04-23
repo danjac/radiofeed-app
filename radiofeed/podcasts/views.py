@@ -168,13 +168,12 @@ def episodes(
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     episodes = podcast.episodes.select_related("podcast")
+    ordering_asc = request.GET.get("order", "desc") == "asc"
 
     if request.search:
         episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
     else:
-        episodes = episodes.order_by(
-            "-pub_date" if request.ordering.is_desc else "pub_date"
-        )
+        episodes = episodes.order_by("pub_date" if ordering_asc else "-pub_date")
 
     return TemplateResponse(
         request,
@@ -182,6 +181,7 @@ def episodes(
         {
             "podcast": podcast,
             "episodes": episodes,
+            "ordering_asc": ordering_asc,
         },
     )
 

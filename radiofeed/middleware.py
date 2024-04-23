@@ -1,4 +1,3 @@
-import enum
 from urllib.parse import urlencode
 
 from django.contrib.messages import get_messages
@@ -82,18 +81,6 @@ class HtmxRedirectMiddleware:
         return response
 
 
-class PaginationMiddleware:
-    """Adds `Pagination` instance as `request.pagination`."""
-
-    def __init__(self, get_response: HttpRequestResponse) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-        request.pagination = PaginationDetails(request)
-        return self.get_response(request)
-
-
 class SearchMiddleware:
     """Adds `Search` instance as `request.search`."""
 
@@ -104,46 +91,6 @@ class SearchMiddleware:
         """Middleware implementation."""
         request.search = SearchDetails(request)
         return self.get_response(request)
-
-
-class OrderingMiddleware:
-    """Adds `Ordering` instance as `request.ordering`."""
-
-    def __init__(self, get_response: HttpRequestResponse) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-        request.ordering = OrderingDetails(request)
-        return self.get_response(request)
-
-
-class PaginationDetails:
-    """Handles pagination parameters in request."""
-
-    param: str = "page"
-
-    def __init__(self, request: HttpRequest) -> None:
-        self.request = request
-
-    def __str__(self) -> str:
-        """Returns current page."""
-        return self.current
-
-    @cached_property
-    def current(self) -> str:
-        """Returns current page number from query string."""
-        return self.request.GET.get(self.param, "")
-
-    def url(self, page_number: int) -> str:
-        """Inserts the page query string parameter with the provided page number into
-        the current query string.
-
-        Preserves the original request path and any other query string parameters.
-        """
-        qs = self.request.GET.copy()
-        qs[self.param] = page_number
-        return f"{self.request.path}?{qs.urlencode()}"
 
 
 class SearchDetails:
@@ -171,44 +118,3 @@ class SearchDetails:
     def qs(self) -> str:
         """Returns encoded query string value, if any."""
         return urlencode({self.param: self.value}) if self.value else ""
-
-
-class OrderingDetails:
-    """Handles ordering parameters in request."""
-
-    class Choices(enum.StrEnum):
-        ASC = enum.auto()
-        DESC = enum.auto()
-
-    param: str = "order"
-    default: str = Choices.DESC
-
-    def __init__(self, request: HttpRequest) -> None:
-        self.request = request
-
-    def __str__(self) -> str:
-        """Returns ordering value."""
-        return str(self.value)
-
-    @cached_property
-    def value(self) -> str:
-        """Returns the search query value, if any."""
-        return self.request.GET.get(self.param, self.default)
-
-    @cached_property
-    def is_asc(self) -> bool:
-        """Returns True if sort ascending."""
-        return self.value == self.Choices.ASC
-
-    @cached_property
-    def is_desc(self) -> bool:
-        """Returns True if sort descending."""
-        return self.value == self.Choices.DESC
-
-    @cached_property
-    def order_qs(self) -> str:
-        """Returns ascending query string parameter/value if current url descending
-        and vice versa."""
-        return urlencode(
-            {self.param: self.Choices.DESC if self.is_asc else self.Choices.ASC}
-        )

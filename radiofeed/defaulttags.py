@@ -152,19 +152,27 @@ def format_duration(total_seconds: int | None) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context: RequestContext, page_number: int) -> str:
+def pagination_url(
+    context: RequestContext, page_number: int, param: str = "page"
+) -> str:
     """Returns URL for next/previous page."""
-    return context.request.pagination.url(page_number)
+    qs = context.request.GET.copy()
+    qs[param] = page_number
+    return f"{context.request.path}?{qs.urlencode()}"
 
 
 @register.simple_tag(takes_context=True)
 def paginate(
-    context: RequestContext, object_list: QuerySet, page_size: int = 30, **kwargs
+    context: RequestContext,
+    object_list: QuerySet,
+    page_size: int = 30,
+    param: str = "page",
+    **kwargs,
 ) -> Page:
     """Returns paginated object list."""
 
     return Paginator(object_list, page_size).get_page(
-        context.request.pagination.current, **kwargs
+        context.request.GET.get(param, ""), **kwargs
     )
 
 

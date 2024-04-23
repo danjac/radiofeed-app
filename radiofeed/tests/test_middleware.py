@@ -8,10 +8,6 @@ from radiofeed.middleware import (
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
     HtmxResponseHeadersMiddleware,
-    OrderingDetails,
-    OrderingMiddleware,
-    PaginationDetails,
-    PaginationMiddleware,
     SearchDetails,
     SearchMiddleware,
 )
@@ -88,35 +84,7 @@ class TestHtmxResponseHeadersMiddleware:
         assert "Vary" not in resp.headers
 
 
-class TestOrderingMiddleware:
-    @pytest.fixture()
-    def mw(self, get_response):
-        return OrderingMiddleware(get_response)
-
-    def test_ordering(self, rf, mw):
-        req = rf.get("/")
-        mw(req)
-        assert req.ordering.value == "desc"
-
-
-class TestSearchMiddleware:
-    @pytest.fixture()
-    def mw(self, get_response):
-        return SearchMiddleware(get_response)
-
-    def test_search(self, rf, mw):
-        req = rf.get("/", {"query": "testing"})
-        mw(req)
-        assert req.search
-        assert str(req.search) == "testing"
-
-    def test_no_search(self, req, mw):
-        mw(req)
-        assert not req.search
-        assert not str(req.search)
-
-
-class TestHtmxMiddleware:
+class TestHtmxMessagesMiddleware:
     @pytest.fixture()
     def mw(self, get_response):
         return HtmxMessagesMiddleware(get_response)
@@ -154,39 +122,21 @@ class TestHtmxMiddleware:
         assert b"OK" not in resp.content
 
 
-class TestPaginationMiddleware:
+class TestSearchMiddleware:
     @pytest.fixture()
     def mw(self, get_response):
-        return PaginationMiddleware(get_response)
+        return SearchMiddleware(get_response)
 
-    def test_page(self, req, mw):
+    def test_search(self, rf, mw):
+        req = rf.get("/", {"query": "testing"})
         mw(req)
-        assert req.pagination.url(1) == "/?page=1"
+        assert req.search
+        assert str(req.search) == "testing"
 
-
-class TestPaginationDetails:
-    def test_append_page_number_to_querystring(self, rf):
-        req = rf.get("/search/", {"query": "test"})
-        page = PaginationDetails(req)
-
-        url = page.url(5)
-        assert url.startswith("/search/?")
-        assert "query=test" in url
-        assert "page=5" in url
-
-    def test_current_page(self, rf):
-        req = rf.get("/", {"page": "100"})
-        page = PaginationDetails(req)
-
-        assert page.current == "100"
-        assert str(page) == "100"
-
-    def test_current_page_empty(self, rf):
-        req = rf.get("/")
-        page = PaginationDetails(req)
-
-        assert page.current == ""
-        assert not str(page)
+    def test_no_search(self, req, mw):
+        mw(req)
+        assert not req.search
+        assert not str(req.search)
 
 
 class TestSearchDetails:
@@ -203,38 +153,3 @@ class TestSearchDetails:
         assert not search
         assert not str(search)
         assert search.qs == ""
-
-
-class TestOrderingDetails:
-    def test_default_value(self, rf):
-        req = rf.get("/")
-        ordering = OrderingDetails(req)
-        assert ordering.value == "desc"
-        assert ordering.is_desc
-
-    def test_asc_value(self, rf):
-        req = rf.get("/", {"order": "asc"})
-        ordering = OrderingDetails(req)
-        assert ordering.value == "asc"
-        assert ordering.is_asc
-
-    def test_desc_value(self, rf):
-        req = rf.get("/", {"order": "desc"})
-        ordering = OrderingDetails(req)
-        assert ordering.value == "desc"
-        assert ordering.is_desc
-
-    def test_str(self, rf):
-        req = rf.get("/")
-        ordering = OrderingDetails(req)
-        assert str(ordering) == "desc"
-
-    def test_order_qs_if_asc(self, rf):
-        req = rf.get("/", {"order": "asc"})
-        ordering = OrderingDetails(req)
-        assert ordering.order_qs == "order=desc"
-
-    def test_order_qs_if_desc(self, rf):
-        req = rf.get("/", {"order": "desc"})
-        ordering = OrderingDetails(req)
-        assert ordering.order_qs == "order=asc"

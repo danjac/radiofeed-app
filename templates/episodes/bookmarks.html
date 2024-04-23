@@ -14,8 +14,8 @@
                             <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                                class="link">Search All Podcasts</a>
                         {% else %}
-                            <a href="{{ request.path }}?{{ request.ordering.order_qs }}"
-                               class="link">{{ request.ordering.is_asc|yesno:"Newest First,Oldest First" }}</a>
+                            <a href="{{ request.path }}?order={{ ordering_asc|yesno:"desc,asc" }}"
+                               class="link">{{ ordering_asc|yesno:"Newest First,Oldest First" }}</a>
                         {% endif %}
                     </li>
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Bookmarks" %}</li>
