@@ -82,7 +82,7 @@ class HtmxRedirectMiddleware:
 
 
 class SearchMiddleware:
-    """Adds `Search` instance as `request.search`."""
+    """Adds `SearchDetails` instance as `request.search`."""
 
     def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
