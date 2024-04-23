@@ -8,8 +8,8 @@ import httpx
 from django.conf import settings
 from django.core.signing import BadSignature, Signer
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import render
 from django.template.defaultfilters import truncatechars
-from django.template.response import TemplateResponse
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
@@ -27,9 +27,9 @@ _cache_page = cache_page(60 * 60)
 
 
 @require_safe
-def about_page(request: HttpRequest) -> TemplateResponse:
+def about_page(request: HttpRequest) -> HttpResponse:
     """Renders about page."""
-    return TemplateResponse(
+    return render(
         request,
         "about.html",
         {
@@ -57,7 +57,7 @@ def accept_cookies(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def favicon(_) -> FileResponse:
+def favicon(_) -> HttpResponse:
     """Generates favicon file."""
     return FileResponse(_favicon_path().open("rb"))
 
@@ -65,9 +65,9 @@ def favicon(_) -> FileResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def service_worker(request: HttpRequest) -> TemplateResponse:
+def service_worker(request: HttpRequest) -> HttpResponse:
     """PWA service worker."""
-    return TemplateResponse(
+    return render(
         request,
         "service_worker.js",
         content_type="application/javascript",
@@ -77,7 +77,7 @@ def service_worker(request: HttpRequest) -> TemplateResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def manifest(request: HttpRequest) -> JsonResponse:
+def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
     start_url = reverse("podcasts:landing_page")
 
@@ -166,7 +166,7 @@ def security(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, size: int) -> FileResponse:
+def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
