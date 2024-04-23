@@ -22,12 +22,16 @@ certifi==2024.2.2
     #   httpx
     #   requests
     #   sentry-sdk
+cffi==1.16.0
+    # via cryptography
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via nltk
 coverage==7.4.4
     # via pytest-cov
+cryptography==42.0.5
+    # via pyjwt
 decorator==5.1.1
     # via ipython
 dj-database-url==2.1.0
@@ -114,6 +118,8 @@ numpy==1.26.4
     # via
     #   scikit-learn
     #   scipy
+oauthlib==3.2.2
+    # via requests-oauthlib
 packaging==24.0
     # via
     #   gunicorn
@@ -140,6 +146,8 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
+pycparser==2.22
+    # via cffi
 pydantic==2.7.0
 pydantic-core==2.18.1
     # via pydantic
@@ -147,6 +155,8 @@ pygments==2.17.2
     # via
     #   ipython
     #   rich
+pyjwt==2.8.0
+    # via django-allauth
 pytest==8.1.1
     # via
     #   pytest-cov
@@ -176,7 +186,12 @@ redis==5.0.3
 regex==2024.4.16
     # via nltk
 requests==2.31.0
-    # via django-anymail
+    # via
+    #   django-allauth
+    #   django-anymail
+    #   requests-oauthlib
+requests-oauthlib==2.0.0
+    # via django-allauth
 rich==13.7.1
     # via bandit
 scikit-learn==1.4.2

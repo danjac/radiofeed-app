@@ -16,10 +16,14 @@ certifi==2024.2.2
     #   httpx
     #   requests
     #   sentry-sdk
+cffi==1.16.0
+    # via cryptography
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via nltk
+cryptography==42.0.5
+    # via pyjwt
 dj-database-url==2.1.0
 django==5.0.4
     # via
@@ -75,6 +79,8 @@ numpy==1.26.4
     # via
     #   scikit-learn
     #   scipy
+oauthlib==3.2.2
+    # via requests-oauthlib
 packaging==24.0
     # via gunicorn
 pillow==10.3.0
@@ -82,16 +88,25 @@ psutil==5.9.8
 psycopg==3.1.18
 psycopg-binary==3.1.18
     # via psycopg
+pycparser==2.22
+    # via cffi
 pydantic==2.7.0
 pydantic-core==2.18.1
     # via pydantic
+pyjwt==2.8.0
+    # via django-allauth
 python-dateutil==2.9.0.post0
 redis==5.0.3
     # via django-redis
 regex==2024.4.16
     # via nltk
 requests==2.31.0
-    # via django-anymail
+    # via
+    #   django-allauth
+    #   django-anymail
+    #   requests-oauthlib
+requests-oauthlib==2.0.0
+    # via django-allauth
 scikit-learn==1.4.2
 scipy==1.13.0
     # via scikit-learn

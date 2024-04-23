@@ -15,7 +15,7 @@ dependencies =[
     "brotli",
     "dj-database-url",
     "django",
-    "django-allauth",
+    "django-allauth[socialaccount]",
     "django-anymail",
     "django-environ",
     "django-extensions",
