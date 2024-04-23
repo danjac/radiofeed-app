@@ -258,7 +258,9 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
 
 @require_POST
 @require_auth
-def add_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
+def add_bookmark(
+    request: HttpRequest, episode_id: int
+) -> TemplateResponse | HttpResponseConflict:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
 

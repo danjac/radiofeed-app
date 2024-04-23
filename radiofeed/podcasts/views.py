@@ -275,7 +275,9 @@ def category_detail(
 
 @require_POST
 @require_auth
-def subscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
+def subscribe(
+    request: HttpRequest, podcast_id: int
+) -> TemplateResponse | HttpResponseConflict:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
     try:
