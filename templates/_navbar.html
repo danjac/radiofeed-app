@@ -2,6 +2,7 @@
 <header class="sticky top-0 z-20 w-full text-white bg-violet-900"
         :class="scrolling ? 'drop-shadow-xl': ''"
         x-data="{showMenu: false, scrolling: false}"
+        {% if request.user.is_authenticated %} x-init="$refs.sidebar.innerHTML=document.getElementById('sidebar').outerHTML" {% endif %}
         @scroll.window="scrolling = window.pageYOffset > 0"
         @htmx:before-request.window="showMenu=false">
     <nav class="flex justify-between items-center p-2">
@@ -62,13 +63,14 @@
     {% if user.is_authenticated %}
         <div class="absolute left-0 z-50 py-6 w-full bg-white shadow-xl xl:hidden dark:bg-black"
              x-cloak
+             x-ref="sidebar"
              x-show.transition="showMenu"
              x-transition:enter="transition ease-out duration-75"
              x-transition:enter-start="transform opacity-0 scale-95"
              x-transition:enter-end="transform opacity-100 scale-100"
              x-transition:leave="transition ease-in duration-75"
              x-transition:leave-start="transform opacity-100 scale-100"
-             x-transition:leave-end="transform opacity-0 scale-95">{% include "_sidebar.html" %}</div>
+             x-transition:leave-end="transform opacity-0 scale-95"></div>
     {% endif %}
     {% include "_signup_cta.html" %}
 </header>

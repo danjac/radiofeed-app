@@ -1,6 +1,7 @@
 {% load heroicons %}
 {% with sidebar_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
-    <nav class="pl-3 text-base md:text-lg lg:text-xl xl:pt-12 xl:pl-0">
+    <nav class="pl-3 text-base md:text-lg lg:text-xl xl:pt-12 xl:pl-0"
+         id="sidebar">
         <ul class="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
             <li>
                 <a href="{% url "podcasts:index" %}"
