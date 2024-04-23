@@ -5,16 +5,13 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
-
-_index_url = reverse_lazy("episodes:index")
-_search_episodes_url = reverse_lazy("episodes:search_episodes")
 
 
 @require_safe
@@ -48,7 +45,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "episodes": episodes,
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
-            "search_episodes_url": _search_episodes_url,
+            "search_episodes_url": reverse("episodes:search_episodes"),
         },
     )
 
@@ -69,7 +66,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             "episodes/search.html",
             {
                 "episodes": episodes,
-                "clear_search_url": _index_url,
+                "clear_search_url": reverse("episodes:index"),
             },
         )
     return redirect("episodes:index")
