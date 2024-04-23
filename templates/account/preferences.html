@@ -3,10 +3,6 @@
 {% block title %}
     {{ block.super }} | Preferences
 {% endblock title %}
-{% block settings_selected_item %}
-    {% heroicon_mini "adjustments-horizontal" class="mr-3" %}
-    Preferences
-{% endblock settings_selected_item %}
 {% block settings_content %}
     <form method="post"
           action="{{ request.path }}"
