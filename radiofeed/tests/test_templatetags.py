@@ -3,7 +3,7 @@ from django.contrib.sites.models import Site
 from django.template.context import RequestContext
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.defaulttags import (
+from radiofeed.templatetags import (
     absolute_uri,
     active_link,
     cover_image,

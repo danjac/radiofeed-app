@@ -116,7 +116,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
-                "radiofeed.defaulttags",
+                "radiofeed.templatetags",
             ],
             "debug": env.bool("TEMPLATE_DEBUG", default=False),
             "context_processors": [

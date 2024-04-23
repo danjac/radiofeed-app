@@ -1,12 +1,12 @@
 from django import template
 from django.template.context import RequestContext
 
-from radiofeed.defaulttags import (
+from radiofeed.episodes.models import Episode
+from radiofeed.templatetags import (
     COVER_IMAGE_SIZES,
     get_cover_image_url,
     get_placeholder_cover_url,
 )
-from radiofeed.episodes.models import Episode
 
 register = template.Library()
 
