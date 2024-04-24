@@ -4,7 +4,7 @@
     {{ block.super }} | Similar
 {% endblock title %}
 {% block podcast_content %}
-    {% cache 600 similar-podcasts podcast.pk %}
+    {% cache 600 similar-podcasts request.get_full_path %}
     <ul class="divide-y divide-solid">
         {% for recommendation in recommendations %}
             <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
