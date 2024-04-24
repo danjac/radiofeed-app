@@ -28,7 +28,7 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via nltk
-coverage==7.4.4
+coverage==7.5.0
     # via pytest-cov
 cryptography==42.0.5
     # via pyjwt
@@ -148,8 +148,8 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.22
     # via cffi
-pydantic==2.7.0
-pydantic-core==2.18.1
+pydantic==2.7.1
+pydantic-core==2.18.2
     # via pydantic
 pygments==2.17.2
     # via
@@ -181,7 +181,7 @@ python-dateutil==2.9.0.post0
     # via faker
 pyyaml==6.0.1
     # via bandit
-redis==5.0.3
+redis==5.0.4
     # via django-redis
 regex==2024.4.16
     # via nltk

@@ -90,13 +90,13 @@ psycopg-binary==3.1.18
     # via psycopg
 pycparser==2.22
     # via cffi
-pydantic==2.7.0
-pydantic-core==2.18.1
+pydantic==2.7.1
+pydantic-core==2.18.2
     # via pydantic
 pyjwt==2.8.0
     # via django-allauth
 python-dateutil==2.9.0.post0
-redis==5.0.3
+redis==5.0.4
     # via django-redis
 regex==2024.4.16
     # via nltk
