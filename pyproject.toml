@@ -188,7 +188,6 @@ lint.ignore = [
     "S101",
 ]
 [tool.ruff.lint.per-file-ignores]
-# ignore pydocstyle rules for tests and migrations
 "**/conftest.py" = ["D101", "D102", "D103", "D105", "RUF"]
 "**/apps.py" = ["D101", "D102", "D103", "D105", "RUF"]
 "**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N", "RUF"]
