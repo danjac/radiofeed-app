@@ -39,7 +39,7 @@ django==5.0.4
     #   django-redis
     #   django-template-partials
     #   heroicons
-django-allauth==0.62.0
+django-allauth==0.62.1
 django-anymail==10.3
 django-environ==0.11.2
 django-extensions==3.2.3

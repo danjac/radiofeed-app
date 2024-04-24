@@ -52,7 +52,7 @@ django==5.0.4
     #   django-redis
     #   django-template-partials
     #   heroicons
-django-allauth==0.62.0
+django-allauth==0.62.1
 django-anymail==10.3
 django-browser-reload==1.12.1
 django-debug-toolbar==4.3.0
@@ -108,7 +108,7 @@ matplotlib-inline==0.1.7
     # via ipython
 mdurl==0.1.2
     # via markdown-it-py
-mypy==1.9.0
+mypy==1.10.0
     # via pytest-mypy
 mypy-extensions==1.0.0
     # via mypy
