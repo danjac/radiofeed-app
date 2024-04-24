@@ -62,7 +62,6 @@
     {% if user.is_authenticated %}
         <div class="absolute left-0 z-50 py-6 w-full bg-white shadow-xl xl:hidden dark:bg-black"
              x-cloak
-             x-ref="sidebar"
              x-show.transition="showMenu"
              x-transition:enter="transition ease-out duration-75"
              x-transition:enter-start="transform opacity-0 scale-95"
@@ -70,7 +69,7 @@
              x-transition:leave="transition ease-in duration-75"
              x-transition:leave-start="transform opacity-100 scale-100"
              x-transition:leave-end="transform opacity-0 scale-95"
-             x-init="$refs.sidebar.innerHTML=document.getElementById('sidebar').outerHTML"></div>
+             x-init="$el.innerHTML=document.getElementById('sidebar').outerHTML"></div>
     {% endif %}
     {% include "_signup_cta.html" %}
 </header>
