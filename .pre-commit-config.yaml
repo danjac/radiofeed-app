@@ -3,9 +3,9 @@ repos:
       rev: v4.6.0
       hooks:
           - id: trailing-whitespace
-            exclude: bundle.js|bundle.js.map|bundle.css
+            exclude: ^static/dist
           - id: end-of-file-fixer
-            exclude: bundle.js|bundle.js.map|bundle.css
+            exclude: ^static/dist
           - id: check-builtin-literals
           - id: check-json
           - id: check-merge-conflict
