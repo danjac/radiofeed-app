@@ -57,6 +57,7 @@ dev =[
     "factory_boy",
     "ipython",
     "mypy",
+    "mypy_extensions",
     "pytest",
     "pytest-cov",
     "pytest-django",

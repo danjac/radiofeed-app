@@ -1,5 +1,4 @@
 import functools
-from collections.abc import Callable
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
@@ -8,13 +7,14 @@ from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.http import HttpResponseUnauthorized
+from radiofeed.types import HttpRequestResponse
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
 require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 
 
-def require_auth(view: Callable) -> Callable:
+def require_auth(view: HttpRequestResponse) -> HttpRequestResponse:
     """Login required decorator also handling HTMX and AJAX views."""
 
     @functools.wraps(view)
