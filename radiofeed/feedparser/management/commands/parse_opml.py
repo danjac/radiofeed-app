@@ -1,37 +1,21 @@
-import argparse
-import sys
-
-from django.core.management.base import BaseCommand
+import djclick as click
 
 from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.podcasts.models import Podcast
 
 
-class Command(BaseCommand):
-    """Django management command."""
+@click.command(help="Create new podcast feeds from OPML document.")
+@click.argument("input", type=click.File("rb"))
+def command(input: click.File) -> None:
+    """Implementation of command."""
+    podcasts = Podcast.objects.bulk_create(
+        [Podcast(rss=rss) for rss in parse_opml(input.read())],
+        ignore_conflicts=True,
+    )
 
-    # TBD : move to feedparser
-
-    help = """Create new podcast feeds from OPML document."""
-
-    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
-        """Parse command args."""
-        parser.add_argument(
-            "input",
-            help="OPML file",
-            type=argparse.FileType("r"),
-            nargs="?",
-            default=sys.stdin.buffer,
+    if num_podcasts := len(podcasts):
+        click.echo(
+            click.style(f"{num_podcasts} podcasts imported", bold=True, fg="green")
         )
-
-    def handle(self, **options):
-        """Handle implementation."""
-        podcasts = Podcast.objects.bulk_create(
-            [Podcast(rss=rss) for rss in parse_opml(options["input"].read())],
-            ignore_conflicts=True,
-        )
-
-        if num_podcasts := len(podcasts):
-            self.stdout.write(self.style.SUCCESS(f"{num_podcasts} podcasts imported"))
-        else:
-            self.stdout.write("No podcasts found")
+    else:
+        click.echo(click.style("No podcasts found", bold=True, fg="red"))
