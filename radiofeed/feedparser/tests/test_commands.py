@@ -33,7 +33,7 @@ class TestParseOpml:
 class TestExportFeeds:
     @pytest.mark.django_db()
     def test_ok(self, podcast):
-        call_command("export_feeds", "-")
+        call_command("export_opml", "-")
 
 
 class TestParseFeeds:
