@@ -32,7 +32,7 @@ podman play kube podman-kube.yaml
 Or run the `Makefile` commands:
 
 ```bash
-make podbuild podstart
+make podbuild
 ```
 
 Next copy `.env.example` to `.env`. The default settings should work with the forementioned Docker services, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
