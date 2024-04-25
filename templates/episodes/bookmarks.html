@@ -13,9 +13,10 @@
                         {% if request.search %}
                             <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                                class="link">Search All Podcasts</a>
+                        {% elif ordering_asc %}
+                            <a href="{{ request.path }}?order=desc" class="link">Oldest First</a>
                         {% else %}
-                            <a href="{{ request.path }}?order={{ ordering_asc|yesno:"desc,asc" }}"
-                               class="link">{{ ordering_asc|yesno:"Newest First,Oldest First" }}</a>
+                            <a href="{{ request.path }}?order=asc" class="link">Newest First</a>
                         {% endif %}
                     </li>
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Bookmarks" %}</li>
