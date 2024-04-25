@@ -18,6 +18,7 @@
 .github
 .idea
 .mypy_cache
+.python-version
 .pytest_cache
 .ruff_cache
 .vim

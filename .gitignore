@@ -9,6 +9,7 @@
 *.swp
 *log
 .disk_cache
+.python-version
 .ruff_cache
 .coverage
 .coverage*
