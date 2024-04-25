@@ -1,23 +1,22 @@
-from django.core.management.base import BaseCommand
+import djclick as click
 
 from radiofeed import tokenizer
 from radiofeed.podcasts import recommender
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 
-class Command(BaseCommand):
-    """Django command."""
+@click.command(help="Runs recommendation algorithms")
+def command() -> None:
+    """Implementation of command."""
+    with DatabaseSafeThreadPoolExecutor() as executor:
+        executor.db_safe_map(_recommend, tokenizer.NLTK_LANGUAGES)
 
-    help = """Runs recommendation algorithms."""
 
-    def handle(self, **options):
-        """Command handler implementation."""
-        with DatabaseSafeThreadPoolExecutor() as executor:
-            executor.db_safe_map(self._recommend, tokenizer.NLTK_LANGUAGES)
-
-    def _recommend(self, language: str):
-        self.stdout.write(f"Creating recommendations for language: {language}...")
-        recommender.recommend(language)
-        self.stdout.write(
-            self.style.SUCCESS(f"Recommendations created for language: {language}")
+def _recommend(language: str):
+    click.echo(f"Creating recommendations for language: {language}...")
+    recommender.recommend(language)
+    click.echo(
+        click.style(
+            f"Recommendations created for language: {language}", bold=True, fg="green"
         )
+    )

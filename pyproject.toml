@@ -17,6 +17,7 @@ dependencies =[
     "django",
     "django-allauth[socialaccount]",
     "django-anymail",
+    "django-click",
     "django-environ",
     "django-extensions",
     "django-fast-update",

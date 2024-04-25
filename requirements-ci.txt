@@ -27,7 +27,9 @@ cffi==1.16.0
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
-    # via nltk
+    # via
+    #   django-click
+    #   nltk
 coverage==7.5.0
     # via pytest-cov
 cryptography==42.0.5
@@ -55,6 +57,7 @@ django==5.0.4
 django-allauth==0.62.1
 django-anymail==10.3
 django-browser-reload==1.12.1
+django-click==2.4.0
 django-debug-toolbar==4.3.0
 django-environ==0.11.2
 django-extensions==3.2.3
@@ -197,7 +200,7 @@ rich==13.7.1
 scikit-learn==1.4.2
 scipy==1.13.0
     # via scikit-learn
-sentry-sdk==1.45.0
+sentry-sdk==2.0.0
 setuptools==69.5.1
 six==1.16.0
     # via
