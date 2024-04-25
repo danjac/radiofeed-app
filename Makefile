@@ -48,6 +48,6 @@ podclean:
 
 dbinstall:
 	python ./manage.py migrate
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/podcasts.json.gz
 	python ./manage.py loaddata ./radiofeed/users/fixtures/users.json.gz
+	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
+	python ./manage.py parse_opml ./radiofeed/podcasts/fixtures/feeds.opml

@@ -30,6 +30,12 @@ class TestParseOpml:
         patched.assert_called()
 
 
+class TestExportFeeds:
+    @pytest.mark.django_db()
+    def test_ok(self, podcast):
+        call_command("export_feeds", "-")
+
+
 class TestParseFeeds:
     @pytest.fixture()
     def mock_parse_ok(self, mocker):

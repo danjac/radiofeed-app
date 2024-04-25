@@ -81,7 +81,10 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     subscriptions = (
-        request.user.subscriptions.filter(podcast__private=False)
+        request.user.subscriptions.filter(
+            podcast__private=False,
+            podcast__pub_date__isnull=False,
+        )
         .select_related("podcast")
         .order_by("podcast__title")
     )
