@@ -238,6 +238,8 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
         "content_hash",
     )
 
+    actions = ("make_promoted",)
+
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast) -> str:
         """Return estimated next update time."""
@@ -253,3 +255,8 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns default ordering."""
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
+
+    @admin.action(description="Promote podcasts")
+    def make_promoted(self, request: HttpRequest, queryset: QuerySet[Podcast]) -> None:
+        """Promotes podcasts."""
+        queryset.update(promoted=True)

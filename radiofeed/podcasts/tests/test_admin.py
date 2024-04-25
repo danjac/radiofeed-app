@@ -58,6 +58,11 @@ class TestPodcastAdmin:
         assert qs.count() == 3
 
     @pytest.mark.django_db()
+    def test_make_promoted(self, podcasts, podcast_admin, req):
+        podcast_admin.make_promoted(req, Podcast.objects.all())
+        assert Podcast.objects.filter(promoted=True).count() == 3
+
+    @pytest.mark.django_db()
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = podcast_admin.get_search_results(
