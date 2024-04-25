@@ -12,7 +12,7 @@ def command() -> None:
         executor.db_safe_map(_recommend, tokenizer.NLTK_LANGUAGES)
 
 
-def _recommend(language: str):
+def _recommend(language: str) -> None:
     click.echo(f"Creating recommendations for language: {language}...")
     recommender.recommend(language)
     click.echo(
