@@ -18,7 +18,7 @@ class AudioPlayerMiddleware:
 class AudioPlayer:
     """Tracks current player episode in session."""
 
-    session_key: str = "audio_player_episode"
+    session_key: str = "audio_player"
 
     def __init__(self, request: HttpRequest) -> None:
         self.request = request
