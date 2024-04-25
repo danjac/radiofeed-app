@@ -13,7 +13,7 @@ Radiofeed requires the following basic dependencies to get started:
 * Node 16+
 * [uv](https://github.com/astral-sh/uv)
 
-If you are using an older version of Python, consider using [pyenv](https://github.com/pyenv/pyenv).
+If your system uses an older version of Python, consider using [pyenv](https://github.com/pyenv/pyenv).
 
 For ease of local development a [Podman](https://podman.io/) configuration file is provided which includes Docker images:
 
