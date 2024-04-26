@@ -63,10 +63,20 @@ class TestRecommend:
     @pytest.mark.django_db()
     @pytest.mark.usefixtures("_clear_categories_cache")
     def test_create_recommendations(self):
+        Category.objects.bulk_create(
+            [
+                Category(name=name)
+                for name in (
+                    "Science",
+                    "Philosophy",
+                    "Society & Culture",
+                )
+            ],
+            ignore_conflicts=True,
+        )
         cat_1 = Category.objects.get(name="Science")
         cat_2 = Category.objects.get(name="Philosophy")
         cat_3 = Category.objects.get(name="Society & Culture")
-
         podcast_1 = PodcastFactory(
             extracted_text="Cool science podcast science physics astronomy",
             categories=[cat_1],

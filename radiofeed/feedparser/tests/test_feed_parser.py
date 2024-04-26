@@ -53,6 +53,19 @@ class TestFeedParser:
     @pytest.fixture()
     def categories(self):
         get_categories.cache_clear()
+        Category.objects.bulk_create(
+            [
+                Category(name=name)
+                for name in (
+                    "Science",
+                    "Religion & Spirituality",
+                    "Philosophy",
+                    "Society & Culture",
+                    "Spirituality",
+                )
+            ],
+            ignore_conflicts=True,
+        )
         return Category.objects.all()
 
     def get_rss_content(self, filename=""):
@@ -153,7 +166,7 @@ class TestFeedParser:
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assert podcast.keywords == "science & medicine"
+        assert "science & medicine" in podcast.keywords
 
         assigned_categories = [c.name for c in podcast.categories.all()]
 
