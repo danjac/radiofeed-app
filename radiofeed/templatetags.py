@@ -27,6 +27,9 @@ ACCEPT_COOKIES_NAME: Final = "accept-cookies"
 
 COVER_IMAGE_SIZES: Final = (100, 200, 300)
 
+_SECONDS_IN_MINUTE: Final = 60
+_SECONDS_IN_HOUR: Final = 3600
+
 register = template.Library()
 
 
@@ -137,15 +140,15 @@ def cover_image(
 @register.filter
 def format_duration(total_seconds: int | None) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1h 30min."""
-    if total_seconds is None or total_seconds < 60:
+    if total_seconds is None or total_seconds < _SECONDS_IN_MINUTE:
         return ""
 
     rv: list[str] = []
 
-    if total_hours := math.floor(total_seconds / 3600):
+    if total_hours := math.floor(total_seconds / _SECONDS_IN_HOUR):
         rv.append(f"{total_hours} hour{pluralize(total_hours)}")
 
-    if total_minutes := round((total_seconds % 3600) / 60):
+    if total_minutes := round((total_seconds % _SECONDS_IN_HOUR) / _SECONDS_IN_MINUTE):
         rv.append(f"{total_minutes} minute{pluralize(total_minutes)}")
 
     return " ".join(rv)

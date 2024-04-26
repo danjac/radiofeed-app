@@ -156,6 +156,7 @@ lint.select = [
     "PT", # flake8-pytest-style
     "PGH", # pygrep hooks
     "PIE", # flake8-pie
+    "PL", # pylint
     "PTH", # flake8-use-pathlib
     "RET", # flake8-return
     "RSE", # flake8-raise
@@ -190,10 +191,10 @@ lint.ignore = [
     "S101",
 ]
 [tool.ruff.lint.per-file-ignores]
-"**/conftest.py" = ["D101", "D102", "D103", "D105", "RUF"]
-"**/apps.py" = ["D101", "D102", "D103", "D105", "RUF"]
-"**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N", "RUF"]
-"**/tests/**.py" = ["D101", "D102", "D103", "D105", "RUF"]
+"**/conftest.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
+"**/apps.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
+"**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N", "PL", "RUF"]
+"**/tests/**.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["radiofeed"]

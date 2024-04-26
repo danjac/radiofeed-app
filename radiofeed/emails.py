@@ -12,7 +12,7 @@ def send_email(
     context: dict | None = None,
     *,
     from_email: str | None = None,
-    fail_silently: bool = False,
+    **kwargs,
 ) -> int:
     """Sends email using Django template to build message and HTML content."""
 
@@ -24,5 +24,5 @@ def send_email(
         recipient_list=recipient_list,
         message=strip_html(html_message),
         html_message=html_message,
-        fail_silently=fail_silently,
+        **kwargs,
     )
