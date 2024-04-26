@@ -32,22 +32,3 @@ nltkdownload:
 
 clean:
 	git clean -Xdf
-
-podbuild:
-	podman play kube podman-kube.yml
-
-podstart:
-	podman pod start radiofeed-pod
-
-podstop:
-	podman pod stop radiofeed-pod
-
-podclean:
-	podman pod rm radiofeed-pod
-	podman volume rm radiofeed_pg_data
-
-dbinstall:
-	python ./manage.py migrate
-	python ./manage.py loaddata ./radiofeed/users/fixtures/users.json.gz
-	python ./manage.py loaddata ./radiofeed/podcasts/fixtures/categories.json.gz
-	python ./manage.py parse_opml ./radiofeed/podcasts/fixtures/podcasts.opml

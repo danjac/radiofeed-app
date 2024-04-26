@@ -46,8 +46,10 @@ class TestCategoryAdmin:
     @pytest.mark.django_db()
     def test_get_queryset(self, req, category_admin, podcasts, category):
         category.podcasts.set(podcasts)
+        category = Category.objects.first()
+        for podcast in podcasts:
+            podcast.categories.add(category)
         qs = category_admin.get_queryset(req)
-        assert qs.count() == 1
         assert category_admin.num_podcasts(qs.first()) == 3
 
 

@@ -15,7 +15,7 @@ Radiofeed requires the following basic dependencies to get started:
 
 If your system uses an older version of Python, consider using [pyenv](https://github.com/pyenv/pyenv).
 
-For ease of local development a [Podman](https://podman.io/) configuration file is provided which includes Docker images:
+For ease of local development a `docker-compose` file is provided which includes Docker images:
 
 * PostgreSQL
 * Redis
@@ -25,19 +25,7 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 Current tested versions are PostgreSQL 16 and Redis 7.
 
-If you want to use the Docker images just run:
-
-```bash
-podman play kube podman-kube.yaml
-```
-
-Or run the `Makefile` commands:
-
-```bash
-make podbuild
-```
-
-Next copy `.env.example` to `.env`. The default settings should work with the forementioned Docker services, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
+To get started, first copy `.env.example` to `.env`. The default settings should work with the forementioned Docker services, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
 
 You should run your development environment inside a virtualenv:
 
@@ -51,7 +39,6 @@ Alternatively you can just run `make install` (see below) which will install you
 The `Makefile` has some convenient shortcuts for local development, including:
 
 * `make install`: download and install front and backend Javascript and Python dependencies
-* `make dbinstall`: run migrations and install sample fixtures
 * `make update`: update all front and backend dependencies to latest available versions
 
 To run unit tests, just run `pytest`.

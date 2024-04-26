@@ -1,9 +1,8 @@
 import pytest
 
-from radiofeed.podcasts.models import Recommendation
+from radiofeed.podcasts.models import Category, Recommendation
 from radiofeed.podcasts.recommender import get_categories, recommend
 from radiofeed.podcasts.tests.factories import (
-    CategoryFactory,
     PodcastFactory,
     RecommendationFactory,
 )
@@ -64,9 +63,9 @@ class TestRecommend:
     @pytest.mark.django_db()
     @pytest.mark.usefixtures("_clear_categories_cache")
     def test_create_recommendations(self):
-        cat_1 = CategoryFactory(name="Science")
-        cat_2 = CategoryFactory(name="Philosophy")
-        cat_3 = CategoryFactory(name="Culture")
+        cat_1 = Category.objects.get(name="Science")
+        cat_2 = Category.objects.get(name="Philosophy")
+        cat_3 = Category.objects.get(name="Society & Culture")
 
         podcast_1 = PodcastFactory(
             extracted_text="Cool science podcast science physics astronomy",

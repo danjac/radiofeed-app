@@ -23,8 +23,8 @@ from radiofeed.feedparser.feed_parser import (
     make_content_hash,
     parse_feed,
 )
-from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.tests.factories import CategoryFactory, PodcastFactory
+from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 def _mock_client(*, url="https://example.com", **response_kwargs):
@@ -53,18 +53,7 @@ class TestFeedParser:
     @pytest.fixture()
     def categories(self):
         get_categories.cache_clear()
-
-        return [
-            CategoryFactory(name=name)
-            for name in (
-                "Philosophy",
-                "Science",
-                "Social Sciences",
-                "Society & Culture",
-                "Spirituality",
-                "Religion & Spirituality",
-            )
-        ]
+        return Category.objects.all()
 
     def get_rss_content(self, filename=""):
         return (
