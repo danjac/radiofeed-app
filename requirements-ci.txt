@@ -74,7 +74,7 @@ execnet==2.1.1
 executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
-faker==24.11.0
+faker==24.14.0
     # via factory-boy
 filelock==3.13.4
     # via pytest-mypy
@@ -200,7 +200,7 @@ rich==13.7.1
 scikit-learn==1.4.2
 scipy==1.13.0
     # via scikit-learn
-sentry-sdk==2.0.0
+sentry-sdk==2.0.1
 setuptools==69.5.1
 six==1.16.0
     # via

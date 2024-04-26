@@ -113,7 +113,7 @@ requests-oauthlib==2.0.0
 scikit-learn==1.4.2
 scipy==1.13.0
     # via scikit-learn
-sentry-sdk==2.0.0
+sentry-sdk==2.0.1
 setuptools==69.5.1
 six==1.16.0
     # via python-dateutil
