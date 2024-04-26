@@ -6,7 +6,7 @@ from pydantic import ValidationError
 
 from radiofeed.feedparser.exceptions import InvalidRSSError
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.feedparser.xpath_parser import OptionalXMLElement, XPathParser
+from radiofeed.feedparser.xpath_parser import OptionalXmlElement, XPathParser
 
 
 def parse_rss(content: bytes) -> Feed:
@@ -43,7 +43,7 @@ class _RSSParser:
             raise InvalidRSSError("No <channel /> element found in RSS feed.")
         return self._parse_feed(channel)
 
-    def _parse_feed(self, channel: OptionalXMLElement) -> Feed:
+    def _parse_feed(self, channel: OptionalXmlElement) -> Feed:
         try:
             return Feed.model_validate(
                 {
@@ -94,14 +94,14 @@ class _RSSParser:
         except ValidationError as exc:
             raise InvalidRSSError from exc
 
-    def _parse_items(self, channel: OptionalXMLElement) -> Iterator[Item]:
+    def _parse_items(self, channel: OptionalXmlElement) -> Iterator[Item]:
         for item in self._parser.iterfind(channel, "item"):
             try:
                 yield self._parse_item(item)
             except ValidationError:
                 continue
 
-    def _parse_item(self, item: OptionalXMLElement) -> Item:
+    def _parse_item(self, item: OptionalXmlElement) -> Item:
         return Item.model_validate(
             {
                 "categories": self._parser.itervalues(
