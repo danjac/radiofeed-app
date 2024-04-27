@@ -17,7 +17,7 @@
     "devDependencies": {
         "@eslint/js": "^9.1.1",
         "@tailwindcss/forms": "^0.5.7",
-        "@tailwindcss/typography": "^0.5.12",
+        "@tailwindcss/typography": "^0.5.13",
         "concurrently": "^8.2.2",
         "esbuild": "^0.20.2",
         "eslint": "^9.1.1",
