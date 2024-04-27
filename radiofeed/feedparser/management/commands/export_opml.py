@@ -23,5 +23,9 @@ def command(output: click.File) -> None:
         )
     )
     click.echo(
-        click.style(f"{podcasts.count()} podcasts exported", bold=True, fg="green")
+        click.style(
+            f"{podcasts.count()} podcasts exported",
+            bold=True,
+            fg="green",
+        )
     )

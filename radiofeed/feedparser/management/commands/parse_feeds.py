@@ -43,10 +43,18 @@ def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
 def _parse_feed(podcast: Podcast, client: httpx.Client) -> None:
     try:
         feed_parser.parse_feed(podcast, client)
-        click.echo(click.style(f"parse feed ok: {podcast}", bold=True, fg="green"))
+        click.echo(
+            click.style(
+                f"parse feed ok: {podcast}",
+                bold=True,
+                fg="green",
+            )
+        )
     except FeedParserError as exc:
         click.echo(
             click.style(
-                f"parse feed {exc.parser_error}: {podcast}", bold=True, fg="red"
+                f"parse feed {exc.parser_error}: {podcast}",
+                bold=True,
+                fg="red",
             )
         )

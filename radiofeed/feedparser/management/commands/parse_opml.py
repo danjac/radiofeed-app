@@ -15,7 +15,17 @@ def command(input: click.File) -> None:
 
     if num_podcasts := len(podcasts):
         click.echo(
-            click.style(f"{num_podcasts} podcasts imported", bold=True, fg="green")
+            click.style(
+                f"{num_podcasts} podcasts imported",
+                bold=True,
+                fg="green",
+            )
         )
     else:
-        click.echo(click.style("No podcasts found", bold=True, fg="red"))
+        click.echo(
+            click.style(
+                "No podcasts found",
+                bold=True,
+                fg="red",
+            )
+        )

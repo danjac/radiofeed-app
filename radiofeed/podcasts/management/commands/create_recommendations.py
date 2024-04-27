@@ -17,6 +17,8 @@ def _recommend(language: str) -> None:
     recommender.recommend(language)
     click.echo(
         click.style(
-            f"Recommendations created for language: {language}", bold=True, fg="green"
+            f"Recommendations created for language: {language}",
+            bold=True,
+            fg="green",
         )
     )
