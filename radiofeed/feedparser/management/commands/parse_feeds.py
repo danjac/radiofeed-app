@@ -45,7 +45,7 @@ def _parse_feed(podcast: Podcast, client: httpx.Client) -> None:
         feed_parser.parse_feed(podcast, client)
         click.echo(
             click.style(
-                f"parse feed ok: {podcast}",
+                f"{podcast}: OK",
                 bold=True,
                 fg="green",
             )
@@ -53,7 +53,7 @@ def _parse_feed(podcast: Podcast, client: httpx.Client) -> None:
     except FeedParserError as exc:
         click.echo(
             click.style(
-                f"parse feed {exc.parser_error}: {podcast}",
+                f"{podcast}: {exc.parser_error.label}",  # type: ignore[union-attr]
                 bold=True,
                 fg="red",
             )
