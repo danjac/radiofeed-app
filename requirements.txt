@@ -101,7 +101,7 @@ pyjwt==2.8.0
 python-dateutil==2.9.0.post0
 redis==5.0.4
     # via django-redis
-regex==2024.4.16
+regex==2024.4.28
     # via nltk
 requests==2.31.0
     # via
