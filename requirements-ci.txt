@@ -74,9 +74,9 @@ execnet==2.1.1
 executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
-faker==24.14.1
+faker==25.0.0
     # via factory-boy
-filelock==3.13.4
+filelock==3.14.0
     # via pytest-mypy
 gunicorn==22.0.0
 h11==0.14.0
@@ -220,7 +220,7 @@ stevedore==5.2.0
     # via bandit
 termcolor==2.4.0
     # via pytest-sugar
-threadpoolctl==3.4.0
+threadpoolctl==3.5.0
     # via scikit-learn
 tqdm==4.66.2
     # via nltk
