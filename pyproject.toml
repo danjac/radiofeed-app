@@ -98,7 +98,7 @@ env = [
 ]
 
 [tool.coverage.run]
-source=["radiofeed", "templates"]
+source=["radiofeed"]
 omit=[
     "**/migrations/*",
     "*/nltk/*",
