@@ -66,8 +66,7 @@ def _parse_feeds(
         feeds_for_podcasts, feeds = itertools.tee(batch)
 
         podcasts = Podcast.objects.filter(
-            rss__in={f.rss for f in feeds_for_podcasts},
-            private=False,
+            rss__in={f.rss for f in feeds_for_podcasts}
         ).in_bulk(field_name="rss")
 
         feeds_for_insert, feeds = itertools.tee(
