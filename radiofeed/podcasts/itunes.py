@@ -51,7 +51,9 @@ def search(client: httpx.Client, search_term: str) -> list[Feed]:
 
 def search_cache_key(search_term: str) -> str:
     """Cache key based on search term."""
-    return "itunes:" + urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
+    return "itunes:" + urlsafe_base64_encode(
+        force_bytes(search_term.casefold(), "utf-8")
+    )
 
 
 def _parse_feeds(
