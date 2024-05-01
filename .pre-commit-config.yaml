@@ -24,6 +24,7 @@ repos:
                 - rustywind@0.21.0
             entry: rustywind
             args: [--write]
+            files: ^templates
             types_or: [html]
     - repo: https://github.com/koalaman/shellcheck-precommit
       rev: v0.10.0
@@ -43,20 +44,20 @@ repos:
       rev: v9.1.1
       hooks:
           - id: eslint
-            files: ^static/
+            files: ^static
             exclude: ^static/dist
     - repo: https://github.com/pre-commit/mirrors-prettier
       rev: v4.0.0-alpha.8
       hooks:
           - id: prettier
-            files: ^static/
+            files: ^static
             exclude: ^static/dist
     - repo: https://github.com/Riverside-Healthcare/djLint
       rev: v1.34.1
       hooks:
           - id: djlint-django
             args: ["--lint", "--reformat"]
-            exclude: ^static/
+            exclude: ^static
     - repo: https://github.com/hadolint/hadolint
       rev: v2.13.0-beta
       hooks:
