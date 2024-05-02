@@ -7,10 +7,8 @@
 !.flake8
 !.pre-commit-config.yaml
 !.prettierrc
-!.pylintrc
 !.sonarcloud.properties
 !.tern-project
-!.woodpecker.yml
 **/__pycache__
 **/tests
 .*
@@ -31,8 +29,6 @@ conftest.py
 docker-compose.yml
 node_modules
 npm-debug.log
-podman-kube.yml
-poetry.lock
 pyproject.toml
 requirements-ci.txt
 screenshots
