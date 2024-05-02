@@ -4,7 +4,7 @@ from radiofeed.types import HttpRequestResponse
 
 
 class AudioPlayerMiddleware:
-    """Adds `AudioPlayer` instance as `request.player`."""
+    """Adds `AudioPlayer` instance to request as `request.audio_player`."""
 
     def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
