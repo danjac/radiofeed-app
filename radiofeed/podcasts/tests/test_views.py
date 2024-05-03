@@ -528,6 +528,21 @@ class TestRemovePrivateFeed:
             subscriber=auth_user, podcast=podcast
         ).exists()
 
+    @pytest.mark.django_db()
+    def test_not_private_feed(self, client, auth_user):
+        podcast = PodcastFactory(private=False)
+        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
+
+        response = client.delete(
+            reverse("podcasts:remove_private_feed", args=[podcast.pk]),
+            {"rss": podcast.rss},
+        )
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+        assert Subscription.objects.filter(
+            subscriber=auth_user, podcast=podcast
+        ).exists()
+
 
 class TestAddPrivateFeed:
     url = reverse_lazy("podcasts:add_private_feed")
