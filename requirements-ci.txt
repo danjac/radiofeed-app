@@ -65,7 +65,7 @@ django-fast-update==0.2.3
 django-fastdev==1.9.0
 django-health-check==3.18.1
 django-htmx==1.17.3
-django-model-utils==4.5.0
+django-model-utils==4.5.1
 django-permissions-policy==4.19.0
 django-redis==5.4.0
 django-template-partials==24.2
@@ -74,7 +74,7 @@ execnet==2.1.1
 executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
-faker==25.0.0
+faker==25.0.1
     # via factory-boy
 filelock==3.14.0
     # via pytest-mypy
@@ -98,7 +98,7 @@ iniconfig==2.0.0
 ipython==8.24.0
 jedi==0.19.1
     # via ipython
-joblib==1.4.0
+joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
@@ -222,7 +222,7 @@ termcolor==2.4.0
     # via pytest-sugar
 threadpoolctl==3.5.0
     # via scikit-learn
-tqdm==4.66.2
+tqdm==4.66.4
     # via nltk
 traitlets==5.14.3
     # via
