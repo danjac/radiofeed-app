@@ -191,6 +191,9 @@ else:
     EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=False)
 
 ADMINS = getaddresses([ADMINS]) if (ADMINS := env("ADMINS", default="")) else []
+MANAGERS = (
+    getaddresses([MANAGERS]) if (MANAGERS := env("MANAGERS", default="")) else ADMINS
+)
 
 SERVER_EMAIL = env("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
