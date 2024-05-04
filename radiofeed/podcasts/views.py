@@ -1,4 +1,3 @@
-import httpx
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
@@ -108,12 +107,11 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if request.search:
-        feeds: list[itunes.Feed] = []
-
         try:
             feeds = itunes.search(get_client(), request.search.value)
-        except httpx.HTTPError:
+        except itunes.ItunesError:
             messages.error(request, "Error: iTunes unavailable")
+            return redirect("podcasts:index")
 
         return render(
             request,

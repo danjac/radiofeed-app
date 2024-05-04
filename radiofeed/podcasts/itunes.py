@@ -10,6 +10,10 @@ from django.utils.http import urlsafe_base64_encode
 from radiofeed.podcasts.models import Podcast
 
 
+class ItunesError(ValueError):
+    """Custom Itunes exception."""
+
+
 @dataclasses.dataclass(frozen=True)
 class Feed:
     """Encapsulates iTunes API result.
@@ -29,66 +33,22 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(client: httpx.Client, search_term: str) -> list[Feed]:
+def search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
     """Runs cached search for podcasts on iTunes API."""
-    cache_key = search_cache_key(search_term)
-    if (feeds := cache.get(cache_key)) is None:
-        response = _get_response(
-            client,
-            "https://itunes.apple.com/search",
-            params={
-                "term": search_term,
-                "media": "podcast",
-            },
-            headers={
-                "Accept": "application/json",
-            },
-        )
-        feeds = list(_parse_feeds(response))
-        cache.set(cache_key, feeds)
-    return feeds
+    try:
+        return _add_podcasts_to_feeds(_parse_feeds(_get_json(client, search_term)))
+    except httpx.HTTPError as e:
+        raise ItunesError from e
 
 
 def search_cache_key(search_term: str) -> str:
-    """Cache key based on search term."""
+    """Return cache key"""
     return "itunes:" + urlsafe_base64_encode(
         force_bytes(search_term.casefold(), "utf-8")
     )
 
 
-def _parse_feeds(
-    response: httpx.Response,
-) -> Iterator[Feed]:
-    for batch in itertools.batched(
-        _build_feeds_from_json(response.json()),
-        100,
-    ):
-        feeds_for_podcasts, feeds = itertools.tee(batch)
-
-        podcasts = Podcast.objects.filter(
-            rss__in={f.rss for f in feeds_for_podcasts}
-        ).in_bulk(field_name="rss")
-
-        feeds_for_insert, feeds = itertools.tee(
-            (
-                dataclasses.replace(feed, podcast=podcasts.get(feed.rss))
-                for feed in feeds
-            ),
-        )
-
-        Podcast.objects.bulk_create(
-            (
-                Podcast(title=feed.title, rss=feed.rss)
-                for feed in set(feeds_for_insert)
-                if feed.podcast is None
-            ),
-            ignore_conflicts=True,
-        )
-
-        yield from feeds
-
-
-def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
+def _parse_feeds(json_data: dict) -> Iterator[Feed]:
     for result in json_data.get("results", []):
         try:
             yield Feed(
@@ -101,18 +61,50 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
             continue
 
 
-def _get_response(
-    client: httpx.Client,
-    url,
-    params: dict | None = None,
-    headers: dict | None = None,
-    **kwargs,
-):
+def _add_podcasts_to_feeds(feeds: Iterator[Feed]) -> Iterator[Feed]:
+    feeds_for_podcasts, feeds = itertools.tee(feeds)
+
+    podcasts = Podcast.objects.filter(
+        rss__in={f.rss for f in feeds_for_podcasts}
+    ).in_bulk(field_name="rss")
+
+    feeds_for_insert, feeds = itertools.tee(
+        (dataclasses.replace(feed, podcast=podcasts.get(feed.rss)) for feed in feeds),
+    )
+
+    Podcast.objects.bulk_create(
+        (
+            Podcast(title=feed.title, rss=feed.rss)
+            for feed in set(feeds_for_insert)
+            if feed.podcast is None
+        ),
+        ignore_conflicts=True,
+    )
+
+    yield from feeds
+
+
+def _get_json(client: httpx.Client, search_term: str) -> dict:
+    cache_key = search_cache_key(search_term)
+
+    if cached := cache.get(cache_key):
+        return cached
+
+    data = _get_response(client, search_term).json()
+    cache.set(cache_key, data)
+    return data
+
+
+def _get_response(client: httpx.Client, search_term: str):
     response = client.get(
-        url,
-        params=params,
-        headers=headers,
-        **kwargs,
+        "https://itunes.apple.com/search",
+        params={
+            "term": search_term,
+            "media": "podcast",
+        },
+        headers={
+            "Accept": "application/json",
+        },
     )
     response.raise_for_status()
     return response

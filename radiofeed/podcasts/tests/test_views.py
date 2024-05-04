@@ -1,6 +1,5 @@
 import http
 
-import httpx
 import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
@@ -200,26 +199,23 @@ class TestSearchItunes:
             ),
         ]
         mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search", return_value=feeds
+            "radiofeed.podcasts.itunes.search", return_value=iter(feeds)
         )
 
         response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
         assert response.status_code == http.HTTPStatus.OK
 
-        assert response.context["feeds"] == feeds
         mock_search.assert_called()
 
     @pytest.mark.django_db()
     def test_search_exception(self, client, auth_user, mocker):
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search",
-            side_effect=httpx.HTTPError("oops"),
+            side_effect=itunes.ItunesError("oops"),
         )
 
         response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
-        assert response.status_code == http.HTTPStatus.OK
-
-        assert response.context["feeds"] == []
+        assert response.url == reverse("podcasts:index")
 
         mock_search.assert_called()
 

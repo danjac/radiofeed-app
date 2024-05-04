@@ -60,7 +60,7 @@ class TestSearch:
 
     @pytest.mark.django_db()
     def test_not_ok(self, bad_client):
-        with pytest.raises(httpx.HTTPError):
+        with pytest.raises(itunes.ItunesError):
             list(itunes.search(bad_client, "test"))
         assert not Podcast.objects.exists()
 
@@ -78,28 +78,19 @@ class TestSearch:
     @pytest.mark.django_db()
     @pytest.mark.usefixtures("_locmem_cache")
     def test_is_not_cached(self, good_client):
-        feeds = itunes.search(good_client, "test")
+        feeds = list(itunes.search(good_client, "test"))
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
-        assert cache.get(itunes.search_cache_key("test")) == feeds
+        assert cache.get(itunes.search_cache_key("test")) == {"results": [MOCK_RESULT]}
 
     @pytest.mark.django_db()
     @pytest.mark.usefixtures("_locmem_cache")
     def test_is_cached(self, good_client):
-        cache.set(
-            itunes.search_cache_key("test"),
-            [
-                itunes.Feed(
-                    rss="https://example.com",
-                    title="test",
-                    url="https://example.com/id1234",
-                )
-            ],
-        )
+        cache.set(itunes.search_cache_key("test"), {"results": [MOCK_RESULT]})
 
-        feeds = itunes.search(good_client, "test")
+        feeds = list(itunes.search(good_client, "test"))
 
         assert len(feeds) == 1
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
