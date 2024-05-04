@@ -4,8 +4,6 @@ from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
@@ -83,14 +81,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
         # create new iTunes search instance for later lookup
 
-        ItunesSearch.objects.get_or_create(
-            id=urlsafe_base64_encode(
-                force_bytes(request.search.value.casefold(), "utf-8")
-            ),
-            defaults={
-                "search": request.search.value,
-            },
-        )
+        ItunesSearch.objects.get_or_create_from_search(request.search.value)
 
         return render(
             request,
