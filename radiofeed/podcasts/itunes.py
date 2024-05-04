@@ -3,7 +3,6 @@ import itertools
 from collections.abc import Iterator
 
 import httpx
-from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
@@ -31,22 +30,18 @@ class Feed:
 
 def search(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
-    cache_key = search_cache_key(search_term)
-    if (feeds := cache.get(cache_key)) is None:
-        response = _get_response(
-            client,
-            "https://itunes.apple.com/search",
-            params={
-                "term": search_term,
-                "media": "podcast",
-            },
-            headers={
-                "Accept": "application/json",
-            },
-        )
-        feeds = list(_parse_feeds(response))
-        cache.set(cache_key, feeds)
-    return feeds
+    response = _get_response(
+        client,
+        "https://itunes.apple.com/search",
+        params={
+            "term": search_term,
+            "media": "podcast",
+        },
+        headers={
+            "Accept": "application/json",
+        },
+    )
+    return list(_parse_feeds(response))
 
 
 def search_cache_key(search_term: str) -> str:

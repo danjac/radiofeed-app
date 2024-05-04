@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
-from radiofeed.podcasts.models import Category, Podcast, Subscription
+from radiofeed.podcasts.models import Category, ItunesSearch, Podcast, Subscription
 
 if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
@@ -34,6 +34,17 @@ class CategoryAdmin(admin.ModelAdmin):
     def num_podcasts(self, obj: Category) -> int:
         """Returns number of podcasts in this category."""
         return obj.num_podcasts or 0
+
+
+@admin.register(ItunesSearch)
+class ItunesSearchAdmin(admin.ModelAdmin):
+    """Admin for itunes searches."""
+
+    ordering = ("created",)
+    list_display = (
+        "search",
+        "completed",
+    )
 
 
 class ActiveFilter(admin.SimpleListFilter):

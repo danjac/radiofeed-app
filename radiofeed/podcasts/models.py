@@ -277,6 +277,24 @@ class Podcast(models.Model):
         return slugify(self.title, allow_unicode=False) or "no-title"
 
 
+class ItunesSearch(TimeStampedModel):
+    """Handles individual itunes search."""
+
+    id: str = models.CharField(
+        max_length=200, unique=True, primary_key=True, editable=False
+    )
+    search: str = models.CharField(max_length=200)
+    completed: datetime | None = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "ITunes search"
+        verbose_name_plural = "ITunes searches"
+
+    def __str__(self) -> str:
+        """Returns search string"""
+        return self.search
+
+
 class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""
 
