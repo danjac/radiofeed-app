@@ -4,55 +4,57 @@
     | {{ podcast.cleaned_title }}
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-6 space-y-6 border-b">
+    <header class="pb-3 mb-3 space-y-6 border-b">
         <h1 class="flex justify-center items-center text-lg font-bold text-center sm:justify-start lg:text-xl xl:text-2xl sm:text-start">
             {{ podcast.cleaned_title }}
         </h1>
         {% cache 600 podcast-detail-header request.get_full_path %}
-        {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
-            {% if num_episodes or has_similar or podcast.private %}
-                <nav class="flex justify-center items-center mb-3 sm:justify-start">
-                    <ul class="flex items-center space-x-6">
-                        {% active_link podcast.get_detail_url as link %}
-                        <li>
-                            <a class="{{ link.css }}"
-                               href="{{ link.url }}"
-                               {% if link.active %}aria-current="page"{% endif %}
-                               aria-label="{{ podcast.cleaned_title }} | About"
-                               title="{{ podcast.cleaned_title }} | About">About</a>
-                        </li>
-                        {% if num_episodes %}
-                            {% active_link podcast.get_episodes_url as link %}
+        {% block podcast_nav %}
+            {% with num_episodes=podcast.episodes.count has_similar=podcast.recommendations.exists %}
+                {% if num_episodes or has_similar or podcast.private %}
+                    <nav class="flex justify-center items-center sm:justify-start">
+                        <ul class="flex items-center space-x-6">
+                            {% active_link podcast.get_detail_url as link %}
                             <li>
                                 <a class="{{ link.css }}"
                                    href="{{ link.url }}"
                                    {% if link.active %}aria-current="page"{% endif %}
-                                   aria-label="{{ podcast.cleaned_title }} | Episodes"
-                                   title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
+                                   aria-label="{{ podcast.cleaned_title }} | About"
+                                   title="{{ podcast.cleaned_title }} | About">About</a>
                             </li>
-                        {% endif %}
-                        {% if podcast.private %}
-                            <li>
-                                <a class="flex items-center link"
-                                   href="{% url "podcasts:private_feeds" %}">
-                                    {% heroicon_mini "lock-closed" class="mr-2" %}
-                                    <span>Private Feed</span>
-                                </a>
-                            </li>
-                        {% elif has_similar %}
-                            {% active_link podcast.get_similar_url as link %}
-                            <li>
-                                <a class="{{ link.css }}"
-                                   href="{{ link.url }}"
-                                   {% if link.active %}aria-current="page"{% endif %}
-                                   aria-label="{{ podcast.cleaned_title }} | Similar"
-                                   title="{{ podcast.cleaned_title }} | Similar">Similar</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            {% endif %}
-        {% endwith %}
+                            {% if num_episodes %}
+                                {% active_link podcast.get_episodes_url as link %}
+                                <li>
+                                    <a class="{{ link.css }}"
+                                       href="{{ link.url }}"
+                                       {% if link.active %}aria-current="page"{% endif %}
+                                       aria-label="{{ podcast.cleaned_title }} | Episodes"
+                                       title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
+                                </li>
+                            {% endif %}
+                            {% if podcast.private %}
+                                <li>
+                                    <a class="flex items-center link"
+                                       href="{% url "podcasts:private_feeds" %}">
+                                        {% heroicon_mini "lock-closed" class="mr-2" %}
+                                        <span>Private Feed</span>
+                                    </a>
+                                </li>
+                            {% elif has_similar %}
+                                {% active_link podcast.get_similar_url as link %}
+                                <li>
+                                    <a class="{{ link.css }}"
+                                       href="{{ link.url }}"
+                                       {% if link.active %}aria-current="page"{% endif %}
+                                       aria-label="{{ podcast.cleaned_title }} | Similar"
+                                       title="{{ podcast.cleaned_title }} | Similar">Similar</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% endwith %}
+        {% endblock podcast_nav %}
     {% endcache %}
 </header>
 {% block podcast_content %}

@@ -11,18 +11,15 @@
         </h1>
         <nav>
             <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
-                <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
-                    {% if request.search %}
-                        <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
-                           class="link">Search All Podcasts</a>
-                    {% else %}
+                {% if not request.search %}
+                    <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
                         <a href="{% url "podcasts:add_private_feed" %}"
                            class="inline-flex items-center btn btn-default">
                             {% heroicon_mini "plus" class="mr-2" %}
                             Add Private Feed
                         </a>
-                    {% endif %}
-                </li>
+                    </li>
+                {% endif %}
                 {% if request.search or page_obj.has_other_pages %}
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Private Feeds" %}</li>
                 {% endif %}

@@ -6,7 +6,6 @@ from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
-from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
@@ -128,29 +127,38 @@ class TestLatestEpisode:
 class TestSearchPodcasts:
     url = reverse_lazy("podcasts:search_podcasts")
 
-    @pytest.mark.django_db()
-    def test_search_empty(self, client, auth_user):
-        assert client.get(self.url, {"query": ""}).url == podcasts_url
+    @pytest.fixture()
+    def mock_itunes(self, mocker):
+        return mocker.patch("radiofeed.podcasts.itunes.search")
 
     @pytest.mark.django_db()
-    def test_search(self, client, auth_user, faker):
+    def test_search_empty(self, client, auth_user, mock_itunes):
+        assert client.get(self.url, {"query": ""}).url == podcasts_url
+        mock_itunes.assert_not_called()
+
+    @pytest.mark.django_db()
+    def test_search(self, client, auth_user, faker, mock_itunes):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"query": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
+        mock_itunes.assert_not_called()
 
     @pytest.mark.django_db()
-    def test_search_filter_private(self, client, auth_user, faker):
+    def test_search_filter_private(self, client, auth_user, faker, mock_itunes):
         podcast = PodcastFactory(title=faker.unique.text(), private=True)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"query": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
+        mock_itunes.assert_called()
 
     @pytest.mark.django_db()
-    def test_search_filter_private_subscribed(self, client, auth_user, faker):
+    def test_search_filter_private_subscribed(
+        self, client, auth_user, faker, mock_itunes
+    ):
         podcast = PodcastFactory(title=faker.unique.text())
         SubscriptionFactory(podcast=podcast, subscriber=auth_user)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
@@ -158,60 +166,24 @@ class TestSearchPodcasts:
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
+        mock_itunes.assert_not_called()
 
     @pytest.mark.django_db()
-    def test_search_no_results(self, client, auth_user, faker):
+    def test_search_no_results(self, client, auth_user, faker, mock_itunes):
         response = client.get(self.url, {"query": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
-
-
-class TestSearchItunes:
-    @pytest.mark.django_db()
-    def test_empty(self, client, auth_user):
-        response = client.get(reverse("podcasts:search_itunes"), {"query": ""})
-        assert response.url == reverse("podcasts:index")
+        mock_itunes.assert_called()
 
     @pytest.mark.django_db()
-    def test_search(self, client, auth_user, podcast, mocker):
-        feeds = [
-            itunes.Feed(
-                url="https://example.com/id123456",
-                rss="https://feeds.fireside.fm/testandcode/rss",
-                title="Test & Code : Py4hon Testing",
-                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-            ),
-            itunes.Feed(
-                url=podcast.website,
-                rss=podcast.rss,
-                title=podcast.title,
-                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-                podcast=podcast,
-            ),
-        ]
-        mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search", return_value=feeds
-        )
-
-        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
+    def test_search_no_results_itunes_error(
+        self, client, auth_user, faker, mock_itunes
+    ):
+        mock_itunes.side_effect = httpx.HTTPError("oops")
+        response = client.get(self.url, {"query": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
-
-        assert response.context["feeds"] == feeds
-        mock_search.assert_called()
-
-    @pytest.mark.django_db()
-    def test_search_exception(self, client, auth_user, mocker):
-        mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search",
-            side_effect=httpx.HTTPError("oops"),
-        )
-
-        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
-        assert response.status_code == http.HTTPStatus.OK
-
-        assert response.context["feeds"] == []
-
-        mock_search.assert_called()
+        assert len(response.context["page_obj"].object_list) == 0
+        mock_itunes.assert_called()
 
 
 class TestPodcastSimilar:

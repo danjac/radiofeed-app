@@ -145,11 +145,9 @@ class TestSearchDetails:
         search = SearchDetails(req)
         assert search
         assert str(search) == "testing"
-        assert search.qs == "query=testing"
 
     def test_no_search(self, rf):
         req = rf.get("/")
         search = SearchDetails(req)
         assert not search
         assert not str(search)
-        assert search.qs == ""

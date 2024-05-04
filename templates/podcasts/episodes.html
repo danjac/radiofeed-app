@@ -3,17 +3,28 @@
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
+{% block podcast_nav %}
+    {% if request.search %}
+        <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
+            {{ block.super }}
+            <nav class="flex justify-center items-center sm:justify-start">
+                <ul class="justify-between items-center sm:flex">
+                    <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Episodes" %}</li>
+                </ul>
+            </nav>
+        </div>
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock podcast_nav %}
 {% block podcast_content %}
     {% cache 600 podcast-episodes request.get_full_path %}
     {% paginate episodes as page_obj %}
-    {% if request.search or page_obj.has_other_pages %}
-        <nav class="mb-6">
+    {% if page_obj.has_other_pages and not request.search %}
+        <nav>
             <ul class="justify-between items-center pb-3 mb-3 border-b sm:flex">
                 <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
-                    {% if request.search %}
-                        <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                           class="link">Search All Podcasts</a>
-                    {% elif ordering_asc %}
+                    {% if ordering_asc %}
                         <a href="{{ request.path }}?order=desc" class="link">Newest First</a>
                     {% else %}
                         <a href="{{ request.path }}?order=asc" class="link">Oldest First</a>

@@ -1,3 +1,5 @@
+import logging
+
 import httpx
 from django.contrib import messages
 from django.db import IntegrityError
@@ -81,35 +83,19 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 "-pub_date",
             )
         )
+
+        # if result not found, search iTunes
+        if not podcasts.exists():
+            try:
+                itunes.search(get_client(), request.search.value)
+            except httpx.HTTPError as e:
+                logging.exception(e)
+
         return render(
             request,
             "podcasts/search.html",
             {
                 "podcasts": podcasts,
-                "clear_search_url": reverse("podcasts:index"),
-            },
-        )
-
-    return redirect("podcasts:index")
-
-
-@require_safe
-@require_auth
-def search_itunes(request: HttpRequest) -> HttpResponse:
-    """Render iTunes search page. Redirects to index page if search is empty."""
-    if request.search:
-        feeds: list[itunes.Feed] = []
-
-        try:
-            feeds = itunes.search(get_client(), request.search.value)
-        except httpx.HTTPError:
-            messages.error(request, "Error: iTunes unavailable")
-
-        return render(
-            request,
-            "podcasts/itunes_search.html",
-            {
-                "feeds": feeds,
                 "clear_search_url": reverse("podcasts:index"),
             },
         )

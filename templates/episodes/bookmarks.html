@@ -9,16 +9,15 @@
         {% if request.search or page_obj.has_other_pages %}
             <nav>
                 <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
-                    <li class="flex justify-center items-center sm:justify-start">
-                        {% if request.search %}
-                            <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                               class="link">Search All Podcasts</a>
-                        {% elif ordering_asc %}
-                            <a href="{{ request.path }}?order=desc" class="link">Oldest First</a>
-                        {% else %}
-                            <a href="{{ request.path }}?order=asc" class="link">Newest First</a>
-                        {% endif %}
-                    </li>
+                    {% if not request.search %}
+                        <li class="flex justify-center items-center sm:justify-start">
+                            {% if ordering_asc %}
+                                <a href="{{ request.path }}?order=desc" class="link">Oldest First</a>
+                            {% else %}
+                                <a href="{{ request.path }}?order=asc" class="link">Newest First</a>
+                            {% endif %}
+                        </li>
+                    {% endif %}
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Bookmarks" %}</li>
                 </ul>
             </nav>

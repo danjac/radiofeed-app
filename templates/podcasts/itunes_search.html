@@ -2,7 +2,17 @@
 {% block title %}
     | Search | iTunes
 {% endblock title %}
-{% block search_content %}
+{% block content %}
+    <header class="justify-between items-center pb-3 mb-6 space-y-3 border-b sm:flex sm:space-y-0">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            Search iTunes
+        </h1>
+        <nav>
+            <ul>
+                <li class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: iTunes" %}</li>
+            </ul>
+        </nav>
+    </header>
     {% if feeds %}
         <ul class="divide-y divide-solid">
             {% for feed in feeds %}
@@ -33,4 +43,4 @@
     {% else %}
         {% include "_empty.html" %}
     {% endif %}
-{% endblock search_content %}
+{% endblock content %}

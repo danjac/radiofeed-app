@@ -80,7 +80,6 @@ addopts = [
     "-v",
     "-x",
     "-p no:warnings",
-    "-n=auto",
     "--ff",
     "--mypy",
     "--cov",

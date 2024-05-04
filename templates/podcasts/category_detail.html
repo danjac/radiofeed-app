@@ -6,39 +6,18 @@
 {% block content %}
     {% cache 600 category-detail request.get_full_path %}
     {% paginate podcasts as page_obj %}
-    {% with search_placeholder="Search: "|add:category.name %}
-        {% if request.search %}
-            <header class="pb-3 mb-3 space-y-3 border-b">
-                <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
-                    {{ category.name }} Podcasts
-                </h1>
-                <nav>
-                    <ul class="justify-center items-center space-y-3 sm:flex sm:justify-between sm:space-y-0">
-                        <li class="flex justify-center items-center sm:justify-start sm:mb-0">
-                            <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
-                               aria-label="Search Podcasts"
-                               title="Search Podcasts"
-                               class="link">Search All Categories</a>
-                        </li>
-                        <li class="flex justify-center items-center sm:justify-end">{% search_form search_placeholder %}</li>
-                    </ul>
-                </nav>
-            </header>
-        {% else %}
-            <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">
-                <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
-                    {{ category.name }} Podcasts
-                </h1>
-                {% if page_obj.has_other_pages %}
-                    <nav class="flex justify-center items-center sm:justify-end">
-                        <ul>
-                            <li>{% search_form search_placeholder %}</li>
-                        </ul>
-                    </nav>
-                {% endif %}
-            </header>
+    <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            {{ category.name }} Podcasts
+        </h1>
+        {% if page_obj.has_other_pages or request.search %}
+            <nav class="flex justify-center items-center sm:justify-end">
+                <ul>
+                    <li>{% search_form "Search: "|add:category.name %}</li>
+                </ul>
+            </nav>
         {% endif %}
-    {% endwith %}
+    </header>
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}
 {% endblock content %}

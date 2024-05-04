@@ -1,11 +1,21 @@
-{% extends "search_base.html" %}
+{% extends "base.html" %}
 {% load cache %}
 {% block title %}
     | Search | Podcasts
 {% endblock title %}
-{% block search_content %}
+{% block content %}
     {% cache 600 search-podcasts request.get_full_path %}
+    <header class="justify-between items-center pb-3 mb-6 space-y-3 border-b sm:flex sm:space-y-0">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            Search Podcasts
+        </h1>
+        <nav>
+            <ul>
+                <li class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: Podcasts" %}</li>
+            </ul>
+        </nav>
+    </header>
     {% paginate podcasts as page_obj %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}
-{% endblock search_content %}
+{% endblock content %}

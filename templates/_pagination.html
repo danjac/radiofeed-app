@@ -17,5 +17,7 @@
         </ul>
     {% endwith %}
 {% else %}
-    {% include "_empty.html" %}
+    {% block pagination_empty %}
+        {% include "_empty.html" %}
+    {% endblock pagination_empty %}
 {% endif %}

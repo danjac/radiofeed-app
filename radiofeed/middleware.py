@@ -1,5 +1,3 @@
-from urllib.parse import urlencode
-
 from django.contrib.messages import get_messages
 from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
@@ -113,8 +111,3 @@ class SearchDetails:
     def value(self) -> str:
         """Returns the search query value, if any."""
         return force_str(self.request.GET.get(self.param, "")).strip()
-
-    @cached_property
-    def qs(self) -> str:
-        """Returns encoded query string value, if any."""
-        return urlencode({self.param: self.value}) if self.value else ""
