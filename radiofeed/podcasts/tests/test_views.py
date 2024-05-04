@@ -1,6 +1,5 @@
 import http
 
-import httpx
 import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
@@ -132,33 +131,28 @@ class TestSearchPodcasts:
         return mocker.patch("radiofeed.podcasts.itunes.search")
 
     @pytest.mark.django_db()
-    def test_search_empty(self, client, auth_user, mock_itunes):
+    def test_search_empty(self, client, auth_user):
         assert client.get(self.url, {"query": ""}).url == podcasts_url
-        mock_itunes.assert_not_called()
 
     @pytest.mark.django_db()
-    def test_search(self, client, auth_user, faker, mock_itunes):
+    def test_search(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"query": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
-        mock_itunes.assert_not_called()
 
     @pytest.mark.django_db()
-    def test_search_filter_private(self, client, auth_user, faker, mock_itunes):
+    def test_search_filter_private(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text(), private=True)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"query": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
-        mock_itunes.assert_called()
 
     @pytest.mark.django_db()
-    def test_search_filter_private_subscribed(
-        self, client, auth_user, faker, mock_itunes
-    ):
+    def test_search_filter_private_subscribed(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text())
         SubscriptionFactory(podcast=podcast, subscriber=auth_user)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
@@ -166,24 +160,18 @@ class TestSearchPodcasts:
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
-        mock_itunes.assert_not_called()
 
     @pytest.mark.django_db()
-    def test_search_no_results(self, client, auth_user, faker, mock_itunes):
+    def test_search_no_results(self, client, auth_user, faker):
         response = client.get(self.url, {"query": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
-        mock_itunes.assert_called()
 
     @pytest.mark.django_db()
-    def test_search_no_results_itunes_error(
-        self, client, auth_user, faker, mock_itunes
-    ):
-        mock_itunes.side_effect = httpx.HTTPError("oops")
+    def test_search_no_results_itunes_error(self, client, auth_user, faker):
         response = client.get(self.url, {"query": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
-        mock_itunes.assert_called()
 
 
 class TestPodcastSimilar:

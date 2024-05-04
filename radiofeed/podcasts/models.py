@@ -294,10 +294,10 @@ class ItunesSearchManager(models.Manager):
 class ItunesSearch(TimeStampedModel):
     """Handles individual itunes search."""
 
-    id: str = models.CharField(
+    id: str = models.TextField(
         max_length=200, unique=True, primary_key=True, editable=False
     )
-    search: str = models.CharField(max_length=200)
+    search: str = models.TextField()
     completed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     objects: models.QuerySet[ItunesSearch] = ItunesSearchManager()
