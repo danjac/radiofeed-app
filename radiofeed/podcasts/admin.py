@@ -40,7 +40,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ItunesSearchAdmin(admin.ModelAdmin):
     """Admin for itunes searches."""
 
-    ordering = ("created",)
+    ordering = ("-created",)
     list_display = (
         "search",
         "completed",
