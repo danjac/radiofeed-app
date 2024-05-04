@@ -1,5 +1,5 @@
 from django.contrib.messages import get_messages
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, QueryDict
 from django.template.loader import render_to_string
 from django.utils.cache import patch_vary_headers
 from django.utils.encoding import force_str
@@ -111,3 +111,8 @@ class SearchDetails:
     def value(self) -> str:
         """Returns the search query value, if any."""
         return force_str(self.request.GET.get(self.param, "")).strip()
+
+    @cached_property
+    def qs(self) -> str:
+        """Returns querystring with search."""
+        return QueryDict.fromkeys([self.param], value=self.value).urlencode()

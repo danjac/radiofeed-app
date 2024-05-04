@@ -85,9 +85,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             )
         )
 
-        search_itunes_url = (
-            f"{reverse("podcasts:search_itunes")}?{request.GET.urlencode()}"
-        )
+        search_itunes_url = f"{reverse("podcasts:search_itunes")}?{request.search.qs}"
 
         return render(
             request,
