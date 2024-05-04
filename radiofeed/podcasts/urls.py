@@ -28,6 +28,7 @@ urlpatterns = [
         name="podcast_similar",
     ),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
+    path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
         "subscribe/<int:podcast_id>/",
         views.subscribe,

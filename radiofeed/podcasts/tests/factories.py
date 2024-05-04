@@ -3,7 +3,6 @@ from django.utils import timezone
 
 from radiofeed.podcasts.models import (
     Category,
-    ItunesSearch,
     Podcast,
     Recommendation,
     Subscription,
@@ -16,20 +15,6 @@ class CategoryFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Category
-
-
-class ItunesSearchFactory(factory.django.DjangoModelFactory):
-    search = factory.Faker("text")
-
-    class Meta:
-        model = ItunesSearch
-
-    @classmethod
-    def _create(cls, model_class, **kwargs):
-        return model_class.objects.create(
-            pk=model_class.objects.create_search_id(kwargs.get("search")),
-            **kwargs,
-        )
 
 
 class PodcastFactory(factory.django.DjangoModelFactory):

@@ -1,20 +1,27 @@
 {% extends "base.html" %}
-{% load cache %}
+{% load cache heroicons %}
 {% block title %}
     | Search | Podcasts
 {% endblock title %}
 {% block content %}
-    {% cache 600 search-podcasts request.get_full_path %}
-    <header class="justify-between items-center pb-3 mb-6 space-y-3 border-b sm:flex sm:space-y-0">
+    <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">
         <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
             Search Podcasts
         </h1>
         <nav>
-            <ul>
-                <li class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: Podcasts" %}</li>
+            <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
+                <li class="flex justify-center items-center sm:justify-end">
+                    <a href="{{ search_itunes_url }}"
+                       class="inline-flex items-center btn btn-default">
+                        {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                        Search iTunes
+                    </a>
+                </li>
+                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
             </ul>
         </nav>
     </header>
+    {% cache 600 search-podcasts request.get_full_path %}
     {% paginate podcasts as page_obj %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}

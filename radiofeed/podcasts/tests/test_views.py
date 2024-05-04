@@ -1,10 +1,12 @@
 import http
 
+import httpx
 import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
+from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
@@ -172,6 +174,54 @@ class TestSearchPodcasts:
         response = client.get(self.url, {"query": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
+
+
+class TestSearchItunes:
+    @pytest.mark.django_db()
+    def test_empty(self, client, auth_user):
+        response = client.get(reverse("podcasts:search_itunes"), {"query": ""})
+        assert response.url == reverse("podcasts:index")
+
+    @pytest.mark.django_db()
+    def test_search(self, client, auth_user, podcast, mocker):
+        feeds = [
+            itunes.Feed(
+                url="https://example.com/id123456",
+                rss="https://feeds.fireside.fm/testandcode/rss",
+                title="Test & Code : Py4hon Testing",
+                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+            ),
+            itunes.Feed(
+                url=podcast.website,
+                rss=podcast.rss,
+                title=podcast.title,
+                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                podcast=podcast,
+            ),
+        ]
+        mock_search = mocker.patch(
+            "radiofeed.podcasts.itunes.search", return_value=feeds
+        )
+
+        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
+        assert response.status_code == http.HTTPStatus.OK
+
+        assert response.context["feeds"] == feeds
+        mock_search.assert_called()
+
+    @pytest.mark.django_db()
+    def test_search_exception(self, client, auth_user, mocker):
+        mock_search = mocker.patch(
+            "radiofeed.podcasts.itunes.search",
+            side_effect=httpx.HTTPError("oops"),
+        )
+
+        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
+        assert response.status_code == http.HTTPStatus.OK
+
+        assert response.context["feeds"] == []
+
+        mock_search.assert_called()
 
 
 class TestPodcastSimilar:

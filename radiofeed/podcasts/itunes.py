@@ -3,6 +3,9 @@ import itertools
 from collections.abc import Iterator
 
 import httpx
+from django.core.cache import cache
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.podcasts.models import Podcast
 
@@ -13,27 +16,44 @@ class Feed:
 
     Attributes:
         rss: URL to RSS or Atom resource
+        url: URL to website of podcast
         title: title of podcast
+        image: URL to cover image
+        podcast: matching Podcast instance in local database
     """
 
     rss: str
+    url: str
     title: str = ""
+    image: str = ""
+    podcast: Podcast | None = None
 
 
-def search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
+def search(client: httpx.Client, search_term: str) -> list[Feed]:
     """Runs cached search for podcasts on iTunes API."""
-    response = _get_response(
-        client,
-        "https://itunes.apple.com/search",
-        params={
-            "term": search_term,
-            "media": "podcast",
-        },
-        headers={
-            "Accept": "application/json",
-        },
+    cache_key = search_cache_key(search_term)
+    if (feeds := cache.get(cache_key)) is None:
+        response = _get_response(
+            client,
+            "https://itunes.apple.com/search",
+            params={
+                "term": search_term,
+                "media": "podcast",
+            },
+            headers={
+                "Accept": "application/json",
+            },
+        )
+        feeds = list(_parse_feeds(response))
+        cache.set(cache_key, feeds)
+    return feeds
+
+
+def search_cache_key(search_term: str) -> str:
+    """Cache key based on search term."""
+    return "itunes:" + urlsafe_base64_encode(
+        force_bytes(search_term.casefold(), "utf-8")
     )
-    return _parse_feeds(response)
 
 
 def _parse_feeds(
@@ -43,18 +63,29 @@ def _parse_feeds(
         _build_feeds_from_json(response.json()),
         100,
     ):
+        feeds_for_podcasts, feeds = itertools.tee(batch)
+
+        podcasts = Podcast.objects.filter(
+            rss__in={f.rss for f in feeds_for_podcasts}
+        ).in_bulk(field_name="rss")
+
+        feeds_for_insert, feeds = itertools.tee(
+            (
+                dataclasses.replace(feed, podcast=podcasts.get(feed.rss))
+                for feed in feeds
+            ),
+        )
+
         Podcast.objects.bulk_create(
             (
-                Podcast(
-                    title=feed.title,
-                    rss=feed.rss,
-                )
-                for feed in set(batch)
+                Podcast(title=feed.title, rss=feed.rss)
+                for feed in set(feeds_for_insert)
+                if feed.podcast is None
             ),
             ignore_conflicts=True,
         )
 
-        yield from batch
+        yield from feeds
 
 
 def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
@@ -62,7 +93,9 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
         try:
             yield Feed(
                 rss=result["feedUrl"],
+                url=result["collectionViewUrl"],
                 title=result["collectionName"],
+                image=result["artworkUrl600"],
             )
         except KeyError:
             continue

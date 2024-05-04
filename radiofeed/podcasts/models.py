@@ -9,9 +9,8 @@ from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
-from django.utils.encoding import force_bytes, force_str
+from django.utils.encoding import force_str
 from django.utils.functional import cached_property
-from django.utils.http import urlsafe_base64_encode
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
@@ -276,42 +275,6 @@ class Podcast(models.Model):
     def slug(self) -> str:
         """Returns slugified title."""
         return slugify(self.title, allow_unicode=False) or "no-title"
-
-
-class ItunesSearchManager(models.Manager):
-    """Custom manager for ItunesSearch model."""
-
-    def create_search_id(self, search_term: str) -> str:
-        """Create primary key from search term."""
-        return urlsafe_base64_encode(force_bytes(search_term.casefold(), "utf-8"))
-
-    def get_or_create_from_search(self, search_term: str) -> tuple[ItunesSearch, bool]:
-        """Generates unique ID from search term and return new or existing instance."""
-        search_id = self.create_search_id(search_term)
-        try:
-            return self.get(pk=search_id), False
-        except self.model.DoesNotExist:
-            return self.create(pk=search_id, search=search_term), True
-
-
-class ItunesSearch(TimeStampedModel):
-    """Handles individual itunes search."""
-
-    id: str = models.TextField(
-        max_length=200, unique=True, primary_key=True, editable=False
-    )
-    search: str = models.TextField()
-    completed: datetime | None = models.DateTimeField(null=True, blank=True)
-
-    objects: models.QuerySet[ItunesSearch] = ItunesSearchManager()
-
-    class Meta:
-        verbose_name = "ITunes search"
-        verbose_name_plural = "ITunes searches"
-
-    def __str__(self) -> str:
-        """Returns search string"""
-        return self.search
 
 
 class Subscription(TimeStampedModel):

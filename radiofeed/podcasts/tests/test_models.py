@@ -1,35 +1,12 @@
 import pytest
 from django.urls import reverse
 
-from radiofeed.podcasts.models import Category, ItunesSearch, Podcast, Recommendation
+from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
-    ItunesSearchFactory,
     PodcastFactory,
     RecommendationFactory,
 )
-
-
-class TestItunesSearchManager:
-    @pytest.mark.django_db()
-    def test_get_or_create_from_search_new(self):
-        search, created = ItunesSearch.objects.get_or_create_from_search("testing")
-        assert search.search == "testing"
-        assert created is True
-
-    @pytest.mark.django_db()
-    def test_get_or_create_from_search_exists(self):
-        instance = ItunesSearchFactory()
-        search, created = ItunesSearch.objects.get_or_create_from_search(
-            instance.search
-        )
-        assert search.search == instance.search
-        assert created is False
-
-
-class TestItunesSearchModel:
-    def test_str(self):
-        assert str(ItunesSearch(search="testing")) == "testing"
 
 
 class TestRecommendationManager:

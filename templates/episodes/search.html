@@ -4,8 +4,7 @@
     | Search | Episodes
 {% endblock title %}
 {% block content %}
-    {% cache 600 search-episodes request.get_full_path %}
-    <header class="justify-between items-center pb-3 mb-6 space-y-3 border-b sm:flex sm:space-y-0">
+    <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">
         <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
             Search Episodes
         </h1>
@@ -15,6 +14,7 @@
             </ul>
         </nav>
     </header>
+    {% cache 600 search-episodes request.get_full_path %}
     {% paginate episodes as page_obj %}
     {% include "episodes/_episodes.html" %}
 {% endcache %}

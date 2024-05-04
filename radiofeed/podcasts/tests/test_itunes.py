@@ -3,6 +3,7 @@ import pathlib
 
 import httpx
 import pytest
+from django.core.cache import cache
 
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Podcast
@@ -73,6 +74,35 @@ class TestSearch:
     def test_bad_data(self, invalid_client):
         feeds = list(itunes.search(invalid_client, "test"))
         assert not feeds
+
+    @pytest.mark.django_db()
+    @pytest.mark.usefixtures("_locmem_cache")
+    def test_is_not_cached(self, good_client):
+        feeds = itunes.search(good_client, "test")
+
+        assert len(feeds) == 1
+        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
+
+        assert cache.get(itunes.search_cache_key("test")) == feeds
+
+    @pytest.mark.django_db()
+    @pytest.mark.usefixtures("_locmem_cache")
+    def test_is_cached(self, good_client):
+        cache.set(
+            itunes.search_cache_key("test"),
+            [
+                itunes.Feed(
+                    rss="https://example.com",
+                    title="test",
+                    url="https://example.com/id1234",
+                )
+            ],
+        )
+
+        feeds = itunes.search(good_client, "test")
+
+        assert len(feeds) == 1
+        assert not Podcast.objects.filter(rss=feeds[0].url).exists()
 
     @pytest.mark.django_db()
     def test_podcast_exists(self, good_client):

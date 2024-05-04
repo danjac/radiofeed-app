@@ -1,3 +1,4 @@
+import httpx
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
@@ -6,11 +7,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.client import get_client
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict
+from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
-from radiofeed.podcasts.models import Category, ItunesSearch, Podcast
+from radiofeed.podcasts.models import Category, Podcast
 
 
 @require_safe
@@ -83,15 +86,40 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             )
         )
 
-        # create new iTunes search instance for later lookup
-
-        ItunesSearch.objects.get_or_create_from_search(request.search.value)
+        search_itunes_url = (
+            f"{reverse("podcasts:search_itunes")}?{request.GET.urlencode()}"
+        )
 
         return render(
             request,
             "podcasts/search.html",
             {
                 "podcasts": podcasts,
+                "search_itunes_url": search_itunes_url,
+                "clear_search_url": reverse("podcasts:index"),
+            },
+        )
+
+    return redirect("podcasts:index")
+
+
+@require_safe
+@require_auth
+def search_itunes(request: HttpRequest) -> HttpResponse:
+    """Render iTunes search page. Redirects to index page if search is empty."""
+    if request.search:
+        feeds: list[itunes.Feed] = []
+
+        try:
+            feeds = itunes.search(get_client(), request.search.value)
+        except httpx.HTTPError:
+            messages.error(request, "Error: iTunes unavailable")
+
+        return render(
+            request,
+            "podcasts/search_itunes.html",
+            {
+                "feeds": feeds,
                 "clear_search_url": reverse("podcasts:index"),
             },
         )
