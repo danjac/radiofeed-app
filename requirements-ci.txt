@@ -107,6 +107,8 @@ linkify-it-py==2.0.3
 lxml==5.2.1
 markdown-it-py==3.0.0
     # via rich
+markupsafe==2.1.5
+    # via werkzeug
 matplotlib-inline==0.1.7
     # via ipython
 mdurl==0.1.2
@@ -246,4 +248,5 @@ urllib3==2.2.1
     #   sentry-sdk
 wcwidth==0.2.13
     # via prompt-toolkit
+werkzeug==3.0.2
 whitenoise==6.6.0
