@@ -33,7 +33,7 @@ def search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
             "Accept": "application/json",
         },
     )
-    yield from _parse_feeds(response)
+    return _parse_feeds(response)
 
 
 def _parse_feeds(
