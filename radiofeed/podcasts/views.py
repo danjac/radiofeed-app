@@ -69,11 +69,7 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_safe
 @require_auth
 def search_podcasts(request: HttpRequest) -> HttpResponse:
-    """Render search page. Redirects to index page if search is empty.
-
-    Will also create an iTunes search, so that any podcasts that might
-    be missing from the database can be fetched later.
-    """
+    """Render search page. Redirects to index page if search is empty."""
     if request.search:
         podcasts = (
             Podcast.objects.search(request.search.value)
