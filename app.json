@@ -12,15 +12,15 @@
         },
         {
             "command": "python manage.py parse_itunes",
-            "schedule": "20 * * * *"
+            "schedule": "15,45 * * * *"
         },
         {
             "command": "python manage.py create_recommendations",
-            "schedule": "15 6 * * *"
+            "schedule": "20 6 * * *"
         },
         {
             "command": "python manage.py send_recommendations_emails",
-            "schedule": "15 9 * * 1"
+            "schedule": "20 9 * * 1"
         },
         {
             "command": "python manage.py clearsessions",

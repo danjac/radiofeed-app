@@ -77,19 +77,25 @@ Once you have access to the Django Admin, you should configure the default Site 
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
 
-Parse podcast RSS feeds:
+#### Parse podcast RSS feeds:
 
 ```bash
 */6 * * * * python manage.py parse_feeds
 ```
 
-Generate similar recommendations for each podcast:
+#### Run saved iTunes searches:
+
+```bash
+15,45 * * * * python manage.py parse_itunes
+```
+
+#### Generate similar recommendations for each podcast:
 
 ```bash
 15 6 * * * python manage.py create_recommendations
 ```
 
-Send podcast recommendations to users:
+#### Send podcast recommendations to users:
 
 ```bash
 15 9 * * 1 python manage.py send_recommendations_emails
