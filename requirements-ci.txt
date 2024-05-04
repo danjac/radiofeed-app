@@ -63,7 +63,7 @@ django-environ==0.11.2
 django-extensions==3.2.3
 django-fast-update==0.2.3
 django-fastdev==1.9.0
-django-health-check==3.18.1
+django-health-check==3.18.2
 django-htmx==1.17.3
 django-model-utils==4.5.1
 django-permissions-policy==4.19.0
