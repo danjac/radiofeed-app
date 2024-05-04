@@ -78,7 +78,6 @@ def _add_podcasts_to_feeds(feeds: Iterator[Feed]) -> Iterator[Feed]:
             for feed in set(feeds_for_insert)
             if feed.podcast is None
         ),
-        batch_size=100,
         ignore_conflicts=True,
     )
 
