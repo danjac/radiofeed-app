@@ -42,14 +42,15 @@ def command() -> None:
 
 def _do_search(search: ItunesSearch, client: httpx.Client) -> None:
     try:
-        feeds = itunes.search(client, search.search)
-        click.echo(
-            click.style(
-                f"Search for '{search.search}': {len(feeds)} feed(s)",
-                bold=True,
-                fg="green",
-            ),
-        )
+        click.echo(f"Searching for {search.search}...")
+        for feed in itunes.search(client, search.search):
+            click.echo(
+                click.style(
+                    f"Found {feed.title}",
+                    bold=True,
+                    fg="green",
+                ),
+            )
     except httpx.HTTPError as e:
         click.echo(
             click.style(

@@ -283,7 +283,8 @@ class ItunesSearchManager(models.Manager):
 
     def get_or_create_from_search(self, search_term: str) -> tuple[ItunesSearch, bool]:
         """Generates unique ID from search term and return new or existing instance."""
-        search_id = urlsafe_base64_encode(force_bytes(search_term.casefold(), "utf-8"))
+        search_term = search_term.strip().casefold()
+        search_id = urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
         try:
             return self.get(pk=search_id), False
         except self.model.DoesNotExist:
