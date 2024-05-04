@@ -281,10 +281,13 @@ class Podcast(models.Model):
 class ItunesSearchManager(models.Manager):
     """Custom manager for ItunesSearch model."""
 
+    def create_search_id(self, search_term: str) -> str:
+        """Create primary key from search term."""
+        return urlsafe_base64_encode(force_bytes(search_term.casefold(), "utf-8"))
+
     def get_or_create_from_search(self, search_term: str) -> tuple[ItunesSearch, bool]:
         """Generates unique ID from search term and return new or existing instance."""
-        search_term = search_term.strip().casefold()
-        search_id = urlsafe_base64_encode(force_bytes(search_term, "utf-8"))
+        search_id = self.create_search_id(search_term)
         try:
             return self.get(pk=search_id), False
         except self.model.DoesNotExist:

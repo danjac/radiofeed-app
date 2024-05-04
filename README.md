@@ -89,6 +89,12 @@ In production you should set up the following cron jobs to run these Django comm
 15,45 * * * * python manage.py parse_itunes
 ```
 
+#### Clear old iTunes searches:
+
+```bash
+3 12 * * * * python manage.py clear_itunes_searches
+```
+
 #### Generate similar recommendations for each podcast:
 
 ```bash

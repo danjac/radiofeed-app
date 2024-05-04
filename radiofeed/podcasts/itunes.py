@@ -13,16 +13,11 @@ class Feed:
 
     Attributes:
         rss: URL to RSS or Atom resource
-        url: URL to website of podcast
         title: title of podcast
-        image: URL to cover image
-        podcast: matching Podcast instance in local database
     """
 
     rss: str
-    url: str
     title: str = ""
-    image: str = ""
 
 
 def search(client: httpx.Client, search_term: str) -> Iterator[Feed]:
@@ -49,7 +44,13 @@ def _parse_feeds(
         100,
     ):
         Podcast.objects.bulk_create(
-            (Podcast(title=feed.title, rss=feed.rss) for feed in set(batch)),
+            (
+                Podcast(
+                    title=feed.title,
+                    rss=feed.rss,
+                )
+                for feed in set(batch)
+            ),
             ignore_conflicts=True,
         )
 
@@ -61,9 +62,7 @@ def _build_feeds_from_json(json_data: dict) -> Iterator[Feed]:
         try:
             yield Feed(
                 rss=result["feedUrl"],
-                url=result["collectionViewUrl"],
                 title=result["collectionName"],
-                image=result["artworkUrl600"],
             )
         except KeyError:
             continue

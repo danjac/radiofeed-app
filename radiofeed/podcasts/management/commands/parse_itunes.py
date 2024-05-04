@@ -1,5 +1,4 @@
 from concurrent.futures import wait
-from datetime import timedelta
 
 import djclick as click
 import httpx
@@ -13,31 +12,16 @@ from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 @click.command(help="Parse saved iTunes searches")
 def command() -> None:
-    """Runs Itunes search for all saved searches. Any over 24 hours old are deleted."""
+    """Runs Itunes search for all saved searches."""
     client = get_client()
-
-    searches = ItunesSearch.objects.filter(completed__isnull=True)
 
     with DatabaseSafeThreadPoolExecutor() as executor:
         wait(
             executor.db_safe_map(
                 lambda search: _do_search(search, client),
-                searches,
+                ItunesSearch.objects.filter(completed__isnull=True),
             )
         )
-
-    now = timezone.now()
-
-    searches.update(completed=now)
-
-    # Delete any searches > 24 hours
-
-    num_deleted, _ = ItunesSearch.objects.filter(
-        completed__lt=now - timedelta(hours=24)
-    ).delete()
-
-    if num_deleted:
-        click.echo(f"{num_deleted} search(es) deleted")
 
 
 def _do_search(search: ItunesSearch, client: httpx.Client) -> None:
@@ -51,6 +35,8 @@ def _do_search(search: ItunesSearch, client: httpx.Client) -> None:
                     fg="green",
                 ),
             )
+        search.completed = timezone.now()
+        search.save()
     except httpx.HTTPError as e:
         click.echo(
             click.style(
