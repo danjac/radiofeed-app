@@ -1,6 +1,13 @@
-install: pyinstall npminstall precommitinstall nltkdownload
+install:
+	@make pyinstall
+	@make npminstall
+	@make precommitinstall
+	@make nltkdownload
 
-update: pyupdate npmupdate precommitupdate
+update:
+	@make pyupdate
+	@make npmupdate
+	@make precommitupdate
 
 pyinstall:
 	uv venv && source .venv/bin/activate
@@ -13,7 +20,9 @@ pydeps:
 pysync:
 	uv pip sync requirements-ci.txt
 
-pyupdate: pydeps pysync
+pyupdate:
+	@make pydeps
+	@make pysync
 
 npminstall:
 	npm ci
