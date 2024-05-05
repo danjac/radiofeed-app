@@ -12,7 +12,9 @@
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 <li class="flex justify-center items-center sm:justify-end">
                     {# djlint:off #}
-                    <button x-data="{
+                    <button class="inline-flex items-center btn btn-default"
+                       hx-push-url="true"
+                       x-data="{
                         url: '{{ search_itunes_url|escapejs }}',
                         search: '{{ request.search.value|escapejs }}',
                         }"
@@ -25,9 +27,7 @@
                         params.set('{{ request.search.param }}', search);
                         url = url.split(/\?/)[0] + '?' + params.toString();"
                        :hx-get="url"
-                       :disabled="!search"
-                       hx-push-url="true"
-                       class="inline-flex items-center btn btn-default">
+                       :disabled="!search">
                     {# djlint:on #}
                     {% heroicon_mini "magnifying-glass" class="mr-2" %}
                     Search iTunes
