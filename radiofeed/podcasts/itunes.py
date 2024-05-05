@@ -84,7 +84,7 @@ def _add_podcasts_to_feeds(feeds: Iterator[Feed]) -> Iterator[Feed]:
         ignore_conflicts=True,
     )
 
-    return feeds
+    yield from feeds
 
 
 def _get_json(client: httpx.Client, search_term: str) -> dict:
