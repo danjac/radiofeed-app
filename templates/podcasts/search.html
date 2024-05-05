@@ -10,6 +10,7 @@
         </h1>
         <nav>
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
+                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
                 <li class="flex justify-center items-center sm:justify-end">
                     {# djlint:off #}
                     <button class="inline-flex items-center btn btn-default"
@@ -33,7 +34,6 @@
                     </button>
                     {# djlint:on #}
                 </li>
-                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
             </ul>
         </nav>
     </header>

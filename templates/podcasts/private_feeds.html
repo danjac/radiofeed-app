@@ -11,6 +11,9 @@
         </h1>
         <nav>
             <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
+                {% if request.search or page_obj.has_other_pages %}
+                    <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Private Feeds" %}</li>
+                {% endif %}
                 {% if not request.search %}
                     <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
                         <a href="{% url "podcasts:add_private_feed" %}"
@@ -19,9 +22,6 @@
                             Add Private Feed
                         </a>
                     </li>
-                {% endif %}
-                {% if request.search or page_obj.has_other_pages %}
-                    <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Private Feeds" %}</li>
                 {% endif %}
             </ul>
         </nav>
