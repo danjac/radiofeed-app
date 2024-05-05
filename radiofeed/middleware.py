@@ -115,4 +115,8 @@ class SearchDetails:
     @cached_property
     def qs(self) -> str:
         """Returns querystring with search."""
-        return QueryDict.fromkeys([self.param], value=self.value).urlencode()
+        return (
+            QueryDict.fromkeys([self.param], value=self.value).urlencode()
+            if self
+            else ""
+        )
