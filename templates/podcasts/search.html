@@ -28,17 +28,17 @@
                         url = url.split(/\?/)[0] + '?' + params.toString();"
                        :hx-get="url"
                        :disabled="!search">
+                        {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                        Search iTunes
+                    </button>
                     {# djlint:on #}
-                    {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                    Search iTunes
-                </button>
-            </li>
-            <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
-        </ul>
-    </nav>
-</header>
-{% cache 600 search-podcasts request.get_full_path %}
-{% paginate podcasts as page_obj %}
-{% include "podcasts/_podcasts.html" %}
+                </li>
+                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
+            </ul>
+        </nav>
+    </header>
+    {% cache 600 search-podcasts request.get_full_path %}
+    {% paginate podcasts as page_obj %}
+    {% include "podcasts/_podcasts.html" %}
 {% endcache %}
 {% endblock content %}
