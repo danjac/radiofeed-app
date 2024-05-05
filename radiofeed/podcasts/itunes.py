@@ -1,7 +1,7 @@
 import dataclasses
 import itertools
 from collections.abc import Iterator
-from types import Final
+from typing import Final
 
 import httpx
 from django.core.cache import cache
