@@ -1,6 +1,7 @@
 import dataclasses
 import itertools
 from collections.abc import Iterator
+from types import Final
 
 import httpx
 from django.core.cache import cache
@@ -8,6 +9,8 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.podcasts.models import Podcast
+
+_CACHE_TIMEOUT: Final = 600
 
 
 class ItunesError(ValueError):
@@ -91,7 +94,7 @@ def _get_json(client: httpx.Client, search_term: str) -> dict:
         return cached
 
     data = _get_response(client, search_term).json()
-    cache.set(cache_key, data)
+    cache.set(cache_key, data, _CACHE_TIMEOUT)
     return data
 
 
