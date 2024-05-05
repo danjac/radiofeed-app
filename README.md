@@ -43,6 +43,12 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 To run unit tests, just run `pytest`.
 
+An OPML file is provided with sample feeds. If you want to load these into the database (or use your own OPML file):
+
+```bash
+python manage.py parse_opml sample-feeds.opml
+```
+
 ## Deployment
 
 The following environment variables should be set in your production installation (changing _radiofeed.app_ for your domain).
