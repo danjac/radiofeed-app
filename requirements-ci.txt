@@ -30,9 +30,9 @@ click==8.1.7
     # via
     #   django-click
     #   nltk
-coverage==7.5.0
+coverage==7.5.1
     # via pytest-cov
-cryptography==42.0.5
+cryptography==42.0.6
     # via pyjwt
 decorator==5.1.1
     # via ipython
@@ -156,7 +156,7 @@ pycparser==2.22
 pydantic==2.7.1
 pydantic-core==2.18.2
     # via pydantic
-pygments==2.17.2
+pygments==2.18.0
     # via
     #   ipython
     #   rich
