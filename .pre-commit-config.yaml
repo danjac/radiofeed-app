@@ -76,3 +76,14 @@ repos:
       rev: v0.16
       hooks:
           - id: validate-pyproject
+    - repo: https://github.com/astral-sh/uv-pre-commit
+      rev: 0.1.39
+      hooks:
+        - id: pip-compile
+          name: pip-compile
+          args: [pyproject.toml, -o, requirements.txt]
+          files: pyproject.toml
+        - id: pip-compile
+          name: pip-compile ci
+          args: [pyproject.toml, --extra, dev, -o, requirements-ci.txt]
+          files: pyproject.toml
