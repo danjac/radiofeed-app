@@ -9,6 +9,9 @@ htmx.config.historyCacheSize = 0;
 htmx.config.refreshOnHistoryMiss = false;
 htmx.config.useTemplateFragments = true;
 
+// set global HTMX instance
+window.htmx = htmx;
+
 // set global Alpine instance
 window.Alpine = Alpine;
 

@@ -6,6 +6,7 @@
       hx-push-url="true">
     <input type="search"
            x-model="search"
+           @keyUp="$dispatch('search', search)"
            name="{{ request.search.param }}"
            autocomplete="off"
            aria-label="{{ placeholder|default:"Search" }}"

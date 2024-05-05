@@ -204,6 +204,7 @@
     .btn:hover:disabled {
         background-color: theme("colors.gray.600");
         border-color: theme("colors.gray.600");
+        cursor: not-allowed;
     }
 
     .btn-default {

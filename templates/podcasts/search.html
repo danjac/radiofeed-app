@@ -11,11 +11,28 @@
         <nav>
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 <li class="flex justify-center items-center sm:justify-end">
-                    <a href="{{ search_itunes_url }}"
-                       class="inline-flex items-center btn btn-default">
+                    {# djlint:off #}
+                    <button x-data="{
+                        url: '{{ search_itunes_url|escapejs }}',
+                        search: '{{ request.search.value|escapejs }}',
+                       }"
+                       x-init="
+                        $watch('url', () => {
+                           window.htmx.process($el);
+                        });"
+                       @search.window="
+                        search = $event.detail;
+                        const params = new URLSearchParams();
+                        params.set('{{ request.search.param }}', search);
+                        url = url.split(/\?/)[0] + '?' + params.toString();"
+                        :hx-get="url"
+                        :disabled="!search"
+                        hx-push-url="true"
+                        class="inline-flex items-center btn btn-default">
                         {% heroicon_mini "magnifying-glass" class="mr-2" %}
                         Search iTunes
-                    </a>
+                    </button>
+                    {# djlint:on #}
                 </li>
                 <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
             </ul>
