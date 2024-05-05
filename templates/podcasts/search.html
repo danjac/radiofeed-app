@@ -15,9 +15,8 @@
                     <button x-data="{
                         url: '{{ search_itunes_url|escapejs }}',
                         search: '{{ request.search.value|escapejs }}',
-                       }"
-                       x-init="
-                        $watch('url', () => {
+                        }"
+                       x-init="$watch('url', () => {
                            window.htmx.process($el);
                         });"
                        @search.window="
@@ -25,21 +24,21 @@
                         const params = new URLSearchParams();
                         params.set('{{ request.search.param }}', search);
                         url = url.split(/\?/)[0] + '?' + params.toString();"
-                        :hx-get="url"
-                        :disabled="!search"
-                        hx-push-url="true"
-                        class="inline-flex items-center btn btn-default">
-                        {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                        Search iTunes
-                    </button>
+                       :hx-get="url"
+                       :disabled="!search"
+                       hx-push-url="true"
+                       class="inline-flex items-center btn btn-default">
                     {# djlint:on #}
-                </li>
-                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
-            </ul>
-        </nav>
-    </header>
-    {% cache 600 search-podcasts request.get_full_path %}
-    {% paginate podcasts as page_obj %}
-    {% include "podcasts/_podcasts.html" %}
+                    {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                    Search iTunes
+                </button>
+            </li>
+            <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
+        </ul>
+    </nav>
+</header>
+{% cache 600 search-podcasts request.get_full_path %}
+{% paginate podcasts as page_obj %}
+{% include "podcasts/_podcasts.html" %}
 {% endcache %}
 {% endblock content %}
