@@ -32,7 +32,7 @@
             </div>
         {% endif %}
     </header>
-    {% cache 600 promoted-episodes %}
+    {% cache 600 promoted-episodes request.get_full_path %}
     {% paginate episodes as page_obj %}
     {% include "episodes/_episodes.html" %}
 {% endcache %}

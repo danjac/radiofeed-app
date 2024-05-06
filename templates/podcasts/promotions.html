@@ -28,7 +28,7 @@
             </div>
         {% endif %}
     </header>
-    {% cache 600 podcasts-promotions %}
+    {% cache 600 podcasts-promotions request.get_full_path %}
     {% paginate podcasts as page_obj %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}
