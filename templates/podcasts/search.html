@@ -11,27 +11,25 @@
         <nav>
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 <li class="flex justify-center items-center sm:justify-end">
-                    {% with search=request.search.value|escapejs search_itunes_url=search_itunes_url|escapejs %}
-                        <button class="inline-flex items-center btn btn-default"
-                            hx-push-url="true"
-                            {# djlint:off #}
-                            x-data="{
-                                url: '{{ search_itunes_url }}?{{ search }}',
-                                search: '{{ search }}',
-                            }"
-                            x-init="$watch('url', () => window.htmx.process($el));"
-                            @search.window="
-                                search = $event.detail;
-                                const params = new URLSearchParams();
-                                params.set('{{ request.search.param }}', search);
-                                url = '{{ search_itunes_url }}' + '?' + params.toString();"
-                            {# djlint:on #}
-                            :hx-get="url"
-                            :disabled="!search">
-                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                            Search iTunes
-                        </button>
-                    {% endwith %}
+                    <button class="inline-flex items-center btn btn-default"
+                        hx-push-url="true"
+                        {# djlint:off #}
+                        x-data="{
+                        url: '{{ search_itunes_url|escapejs }}?{{ request.search.qs|escapejs }}',
+                            search: '{{ request.search.value|escapejs }}',
+                        }"
+                        x-init="$watch('url', () => window.htmx.process($el));"
+                        @search.window="
+                            search = $event.detail;
+                            const params = new URLSearchParams();
+                            params.set('{{ request.search.param }}', search);
+                            url = '{{ search_itunes_url|escapejs }}' + '?' + params.toString();"
+                        {# djlint:on #}
+                        :hx-get="url"
+                        :disabled="!search">
+                        {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                        Search iTunes
+                    </button>
                 </li>
                 <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
             </ul>
