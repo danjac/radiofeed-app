@@ -2,7 +2,7 @@ import http
 
 import pytest
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
@@ -34,7 +34,7 @@ class TestLandingPage:
         assert client.get(self.url).url == podcasts_url
 
 
-class TestPodcasts:
+class TestIndex:
     @pytest.mark.django_db()
     def test_htmx(self, client, auth_user):
         PodcastFactory.create_batch(3, promoted=True)
@@ -45,6 +45,7 @@ class TestPodcasts:
         assert len(response.context["page_obj"].object_list) == 3
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
+        assertTemplateUsed(response, "podcasts/promotions.html")
 
     @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
@@ -54,6 +55,7 @@ class TestPodcasts:
         assert len(response.context["page_obj"].object_list) == 0
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
+        assertTemplateUsed(response, "podcasts/promotions.html")
 
     @pytest.mark.django_db()
     def test_invalid_page(self, client, auth_user):
@@ -68,6 +70,7 @@ class TestPodcasts:
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 3
         assert response.context["promoted"]
+        assertTemplateUsed(response, "podcasts/promotions.html")
 
     @pytest.mark.django_db()
     def test_user_is_subscribed_promoted(self, client, auth_user):
@@ -82,6 +85,7 @@ class TestPodcasts:
         assert sub not in response.context["page_obj"].object_list
         assert response.context["promoted"]
         assert response.context["has_subscriptions"]
+        assertTemplateUsed(response, "podcasts/promotions.html")
 
     @pytest.mark.django_db()
     def test_user_is_not_subscribed(self, client, auth_user):
@@ -94,6 +98,7 @@ class TestPodcasts:
         assert len(response.context["page_obj"].object_list) == 3
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
+        assertTemplateUsed(response, "podcasts/promotions.html")
 
     @pytest.mark.django_db()
     def test_user_is_subscribed(self, client, auth_user):
@@ -108,6 +113,7 @@ class TestPodcasts:
         assert response.context["page_obj"].object_list[0] == sub.podcast
         assert not response.context["promoted"]
         assert response.context["has_subscriptions"]
+        assertTemplateUsed(response, "podcasts/subscriptions.html")
 
 
 class TestLatestEpisode:

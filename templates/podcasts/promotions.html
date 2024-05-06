@@ -1,22 +1,18 @@
 {% extends "base.html" %}
+{% load cache %}
 {% block title %}
-    | Podcasts
-    {% if has_subscriptions %}| {{ promoted|yesno:"Promotions,Subscriptions" }}{% endif %}
+    | Podcasts | Promotions
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-3 space-y-3 border-b sm:space-y-6">
         {% if has_subscriptions %}
             <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
-                Podcasts: {{ promoted|yesno:"Promotions,Subscriptions" }}
+                Podcasts: Promotions
             </h1>
             <nav>
                 <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
                     <li class="flex justify-center items-center sm:justify-start">
-                        {% if promoted %}
-                            <a href="{{ request.path }}" class="link">Subscriptions</a>
-                        {% else %}
-                            <a href="{{ request.path }}?promoted=true" class="link">Promotions</a>
-                        {% endif %}
+                        <a href="{{ request.path }}" class="link">Subscriptions</a>
                     </li>
                     <li class="flex justify-center items-center space-x-3 sm:justify-end">
                         {% search_form "Search: Podcasts" search_url=search_podcasts_url %}
@@ -32,6 +28,8 @@
             </div>
         {% endif %}
     </header>
+    {% cache 600 podcasts-promotions %}
     {% paginate podcasts as page_obj %}
     {% include "podcasts/_podcasts.html" %}
+{% endcache %}
 {% endblock content %}
