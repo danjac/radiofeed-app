@@ -15,7 +15,7 @@
                         hx-push-url="true"
                         {# djlint:off #}
                         x-data="{
-                        url: '{{ search_itunes_url|escapejs }}?{{ request.search.qs|escapejs }}',
+                            url: '{{ search_itunes_url|escapejs }}?{{ request.search.qs|escapejs }}',
                             search: '{{ request.search.value|escapejs }}',
                         }"
                         x-init="$watch('url', () => window.htmx.process($el));"
