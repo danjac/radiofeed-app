@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+    | New Releases | Promotions
+{% endblock title %}
+{% block content %}
+    <header class="pb-3 mb-3 space-y-3 border-b sm:space-y-6">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
+            New Releases: Subscriptions
+        </h1>
+        <nav>
+            <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
+                <li class="flex justify-center items-center sm:justify-start">
+                    <a href="{{ request.path }}?promoted=true" class="link">Promotions</a>
+                </li>
+                <li class="flex justify-center items-center space-x-3 sm:justify-end">
+                    {% search_form "Search: Episodes" search_url=search_episodes_url %}
+                </li>
+            </ul>
+        </nav>
+    </header>
+    {% paginate episodes as page_obj %}
+    {% include "episodes/_episodes.html" %}
+{% endblock content %}

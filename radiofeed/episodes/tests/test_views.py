@@ -4,7 +4,7 @@ from datetime import timedelta
 import pytest
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from pytest_django.asserts import assertContains, assertNotContains
+from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from radiofeed.episodes.middleware import AudioPlayer
 from radiofeed.episodes.models import AudioLog, Bookmark
@@ -38,12 +38,13 @@ def player_episode_anonymous(client, episode):
     return episode
 
 
-class TestNewEpisodes:
+class TestIndex:
     @pytest.mark.django_db()
     def test_no_episodes(self, client, auth_user):
         response = client.get(episodes_url)
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
+        assertTemplateUsed("episodes/promotions.html")
 
     @pytest.mark.django_db()
     def test_not_subscribed(self, client, auth_user):
@@ -56,6 +57,7 @@ class TestNewEpisodes:
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["promoted"]
         assert not response.context["has_subscriptions"]
+        assertTemplateUsed("episodes/promotions.html")
 
     @pytest.mark.django_db()
     def test_user_has_subscribed(self, client, auth_user):
@@ -74,6 +76,7 @@ class TestNewEpisodes:
         assert response.context["page_obj"].object_list[0] == episode
         assert not response.context["promoted"]
         assert response.context["has_subscriptions"]
+        assertTemplateUsed("episodes/subscriptions.html")
 
     @pytest.mark.django_db()
     def test_user_has_subscribed_promoted(self, client, auth_user):
@@ -92,6 +95,7 @@ class TestNewEpisodes:
         assert response.context["page_obj"].object_list[0].podcast == promoted
         assert response.context["promoted"]
         assert response.context["has_subscriptions"]
+        assertTemplateUsed("episodes/promotions.html")
 
 
 class TestSearchEpisodes:

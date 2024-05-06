@@ -34,13 +34,17 @@ def index(request: HttpRequest) -> HttpResponse:
     has_subscriptions = subscribed_episodes.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
 
-    episodes = (
-        episodes.filter(podcast__promoted=True) if promoted else subscribed_episodes
-    )
+    if promoted:
+        episodes = episodes.filter(podcast__promoted=True)
+        template_name = "episodes/promotions.html"
+
+    else:
+        episodes = subscribed_episodes
+        template_name = "episodes/subscriptions.html"
 
     return render(
         request,
-        "episodes/index.html",
+        template_name,
         {
             "episodes": episodes,
             "promoted": promoted,
