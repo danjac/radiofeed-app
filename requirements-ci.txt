@@ -32,12 +32,12 @@ click==8.1.7
     #   nltk
 coverage==7.5.1
     # via pytest-cov
-cryptography==42.0.6
+cryptography==42.0.7
     # via pyjwt
 decorator==5.1.1
     # via ipython
 dj-database-url==2.1.0
-django==5.0.4
+django==5.0.5
     # via
     #   dj-database-url
     #   django-allauth
@@ -202,7 +202,7 @@ rich==13.7.1
 scikit-learn==1.4.2
 scipy==1.13.0
     # via scikit-learn
-sentry-sdk==2.0.1
+sentry-sdk==2.1.1
 setuptools==69.5.1
 six==1.16.0
     # via
@@ -248,5 +248,5 @@ urllib3==2.2.1
     #   sentry-sdk
 wcwidth==0.2.13
     # via prompt-toolkit
-werkzeug==3.0.2
+werkzeug==3.0.3
 whitenoise==6.6.0
