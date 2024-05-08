@@ -54,7 +54,7 @@ def index(request: HttpRequest) -> HttpResponse:
     promoted = "promoted" in request.GET or not has_subscriptions
 
     if promoted:
-        podcasts = podcasts.filter(promoted=True) if promoted else subscribed_podcasts
+        podcasts = podcasts.filter(promoted=True)
         template_name = "podcasts/promotions.html"
 
     else:
