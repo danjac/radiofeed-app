@@ -67,11 +67,11 @@ repos:
           - id: django-upgrade
             args: [--target-version, "5.0"]
     - repo: https://github.com/abravalheri/validate-pyproject
-      rev: v0.16
+      rev: v0.17
       hooks:
           - id: validate-pyproject
     - repo: https://github.com/astral-sh/uv-pre-commit
-      rev: 0.1.39
+      rev: 0.1.41
       hooks:
         - id: pip-compile
           name: pip-compile

@@ -37,7 +37,7 @@ cryptography==42.0.7
 decorator==5.1.1
     # via ipython
 dj-database-url==2.1.0
-django==5.0.5
+django==5.0.6
     # via
     #   dj-database-url
     #   django-allauth
