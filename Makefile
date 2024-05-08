@@ -1,28 +1,14 @@
-install:
-	@make pyinstall
-	@make npminstall
-	@make precommitinstall
-	@make nltkdownload
-
-update:
-	@make pyupdate
-	@make npmupdate
-	@make precommitupdate
+install: pyinstall npminstall precommitinstall nltkdownload
+update: pyupdate npmupdate precommitupdate
 
 pyinstall:
 	uv venv && source .venv/bin/activate
 	uv pip install -r requirements-ci.txt
 
-pydeps:
+pyupdate:
 	uv pip compile pyproject.toml --upgrade -o requirements.txt
 	uv pip compile pyproject.toml --upgrade --extra dev -o requirements-ci.txt
-
-pysync:
 	uv pip sync requirements-ci.txt
-
-pyupdate:
-	@make pydeps
-	@make pysync
 
 npminstall:
 	npm ci
