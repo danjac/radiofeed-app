@@ -94,7 +94,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             {
                 "podcasts": podcasts,
                 "clear_search_url": reverse("podcasts:index"),
-                "search_itunes_url": reverse("podcasts:search_itunes"),
             },
         )
 
