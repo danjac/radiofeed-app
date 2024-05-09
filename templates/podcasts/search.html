@@ -19,6 +19,7 @@
                             search: '{{ request.search.value|escapejs }}',
                         }"
                         x-init="$watch('url', () => window.htmx.process($el));"
+                        @htmx:after-settle.window="window.htmx.process($el)"
                         @search.window="
                             search = $event.detail;
                             const params = new URLSearchParams();
