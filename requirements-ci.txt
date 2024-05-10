@@ -144,8 +144,8 @@ pprintpp==0.4.0
 prompt-toolkit==3.0.43
     # via ipython
 psutil==5.9.8
-psycopg==3.1.18
-psycopg-binary==3.1.18
+psycopg==3.1.19
+psycopg-binary==3.1.19
     # via psycopg
 ptyprocess==0.7.0
     # via pexpect

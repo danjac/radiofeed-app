@@ -88,8 +88,8 @@ packaging==24.0
     # via gunicorn
 pillow==10.3.0
 psutil==5.9.8
-psycopg==3.1.18
-psycopg-binary==3.1.18
+psycopg==3.1.19
+psycopg-binary==3.1.19
     # via psycopg
 pycparser==2.22
     # via cffi
