@@ -1,6 +1,5 @@
 import functools
 
-from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
@@ -22,9 +21,10 @@ def require_auth(view: HttpRequestResponse) -> HttpRequestResponse:
         if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
-        # redirect to the login url without "next", so we don't have to deal with redirecting to a partial
         if request.htmx:
-            return HttpResponseClientRedirect(settings.LOGIN_URL)
+            return HttpResponseClientRedirect(
+                redirect_to_login(request.htmx.current_url_abs_path or "").url
+            )
 
         # plain non-HTMX AJAX: return a 401
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
