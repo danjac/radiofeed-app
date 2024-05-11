@@ -69,7 +69,6 @@ MIDDLEWARE: list[str] = [
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "radiofeed.middleware.HtmxRestoreMiddleware",
-    "radiofeed.middleware.HtmxPushUrlMiddleware",
     "radiofeed.middleware.HtmxMessagesMiddleware",
     "radiofeed.middleware.HtmxRedirectMiddleware",
     "radiofeed.middleware.SearchMiddleware",

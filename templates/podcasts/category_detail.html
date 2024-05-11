@@ -14,12 +14,11 @@
             <nav>
                 <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                     <li class="flex justify-center items-center sm:justify-end">
-                        <button class="inline-flex items-center btn btn-default"
-                                x-data
-                                @click.once="$dispatch('search', '{{ search_podcasts_url|escapejs }}')">
+                        <a class="inline-flex items-center btn btn-default"
+                           href="{{ search_podcasts_url }}?{{ request.search.qs }}">
                             {% heroicon_mini "magnifying-glass" class="mr-2" %}
                             Search All Podcasts
-                        </button>
+                        </a>
                     </li>
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: "|add:category.name %}</li>
                 </ul>

@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.utils.cache import patch_vary_headers
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
-from django_htmx.http import HttpResponseLocation, push_url
+from django_htmx.http import HttpResponseLocation
 
 from radiofeed.types import HttpRequestResponse
 
@@ -38,18 +38,6 @@ class HtmxRestoreMiddleware(BaseMiddleware):
         if request.htmx:
             patch_vary_headers(response, ["HX-Request"])
             response.setdefault("Cache-Control", "no-store, max-age=0")
-        return response
-
-
-class HtmxPushUrlMiddleware(BaseMiddleware):
-    """If custom HX-Push-URL in header in request, responds with 'HX-Push-URL' response."""
-
-    def handle_request(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-
-        response = self.get_response(request)
-        if request.htmx and "HX-Push-URL" in request.headers:
-            return push_url(response, request.get_full_path())
         return response
 
 
