@@ -9,7 +9,22 @@ from django_htmx.http import HttpResponseLocation
 from radiofeed.types import HttpRequestResponse
 
 
-class HtmxResponseHeadersMiddleware:
+class BaseMiddleware:
+    """Base middleware class."""
+
+    def __init__(self, get_response: HttpRequestResponse) -> None:
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Middleware callable."""
+        return self.handle_request(request)
+
+    def handle_request(self, request: HttpRequest) -> HttpResponse:
+        """Implementation."""
+        raise NotImplementedError  # pragma: no cover
+
+
+class HtmxResponseHeadersMiddleware(BaseMiddleware):
     """Workarounds for https://github.com/bigskysoftware/htmx/issues/497.
 
     Sets Cache-Control and Vary headers to ensure full page is rendered.
@@ -17,10 +32,7 @@ class HtmxResponseHeadersMiddleware:
     Place after HtmxMiddleware.
     """
 
-    def __init__(self, get_response: HttpRequestResponse) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def handle_request(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
         response = self.get_response(request)
         if request.htmx:
@@ -29,7 +41,7 @@ class HtmxResponseHeadersMiddleware:
         return response
 
 
-class HtmxMessagesMiddleware:
+class HtmxMessagesMiddleware(BaseMiddleware):
     """Adds messages to HTMX response"""
 
     _hx_redirect_headers = frozenset(
@@ -40,10 +52,7 @@ class HtmxMessagesMiddleware:
         }
     )
 
-    def __init__(self, get_response: HttpRequestResponse) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def handle_request(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation"""
         response = self.get_response(request)
 
@@ -65,13 +74,10 @@ class HtmxMessagesMiddleware:
         return response
 
 
-class HtmxRedirectMiddleware:
+class HtmxRedirectMiddleware(BaseMiddleware):
     """If HTMX request will send HX-Location response header if HTTP redirect."""
 
-    def __init__(self, get_response: HttpRequestResponse) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def handle_request(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation"""
         response = self.get_response(request)
         if request.htmx and "Location" in response:
@@ -79,13 +85,10 @@ class HtmxRedirectMiddleware:
         return response
 
 
-class SearchMiddleware:
+class SearchMiddleware(BaseMiddleware):
     """Adds `SearchDetails` instance as `request.search`."""
 
-    def __init__(self, get_response: HttpRequestResponse) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def handle_request(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
         request.search = SearchDetails(request)
         return self.get_response(request)
