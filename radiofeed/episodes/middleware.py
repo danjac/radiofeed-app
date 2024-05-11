@@ -4,7 +4,7 @@ from radiofeed.middleware import BaseMiddleware
 
 
 class AudioPlayerMiddleware(BaseMiddleware):
-    """Adds `AudioPlayer` instance to request as `request.audio_player`."""
+    """Adds `AudioPlayerDetail` instance to request as `request.audio_player`."""
 
     def handle_request(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
