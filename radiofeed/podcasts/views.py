@@ -89,14 +89,17 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             )
         )
 
-        return render(
-            request,
-            "podcasts/search.html",
-            {
-                "podcasts": podcasts,
-                "clear_search_url": reverse("podcasts:index"),
-                "search_itunes_url": reverse("podcasts:search_itunes"),
-            },
+        return push_url(
+            render(
+                request,
+                "podcasts/search.html",
+                {
+                    "podcasts": podcasts,
+                    "clear_search_url": reverse("podcasts:index"),
+                    "search_itunes_url": reverse("podcasts:search_itunes"),
+                },
+            ),
+            request.get_full_path(),
         )
 
     return redirect("podcasts:index")
@@ -120,6 +123,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
                 {
                     "feeds": feeds,
                     "clear_search_url": reverse("podcasts:index"),
+                    "search_podcasts_url": reverse("podcasts:search_podcasts"),
                 },
             ),
             request.get_full_path(),
