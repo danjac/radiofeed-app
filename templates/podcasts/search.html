@@ -11,11 +11,12 @@
         <nav>
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 <li class="flex justify-center items-center sm:justify-end">
-                    <a class="inline-flex items-center btn btn-default"
-                       href="{% url "podcasts:search_itunes" %}?{{ request.search.qs }}">
+                    <button class="inline-flex items-center btn btn-default"
+                            x-data
+                            @click.once="$dispatch('search', '{{ search_itunes_url|escapejs }}')">
                         {% heroicon_mini "magnifying-glass" class="mr-2" %}
                         Search iTunes
-                    </a>
+                    </button>
                 </li>
                 <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Podcasts" %}</li>
             </ul>

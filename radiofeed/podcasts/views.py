@@ -5,6 +5,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
+from django_htmx.http import push_url
 
 from radiofeed.client import get_client
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
@@ -94,6 +95,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             {
                 "podcasts": podcasts,
                 "clear_search_url": reverse("podcasts:index"),
+                "search_itunes_url": reverse("podcasts:search_itunes"),
             },
         )
 
@@ -111,13 +113,16 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             messages.error(request, "Error: iTunes unavailable")
             return redirect("podcasts:index")
 
-        return render(
-            request,
-            "podcasts/search_itunes.html",
-            {
-                "feeds": feeds,
-                "clear_search_url": reverse("podcasts:index"),
-            },
+        return push_url(
+            render(
+                request,
+                "podcasts/search_itunes.html",
+                {
+                    "feeds": feeds,
+                    "clear_search_url": reverse("podcasts:index"),
+                },
+            ),
+            request.get_full_path(),
         )
 
     return redirect("podcasts:index")
