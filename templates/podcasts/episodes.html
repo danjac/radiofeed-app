@@ -1,5 +1,5 @@
 {% extends "podcasts/detail_base.html" %}
-{% load cache %}
+{% load cache heroicons %}
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
@@ -8,7 +8,15 @@
         <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
             {{ block.super }}
             <nav class="flex justify-center items-center sm:justify-start">
-                <ul class="justify-between items-center sm:flex">
+                <ul class="justify-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
+                    <li class="flex justify-center items-center sm:justify-end">
+                        <button class="inline-flex items-center btn btn-default"
+                                x-data
+                                @click.once="$dispatch('search', '{{ search_episodes_url|escapejs }}')">
+                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                            Search All Episodes
+                        </button>
+                    </li>
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Episodes" %}</li>
                 </ul>
             </nav>

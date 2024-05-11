@@ -185,6 +185,7 @@ def episodes(
             "podcast": podcast,
             "episodes": episodes,
             "ordering_asc": ordering_asc,
+            "search_episodes_url": reverse("episodes:search_episodes"),
         },
     )
 
