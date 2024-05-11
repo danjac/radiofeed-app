@@ -8,11 +8,11 @@ class AudioPlayerMiddleware(BaseMiddleware):
 
     def handle_request(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.audio_player = AudioPlayer(request)
+        request.audio_player = AudioPlayerDetail(request)
         return self.get_response(request)
 
 
-class AudioPlayer:
+class AudioPlayerDetail:
     """Tracks current player episode in session."""
 
     session_key: str = "audio_player"

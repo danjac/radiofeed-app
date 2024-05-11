@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed.episodes.middleware import AudioPlayer, AudioPlayerMiddleware
+from radiofeed.episodes.middleware import AudioPlayerDetail, AudioPlayerMiddleware
 
 
 class TestAudioPlayerMiddleware:
@@ -10,7 +10,7 @@ class TestAudioPlayerMiddleware:
         assert req.audio_player
 
 
-class TestAudioPlayer:
+class TestAudioPlayerDetail:
     episode_id = 12345
 
     @pytest.fixture()
@@ -21,7 +21,7 @@ class TestAudioPlayer:
 
     @pytest.fixture()
     def player(self, req):
-        return AudioPlayer(req)
+        return AudioPlayerDetail(req)
 
     def test_get_if_none(self, player):
         assert player.get() is None
