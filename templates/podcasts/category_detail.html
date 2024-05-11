@@ -13,13 +13,15 @@
         {% if page_obj.has_other_pages or request.search %}
             <nav>
                 <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
-                    <li class="flex justify-center items-center sm:justify-end">
-                        <a class="inline-flex items-center btn btn-default"
-                           href="{{ search_podcasts_url }}?{{ request.search.qs }}">
-                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                            Search All Podcasts
-                        </a>
-                    </li>
+                    {% if request.search %}
+                        <li class="flex justify-center items-center sm:justify-end">
+                            <a class="inline-flex items-center btn btn-default"
+                               href="{{ search_podcasts_url }}?{{ request.search.qs }}">
+                                {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                                Search All Podcasts
+                            </a>
+                        </li>
+                    {% endif %}
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: "|add:category.name %}</li>
                 </ul>
             </nav>
