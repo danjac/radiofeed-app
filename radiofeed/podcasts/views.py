@@ -5,7 +5,6 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import push_url
 
 from radiofeed.client import get_client
 from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
@@ -89,17 +88,14 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             )
         )
 
-        return push_url(
-            render(
-                request,
-                "podcasts/search.html",
-                {
-                    "podcasts": podcasts,
-                    "clear_search_url": reverse("podcasts:index"),
-                    "search_itunes_url": reverse("podcasts:search_itunes"),
-                },
-            ),
-            request.get_full_path(),
+        return render(
+            request,
+            "podcasts/search.html",
+            {
+                "podcasts": podcasts,
+                "clear_search_url": reverse("podcasts:index"),
+                "search_itunes_url": reverse("podcasts:search_itunes"),
+            },
         )
 
     return redirect("podcasts:index")
@@ -116,17 +112,14 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             messages.error(request, "Error: iTunes unavailable")
             return redirect("podcasts:index")
 
-        return push_url(
-            render(
-                request,
-                "podcasts/search_itunes.html",
-                {
-                    "feeds": feeds,
-                    "clear_search_url": reverse("podcasts:index"),
-                    "search_podcasts_url": reverse("podcasts:search_podcasts"),
-                },
-            ),
-            request.get_full_path(),
+        return render(
+            request,
+            "podcasts/search_itunes.html",
+            {
+                "feeds": feeds,
+                "clear_search_url": reverse("podcasts:index"),
+                "search_podcasts_url": reverse("podcasts:search_podcasts"),
+            },
         )
 
     return redirect("podcasts:index")
@@ -279,6 +272,7 @@ def category_detail(
         {
             "category": category,
             "podcasts": podcasts,
+            "search_podcasts_url": reverse("podcasts:search_podcasts"),
         },
     )
 

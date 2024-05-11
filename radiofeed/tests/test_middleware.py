@@ -6,8 +6,9 @@ from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
 from radiofeed.middleware import (
     HtmxMessagesMiddleware,
+    HtmxPushUrlMiddleware,
     HtmxRedirectMiddleware,
-    HtmxResponseHeadersMiddleware,
+    HtmxRestoreMiddleware,
     SearchDetails,
     SearchMiddleware,
 )
@@ -26,6 +27,31 @@ def req(rf):
 @pytest.fixture()
 def htmx_req(rf):
     return rf.get("/", HTTP_HX_REQUEST="true")
+
+
+class TestHtmxPushUrlMiddleware:
+    @pytest.fixture()
+    def get_response(self):
+        def _get_response(request):
+            return HttpResponse()
+
+        return _get_response
+
+    def test_not_htmx(self, req, get_response):
+        req.htmx = False
+        response = HtmxPushUrlMiddleware(get_response)(req)
+        assert "HX-Push-URL" not in response
+
+    def test_htmx_no_header(self, htmx_req, get_response):
+        htmx_req.htmx = True
+        response = HtmxPushUrlMiddleware(get_response)(htmx_req)
+        assert "HX-Push-URL" not in response
+
+    def test_htmx_has_header(self, rf, get_response):
+        req = rf.get("/", HTTP_HX_REQUEST=True, HTTP_HX_PUSH_URL="true")
+        req.htmx = True
+        response = HtmxPushUrlMiddleware(get_response)(req)
+        assert response["HX-Push-URL"] == "/"
 
 
 class TestHtmxRedirectMiddleware:
@@ -52,10 +78,10 @@ class TestHtmxRedirectMiddleware:
         assert response["Location"] == "/"
 
 
-class TestHtmxResponseHeadersMiddleware:
+class TestHtmxRestoreMiddleware:
     @pytest.fixture()
     def cache_mw(self, get_response):
-        return HtmxResponseHeadersMiddleware(get_response)
+        return HtmxRestoreMiddleware(get_response)
 
     def test_is_htmx_request_cache_control_already_set(self, rf):
         def _get_response(request):
@@ -67,7 +93,7 @@ class TestHtmxResponseHeadersMiddleware:
         req = rf.get("/")
         req.htmx = True
 
-        resp = HtmxResponseHeadersMiddleware(_get_response)(req)
+        resp = HtmxRestoreMiddleware(_get_response)(req)
         assert resp.headers["Cache-Control"] == "max-age=3600"
         assert resp.headers["Vary"] == "HX-Request"
 
