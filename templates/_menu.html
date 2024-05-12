@@ -1,5 +1,5 @@
 {% load cache heroicons %}
-<nav class="pl-3 xl:pl-0" id="{{ dom_id }}">
+<nav class="pl-3 xl:pl-0" id="menu">
     {% cache 600 menu request.path %}
     <ul class="space-y-3 text-base sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:text-lg lg:text-xl xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
         {% with menu_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
