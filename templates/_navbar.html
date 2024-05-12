@@ -51,19 +51,17 @@
                                     <a href="{% url "users:preferences" %}"
                                        accesskey="s"
                                        class="flex items-center py-2 px-4 text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800">
-                                        {% heroicon_mini "cog-6-tooth" class="mr-2" %}
                                         Settings
                                     </a>
                                 </li>
                                 <li>
                                     <form class="items-center py-2 px-4 hover:bg-gray-100 flex-inline w-42 dark:hover:bg-gray-800"
                                           hx-disable="true"
-                                          action="{% url 'account_logout' %}"
+                                          action="{% url "account_logout" %}"
                                           method="post">
                                         {% csrf_token %}
                                         <button accesskey="l"
                                                 class="flex items-center w-full text-gray-700 dark:text-gray-100">
-                                            {% heroicon_outline "arrow-left-on-rectangle" class="mr-2" %}
                                             Logout
                                         </button>
                                     </form>
