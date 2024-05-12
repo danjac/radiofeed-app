@@ -4,14 +4,8 @@
     x-data="{showMenu: false, showDropdown: false, scrolling: false}"
     {# djlint: off #}
         x-init="
-            $watch('showMenu', () => {
-                if (showMenu) {
-                    showDropdown = false;
-                    $refs.menu.innerHTML = document.getElementById('menu').innerHTML;
-                    window.htmx.process($refs.menu);
-                }
-             });
-            $watch('showDropdown', () => { if (showDropdown) {showMenu = false} });"
+            $watch('showMenu', () => { if (showMenu) showDropdown = false; });
+            $watch('showDropdown', () => { if (showDropdown) showMenu = false; });"
     {# djlint: on #}
     @scroll.window="scrolling = window.pageYOffset > 0"
     @htmx:before-request.window="showMenu=false; showDropdown=false">
@@ -111,7 +105,7 @@
     {% if user.is_authenticated %}
         <nav class="absolute left-0 z-50 py-6 pl-3 w-full bg-white shadow-xl xl:hidden dark:bg-black"
              x-cloak
-             x-ref="menu"
+             x-init="$el.innerHTML = document.getElementById('sidebar').innerHTML"
              x-show.transition="showMenu"
              x-transition:enter="transition ease-out duration-75"
              x-transition:enter-start="transform opacity-0 scale-95"
