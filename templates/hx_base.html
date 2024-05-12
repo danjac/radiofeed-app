@@ -1,6 +1,22 @@
-<title>{{ request.site.name }}
-    {% block title %}
-    {% endblock title %}
-</title>
-{% block content %}
-{% endblock content %}
+{% block page %}
+    {% block page_header %}
+        <title>{{ request.site.name }}
+            {% block title %}
+            {% endblock title %}
+        </title>
+    {% endblock page_header %}
+    {% block page_content %}
+        {% include "_navbar.html" %}
+        <div class="flex relative p-2 py-6 mx-auto min-h-screen xl:pt-12">
+            {% if user.is_authenticated %}
+                <aside class="hidden w-full xl:block xl:sticky xl:top-28 xl:w-1/6 xl:h-full">
+                    {% include "_menu.html" with dom_id="sidebar-menu" %}
+                </aside>
+            {% endif %}
+            <main class="mx-auto w-full xl:w-5/6" id="content" hx-history-elt>
+                {% block content %}
+                {% endblock content %}
+            </main>
+        </div>
+    {% endblock page_content %}
+{% endblock page %}

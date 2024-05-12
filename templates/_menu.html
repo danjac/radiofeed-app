@@ -1,63 +1,58 @@
 {% load cache heroicons %}
-{% cache 600 menu request.path %}
-{% with menu_link_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
-    <nav class="pl-3 xl:pl-0" id="{{ dom_id }}">
-        <ul class="space-y-3 text-base sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:text-lg lg:text-xl xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
+<nav class="pl-3 xl:pl-0" id="{{ dom_id }}">
+    {% cache 600 menu request.path %}
+    <ul class="space-y-3 text-base sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:text-lg lg:text-xl xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
+        {% with menu_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
             <li>
-                <a href="{% url "podcasts:index" %}"
-                   accesskey="p"
-                   class="{{ menu_link_css }}">
+                {% active_link "podcasts:index" css=menu_css as link %}
+                <a href="{{ link.url }}" accesskey="p" class="{{ link.css }}">
                     {% heroicon_outline "rss" class=icon_css %}
                     Podcasts
                 </a>
             </li>
             <li>
-                <a href="{% url "episodes:index" %}"
-                   accesskey="n"
-                   class="{{ menu_link_css }}">
+                {% active_link "episodes:index" css=menu_css as link %}
+                <a href="{{ link.url }}" accesskey="n" class="{{ link.css }}">
                     {% heroicon_outline "sparkles" class=icon_css %}
                     New Releases
                 </a>
             </li>
             <li>
-                <a href="{% url "podcasts:category_list" %}"
-                   accesskey="c"
-                   class="{{ menu_link_css }}">
+                {% active_link "podcasts:category_list" css=menu_css as link %}
+                <a href="{{ link.url }}" accesskey="c" class="{{ link.css }}">
                     {% heroicon_outline "tag" class=icon_css %}
                     Categories
                 </a>
             </li>
             <li>
-                <a href="{% url "episodes:bookmarks" %}"
-                   accesskey="b"
-                   class="{{ menu_link_css }}">
+                {% active_link "episodes:bookmarks" css=menu_css as link %}
+                <a href="{{ link.url }}" accesskey="b" class="{{ link.css }}">
                     {% heroicon_outline "bookmark" class=icon_css %}
                     Bookmarks
                 </a>
             </li>
             <li>
-                <a href="{% url "episodes:history" %}"
-                   accesskey="h"
-                   class="{{ menu_link_css }}">
+                {% active_link "episodes:history" css=menu_css as link %}
+                <a href="{{ link.url }}" accesskey="h" class="{{ link.css }}">
                     {% heroicon_outline "clock" class=icon_css %}
                     History
                 </a>
             </li>
             <li>
-                <a href="{% url "podcasts:private_feeds" %}"
-                   accesskey="f"
-                   class="{{ menu_link_css }}">
+                {% active_link "podcasts:private_feeds" css=menu_css as link %}
+                <a href="{{ link.url }}" accesskey="f" class="{{ link.css }}">
                     {% heroicon_outline "lock-closed" class=icon_css %}
                     Private Feeds
                 </a>
             </li>
             <li>
-                <a href="{% url "about" %}" accesskey="a" class="{{ menu_link_css }}">
+                {% active_link "about" css=menu_css as link %}
+                <a href="{{ link.url }}" accesskey="a" class="{{ link.css }}">
                     {% heroicon_outline "information-circle" class=icon_css %}
                     About
                 </a>
             </li>
-        </ul>
-    </nav>
-{% endwith %}
+        {% endwith %}
+    </ul>
 {% endcache %}
+</nav>
