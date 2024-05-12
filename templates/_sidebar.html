@@ -1,4 +1,5 @@
-{% load heroicons %}
+{% load cache heroicons %}
+{% cache 600 sidebar %}
 {% with sidebar_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
     <nav class="pl-3 xl:pl-0" id="sidebar">
         <ul class="space-y-3 text-base sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:text-lg lg:text-xl xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
@@ -51,31 +52,12 @@
                 </a>
             </li>
             <li>
-                <a href="{% url "users:preferences" %}"
-                   accesskey="s"
-                   class="{{ sidebar_css }}">
-                    {% heroicon_outline "cog-6-tooth" class=icon_css %}
-                    Settings
-                </a>
-            </li>
-            <li>
                 <a href="{% url "about" %}" accesskey="a" class="{{ sidebar_css }}">
                     {% heroicon_outline "information-circle" class=icon_css %}
                     About
                 </a>
             </li>
-            <li>
-                <form class="{{ sidebar_css }}"
-                      hx-disable="true"
-                      action="{% url 'account_logout' %}"
-                      method="post">
-                    {% csrf_token %}
-                    <button accesskey="l" class="{{ sidebar_css }}">
-                        {% heroicon_outline "arrow-left-on-rectangle" class=icon_css %}
-                        Logout
-                    </button>
-                </form>
-            </li>
         </ul>
     </nav>
 {% endwith %}
+{% endcache %}
