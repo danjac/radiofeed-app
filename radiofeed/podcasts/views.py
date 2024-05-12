@@ -94,7 +94,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             {
                 "podcasts": podcasts,
                 "clear_search_url": reverse("podcasts:index"),
-                "search_itunes_url": reverse("podcasts:search_itunes"),
             },
         )
 
@@ -118,7 +117,6 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             {
                 "feeds": feeds,
                 "clear_search_url": reverse("podcasts:index"),
-                "search_podcasts_url": reverse("podcasts:search_podcasts"),
             },
         )
 
@@ -185,7 +183,6 @@ def episodes(
             "podcast": podcast,
             "episodes": episodes,
             "ordering_asc": ordering_asc,
-            "search_episodes_url": reverse("episodes:search_episodes"),
         },
     )
 
