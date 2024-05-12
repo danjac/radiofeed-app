@@ -33,11 +33,13 @@
                         <button id="user-dropdown-btn"
                                 tabindex="0"
                                 title="You are logged in as {{ user.username }}"
+                                x-cloak
                                 @click="showDropdown = !showDropdown"
                                 @click.outside="showDropdown=false"
                                 @keyup.escape.window="showDropdown=false"
                                 class="flex items-center text-white rounded-lg sm:justify-end hover:text-gray-300 md:hover:bg-transparent">
-                            {% heroicon_outline "user-circle" size=30 %}
+                            {% heroicon_outline "user-circle" size=30 x_show="!showDropdown" %}
+                            {% heroicon_solid "user-circle" size=30 x_show="showDropdown" %}
                         </button>
                         <div class="absolute right-1 z-20 w-64 bg-white rounded-lg shadow dark:bg-gray-900 dark:border"
                              x-cloak
