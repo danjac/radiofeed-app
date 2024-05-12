@@ -35,7 +35,7 @@
                 <div class="flex relative p-2 py-6 mx-auto min-h-screen xl:pt-12">
                     {% if user.is_authenticated %}
                         <aside class="hidden w-full xl:block xl:sticky xl:top-28 xl:w-1/6 xl:h-full">
-                            {% include "_sidebar.html" %}
+                            {% include "_menu.html" with dom_id="sidebar-menu" %}
                         </aside>
                     {% endif %}
                     <main class="mx-auto w-full xl:w-5/6" id="content" hx-history-elt>

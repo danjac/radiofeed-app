@@ -103,7 +103,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated %}
-        <nav class="absolute left-0 z-50 py-6 pl-3 w-full bg-white shadow-xl xl:hidden dark:bg-black"
+        <div class="absolute left-0 z-50 py-6 pl-3 w-full bg-white shadow-xl xl:hidden dark:bg-black"
              x-cloak
              x-show.transition="showMenu"
              x-transition:enter="transition ease-out duration-75"
@@ -111,9 +111,9 @@
              x-transition:enter-end="transform opacity-100 scale-100"
              x-transition:leave="transition ease-in duration-75"
              x-transition:leave-start="transform opacity-100 scale-100"
-             x-transition:leave-end="transform opacity-0 scale-95"
-             x-init="$el.innerHTML=document.getElementById('sidebar').innerHTML">
-        </nav>
+             x-transition:leave-end="transform opacity-0 scale-95">
+            {% include "_menu.html" with dom_id="navbar-id" %}
+        </div>
     {% endif %}
     {% include "_signup_cta.html" %}
 </header>

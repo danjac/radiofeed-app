@@ -1,12 +1,12 @@
 {% load cache heroicons %}
-{% cache 600 sidebar %}
-{% with sidebar_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
-    <nav class="pl-3 xl:pl-0" id="sidebar">
+{% cache 600 menu request.path %}
+{% with menu_link_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
+    <nav class="pl-3 xl:pl-0" id="{{ dom_id }}">
         <ul class="space-y-3 text-base sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:text-lg lg:text-xl xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
             <li>
                 <a href="{% url "podcasts:index" %}"
                    accesskey="p"
-                   class="{{ sidebar_css }}">
+                   class="{{ menu_link_css }}">
                     {% heroicon_outline "rss" class=icon_css %}
                     Podcasts
                 </a>
@@ -14,7 +14,7 @@
             <li>
                 <a href="{% url "episodes:index" %}"
                    accesskey="n"
-                   class="{{ sidebar_css }}">
+                   class="{{ menu_link_css }}">
                     {% heroicon_outline "sparkles" class=icon_css %}
                     New Releases
                 </a>
@@ -22,7 +22,7 @@
             <li>
                 <a href="{% url "podcasts:category_list" %}"
                    accesskey="c"
-                   class="{{ sidebar_css }}">
+                   class="{{ menu_link_css }}">
                     {% heroicon_outline "tag" class=icon_css %}
                     Categories
                 </a>
@@ -30,7 +30,7 @@
             <li>
                 <a href="{% url "episodes:bookmarks" %}"
                    accesskey="b"
-                   class="{{ sidebar_css }}">
+                   class="{{ menu_link_css }}">
                     {% heroicon_outline "bookmark" class=icon_css %}
                     Bookmarks
                 </a>
@@ -38,7 +38,7 @@
             <li>
                 <a href="{% url "episodes:history" %}"
                    accesskey="h"
-                   class="{{ sidebar_css }}">
+                   class="{{ menu_link_css }}">
                     {% heroicon_outline "clock" class=icon_css %}
                     History
                 </a>
@@ -46,13 +46,13 @@
             <li>
                 <a href="{% url "podcasts:private_feeds" %}"
                    accesskey="f"
-                   class="{{ sidebar_css }}">
+                   class="{{ menu_link_css }}">
                     {% heroicon_outline "lock-closed" class=icon_css %}
                     Private Feeds
                 </a>
             </li>
             <li>
-                <a href="{% url "about" %}" accesskey="a" class="{{ sidebar_css }}">
+                <a href="{% url "about" %}" accesskey="a" class="{{ menu_link_css }}">
                     {% heroicon_outline "information-circle" class=icon_css %}
                     About
                 </a>
