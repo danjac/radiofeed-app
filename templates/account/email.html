@@ -15,19 +15,17 @@
                       action="{% url 'account_email' %}">
                     {% csrf_token %}
                     {% for emailaddress in emailaddresses %}
-                        <div>
+                        <div class="flex items-center space-x-3{% if emailaddress.primary or num_addresses == 1 %} font-bold{% endif %}">
+                            <input id="email_radio_{{ forloop.counter }}"
+                                   type="radio"
+                                   name="email"
+                                   {% if emailaddress.primary or num_addresses == 1 %}checked="checked"{% endif %}
+                                   value="{{ emailaddress.email }}" />
                             <label for="email_radio_{{ forloop.counter }}"
-                                   class="flex items-center space-x-3{% if emailaddress.primary or num_addresses == 1 %} font-bold{% endif %}">
-                                <input id="email_radio_{{ forloop.counter }}"
-                                       type="radio"
-                                       name="email"
-                                       {% if emailaddress.primary or num_addresses == 1 %}checked="checked"{% endif %}
-                                       value="{{ emailaddress.email }}" />
+                                   class="flex items-center space-x-3">
+                                <span>{{ emailaddress.email }}</span>
                                 {% if emailaddress.verified %}
-                                    <span aria-label="Verified">{{ emailaddress.email }}</span>
                                     {% heroicon_mini "check" class="text-green-600" title="Verified" %}
-                                {% else %}
-                                    <span>{{ emailaddress.email }}</span>
                                 {% endif %}
                             </label>
                         </div>

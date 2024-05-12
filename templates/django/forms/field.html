@@ -5,13 +5,13 @@
     {% with widget_type=field.field.widget.input_type required=field.field.required %}
         <div class="space-y-3 form-control is-{{ widget_type }}{% if field.errors %} has-errors{% endif %}">
             {% if widget_type == "checkbox" %}
-                <label class="flex items-center w-full space-x-3 font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}">
+                <div class="flex items-center w-full space-x-3 font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}">
                     {{ field }}
-                    <span>
+                    <label for="{{ field.id_for_label }}">
                         {{ field.label }}
                         {% if not required %}(optional){% endif %}
-                    </span>
-                </label>
+                    </label>
+                </div>
             {% else %}
                 <label class="block font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}"
                        for="{{ field.id_for_label }}">
