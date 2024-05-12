@@ -2527,12 +2527,6 @@
                 htmlUrl="https://www.iheart.com/podcast/1119-ghost-church-by-jamie-lof-95721611/" />
 
             <outline type="rss"
-                text="Ghost Stories For The End Of The World&#x27;s Private RSS Feed for Dan Jacob"
-                title="Ghost Stories For The End Of The World"
-                xmlUrl="https://www.patreon.com/rss/GhostStoriesForTheEnd?auth=iZE3PNFu41dwF3zKDJ9834_tDpoy2I8Q"
-                htmlUrl="https://www.patreon.com/GhostStoriesForTheEnd" />
-
-            <outline type="rss"
                 text="A podcast about the design, development, and business of great software. Each week thoughtbot&#x27;s Chad Pytel is joined by the people who build and nurture the products we love."
                 title="Giant Robots Smashing Into Other Giant Robots"
                 xmlUrl="https://feeds.fireside.fm/giantrobots/rss"
