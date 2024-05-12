@@ -1,27 +1,44 @@
 {% extends "base.html" %}
+{% load heroicons %}
 {% block title %}
     | History
 {% endblock title %}
 {% block content %}
     {% paginate audio_logs as page_obj %}
-    <header class="pb-3 mb-6 space-y-3 border-b sm:space-y-6">
-        <h1 class="flex justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">History</h1>
-        {% if request.search or page_obj.has_other_pages %}
+    {% if request.search %}
+        <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
+            <h1 class="flex justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">History</h1>
             <nav>
-                <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
-                    {% if not request.search %}
-                        <li class="flex justify-center items-center sm:justify-start">
-                            {% if ordering_asc %}
-                                <a href="{{ request.path }}?order=desc" class="link">Oldest First</a>
-                            {% else %}
-                                <a href="{{ request.path }}?order=asc" class="link">Newest First</a>
-                            {% endif %}
-                        </li>
-                    {% endif %}
+                <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
+                    <li class="flex justify-center items-center sm:justify-end">
+                        <a class="inline-flex items-center btn btn-default"
+                           href="{% url "episodes:search_episodes" %}?{{ request.search.qs }}">
+                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                            Search All Episodes
+                        </a>
+                    </li>
                     <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: History" %}</li>
                 </ul>
             </nav>
-        {% endif %}
-    </header>
+        </header>
+    {% else %}
+        <header class="pb-3 mb-3 space-y-3 border-b">
+            <h1 class="flex justify-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">History</h1>
+            {% if page_obj.has_other_pages %}
+                <nav>
+                    <ul class="justify-between items-center sm:flex">
+                        <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
+                            {% if ordering_asc %}
+                                <a href="{{ request.path }}?order=desc" class="link">Newest First</a>
+                            {% else %}
+                                <a href="{{ request.path }}?order=asc" class="link">Oldest First</a>
+                            {% endif %}
+                        </li>
+                        <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: History" %}</li>
+                    </ul>
+                </nav>
+            {% endif %}
+        </header>
+    {% endif %}
     {% include "episodes/_episodes.html" with is_fk=True %}
 {% endblock content %}
