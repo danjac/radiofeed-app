@@ -104,7 +104,7 @@ joblib==1.4.2
     #   scikit-learn
 linkify-it-py==2.0.3
     # via markdown-it-py
-lxml==5.2.1
+lxml==5.2.2
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.5
