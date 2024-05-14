@@ -143,7 +143,7 @@ class Podcast(models.Model):
     )
 
     frequency: timedelta = models.DurationField(
-        default=timedelta(hours=24),
+        default=timedelta(hours=3),
     )
 
     modified: datetime | None = models.DateTimeField(

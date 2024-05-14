@@ -17,7 +17,7 @@ def assert_hours_diff(delta, hours):
 class TestNextScheduledUpdate:
     def test_pub_date_none(self):
         now = timezone.now()
-        podcast = Podcast(parsed=now - timedelta(hours=3), pub_date=None)
+        podcast = Podcast(parsed=now - timedelta(hours=6), pub_date=None)
         assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 21)
 
     def test_parsed_none(self):
@@ -79,7 +79,15 @@ class TestGetScheduledForUpdate:
             pytest.param(
                 {},
                 True,
-                id="no pub date",
+                id="parsed is None",
+            ),
+            pytest.param(
+                {
+                    "parsed": timedelta(hours=3),
+                    "frequency": timedelta(hours=1),
+                },
+                True,
+                id="pub date is None",
             ),
             pytest.param(
                 {
