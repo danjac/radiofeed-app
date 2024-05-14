@@ -16,21 +16,28 @@ _MAX_FREQUENCY: Final = timedelta(hours=24)
 def get_scheduled_podcasts() -> QuerySet[Podcast]:
     """Returns all podcasts scheduled for feed parser update.
 
-    1) Any podcast with `pub_date` or `parsed` is `None`
-    2) Any podcast that has not been parsed with 7 days
-    3) Any podcast with `pub_date` + `frequency` is less than current time
+    1. If parsed is NULL, should be ASAP.
+    2. If pub date is NULL, add frequency to last parsed
+    3. If pub date is not NULL, add frequency to pub date
+    4. Scheduled time should always be in range of 1-24 hours.
 
     Podcasts should not be parsed more than once per hour.
     """
     now = timezone.now()
     return Podcast.objects.filter(
         Q(parsed__isnull=True)
-        | Q(pub_date__isnull=True)
-        | Q(parsed__lt=now - _MAX_FREQUENCY)
         | Q(
-            pub_date__lt=now - F("frequency"),
+            Q(parsed__lt=now - _MAX_FREQUENCY)
+            | Q(
+                pub_date__isnull=True,
+                parsed__lt=now - F("frequency"),
+            )
+            | Q(
+                pub_date__isnull=False,
+                pub_date__lt=now - F("frequency"),
+            ),
             parsed__lt=now - _MIN_FREQUENCY,
-        ),
+        )
     )
 
 
@@ -76,15 +83,25 @@ def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
 
 
 def next_scheduled_update(podcast: Podcast) -> datetime:
-    """Returns estimated next update."""
+    """Returns estimated next update:
 
-    if podcast.pub_date is None or podcast.parsed is None:
+    1. If parsed is NULL, should be ASAP.
+    2. If pub date is NULL, add frequency to last parsed
+    3. If pub date is not NULL, add frequency to pub date
+    4. Scheduled time should always be in range of 1-24 hours.
+
+    Note that this is a rough estimate: the precise update time depends
+    on the frequency of the parse feeds cron and the number of other
+    scheduled podcasts in the queue.
+    """
+
+    if podcast.parsed is None:
         return timezone.now()
 
     return min(
         podcast.parsed + _MAX_FREQUENCY,
         max(
-            podcast.pub_date + podcast.frequency,
+            (podcast.pub_date or podcast.parsed) + podcast.frequency,
             podcast.parsed + _MIN_FREQUENCY,
         ),
     )
