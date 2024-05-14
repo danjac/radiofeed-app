@@ -10,6 +10,10 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
+def assert_hours_diff(delta, hours):
+    assert delta.total_seconds() / 3600 == pytest.approx(hours)
+
+
 class TestNextScheduledUpdate:
     def test_pub_date_none(self):
         now = timezone.now()
@@ -28,7 +32,7 @@ class TestNextScheduledUpdate:
             parsed=now,
             frequency=timedelta(days=30),
         )
-        assert (scheduler.next_scheduled_update(podcast) - now).days == 3
+        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 24)
 
     def test_parsed_lt_now(self):
         now = timezone.now()
@@ -51,11 +55,11 @@ class TestNextScheduledUpdate:
     def test_pub_date_in_future(self):
         now = timezone.now()
         podcast = Podcast(
-            pub_date=now - timedelta(days=5),
-            parsed=now - timedelta(hours=12),
+            pub_date=now - timedelta(days=1),
+            parsed=now - timedelta(hours=1),
             frequency=timedelta(days=7),
         )
-        assert (scheduler.next_scheduled_update(podcast) - now).days == 2
+        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 23)
 
     def test_pub_date_lt_min(self):
         now = timezone.now()
@@ -64,9 +68,8 @@ class TestNextScheduledUpdate:
             parsed=now - timedelta(minutes=30),
             frequency=timedelta(hours=3),
         )
-        assert (
-            scheduler.next_scheduled_update(podcast) - now
-        ).total_seconds() / 3600 == pytest.approx(0.5)
+
+        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 0.5)
 
 
 class TestGetScheduledForUpdate:
@@ -134,15 +137,18 @@ class TestGetScheduledForUpdate:
 
 class TestReschedule:
     def test_pub_date_none(self):
-        assert scheduler.reschedule(None, timedelta(hours=24)).days == 1
+        assert_hours_diff(scheduler.reschedule(None, timedelta(hours=24)), 3)
 
     def test_reschedule_no_change(self):
         assert scheduler.reschedule(timezone.now(), timedelta(days=10)).days == 10
 
     def test_increment(self):
-        assert scheduler.reschedule(
-            timezone.now() - timedelta(days=1), timedelta(hours=24)
-        ).total_seconds() / 3600 == pytest.approx(24.24)
+        assert_hours_diff(
+            scheduler.reschedule(
+                timezone.now() - timedelta(days=1), timedelta(hours=24)
+            ),
+            24.24,
+        )
 
 
 class TestSchedule:
