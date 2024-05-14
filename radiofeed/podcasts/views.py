@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -13,6 +13,7 @@ from radiofeed.http import HttpResponseConflict
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.users.models import User
 
 
 @require_safe
@@ -42,14 +43,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
-    subscribed_podcasts = podcasts.annotate(
-        is_subscribed=Exists(
-            request.user.subscriptions.filter(
-                podcast=OuterRef("pk"),
-            )
-        )
-    ).filter(is_subscribed=True)
-
+    subscribed_podcasts = _get_subscribed_podcasts(request.user)
     has_subscriptions = subscribed_podcasts.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
 
@@ -304,14 +298,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
-    podcasts = Podcast.objects.annotate(
-        is_subscribed=Exists(
-            request.user.subscriptions.filter(
-                podcast=OuterRef("pk"),
-            )
-        )
-    ).filter(
-        is_subscribed=True,
+    podcasts = _get_subscribed_podcasts(request.user).filter(
         private=True,
         pub_date__isnull=False,
     )
@@ -372,6 +359,16 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
     return get_object_or_404(Podcast, pk=podcast_id, **kwargs)
+
+
+def _get_subscribed_podcasts(user: User) -> QuerySet[Podcast]:
+    return Podcast.objects.annotate(
+        is_subscribed=Exists(
+            user.subscriptions.filter(
+                podcast=OuterRef("pk"),
+            )
+        )
+    ).filter(is_subscribed=True)
 
 
 def _render_subscribe_action(
