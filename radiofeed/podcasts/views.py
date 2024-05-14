@@ -146,7 +146,7 @@ def podcast_detail(
 ) -> HttpResponse:
     """Details for a single podcast."""
 
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = _get_podcast_or_404(podcast_id)
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
@@ -166,7 +166,7 @@ def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     """Render episodes for a single podcast."""
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = _get_podcast_or_404(podcast_id)
 
     episodes = podcast.episodes.select_related("podcast")
     ordering_asc = request.GET.get("order", "desc") == "asc"
@@ -194,7 +194,7 @@ def similar(
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
 
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = _get_podcast_or_404(podcast_id)
 
     recommendations = (
         podcast.recommendations.with_relevance()
@@ -279,7 +279,7 @@ def category_detail(
 @require_auth
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
-    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
+    podcast = _get_podcast_or_404(podcast_id, private=False)
     try:
         request.user.subscriptions.create(podcast=podcast)
     except IntegrityError:
@@ -294,7 +294,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
-    podcast = get_object_or_404(Podcast, private=False, pk=podcast_id)
+    podcast = _get_podcast_or_404(podcast_id, private=False)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Unsubscribed from Podcast")
     return _render_subscribe_action(request, podcast, is_subscribed=False)
@@ -364,10 +364,14 @@ def add_private_feed(
 @require_auth
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
-    podcast = get_object_or_404(Podcast, private=True, pk=podcast_id)
+    podcast = _get_podcast_or_404(podcast_id, private=True)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Removed from Private Feeds")
     return redirect("podcasts:private_feeds")
+
+
+def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
+    return get_object_or_404(Podcast, pk=podcast_id, **kwargs)
 
 
 def _render_subscribe_action(
