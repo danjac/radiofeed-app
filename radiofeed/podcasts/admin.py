@@ -62,25 +62,6 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class NewFilter(admin.SimpleListFilter):
-    """Filters podcasts just added."""
-
-    title = "New"
-    parameter_name = "new"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (("yes", "New"),)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
-        """Returns filtered queryset."""
-        return (
-            queryset.filter(parsed__isnull=True) if self.value() == "yes" else queryset
-        )
-
-
 class ParserErrorFilter(admin.SimpleListFilter):
     """Filters based on parser error."""
 
@@ -226,7 +207,6 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        NewFilter,
         PubDateFilter,
         SubscribedFilter,
         PromotedFilter,
