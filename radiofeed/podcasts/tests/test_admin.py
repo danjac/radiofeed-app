@@ -8,6 +8,7 @@ from django.utils import timezone
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
+    NewFilter,
     ParserErrorFilter,
     PodcastAdmin,
     PrivateFilter,
@@ -32,7 +33,9 @@ def podcast_admin():
 
 @pytest.fixture()
 def podcasts():
-    return PodcastFactory.create_batch(3, active=True, promoted=False)
+    return PodcastFactory.create_batch(
+        3, active=True, promoted=False, parsed=timezone.now()
+    )
 
 
 @pytest.fixture()
@@ -136,6 +139,23 @@ class TestPubDateFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert no_pub_date not in qs
+
+
+class TestNewFilter:
+    @pytest.mark.django_db()
+    def test_none(self, podcasts, podcast_admin, req):
+        PodcastFactory(parsed=None)
+        f = NewFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db()
+    def test_promoted(self, podcasts, podcast_admin, req):
+        new = PodcastFactory(parsed=None)
+        f = NewFilter(req, {"new": ["yes"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == new
 
 
 class TestPromotedFilter:
