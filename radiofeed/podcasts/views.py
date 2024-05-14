@@ -43,7 +43,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
 
-    subscribed_podcasts = _get_subscribed_podcasts(request.user)
+    subscribed_podcasts = podcasts & _get_subscribed_podcasts(request.user)
     has_subscriptions = subscribed_podcasts.exists()
     promoted = "promoted" in request.GET or not has_subscriptions
 
