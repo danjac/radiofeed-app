@@ -24,11 +24,11 @@ class TestNextScheduledUpdate:
     def test_parsed_gt_max(self):
         now = timezone.now()
         podcast = Podcast(
-            pub_date=now - timedelta(days=5),
-            parsed=now - timedelta(days=3),
+            pub_date=now,
+            parsed=now,
             frequency=timedelta(days=30),
         )
-        assert (scheduler.next_scheduled_update(podcast) - now).days == 4
+        assert (scheduler.next_scheduled_update(podcast) - now).days == 3
 
     def test_parsed_lt_now(self):
         now = timezone.now()

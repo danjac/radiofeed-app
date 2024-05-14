@@ -10,7 +10,7 @@ from radiofeed.podcasts.models import Podcast
 
 _DEFAULT_FREQUENCY: Final = timedelta(hours=24)
 _MIN_FREQUENCY: Final = timedelta(hours=1)
-_MAX_FREQUENCY: Final = timedelta(days=7)
+_MAX_FREQUENCY: Final = timedelta(days=3)
 
 
 def get_scheduled_podcasts() -> QuerySet[Podcast]:
