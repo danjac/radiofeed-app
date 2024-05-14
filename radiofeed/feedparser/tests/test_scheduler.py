@@ -90,7 +90,17 @@ class TestGetScheduledForUpdate:
             pytest.param(
                 {},
                 True,
+                id="parsed and frequency are None",
+            ),
+            pytest.param(
+                {"frequency": timedelta(hours=3)},
+                True,
                 id="parsed is None",
+            ),
+            pytest.param(
+                {"parsed": timedelta(hours=3)},
+                True,
+                id="frequency is None",
             ),
             pytest.param(
                 {
@@ -104,6 +114,7 @@ class TestGetScheduledForUpdate:
                 {
                     "parsed": timedelta(seconds=1200),
                     "pub_date": timedelta(days=3),
+                    "frequency": timedelta(hours=3),
                 },
                 False,
                 id="just parsed",
@@ -112,6 +123,7 @@ class TestGetScheduledForUpdate:
                 {
                     "parsed": timedelta(hours=3),
                     "pub_date": timedelta(days=3),
+                    "frequency": timedelta(hours=3),
                 },
                 True,
                 id="parsed before pub date+frequency",
@@ -140,9 +152,8 @@ class TestGetScheduledForUpdate:
     def test_get_scheduled_podcasts(self, kwargs, exists):
         now = timezone.now()
 
-        frequency = kwargs.get("frequency", timedelta(hours=24))
+        frequency = kwargs.get("frequency", None)
         parsed = kwargs.get("parsed", None)
-
         pub_date = kwargs.get("pub_date", None)
 
         PodcastFactory(
