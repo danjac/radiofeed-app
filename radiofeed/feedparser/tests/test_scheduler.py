@@ -17,8 +17,8 @@ def assert_hours_diff(delta, hours):
 class TestNextScheduledUpdate:
     def test_pub_date_none(self):
         now = timezone.now()
-        podcast = Podcast(parsed=now - timedelta(hours=6), pub_date=None)
-        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 21)
+        podcast = Podcast(parsed=now - timedelta(hours=1), pub_date=None)
+        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 2)
 
     def test_parsed_none(self):
         now = timezone.now()
