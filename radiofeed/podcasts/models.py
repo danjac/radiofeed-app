@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import timedelta
 from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
@@ -20,7 +19,7 @@ from radiofeed.search import SearchQuerySetMixin
 
 if TYPE_CHECKING:  # pragma: no cover
     import decimal
-    from datetime import datetime
+    from datetime import datetime, timedelta
 
     from radiofeed.users.models import User
 
@@ -142,9 +141,7 @@ class Podcast(models.Model):
         blank=True,
     )
 
-    frequency: timedelta = models.DurationField(
-        default=timedelta(hours=3),
-    )
+    frequency: timedelta = models.DurationField(null=True, blank=True)
 
     modified: datetime | None = models.DateTimeField(
         null=True,

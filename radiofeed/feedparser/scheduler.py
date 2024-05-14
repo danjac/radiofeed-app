@@ -26,6 +26,7 @@ def get_scheduled_podcasts() -> QuerySet[Podcast]:
     now = timezone.now()
     return Podcast.objects.filter(
         Q(parsed__isnull=True)
+        | Q(frequency__isnull=True)
         | Q(
             Q(parsed__lt=now - _MAX_FREQUENCY)
             | Q(
@@ -63,9 +64,9 @@ def schedule(feed: Feed) -> timedelta:
     return reschedule(feed.pub_date, frequency)
 
 
-def reschedule(pub_date: datetime | None, frequency: timedelta) -> timedelta:
+def reschedule(pub_date: datetime | None, frequency: timedelta | None) -> timedelta:
     """Increments update frequency until next scheduled date > current time."""
-    if pub_date is None:
+    if pub_date is None or frequency is None:
         return _DEFAULT_FREQUENCY
 
     # ensure we don't try to increment zero frequency
@@ -95,7 +96,7 @@ def next_scheduled_update(podcast: Podcast) -> datetime:
     scheduled podcasts in the queue.
     """
 
-    if podcast.parsed is None:
+    if podcast.parsed is None or podcast.frequency is None:
         return timezone.now()
 
     return min(

@@ -229,7 +229,7 @@ class TestScheduledFilter:
     @pytest.fixture()
     def unscheduled(self):
         now = timezone.now()
-        return PodcastFactory(pub_date=now, parsed=now)
+        return PodcastFactory(pub_date=now, parsed=now, frequency=timedelta(hours=3))
 
     @pytest.mark.django_db()
     def test_none(self, podcast_admin, req, scheduled, unscheduled):
