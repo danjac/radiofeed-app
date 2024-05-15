@@ -23,7 +23,7 @@
                                    value="{{ emailaddress.email }}" />
                             <label for="email_radio_{{ forloop.counter }}"
                                    class="flex items-center space-x-3">
-                                <span>{{ emailaddress.email }}</span>
+                                <span {% if emailaddress.primary or num_addresses == 1 %}class="font-bold"{% endif %}>{{ emailaddress.email }}</span>
                                 {% if emailaddress.verified %}
                                     {% heroicon_mini "check" class="text-green-600" title="Verified" %}
                                 {% endif %}

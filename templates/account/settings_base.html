@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load heroicons %}
+{% load heroicons socialaccount %}
 {% block title %}
     | Settings
 {% endblock title %}
@@ -73,15 +73,18 @@
                                         {% heroicon_mini "key" class="mr-2" %}
                                     Change Password</a>
                                 </li>
-                                <li>
-                                    {% active_link 'socialaccount_connections' css=dropdown_css active_css=active_css as link %}
-                                    <a href="{{ link.url }}"
-                                       tabindex="6"
-                                       class="{{ link.css }}"
-                                       {% if link.active %}x-init="select($el)"{% endif %}>
-                                        {% heroicon_mini "user-group" class="mr-2" %}
-                                    Social Logins</a>
-                                </li>
+                                {% get_providers as socialaccount_providers %}
+                                {% if socialaccount_providers %}
+                                    <li>
+                                        {% active_link 'socialaccount_connections' css=dropdown_css active_css=active_css as link %}
+                                        <a href="{{ link.url }}"
+                                           tabindex="6"
+                                           class="{{ link.css }}"
+                                           {% if link.active %}x-init="select($el)"{% endif %}>
+                                            {% heroicon_mini "user-group" class="mr-2" %}
+                                        Social Logins</a>
+                                    </li>
+                                {% endif %}
                                 <li>
                                     {% active_link 'users:delete_account' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}"
