@@ -43,7 +43,7 @@ class TestNextScheduledUpdate:
             parsed=now,
             frequency=timedelta(days=30),
         )
-        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 24)
+        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 72)
 
     def test_parsed_lt_now(self):
         now = timezone.now()
@@ -70,7 +70,7 @@ class TestNextScheduledUpdate:
             parsed=now - timedelta(hours=1),
             frequency=timedelta(days=7),
         )
-        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 23)
+        assert_hours_diff(scheduler.next_scheduled_update(podcast) - now, 71)
 
     def test_pub_date_lt_min(self):
         now = timezone.now()
@@ -167,10 +167,10 @@ class TestGetScheduledForUpdate:
 
 class TestReschedule:
     def test_pub_date_none(self):
-        assert_hours_diff(scheduler.reschedule(None, timedelta(hours=24)), 3)
+        assert_hours_diff(scheduler.reschedule(None, timedelta(hours=24)), 24)
 
     def test_frequency_none(self):
-        assert_hours_diff(scheduler.reschedule(timezone.now(), None), 3)
+        assert_hours_diff(scheduler.reschedule(timezone.now(), None), 24)
 
     def test_reschedule_no_change(self):
         assert scheduler.reschedule(timezone.now(), timedelta(days=10)).days == 10

@@ -8,9 +8,9 @@ from django.utils import timezone
 from radiofeed.feedparser.models import Feed
 from radiofeed.podcasts.models import Podcast
 
-_DEFAULT_FREQUENCY: Final = timedelta(hours=3)
+_DEFAULT_FREQUENCY: Final = timedelta(hours=24)
 _MIN_FREQUENCY: Final = timedelta(hours=1)
-_MAX_FREQUENCY: Final = timedelta(hours=24)
+_MAX_FREQUENCY: Final = timedelta(days=3)
 
 
 def get_scheduled_podcasts() -> QuerySet[Podcast]:
