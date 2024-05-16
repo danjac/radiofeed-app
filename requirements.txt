@@ -131,7 +131,7 @@ redis==5.0.4
     # via
     #   radiofeed (pyproject.toml)
     #   django-redis
-regex==2024.5.10
+regex==2024.5.15
     # via nltk
 requests==2.31.0
     # via
