@@ -6,7 +6,7 @@
 {% block content %}
     {% cache 600 episode-nav-header episode.pk %}
     {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
-        <header class="pb-3 mb-6 space-y-6 border-b">
+        <header class="pb-3 mb-3 space-y-3 border-b">
             <h1 class="text-lg font-bold md:text-xl xl:text-2xl">{{ episode.cleaned_title }}</h1>
             {% if next_episode or previous_episode %}
                 <nav>
