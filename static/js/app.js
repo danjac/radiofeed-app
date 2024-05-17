@@ -8,12 +8,10 @@ import "./audio-player";
 htmx.config.historyCacheSize = 0;
 htmx.config.refreshOnHistoryMiss = false;
 htmx.config.scrollBehavior = "smooth";
-htmx.config.scrollIntoViewOnBoost = true;
+htmx.config.scrollIntoViewOnBoost = false;
 htmx.config.useTemplateFragments = true;
 
-window.htmx = htmx;
+// initialize global Alpine instance
 
-// set global Alpine instance
 window.Alpine = Alpine;
-
-Alpine.start();
+window.Alpine.start();
