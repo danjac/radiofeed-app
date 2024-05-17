@@ -7,6 +7,8 @@ import "./audio-player";
 
 htmx.config.historyCacheSize = 0;
 htmx.config.refreshOnHistoryMiss = false;
+htmx.config.scrollBehavior = "smooth";
+htmx.config.scrollIntoViewOnBoost = true;
 htmx.config.useTemplateFragments = true;
 
 window.htmx = htmx;
