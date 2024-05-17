@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Scrolling fixes */
+html {
+    height: 100%;
+    overflow: auto;
+}
+body {
+    height: 100%;
+}
 /* ALPINEJS */
 
 [x-cloak] {
