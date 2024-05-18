@@ -1,3 +1,4 @@
+{# vim: set filetype=htmldjango #}
 {% spaceless %}
     <img class="object-cover border bg-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
         title="{{ title }}"
@@ -7,7 +8,7 @@
         decoding="async"
         width="{{ size }}"
         height="{{ size }}"
-        src="{{ cover_url|default:placeholder_url }}"
+        src="{{ placeholder_url }}"
         {# djlint:off #}
         {% if url %}
             role="link"
