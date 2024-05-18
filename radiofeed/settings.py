@@ -95,9 +95,12 @@ DATABASES = {
 
 # Caches
 
+CACHE_TIMEOUT = 300
+
 CACHES = {
     "default": env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0")
     | {
+        "TIMEOUT": CACHE_TIMEOUT,
         "OPTIONS": {
             "PARSER_CLASS": "redis.connection._HiredisParser",
         },

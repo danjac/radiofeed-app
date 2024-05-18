@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
@@ -50,6 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "promoted": promoted,
             "has_subscriptions": has_subscriptions,
             "search_episodes_url": reverse("episodes:search_episodes"),
+            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
@@ -71,6 +73,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             {
                 "episodes": episodes,
                 "clear_search_url": reverse("episodes:index"),
+                "cache_timeout": settings.CACHE_TIMEOUT,
             },
         )
     return redirect("episodes:index")
@@ -95,6 +98,7 @@ def episode_detail(
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
             "is_playing": request.audio_player.has(episode.pk),
+            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 

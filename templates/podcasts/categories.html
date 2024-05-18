@@ -4,7 +4,7 @@
     | Categories
 {% endblock title %}
 {% block content %}
-    {% cache 600 categories request.get_full_path %}
+    {% cache cache_timeout categories request.get_full_path %}
     <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">
         <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Categories</h1>
         <div class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: Categories" %}</div>

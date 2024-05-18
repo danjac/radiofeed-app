@@ -21,7 +21,7 @@
             </ul>
         </nav>
     </header>
-    {% cache 600 search-itunes request.get_full_path %}
+    {% cache cache_timeout search-itunes request.get_full_path %}
     <ul class="divide-y divide-solid">
         {% for feed in feeds %}
             <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
