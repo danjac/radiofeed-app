@@ -97,7 +97,7 @@ class SearchMiddleware(BaseMiddleware):
 class SearchDetails:
     """Handles search parameters in request."""
 
-    param: str = "query"
+    param: str = "search"
 
     def __init__(self, request: HttpRequest) -> None:
         self.request = request

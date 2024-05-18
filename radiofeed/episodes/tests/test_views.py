@@ -94,25 +94,25 @@ class TestSearchEpisodes:
 
     @pytest.mark.django_db()
     def test_no_results(self, auth_user, client):
-        response = client.get(self.url, {"query": "test"})
+        response = client.get(self.url, {"search": "test"})
         assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db()
     def test_search_empty(self, auth_user, client):
-        assert client.get(self.url, {"query": ""}).url == episodes_url
+        assert client.get(self.url, {"search": ""}).url == episodes_url
 
     @pytest.mark.django_db()
     def test_search(self, auth_user, client, faker):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
-        response = client.get(self.url, {"query": episode.title})
+        response = client.get(self.url, {"search": episode.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
 
     @pytest.mark.django_db()
     def test_search_no_results(self, auth_user, client):
-        response = client.get(self.url, {"query": "zzzz"})
+        response = client.get(self.url, {"search": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
 
@@ -401,7 +401,7 @@ class TestBookmarks:
 
         BookmarkFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
 
-        response = client.get(self.url, {"query": "testing"})
+        response = client.get(self.url, {"search": "testing"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
 
@@ -478,7 +478,7 @@ class TestHistory:
             )
 
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
-        response = client.get(self.url, {"query": "testing"})
+        response = client.get(self.url, {"search": "testing"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
 

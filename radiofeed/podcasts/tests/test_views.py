@@ -139,13 +139,13 @@ class TestSearchPodcasts:
 
     @pytest.mark.django_db()
     def test_search_empty(self, client, auth_user):
-        assert client.get(self.url, {"query": ""}).url == podcasts_url
+        assert client.get(self.url, {"search": ""}).url == podcasts_url
 
     @pytest.mark.django_db()
     def test_search(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(self.url, {"query": podcast.title})
+        response = client.get(self.url, {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
@@ -154,7 +154,7 @@ class TestSearchPodcasts:
     def test_search_filter_private(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text(), private=True)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(self.url, {"query": podcast.title})
+        response = client.get(self.url, {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
 
@@ -163,20 +163,20 @@ class TestSearchPodcasts:
         podcast = PodcastFactory(title=faker.unique.text())
         SubscriptionFactory(podcast=podcast, subscriber=auth_user)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(self.url, {"query": podcast.title})
+        response = client.get(self.url, {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
 
     @pytest.mark.django_db()
     def test_search_no_results(self, client, auth_user, faker):
-        response = client.get(self.url, {"query": "zzzz"})
+        response = client.get(self.url, {"search": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
 
     @pytest.mark.django_db()
     def test_search_no_results_itunes_error(self, client, auth_user, faker):
-        response = client.get(self.url, {"query": "zzzz"})
+        response = client.get(self.url, {"search": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
 
@@ -184,7 +184,7 @@ class TestSearchPodcasts:
 class TestSearchItunes:
     @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
-        response = client.get(reverse("podcasts:search_itunes"), {"query": ""})
+        response = client.get(reverse("podcasts:search_itunes"), {"search": ""})
         assert response.url == reverse("podcasts:index")
 
     @pytest.mark.django_db()
@@ -208,7 +208,7 @@ class TestSearchItunes:
             "radiofeed.podcasts.itunes.search", return_value=iter(feeds)
         )
 
-        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
+        response = client.get(reverse("podcasts:search_itunes"), {"search": "test"})
         assert response.status_code == http.HTTPStatus.OK
 
         mock_search.assert_called()
@@ -220,7 +220,7 @@ class TestSearchItunes:
             side_effect=itunes.ItunesError("oops"),
         )
 
-        response = client.get(reverse("podcasts:search_itunes"), {"query": "test"})
+        response = client.get(reverse("podcasts:search_itunes"), {"search": "test"})
         assert response.url == reverse("podcasts:index")
 
         mock_search.assert_called()
@@ -336,7 +336,7 @@ class TestPodcastEpisodes:
 
         response = client.get(
             self.url(podcast),
-            {"query": episode.title},
+            {"search": episode.title},
         )
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
@@ -373,7 +373,7 @@ class TestCategoryList:
         category = CategoryFactory(name="testing")
         category.podcasts.add(PodcastFactory())
 
-        response = client.get(self.url, {"query": "testing"})
+        response = client.get(self.url, {"search": "testing"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["categories"]) == 1
 
@@ -383,7 +383,7 @@ class TestCategoryList:
 
         CategoryFactory(name="testing")
 
-        response = client.get(self.url, {"query": "testing"})
+        response = client.get(self.url, {"search": "testing"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["categories"]) == 0
 
@@ -403,7 +403,7 @@ class TestCategoryDetail:
         )
         podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
-        response = client.get(category.get_absolute_url(), {"query": podcast.title})
+        response = client.get(category.get_absolute_url(), {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page_obj"].object_list) == 1
@@ -518,7 +518,7 @@ class TestPrivateFeeds:
             podcast=PodcastFactory(title="zzz", keywords="zzzz", private=True),
         )
 
-        response = client.get(self.url, {"query": podcast.title})
+        response = client.get(self.url, {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast

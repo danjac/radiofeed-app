@@ -128,7 +128,7 @@ class TestSearchMiddleware:
         return SearchMiddleware(get_response)
 
     def test_search(self, rf, mw):
-        req = rf.get("/", {"query": "testing"})
+        req = rf.get("/", {"search": "testing"})
         mw(req)
         assert req.search
         assert str(req.search) == "testing"
@@ -141,11 +141,11 @@ class TestSearchMiddleware:
 
 class TestSearchDetails:
     def test_search(self, rf):
-        req = rf.get("/", {"query": "testing"})
+        req = rf.get("/", {"search": "testing"})
         search = SearchDetails(req)
         assert search
         assert str(search) == "testing"
-        assert search.qs == "query=testing"
+        assert search.qs == "search=testing"
 
     def test_no_search(self, rf):
         req = rf.get("/")
