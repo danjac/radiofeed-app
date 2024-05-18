@@ -5,7 +5,7 @@ from radiofeed.episodes.models import Episode
 from radiofeed.templatetags import (
     COVER_IMAGE_SIZES,
     get_cover_image_url,
-    get_placeholder_cover_url,
+    get_placeholder_url,
 )
 
 register = template.Library()
@@ -29,7 +29,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
                 "src": context.request.build_absolute_uri(
                     get_cover_image_url(episode.podcast.cover_url, size)
                     if episode.podcast.cover_url
-                    else get_placeholder_cover_url(size)
+                    else get_placeholder_url(size)
                 ),
                 "sizes": f"{size}x{size}",
                 "type": "image/webp",

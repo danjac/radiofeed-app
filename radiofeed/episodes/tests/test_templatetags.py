@@ -8,7 +8,6 @@ from radiofeed.episodes.templatetags.audio_player import (
 )
 from radiofeed.episodes.tests.factories import AudioLogFactory, EpisodeFactory
 from radiofeed.podcasts.tests.factories import PodcastFactory
-from radiofeed.templatetags import get_placeholder_cover_url
 
 
 class TestMediaMetadata:
@@ -32,8 +31,6 @@ class TestMediaMetadata:
 
     @pytest.mark.django_db()
     def test_get_media_metadata_no_cover_url(self, rf):
-        get_placeholder_cover_url.cache_clear()
-
         episode = EpisodeFactory(podcast=PodcastFactory(cover_url=None))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.title

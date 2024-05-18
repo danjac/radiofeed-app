@@ -23,9 +23,10 @@ if TYPE_CHECKING:  # pragma: nocover
     from django.db.models import QuerySet
     from django.template.context import RequestContext
 
-ACCEPT_COOKIES_NAME: Final = "accept-cookies"
 
-COVER_IMAGE_SIZES: Final = (100, 200, 300)
+ACCEPT_COOKIES_NAME = "accept-cookies"
+
+COVER_IMAGE_SIZES = (100, 200, 300)
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
@@ -89,33 +90,6 @@ def search_form(
     }
 
 
-@register.simple_tag
-@functools.cache
-def get_cover_image_url(cover_url: str | None, size: int) -> str:
-    """Returns signed cover image URL."""
-    _assert_cover_size(size)
-    if cover_url:
-        return (
-            reverse(
-                "cover_image",
-                kwargs={
-                    "size": size,
-                },
-            )
-            + "?"
-            + urllib.parse.urlencode({"url": Signer().sign(cover_url)})
-        )
-    return ""
-
-
-@register.simple_tag
-@functools.cache
-def get_placeholder_cover_url(size: int) -> str:
-    """Return placeholder cover image URL."""
-    _assert_cover_size(size)
-    return static(f"img/placeholder-{size}.webp")
-
-
 @register.inclusion_tag("_cover_image.html")
 @functools.cache
 def cover_image(
@@ -127,9 +101,12 @@ def cover_image(
 ) -> dict:
     """Renders a cover image with proxy URL."""
 
+    if size not in COVER_IMAGE_SIZES:
+        raise ValueError(f"invalid cover image size:{size}")
+
     return {
         "cover_url": get_cover_image_url(cover_url, size),
-        "placeholder": get_placeholder_cover_url(size),
+        "placeholder_url": get_placeholder_url(size),
         "title": title,
         "size": size,
         "url": url,
@@ -198,5 +175,28 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-def _assert_cover_size(size: int) -> None:
-    assert size in COVER_IMAGE_SIZES, f"invalid cover image size:{size}"
+@register.simple_tag
+@functools.cache
+def get_placeholder_url(size: int) -> str:
+    """Return URL to cover image placeholder"""
+    return static(f"img/placeholder-{size}.webp")
+
+
+@register.simple_tag
+@functools.cache
+def get_cover_image_url(cover_url: str | None, size: int) -> str:
+    """Return the cover image URL"""
+    return (
+        (
+            reverse(
+                "cover_image",
+                kwargs={
+                    "size": size,
+                },
+            )
+            + "?"
+            + urllib.parse.urlencode({"url": Signer().sign(cover_url)})
+        )
+        if cover_url
+        else ""
+    )

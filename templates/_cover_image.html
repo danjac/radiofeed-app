@@ -7,7 +7,7 @@
         decoding="async"
         width="{{ size }}"
         height="{{ size }}"
-        src="{{ cover_url|default:placeholder }}"
+        src="{{ cover_url|default:placeholder_url }}"
         {# djlint:off #}
         {% if url %}
             role="link"
@@ -19,7 +19,7 @@
             x-data="{
                 isLoaded: false,
                 src: '{{ cover_url|escapejs }}',
-                placeholder: '{{ placeholder|escapejs }}'
+                placeholder: '{{ placeholder_url|escapejs }}'
             }"
             @load.once="isLoaded=true;"
             @error.once="src=placeholder;isLoaded=true;"

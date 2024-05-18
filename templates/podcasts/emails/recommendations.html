@@ -19,7 +19,7 @@
                         border-bottom: 1px solid #eee">
                 <div style="display:flex; align-items:center;">
                     {% get_cover_image_url podcast.cover_url 100 as cover_url %}
-                    {% get_placeholder_cover_url 100 as placeholder %}
+                    {% get_placeholder_url 100 as placeholder %}
                     <div>
                         <img src="{% absolute_uri cover_url|default:placeholder %}"
                              alt="{{ podcast.cleaned_title }}"
