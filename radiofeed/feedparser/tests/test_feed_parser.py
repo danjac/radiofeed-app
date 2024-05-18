@@ -37,11 +37,22 @@ def _mock_client(*, url="https://example.com", **response_kwargs):
     return httpx.Client(transport=httpx.MockTransport(_handle))
 
 
+def _get_mock_file_path(filename):
+    return pathlib.Path(__file__).parent / "mocks" / filename
+
+
 def _mock_error_client(exc):
     def _handle(request):
         raise exc
 
     return httpx.Client(transport=httpx.MockTransport(_handle))
+
+
+class TestMakeContentHash:
+    def test_files_different(self):
+        content_a = _get_mock_file_path("rss_mock.xml").read_bytes()
+        content_b = _get_mock_file_path("rss_mock_modified.xml").read_bytes()
+        assert make_content_hash(content_a) != make_content_hash(content_b)
 
 
 class TestFeedParser:
@@ -69,9 +80,7 @@ class TestFeedParser:
         return Category.objects.all()
 
     def get_rss_content(self, filename=""):
-        return (
-            pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file)
-        ).read_bytes()
+        return _get_mock_file_path(filename or self.mock_file).read_bytes()
 
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
