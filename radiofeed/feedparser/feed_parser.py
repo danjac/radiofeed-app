@@ -71,8 +71,6 @@ class _FeedParser:
         Podcast details are updated and episodes created, updated or deleted
         accordingly.
 
-        If any `fields` these will be set on podcast on each update (successful or not).
-
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
