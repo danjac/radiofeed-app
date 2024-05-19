@@ -8,7 +8,7 @@
         decoding="async"
         width="{{ size }}"
         height="{{ size }}"
-        src="{{ placeholder_url }}"
+        src="{{ cover_url|default:placeholder_url }}"
         {# djlint:off #}
         {% if url %}
             role="link"
@@ -19,11 +19,11 @@
         {% if cover_url %}
             x-data="{
                 isLoaded: false,
-                image: '{{ cover_url|escapejs }}',
+                coverUrl: '{{ cover_url|escapejs }}',
                 placeholder: '{{ placeholder_url|escapejs }}',
             }"
             @load.once="isLoaded=true;"
-            @error.once="image=placeholder;isLoaded=true;"
-            :src="isLoaded ? image : placeholder"
+            @error.once="coverUrl=placeholder;isLoaded=true;"
+            :src="isLoaded ? coverUrl : placeholder"
         {% endif %}{# djlint:on #}>
     {% endspaceless %}
