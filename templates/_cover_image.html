@@ -1,6 +1,6 @@
 {# vim: set filetype=htmldjango #}
 {% spaceless %}
-    <img class="object-cover border bg-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
+    <img class="object-cover border bg-transparent bg-gray-100 dark:bg-gray-900 text-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
         title="{{ title }}"
         alt="{{ title }}"
         aria-hidden="true"
