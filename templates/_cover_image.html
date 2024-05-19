@@ -16,12 +16,5 @@
             hx-push-url="true"
             hx-trigger="click consume"
         {% endif %}
-        {% if cover_url %}
-            x-data="{
-                coverUrl: '{{ cover_url|escapejs }}',
-                placeholder: '{{ placeholder_url|escapejs }}',
-            }"
-            @error.once="coverUrl=placeholder"
-            :src="coverUrl"
-        {% endif %}{# djlint:on #}>
+        {# djlint:on #}>
     {% endspaceless %}
