@@ -18,12 +18,10 @@
         {% endif %}
         {% if cover_url %}
             x-data="{
-                isLoaded: false,
                 coverUrl: '{{ cover_url|escapejs }}',
                 placeholder: '{{ placeholder_url|escapejs }}',
             }"
-            @load.once="isLoaded=true;"
-            @error.once="coverUrl=placeholder;isLoaded=true;"
-            :src="isLoaded ? coverUrl : placeholder"
+            @error.once="coverUrl=placeholder"
+            :src="coverUrl"
         {% endif %}{# djlint:on #}>
     {% endspaceless %}
