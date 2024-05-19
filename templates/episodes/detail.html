@@ -169,9 +169,9 @@
     {% if audio_log %}
         <div class="flex-wrap items-center space-y-3 font-semibold text-gray-600 sm:flex sm:space-y-0 sm:space-x-3 dark:text-gray-300">
             <div class="flex flex-wrap items-center space-x-3">
-                <div class="flex items-center space-x-1">
-                    <span>Listened</span>
-                    {% include "_date.html" with value=audio_log.listened title="Listened" %}
+                <div class="flex items-center">
+                    Listened
+                    {% include "_date.html" with value=audio_log.listened title="Listened" css_class="ml-2" %}
                 </div>
                 {% with current_time=audio_log.current_time %}
                     {% if current_time and current_time > 60 %}
