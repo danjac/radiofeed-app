@@ -131,6 +131,18 @@ def format_duration(total_seconds: int | None) -> str:
     return " ".join(rv)
 
 
+@register.filter
+def percentage(value: float, total: float) -> int:
+    """Returns % value.
+
+    Example:
+    {{ value|percentage:total }}% done
+    """
+    if 0 in (value, total):
+        return 0
+    return math.ceil((value / total) * 100)
+
+
 @register.simple_tag(takes_context=True)
 def pagination_url(
     context: RequestContext, page_number: int, param: str = "page"
