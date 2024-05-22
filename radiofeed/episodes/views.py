@@ -34,7 +34,6 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
         {
             "episodes": episodes,
             "search_episodes_url": _search_episodes_url,
-            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
