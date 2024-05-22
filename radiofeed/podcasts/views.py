@@ -46,7 +46,7 @@ def index(request: HttpRequest, limit: int = 30) -> HttpResponse:
 @require_safe
 @require_auth
 def subscriptions(request: HttpRequest) -> HttpResponse:
-    """Render default podcast home page for authenticated users."""
+    """Podcast subscriptions."""
 
     podcasts = (
         _get_subscribed_podcasts(request.user)
@@ -70,7 +70,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 @require_safe
 @require_auth
 def promotions(request: HttpRequest) -> HttpResponse:
-    """Render default podcast home page for authenticated users."""
+    """Promoted podcasts."""
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False, promoted=True).order_by(
         "-pub_date"

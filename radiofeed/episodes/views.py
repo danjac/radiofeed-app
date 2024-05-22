@@ -42,8 +42,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 @require_safe
 @require_auth
 def promotions(request: HttpRequest) -> HttpResponse:
-    """List latest episodes from subscriptions if any, else latest episodes from
-    promoted podcasts."""
+    """Episodes from promoted podcasts."""
     episodes = _get_latest_episodes().filter(podcast__promoted=True)
     has_subscriptions = _get_subscribed_episodes(request.user).exists()
 
