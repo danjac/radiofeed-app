@@ -36,6 +36,13 @@ class TestSubscriptions:
         assert response.url == reverse("episodes:promotions")
 
     @pytest.mark.django_db()
+    def test_has_no_subscriptions(self, client, auth_user):
+        EpisodeFactory(podcast__promoted=True)
+
+        response = client.get(_subscriptions_url)
+        assert response.url == reverse("episodes:promotions")
+
+    @pytest.mark.django_db()
     def test_has_subscriptions(self, client, auth_user):
         episode = EpisodeFactory()
         SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
