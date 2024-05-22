@@ -11,9 +11,11 @@
             </h1>
             <nav>
                 <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
-                    <li class="flex justify-center items-center sm:justify-start">
-                        <a href="{{ request.path }}" class="link">Subscriptions</a>
-                    </li>
+                    {% if has_subscriptions %}
+                        <li class="flex justify-center items-center sm:justify-start">
+                            <a href="{% url "episodes:subscriptions" %}" class="link">Subscriptions</a>
+                        </li>
+                    {% endif %}
                     <li class="flex justify-center items-center space-x-3 sm:justify-end">
                         {% search_form "Search: Episodes" search_url=search_episodes_url %}
                     </li>

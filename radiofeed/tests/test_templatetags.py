@@ -77,7 +77,7 @@ class TestCoverImage:
 
 
 class TestActiveLink:
-    episodes_url = reverse_lazy("episodes:index")
+    episodes_url = reverse_lazy("episodes:subscriptions")
 
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
