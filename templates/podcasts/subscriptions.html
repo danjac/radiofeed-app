@@ -10,7 +10,7 @@
         <nav>
             <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
                 <li class="flex justify-center items-center sm:justify-start">
-                    <a href="{{ request.path }}?promoted=true" class="link">Promotions</a>
+                    <a href="{% url "podcasts:promotions" %}" class="link">Promotions</a>
                 </li>
                 <li class="flex justify-center items-center space-x-3 sm:justify-end">
                     {% search_form "Search: Podcasts" search_url=search_podcasts_url %}

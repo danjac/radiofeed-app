@@ -79,7 +79,7 @@ def service_worker(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
-    start_url = reverse("podcasts:landing_page")
+    start_url = reverse("podcasts:index")
 
     icon = {
         "src": static("img/wave.png"),

@@ -118,5 +118,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect("podcasts:landing_page")
+        return redirect("podcasts:index")
     return render(request, "account/delete_account.html")

@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.client import get_client
@@ -16,23 +16,28 @@ from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.models import User
 
+_private_feeds_url = reverse_lazy("podcasts:private_feeds")
+_search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
+_subscriptions_url = reverse_lazy("podcasts:subscriptions")
+
 
 @require_safe
-def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
+def index(request: HttpRequest, limit: int = 30) -> HttpResponse:
     """Render default site home page for anonymous users.
     Redirects authenticated users to podcast index page.
     """
     if request.user.is_authenticated:
-        return redirect("podcasts:index")
+        return redirect("podcasts:subscriptions")
+
+    podcasts = Podcast.objects.filter(pub_date__isnull=False, promoted=True).order_by(
+        "-pub_date"
+    )[:limit]
 
     return render(
         request,
-        "podcasts/landing_page.html",
+        "podcasts/index.html",
         {
-            "podcasts": Podcast.objects.filter(
-                pub_date__isnull=False,
-                promoted=True,
-            ).order_by("-pub_date")[:limit],
+            "podcasts": podcasts,
             "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
@@ -40,31 +45,46 @@ def landing_page(request: HttpRequest, limit: int = 30) -> HttpResponse:
 
 @require_safe
 @require_auth
-def index(request: HttpRequest) -> HttpResponse:
+def subscriptions(request: HttpRequest) -> HttpResponse:
     """Render default podcast home page for authenticated users."""
 
-    podcasts = Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date")
-    subscribed_podcasts = podcasts & _get_subscribed_podcasts(request.user)
+    podcasts = (
+        _get_subscribed_podcasts(request.user)
+        .filter(pub_date__isnull=False)
+        .order_by("-pub_date")
+    )
 
-    has_subscriptions = subscribed_podcasts.exists()
-    promoted = "promoted" in request.GET or not has_subscriptions
-
-    if promoted:
-        podcasts = podcasts.filter(promoted=True)
-        template_name = "podcasts/promotions.html"
-
-    else:
-        podcasts = subscribed_podcasts
-        template_name = "podcasts/subscriptions.html"
+    if not podcasts.exists():
+        return redirect("podcasts:promotions")
 
     return render(
         request,
-        template_name,
+        "podcasts/subscriptions.html",
+        {
+            "podcasts": podcasts,
+            "search_podcasts_url": _search_podcasts_url,
+        },
+    )
+
+
+@require_safe
+@require_auth
+def promotions(request: HttpRequest) -> HttpResponse:
+    """Render default podcast home page for authenticated users."""
+
+    podcasts = Podcast.objects.filter(pub_date__isnull=False, promoted=True).order_by(
+        "-pub_date"
+    )
+
+    has_subscriptions = _get_subscribed_podcasts(request.user).exists()
+
+    return render(
+        request,
+        "podcasts/promotions.html",
         {
             "podcasts": podcasts,
             "has_subscriptions": has_subscriptions,
-            "promoted": promoted,
-            "search_podcasts_url": reverse("podcasts:search_podcasts"),
+            "search_podcasts_url": _search_podcasts_url,
             "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
@@ -90,12 +110,12 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "podcasts/search.html",
             {
                 "podcasts": podcasts,
-                "clear_search_url": reverse("podcasts:index"),
                 "cache_timeout": settings.CACHE_TIMEOUT,
+                "clear_search_url": _subscriptions_url,
             },
         )
 
-    return redirect("podcasts:index")
+    return redirect(_subscriptions_url)
 
 
 @require_safe
@@ -105,21 +125,20 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     if request.search:
         try:
             feeds = itunes.search(get_client(), request.search.value)
+            return render(
+                request,
+                "podcasts/search_itunes.html",
+                {
+                    "feeds": feeds,
+                    "clear_search_url": _subscriptions_url,
+                    "cache_timeout": settings.CACHE_TIMEOUT,
+                },
+            )
+
         except itunes.ItunesError:
             messages.error(request, "Error: iTunes unavailable")
-            return redirect("podcasts:index")
 
-        return render(
-            request,
-            "podcasts/search_itunes.html",
-            {
-                "feeds": feeds,
-                "clear_search_url": reverse("podcasts:index"),
-                "cache_timeout": settings.CACHE_TIMEOUT,
-            },
-        )
-
-    return redirect("podcasts:index")
+    return redirect(_subscriptions_url)
 
 
 @require_safe
@@ -270,8 +289,8 @@ def category_detail(
         {
             "category": category,
             "podcasts": podcasts,
-            "search_podcasts_url": reverse("podcasts:search_podcasts"),
             "cache_timeout": settings.CACHE_TIMEOUT,
+            "search_podcasts_url": _search_podcasts_url,
         },
     )
 
@@ -344,7 +363,7 @@ def add_private_feed(
                     request,
                     "Podcast added to your Private Feeds and will appear here soon",
                 )
-                return redirect("podcasts:private_feeds")
+                return redirect(_private_feeds_url)
 
             messages.success(request, "Podcast added to your Private Feeds")
             return redirect(podcast)
@@ -361,7 +380,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = _get_podcast_or_404(podcast_id, private=True)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Removed from Private Feeds")
-    return redirect("podcasts:private_feeds")
+    return redirect(_private_feeds_url)
 
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:

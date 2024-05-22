@@ -5,8 +5,9 @@ from radiofeed.podcasts import views
 app_name = "podcasts"
 
 urlpatterns = [
-    path("", views.landing_page, name="landing_page"),
-    path("podcasts/", views.index, name="index"),
+    path("", views.index, name="index"),
+    path("subscriptions/", views.subscriptions, name="subscriptions"),
+    path("promotions/", views.promotions, name="promotions"),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",
         views.podcast_detail,
