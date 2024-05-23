@@ -244,7 +244,7 @@ redis==5.0.4
     #   django-redis
 regex==2024.5.15
     # via nltk
-requests==2.32.1
+requests==2.32.2
     # via
     #   django-allauth
     #   django-anymail
@@ -253,15 +253,15 @@ requests-oauthlib==2.0.0
     # via django-allauth
 rich==13.7.1
     # via bandit
-scikit-learn==1.4.2
+scikit-learn==1.5.0
     # via radiofeed (pyproject.toml)
-scipy==1.13.0
+scipy==1.13.1
     # via
     #   radiofeed (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.2.0
+sentry-sdk==2.2.1
     # via radiofeed (pyproject.toml)
-setuptools==69.5.1
+setuptools==70.0.0
     # via radiofeed (pyproject.toml)
 six==1.16.0
     # via
