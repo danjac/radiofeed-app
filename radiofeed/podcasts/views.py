@@ -24,14 +24,12 @@ _subscriptions_url = reverse_lazy("podcasts:subscriptions")
 @require_safe
 def index(request: HttpRequest, limit: int = 30) -> HttpResponse:
     """Render default site home page for anonymous users.
-    Redirects authenticated users to podcast index page.
+    Redirects authenticated users to podcast subscriptions page.
     """
     if request.user.is_authenticated:
         return redirect("podcasts:subscriptions")
 
-    podcasts = Podcast.objects.filter(pub_date__isnull=False, promoted=True).order_by(
-        "-pub_date"
-    )[:limit]
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
 
     return render(
         request,
@@ -48,11 +46,7 @@ def index(request: HttpRequest, limit: int = 30) -> HttpResponse:
 def subscriptions(request: HttpRequest) -> HttpResponse:
     """Podcast subscriptions."""
 
-    podcasts = (
-        _get_subscribed_podcasts(request.user)
-        .filter(pub_date__isnull=False)
-        .order_by("-pub_date")
-    )
+    podcasts = _get_subscribed_podcasts(request.user).order_by("-pub_date")
 
     if not podcasts.exists():
         return redirect("podcasts:promotions")
@@ -72,10 +66,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 def promotions(request: HttpRequest) -> HttpResponse:
     """Promoted podcasts."""
 
-    podcasts = Podcast.objects.filter(pub_date__isnull=False, promoted=True).order_by(
-        "-pub_date"
-    )
-
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
     has_subscriptions = _get_subscribed_podcasts(request.user).exists()
 
     return render(
@@ -96,8 +87,9 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
         podcasts = (
-            Podcast.objects.search(request.search.value)
-            .filter(pub_date__isnull=False, private=False)
+            _get_podcasts()
+            .filter(private=False)
+            .search(request.search.value)
             .order_by(
                 "-exact_match",
                 "-rank",
@@ -208,7 +200,10 @@ def episodes(
 @require_safe
 @require_auth
 def similar(
-    request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
+    request: HttpRequest,
+    podcast_id: int,
+    slug: str | None = None,
+    limit: int = 12,
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
 
@@ -271,8 +266,7 @@ def category_detail(
     Podcasts can also be searched.
     """
     category = get_object_or_404(Category, pk=category_id)
-
-    podcasts = category.podcasts.filter(pub_date__isnull=False, private=False)
+    podcasts = category.podcasts.filter(private=False, pub_date__isnull=False)
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
@@ -324,10 +318,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_auth
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
-    podcasts = _get_subscribed_podcasts(request.user).filter(
-        private=True,
-        pub_date__isnull=False,
-    )
+    podcasts = _get_subscribed_podcasts(request.user).filter(private=True)
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
@@ -384,17 +375,25 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
-    return get_object_or_404(Podcast, pk=podcast_id, **kwargs)
+    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
+
+
+def _get_podcasts() -> QuerySet[Podcast]:
+    return Podcast.objects.filter(pub_date__isnull=False)
 
 
 def _get_subscribed_podcasts(user: User) -> QuerySet[Podcast]:
-    return Podcast.objects.annotate(
-        is_subscribed=Exists(
-            user.subscriptions.filter(
-                podcast=OuterRef("pk"),
+    return (
+        _get_podcasts()
+        .annotate(
+            is_subscribed=Exists(
+                user.subscriptions.filter(
+                    podcast=OuterRef("pk"),
+                )
             )
         )
-    ).filter(is_subscribed=True)
+        .filter(is_subscribed=True)
+    )
 
 
 def _render_podcast_detail(
