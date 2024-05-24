@@ -22,14 +22,14 @@ _subscriptions_url = reverse_lazy("podcasts:subscriptions")
 
 
 @require_safe
-def index(request: HttpRequest, limit: int = 30) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
     """Render default site home page for anonymous users.
     Redirects authenticated users to podcast subscriptions page.
     """
     if request.user.is_authenticated:
         return redirect("podcasts:subscriptions")
 
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
 
     return render(
         request,
