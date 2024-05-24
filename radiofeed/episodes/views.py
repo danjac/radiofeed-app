@@ -284,7 +284,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return _render_bookmark_action(request, episode, is_bookmarked=False)
 
 
-def _get_latest_episodes(since=timedelta(days=14)) -> QuerySet[Episode]:
+def _get_latest_episodes(*, since=timedelta(days=14)) -> QuerySet[Episode]:
     return (
         Episode.objects.filter(pub_date__gt=timezone.now() - since)
         .select_related("podcast")
@@ -292,11 +292,9 @@ def _get_latest_episodes(since=timedelta(days=14)) -> QuerySet[Episode]:
     )
 
 
-def _get_latest_subscribed_episodes(
-    user: User, since=timedelta(days=14)
-) -> QuerySet[Episode]:
+def _get_latest_subscribed_episodes(user: User, **kwargs) -> QuerySet[Episode]:
     return (
-        _get_latest_episodes(since)
+        _get_latest_episodes(**kwargs)
         .annotate(
             is_subscribed=Exists(user.subscriptions.filter(podcast=OuterRef("podcast")))
         )
