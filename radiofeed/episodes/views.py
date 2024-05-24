@@ -23,7 +23,7 @@ _search_episodes_url = reverse_lazy("episodes:search_episodes")
 def subscriptions(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
-    episodes = _get_latest_episodes() & _get_subscribed_episodes(request.user)
+    episodes = _get_latest_subscribed_episodes(request.user)
 
     if not episodes.exists():
         return redirect("episodes:promotions")
@@ -43,7 +43,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 def promotions(request: HttpRequest) -> HttpResponse:
     """Episodes from promoted podcasts."""
     episodes = _get_latest_episodes().filter(podcast__promoted=True)
-    has_subscriptions = _get_subscribed_episodes(request.user).exists()
+    has_subscriptions = _get_latest_subscribed_episodes(request.user).exists()
 
     return render(
         request,
@@ -292,10 +292,16 @@ def _get_latest_episodes(since=timedelta(days=14)) -> QuerySet[Episode]:
     )
 
 
-def _get_subscribed_episodes(user: User) -> QuerySet[Episode]:
-    return Episode.objects.annotate(
-        is_subscribed=Exists(user.subscriptions.filter(podcast=OuterRef("podcast")))
-    ).filter(is_subscribed=True)
+def _get_latest_subscribed_episodes(
+    user: User, since=timedelta(days=14)
+) -> QuerySet[Episode]:
+    return (
+        _get_latest_episodes(since)
+        .annotate(
+            is_subscribed=Exists(user.subscriptions.filter(podcast=OuterRef("podcast")))
+        )
+        .filter(is_subscribed=True)
+    )
 
 
 def _render_bookmark_action(
