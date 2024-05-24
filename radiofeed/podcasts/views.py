@@ -102,8 +102,8 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "podcasts/search.html",
             {
                 "podcasts": podcasts,
-                "cache_timeout": settings.CACHE_TIMEOUT,
                 "clear_search_url": _subscriptions_url,
+                "cache_timeout": settings.CACHE_TIMEOUT,
             },
         )
 
@@ -283,8 +283,8 @@ def category_detail(
         {
             "category": category,
             "podcasts": podcasts,
-            "cache_timeout": settings.CACHE_TIMEOUT,
             "search_podcasts_url": _search_podcasts_url,
+            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
