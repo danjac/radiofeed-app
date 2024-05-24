@@ -1,17 +1,18 @@
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import require_auth, require_form_methods
+from radiofeed.http import require_form_methods
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
 @require_form_methods
-@require_auth
+@login_required
 def user_preferences(
     request: HttpRequest,
 ) -> HttpResponse:
@@ -36,7 +37,7 @@ def user_preferences(
 
 
 @require_safe
-@require_auth
+@login_required
 def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Renders import/export page."""
     return render(
@@ -49,7 +50,7 @@ def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@require_auth
+@login_required
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
@@ -76,7 +77,7 @@ def import_podcast_feeds(
 
 
 @require_safe
-@require_auth
+@login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
@@ -104,14 +105,14 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     return render(request, "account/stats.html")
 
 
 @require_form_methods
-@require_auth
+@login_required
 def delete_account(request: HttpRequest) -> HttpResponse:
     """Delete account on confirmation."""
     if request.method == "POST" and "confirm-delete" in request.POST:

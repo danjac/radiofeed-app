@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
@@ -8,9 +9,8 @@ from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.client import get_client
-from radiofeed.decorators import require_auth, require_DELETE, require_form_methods
 from radiofeed.episodes.models import Episode
-from radiofeed.http import HttpResponseConflict
+from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -42,7 +42,7 @@ def index(request: HttpRequest, limit: int = 30) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def subscriptions(request: HttpRequest) -> HttpResponse:
     """Podcast subscriptions."""
 
@@ -62,7 +62,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def promotions(request: HttpRequest) -> HttpResponse:
     """Promoted podcasts."""
 
@@ -82,7 +82,7 @@ def promotions(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Render search page. Redirects to index page if search is empty."""
     if request.search:
@@ -111,7 +111,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to index page if search is empty."""
     if request.search:
@@ -134,7 +134,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def latest_episode(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -150,7 +150,7 @@ def latest_episode(
 
 
 @require_safe
-@require_auth
+@login_required
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -171,7 +171,7 @@ def podcast_detail(
 
 
 @require_safe
-@require_auth
+@login_required
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -198,7 +198,7 @@ def episodes(
 
 
 @require_safe
-@require_auth
+@login_required
 def similar(
     request: HttpRequest,
     podcast_id: int,
@@ -226,7 +226,7 @@ def similar(
 
 
 @require_safe
-@require_auth
+@login_required
 def category_list(request: HttpRequest) -> HttpResponse:
     """List all categories containing podcasts."""
     categories = (
@@ -257,7 +257,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -290,7 +290,7 @@ def category_detail(
 
 
 @require_POST
-@require_auth
+@login_required
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
@@ -305,7 +305,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 @require_DELETE
-@require_auth
+@login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
@@ -315,7 +315,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
     podcasts = _get_subscribed_podcasts(request.user).filter(private=True)
@@ -339,7 +339,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
 
 
 @require_form_methods
-@require_auth
+@login_required
 def add_private_feed(
     request: HttpRequest,
 ) -> HttpResponse:
@@ -365,7 +365,7 @@ def add_private_feed(
 
 
 @require_DELETE
-@require_auth
+@login_required
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
     podcast = _get_podcast_or_404(podcast_id, private=True)

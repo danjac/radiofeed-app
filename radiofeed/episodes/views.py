@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -10,16 +11,15 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import require_auth, require_DELETE
 from radiofeed.episodes.models import Episode
-from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
+from radiofeed.http import HttpResponseConflict, HttpResponseNoContent, require_DELETE
 from radiofeed.users.models import User
 
 _search_episodes_url = reverse_lazy("episodes:search_episodes")
 
 
 @require_safe
-@require_auth
+@login_required
 def subscriptions(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
@@ -39,7 +39,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def promotions(request: HttpRequest) -> HttpResponse:
     """Episodes from promoted podcasts."""
     episodes = _get_latest_episodes().filter(podcast__promoted=True)
@@ -58,7 +58,7 @@ def promotions(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search episodes. If search empty redirects to index page."""
     if request.search:
@@ -81,7 +81,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -105,7 +105,7 @@ def episode_detail(
 
 
 @require_POST
-@require_auth
+@login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
@@ -136,7 +136,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
-@require_auth
+@login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
     if episode_id := request.audio_player.pop():
@@ -157,7 +157,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@require_auth
+@login_required
 def player_time_update(
     request: HttpRequest,
 ) -> HttpResponse:
@@ -184,7 +184,7 @@ def player_time_update(
 
 
 @require_safe
-@require_auth
+@login_required
 def history(request: HttpRequest) -> HttpResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
@@ -208,7 +208,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 
 @require_DELETE
-@require_auth
+@login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
@@ -234,7 +234,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_safe
-@require_auth
+@login_required
 def bookmarks(request: HttpRequest) -> HttpResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
@@ -257,7 +257,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@require_auth
+@login_required
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
@@ -273,7 +273,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_DELETE
-@require_auth
+@login_required
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
