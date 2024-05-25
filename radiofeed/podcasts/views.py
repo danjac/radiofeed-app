@@ -40,16 +40,17 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 
     podcasts = _get_subscribed_podcasts(request.user).order_by("-pub_date")
 
-    if not podcasts.exists():
-        return redirect("podcasts:promotions")
-
-    return render(
-        request,
-        "podcasts/subscriptions.html",
-        {
-            "podcasts": podcasts,
-            "search_podcasts_url": _search_podcasts_url,
-        },
+    return (
+        render(
+            request,
+            "podcasts/subscriptions.html",
+            {
+                "podcasts": podcasts,
+                "search_podcasts_url": _search_podcasts_url,
+            },
+        )
+        if podcasts.exists()
+        else redirect("podcasts:promotions")
     )
 
 

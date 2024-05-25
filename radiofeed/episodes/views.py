@@ -24,16 +24,17 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
     promoted podcasts."""
     episodes = _get_latest_subscribed_episodes(request.user)
 
-    if not episodes.exists():
-        return redirect("episodes:promotions")
-
-    return render(
-        request,
-        "episodes/subscriptions.html",
-        {
-            "episodes": episodes,
-            "search_episodes_url": _search_episodes_url,
-        },
+    return (
+        render(
+            request,
+            "episodes/subscriptions.html",
+            {
+                "episodes": episodes,
+                "search_episodes_url": _search_episodes_url,
+            },
+        )
+        if episodes.exists()
+        else redirect("episodes:promotions")
     )
 
 
