@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -34,10 +33,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "podcasts/index.html",
-        {
-            "podcasts": podcasts,
-            "cache_timeout": settings.CACHE_TIMEOUT,
-        },
+        {"podcasts": podcasts},
     )
 
 
@@ -76,7 +72,6 @@ def promotions(request: HttpRequest) -> HttpResponse:
             "podcasts": podcasts,
             "has_subscriptions": has_subscriptions,
             "search_podcasts_url": _search_podcasts_url,
-            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
@@ -103,7 +98,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             {
                 "podcasts": podcasts,
                 "clear_search_url": _subscriptions_url,
-                "cache_timeout": settings.CACHE_TIMEOUT,
             },
         )
 
@@ -123,7 +117,6 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
                 {
                     "feeds": feeds,
                     "clear_search_url": _subscriptions_url,
-                    "cache_timeout": settings.CACHE_TIMEOUT,
                 },
             )
 
@@ -160,11 +153,11 @@ def podcast_detail(
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
-    return _render_podcast_detail(
+    return render(
         request,
-        podcast,
         "podcasts/detail.html",
         {
+            "podcast": podcast,
             "is_subscribed": is_subscribed,
         },
     )
@@ -186,11 +179,11 @@ def episodes(
     else:
         episodes = episodes.order_by("pub_date" if ordering_asc else "-pub_date")
 
-    return _render_podcast_detail(
+    return render(
         request,
-        podcast,
         "podcasts/episodes.html",
         {
+            "podcast": podcast,
             "episodes": episodes,
             "ordering_asc": ordering_asc,
         },
@@ -215,11 +208,11 @@ def similar(
         .order_by("-relevance")[:limit]
     )
 
-    return _render_podcast_detail(
+    return render(
         request,
-        podcast,
         "podcasts/similar.html",
         {
+            "podcast": podcast,
             "recommendations": recommendations,
         },
     )
@@ -251,7 +244,6 @@ def category_list(request: HttpRequest) -> HttpResponse:
         "podcasts/categories.html",
         {
             "categories": categories,
-            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
@@ -284,7 +276,6 @@ def category_detail(
             "category": category,
             "podcasts": podcasts,
             "search_podcasts_url": _search_podcasts_url,
-            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
@@ -393,23 +384,6 @@ def _get_subscribed_podcasts(user: User) -> QuerySet[Podcast]:
             )
         )
         .filter(is_subscribed=True)
-    )
-
-
-def _render_podcast_detail(
-    request: HttpRequest,
-    podcast: Podcast,
-    template_name: str,
-    extra_context: dict | None,
-) -> HttpResponse:
-    return render(
-        request,
-        template_name,
-        {
-            "podcast": podcast,
-            "cache_timeout": settings.CACHE_TIMEOUT,
-        }
-        | (extra_context or {}),
     )
 
 

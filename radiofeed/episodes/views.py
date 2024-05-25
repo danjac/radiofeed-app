@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -52,7 +51,6 @@ def promotions(request: HttpRequest) -> HttpResponse:
             "episodes": episodes,
             "has_subscriptions": has_subscriptions,
             "search_episodes_url": _search_episodes_url,
-            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
@@ -74,7 +72,6 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             {
                 "episodes": episodes,
                 "clear_search_url": reverse("episodes:subscriptions"),
-                "cache_timeout": settings.CACHE_TIMEOUT,
             },
         )
     return redirect("episodes:subscriptions")
@@ -99,7 +96,6 @@ def episode_detail(
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
             "is_playing": request.audio_player.has(episode.pk),
-            "cache_timeout": settings.CACHE_TIMEOUT,
         },
     )
 
