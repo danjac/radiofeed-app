@@ -17,7 +17,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.client import get_client
+from radiofeed.http_client import get_client
 from radiofeed.templatetags import ACCEPT_COOKIES_NAME, COVER_IMAGE_SIZES
 
 _PWA_THEME_COLOR: Final = "#26323C"

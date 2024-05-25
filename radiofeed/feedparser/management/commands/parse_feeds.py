@@ -4,9 +4,9 @@ import djclick as click
 import httpx
 from django.db.models import Count, F, QuerySet
 
-from radiofeed.client import get_client
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
+from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
