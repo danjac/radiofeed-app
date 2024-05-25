@@ -30,11 +30,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
 
-    return render(
-        request,
-        "podcasts/index.html",
-        {"podcasts": podcasts},
-    )
+    return render(request, "podcasts/index.html", {"podcasts": podcasts})
 
 
 @require_safe
