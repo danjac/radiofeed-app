@@ -44,7 +44,7 @@ django==5.0.6
     #   django-redis
     #   django-template-partials
     #   heroicons
-django-allauth==0.63.1
+django-allauth==0.63.2
     # via radiofeed (pyproject.toml)
 django-anymail==10.3
     # via radiofeed (pyproject.toml)
@@ -162,7 +162,7 @@ threadpoolctl==3.5.0
     # via scikit-learn
 tqdm==4.66.4
     # via nltk
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   dj-database-url
     #   psycopg
