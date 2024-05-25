@@ -147,9 +147,7 @@ def percentage(value: float, total: float) -> int:
 def pagination_url(
     context: RequestContext, page_number: int, param: str = "page"
 ) -> str:
-    """Returns URL for next/previous page.
-    TBD: replace this with {% query_string %} in Django 5.1
-    """
+    """Returns URL for next/previous page."""
     qs = context.request.GET.copy()
     qs[param] = page_number
     return f"{context.request.path}?{qs.urlencode()}"
