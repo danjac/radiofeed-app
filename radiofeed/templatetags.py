@@ -144,13 +144,13 @@ def percentage(value: float, total: float) -> int:
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(
+def pagination_qs(
     context: RequestContext, page_number: int, param: str = "page"
 ) -> str:
-    """Returns URL for next/previous page."""
+    """Returns query string for next/previous page."""
     qs = context.request.GET.copy()
     qs[param] = page_number
-    return f"{context.request.path}?{qs.urlencode()}"
+    return f"?{qs.urlencode()}"
 
 
 @register.simple_tag(takes_context=True)
