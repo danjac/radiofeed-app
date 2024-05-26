@@ -58,10 +58,7 @@ class PaginationUrls:
             return self._pagination_url(self.page_obj.previous_page_number())
         return ""
 
-    def _pagination_url(
-        self,
-        page_number: int,
-    ) -> str:
+    def _pagination_url(self, page_number: int) -> str:
         """Returns url for next/previous page."""
         dct = self.request.GET.copy()
         dct[self.param] = page_number
