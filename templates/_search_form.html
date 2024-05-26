@@ -8,10 +8,8 @@
            name="{{ request.search.param }}"
            class="py-1 px-2 w-64 text-sm placeholder-opacity-100 text-gray-900 rounded md:text-base dark:text-white dark:bg-gray-900 focus:ring focus:outline-none"
            autocomplete="off"
-           {% with placeholder=placeholder|default:"Search" %}
            placeholder="{{ placeholder }}"
            aria-label="{{ placeholder }}"
-           {% endwith %}
            x-model="search"
            hx-validate="true"
            :class="{ 'md:w-72 xl:w-84': !search, 'md:w-72 xl:w-96': search }">
