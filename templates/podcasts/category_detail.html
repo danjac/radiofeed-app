@@ -16,7 +16,7 @@
                     {% if request.search %}
                         <li class="flex justify-center items-center sm:justify-end">
                             <a class="inline-flex items-center btn btn-default"
-                               href="{{ search_podcasts_url }}?{{ request.search.qs }}">
+                               href="{{ search_podcasts_url }}{{ request.search.qs }}">
                                 {% heroicon_mini "magnifying-glass" class="mr-2" %}
                                 Search All Podcasts
                             </a>

@@ -145,7 +145,7 @@ class TestSearchDetails:
         search = SearchDetails(req)
         assert search
         assert str(search) == "testing"
-        assert search.qs == "search=testing"
+        assert search.qs == "?search=testing"
 
     def test_no_search(self, rf):
         req = rf.get("/")

@@ -119,7 +119,7 @@ class SearchDetails:
     def qs(self) -> str:
         """Returns querystring with search."""
         return (
-            QueryDict.fromkeys([self.param], value=self.value).urlencode()
+            "?" + QueryDict.fromkeys([self.param], value=self.value).urlencode()
             if self
             else ""
         )
