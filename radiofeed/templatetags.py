@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import dataclasses
 import functools
 import math
 import urllib.parse
+from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -15,7 +15,6 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 
 from radiofeed import cleaners
@@ -23,7 +22,6 @@ from radiofeed import cleaners
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
     from django.db.models import QuerySet
-    from django.http import HttpRequest
     from django.template.context import RequestContext
 
 ACCEPT_COOKIES_NAME = "accept-cookies"
@@ -34,35 +32,6 @@ _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
 
 register = template.Library()
-
-
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class PaginationUrls:
-    """Configuration for next/previous urls"""
-
-    request: HttpRequest
-    page_obj: Page
-    param: str = "page"
-
-    @cached_property
-    def next(self) -> str:
-        """Returns next url if any, otherwise empty string"""
-        if self.page_obj.has_next():
-            return self._pagination_url(self.page_obj.next_page_number())
-        return ""
-
-    @cached_property
-    def previous(self) -> str:
-        """Returns previous url if any, otherwise empty string"""
-        if self.page_obj.has_previous():
-            return self._pagination_url(self.page_obj.previous_page_number())
-        return ""
-
-    def _pagination_url(self, page_number: int) -> str:
-        """Returns url for next/previous page."""
-        dct = self.request.GET.copy()
-        dct[self.param] = page_number
-        return f"?{dct.urlencode()}"
 
 
 class ActiveLink(TypedDict):
@@ -175,14 +144,6 @@ def percentage(value: float, total: float) -> int:
 
 
 @register.simple_tag(takes_context=True)
-def pagination_urls(
-    context: RequestContext, page_obj: Page, param: str = "page"
-) -> PaginationUrls:
-    """Returns the pagination previous/next urls"""
-    return PaginationUrls(request=context.request, page_obj=page_obj, param=param)
-
-
-@register.simple_tag(takes_context=True)
 def paginate(
     context: RequestContext,
     object_list: QuerySet,
@@ -195,6 +156,28 @@ def paginate(
     return Paginator(object_list, page_size).get_page(
         context.request.GET.get(param, ""), **kwargs
     )
+
+
+@register.simple_tag(takes_context=True)
+def query_string(context: RequestContext, **kwargs) -> str:
+    """Replace values with query string values.
+
+    If value is None, then removes that param.
+
+    This can be replaced with Django 5.1 upgrade, which has a more complete implementation.
+    """
+    dct = context.request.GET.copy()
+    for param, value in kwargs.items():
+        if value is None:
+            if param in dct:
+                del dct[param]
+        elif isinstance(value, Iterable) and not isinstance(value, str):
+            dct.setlist(param, value)
+        else:
+            dct[param] = value
+    if dct:
+        return f"?{dct.urlencode()}"
+    return ""
 
 
 @register.simple_tag

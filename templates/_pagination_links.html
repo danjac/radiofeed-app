@@ -2,9 +2,9 @@
 <nav role="navigation" aria-label="Pagination">
     <ul class="flex justify-between items-center">
         <li>
-            {% if pagination_urls.previous %}
+            {% if page_obj.has_previous %}
                 <a class="link"
-                   href="{{ pagination_urls.previous }}"
+                   href="{{ request.path }}{% query_string page=page_obj.previous_page_number %}"
                    aria-label="Previous Page"
                    title="Previous Page">Previous</a>
             {% else %}
@@ -14,10 +14,10 @@
             {% endif %}
         </li>
         <li>
-            {% if pagination_urls.next %}
+            {% if page_obj.has_next %}
                 <a class="link"
                    aria-label="Next Page"
-                   href="{{ pagination_urls.next }}"
+                   href="{{ request.path }}{% query_string page=page_obj.next_page_number %}"
                    title="Next Page">Next</a>
             {% else %}
                 <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"

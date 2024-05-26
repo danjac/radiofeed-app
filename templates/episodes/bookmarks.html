@@ -29,8 +29,11 @@
                     <ul class="justify-between items-center sm:flex">
                         <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
                             {% if ordering_asc %}
+                                <a href="{{ request.path }}{% query_string order="desc" page=None %}"
+                                   class="link">Newest First</a>
                             {% else %}
-                                <a href="{{ request.path }}?order=asc" class="link">Oldest First</a>
+                                <a href="{{ request.path }}{% query_string order="asc" page=None %}"
+                                   class="link">Oldest First</a>
                             {% endif %}
                         </li>
                         <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Bookmarks" %}</li>
