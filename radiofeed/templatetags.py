@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import functools
 import math
 import urllib.parse
@@ -14,6 +15,7 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 
 from radiofeed import cleaners
@@ -21,8 +23,8 @@ from radiofeed import cleaners
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
     from django.db.models import QuerySet
+    from django.http import HttpRequest
     from django.template.context import RequestContext
-
 
 ACCEPT_COOKIES_NAME = "accept-cookies"
 
@@ -32,6 +34,38 @@ _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
 
 register = template.Library()
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class PaginationUrls:
+    """Configuration for next/previous urls"""
+
+    request: HttpRequest
+    page_obj: Page
+    param: str = "page"
+
+    @cached_property
+    def next(self) -> str:
+        """Returns next url if any, otherwise empty string"""
+        if self.page_obj.has_next():
+            return self._pagination_url(self.page_obj.next_page_number())
+        return ""
+
+    @cached_property
+    def previous(self) -> str:
+        """Returns previous url if any, otherwise empty string"""
+        if self.page_obj.has_previous():
+            return self._pagination_url(self.page_obj.previous_page_number())
+        return ""
+
+    def _pagination_url(
+        self,
+        page_number: int,
+    ) -> str:
+        """Returns url for next/previous page."""
+        dct = self.request.GET.copy()
+        dct[self.param] = page_number
+        return f"?{dct.urlencode()}"
 
 
 class ActiveLink(TypedDict):
@@ -144,13 +178,11 @@ def percentage(value: float, total: float) -> int:
 
 
 @register.simple_tag(takes_context=True)
-def pagination_qs(
-    context: RequestContext, page_number: int, param: str = "page"
-) -> str:
-    """Returns query string for next/previous page."""
-    qs = context.request.GET.copy()
-    qs[param] = page_number
-    return f"?{qs.urlencode()}"
+def pagination_urls(
+    context: RequestContext, page_obj: Page, param: str = "page"
+) -> PaginationUrls:
+    """Returns the pagination previous/next urls"""
+    return PaginationUrls(request=context.request, page_obj=page_obj, param=param)
 
 
 @register.simple_tag(takes_context=True)
