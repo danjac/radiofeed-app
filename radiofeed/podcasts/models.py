@@ -273,6 +273,16 @@ class Podcast(models.Model):
         """Returns slugified title."""
         return slugify(self.title, allow_unicode=False) or "no-title"
 
+    @cached_property
+    def num_episodes(self) -> int:
+        """Returns number of episodes."""
+        return self.episodes.count()
+
+    @cached_property
+    def has_similar(self) -> bool:
+        """Returns true if any recommendations."""
+        return self.recommendations.exists()
+
 
 class Subscription(TimeStampedModel):
     """Subscribed podcast belonging to a user's collection."""
