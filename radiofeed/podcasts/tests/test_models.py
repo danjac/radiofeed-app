@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 
+from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
@@ -142,3 +143,21 @@ class TestPodcastModel:
                 "slug": podcast.slug,
             },
         )
+
+    @pytest.mark.django_db()
+    def test_has_similar_none(self, podcast):
+        assert podcast.has_similar is False
+
+    @pytest.mark.django_db()
+    def test_has_similar_has_recommendations(self, podcast):
+        RecommendationFactory.create_batch(3, podcast=podcast)
+        assert podcast.has_similar is True
+
+    @pytest.mark.django_db()
+    def test_num_episodes_none(self, podcast):
+        assert podcast.num_episodes == 0
+
+    @pytest.mark.django_db()
+    def test_num_episodes(self, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        assert podcast.num_episodes == 3
