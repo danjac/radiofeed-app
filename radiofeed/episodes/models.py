@@ -13,7 +13,7 @@ from django.utils.text import slugify
 from fast_update.query import FastUpdateQuerySet
 from model_utils.models import TimeStampedModel
 
-from radiofeed import cleaners
+from radiofeed import markup
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.search import SearchQuerySetMixin
 
@@ -142,12 +142,12 @@ class Episode(models.Model):
     @cached_property
     def cleaned_title(self) -> str:
         """Strips HTML from title field."""
-        return cleaners.strip_html(self.title)
+        return markup.strip_html(self.title)
 
     @cached_property
     def cleaned_description(self) -> str:
         """Strips HTML from description field."""
-        return cleaners.strip_html(self.description)
+        return markup.strip_html(self.description)
 
     @cached_property
     def duration_in_seconds(self) -> int:

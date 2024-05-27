@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.template import loader
 
-from radiofeed.cleaners import strip_html
+from radiofeed.markup import strip_html
 
 
 def send_email(

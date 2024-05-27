@@ -70,8 +70,8 @@ def _markdown():
     return MarkdownIt("commonmark", {"linkify": True}).enable("linkify")
 
 
-def clean_html(value: str) -> str:
-    """Scrubs any unwanted HTML tags and attributes."""
+def markdown(value: str) -> str:
+    """Scrubs any unwanted HTML tags and attributes and renders Markdown."""
     if value := value.strip():
         return nh3.clean(
             value if nh3.is_html(value) else _markdown().render(value),

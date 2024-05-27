@@ -13,7 +13,7 @@ from django.utils.formats import date_format
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
-from radiofeed import cleaners
+from radiofeed import markup
 
 NLTK_LANGUAGES: Final = {
     "ar": "arabic",
@@ -76,7 +76,7 @@ def get_stopwords(language: str) -> frozenset[str]:
 
 def clean_text(text: str) -> str:
     """Scrub text of any HTML tags and entities, punctuation and numbers."""
-    text = cleaners.strip_html(text)
+    text = markup.strip_html(text)
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
     return re.sub(r"\d+", "", text)
 
