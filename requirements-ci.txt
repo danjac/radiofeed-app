@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml --extra dev -o requirements-ci.txt
 annotated-types==0.7.0
     # via pydantic
-anyio==4.3.0
+anyio==4.4.0
     # via httpx
 asgiref==3.8.1
     # via
@@ -32,7 +32,7 @@ click==8.1.7
     # via
     #   django-click
     #   nltk
-coverage==7.5.1
+coverage==7.5.2
     # via
     #   radiofeed (pyproject.toml)
     #   pytest-cov
@@ -68,7 +68,7 @@ django-browser-reload==1.12.1
     # via radiofeed (pyproject.toml)
 django-click==2.4.0
     # via radiofeed (pyproject.toml)
-django-debug-toolbar==4.3.0
+django-debug-toolbar==4.4.1
     # via radiofeed (pyproject.toml)
 django-environ==0.11.2
     # via radiofeed (pyproject.toml)
