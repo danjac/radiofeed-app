@@ -11,7 +11,7 @@
                 {% search_form "Search: Podcasts" search_url=search_podcasts_url %}
             </nav>
         </header>
-        {% cache cache_timeout podcasts-promoted %}
+        {% cache cache_timeout podcasts-promoted request.get_full_path %}
         {% paginate podcasts as page_obj %}
         {% include "podcasts/_podcasts.html" %}
     {% endcache %}
