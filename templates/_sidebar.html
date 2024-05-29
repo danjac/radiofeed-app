@@ -4,7 +4,7 @@
     <ul class="space-y-3 text-base sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 md:text-lg lg:text-xl xl:flex xl:flex-col xl:space-y-3 sm:grid-flow-cols xl:justify-content-between">
         {% with sidebar_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
             <li>
-                <a href="{% url "podcasts:subscriptions" %}"
+                <a href="{% url "podcasts:index" %}"
                    accesskey="p"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "rss" class=icon_css %}
@@ -12,11 +12,19 @@
                 </a>
             </li>
             <li>
-                <a href="{% url "episodes:subscriptions" %}"
+                <a href="{% url "episodes:index" %}"
                    accesskey="n"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "sparkles" class=icon_css %}
                     New Releases
+                </a>
+            </li>
+            <li>
+                <a href="{% url "podcasts:discover" %}"
+                   accesskey="d"
+                   class="{{ sidebar_css }}">
+                    {% heroicon_outline "magnifying-glass" class=icon_css %}
+                    Discover
                 </a>
             </li>
             <li>

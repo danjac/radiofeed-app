@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load cache heroicons %}
 {% block title %}
-    | Categories | {{ category.name }} Podcasts
+    {{ block.super }}| Categories | {{ category.name }} Podcasts
 {% endblock title %}
 {% block content %}
     {% cache cache_timeout category-detail request.get_full_path %}

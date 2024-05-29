@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
@@ -108,7 +109,33 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 @login_required
 def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
-    return render(request, "account/stats.html")
+    stats = [
+        {
+            "label": "Subscribed",
+            "value": request.user.subscriptions.count(),
+            "unit": "podcast",
+            "url": reverse("podcasts:index"),
+        },
+        {
+            "label": "Private Feeds",
+            "value": request.user.subscriptions.filter(podcast__private=True).count(),
+            "unit": "podcast",
+            "url": reverse("podcasts:private_feeds"),
+        },
+        {
+            "label": "Bookmarks",
+            "value": request.user.bookmarks.count(),
+            "unit": "episode",
+            "url": reverse("episodes:bookmarks"),
+        },
+        {
+            "label": "Listened",
+            "value": request.user.audio_logs.count(),
+            "unit": "episode",
+            "url": reverse("episodes:history"),
+        },
+    ]
+    return render(request, "account/stats.html", {"stats": stats})
 
 
 @require_form_methods

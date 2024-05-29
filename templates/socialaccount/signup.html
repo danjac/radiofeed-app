@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load heroicons %}
 {% block title %}
-    | Signup
+    {{ block.super }}  | Signup
 {% endblock title %}
 {% block content %}
     {% with provider_name=account.get_provider.name site_name=site.name %}

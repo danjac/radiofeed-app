@@ -3,54 +3,49 @@ from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, QuerySet
+from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, HttpResponseNoContent, require_DELETE
-from radiofeed.users.models import User
 
+_index_url = reverse_lazy("episodes:index")
 _search_episodes_url = reverse_lazy("episodes:search_episodes")
 
 
 @require_safe
 @login_required
-def subscriptions(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpResponse:
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
-    episodes = _get_latest_subscribed_episodes(request.user)
 
-    return (
-        render(
-            request,
-            "episodes/subscriptions.html",
-            {
-                "episodes": episodes,
-                "search_episodes_url": _search_episodes_url,
-            },
-        )
-        if episodes.exists()
-        else redirect("episodes:promotions")
+    latest_episodes = (
+        Episode.objects.filter(pub_date__gt=timezone.now() - since)
+        .select_related("podcast")
+        .order_by("-pub_date", "-id")
     )
 
+    subscribed_episodes = latest_episodes.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+        )
+    ).filter(is_subscribed=True)
 
-@require_safe
-@login_required
-def promotions(request: HttpRequest) -> HttpResponse:
-    """Episodes from promoted podcasts."""
-    episodes = _get_latest_episodes().filter(podcast__promoted=True)
-    has_subscriptions = _get_latest_subscribed_episodes(request.user).exists()
+    episodes = (
+        subscribed_episodes
+        if subscribed_episodes.exists()
+        else latest_episodes.filter(podcast__promoted=True)
+    )
 
     return render(
         request,
-        "episodes/promotions.html",
+        "episodes/index.html",
         {
             "episodes": episodes,
-            "has_subscriptions": has_subscriptions,
             "search_episodes_url": _search_episodes_url,
         },
     )
@@ -72,10 +67,10 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             "episodes/search.html",
             {
                 "episodes": episodes,
-                "clear_search_url": reverse("episodes:subscriptions"),
+                "clear_search_url": _index_url,
             },
         )
-    return redirect("episodes:subscriptions")
+    return redirect(_index_url)
 
 
 @require_safe
@@ -279,24 +274,6 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     messages.info(request, "Removed from Bookmarks")
 
     return _render_bookmark_action(request, episode, is_bookmarked=False)
-
-
-def _get_latest_episodes() -> QuerySet[Episode]:
-    return (
-        Episode.objects.filter(pub_date__gt=timezone.now() - timedelta(days=14))
-        .select_related("podcast")
-        .order_by("-pub_date", "-id")
-    )
-
-
-def _get_latest_subscribed_episodes(user: User) -> QuerySet[Episode]:
-    return (
-        _get_latest_episodes()
-        .annotate(
-            is_subscribed=Exists(user.subscriptions.filter(podcast=OuterRef("podcast")))
-        )
-        .filter(is_subscribed=True)
-    )
 
 
 def _render_bookmark_action(

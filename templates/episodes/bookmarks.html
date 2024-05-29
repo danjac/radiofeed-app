@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load heroicons %}
 {% block title %}
-    | Bookmarks
+    {{ block.super }}| Bookmarks
 {% endblock title %}
 {% block content %}
     {% paginate bookmarks as page_obj %}

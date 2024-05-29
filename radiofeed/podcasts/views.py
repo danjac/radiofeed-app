@@ -13,61 +13,55 @@ from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.users.models import User
 
+_index_url = reverse_lazy("podcasts:index")
 _private_feeds_url = reverse_lazy("podcasts:private_feeds")
 _search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
-_subscriptions_url = reverse_lazy("podcasts:subscriptions")
 
 
 @require_safe
 def index(request: HttpRequest) -> HttpResponse:
-    """Render default site home page for anonymous users.
-    Redirects authenticated users to podcast subscriptions page.
-    """
+    """Render podcast index page."""
+
     if request.user.is_authenticated:
-        return redirect("podcasts:subscriptions")
-
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
-
-    return render(request, "podcasts/index.html", {"podcasts": podcasts})
-
-
-@require_safe
-@login_required
-def subscriptions(request: HttpRequest) -> HttpResponse:
-    """Podcast subscriptions."""
-
-    podcasts = _get_subscribed_podcasts(request.user).order_by("-pub_date")
-
-    return (
-        render(
-            request,
-            "podcasts/subscriptions.html",
-            {
-                "podcasts": podcasts,
-                "search_podcasts_url": _search_podcasts_url,
-            },
+        podcasts = (
+            _get_podcasts()
+            .annotate(
+                is_subscribed=Exists(
+                    request.user.subscriptions.filter(
+                        podcast=OuterRef("pk"),
+                    )
+                )
+            )
+            .filter(is_subscribed=True)
+            .order_by("-pub_date")
         )
-        if podcasts.exists()
-        else redirect("podcasts:promotions")
-    )
+
+        if podcasts.exists():
+            return render(
+                request,
+                "podcasts/index.html",
+                {
+                    "podcasts": podcasts,
+                    "search_podcasts_url": _search_podcasts_url,
+                },
+            )
+
+    return redirect("podcasts:discover")
 
 
 @require_safe
 @login_required
-def promotions(request: HttpRequest) -> HttpResponse:
+def discover(request: HttpRequest) -> HttpResponse:
     """Promoted podcasts."""
 
     podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
-    has_subscriptions = _get_subscribed_podcasts(request.user).exists()
 
     return render(
         request,
-        "podcasts/promotions.html",
+        "podcasts/discover.html",
         {
             "podcasts": podcasts,
-            "has_subscriptions": has_subscriptions,
             "search_podcasts_url": _search_podcasts_url,
         },
     )
@@ -94,11 +88,11 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "podcasts/search.html",
             {
                 "podcasts": podcasts,
-                "clear_search_url": _subscriptions_url,
+                "clear_search_url": _index_url,
             },
         )
 
-    return redirect(_subscriptions_url)
+    return redirect(_index_url)
 
 
 @require_safe
@@ -113,14 +107,14 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
                 "podcasts/search_itunes.html",
                 {
                     "feeds": feeds,
-                    "clear_search_url": _subscriptions_url,
+                    "clear_search_url": _index_url,
                 },
             )
 
         except itunes.ItunesError:
             messages.error(request, "Error: iTunes unavailable")
 
-    return redirect(_subscriptions_url)
+    return redirect(_index_url)
 
 
 @require_safe
@@ -306,7 +300,17 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @login_required
 def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
-    podcasts = _get_subscribed_podcasts(request.user).filter(private=True)
+    podcasts = (
+        _get_podcasts()
+        .annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(
+                    podcast=OuterRef("pk"),
+                )
+            )
+        )
+        .filter(private=True, is_subscribed=True)
+    )
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by(
@@ -368,20 +372,6 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
 
 def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
-
-
-def _get_subscribed_podcasts(user: User) -> QuerySet[Podcast]:
-    return (
-        _get_podcasts()
-        .annotate(
-            is_subscribed=Exists(
-                user.subscriptions.filter(
-                    podcast=OuterRef("pk"),
-                )
-            )
-        )
-        .filter(is_subscribed=True)
-    )
 
 
 def _render_subscribe_action(

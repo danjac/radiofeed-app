@@ -17,7 +17,7 @@
         </ul>
     {% endwith %}
 {% else %}
-    <p class="py-2 text-center sm:text-left">
+    <p class="text-center sm:text-left">
         {% if request.search %}
             No results found for <span class="font-bold">{{ request.search.value }}</span>.
         {% else %}

@@ -6,8 +6,7 @@ app_name = "episodes"
 
 
 urlpatterns = [
-    path("new/", views.subscriptions, name="subscriptions"),
-    path("new/promotions/", views.promotions, name="promotions"),
+    path("new/", views.index, name="index"),
     path("search/episodes/", views.search_episodes, name="search_episodes"),
     path(
         "episodes/<slug:slug>-<int:episode_id>/",

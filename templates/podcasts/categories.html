@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load cache %}
 {% block title %}
-    | Categories
+    {{ block.super }}| Categories
 {% endblock title %}
 {% block content %}
     {% cache cache_timeout categories request.get_full_path %}

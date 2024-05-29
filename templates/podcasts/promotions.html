@@ -4,29 +4,11 @@
     | Podcasts | Promotions
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-3 space-y-3 border-b sm:space-y-6">
-        {% if has_subscriptions %}
-            <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">
-                Podcasts: Promotions
-            </h1>
-            <nav>
-                <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
-                    <li class="flex justify-center items-center sm:justify-start">
-                        <a href="{% url "podcasts:subscriptions" %}" class="link">Subscriptions</a>
-                    </li>
-                    <li class="flex justify-center items-center space-x-3 sm:justify-end">
-                        {% search_form "Search: Podcasts" search_url=search_podcasts_url %}
-                    </li>
-                </ul>
-            </nav>
-        {% else %}
-            <div class="justify-between items-center space-y-6 sm:flex sm:space-y-0">
-                <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Podcasts</h1>
-                <nav class="flex justify-center items-center space-x-3 sm:justify-end">
-                    {% search_form "Search: Podcasts" search_url=search_podcasts_url %}
-                </nav>
-            </div>
-        {% endif %}
+    <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
+        <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start md:text-xl xl:text-2xl">Discover</h1>
+        <nav class="flex justify-center items-center space-x-3 sm:justify-end">
+            {% search_form "Search: Podcasts" search_url=search_podcasts_url %}
+        </nav>
     </header>
     {% cache cache_timeout podcasts-promotions request.get_full_path %}
     {% paginate podcasts as page_obj %}

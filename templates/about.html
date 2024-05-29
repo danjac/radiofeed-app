@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-    | About
+    {{ block.super }} | About
 {% endblock title %}
 {% block content %}
     {% with site_name=request.site.name %}

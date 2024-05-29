@@ -6,45 +6,20 @@
 {% block settings_content %}
     <table class="w-full">
         <tbody class="divide-y divide-solid">
-            <tr class="flex justify-between py-3">
+            <tr class="flex justify-between pt-0 pb-3">
                 <td class="w-1/2">Joined</td>
                 <td class="w-1/2 font-bold text-right">{% include "_date.html" with value=user.date_joined %}</td>
             </tr>
-            {% with subscribed=user.subscriptions.count %}
-                {% if subscribed %}
+            {% for item in stats %}
+                {% if item.value > 0 %}
                     <tr class="flex justify-between py-3">
-                        <td class="w-1/2">Subscribed</td>
+                        <td class="w-1/2">{{ item.label }}</td>
                         <td class="w-1/2 font-bold text-right">
-                            <a href="{% url 'podcasts:index' %}" class="font-bold underline link">
-                                {{ subscribed }} podcast{{ subscribed|pluralize }}
-                            </a>
+                            <a href="{{ item.url }}" class="font-bold underline link">{{ item.value }} {{ item.unit }}{{ item.value|pluralize }}</a>
                         </td>
                     </tr>
                 {% endif %}
-            {% endwith %}
-            {% with bookmarks=user.bookmarks.count %}
-                {% if bookmarks %}
-                    <tr class="flex justify-between py-3">
-                        <td class="w-1/2">Bookmarks</td>
-                        <td class="w-1/2 font-bold text-right">
-                            <a href="{% url 'episodes:bookmarks' %}"
-                               class="font-bold underline link">{{ bookmarks }} episode{{ bookmarks|pluralize }}</a>
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endwith %}
-            {% with listened=user.audio_logs.count %}
-                {% if listened %}
-                    <tr class="flex justify-between py-3">
-                        <td class="w-1/2">Listened</td>
-                        <td class="w-1/2 font-bold text-right">
-                            <a href="{% url 'episodes:history' %}" class="font-bold underline link">
-                                {{ listened }} episode{{ listened|pluralize }}
-                            </a>
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endwith %}
+            {% endfor %}
         </tbody>
     </table>
 {% endblock settings_content %}

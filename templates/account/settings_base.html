@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load heroicons socialaccount %}
 {% block title %}
-    | Settings
+    {{ block.super }} | Settings
 {% endblock title %}
 {% block content %}
     {% if user.is_authenticated %}
