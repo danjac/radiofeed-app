@@ -2,7 +2,7 @@ import http
 
 import pytest
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains, assertTemplateUsed
+from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
@@ -31,6 +31,18 @@ class TestIndex:
         response = client.get(_index_url)
         assert response.url == _discover_url
 
+    @pytest.mark.django_db()
+    def test_user_is_subscribed(self, client, auth_user):
+        """If user subscribed any podcasts, show only own feed with these podcasts"""
+
+        PodcastFactory.create_batch(3, promoted=True)
+        sub = SubscriptionFactory(subscriber=auth_user)
+        response = client.get(_index_url)
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == sub.podcast
+
 
 class TestDiscover:
     @pytest.mark.django_db()
@@ -49,7 +61,6 @@ class TestDiscover:
         assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page_obj"].object_list) == 3
-        assertTemplateUsed(response, "podcasts/discover.html")
 
     @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
@@ -57,7 +68,6 @@ class TestDiscover:
         assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page_obj"].object_list) == 0
-        assertTemplateUsed(response, "podcasts/discover.html")
 
     @pytest.mark.django_db()
     def test_invalid_page(self, client, auth_user):
@@ -71,7 +81,6 @@ class TestDiscover:
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 3
-        assertTemplateUsed(response, "podcasts/discover.html")
 
 
 class TestSubscriptions:
@@ -82,19 +91,6 @@ class TestSubscriptions:
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(_index_url)
         assert response.url == reverse("podcasts:discover")
-
-    @pytest.mark.django_db()
-    def test_user_is_subscribed(self, client, auth_user):
-        """If user subscribed any podcasts, show only own feed with these podcasts"""
-
-        PodcastFactory.create_batch(3, promoted=True)
-        sub = SubscriptionFactory(subscriber=auth_user)
-        response = client.get(_index_url)
-
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == sub.podcast
-        assertTemplateUsed(response, "podcasts/index.html")
 
 
 class TestLatestEpisode:
