@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% load cache %}
+{% block title %}
+    {{ block.super }} | Discover
+{% endblock title %}
 {% block content %}
     {% if request.user.is_authenticated %}
         <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
@@ -8,30 +11,32 @@
                 {% search_form "Search: Podcasts" search_url=search_podcasts_url %}
             </nav>
         </header>
+        {% cache cache_timeout podcasts-promoted %}
         {% paginate podcasts as page_obj %}
         {% include "podcasts/_podcasts.html" %}
-    {% else %}
-        <header class="mb-6 space-y-6 text-center">
-            <h1 class="text-lg font-bold md:text-xl xl:text-2xl">
-                Welcome to <strong>{{ request.site.name }}</strong>, where you can find the latest and greatest podcasts from around the world.
-            </h1>
-            <h2 class="text-base md:text-lg xl:text-xl text-semibold">
-                We curate a selection of the best podcasts across a range of topics, so there's something for everyone!
-            </h2>
-        </header>
-        <div class="flex flex-wrap gap-1 justify-center" hx-disable="true">
-            {% cache cache_timeout podcasts-landing-page %}
-            {% for podcast in podcasts|slice:30 %}
-                {% with css_class="h-28 w-28 md:h-48 md:w-48 xl:h-56 xl:w-56 hover:grayscale" %}
-                    <a href="{{ podcast.get_absolute_url }}"
-                       class="{{ css_class }}"
-                       title="{{ podcast.cleaned_title }}"
-                       aria-label="{{ podcast.cleaned_title }}">
-                        {% cover_image podcast.cover_url 300 podcast.cleaned_title css_class=css_class %}
-                    </a>
-                {% endwith %}
-            {% endfor %}
-        {% endcache %}
-    </div>
+    {% endcache %}
+{% else %}
+    <header class="mb-6 space-y-6 text-center">
+        <h1 class="text-lg font-bold md:text-xl xl:text-2xl">
+            Welcome to <strong>{{ request.site.name }}</strong>, where you can find the latest and greatest podcasts from around the world.
+        </h1>
+        <h2 class="text-base md:text-lg xl:text-xl text-semibold">
+            We curate a selection of the best podcasts across a range of topics, so there's something for everyone!
+        </h2>
+    </header>
+    <div class="flex flex-wrap gap-1 justify-center" hx-disable="true">
+        {% cache cache_timeout podcasts-landing-page %}
+        {% for podcast in podcasts|slice:30 %}
+            {% with css_class="h-28 w-28 md:h-48 md:w-48 xl:h-56 xl:w-56 hover:grayscale" %}
+                <a href="{{ podcast.get_absolute_url }}"
+                   class="{{ css_class }}"
+                   title="{{ podcast.cleaned_title }}"
+                   aria-label="{{ podcast.cleaned_title }}">
+                    {% cover_image podcast.cover_url 300 podcast.cleaned_title css_class=css_class %}
+                </a>
+            {% endwith %}
+        {% endfor %}
+    {% endcache %}
+</div>
 {% endif %}
 {% endblock content %}
