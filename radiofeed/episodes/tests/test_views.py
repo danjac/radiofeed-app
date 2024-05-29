@@ -15,7 +15,7 @@ from radiofeed.episodes.tests.factories import (
 )
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 
-_subscriptions_url = reverse_lazy("episodes:subscriptions")
+_index_url = reverse_lazy("episodes:index")
 
 
 @pytest.fixture()
@@ -29,70 +29,48 @@ def player_episode(auth_user, client, episode):
     return episode
 
 
-class TestSubscriptions:
+class TestIndex:
     @pytest.mark.django_db()
     def test_no_episodes(self, client, auth_user):
-        response = client.get(_subscriptions_url)
-        assert response.url == reverse("episodes:promotions")
-
-    @pytest.mark.django_db()
-    def test_has_no_subscriptions(self, client, auth_user):
-        EpisodeFactory(podcast__promoted=True)
-
-        response = client.get(_subscriptions_url)
-        assert response.url == reverse("episodes:promotions")
+        response = client.get(_index_url)
+        assertTemplateUsed(response, "episodes/index.html")
 
     @pytest.mark.django_db()
     def test_has_subscriptions(self, client, auth_user):
         episode = EpisodeFactory()
         SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
 
-        response = client.get(_subscriptions_url)
+        response = client.get(_index_url)
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
-        assertTemplateUsed("episodes/subscriptions.html")
-
-
-class TestPromotions:
-    url = reverse_lazy("episodes:promotions")
-
-    @pytest.mark.django_db()
-    def test_no_episodes(self, client, auth_user):
-        response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
-        assertTemplateUsed("episodes/promotions.html")
+        assertTemplateUsed(response, "episodes/index.html")
 
     @pytest.mark.django_db()
     def test_user_has_no_subscriptions(self, client, auth_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
+        episode = EpisodeFactory(podcast__promoted=True)
         EpisodeFactory.create_batch(3)
-        response = client.get(self.url)
+        response = client.get(_index_url)
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
-        assert not response.context["has_subscriptions"]
-        assertTemplateUsed("episodes/promotions.html")
+        assert response.context["page_obj"].object_list[0] == episode
+        assertTemplateUsed(response, "episodes/index.html")
 
     @pytest.mark.django_db()
     def test_user_has_subscriptions(self, client, auth_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
-
-        EpisodeFactory.create_batch(3)
+        EpisodeFactory(podcast__promoted=True)
 
         episode = EpisodeFactory()
+
         SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
 
-        response = client.get(self.url)
+        response = client.get(_index_url)
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0].podcast == promoted
-        assert response.context["has_subscriptions"]
-        assertTemplateUsed("episodes/promotions.html")
+        assert response.context["page_obj"].object_list[0] == episode
+        assertTemplateUsed(response, "episodes/index.html")
 
 
 class TestSearchEpisodes:
@@ -105,7 +83,7 @@ class TestSearchEpisodes:
 
     @pytest.mark.django_db()
     def test_search_empty(self, auth_user, client):
-        assert client.get(self.url, {"search": ""}).url == _subscriptions_url
+        assert client.get(self.url, {"search": ""}).url == _index_url
 
     @pytest.mark.django_db()
     def test_search(self, auth_user, client, faker):

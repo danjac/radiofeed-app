@@ -51,7 +51,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-@login_required
 def discover(request: HttpRequest) -> HttpResponse:
     """Promoted podcasts."""
 
