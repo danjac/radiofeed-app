@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.http import require_form_methods
+from radiofeed.decorators import require_form_methods
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 

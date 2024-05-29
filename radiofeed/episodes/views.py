@@ -10,8 +10,9 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.decorators import htmx_login_required, require_DELETE
 from radiofeed.episodes.models import Episode
-from radiofeed.http import HttpResponseConflict, HttpResponseNoContent, require_DELETE
+from radiofeed.http import HttpResponseConflict, HttpResponseNoContent
 
 _index_url = reverse_lazy("episodes:index")
 _search_episodes_url = reverse_lazy("episodes:search_episodes")
@@ -97,7 +98,7 @@ def episode_detail(
 
 
 @require_POST
-@login_required
+@htmx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
@@ -128,7 +129,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@htmx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     """Closes audio player."""
     if episode_id := request.audio_player.pop():
@@ -200,7 +201,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 
 @require_DELETE
-@login_required
+@htmx_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
@@ -249,7 +250,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@htmx_login_required
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
@@ -265,7 +266,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_DELETE
-@login_required
+@htmx_login_required
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)

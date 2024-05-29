@@ -7,8 +7,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.decorators import (
+    htmx_login_required,
+    require_DELETE,
+    require_form_methods,
+)
 from radiofeed.episodes.models import Episode
-from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
+from radiofeed.http import HttpResponseConflict
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -271,7 +276,7 @@ def category_detail(
 
 
 @require_POST
-@login_required
+@htmx_login_required
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
@@ -286,7 +291,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 @require_DELETE
-@login_required
+@htmx_login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
@@ -356,7 +361,7 @@ def add_private_feed(
 
 
 @require_DELETE
-@login_required
+@htmx_login_required
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Removes subscription to private feed."""
     podcast = _get_podcast_or_404(podcast_id, private=True)
