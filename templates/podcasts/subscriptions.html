@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load heroicons %}
 {% block title %}
     {{ block.super }} | Podcasts
 {% endblock title %}
@@ -8,7 +9,16 @@
         <h1 class="flex justify-center items-center text-xl font-bold sm:justify-start md:text-2xl xl:text-3xl">Podcasts</h1>
         {% if request.search or page_obj.has_other_pages %}
             <nav>
-                <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
+                <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
+                    {% if request.search %}
+                        <li class="flex justify-center items-center sm:justify-end">
+                            <a class="inline-flex items-center btn btn-default"
+                               href="{% url "podcasts:discover" %}{{ request.search.qs }}">
+                                {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                                Search All Podcasts
+                            </a>
+                        </li>
+                    {% endif %}
                     <li class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: Subscriptions" %}</li>
                 </ul>
             </nav>

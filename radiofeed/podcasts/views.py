@@ -263,7 +263,6 @@ def category_detail(
         {
             "category": category,
             "podcasts": podcasts,
-            "search_podcasts_url": _discover_url,
         },
     )
 
