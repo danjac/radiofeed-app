@@ -27,7 +27,7 @@ click==8.1.7
     #   nltk
 cryptography==42.0.7
     # via pyjwt
-dj-database-url==2.1.0
+dj-database-url==2.2.0
     # via radiofeed (pyproject.toml)
 django==5.0.6
     # via
@@ -119,9 +119,9 @@ psycopg-binary==3.1.19
     # via psycopg
 pycparser==2.22
     # via cffi
-pydantic==2.7.1
+pydantic==2.7.2
     # via radiofeed (pyproject.toml)
-pydantic-core==2.18.2
+pydantic-core==2.18.3
     # via pydantic
 pyjwt==2.8.0
     # via django-allauth
@@ -133,7 +133,7 @@ redis==5.0.4
     #   django-redis
 regex==2024.5.15
     # via nltk
-requests==2.32.2
+requests==2.32.3
     # via
     #   django-allauth
     #   django-anymail

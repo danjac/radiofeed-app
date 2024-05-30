@@ -32,7 +32,7 @@ click==8.1.7
     # via
     #   django-click
     #   nltk
-coverage==7.5.2
+coverage==7.5.3
     # via
     #   radiofeed (pyproject.toml)
     #   pytest-cov
@@ -40,7 +40,7 @@ cryptography==42.0.7
     # via pyjwt
 decorator==5.1.1
     # via ipython
-dj-database-url==2.1.0
+dj-database-url==2.2.0
     # via radiofeed (pyproject.toml)
 django==5.0.6
     # via
@@ -96,7 +96,7 @@ executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
     # via radiofeed (pyproject.toml)
-faker==25.2.0
+faker==25.3.0
     # via factory-boy
 filelock==3.14.0
     # via pytest-mypy
@@ -178,7 +178,7 @@ pluggy==1.5.0
     # via pytest
 pprintpp==0.4.0
     # via pytest-icdiff
-prompt-toolkit==3.0.44
+prompt-toolkit==3.0.45
     # via ipython
 psutil==5.9.8
     # via radiofeed (pyproject.toml)
@@ -192,9 +192,9 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.22
     # via cffi
-pydantic==2.7.1
+pydantic==2.7.2
     # via radiofeed (pyproject.toml)
-pydantic-core==2.18.2
+pydantic-core==2.18.3
     # via pydantic
 pygments==2.18.0
     # via
@@ -244,7 +244,7 @@ redis==5.0.4
     #   django-redis
 regex==2024.5.15
     # via nltk
-requests==2.32.2
+requests==2.32.3
     # via
     #   django-allauth
     #   django-anymail
