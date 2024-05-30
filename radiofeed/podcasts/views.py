@@ -59,7 +59,7 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_safe
 def discover(request: HttpRequest) -> HttpResponse:
     """Shows all promoted podcasts."""
-    podcasts = _get_podcasts().filter(promoted=True)
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
     template_name = (
         "podcasts/discover.html"
         if request.user.is_authenticated
