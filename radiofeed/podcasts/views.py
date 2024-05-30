@@ -19,69 +19,63 @@ from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
 
-_index_url = reverse_lazy("podcasts:index")
+_discover_url = reverse_lazy("podcasts:discover")
 _private_feeds_url = reverse_lazy("podcasts:private_feeds")
-_search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
 
 
 @require_safe
 def index(request: HttpRequest) -> HttpResponse:
-    """Render podcast index page.
-    If user does not have any subscribed podcasts, redirects to Discover page.
-    """
+    """Returns landing page."""
     if request.user.is_authenticated:
-        podcasts = (
-            _get_podcasts()
-            .annotate(
-                is_subscribed=Exists(
-                    request.user.subscriptions.filter(
-                        podcast=OuterRef("pk"),
-                    )
-                )
-            )
-            .filter(is_subscribed=True)
-            .order_by("-pub_date")
-        )
+        return redirect("podcasts:subscriptions")
 
-        if podcasts.exists():
-            return render(
-                request,
-                "podcasts/index.html",
-                {
-                    "podcasts": podcasts,
-                    "search_podcasts_url": _search_podcasts_url,
-                },
-            )
-
-    return redirect("podcasts:discover")
-
-
-@require_safe
-def discover(request: HttpRequest) -> HttpResponse:
-    """Shows all promoted podcasts."""
     podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
-    template_name = (
-        "podcasts/discover.html"
-        if request.user.is_authenticated
-        else "podcasts/landing_page.html"
-    )
 
-    return render(
-        request,
-        template_name,
-        {
-            "podcasts": podcasts,
-            "search_podcasts_url": _search_podcasts_url,
-        },
-    )
+    return render(request, "podcasts/landing_page.html", {"podcasts": podcasts})
 
 
 @require_safe
 @login_required
-def search_podcasts(request: HttpRequest) -> HttpResponse:
-    """Render search page. Redirects to index page if search is empty."""
-    if request.search:
-        podcasts = (
+def subscriptions(request: HttpRequest) -> HttpResponse:
+    """Render podcast index page.
+    If user does not have any subscribed podcasts, redirects to Discover page.
+    """
+    podcasts = (
+        _get_podcasts()
+        .annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(
+                    podcast=OuterRef("pk"),
+                )
+            )
+        )
+        .filter(is_subscribed=True)
+    )
+
+    if not podcasts.exists():
+        return redirect("podcasts:discover")
+
+    podcasts = (
+        podcasts.search(request.search.value).order_by(
+            "-exact_match",
+            "-rank",
+            "-pub_date",
+        )
+        if request.search
+        else podcasts.order_by("-pub_date")
+    )
+
+    return render(request, "podcasts/subscriptions.html", {"podcasts": podcasts})
+
+
+@require_safe
+@login_required
+def discover(request: HttpRequest) -> HttpResponse:
+    """Shows all promoted podcasts. If search, will search all
+    public podcasts in database."""
+
+    podcasts = (
+        (
             _get_podcasts()
             .filter(private=False)
             .search(request.search.value)
@@ -91,17 +85,11 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
                 "-pub_date",
             )
         )
+        if request.search
+        else _get_podcasts().filter(promoted=True).order_by("-pub_date")
+    )
 
-        return render(
-            request,
-            "podcasts/search.html",
-            {
-                "podcasts": podcasts,
-                "clear_search_url": _index_url,
-            },
-        )
-
-    return redirect(_index_url)
+    return render(request, "podcasts/discover.html", {"podcasts": podcasts})
 
 
 @require_safe
@@ -116,14 +104,14 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
                 "podcasts/search_itunes.html",
                 {
                     "feeds": feeds,
-                    "clear_search_url": _index_url,
+                    "clear_search_url": _discover_url,
                 },
             )
 
         except itunes.ItunesError:
             messages.error(request, "Error: iTunes unavailable")
 
-    return redirect(_index_url)
+    return redirect(_discover_url)
 
 
 @require_safe
@@ -275,7 +263,7 @@ def category_detail(
         {
             "category": category,
             "podcasts": podcasts,
-            "search_podcasts_url": _search_podcasts_url,
+            "search_podcasts_url": _discover_url,
         },
     )
 

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
@@ -24,54 +24,31 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
 
-    latest_episodes = (
-        Episode.objects.filter(pub_date__gt=timezone.now() - since)
-        .select_related("podcast")
-        .order_by("-pub_date", "-id")
-    )
+    episodes = Episode.objects.select_related("podcast")
 
-    subscribed_episodes = latest_episodes.annotate(
-        is_subscribed=Exists(
-            request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-        )
-    ).filter(is_subscribed=True)
-
-    episodes = (
-        subscribed_episodes
-        if subscribed_episodes.exists()
-        else latest_episodes.filter(podcast__promoted=True)
-    )
-
-    return render(
-        request,
-        "episodes/index.html",
-        {
-            "episodes": episodes,
-            "search_episodes_url": _search_episodes_url,
-        },
-    )
-
-
-@require_safe
-@login_required
-def search_episodes(request: HttpRequest) -> HttpResponse:
-    """Search episodes. If search empty redirects to index page."""
     if request.search:
         episodes = (
-            Episode.objects.search(request.search.value)
+            episodes.search(request.search.value)
             .filter(podcast__private=False)
             .select_related("podcast")
             .order_by("-rank", "-pub_date")
         )
-        return render(
-            request,
-            "episodes/search.html",
-            {
-                "episodes": episodes,
-                "clear_search_url": _index_url,
-            },
+    else:
+        episodes = episodes.order_by("-pub_date", "-id")
+
+        subscribed_episodes = episodes.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+            )
+        ).filter(is_subscribed=True)
+
+        episodes = (
+            subscribed_episodes
+            if subscribed_episodes.exists()
+            else episodes.filter(podcast__promoted=True)
         )
-    return redirect(_index_url)
+
+    return render(request, "episodes/index.html", {"episodes": episodes})
 
 
 @require_safe

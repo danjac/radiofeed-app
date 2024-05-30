@@ -2,7 +2,7 @@ import http
 
 import pytest
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains, assertTemplateUsed
+from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
@@ -15,6 +15,7 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 _index_url = reverse_lazy("podcasts:index")
+_subscriptions_url = reverse_lazy("podcasts:subscriptions")
 _discover_url = reverse_lazy("podcasts:discover")
 
 
@@ -23,12 +24,19 @@ class TestIndex:
     def test_anonymous(self, client):
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(_index_url)
-        assert response.url == _discover_url
+        assert response.status_code == http.HTTPStatus.OK
 
+    @pytest.mark.django_db()
+    def test_authenticated(self, client, auth_user):
+        response = client.get(_index_url)
+        assert response.url == _subscriptions_url
+
+
+class TestSubscriptions:
     @pytest.mark.django_db()
     def test_authenticated_no_subscriptions(self, client, auth_user):
         PodcastFactory.create_batch(3, promoted=True)
-        response = client.get(_index_url)
+        response = client.get(_subscriptions_url)
         assert response.url == _discover_url
 
     @pytest.mark.django_db()
@@ -37,7 +45,19 @@ class TestIndex:
 
         PodcastFactory.create_batch(3, promoted=True)
         sub = SubscriptionFactory(subscriber=auth_user)
-        response = client.get(_index_url)
+        response = client.get(_subscriptions_url)
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == sub.podcast
+
+    @pytest.mark.django_db()
+    def test_user_is_subscribed_search(self, client, auth_user):
+        """If user subscribed any podcasts, show only own feed with these podcasts"""
+
+        PodcastFactory.create_batch(3, promoted=True)
+        sub = SubscriptionFactory(subscriber=auth_user)
+        response = client.get(_subscriptions_url, {"search": sub.podcast.title})
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
@@ -46,21 +66,11 @@ class TestIndex:
 
 class TestDiscover:
     @pytest.mark.django_db()
-    def test_anonymous(self, client):
-        PodcastFactory.create_batch(3, promoted=True)
-        response = client.get(_discover_url)
-        assert response.status_code == http.HTTPStatus.OK
-
-        assert len(response.context["podcasts"]) == 3
-        assertTemplateUsed(response, "podcasts/landing_page.html")
-
-    @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
         response = client.get(_discover_url)
         assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page_obj"].object_list) == 0
-        assertTemplateUsed(response, "podcasts/discover.html")
 
     @pytest.mark.django_db()
     def test_invalid_page(self, client, auth_user):
@@ -74,17 +84,39 @@ class TestDiscover:
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 3
-        assertTemplateUsed(response, "podcasts/discover.html")
 
-
-class TestSubscriptions:
     @pytest.mark.django_db()
-    def test_user_is_not_subscribed(self, client, auth_user):
-        """If user is not subscribed any podcasts, just show general feed"""
+    def test_search(self, client, auth_user, faker):
+        podcast = PodcastFactory(title=faker.unique.text())
+        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
+        response = client.get(_discover_url, {"search": podcast.title})
+        assert response.status_code == http.HTTPStatus.OK
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == podcast
 
-        PodcastFactory.create_batch(3, promoted=True)
-        response = client.get(_index_url)
-        assert response.url == reverse("podcasts:discover")
+    @pytest.mark.django_db()
+    def test_search_filter_private(self, client, auth_user, faker):
+        podcast = PodcastFactory(title=faker.unique.text(), private=True)
+        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
+        response = client.get(_discover_url, {"search": podcast.title})
+        assert response.status_code == http.HTTPStatus.OK
+        assert len(response.context["page_obj"].object_list) == 0
+
+    @pytest.mark.django_db()
+    def test_search_filter_private_subscribed(self, client, auth_user, faker):
+        podcast = PodcastFactory(title=faker.unique.text())
+        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
+        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
+        response = client.get(_discover_url, {"search": podcast.title})
+        assert response.status_code == http.HTTPStatus.OK
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == podcast
+
+    @pytest.mark.django_db()
+    def test_search_no_results(self, client, auth_user, faker):
+        response = client.get(_discover_url, {"search": "zzzz"})
+        assert response.status_code == http.HTTPStatus.OK
+        assert len(response.context["page_obj"].object_list) == 0
 
 
 class TestLatestEpisode:
@@ -101,64 +133,13 @@ class TestLatestEpisode:
         )
 
 
-class TestSearchPodcasts:
-    url = reverse_lazy("podcasts:search_podcasts")
-
-    @pytest.fixture()
-    def mock_itunes(self, mocker):
-        return mocker.patch("radiofeed.podcasts.itunes.search")
-
-    @pytest.mark.django_db()
-    def test_search_empty(self, client, auth_user):
-        assert client.get(self.url, {"search": ""}).url == _index_url
-
-    @pytest.mark.django_db()
-    def test_search(self, client, auth_user, faker):
-        podcast = PodcastFactory(title=faker.unique.text())
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(self.url, {"search": podcast.title})
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == podcast
-
-    @pytest.mark.django_db()
-    def test_search_filter_private(self, client, auth_user, faker):
-        podcast = PodcastFactory(title=faker.unique.text(), private=True)
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(self.url, {"search": podcast.title})
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
-
-    @pytest.mark.django_db()
-    def test_search_filter_private_subscribed(self, client, auth_user, faker):
-        podcast = PodcastFactory(title=faker.unique.text())
-        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(self.url, {"search": podcast.title})
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == podcast
-
-    @pytest.mark.django_db()
-    def test_search_no_results(self, client, auth_user, faker):
-        response = client.get(self.url, {"search": "zzzz"})
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
-
-    @pytest.mark.django_db()
-    def test_search_no_results_itunes_error(self, client, auth_user, faker):
-        response = client.get(self.url, {"search": "zzzz"})
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
-
-
 class TestSearchItunes:
     url = reverse_lazy("podcasts:search_itunes")
 
     @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
         response = client.get(self.url, {"search": ""})
-        assert response.url == _index_url
+        assert response.url == _discover_url
 
     @pytest.mark.django_db()
     def test_search(self, client, auth_user, podcast, mocker):
@@ -194,7 +175,7 @@ class TestSearchItunes:
         )
 
         response = client.get(reverse("podcasts:search_itunes"), {"search": "test"})
-        assert response.url == _index_url
+        assert response.url == _discover_url
 
         mock_search.assert_called()
 

@@ -6,6 +6,7 @@ app_name = "podcasts"
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("podcasts/", views.subscriptions, name="subscriptions"),
     path("discover/", views.discover, name="discover"),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",
@@ -27,8 +28,7 @@ urlpatterns = [
         views.similar,
         name="podcast_similar",
     ),
-    path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
-    path("search/itunes/", views.search_itunes, name="search_itunes"),
+    path("itunes/", views.search_itunes, name="search_itunes"),
     path(
         "subscribe/<int:podcast_id>/",
         views.subscribe,

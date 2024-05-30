@@ -70,31 +70,23 @@ class TestIndex:
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
 
-
-class TestSearchEpisodes:
-    url = reverse_lazy("episodes:search_episodes")
-
     @pytest.mark.django_db()
     def test_no_results(self, auth_user, client):
-        response = client.get(self.url, {"search": "test"})
+        response = client.get(_index_url, {"search": "test"})
         assert response.status_code == http.HTTPStatus.OK
-
-    @pytest.mark.django_db()
-    def test_search_empty(self, auth_user, client):
-        assert client.get(self.url, {"search": ""}).url == _index_url
 
     @pytest.mark.django_db()
     def test_search(self, auth_user, client, faker):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
-        response = client.get(self.url, {"search": episode.title})
+        response = client.get(_index_url, {"search": episode.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == episode
 
     @pytest.mark.django_db()
     def test_search_no_results(self, auth_user, client):
-        response = client.get(self.url, {"search": "zzzz"})
+        response = client.get(_index_url, {"search": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
 
