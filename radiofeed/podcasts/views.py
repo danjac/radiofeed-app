@@ -26,8 +26,9 @@ _search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
 
 @require_safe
 def index(request: HttpRequest) -> HttpResponse:
-    """Render podcast index page."""
-
+    """Render podcast index page.
+    If user does not have any subscribed podcasts, redirects to Discover page.
+    """
     if request.user.is_authenticated:
         podcasts = (
             _get_podcasts()
@@ -57,13 +58,17 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 def discover(request: HttpRequest) -> HttpResponse:
-    """Promoted podcasts."""
-
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
+    """Shows all promoted podcasts."""
+    podcasts = _get_podcasts().filter(promoted=True)
+    template_name = (
+        "podcasts/discover.html"
+        if request.user.is_authenticated
+        else "podcasts/landing_page.html"
+    )
 
     return render(
         request,
-        "podcasts/discover.html",
+        template_name,
         {
             "podcasts": podcasts,
             "search_podcasts_url": _search_podcasts_url,

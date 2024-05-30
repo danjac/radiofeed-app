@@ -2,7 +2,7 @@ import http
 
 import pytest
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
@@ -52,15 +52,7 @@ class TestDiscover:
         assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["podcasts"]) == 3
-
-    @pytest.mark.django_db()
-    def test_htmx(self, client, auth_user):
-        PodcastFactory.create_batch(3, promoted=True)
-        response = client.get(_discover_url)
-
-        assert response.status_code == http.HTTPStatus.OK
-
-        assert len(response.context["page_obj"].object_list) == 3
+        assertTemplateUsed(response, "podcasts/landing_page.html")
 
     @pytest.mark.django_db()
     def test_empty(self, client, auth_user):
@@ -68,6 +60,7 @@ class TestDiscover:
         assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page_obj"].object_list) == 0
+        assertTemplateUsed(response, "podcasts/discover.html")
 
     @pytest.mark.django_db()
     def test_invalid_page(self, client, auth_user):
@@ -81,6 +74,7 @@ class TestDiscover:
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 3
+        assertTemplateUsed(response, "podcasts/discover.html")
 
 
 class TestSubscriptions:
