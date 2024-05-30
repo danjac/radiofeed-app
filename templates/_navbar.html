@@ -12,7 +12,7 @@
     <nav class="flex justify-between items-center p-2">
         {% with site_name=request.site.name %}
             <div class="flex flex-shrink-0 items-center">
-                <a class="inline-flex items-center text-lg font-bold md:text-xl xl:text-2xl"
+                <a class="inline-flex items-center text-xl font-bold md:text-2xl xl:text-3xl"
                    href="{% url 'podcasts:index' %}"
                    title="{{ site_name }}: Home Page">
                     <img src="{% static 'img/wave-white.png' %}"
