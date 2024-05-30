@@ -6,6 +6,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
 from django.views.decorators.http import require_http_methods
+from django_htmx.http import HttpResponseClientRedirect
 
 from radiofeed.types import HttpRequestResponse
 
@@ -37,6 +38,10 @@ def htmx_login_required(
         path = request.htmx.current_url_abs_path or "/"
         resolved_login_url = resolve_url(login_url or settings.LOGIN_URL)
 
-        return redirect_to_login(path, resolved_login_url, redirect_field_name)
+        redirect_url = redirect_to_login(
+            path, resolved_login_url, redirect_field_name
+        ).url
+
+        return HttpResponseClientRedirect(redirect_url)
 
     return _view
