@@ -4,17 +4,10 @@
     {{ block.super }} | Private Feeds | Add Feed
 {% endblock title %}
 {% block content %}
-    <header class="justify-between items-center pb-3 mb-6 space-y-3 border-b sm:flex sm:space-y-0">
+    <header class="pb-6 mb-3 border-b">
         <h1 class="flex justify-center items-center text-lg font-bold sm:justify-start lg:text-xl xl:text-2xl">
             Add Private Feed
         </h1>
-        <nav>
-            <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
-                <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
-                    <a href="{% url "podcasts:private_feeds" %}" class="link">Private Feeds</a>
-                </li>
-            </ul>
-        </nav>
     </header>
     <form method="post"
           action="{{ request.path }}"
@@ -22,11 +15,16 @@
           id="private-feed-form">
         {% csrf_token %}
         {{ form }}
-        <div>
+        <div class="flex items-center space-x-3">
             <button class="inline-flex items-center btn btn-primary">
                 {% heroicon_mini "plus" class="mr-2" %}
                 Add Feed
             </button>
+            <a class="inline-flex items-center btn btn-default"
+               href="{% url "podcasts:private_feeds" %}">
+                {% heroicon_mini "arrow-uturn-left" class="mr-2" %}
+                Cancel
+            </a>
         </div>
     </form>
 {% endblock content %}
