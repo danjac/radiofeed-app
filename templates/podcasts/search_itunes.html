@@ -24,7 +24,7 @@
     {% cache cache_timeout search-itunes request.get_full_path %}
     <ul class="divide-y divide-solid">
         {% for feed in feeds %}
-            <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
+            <li class="py-3 first:pt-0 last:pb-0">
                 {% if feed.podcast and feed.podcast.pub_date %}
                     {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
                 {% else %}
