@@ -10,7 +10,7 @@ asgiref==3.8.1
     #   django-htmx
     #   django-permissions-policy
 brotli==1.1.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 certifi==2024.2.2
     # via
     #   httpcore
@@ -28,10 +28,10 @@ click==8.1.7
 cryptography==42.0.7
     # via pyjwt
 dj-database-url==2.2.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django==5.0.6
     # via
-    #   radiofeed (pyproject.toml)
+    #   listenwave (pyproject.toml)
     #   dj-database-url
     #   django-allauth
     #   django-anymail
@@ -45,41 +45,41 @@ django==5.0.6
     #   django-template-partials
     #   heroicons
 django-allauth==0.63.3
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-anymail==10.3
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-click==2.4.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-environ==0.11.2
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-extensions==3.2.3
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-fast-update==0.2.3
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-health-check==3.18.2
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-htmx==1.17.3
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-model-utils==4.5.1
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-permissions-policy==4.19.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-redis==5.4.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 django-template-partials==24.2
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 gunicorn==22.0.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 h11==0.14.0
     # via httpcore
 heroicons==2.6.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 hiredis==2.3.2
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 httpcore==1.0.5
     # via httpx
 httpx==0.27.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 idna==3.7
     # via
     #   anyio
@@ -92,15 +92,15 @@ joblib==1.4.2
 linkify-it-py==2.0.3
     # via markdown-it-py
 lxml==5.2.2
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 markdown-it-py==3.0.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 mdurl==0.1.2
     # via markdown-it-py
 nh3==0.2.17
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 nltk==3.8.1
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 numpy==1.26.4
     # via
     #   scikit-learn
@@ -110,26 +110,26 @@ oauthlib==3.2.2
 packaging==24.0
     # via gunicorn
 pillow==10.3.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 psutil==5.9.8
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 psycopg==3.1.19
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 psycopg-binary==3.1.19
     # via psycopg
 pycparser==2.22
     # via cffi
 pydantic==2.7.2
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 pydantic-core==2.18.3
     # via pydantic
 pyjwt==2.8.0
     # via django-allauth
 python-dateutil==2.9.0.post0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 redis==5.0.4
     # via
-    #   radiofeed (pyproject.toml)
+    #   listenwave (pyproject.toml)
     #   django-redis
 regex==2024.5.15
     # via nltk
@@ -141,15 +141,15 @@ requests==2.32.3
 requests-oauthlib==2.0.0
     # via django-allauth
 scikit-learn==1.5.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 scipy==1.13.1
     # via
-    #   radiofeed (pyproject.toml)
+    #   listenwave (pyproject.toml)
     #   scikit-learn
 sentry-sdk==2.3.1
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 setuptools==70.0.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
 six==1.16.0
     # via python-dateutil
 sniffio==1.3.1
@@ -176,4 +176,4 @@ urllib3==2.2.1
     #   requests
     #   sentry-sdk
 whitenoise==6.6.0
-    # via radiofeed (pyproject.toml)
+    # via listenwave (pyproject.toml)
