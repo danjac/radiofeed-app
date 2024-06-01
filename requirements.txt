@@ -44,7 +44,7 @@ django==5.0.6
     #   django-redis
     #   django-template-partials
     #   heroicons
-django-allauth==0.63.2
+django-allauth==0.63.3
     # via radiofeed (pyproject.toml)
 django-anymail==10.3
     # via radiofeed (pyproject.toml)

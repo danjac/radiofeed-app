@@ -60,7 +60,7 @@ django==5.0.6
     #   django-redis
     #   django-template-partials
     #   heroicons
-django-allauth==0.63.2
+django-allauth==0.63.3
     # via radiofeed (pyproject.toml)
 django-anymail==10.3
     # via radiofeed (pyproject.toml)
@@ -121,7 +121,7 @@ idna==3.7
     #   requests
 iniconfig==2.0.0
     # via pytest
-ipython==8.24.0
+ipython==8.25.0
     # via radiofeed (pyproject.toml)
 jedi==0.19.1
     # via ipython

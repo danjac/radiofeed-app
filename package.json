@@ -15,12 +15,12 @@
         "htmx.org": "^1.9.12"
     },
     "devDependencies": {
-        "@eslint/js": "^9.3.0",
+        "@eslint/js": "^9.4.0",
         "@tailwindcss/forms": "^0.5.7",
         "@tailwindcss/typography": "^0.5.13",
         "concurrently": "^8.2.2",
         "esbuild": "^0.21.4",
-        "eslint": "^9.3.0",
+        "eslint": "^9.4.0",
         "globals": "^15.3.0",
         "npm-check-updates": "^16.14.20",
         "npm-update-all": "^1.0.1",
