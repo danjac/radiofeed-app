@@ -141,6 +141,7 @@ def robots(_) -> HttpResponse:
                         "/episodes/",
                         "/history/",
                         "/podcasts/",
+                        "/private-feeds/",
                     ]
                 ],
             ]
