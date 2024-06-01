@@ -7,7 +7,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ## Development
 
-Radiofeed requires the following basic dependencies to get started:
+Listenwave requires the following basic dependencies to get started:
 
 * Python 3.12
 * Node 16+
