@@ -1,5 +1,5 @@
 {
-    "name": "Radiofeed Dokku deployment",
+    "name": "Listenwave Dokku deployment",
     "formation": {
         "web": {
             "quantity": 1
