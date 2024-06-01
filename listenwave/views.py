@@ -137,6 +137,7 @@ def robots(_) -> HttpResponse:
                         "/account/",
                         "/bookmarks/",
                         "/categories/",
+                        "/discover/",
                         "/episodes/",
                         "/history/",
                         "/podcasts/",
