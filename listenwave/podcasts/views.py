@@ -95,7 +95,7 @@ def discover(request: HttpRequest) -> HttpResponse:
 @require_safe
 @login_required
 def search_itunes(request: HttpRequest) -> HttpResponse:
-    """Render iTunes search page. Redirects to index page if search is empty."""
+    """Render iTunes search page. Redirects to discover page if search is empty."""
     if request.search:
         try:
             feeds = itunes.search(get_client(), request.search.value)
