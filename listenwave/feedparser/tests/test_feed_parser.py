@@ -572,7 +572,8 @@ class TestFeedParser:
 
         assert podcast.parser_error == Podcast.ParserError.INACCESSIBLE
 
-        assert not podcast.active
+        assert podcast.active
+        assert podcast.num_retries == 1
         assert podcast.parsed
 
     @pytest.mark.django_db()

@@ -169,11 +169,16 @@ class _FeedParser:
         active: bool = True
 
         match exc:
-            case DuplicateError() | InaccessibleError():
+            case DuplicateError():
                 # podcast should be discontinued and no longer updated
                 active = False
 
-            case InvalidDataError() | InvalidRSSError() | UnavailableError():
+            case (
+                InvalidDataError()
+                | InaccessibleError()
+                | InvalidRSSError()
+                | UnavailableError()
+            ):
                 # increment num_retries in case a temporary error
                 num_retries += 1
 
