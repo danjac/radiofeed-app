@@ -3,46 +3,47 @@
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
-{% block podcast_nav %}
-    {% if request.search %}
-        <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
+{% block content %}
+    <header class="pb-6 mb-3 space-y-6 border-b">
+        {% block podcast_header %}
             {{ block.super }}
-            <nav class="flex justify-center items-center sm:justify-start">
-                <ul class="justify-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
-                    <li class="flex justify-center items-center sm:justify-end">
-                        <a class="inline-flex items-center btn btn-default"
-                           href="{% url "episodes:index" %}{{ request.search.qs }}">
-                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                            Search All Episodes
-                        </a>
-                    </li>
-                    <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Episodes" %}</li>
-                </ul>
-            </nav>
-        </div>
-    {% else %}
-        {{ block.super }}
-    {% endif %}
-{% endblock podcast_nav %}
-{% block podcast_content %}
-    {% cache cache_timeout podcast-episodes request.get_full_path %}
-    {% paginate episodes as page_obj %}
-    {% if page_obj.has_other_pages and not request.search %}
-        <nav>
-            <ul class="justify-between items-center pb-3 mb-3 border-b sm:flex">
-                <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
-                    {% if ordering_asc %}
-                        <a href="{{ request.path }}{% query_string order="desc" page=None %}"
-                           class="link">Newest First</a>
-                    {% else %}
-                        <a href="{{ request.path }}{% query_string order="asc" page=None %}"
-                           class="link">Oldest First</a>
-                    {% endif %}
-                </li>
-                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Episodes" %}</li>
-            </ul>
-        </nav>
-    {% endif %}
+        {% endblock podcast_header %}
+        {% cache cache_timeout podcast-episodes request.get_full_path %}
+        {% paginate episodes as page_obj %}
+        {% block podcast_nav %}
+            {% if page_obj.has_other_pages or request.search %}
+                <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
+                    {{ block.super }}
+                    <nav class="flex justify-center items-center sm:justify-start">
+                        <ul class="justify-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
+                            {% if request.search %}
+                                <li class="flex justify-center items-center sm:justify-end">
+                                    <a class="inline-flex items-center btn btn-default"
+                                       href="{% url "episodes:index" %}{{ request.search.qs }}">
+                                        {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                                        Search All Episodes
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
+                                    {% if ordering_asc %}
+                                        <a href="{{ request.path }}{% query_string order="desc" page=None %}"
+                                           class="link">Newest First</a>
+                                    {% else %}
+                                        <a href="{{ request.path }}{% query_string order="asc" page=None %}"
+                                           class="link">Oldest First</a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                            <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Episodes" %}</li>
+                        </ul>
+                    </nav>
+                </div>
+            {% else %}
+                {{ block.super }}
+            {% endif %}
+        {% endblock podcast_nav %}
+    </header>
     {% include "episodes/_episodes.html" with is_podcast_detail=True %}
 {% endcache %}
-{% endblock podcast_content %}
+{% endblock content %}
