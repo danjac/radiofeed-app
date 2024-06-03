@@ -52,7 +52,6 @@ django==5.0.6
     #   django-debug-toolbar
     #   django-extensions
     #   django-fast-update
-    #   django-fastdev
     #   django-health-check
     #   django-htmx
     #   django-model-utils
@@ -75,8 +74,6 @@ django-environ==0.11.2
 django-extensions==3.2.3
     # via listenwave (pyproject.toml)
 django-fast-update==0.2.3
-    # via listenwave (pyproject.toml)
-django-fastdev==1.9.0
     # via listenwave (pyproject.toml)
 django-health-check==3.18.2
     # via listenwave (pyproject.toml)

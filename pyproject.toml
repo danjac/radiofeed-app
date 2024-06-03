@@ -54,7 +54,6 @@ dev =[
     "coverage[toml]",
     "django-browser-reload",
     "django-debug-toolbar",
-    "django-fastdev",
     "factory_boy",
     "ipython",
     "mypy",
@@ -94,7 +93,6 @@ env = [
     "COVERAGE_CORE=sysmon",
     "TEMPLATE_DEBUG=true",
     "USE_COLLECTSTATIC=false",
-    "USE_FASTDEV=true",
     "USE_HTTPS=false",
 ]
 

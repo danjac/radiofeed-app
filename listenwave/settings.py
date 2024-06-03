@@ -137,11 +137,6 @@ TEMPLATES = [
     }
 ]
 
-# https://github.com/boxed/django-fastdev
-if env.bool("USE_FASTDEV", default=False):
-    INSTALLED_APPS += ["django_fastdev"]
-    FASTDEV_STRICT_TEMPLATE_CHECKING = True
-
 # prevent deprecation warnings
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
