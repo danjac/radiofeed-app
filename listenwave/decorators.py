@@ -35,7 +35,7 @@ def htmx_login_required(
 
         # Use HX-Current URL header if available
         # Note that the django-htmx checks this is "safe" i.e. belongs to current scheme
-        path = request.htmx.current_url_abs_path or "/"
+        path = request.htmx.current_url_abs_path or settings.LOGIN_REDIRECT_URL
         resolved_login_url = resolve_url(login_url or settings.LOGIN_URL)
 
         redirect_url = redirect_to_login(
