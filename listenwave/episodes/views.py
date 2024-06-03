@@ -34,7 +34,9 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
             .order_by("-rank", "-pub_date")
         )
     else:
-        episodes = episodes.order_by("-pub_date", "-id")
+        episodes = episodes.filter(
+            pub_date__gt=timezone.now() - timedelta(days=14)
+        ).order_by("-pub_date", "-id")
 
         subscribed_episodes = episodes.annotate(
             is_subscribed=Exists(
