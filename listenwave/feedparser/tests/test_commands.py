@@ -20,6 +20,15 @@ class TestParseOpml:
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
         call_command("parse_opml", filename)
         assert Podcast.objects.count() == 1
+        assert not Podcast.objects.first().promoted
+        patched.assert_called()
+
+    @pytest.mark.django_db()
+    def test_promote(self, mocker, filename):
+        patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
+        call_command("parse_opml", filename, promote=True)
+        assert Podcast.objects.count() == 1
+        assert Podcast.objects.first().promoted
         patched.assert_called()
 
     @pytest.mark.django_db()

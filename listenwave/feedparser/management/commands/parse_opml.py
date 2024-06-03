@@ -6,10 +6,21 @@ from listenwave.podcasts.models import Podcast
 
 @click.command(help="Create new podcast feeds from OPML document.")
 @click.argument("input", type=click.File("rb"))
-def command(input: click.File) -> None:
+@click.option(
+    "--promote/--no-promote",
+    default=False,
+    help="Promote podcasts",
+)
+def command(input: click.File, *, promote: bool) -> None:
     """Implementation of command."""
     podcasts = Podcast.objects.bulk_create(
-        [Podcast(rss=rss) for rss in parse_opml(input.read())],
+        [
+            Podcast(
+                rss=rss,
+                promoted=promote,
+            )
+            for rss in parse_opml(input.read())
+        ],
         ignore_conflicts=True,
     )
 
