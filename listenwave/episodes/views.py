@@ -24,6 +24,7 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
 
+    # tbd: move search to separate page
     episodes = Episode.objects.select_related("podcast")
 
     if request.search:
@@ -33,6 +34,7 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
             .select_related("podcast")
             .order_by("-rank", "-pub_date")
         )
+        cache_episodes = True
     else:
         episodes = episodes.filter(
             pub_date__gt=timezone.now() - timedelta(days=14)
@@ -44,13 +46,24 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
             )
         ).filter(is_subscribed=True)
 
+        has_subscriptions = subscribed_episodes.exists()
+
         episodes = (
             subscribed_episodes
-            if subscribed_episodes.exists()
+            if has_subscriptions
             else episodes.filter(podcast__promoted=True)
         )
 
-    return render(request, "episodes/index.html", {"episodes": episodes})
+        cache_episodes = not (has_subscriptions)
+
+    return render(
+        request,
+        "episodes/index.html",
+        {
+            "episodes": episodes,
+            "cache_episodes": cache_episodes,
+        },
+    )
 
 
 @require_safe

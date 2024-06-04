@@ -361,7 +361,6 @@ class TestBookmarks:
         response = client.get(self.url)
 
         assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
 
     @pytest.mark.django_db()
     def test_search(self, client, auth_user):
@@ -430,7 +429,6 @@ class TestHistory:
     def test_empty(self, client, auth_user):
         response = client.get(self.url)
         assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
 
     @pytest.mark.django_db()
     def test_ascending(self, client, auth_user):

@@ -6,7 +6,7 @@
 {% block content %}
     <header class="pb-6 mb-3 space-y-6 border-b">
         <h1 class="text-lg font-bold md:text-xl lg:text-2xl">{{ episode.cleaned_title }}</h1>
-        {% cache cache_timeout episode-nav-header episode.pk %}
+        {% cache CACHE_TIMEOUT episode-nav-header episode.pk %}
         {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
             {% if next_episode or previous_episode %}
                 <nav>

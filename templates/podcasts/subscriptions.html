@@ -24,5 +24,11 @@
             </nav>
         {% endif %}
     </header>
-    {% include "podcasts/_podcasts.html" %}
+    {% if not request.search and not page_obj.paginator.count %}
+        <p class="break-words prose prose-sm md:prose-base dark:prose-invert">
+            You are not subscribed to any podcasts. Find new podcasts on the <a href="{% url "podcasts:discover" %}" class="link">Discover</a> page and click the <strong>Subscribe</strong> button to add a podcast to your collection.
+        </p>
+    {% else %}
+        {% include "podcasts/_podcasts.html" %}
+    {% endif %}
 {% endblock content %}

@@ -34,5 +34,11 @@
             </nav>
         {% endif %}
     </header>
-    {% include "episodes/_episodes.html" with is_fk=True %}
+    {% if not request.search and not page_obj.paginator.count %}
+        <p class="break-words prose prose-sm md:prose-base dark:prose-invert">
+            You do not have any episodes in your listening History. When you play a podcast episode, it will appear here.
+        </p>
+    {% else %}
+        {% include "episodes/_episodes.html" with is_fk=True %}
+    {% endif %}
 {% endblock content %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cache %}
 {% block title %}
     {{ block.super }}| {{ request.search|yesno:"Search Episodes,New Releases" }}
 {% endblock title %}
@@ -13,6 +14,13 @@
             </ul>
         </nav>
     </header>
+    {% if cache_episodes %}
+        {% cache CACHE_TIMEOUT episodes request.get_full_path %}
+        {% paginate episodes as page_obj %}
+        {% include "episodes/_episodes.html" %}
+    {% endcache %}
+{% else %}
     {% paginate episodes as page_obj %}
     {% include "episodes/_episodes.html" %}
+{% endif %}
 {% endblock content %}

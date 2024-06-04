@@ -10,7 +10,7 @@
                 {{ podcast.cleaned_title }}
             </h1>
         {% endblock podcast_header %}
-        {% cache cache_timeout podcast-detail-header request.get_full_path %}
+        {% cache CACHE_TIMEOUT podcast-detail-header request.get_full_path %}
         {% block podcast_nav %}
             {% if podcast.num_episodes or podcast.has_similar or podcast.private %}
                 <nav class="flex justify-center items-center sm:justify-start">

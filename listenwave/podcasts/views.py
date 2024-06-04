@@ -52,9 +52,6 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
         .filter(is_subscribed=True)
     )
 
-    if not podcasts.exists():
-        return redirect("podcasts:discover")
-
     podcasts = (
         podcasts.search(request.search.value).order_by(
             "-exact_match",

@@ -21,7 +21,7 @@
             </ul>
         </nav>
     </header>
-    {% cache cache_timeout promoted-podcasts request.get_full_path %}
+    {% cache CACHE_TIMEOUT promoted-podcasts request.get_full_path %}
     {% paginate podcasts as page_obj %}
     {% include "podcasts/_podcasts.html" %}
 {% endcache %}

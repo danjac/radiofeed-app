@@ -37,7 +37,7 @@ class TestSubscriptions:
     def test_authenticated_no_subscriptions(self, client, auth_user):
         PodcastFactory.create_batch(3, promoted=True)
         response = client.get(_subscriptions_url)
-        assert response.url == _discover_url
+        assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db()
     def test_user_is_subscribed(self, client, auth_user):

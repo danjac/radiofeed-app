@@ -35,5 +35,11 @@
             </ul>
         </nav>
     </header>
-    {% include "podcasts/_podcasts.html" %}
+    {% if not request.search and not page_obj.paginator.count %}
+        <p class="break-words prose prose-sm md:prose-base dark:prose-invert">
+            You do not have any private podcast feeds. Click the <strong>Add Private Feed</strong> button above to add a feed to your personal collection, for example from a Patreon subscription.
+        </p>
+    {% else %}
+        {% include "podcasts/_podcasts.html" %}
+    {% endif %}
 {% endblock content %}
