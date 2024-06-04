@@ -227,7 +227,6 @@
 
     .btn-outline {
         background-color: inherit;
-        border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
     }
 
     .btn-primary.btn-outline {
@@ -242,14 +241,14 @@
     }
 
     .btn-default.btn-outline {
-        color: theme("colors.purple.800");
-        border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
+        color: theme("colors.gray.800");
+        border: solid theme("borderWidth.DEFAULT") theme("colors.gray.600");
     }
 
     .btn-default.btn-outline:hover {
         color: theme("colors.purple.600");
         background-color: theme("colors.gray.100");
-        border-color: theme("colors.purple.800");
+        border: solid theme("borderWidth.DEFAULT") theme("colors.purple.600");
     }
 
     .btn-danger.btn-outline {
