@@ -7,6 +7,7 @@
     <h1 class="flex justify-center items-center pb-6 mb-3 text-xl font-bold border-b sm:justify-start md:text-2xl xl:text-3xl">
         Sign Up
     </h1>
+    {% include "account/_social_logins.html" %}
     <p class="mb-3">
         Already have an account? Then please
         <a class="underline link" href="{{ login_url }}">sign in</a>.
@@ -30,6 +31,5 @@
                 </button>
             </div>
         </form>
-        {% include "account/_social_logins.html" %}
     </div>
 {% endblock content %}
