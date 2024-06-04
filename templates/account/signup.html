@@ -4,32 +4,34 @@
     {{ block.super }} | Sign Up
 {% endblock title %}
 {% block content %}
-    <h1 class="flex justify-center items-center pb-6 mb-3 text-xl font-bold border-b sm:justify-start md:text-2xl xl:text-3xl">
-        Sign Up
-    </h1>
-    {% include "account/_social_logins.html" %}
-    <p class="mb-3">
-        Already have an account? Then please
-        <a class="underline link" href="{{ login_url }}">sign in</a>.
-    </p>
     <div class="space-y-6">
-        <form method="post"
-              action="{{ request.path }}"
-              class="space-y-6"
-              hx-disable="true">
-            {% csrf_token %}
-            {% if redirect_field_value %}
-                <input type="hidden"
-                       name="{{ redirect_field_name }}"
-                       value="{{ redirect_field_value }}" />
-            {% endif %}
-            {{ form }}
-            <div>
-                <button class="inline-flex items-center btn btn-primary">
-                    {% heroicon_mini "plus" class="mr-2" %}
-                    Sign Up
-                </button>
-            </div>
-        </form>
+        <h1 class="flex justify-center items-center pb-6 mb-3 text-xl font-bold border-b sm:justify-start md:text-2xl xl:text-3xl">
+            Sign Up
+        </h1>
+        {% include "account/_social_logins.html" %}
+        <p class="mb-3">
+            Already have an account? Then please
+            <a class="underline link" href="{{ login_url }}">sign in</a>.
+        </p>
+        <div class="space-y-6">
+            <form method="post"
+                  action="{{ request.path }}"
+                  class="space-y-6"
+                  hx-disable="true">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                           name="{{ redirect_field_name }}"
+                           value="{{ redirect_field_value }}" />
+                {% endif %}
+                {{ form }}
+                <div>
+                    <button class="inline-flex items-center btn btn-primary">
+                        {% heroicon_mini "plus" class="mr-2" %}
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock content %}
