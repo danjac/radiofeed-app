@@ -21,6 +21,7 @@ from listenwave.podcasts.models import Category, Podcast
 
 _discover_url = reverse_lazy("podcasts:discover")
 _private_feeds_url = reverse_lazy("podcasts:private_feeds")
+_search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
 
 
 @require_safe
@@ -29,7 +30,7 @@ def index(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("podcasts:subscriptions")
 
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
+    podcasts = _get_promoted_podcasts().order_by("-pub_date")
 
     return render(request, "podcasts/landing_page.html", {"podcasts": podcasts})
 
@@ -68,11 +69,26 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 @require_safe
 @login_required
 def discover(request: HttpRequest) -> HttpResponse:
-    """Shows all promoted podcasts. If search, will search all
-    public podcasts in database."""
+    """Shows all promoted podcasts."""
 
-    podcasts = (
-        (
+    podcasts = _get_promoted_podcasts().order_by("-pub_date")
+    return render(
+        request,
+        "podcasts/discover.html",
+        {
+            "podcasts": podcasts,
+            "search_url": _search_podcasts_url,
+        },
+    )
+
+
+@require_safe
+@login_required
+def search_podcasts(request: HttpRequest) -> HttpResponse:
+    """Search all public podcasts in database."""
+
+    if request.search:
+        podcasts = (
             _get_podcasts()
             .filter(private=False)
             .search(request.search.value)
@@ -82,11 +98,16 @@ def discover(request: HttpRequest) -> HttpResponse:
                 "-pub_date",
             )
         )
-        if request.search
-        else _get_podcasts().filter(promoted=True).order_by("-pub_date")
-    )
 
-    return render(request, "podcasts/discover.html", {"podcasts": podcasts})
+        return render(
+            request,
+            "podcasts/search.html",
+            {
+                "podcasts": podcasts,
+                "clear_search_url": _discover_url,
+            },
+        )
+    return redirect("podcasts:discover")
 
 
 @require_safe
@@ -365,6 +386,10 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
 
 def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
+
+
+def _get_promoted_podcasts() -> QuerySet[Podcast]:
+    return _get_podcasts().filter(promoted=True)
 
 
 def _render_subscribe_action(

@@ -1,28 +1,23 @@
 {% extends "base.html" %}
 {% load cache %}
 {% block title %}
-    {{ block.super }} | New Episodes
+    {{ block.super }} | Search Episodes
 {% endblock title %}
 {% block content %}
     <header class="pb-6 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
         <h1 class="flex justify-center items-center text-xl font-bold sm:justify-start md:text-2xl xl:text-3xl">
-            New Episodes
+            Search Episodes
         </h1>
         <nav>
             <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
                 <li class="flex justify-center items-center space-x-3 sm:justify-end">
-                    {% search_form "Search: Episodes" search_url=search_url %}
+                    {% search_form "Search: Episodes" clear_search_url=clear_search_url %}
                 </li>
             </ul>
         </nav>
     </header>
-    {% if has_subscriptions %}
-        {% paginate episodes as page_obj %}
-        {% include "episodes/_episodes.html" %}
-    {% else %}
-        {% cache CACHE_TIMEOUT promoted-episodes request.get_full_path %}
-        {% paginate episodes as page_obj %}
-        {% include "episodes/_episodes.html" %}
-    {% endcache %}
-{% endif %}
+    {% cache CACHE_TIMEOUT search-episodes request.get_full_path %}
+    {% paginate episodes as page_obj %}
+    {% include "episodes/_episodes.html" %}
+{% endcache %}
 {% endblock content %}

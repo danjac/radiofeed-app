@@ -85,36 +85,35 @@ class TestDiscover:
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 3
 
+
+class TestSearchPodcasts:
+    url = reverse_lazy("podcasts:search_podcasts")
+
     @pytest.mark.django_db()
     def test_search(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(_discover_url, {"search": podcast.title})
+        response = client.get(self.url, {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
         assert response.context["page_obj"].object_list[0] == podcast
+
+    @pytest.mark.django_db()
+    def test_search_value_empty(self, client, auth_user, faker):
+        response = client.get(self.url, {"search": ""})
+        assert response.url == _discover_url
 
     @pytest.mark.django_db()
     def test_search_filter_private(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text(), private=True)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(_discover_url, {"search": podcast.title})
+        response = client.get(self.url, {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
 
     @pytest.mark.django_db()
-    def test_search_filter_private_subscribed(self, client, auth_user, faker):
-        podcast = PodcastFactory(title=faker.unique.text())
-        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        response = client.get(_discover_url, {"search": podcast.title})
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == podcast
-
-    @pytest.mark.django_db()
     def test_search_no_results(self, client, auth_user, faker):
-        response = client.get(_discover_url, {"search": "zzzz"})
+        response = client.get(self.url, {"search": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 0
 

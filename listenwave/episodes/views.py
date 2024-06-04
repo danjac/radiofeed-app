@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
@@ -15,7 +15,6 @@ from listenwave.episodes.models import Episode
 from listenwave.http import HttpResponseConflict, HttpResponseNoContent
 
 _index_url = reverse_lazy("episodes:index")
-_search_episodes_url = reverse_lazy("episodes:search_episodes")
 
 
 @require_safe
@@ -24,46 +23,60 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
     """List latest episodes from subscriptions if any, else latest episodes from
     promoted podcasts."""
 
-    # tbd: move search to separate page
-    episodes = Episode.objects.select_related("podcast")
+    episodes = (
+        Episode.objects.filter(pub_date__gt=timezone.now() - since)
+        .select_related("podcast")
+        .order_by("-pub_date", "-id")
+    )
 
-    if request.search:
-        episodes = (
-            episodes.search(request.search.value)
-            .filter(podcast__private=False)
-            .select_related("podcast")
-            .order_by("-rank", "-pub_date")
+    subscribed_episodes = episodes.annotate(
+        is_subscribed=Exists(
+            request.user.subscriptions.filter(podcast=OuterRef("podcast"))
         )
-        cache_episodes = True
-    else:
-        episodes = episodes.filter(
-            pub_date__gt=timezone.now() - timedelta(days=14)
-        ).order_by("-pub_date", "-id")
+    ).filter(is_subscribed=True)
 
-        subscribed_episodes = episodes.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-            )
-        ).filter(is_subscribed=True)
+    has_subscriptions = subscribed_episodes.exists()
 
-        has_subscriptions = subscribed_episodes.exists()
-
-        episodes = (
-            subscribed_episodes
-            if has_subscriptions
-            else episodes.filter(podcast__promoted=True)
-        )
-
-        cache_episodes = not (has_subscriptions)
+    episodes = (
+        subscribed_episodes
+        if has_subscriptions
+        else episodes.filter(podcast__promoted=True)
+    )
 
     return render(
         request,
         "episodes/index.html",
         {
             "episodes": episodes,
-            "cache_episodes": cache_episodes,
+            "has_subscriptions": has_subscriptions,
+            "search_url": reverse("episodes:search_episodes"),
         },
     )
+
+
+@require_safe
+@login_required
+def search_episodes(request: HttpRequest) -> HttpResponse:
+    """Search any episodes in the database."""
+
+    if request.search:
+        episodes = (
+            Episode.objects.search(request.search.value)
+            .filter(podcast__private=False)
+            .select_related("podcast")
+            .order_by("-rank", "-pub_date")
+        )
+
+        return render(
+            request,
+            "episodes/search.html",
+            {
+                "episodes": episodes,
+                "clear_search_url": _index_url,
+            },
+        )
+
+    return redirect(_index_url)
 
 
 @require_safe

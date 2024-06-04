@@ -8,6 +8,8 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("podcasts/", views.subscriptions, name="subscriptions"),
     path("discover/", views.discover, name="discover"),
+    path("search/", views.search_podcasts, name="search_podcasts"),
+    path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",
         views.podcast_detail,
@@ -28,7 +30,6 @@ urlpatterns = [
         views.similar,
         name="podcast_similar",
     ),
-    path("itunes/", views.search_itunes, name="search_itunes"),
     path(
         "subscribe/<int:podcast_id>/",
         views.subscribe,
