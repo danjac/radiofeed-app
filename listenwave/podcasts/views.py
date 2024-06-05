@@ -27,12 +27,18 @@ _search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
 @require_safe
 def index(request: HttpRequest) -> HttpResponse:
     """Returns landing page."""
-    if request.user.is_authenticated:
-        return redirect("podcasts:subscriptions")
+    if request.user.is_anonymous:
+        podcasts = _get_promoted_podcasts().order_by("-pub_date")
 
-    podcasts = _get_promoted_podcasts().order_by("-pub_date")
+        return render(
+            request,
+            "podcasts/landing_page.html",
+            {
+                "podcasts": podcasts,
+            },
+        )
 
-    return render(request, "podcasts/landing_page.html", {"podcasts": podcasts})
+    return redirect("podcasts:subscriptions")
 
 
 @require_safe
@@ -63,7 +69,13 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render(request, "podcasts/subscriptions.html", {"podcasts": podcasts})
+    return render(
+        request,
+        "podcasts/subscriptions.html",
+        {
+            "podcasts": podcasts,
+        },
+    )
 
 
 @require_safe
@@ -370,7 +382,13 @@ def add_private_feed(
     else:
         form = PrivateFeedForm(request.user)
 
-    return render(request, "podcasts/private_feed_form.html", {"form": form})
+    return render(
+        request,
+        "podcasts/private_feed_form.html",
+        {
+            "form": form,
+        },
+    )
 
 
 @require_DELETE
