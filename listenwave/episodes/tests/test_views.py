@@ -344,7 +344,7 @@ class TestPlayerTimeUpdate:
         assert response.status_code == http.HTTPStatus.BAD_REQUEST
 
     @pytest.mark.django_db()
-    def test_user_not_authenticated(self, client, player_episode):
+    def test_user_not_authenticated(self, client):
         response = client.post(self.url, {"current_time": "1000"})
         assert response.status_code == http.HTTPStatus.UNAUTHORIZED
 

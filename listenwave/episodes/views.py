@@ -159,9 +159,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def player_time_update(
-    request: HttpRequest,
-) -> HttpResponse:
+def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
