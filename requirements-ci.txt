@@ -36,7 +36,7 @@ coverage==7.5.3
     # via
     #   listenwave (pyproject.toml)
     #   pytest-cov
-cryptography==42.0.7
+cryptography==42.0.8
     # via pyjwt
 decorator==5.1.1
     # via ipython
@@ -93,7 +93,7 @@ executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
     # via listenwave (pyproject.toml)
-faker==25.3.0
+faker==25.5.0
     # via factory-boy
 filelock==3.14.0
     # via pytest-mypy
@@ -175,7 +175,7 @@ pluggy==1.5.0
     # via pytest
 pprintpp==0.4.0
     # via pytest-icdiff
-prompt-toolkit==3.0.45
+prompt-toolkit==3.0.46
     # via ipython
 psutil==5.9.8
     # via listenwave (pyproject.toml)
@@ -189,9 +189,9 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.22
     # via cffi
-pydantic==2.7.2
+pydantic==2.7.3
     # via listenwave (pyproject.toml)
-pydantic-core==2.18.3
+pydantic-core==2.18.4
     # via pydantic
 pygments==2.18.0
     # via
@@ -199,7 +199,7 @@ pygments==2.18.0
     #   rich
 pyjwt==2.8.0
     # via django-allauth
-pytest==8.2.1
+pytest==8.2.2
     # via
     #   listenwave (pyproject.toml)
     #   pytest-cov
@@ -256,7 +256,7 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.3.1
+sentry-sdk==2.4.0
     # via listenwave (pyproject.toml)
 setuptools==70.0.0
     # via listenwave (pyproject.toml)

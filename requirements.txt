@@ -25,7 +25,7 @@ click==8.1.7
     # via
     #   django-click
     #   nltk
-cryptography==42.0.7
+cryptography==42.0.8
     # via pyjwt
 dj-database-url==2.2.0
     # via listenwave (pyproject.toml)
@@ -119,9 +119,9 @@ psycopg-binary==3.1.19
     # via psycopg
 pycparser==2.22
     # via cffi
-pydantic==2.7.2
+pydantic==2.7.3
     # via listenwave (pyproject.toml)
-pydantic-core==2.18.3
+pydantic-core==2.18.4
     # via pydantic
 pyjwt==2.8.0
     # via django-allauth
@@ -146,7 +146,7 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.3.1
+sentry-sdk==2.4.0
     # via listenwave (pyproject.toml)
 setuptools==70.0.0
     # via listenwave (pyproject.toml)
