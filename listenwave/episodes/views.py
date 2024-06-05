@@ -12,7 +12,11 @@ from django.views.decorators.http import require_POST, require_safe
 
 from listenwave.decorators import htmx_login_required, require_DELETE
 from listenwave.episodes.models import Episode
-from listenwave.http import HttpResponseConflict, HttpResponseNoContent
+from listenwave.http import (
+    HttpResponseConflict,
+    HttpResponseNoContent,
+    HttpResponseUnauthorized,
+)
 
 _index_url = reverse_lazy("episodes:index")
 
@@ -155,7 +159,6 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
 def player_time_update(
     request: HttpRequest,
 ) -> HttpResponse:
@@ -166,19 +169,21 @@ def player_time_update(
     Returns:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
-    if episode_id := request.audio_player.get():
-        try:
-            request.user.audio_logs.update_or_create(
-                episode=get_object_or_404(Episode, pk=episode_id),
-                defaults={
-                    "current_time": int(request.POST["current_time"]),
-                    "listened": timezone.now(),
-                },
-            )
-        except (KeyError, ValueError):
-            return HttpResponseBadRequest()
+    if request.user.is_authenticated:
+        if episode_id := request.audio_player.get():
+            try:
+                request.user.audio_logs.update_or_create(
+                    episode=get_object_or_404(Episode, pk=episode_id),
+                    defaults={
+                        "current_time": int(request.POST["current_time"]),
+                        "listened": timezone.now(),
+                    },
+                )
+            except (KeyError, ValueError):
+                return HttpResponseBadRequest()
 
-    return HttpResponseNoContent()
+        return HttpResponseNoContent()
+    return HttpResponseUnauthorized()
 
 
 @require_safe

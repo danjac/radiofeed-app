@@ -343,6 +343,11 @@ class TestPlayerTimeUpdate:
         response = client.post(self.url, {"current_time": "xyz"})
         assert response.status_code == http.HTTPStatus.BAD_REQUEST
 
+    @pytest.mark.django_db()
+    def test_user_not_authenticated(self, client, player_episode):
+        response = client.post(self.url, {"current_time": "1000"})
+        assert response.status_code == http.HTTPStatus.UNAUTHORIZED
+
 
 class TestBookmarks:
     url = reverse_lazy("episodes:bookmarks")
