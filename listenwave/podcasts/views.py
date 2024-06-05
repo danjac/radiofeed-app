@@ -180,10 +180,11 @@ def episodes(
     episodes = podcast.episodes.select_related("podcast")
     ordering_asc = request.GET.get("order", "desc") == "asc"
 
-    if request.search:
-        episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
-    else:
-        episodes = episodes.order_by("pub_date" if ordering_asc else "-pub_date")
+    episodes = (
+        episodes.search(request.search.value).order_by("-rank", "-pub_date")
+        if request.search
+        else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
+    )
 
     return render(
         request,
@@ -266,14 +267,15 @@ def category_detail(
     category = get_object_or_404(Category, pk=category_id)
     podcasts = category.podcasts.filter(private=False, pub_date__isnull=False)
 
-    if request.search:
-        podcasts = podcasts.search(request.search.value).order_by(
+    podcasts = (
+        podcasts.search(request.search.value).order_by(
             "-exact_match",
             "-rank",
             "-pub_date",
         )
-    else:
-        podcasts = podcasts.order_by("-pub_date")
+        if request.search
+        else podcasts.order_by("-pub_date")
+    )
 
     return render(
         request,
@@ -326,14 +328,15 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
         .filter(private=True, is_subscribed=True)
     )
 
-    if request.search:
-        podcasts = podcasts.search(request.search.value).order_by(
+    podcasts = (
+        podcasts.search(request.search.value).order_by(
             "-exact_match",
             "-rank",
             "-pub_date",
         )
-    else:
-        podcasts = podcasts.order_by("-pub_date")
+        if request.search
+        else podcasts.order_by("-pub_date")
+    )
 
     return render(
         request,

@@ -39,11 +39,9 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
         )
     ).filter(is_subscribed=True)
 
-    has_subscriptions = subscribed_episodes.exists()
-
     episodes = (
         subscribed_episodes
-        if has_subscriptions
+        if subscribed_episodes.exists()
         else episodes.filter(podcast__promoted=True)
     )
 
@@ -52,7 +50,6 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
         "episodes/index.html",
         {
             "episodes": episodes,
-            "has_subscriptions": has_subscriptions,
             "search_url": reverse("episodes:search_episodes"),
         },
     )
@@ -191,12 +188,11 @@ def history(request: HttpRequest) -> HttpResponse:
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
     ordering_asc = request.GET.get("order", "desc") == "asc"
 
-    if request.search:
-        audio_logs = audio_logs.search(request.search.value).order_by(
-            "-rank", "-listened"
-        )
-    else:
-        audio_logs = audio_logs.order_by("listened" if ordering_asc else "-listened")
+    audio_logs = (
+        audio_logs.search(request.search.value).order_by("-rank", "-listened")
+        if request.search
+        else audio_logs.order_by("listened" if ordering_asc else "-listened")
+    )
 
     return render(
         request,
@@ -242,10 +238,11 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
     ordering_asc = request.GET.get("order", "desc") == "asc"
 
-    if request.search:
-        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
-    else:
-        bookmarks = bookmarks.order_by("created" if ordering_asc else "-created")
+    bookmarks = (
+        bookmarks.search(request.search.value).order_by("-rank", "-created")
+        if request.search
+        else bookmarks.order_by("created" if ordering_asc else "-created")
+    )
 
     return render(
         request,
