@@ -31,7 +31,7 @@ repos:
       hooks:
           - id: shellcheck
     - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: "v0.4.7"
+      rev: "v0.4.8"
       hooks:
           - id: ruff
             args: ["--fix"]
@@ -71,7 +71,7 @@ repos:
       hooks:
           - id: validate-pyproject
     - repo: https://github.com/astral-sh/uv-pre-commit
-      rev: 0.2.6
+      rev: 0.2.7
       hooks:
         - id: pip-compile
           name: pip-compile
