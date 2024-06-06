@@ -6,6 +6,7 @@
             <li>
                 <a href="{% url "podcasts:subscriptions" %}"
                    accesskey="p"
+                   tabindex="0"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "rss" class=icon_css %}
                     Podcasts
@@ -14,6 +15,7 @@
             <li>
                 <a href="{% url "episodes:index" %}"
                    accesskey="n"
+                   tabindex="0"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "sparkles" class=icon_css %}
                     New Releases
@@ -22,6 +24,7 @@
             <li>
                 <a href="{% url "podcasts:discover" %}"
                    accesskey="d"
+                   tabindex="0"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "magnifying-glass" class=icon_css %}
                     Discover
@@ -30,6 +33,7 @@
             <li>
                 <a href="{% url "podcasts:category_list" %}"
                    accesskey="c"
+                   tabindex="0"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "tag" class=icon_css %}
                     Categories
@@ -38,6 +42,7 @@
             <li>
                 <a href="{% url "episodes:bookmarks" %}"
                    accesskey="b"
+                   tabindex="0"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "bookmark" class=icon_css %}
                     Bookmarks
@@ -46,6 +51,7 @@
             <li>
                 <a href="{% url "episodes:history" %}"
                    accesskey="h"
+                   tabindex="0"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "clock" class=icon_css %}
                     History
@@ -54,13 +60,17 @@
             <li>
                 <a href="{% url "podcasts:private_feeds" %}"
                    accesskey="f"
+                   tabindex="0"
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "lock-closed" class=icon_css %}
                     Private Feeds
                 </a>
             </li>
             <li>
-                <a href="{% url "about" %}" accesskey="a" class="{{ sidebar_css }}">
+                <a href="{% url "about" %}"
+                   accesskey="a"
+                   tabindex="0"
+                   class="{{ sidebar_css }}">
                     {% heroicon_outline "information-circle" class=icon_css %}
                     About
                 </a>
