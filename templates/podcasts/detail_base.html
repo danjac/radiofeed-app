@@ -6,9 +6,7 @@
 {% block content %}
     <header class="pb-6 mb-3 space-y-6 border-b">
         {% block podcast_header %}
-            <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
-                {{ podcast.cleaned_title }}
-            </h1>
+            <h1 class="text-lg font-bold md:text-xl lg:text-2xl">{{ podcast.cleaned_title }}</h1>
         {% endblock podcast_header %}
         {% cache CACHE_TIMEOUT podcast-detail-header request.get_full_path %}
         {% block podcast_nav %}
