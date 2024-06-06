@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load cache %}
 {% block title %}
     {{ block.super }} | New Episodes
 {% endblock title %}
@@ -16,13 +15,7 @@
             </ul>
         </nav>
     </header>
-    {% if has_subscriptions %}
-        {% paginate episodes as page_obj %}
-        {% include "episodes/_episodes.html" %}
-    {% else %}
-        {% cache CACHE_TIMEOUT promoted-episodes request.get_full_path %}
-        {% paginate episodes as page_obj %}
-        {% include "episodes/_episodes.html" %}
-    {% endcache %}
+    {% paginate episodes as page_obj %}
+    {% include "episodes/_episodes.html" %}
 {% endif %}
 {% endblock content %}
