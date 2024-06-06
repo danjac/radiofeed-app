@@ -1,9 +1,10 @@
 {# vim: set filetype=htmldjango #}
 {% with podcast_url=podcast.get_absolute_url %}
-    <article class="flex items-center space-x-3 cursor-pointer group"
-             role="link"
-             hx-get="{{ podcast_url }}"
-             hx-push-url="true">
+    <div class="flex items-center space-x-3 cursor-pointer group"
+         role="link"
+         tabindex="0"
+         hx-get="{{ podcast_url }}"
+         hx-push-url="true">
         {% cover_image podcast.cover_url 100 podcast.cleaned_title css_class="h-16 w-16 group-hover:grayscale" %}
         <div class="flex flex-col place-content-between h-16">
             <h2 class="font-bold tracking-tight leading-tight break-words line-clamp-2"
@@ -17,5 +18,5 @@
                 {% include "_date.html" with value=podcast.pub_date title="Latest Episode" %}
             </h3>
         </div>
-    </article>
+    </div>
 {% endwith %}
