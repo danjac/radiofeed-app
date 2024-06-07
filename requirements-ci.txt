@@ -93,7 +93,7 @@ executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
     # via listenwave (pyproject.toml)
-faker==25.5.0
+faker==25.6.0
     # via factory-boy
 filelock==3.14.0
     # via pytest-mypy
@@ -235,7 +235,7 @@ python-dateutil==2.9.0.post0
     #   faker
 pyyaml==6.0.1
     # via bandit
-redis==5.0.4
+redis==5.0.5
     # via
     #   listenwave (pyproject.toml)
     #   django-redis
@@ -256,7 +256,7 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.4.0
+sentry-sdk==2.5.0
     # via listenwave (pyproject.toml)
 setuptools==70.0.0
     # via listenwave (pyproject.toml)

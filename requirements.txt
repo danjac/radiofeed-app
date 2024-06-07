@@ -127,7 +127,7 @@ pyjwt==2.8.0
     # via django-allauth
 python-dateutil==2.9.0.post0
     # via listenwave (pyproject.toml)
-redis==5.0.4
+redis==5.0.5
     # via
     #   listenwave (pyproject.toml)
     #   django-redis
@@ -146,7 +146,7 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.4.0
+sentry-sdk==2.5.0
     # via listenwave (pyproject.toml)
 setuptools==70.0.0
     # via listenwave (pyproject.toml)
