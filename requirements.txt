@@ -146,7 +146,7 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.5.0
+sentry-sdk==2.5.1
     # via listenwave (pyproject.toml)
 setuptools==70.0.0
     # via listenwave (pyproject.toml)
@@ -162,7 +162,7 @@ threadpoolctl==3.5.0
     # via scikit-learn
 tqdm==4.66.4
     # via nltk
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   dj-database-url
     #   psycopg

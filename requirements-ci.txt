@@ -93,7 +93,7 @@ executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
     # via listenwave (pyproject.toml)
-faker==25.6.0
+faker==25.8.0
     # via factory-boy
 filelock==3.14.0
     # via pytest-mypy
@@ -256,7 +256,7 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.5.0
+sentry-sdk==2.5.1
     # via listenwave (pyproject.toml)
 setuptools==70.0.0
     # via listenwave (pyproject.toml)
@@ -290,7 +290,7 @@ types-python-dateutil==2.9.0.20240316
     # via listenwave (pyproject.toml)
 types-urllib3==1.26.25.14
     # via listenwave (pyproject.toml)
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   dj-database-url
     #   mypy
