@@ -3,13 +3,32 @@ import http
 from django.http import HttpResponse
 from django_htmx.middleware import HtmxDetails
 
-from listenwave.decorators import htmx_login_required
+from listenwave.decorators import ajax_login_required, htmx_login_required
 from listenwave.users.models import User
 
 
 @htmx_login_required
 def htmx_view(request):
     return HttpResponse()
+
+
+@ajax_login_required
+def ajax_view(request):
+    return HttpResponse()
+
+
+class TestAjaxLoginRequired:
+    def test_is_authenticated(self, rf):
+        request = rf.get("/")
+        request.user = User()
+        response = ajax_view(request)
+        assert response.status_code == http.HTTPStatus.OK
+
+    def test_is_anonymous(self, rf, anonymous_user):
+        request = rf.get("/")
+        request.user = anonymous_user
+        response = ajax_view(request)
+        assert response.status_code == http.HTTPStatus.UNAUTHORIZED
 
 
 class TestHtmxLoginRequired:

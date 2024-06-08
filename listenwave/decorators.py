@@ -8,11 +8,26 @@ from django.shortcuts import resolve_url
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect
 
+from listenwave.http import HttpResponseUnauthorized
 from listenwave.types import HttpRequestResponse
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
 require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
+
+
+def ajax_login_required(view: HttpRequestResponse) -> HttpRequestResponse:
+    """AJAX login required decorator. Returns an HTTP 401 Unauthorized
+    if the user is not logged in."""
+
+    @functools.wraps(view)
+    def _view(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if request.user.is_authenticated:
+            return view(request, *args, **kwargs)
+
+        return HttpResponseUnauthorized()
+
+    return _view
 
 
 def htmx_login_required(
