@@ -6,7 +6,6 @@ from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
 from django.views.decorators.http import require_http_methods
-from django_htmx.http import HttpResponseClientRedirect
 
 from listenwave.http import HttpResponseUnauthorized
 from listenwave.types import HttpRequestResponse
@@ -52,11 +51,6 @@ def htmx_login_required(
         # Note that the django-htmx checks this is "safe" i.e. belongs to current scheme
         path = request.htmx.current_url_abs_path or settings.LOGIN_REDIRECT_URL
         resolved_login_url = resolve_url(login_url or settings.LOGIN_URL)
-
-        redirect_url = redirect_to_login(
-            path, resolved_login_url, redirect_field_name
-        ).url
-
-        return HttpResponseClientRedirect(redirect_url)
+        return redirect_to_login(path, resolved_login_url, redirect_field_name)
 
     return _view
