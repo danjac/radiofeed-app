@@ -38,8 +38,7 @@ def htmx_login_required(
 
     Redirects to the HX-Current-URL header if available.
 
-    For HX-Boosted requests, @login_required can be used as redirects are handled by
-    the HtmxRedirectMiddleware.
+    HtmxRedirectMiddleware will ensure we send the correct HTMX redirect header.
     """
 
     @functools.wraps(view)
