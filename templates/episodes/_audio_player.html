@@ -31,7 +31,7 @@
                         <div class="sm:w-1/2" hx-swap="innerHTML show:window:top">
                             {% with podcast=episode.podcast %}
                                 <div class="flex items-center pr-2 space-x-2 lg:space-x-3">
-                                    {% cover podcast.cover_url "sm" podcast.cleaned_title url=podcast.get_absolute_url css_class="w-16 h-16" %}
+                                    {% cover_image podcast.cover_url "sm" podcast.cleaned_title url=podcast.get_absolute_url css_class="w-16 h-16" %}
                                     <div class="flex flex-col place-content-between h-16">
                                         <a class="font-bold tracking-tight leading-tight break-words hover:text-blue-300 line-clamp-2"
                                            href="{{ episode.get_absolute_url }}"

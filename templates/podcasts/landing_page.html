@@ -17,7 +17,7 @@
                    class="{{ css_class }}"
                    title="{{ podcast.cleaned_title }}"
                    aria-label="{{ podcast.cleaned_title }}">
-                    {% cover podcast.cover_url "lg" podcast.cleaned_title css_class=css_class %}
+                    {% cover_image podcast.cover_url "lg" podcast.cleaned_title css_class=css_class %}
                 </a>
             {% endwith %}
         {% endfor %}

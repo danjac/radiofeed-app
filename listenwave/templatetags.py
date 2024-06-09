@@ -176,8 +176,8 @@ def get_cover_attrs(cover_url: str | None, size: covers.Size):
     return covers.get_cover_attrs(cover_url, size)
 
 
-@register.inclusion_tag("_cover.html")
-def cover(
+@register.inclusion_tag("_cover_image.html")
+def cover_image(
     cover_url: str | None,
     size: covers.Size,
     title: str,

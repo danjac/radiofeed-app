@@ -7,9 +7,9 @@
          hx-push-url="true">
         {% with size="sm" css_class="h-16 w-16 group-hover:grayscale" %}
             {% if is_podcast_detail %}
-                {% cover episode.get_cover_url size episode.cleaned_title css_class=css_class %}
+                {% cover_image episode.get_cover_url size episode.cleaned_title css_class=css_class %}
             {% else %}
-                {% cover podcast.cover_url size podcast.cleaned_title css_class=css_class %}
+                {% cover_image podcast.cover_url size podcast.cleaned_title css_class=css_class %}
             {% endif %}
         {% endwith %}
         <div class="flex flex-col place-content-between h-16">
