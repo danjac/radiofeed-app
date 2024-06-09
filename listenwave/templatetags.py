@@ -171,13 +171,13 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 
 
 @register.simple_tag
-def get_cover_image_attrs(cover_url: str | None, size: covers.Size):
+def get_cover_attrs(cover_url: str | None, size: covers.Size):
     """Returns cover image attributes."""
-    return covers.get_cover_image_attrs(cover_url, size)
+    return covers.get_cover_attrs(cover_url, size)
 
 
-@register.inclusion_tag("_cover_image.html")
-def cover_image(
+@register.inclusion_tag("_cover.html")
+def cover(
     cover_url: str | None,
     size: covers.Size,
     title: str,

@@ -4,7 +4,7 @@
     <article class="space-y-6">
         {% if podcast.owner %}<h2 class="text-base font-semibold lg:text-lg">{{ podcast.owner }}</h2>{% endif %}
         <div class="flex items-center space-x-3 sm:space-x-6">
-            {% cover_image podcast.cover_url "lg" podcast.cleaned_title css_class="h-32 w-32 md:h-40 md:w-40" %}
+            {% cover podcast.cover_url "lg" podcast.cleaned_title css_class="h-32 w-32 md:h-40 md:w-40" %}
             <div class="flex flex-col place-content-between h-28 md:h-32">
                 {% if podcast.private %}
                     <div>

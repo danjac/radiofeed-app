@@ -169,13 +169,13 @@ def security(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, size: int) -> HttpResponse:
+def cover(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
     """
     # only specific image sizes permitted
-    if not covers.is_cover_image_size(size):
+    if not covers.is_cover_size(size):
         raise Http404
 
     # check cover url is legit
