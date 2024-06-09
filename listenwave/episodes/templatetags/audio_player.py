@@ -1,12 +1,8 @@
 from django import template
 from django.template.context import RequestContext
 
+from listenwave.cover_image import get_artwork_info
 from listenwave.episodes.models import Episode
-from listenwave.templatetags import (
-    COVER_IMAGE_SIZES,
-    get_cover_image_url,
-    get_placeholder_url,
-)
 
 register = template.Library()
 
@@ -24,18 +20,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
         "title": episode.cleaned_title,
         "album": episode.podcast.cleaned_title,
         "artist": episode.podcast.owner,
-        "artwork": [
-            {
-                "src": context.request.build_absolute_uri(
-                    get_cover_image_url(episode.podcast.cover_url, size)
-                    if episode.podcast.cover_url
-                    else get_placeholder_url(size)
-                ),
-                "sizes": f"{size}x{size}",
-                "type": "image/webp",
-            }
-            for size in COVER_IMAGE_SIZES
-        ],
+        "artwork": get_artwork_info(episode.cover_url),
     }
 
 

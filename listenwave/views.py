@@ -17,8 +17,9 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
+from listenwave.cover_image import get_placeholder_path, is_cover_image_size
 from listenwave.http_client import get_client
-from listenwave.templatetags import ACCEPT_COOKIES_NAME, COVER_IMAGE_SIZES
+from listenwave.templatetags import ACCEPT_COOKIES_NAME
 
 _PWA_THEME_COLOR: Final = "#26323C"
 
@@ -174,7 +175,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     URL should be signed, so we can verify the request comes from this site.
     """
     # only specific image sizes permitted
-    if size not in COVER_IMAGE_SIZES:
+    if not is_cover_image_size(size):
         raise Http404
 
     # check cover url is legit
@@ -202,16 +203,11 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 
-        output = _placeholder_path(size).open("rb")
+        output = get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
 
 
-@functools.lru_cache
-def _placeholder_path(size: int) -> pathlib.Path:
-    return settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp"
-
-
-@functools.lru_cache
+@functools.cache
 def _favicon_path() -> pathlib.Path:
     return settings.BASE_DIR / "static" / "img" / "wave-ico.png"

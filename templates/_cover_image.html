@@ -1,20 +1,16 @@
 {# vim: set filetype=htmldjango #}
+{# djlint:off #}
 {% spaceless %}
     <img class="object-cover border bg-transparent bg-gray-100 dark:bg-gray-900 text-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
-        title="{{ title }}"
-        alt="{{ title }}"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
-        width="{{ size }}"
-        height="{{ size }}"
-        src="{{ cover_url|default:placeholder_url }}"
-        {# djlint:off #}
+        {% include "django/forms/attrs.html" %}
         {% if url %}
             role="link"
             hx-get="{{ url }}"
             hx-push-url="true"
             hx-trigger="click consume"
-        {% endif %}
-        {# djlint:on #}>
+        {% endif %}>
     {% endspaceless %}
+{# djlint:on #}

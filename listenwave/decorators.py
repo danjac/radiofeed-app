@@ -16,7 +16,7 @@ require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 
 
 def ajax_login_required(view: HttpRequestResponse) -> HttpRequestResponse:
-    """AJAX login required decorator. Returns an HTTP 401 Unauthorized
+    """AJAX login required decorator. Returns an HTTP 401 Unauthorized response
     if the user is not logged in."""
 
     @functools.wraps(view)

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import functools
 import math
-import urllib.parse
 from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
@@ -10,14 +9,12 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.paginator import Page, Paginator
-from django.core.signing import Signer
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
-from django.templatetags.static import static
-from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from listenwave import markup
+from listenwave.cover_image import get_cover_image_attrs, get_placeholder_url
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
@@ -26,7 +23,6 @@ if TYPE_CHECKING:  # pragma: nocover
 
 ACCEPT_COOKIES_NAME = "accept-cookies"
 
-COVER_IMAGE_SIZES = (100, 200, 300)
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
@@ -87,30 +83,6 @@ def search_form(
         "search_url": search_url or context.request.path,
         "clear_search_url": clear_search_url or context.request.path,
         "request": context.request,
-    }
-
-
-@register.inclusion_tag("_cover_image.html")
-@functools.cache
-def cover_image(
-    cover_url: str | None,
-    size: int,
-    title: str,
-    url: str = "",
-    css_class: str = "",
-) -> dict:
-    """Renders a cover image with proxy URL."""
-
-    if size not in COVER_IMAGE_SIZES:
-        raise ValueError(f"invalid cover image size:{size}")
-
-    return {
-        "cover_url": get_cover_image_url(cover_url, size),
-        "placeholder_url": get_placeholder_url(size),
-        "title": title,
-        "size": size,
-        "url": url,
-        "css_class": css_class,
     }
 
 
@@ -199,28 +171,22 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-@register.simple_tag
-@functools.cache
-def get_placeholder_url(size: int) -> str:
-    """Return URL to cover image placeholder"""
-    return static(f"img/placeholder-{size}.webp")
-
-
-@register.simple_tag
-@functools.cache
-def get_cover_image_url(cover_url: str | None, size: int) -> str:
-    """Return the cover image URL"""
-    return (
-        (
-            reverse(
-                "cover_image",
-                kwargs={
-                    "size": size,
-                },
-            )
-            + "?"
-            + urllib.parse.urlencode({"url": Signer().sign(cover_url)})
-        )
-        if cover_url
-        else ""
-    )
+@register.inclusion_tag("_cover_image.html")
+def cover_image(
+    cover_url: str | None,
+    variant: cover_image.Variant,
+    title: str,
+    url: str = "",
+    css_class: str = "",
+) -> dict:
+    """Renders a cover image with proxy URL."""
+    attrs = get_cover_image_attrs(cover_url, variant) | {
+        "title": title,
+        "alt": title,
+    }
+    return {
+        "attrs": attrs,
+        "css_class": css_class,
+        "placeholder_url": get_placeholder_url(variant),
+        "url": url,
+    }

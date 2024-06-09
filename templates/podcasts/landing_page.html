@@ -9,7 +9,8 @@
             We curate a selection of the best podcasts across a range of topics, so there's something for everyone!
         </h2>
     </header>
-    <div class="flex flex-wrap gap-1 justify-center" hx-disable="true">
+    <div class="flex flex-wrap grid-rows-3 row-span-3 gap-1 justify-center sm:grid-rows-auto sm:row-span-auto"
+         hx-disable="true">
         {% cache CACHE_TIMEOUT podcasts-landing-page %}
         {% for podcast in podcasts|slice:30 %}
             {% with css_class="h-28 w-28 md:h-48 md:w-48 xl:h-56 xl:w-56 hover:grayscale" %}
@@ -17,7 +18,7 @@
                    class="{{ css_class }}"
                    title="{{ podcast.cleaned_title }}"
                    aria-label="{{ podcast.cleaned_title }}">
-                    {% cover_image podcast.cover_url 300 podcast.cleaned_title css_class=css_class %}
+                    {% cover_image podcast.cover_url "lg" podcast.cleaned_title css_class=css_class %}
                 </a>
             {% endwith %}
         {% endfor %}
