@@ -13,7 +13,7 @@ from django.urls import reverse
 _COVER_IMAGE_SIZES: Final = (96, 120, 240)
 
 
-class CoverImageSize(StrEnum):
+class Size(StrEnum):
     """Possible size variations."""
 
     SMALL = "sm"
@@ -21,13 +21,13 @@ class CoverImageSize(StrEnum):
 
 
 _COVER_IMAGE_VARIANTS = {
-    CoverImageSize.SMALL: (96, 96),
-    CoverImageSize.LARGE: (120, 240),
+    Size.SMALL: (96, 96),
+    Size.LARGE: (120, 240),
 }
 
 
 @functools.cache
-def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
+def get_cover_image_attrs(cover_url: str, size: Size) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_IMAGE_VARIANTS[size]
 

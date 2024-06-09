@@ -17,7 +17,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from listenwave.cover_image import get_placeholder_path, is_cover_image_size
+from listenwave import covers
 from listenwave.http_client import get_client
 from listenwave.templatetags import ACCEPT_COOKIES_NAME
 
@@ -175,7 +175,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     URL should be signed, so we can verify the request comes from this site.
     """
     # only specific image sizes permitted
-    if not is_cover_image_size(size):
+    if not covers.is_cover_image_size(size):
         raise Http404
 
     # check cover url is legit
@@ -203,7 +203,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 
-        output = get_placeholder_path(size).open("rb")
+        output = covers.get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
 

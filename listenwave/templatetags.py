@@ -13,11 +13,7 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.utils.safestring import mark_safe
 
-from listenwave import markup
-from listenwave.cover_image import (
-    CoverImageSize,
-    get_cover_image_attrs,
-)
+from listenwave import covers, markup
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
@@ -175,15 +171,15 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 
 
 @register.simple_tag
-def cover_image_attrs(cover_url: str | None, variant: CoverImageSize):
+def get_cover_image_attrs(cover_url: str | None, size: covers.Size):
     """Returns cover image attributes."""
-    return get_cover_image_attrs(cover_url, variant)
+    return covers.get_cover_image_attrs(cover_url, size)
 
 
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     cover_url: str | None,
-    size: CoverImageSize,
+    size: covers.Size,
     title: str,
     url: str = "",
     css_class: str = "",
