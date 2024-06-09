@@ -23,7 +23,7 @@ from listenwave.templatetags import ACCEPT_COOKIES_NAME
 
 _PWA_THEME_COLOR: Final = "#26323C"
 
-_cache_control = cache_control(max_age=60 * 60 * 24, immutable=True)
+_cache_control = cache_control(max_age=60 * 60 * 24 * 30, immutable=True)
 _cache_page = cache_page(60 * 60)
 
 
