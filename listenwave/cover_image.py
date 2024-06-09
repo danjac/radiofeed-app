@@ -17,14 +17,12 @@ class CoverImageSize(StrEnum):
     """Possible size variations."""
 
     SMALL = "sm"
-    MEDIUM = "md"
     LARGE = "lg"
 
 
 _COVER_IMAGE_VARIANTS = {
     CoverImageSize.SMALL: (96, 96),
-    CoverImageSize.MEDIUM: (120, 240),
-    CoverImageSize.LARGE: (240, 360),
+    CoverImageSize.LARGE: (120, 240),
 }
 
 
