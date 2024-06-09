@@ -175,22 +175,24 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 
 
 @register.simple_tag
-def cover_image_attrs(cover_url: str | None, variant: CoverImageSize, title: str):
+def cover_image_attrs(cover_url: str | None, variant: CoverImageSize):
     """Returns cover image attributes."""
-    return get_cover_image_attrs(cover_url, variant) | {"title": title, "alt": title}
+    return get_cover_image_attrs(cover_url, variant)
 
 
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     cover_url: str | None,
-    variant: CoverImageSize,
+    size: CoverImageSize,
     title: str,
     url: str = "",
     css_class: str = "",
 ) -> dict:
     """Renders a cover image with proxy URL."""
     return {
-        "url": url,
+        "cover_url": cover_url,
         "css_class": css_class,
-        "attrs": cover_image_attrs(cover_url, variant, title),
+        "size": size,
+        "title": title,
+        "url": url,
     }

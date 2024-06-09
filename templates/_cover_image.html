@@ -1,10 +1,13 @@
 {# vim: set filetype=htmldjango #}
 {# djlint:off #}
 {% spaceless %}
+    {% cover_image_attrs cover_url size as attrs %}
     <img class="object-cover border bg-transparent bg-gray-100 dark:bg-gray-900 text-transparent{% if url %} hover:grayscale cursor-pointer{% endif %} {{ css_class }}"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
+        title="{{ title }}"
+        alt="{{ title }}"
         {% include "django/forms/attrs.html" %}
         {% if url %}
             role="link"

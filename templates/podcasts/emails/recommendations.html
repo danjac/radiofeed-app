@@ -18,12 +18,12 @@
                         padding-bottom: 0.75rem;
                         border-bottom: 1px solid #eee">
                 <div style="display:flex; align-items:center;">
-                    {% cover_image_attrs podcast.cover_url "sm" title=podcast.cleaned_title as cover_attrs %}
+                    {% cover_image_attrs podcast.cover_url "sm" as cover_attrs %}
                     <div>
                         <img src="{% absolute_uri cover_attrs.src %}"
-                             alt="{{ cover_attrs.alt }}"
                              width="{{ cover_attrs.width }}"
                              height="{{ cover_attrs.height }}"
+                             alt="{{ podcast.cleaned_title }}"
                              style="height: 4rem;
                                     width: 4rem;
                                     margin-right:12px">

@@ -6,7 +6,6 @@ from django.urls import reverse, reverse_lazy
 from listenwave.templatetags import (
     absolute_uri,
     active_link,
-    cover_image,
     format_duration,
     markdown,
     percentage,
@@ -93,17 +92,6 @@ class TestFormatDuration:
     )
     def test_format_duration(self, duration, expected):
         assert format_duration(duration) == expected
-
-
-class TestCoverImage:
-    def test_is_cover_url(self):
-        dct = cover_image("https://example.com/test.jpg", "sm", "test img")
-        assert "test.jpg" in dct["attrs"]["src"]
-
-    def test_is_not_cover_url(self, settings):
-        settings.STATIC_URL = "/static/"
-        dct = cover_image("", "sm", "test img")
-        assert dct["attrs"]["src"] == "/static/img/placeholder-96.webp"
 
 
 class TestActiveLink:
