@@ -2,20 +2,7 @@
 {% load cache heroicons partials %}
 {% block podcast_content %}
     <article class="space-y-6">
-        {% if podcast.owner %}
-            <h2 class="text-base font-semibold lg:text-lg">
-                {% if podcast.website %}
-                    <a href="{{ podcast.website }}"
-                       rel="noopener nofollow"
-                       target="_blank"
-                       aria-label="Podcast Owner"
-                       title="Podcast Owner"
-                       class="link">{{ podcast.owner }}</a>
-                {% else %}
-                    {{ podcast.owner }}
-                {% endif %}
-            </h2>
-        {% endif %}
+        {% if podcast.owner %}<h2 class="text-base font-semibold lg:text-lg">{{ podcast.owner }}</h2>{% endif %}
         <div class="flex items-center space-x-3 sm:space-x-6">
             {% cover_image podcast.cover_url 200 podcast.cleaned_title css_class="h-32 w-32 md:h-40 md:w-40" %}
             <div class="flex flex-col place-content-between h-28 md:h-32">
@@ -86,12 +73,13 @@
                 {% endif %}
                 {% if is_subscribed or not podcast.private %}
                     <div>
-                        <a href="{{ podcast.rss }}" class="link" download>RSS</a>
+                        <a href="{{ podcast.rss }}" class="link" target="_blank" download>RSS</a>
                     </div>
                 {% endif %}
                 {% if user.is_staff %}
                     <div>
                         <a href="{% url 'admin:podcasts_podcast_change' podcast.pk %}"
+                           target="_blank"
                            hx-disable="true"
                            class="link">Admin</a>
                     </div>

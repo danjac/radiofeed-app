@@ -307,6 +307,10 @@
         color: theme("colors.blue.600");
     }
 
+    .link[target=_blank] {
+        text-decoration: underline;
+    }
+
     @media (prefers-color-scheme: dark) {
         :root {
             color-scheme: dark;
