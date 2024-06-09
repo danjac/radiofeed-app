@@ -78,7 +78,7 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("listenwave.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
-        response = client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        response = client.get(self.get_url(120, self.encode_url(self.cover_url)))
         assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db()
@@ -93,7 +93,7 @@ class TestCoverImage:
 
     @pytest.mark.django_db()
     def test_unsigned_url(self, client, db):
-        response = client.get(self.get_url(100, self.cover_url))
+        response = client.get(self.get_url(120, self.cover_url))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
     @pytest.mark.django_db()
@@ -104,7 +104,7 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("listenwave.views.get_client", return_value=mock_client)
 
-        response = client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        response = client.get(self.get_url(120, self.encode_url(self.cover_url)))
         assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db()
@@ -115,5 +115,5 @@ class TestCoverImage:
         mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
         mocker.patch("listenwave.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
-        response = client.get(self.get_url(100, self.encode_url(self.cover_url)))
+        response = client.get(self.get_url(120, self.encode_url(self.cover_url)))
         assert response.status_code == http.HTTPStatus.OK

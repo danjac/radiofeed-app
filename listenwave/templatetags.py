@@ -17,7 +17,6 @@ from listenwave import markup
 from listenwave.cover_image import (
     CoverImageSize,
     get_cover_image_attrs,
-    get_placeholder_url,
 )
 
 if TYPE_CHECKING:  # pragma: nocover
@@ -175,6 +174,12 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
+@register.simple_tag
+def cover_image_attrs(cover_url: str | None, variant: CoverImageSize, title: str):
+    """Returns cover image attributes."""
+    return get_cover_image_attrs(cover_url, variant) | {"title": title, "alt": title}
+
+
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     cover_url: str | None,
@@ -184,13 +189,8 @@ def cover_image(
     css_class: str = "",
 ) -> dict:
     """Renders a cover image with proxy URL."""
-    attrs = get_cover_image_attrs(cover_url, variant) | {
-        "title": title,
-        "alt": title,
-    }
     return {
-        "attrs": attrs,
-        "css_class": css_class,
-        "placeholder_url": get_placeholder_url(variant),
         "url": url,
+        "css_class": css_class,
+        "attrs": cover_image_attrs(cover_url, variant, title),
     }

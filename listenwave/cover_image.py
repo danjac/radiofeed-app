@@ -10,13 +10,7 @@ from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 
-_COVER_IMAGE_SIZES: Final = (
-    96,
-    128,
-    160,
-    192,
-    224,
-)
+_COVER_IMAGE_SIZES: Final = (96, 120, 240, 360)
 
 
 class CoverImageSize(StrEnum):
@@ -27,28 +21,25 @@ class CoverImageSize(StrEnum):
     LARGE = "lg"
 
 
-_COVER_IMAGE_INFO = {
+_COVER_IMAGE_VARIANTS = {
     CoverImageSize.SMALL: (96, 96),
-    CoverImageSize.MEDIUM: (128, 160),
-    CoverImageSize.LARGE: (192, 224),
+    CoverImageSize.MEDIUM: (120, 240),
+    CoverImageSize.LARGE: (240, 360),
 }
 
 
-def is_cover_image_size(size: int) -> bool:
-    """Check image has correct size."""
-    return size in _COVER_IMAGE_SIZES
-
-
 @functools.cache
-def get_cover_image_attrs(cover_url: str, variant: CoverImageSize) -> dict[str, str]:
+def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
     """Returns the HTML attributes for an image."""
-    min_size, full_size = _COVER_IMAGE_INFO[variant]
-    full_size_src = get_cover_image_url(cover_url, full_size)
+    min_size, full_size = _COVER_IMAGE_VARIANTS[size]
+
+    full_src = get_cover_image_url(cover_url, full_size)
+    min_src = get_cover_image_url(cover_url, min_size)
 
     attrs = {
         "height": full_size,
         "width": full_size,
-        "src": full_size_src,
+        "src": full_src,
     }
 
     # one size only
@@ -57,8 +48,8 @@ def get_cover_image_attrs(cover_url: str, variant: CoverImageSize) -> dict[str, 
 
     srcset = ", ".join(
         [
-            f"{full_size_src} {full_size}w",
-            f"{get_cover_image_url(cover_url, min_size)} {min_size}w",
+            f"{full_src} {full_size}w",
+            f"{min_src} {min_size}w",
         ]
     )
 
@@ -92,28 +83,35 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 
 
 @functools.cache
+def get_placeholder(size: int) -> str:
+    """Return placeholder image name"""
+    return f"placeholder-{size}.webp"
+
+
+@functools.cache
 def get_placeholder_url(size: int) -> str:
     """Return URL to cover image placeholder"""
-    return static(f"img/placeholder-{size}.webp")
+    return static(f"img/{get_placeholder(size)}")
 
 
 @functools.cache
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
-    return settings.BASE_DIR / "static" / "img" / f"placeholder-{size}.webp"
+    return settings.BASE_DIR / "static" / "img" / get_placeholder(size)
 
 
-def get_metadata_info(request: HttpRequest, cover_url: str) -> dict[str, str]:
+def is_cover_image_size(size: int) -> bool:
+    """Check image has correct size."""
+    return size in _COVER_IMAGE_SIZES
+
+
+def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]:
     """Returns media artwork details."""
     return [
         {
-            "src": request.build_absolute_uri(
-                get_cover_image_url(cover_url, info["default_size"])
-                if cover_url
-                else get_placeholder_url(size)
-            ),
-            "sizes": f"{[info["default_size"]]}x{info["default_size"]}",
+            "src": request.build_absolute_uri(get_cover_image_url(cover_url, size)),
+            "sizes": f"{size}x{size}",
             "type": "image/webp",
         }
-        for size, info in _COVER_IMAGE_INFO.items()
+        for size in _COVER_IMAGE_SIZES
     ]

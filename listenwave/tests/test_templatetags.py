@@ -97,18 +97,13 @@ class TestFormatDuration:
 
 class TestCoverImage:
     def test_is_cover_url(self):
-        dct = cover_image("https://example.com/test.jpg", 100, "test img")
-        assert "test.jpg" in dct["cover_url"]
-        assert dct["placeholder_url"] == "/static/img/placeholder-100.webp"
+        dct = cover_image("https://example.com/test.jpg", "sm", "test img")
+        assert "test.jpg" in dct["attrs"]["src"]
 
-    def test_is_not_cover_url(self):
-        dct = cover_image("", 100, "test img")
-        assert dct["cover_url"] == ""
-        assert dct["placeholder_url"] == "/static/img/placeholder-100.webp"
-
-    def test_invalid_cover_image_size(self):
-        with pytest.raises(ValueError, match=r"invalid cover image size:500"):
-            cover_image("https://example.com/test.jpg", 500, "test img")
+    def test_is_not_cover_url(self, settings):
+        settings.STATIC_URL = "/static/"
+        dct = cover_image("", "sm", "test img")
+        assert dct["attrs"]["src"] == "/static/img/placeholder-96.webp"
 
 
 class TestActiveLink:
