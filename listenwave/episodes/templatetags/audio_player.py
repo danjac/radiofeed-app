@@ -1,7 +1,7 @@
 from django import template
 from django.template.context import RequestContext
 
-from listenwave import covers
+from listenwave.cover_image import get_metadata_info
 from listenwave.episodes.models import Episode
 
 register = template.Library()
@@ -20,7 +20,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
         "title": episode.cleaned_title,
         "album": episode.podcast.cleaned_title,
         "artist": episode.podcast.owner,
-        "artwork": covers.get_metadata_info(
+        "artwork": get_metadata_info(
             context.request,
             episode.get_cover_url(),
         ),

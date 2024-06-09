@@ -13,12 +13,15 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.utils.safestring import mark_safe
 
-from listenwave import covers, markup
+from listenwave import markup
+from listenwave.cover_image import get_cover_image_attrs
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
     from django.db.models import QuerySet
     from django.template.context import RequestContext
+
+    from listenwave.cover_image import CoverImageSize
 
 ACCEPT_COOKIES_NAME = "accept-cookies"
 
@@ -170,16 +173,10 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-@register.simple_tag
-def get_cover_attrs(cover_url: str | None, size: covers.Size):
-    """Returns cover image attributes."""
-    return covers.get_cover_attrs(cover_url, size)
-
-
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     cover_url: str | None,
-    size: covers.Size,
+    size: CoverImageSize,
     title: str,
     url: str = "",
     css_class: str = "",
@@ -192,3 +189,6 @@ def cover_image(
         "title": title,
         "url": url,
     }
+
+
+get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)

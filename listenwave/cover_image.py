@@ -13,7 +13,7 @@ from django.urls import reverse
 _COVER_IMAGE_SIZES: Final = (96, 120, 240)
 
 
-class Size(StrEnum):
+class CoverImageSize(StrEnum):
     """Possible size variations."""
 
     SMALL = "sm"
@@ -21,18 +21,18 @@ class Size(StrEnum):
 
 
 _COVER_IMAGE_VARIANTS = {
-    Size.SMALL: (96, 96),
-    Size.LARGE: (120, 240),
+    CoverImageSize.SMALL: (96, 96),
+    CoverImageSize.LARGE: (120, 240),
 }
 
 
 @functools.cache
-def get_cover_attrs(cover_url: str, size: Size) -> dict:
+def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_IMAGE_VARIANTS[size]
 
-    full_src = get_cover_url(cover_url, full_size)
-    min_src = get_cover_url(cover_url, min_size)
+    full_src = get_cover_image_url(cover_url, full_size)
+    min_src = get_cover_image_url(cover_url, min_size)
 
     attrs = {
         "height": full_size,
@@ -62,7 +62,7 @@ def get_cover_attrs(cover_url: str, size: Size) -> dict:
 
 
 @functools.cache
-def get_cover_url(cover_url: str | None, size: int) -> str:
+def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
         (
@@ -98,7 +98,7 @@ def get_placeholder_path(size: int) -> pathlib.Path:
     return settings.BASE_DIR / "static" / "img" / get_placeholder(size)
 
 
-def is_cover_size(size: int) -> bool:
+def is_cover_image_size(size: int) -> bool:
     """Check image has correct size."""
     return size in _COVER_IMAGE_SIZES
 
@@ -107,7 +107,7 @@ def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]
     """Returns media artwork details."""
     return [
         {
-            "src": request.build_absolute_uri(get_cover_url(cover_url, size)),
+            "src": request.build_absolute_uri(get_cover_image_url(cover_url, size)),
             "sizes": f"{size}x{size}",
             "type": "image/webp",
         }
