@@ -14,7 +14,11 @@ from django.template.defaultfilters import pluralize
 from django.utils.safestring import mark_safe
 
 from listenwave import markup
-from listenwave.cover_image import get_cover_image_attrs, get_placeholder_url
+from listenwave.cover_image import (
+    CoverImageSize,
+    get_cover_image_attrs,
+    get_placeholder_url,
+)
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
@@ -174,7 +178,7 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     cover_url: str | None,
-    variant: cover_image.Variant,
+    variant: CoverImageSize,
     title: str,
     url: str = "",
     css_class: str = "",
