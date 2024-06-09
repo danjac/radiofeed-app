@@ -32,7 +32,6 @@ def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
     min_size, full_size = _COVER_IMAGE_VARIANTS[size]
 
     full_src = get_cover_image_url(cover_url, full_size)
-    min_src = get_cover_image_url(cover_url, min_size)
 
     attrs = {
         "height": full_size,
@@ -43,6 +42,8 @@ def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
     # one size only
     if min_size == full_size:
         return attrs
+
+    min_src = get_cover_image_url(cover_url, min_size)
 
     srcset = ", ".join(
         [
