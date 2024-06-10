@@ -107,7 +107,7 @@ numpy==1.26.4
     #   scipy
 oauthlib==3.2.2
     # via requests-oauthlib
-packaging==24.0
+packaging==24.1
     # via gunicorn
 pillow==10.3.0
     # via listenwave (pyproject.toml)
