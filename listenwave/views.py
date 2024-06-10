@@ -135,14 +135,13 @@ def robots(_) -> HttpResponse:
                 *[
                     f"Disallow: {url}"
                     for url in [
-                        "/account/",
                         "/bookmarks/",
                         "/categories/",
                         "/discover/",
                         "/episodes/",
                         "/history/",
-                        "/podcasts/",
                         "/private-feeds/",
+                        "/subscriptions/",
                     ]
                 ],
             ]
