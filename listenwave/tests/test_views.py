@@ -62,7 +62,7 @@ class TestCoverImage:
 
     def get_url(self, size, url):
         return (
-            reverse("cover", kwargs={"size": size})
+            reverse("cover_image", kwargs={"size": size})
             + "?"
             + urllib.parse.urlencode({"url": url})
         )
@@ -88,7 +88,7 @@ class TestCoverImage:
 
     @pytest.mark.django_db()
     def test_missing_url_param(self, client, db, mocker):
-        response = client.get(reverse("cover", kwargs={"size": 100}))
+        response = client.get(reverse("cover_image", kwargs={"size": 100}))
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
     @pytest.mark.django_db()

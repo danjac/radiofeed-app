@@ -23,8 +23,10 @@ from listenwave.templatetags import ACCEPT_COOKIES_NAME
 
 _PWA_THEME_COLOR: Final = "#26323C"
 
-_cache_control = cache_control(max_age=60 * 60 * 24 * 365, immutable=True)
-_cache_page = cache_page(60 * 60)
+_CACHE_TIMEOUT: Final = 60 * 60 * 24 * 350
+
+_cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
+_cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
@@ -171,7 +173,7 @@ def security(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover(request: HttpRequest, size: int) -> HttpResponse:
+def cover_image(request: HttpRequest, size: int) -> HttpResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.

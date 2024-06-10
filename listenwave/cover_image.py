@@ -68,7 +68,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
     return (
         (
             reverse(
-                "cover",
+                "cover_image",
                 kwargs={
                     "size": size,
                 },
