@@ -140,7 +140,10 @@ def robots(_) -> HttpResponse:
                         "/discover/",
                         "/episodes/",
                         "/history/",
+                        "/new/",
+                        "/podcasts/",
                         "/private-feeds/",
+                        "/search/",
                         "/subscriptions/",
                     ]
                 ],
