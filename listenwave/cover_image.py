@@ -10,7 +10,7 @@ from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 
-_COVER_IMAGE_SIZES: Final = (96, 120, 180, 240)
+_COVER_IMAGE_SIZES: Final = (96, 128, 180, 240)
 
 
 class CoverImageSize(StrEnum):
@@ -23,7 +23,7 @@ class CoverImageSize(StrEnum):
 
 _COVER_IMAGE_VARIANTS = {
     CoverImageSize.SMALL: (96, 96),
-    CoverImageSize.MEDIUM: (120, 180),
+    CoverImageSize.MEDIUM: (128, 180),
     CoverImageSize.LARGE: (180, 240),
 }
 
