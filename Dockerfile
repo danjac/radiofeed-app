@@ -1,6 +1,6 @@
 # Production Dockerfile for application
 
-FROM node:21-bookworm-slim AS frontend
+FROM node:22-bookworm-slim AS frontend
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN npm run build
 
 # Python
 
-FROM python:3.12.2-bookworm AS backend
+FROM python:3.12.4-bookworm AS backend
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
