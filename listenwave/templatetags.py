@@ -178,6 +178,7 @@ def cover_image(
     cover_url: str | None,
     size: CoverImageSize,
     title: str,
+    *,
     url: str = "",
     css_class: str = "",
 ) -> dict:
