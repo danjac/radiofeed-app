@@ -132,6 +132,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "listenwave.context_processors.cache_timeout",
+                "listenwave.context_processors.theme_color",
             ],
         },
     }
@@ -407,3 +408,8 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
 
     # INTERNAL_IPS required for debug toolbar
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
+
+
+# Site-specific settings
+
+THEME_COLOR = env("THEME_COLOR", default="#26323C")

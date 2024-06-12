@@ -21,8 +21,6 @@ from listenwave.cover_image import get_placeholder_path, is_cover_image_size
 from listenwave.http_client import get_client
 from listenwave.templatetags import ACCEPT_COOKIES_NAME
 
-_PWA_THEME_COLOR: Final = "#26323C"
-
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 350
 
 _cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
@@ -92,8 +90,8 @@ def manifest(request: HttpRequest) -> HttpResponse:
 
     return JsonResponse(
         {
-            "background_color": _PWA_THEME_COLOR,
-            "theme_color": _PWA_THEME_COLOR,
+            "background_color": settings.THEME_COLOR,
+            "theme_color": settings.THEME_COLOR,
             "description": "Podcast aggregator site",
             "dir": "ltr",
             "display": "standalone",
