@@ -10,7 +10,9 @@ asgiref==3.8.1
     #   django-htmx
     #   django-permissions-policy
 brotli==1.1.0
-    # via listenwave (pyproject.toml)
+    # via
+    #   listenwave (pyproject.toml)
+    #   whitenoise
 certifi==2024.6.2
     # via
     #   httpcore

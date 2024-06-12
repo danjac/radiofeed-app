@@ -45,7 +45,7 @@ dependencies =[
     "scipy",
     "sentry-sdk",
     "setuptools",
-    "whitenoise",
+    "whitenoise[brotli]",
 ]
 
 [project.optional-dependencies]
