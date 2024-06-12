@@ -46,8 +46,8 @@
                                 </div>
                             {% endwith %}
                         </div>
-                        <div class="flex flex-col place-content-end space-y-1 h-16 sm:pl-3 sm:space-y-3 sm:w-1/2">
-                            <div class="grid grid-cols-3 place-content-between">
+                        <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-3 sm:w-1/2">
+                            <div class="grid grid-cols-3 place-content-between h-10 sm:h-12">
                                 <div x-text="counters.current"
                                      aria-label="Current Time"
                                      title="Current Time"
@@ -95,7 +95,7 @@
                                      class="flex justify-end items-center font-mono text-xs md:text-sm"
                                      :class="isPlaying ? '' : 'text-gray-300'"></div>
                             </div>
-                            <div class="w-full">
+                            <div class="w-full h-6 sm:h-4">
                                 <input type="range"
                                        aria-label="Progress"
                                        title="Progress"
