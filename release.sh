@@ -2,10 +2,12 @@
 
 set -o errexit
 
-./manage.py check --deploy
+python ./manage.py check --deploy
 
-./manage.py migrate
+python ./manage.py migrate
 
-./manage.py health_check
+python ./manage.py health_check
 
-./manage.py clear_cache
+python ./manage.py clear_cache
+
+python -m gunicorn -c ./gunicorn.conf.py
