@@ -45,6 +45,7 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
         "episodes/index.html",
         {
             "episodes": episodes,
+            "since": since,
             "search_url": reverse("episodes:search_episodes"),
         },
     )
