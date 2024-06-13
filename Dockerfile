@@ -58,5 +58,3 @@ COPY --from=frontend /app/static /app/static
 # Collect static files for Whitenoise
 
 RUN python manage.py collectstatic --no-input --traceback
-
-ENTRYPOINT ["./release.sh"]
