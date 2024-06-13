@@ -27,25 +27,17 @@ _index_url = reverse_lazy("episodes:index")
 @require_safe
 @login_required
 def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpResponse:
-    """List latest episodes from subscriptions if any, else latest episodes from
-    promoted podcasts."""
+    """List latest episodes from subscriptions."""
 
     episodes = (
-        Episode.objects.filter(pub_date__gt=timezone.now() - since)
+        Episode.objects.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
+            )
+        )
+        .filter(is_subscribed=True, pub_date__gt=timezone.now() - since)
         .select_related("podcast")
         .order_by("-pub_date", "-id")
-    )
-
-    subscribed_episodes = episodes.annotate(
-        is_subscribed=Exists(
-            request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-        )
-    ).filter(is_subscribed=True)
-
-    episodes = (
-        subscribed_episodes
-        if subscribed_episodes.exists()
-        else episodes.filter(podcast__promoted=True)
     )
 
     return render(

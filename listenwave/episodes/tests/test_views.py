@@ -34,7 +34,15 @@ class TestIndex:
     def test_no_episodes(self, client, auth_user):
         response = client.get(_index_url)
         assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
+        assert "page_obj" not in response.context
+
+    @pytest.mark.django_db()
+    def test_has_no_subscriptions(self, client, auth_user):
+        EpisodeFactory.create_batch(3)
+        response = client.get(_index_url)
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert "page_obj" not in response.context
 
     @pytest.mark.django_db()
     def test_has_subscriptions(self, client, auth_user):
@@ -45,35 +53,6 @@ class TestIndex:
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
-
-    @pytest.mark.django_db()
-    def test_user_has_no_subscriptions(self, client, auth_user):
-        episode = EpisodeFactory(podcast__promoted=True)
-        EpisodeFactory.create_batch(3)
-        response = client.get(_index_url)
-
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == episode
-
-    @pytest.mark.django_db()
-    def test_user_has_subscriptions(self, client, auth_user):
-        EpisodeFactory(podcast__promoted=True)
-
-        episode = EpisodeFactory()
-
-        SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
-
-        response = client.get(_index_url)
-
-        assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == episode
-
-    @pytest.mark.django_db()
-    def test_no_results(self, auth_user, client):
-        response = client.get(_index_url, {"search": "test"})
-        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestSearchEpisodes:
