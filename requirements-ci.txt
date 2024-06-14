@@ -14,7 +14,7 @@ asttokens==2.4.1
     # via stack-data
 attrs==23.2.0
     # via pytest-mypy
-bandit==1.7.8
+bandit==1.7.9
     # via listenwave (pyproject.toml)
 brotli==1.1.0
     # via
@@ -97,7 +97,7 @@ factory-boy==3.3.0
     # via listenwave (pyproject.toml)
 faker==25.8.0
     # via factory-boy
-filelock==3.14.0
+filelock==3.15.1
     # via pytest-mypy
 gunicorn==22.0.0
     # via listenwave (pyproject.toml)
@@ -191,7 +191,7 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.22
     # via cffi
-pydantic==2.7.3
+pydantic==2.7.4
     # via listenwave (pyproject.toml)
 pydantic-core==2.18.4
     # via pydantic
@@ -237,7 +237,7 @@ python-dateutil==2.9.0.post0
     #   faker
 pyyaml==6.0.1
     # via bandit
-redis==5.0.5
+redis==5.0.6
     # via
     #   listenwave (pyproject.toml)
     #   django-redis

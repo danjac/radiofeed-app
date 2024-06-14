@@ -121,7 +121,7 @@ psycopg-binary==3.1.19
     # via psycopg
 pycparser==2.22
     # via cffi
-pydantic==2.7.3
+pydantic==2.7.4
     # via listenwave (pyproject.toml)
 pydantic-core==2.18.4
     # via pydantic
@@ -129,7 +129,7 @@ pyjwt==2.8.0
     # via django-allauth
 python-dateutil==2.9.0.post0
     # via listenwave (pyproject.toml)
-redis==5.0.5
+redis==5.0.6
     # via
     #   listenwave (pyproject.toml)
     #   django-redis
