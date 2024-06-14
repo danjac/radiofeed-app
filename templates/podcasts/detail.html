@@ -101,6 +101,7 @@
     {% if podcast.funding_url %}
         <div class="flex-wrap font-semibold">
             <a href="{{ podcast.funding_url }}"
+               class="link"
                rel="noopener nofollow"
                target="_blank">{{ podcast.funding_text|default:'Support this podcast' }}</a>
         </div>
