@@ -109,13 +109,13 @@ class TestSearchPodcasts:
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"search": podcast.title})
         assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
+        assert "page_obj" not in response.context
 
     @pytest.mark.django_db()
     def test_search_no_results(self, client, auth_user, faker):
         response = client.get(self.url, {"search": "zzzz"})
         assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
+        assert "page_obj" not in response.context
 
 
 class TestLatestEpisode:
