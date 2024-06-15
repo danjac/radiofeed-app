@@ -12,7 +12,7 @@
         <nav>
             <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
                 {% if not request.search %}
-                    <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
+                    <li class="flex justify-center items-center sm:justify-start">
                         <a href="{% url "podcasts:add_private_feed" %}"
                            class="inline-flex items-center btn btn-default">
                             {% heroicon_mini "plus" class="mr-2" %}
