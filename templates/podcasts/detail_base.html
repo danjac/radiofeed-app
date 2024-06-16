@@ -12,7 +12,7 @@
         {% endblock podcast_header %}
         {% cache CACHE_TIMEOUT podcast-detail-header request.get_full_path %}
         {% block podcast_nav %}
-            {% if podcast.num_episodes or podcast.has_similar %}
+            {% if podcast.num_episodes or podcast.has_similar or podcast.private %}
                 <nav class="flex justify-center items-center sm:justify-start">
                     <ul class="flex items-center space-x-6">
                         {% active_link podcast.get_detail_url as link %}
@@ -41,6 +41,10 @@
                                    {% if link.active %}aria-current="page"{% endif %}
                                    aria-label="{{ podcast.cleaned_title }} | Similar"
                                    title="{{ podcast.cleaned_title }} | Similar">Similar</a>
+                            </li>
+                        {% elif podcast.private %}
+                            <li>
+                                <a class="link" href="{% url "podcasts:private_feeds" %}">Private Feeds</a>
                             </li>
                         {% endif %}
                     </ul>
