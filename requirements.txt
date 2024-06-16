@@ -103,7 +103,7 @@ nh3==0.2.17
     # via listenwave (pyproject.toml)
 nltk==3.8.1
     # via listenwave (pyproject.toml)
-numpy==1.26.4
+numpy==2.0.0
     # via
     #   scikit-learn
     #   scipy
