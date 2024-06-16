@@ -154,6 +154,10 @@ class TestPodcastModel:
         assert podcast.has_similar is True
 
     @pytest.mark.django_db()
+    def test_has_similar_is_private(self):
+        assert Podcast(private=True).has_similar is False
+
+    @pytest.mark.django_db()
     def test_num_episodes_none(self, podcast):
         assert podcast.num_episodes == 0
 

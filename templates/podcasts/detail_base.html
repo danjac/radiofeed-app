@@ -12,7 +12,7 @@
         {% endblock podcast_header %}
         {% cache CACHE_TIMEOUT podcast-detail-header request.get_full_path %}
         {% block podcast_nav %}
-            {% if podcast.num_episodes or podcast.has_similar or podcast.private %}
+            {% if podcast.num_episodes or podcast.has_similar %}
                 <nav class="flex justify-center items-center sm:justify-start">
                     <ul class="flex items-center space-x-6">
                         {% active_link podcast.get_detail_url as link %}
@@ -33,15 +33,7 @@
                                    title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ podcast.num_episodes }})</a>
                             </li>
                         {% endif %}
-                        {% if podcast.private %}
-                            <li>
-                                <a class="flex items-center link"
-                                   href="{% url "podcasts:private_feeds" %}">
-                                    {% heroicon_mini "lock-closed" class="mr-2" %}
-                                    <span>Private Feed</span>
-                                </a>
-                            </li>
-                        {% elif podcast.has_similar %}
+                        {% if podcast.has_similar %}
                             {% active_link podcast.get_similar_url as link %}
                             <li>
                                 <a class="{{ link.css }}"

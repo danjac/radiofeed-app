@@ -281,7 +281,7 @@ class Podcast(models.Model):
     @cached_property
     def has_similar(self) -> bool:
         """Returns true if any recommendations."""
-        return self.recommendations.exists()
+        return False if self.private else self.recommendations.exists()
 
 
 class Subscription(TimeStampedModel):
