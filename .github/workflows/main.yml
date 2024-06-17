@@ -72,16 +72,15 @@ jobs:
                 subject-name: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}
                 subject-digest: ${{ steps.push.outputs.digest }}
                 push-to-registry: true
-    # deploy:
-    #     if: github.ref == 'refs/heads/main'
-    #     needs: docker
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Check out repo
-    #           uses: actions/checkout@v4
-    #         - name: Push to dokku
-    #           uses: dokku/github-action@master
-    #           with:
-    #             git_remote_url: ${{ secrets.GIT_REMOTE_URL }} # 'ssh://dokku@dokku.me:22/appname'
-    #             ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-    #             deploy_docker_image: ${{ env.DOCKER_IMAGE }}:main
+    deploy:
+        if: github.ref == 'refs/heads/main'
+        needs: docker
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repo
+              uses: actions/checkout@v4
+            - name: Push to dokku
+              uses: dokku/github-action@master
+              with:
+                git_remote_url: ${{ secrets.GIT_REMOTE_URL }} # 'ssh://dokku@dokku.me:22/appname'
+                ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
