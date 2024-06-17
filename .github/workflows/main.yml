@@ -39,9 +39,13 @@ jobs:
             - run: xargs python -m nltk.downloader < nltk.txt
             - run: python -m pytest
     docker:
+        if: github.ref == 'refs/heads/main'
         needs: unittests
         runs-on: ubuntu-latest
-        if: github.ref == 'refs/heads/main'
+        permissions:
+            contents: read
+            pages: write
+            id-token: write
         steps:
             - name: Check out repo
               uses: actions/checkout@v4
