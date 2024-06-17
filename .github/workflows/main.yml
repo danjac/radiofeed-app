@@ -83,4 +83,4 @@ jobs:
               with:
                 git_remote_url: ${{ secrets.GIT_REMOTE_URL }} # 'ssh://dokku@dokku.me:22/appname'
                 ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-                deploy_docker_image: ${{ env.REGISTRY }}/${{ secrets.DOCKER_IMAGE }}
+                deploy_docker_image: ${{ env.REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:main
