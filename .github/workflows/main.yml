@@ -43,7 +43,7 @@ jobs:
         needs: unittests
         runs-on: ubuntu-latest
         permissions:
-            contents: read
+            contents: write
             pages: write
             id-token: write
         steps:
