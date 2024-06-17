@@ -3,7 +3,7 @@ on: [pull_request, push]
 run-name: ${{ github.actor }} is running checks
 env:
     REGISTRY: docker.io
-    DOCKER_IMAGE: danjac2018/listenwave
+    DOCKER_IMAGE: danjac2018/listenwave:latest
 jobs:
     precommit:
         runs-on: ubuntu-latest
