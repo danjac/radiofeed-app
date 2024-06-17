@@ -42,10 +42,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         needs: unittests
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
-            pages: write
-            id-token: write
+        permissions: write-all
         steps:
             - name: Check out repo
               uses: actions/checkout@v4
