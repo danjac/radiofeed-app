@@ -8,11 +8,12 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         steps:
-            - uses: ./checks.yml
             - name: Cloning repo
               uses: actions/checkout@v4
               with:
                 fetch-depth: 0
+            - name: Run all checks
+              uses: ./checks.yml
             - name: Push to dokku
               uses: dokku/github-action@master
               with:
