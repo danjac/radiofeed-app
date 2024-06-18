@@ -3,7 +3,4 @@ on: [pull_request, push]
 run-name: ${{ github.actor }} is running checks
 jobs:
     run_checks:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: ./.github/workflows/checks.yml
+        - uses: ./.github/workflows/checks.yml
