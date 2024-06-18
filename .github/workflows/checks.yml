@@ -1,6 +1,6 @@
 name: Listenwave Project CI/CD
 on: [pull_request, push]
-run-name: ${{ github.actor }} is running Listenwave pipeline
+run-name: ${{ github.actor }} is running checks
 jobs:
     precommit:
         runs-on: ubuntu-latest

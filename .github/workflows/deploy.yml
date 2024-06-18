@@ -1,0 +1,22 @@
+name: Listenwave Project Deployment
+run-name: ${{ github.actor }} is deploying
+on:
+    workflow_dispatch:
+        branches:
+            - main
+jobs:
+    deploy:
+        uses: ./.github/workflows/checks.yml
+        needs: unittests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Cloning repo
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+            - name: Push to dokku
+              uses: dokku/github-action@master
+              with:
+                branch: main
+                git_remote_url: ${{ secrets.GIT_REMOTE_URL }}
+                ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
