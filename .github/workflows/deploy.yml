@@ -6,7 +6,7 @@ on:
             - main
 jobs:
     deploy:
-        uses: ./.github/workflows/checks.yml
+        uses: ./checks.yml
         needs: unittests
         runs-on: ubuntu-latest
         steps:
