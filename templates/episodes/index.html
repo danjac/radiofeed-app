@@ -19,13 +19,8 @@
     {% if page_obj.paginator.count %}
         {% include "episodes/_episodes.html" %}
     {% else %}
-        <div class="break-words prose prose-sm md:prose-base dark:prose-invert">
-            <p>
-                This shows latest releases from your <a href="{% url "podcasts:subscriptions" %}" class="link">subscribed podcasts</a> from the last <strong>{{ since.days }} day{{ since.days|pluralize }}</strong>.
-            </p>
-            <p>
-                If you are not subscribed to any podcasts, you can find new podcasts on the <a href="{% url "podcasts:discover" %}" class="link">Discover</a> page and click the <strong>Subscribe</strong> button to add a podcast to your collection.
-            </p>
-        </div>
+        <p class="text-center sm:text-left">
+            This shows latest releases from your <a href="{% url "podcasts:subscriptions" %}" class="link">subscribed podcasts</a> from the last <strong>{{ since.days }} day{{ since.days|pluralize }}</strong>. If you are not subscribed to any podcasts, you can find new podcasts on the <a href="{% url "podcasts:discover" %}" class="link">Discover</a> page and click the <strong>Subscribe</strong> button to add a podcast to your collection.
+        </p>
     {% endif %}
 {% endblock content %}
