@@ -1,4 +1,4 @@
-name: Listenwave Project CI/CD
+name: listenwave_default
 on: [pull_request, push]
 run-name: ${{ github.actor }} is running checks
 jobs:
