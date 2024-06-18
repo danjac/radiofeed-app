@@ -6,10 +6,9 @@ on:
             - main
 jobs:
     deploy:
-        uses: ./checks.yml
-        needs: unittests
         runs-on: ubuntu-latest
         steps:
+            - uses: ./checks.yml
             - name: Cloning repo
               uses: actions/checkout@v4
               with:
