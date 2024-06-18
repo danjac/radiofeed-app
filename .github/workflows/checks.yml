@@ -1,6 +1,5 @@
-name: Listenwave Project CI/CD
-on: [pull_request, push]
-run-name: ${{ github.actor }} is running checks
+name: listenwave_checks
+on: workflow_call
 jobs:
     precommit:
         runs-on: ubuntu-latest

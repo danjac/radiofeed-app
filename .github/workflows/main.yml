@@ -1,0 +1,9 @@
+name: Listenwave Project CI/CD
+on: [pull_request, push]
+run-name: ${{ github.actor }} is running checks
+jobs:
+    run_checks:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: ./checks.yml
