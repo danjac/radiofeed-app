@@ -30,7 +30,7 @@
     {% if page_obj.paginator.count %}
         {% include "podcasts/_podcasts.html" %}
     {% else %}
-        <p class="break-words prose prose-sm md:prose-base dark:prose-invert">
+        <p class="text-center sm:text-left">
             Sorry, no results found for your search. Click the <strong>Search iTunes</strong> button above to find a podcast in the iTunes catalog. Any new results returned from iTunes will be automatically added to our database.
         </p>
     {% endif %}
