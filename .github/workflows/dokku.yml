@@ -1,5 +1,5 @@
-name: listenwave_deploy
-run-name: ${{ github.actor }} is deploying
+name: listenwave_deploy_dokku
+run-name: ${{ github.actor }} is deploying to Dokku
 on:
     workflow_dispatch:
         branches:
