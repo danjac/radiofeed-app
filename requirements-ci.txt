@@ -179,7 +179,7 @@ pprintpp==0.4.0
     # via pytest-icdiff
 prompt-toolkit==3.0.47
     # via ipython
-psutil==5.9.8
+psutil==6.0.0
     # via listenwave (pyproject.toml)
 psycopg==3.1.19
     # via listenwave (pyproject.toml)
