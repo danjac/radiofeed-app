@@ -54,5 +54,5 @@ jobs:
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
-                    docker compose pull
-                    docker compose run --rm cron_scheduler ./release.sh
+                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} pull
+                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} run --rm cron_scheduler ./release.sh
