@@ -1,15 +1,16 @@
 import Alpine from "alpinejs";
-import "htmx.org";
+import htmx from "htmx.org/dist/htmx.esm";
 import "./audio-player";
 
-// global HTMX configuration
-// https://htmx.org/docs/#config
+// initialize global HTMX instance
 
-// htmx.config.historyCacheSize = 0;
-// htmx.config.refreshOnHistoryMiss = false;
-// htmx.config.scrollBehavior = "smooth";
-// htmx.config.scrollIntoViewOnBoost = false;
-// htmx.config.useTemplateFragments = true;
+window.htmx = htmx;
+
+window.htmx.config.historyCacheSize = 0;
+window.htmx.config.refreshOnHistoryMiss = false;
+window.htmx.config.scrollBehavior = "smooth";
+window.htmx.config.scrollIntoViewOnBoost = false;
+window.htmx.config.useTemplateFragments = true;
 
 // initialize global Alpine instance
 
