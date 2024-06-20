@@ -11,14 +11,6 @@
             "schedule": "*/6 * * * *"
         },
         {
-            "command": "python manage.py parse_itunes",
-            "schedule": "15,45 * * * *"
-        },
-        {
-            "command": "python manage.py clear_itunes_searches",
-            "schedule": "3 12 * * *"
-        },
-        {
             "command": "python manage.py create_recommendations",
             "schedule": "20 6 * * *"
         },
