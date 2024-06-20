@@ -40,9 +40,7 @@
                 {% endif %}
             </li>
         {% empty %}
-            <li>
-                No results found for <span class="font-bold">{{ request.search.value }}</span>.
-            </li>
+            <li>Sorry, no results found for your search.</li>
         {% endfor %}
     </ul>
 {% endcache %}
