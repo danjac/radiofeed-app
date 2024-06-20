@@ -39,3 +39,18 @@ jobs:
                 subject-name: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}
                 subject-digest: ${{ steps.push.outputs.digest }}
                 push-to-registry: true
+    deploy_docker:
+        needs: build_docker
+        steps:
+            - name: Cloning repo
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+            - name: Deploy to cron scheduler
+              uses: appleboy/ssh-action@master
+              host: ${{ secrets.CRON_SCHEDULER_IP }}
+              username: ${{ secrets.DEPLOY_USER }}
+              key: ${{ secrets.SSH_PRIVATE_KEY }}
+              script: |
+                docker compose pull
+                docker compose run --rm cron_scheduler ./release.sh
