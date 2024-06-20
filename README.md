@@ -69,7 +69,7 @@ In some server configurations your load balancer (e.g. Nginx) may set the `stric
 
 In production it's also a good idea to set `ADMIN_URL` to something other than the default _admin/_. Make sure it ends in a forward slash, e.g. _some-random-path/_.
 
-A Dockerfile is provided for standard container deployments e.g. on Dokku.
+A Dockerfile is provided for standard container deployments e.g. on Dokku or another PAAS.
 
 Once you have access to the Django Admin, you should configure the default Site instance with the correct production name and domain.
 
@@ -94,5 +94,3 @@ In production you should set up the following cron jobs to run these Django comm
 ```bash
 15 9 * * 1 python manage.py send_recommendations_emails
 ```
-
-An `app.json` configuration with these cron schedules is included for Dokku deployment.
