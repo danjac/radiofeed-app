@@ -8,7 +8,7 @@ jobs:
     run_checks:
         uses: ./.github/workflows/checks.yml
     build_docker:
-        permisssions: write-all
+        permissions: write-all
         runs-on: ubuntu-latest
         needs: run_checks
         steps:
