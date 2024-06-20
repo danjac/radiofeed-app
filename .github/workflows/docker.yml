@@ -2,7 +2,6 @@ name: radiofeed_deploy_docker
 on: workflow_call
 jobs:
     build_docker:
-        needs: run_checks
         permissions: write-all
         runs-on: ubuntu-latest
         env:
