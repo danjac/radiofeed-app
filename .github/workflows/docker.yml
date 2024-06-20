@@ -10,6 +10,7 @@ jobs:
     build_docker:
         permissions: write-all
         runs-on: ubuntu-latest
+        environment: ${{ vars.default }}
         # needs: run_checks
         steps:
             - name: Cloning repo
