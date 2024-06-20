@@ -11,7 +11,7 @@ jobs:
         # needs: run_checks
         permissions: write-all
         runs-on: ubuntu-latest
-        environment:
+        env:
             REGISTRY: docker.io
             DOCKER_IMAGE: danjac2018/listenwave
             DOCKER_TAG: latest
