@@ -5,7 +5,7 @@ import psutil
 
 # https://docs.gunicorn.org/en/stable/configure.html#configuration-file
 
-wsgi_app = "listenwave.wsgi"
+wsgi_app = "radiofeed.wsgi"
 
 accesslog = "-"
 

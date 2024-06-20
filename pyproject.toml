@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "listenwave"
+name = "radiofeed"
 description = "Podcast aggregator app"
 requires-python = ">=3.12"
 readme = "README.md"
@@ -74,7 +74,7 @@ dev =[
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="listenwave.settings"
+DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = [
     "-v",
     "-x",
@@ -88,7 +88,7 @@ addopts = [
     "--cov-report=term-missing",
     "--tb=short",
 ]
-testpaths = "listenwave"
+testpaths = "radiofeed"
 env = [
     "COVERAGE_CORE=sysmon",
     "TEMPLATE_DEBUG=true",
@@ -97,7 +97,7 @@ env = [
 ]
 
 [tool.coverage.run]
-source=["listenwave"]
+source=["radiofeed"]
 omit=[
     "**/migrations/*",
     "*/nltk/*",
@@ -196,7 +196,7 @@ lint.ignore = [
 "**/tests/**.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["listenwave"]
+known-first-party = ["radiofeed"]
 
 [tool.pyright]
 reportOptionalMemberAccess = false
