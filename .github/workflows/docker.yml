@@ -48,9 +48,10 @@ jobs:
                 fetch-depth: 0
             - name: Deploy to cron scheduler
               uses: appleboy/ssh-action@master
-              host: ${{ secrets.CRON_SCHEDULER_IP }}
-              username: ${{ secrets.DEPLOY_USER }}
-              key: ${{ secrets.SSH_PRIVATE_KEY }}
-              script: |
-                docker compose pull
-                docker compose run --rm cron_scheduler ./release.sh
+              with:
+                  host: ${{ secrets.CRON_SCHEDULER_IP }}
+                  username: ${{ secrets.DEPLOY_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: |
+                    docker compose pull
+                    docker compose run --rm cron_scheduler ./release.sh
