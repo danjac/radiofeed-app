@@ -10,10 +10,6 @@ jobs:
     build_docker:
         permissions: write-all
         runs-on: ubuntu-latest
-        environment:
-            REGISTRY: docker.io
-            DOCKER_IMAGE: danjac2018/listenwave.io
-            DOCKER_TAG: latest
         # needs: run_checks
         steps:
             - name: Cloning repo
@@ -32,7 +28,7 @@ jobs:
                 context: .
                 file: ./Dockerfile
                 push: true
-                tags: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}:{{ env.DOCKER_TAG }}
+                tags: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
             - name: Generate artifact attestation
               uses: actions/attest-build-provenance@v1
               with:
