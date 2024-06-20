@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "alpinejs": "^3.14.1",
-        "htmx.org": "^1.9.12"
+        "htmx.org": "^2.0.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.5.0",

@@ -65,7 +65,7 @@ django-allauth==0.63.3
     # via listenwave (pyproject.toml)
 django-anymail==10.3
     # via listenwave (pyproject.toml)
-django-browser-reload==1.12.1
+django-browser-reload==1.13.0
     # via listenwave (pyproject.toml)
 django-click==2.4.0
     # via listenwave (pyproject.toml)
@@ -79,11 +79,11 @@ django-fast-update==0.2.3
     # via listenwave (pyproject.toml)
 django-health-check==3.18.2
     # via listenwave (pyproject.toml)
-django-htmx==1.17.3
+django-htmx==1.18.0
     # via listenwave (pyproject.toml)
 django-model-utils==4.5.1
     # via listenwave (pyproject.toml)
-django-permissions-policy==4.19.0
+django-permissions-policy==4.20.0
     # via listenwave (pyproject.toml)
 django-redis==5.4.0
     # via listenwave (pyproject.toml)
@@ -97,7 +97,7 @@ factory-boy==3.3.0
     # via listenwave (pyproject.toml)
 faker==25.8.0
     # via factory-boy
-filelock==3.15.1
+filelock==3.15.3
     # via pytest-mypy
 gunicorn==22.0.0
     # via listenwave (pyproject.toml)
@@ -258,9 +258,9 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.5.1
+sentry-sdk==2.6.0
     # via listenwave (pyproject.toml)
-setuptools==70.0.0
+setuptools==70.1.0
     # via listenwave (pyproject.toml)
 six==1.16.0
     # via
@@ -310,5 +310,5 @@ wcwidth==0.2.13
     # via prompt-toolkit
 werkzeug==3.0.3
     # via listenwave (pyproject.toml)
-whitenoise==6.6.0
+whitenoise==6.7.0
     # via listenwave (pyproject.toml)

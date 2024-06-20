@@ -60,11 +60,11 @@ django-fast-update==0.2.3
     # via listenwave (pyproject.toml)
 django-health-check==3.18.2
     # via listenwave (pyproject.toml)
-django-htmx==1.17.3
+django-htmx==1.18.0
     # via listenwave (pyproject.toml)
 django-model-utils==4.5.1
     # via listenwave (pyproject.toml)
-django-permissions-policy==4.19.0
+django-permissions-policy==4.20.0
     # via listenwave (pyproject.toml)
 django-redis==5.4.0
     # via listenwave (pyproject.toml)
@@ -148,9 +148,9 @@ scipy==1.13.1
     # via
     #   listenwave (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.5.1
+sentry-sdk==2.6.0
     # via listenwave (pyproject.toml)
-setuptools==70.0.0
+setuptools==70.1.0
     # via listenwave (pyproject.toml)
 six==1.16.0
     # via python-dateutil
@@ -177,5 +177,5 @@ urllib3==2.2.2
     #   django-anymail
     #   requests
     #   sentry-sdk
-whitenoise==6.6.0
+whitenoise==6.7.0
     # via listenwave (pyproject.toml)
