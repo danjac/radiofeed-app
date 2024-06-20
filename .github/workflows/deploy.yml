@@ -35,6 +35,7 @@ jobs:
             matrix:
                 server_ip:
                     - APP_SERVER_1_IP
+                    - APP_SERVER_2_IP
         steps:
             - name: Deploy to app server
               uses: appleboy/ssh-action@master
