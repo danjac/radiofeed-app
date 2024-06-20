@@ -35,20 +35,3 @@ jobs:
                 subject-name: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}
                 subject-digest: ${{ steps.push.outputs.digest }}
                 push-to-registry: true
-    deploy:
-        jobs:
-            # deploy cron scheduler first: it will run migrations and checks
-            - name: Deploy cron scheduler
-              strategy:
-                  matrix:
-                      server_ips: ${{ secrets.CRON_SCHEDULER_IP }}
-              run: |
-                  docker-compose -f ${{ secrets.REMOTE_PATH }}/docker-compose.yml pull && \
-                  docker-compose -f ${{ secrets.REMOTE_PATH }}/docker-compose.yml up -d
-            - name: Deploy app servers
-              strategy:
-                  matrix:
-                      server_ips: ${{ secrets.APP_SERVER_IPS }}
-              run: |
-                  docker-compose -f ${{ secrets.REMOTE_PATH }}/docker-compose.yml pull && \
-                  docker-compose -f ${{ secrets.REMOTE_PATH }}/docker-compose.yml up -d
