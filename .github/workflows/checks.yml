@@ -1,4 +1,4 @@
-name: listenwave_checks
+name: radiofeed_checks
 on: workflow_call
 jobs:
     precommit:
