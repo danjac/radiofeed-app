@@ -8,6 +8,6 @@ jobs:
     # run_checks:
     #    #uses: ./.github/workflows/checks.yml
     build_docker:
-        needs: run_checks
+        # needs: run_checks
         uses: ./.github/workflows/docker.yml
         secrets: inherit
