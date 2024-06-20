@@ -10,6 +10,7 @@ jobs:
     build_docker:
         needs: run_checks
         uses: ./.github/workflows/docker.yml
+        secrets: inherit
     deploy_cron_scheduler:
         runs-on: ubuntu-latest
         needs: build_docker
