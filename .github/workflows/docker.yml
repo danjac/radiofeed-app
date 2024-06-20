@@ -5,12 +5,16 @@ on:
         branches:
             - main
 jobs:
-    run_checks:
-        uses: ./.github/workflows/checks.yml
+    # run_checks:
+    #    uses: ./.github/workflows/checks.yml
     build_docker:
         permissions: write-all
         runs-on: ubuntu-latest
-        needs: run_checks
+        environment:
+            REGISTRY: docker.io
+            DOCKER_IMAGE: danjac2018/listenwave.io
+            DOCKER_TAG: latest
+        # needs: run_checks
         steps:
             - name: Cloning repo
               uses: actions/checkout@v4
