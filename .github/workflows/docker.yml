@@ -62,12 +62,12 @@ jobs:
         strategy:
             matrix:
                 server_ip:
-                    - "${{ secrets.APP_SERVER_1_IP }}"
+                    - APP_1_SERVER_IP
         steps:
             - name: Deploy to app server
               uses: appleboy/ssh-action@master
               with:
-                  host: ${{ matrix.server_ip }}
+                  host: ${{ secrets[matrix.server_ip] }}
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
