@@ -8,10 +8,13 @@ jobs:
     # run_checks:
     #    uses: ./.github/workflows/checks.yml
     build_docker:
+        # needs: run_checks
         permissions: write-all
         runs-on: ubuntu-latest
-        environment: ${{ vars.default }}
-        # needs: run_checks
+        environment:
+            REGISTRY: docker.io
+            DOCKER_IMAGE: danjac2018/listenwave
+            DOCKER_TAG: latest
         steps:
             - name: Cloning repo
               uses: actions/checkout@v4
