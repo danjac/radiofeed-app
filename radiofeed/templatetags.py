@@ -13,7 +13,7 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.utils.safestring import mark_safe
 
-from radiofeed import markup
+from radiofeed import html
 from radiofeed.cover_image import get_cover_image_attrs
 
 if TYPE_CHECKING:  # pragma: nocover
@@ -62,7 +62,7 @@ def active_link(
 @register.inclusion_tag("_markdown.html")
 def markdown(value: str | None) -> dict:
     """Renders cleaned HTML/Markdown content."""
-    return {"content": mark_safe(markup.markdown(value or ""))}  # noqa: S308
+    return {"content": mark_safe(html.markdown(value or ""))}  # noqa: S308
 
 
 @register.inclusion_tag("_cookie_notice.html", takes_context=True)

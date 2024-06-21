@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed.markup import markdown, strip_html
+from radiofeed.html import markdown, strip_html
 
 
 class TestMarkdown:
