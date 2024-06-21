@@ -13,6 +13,15 @@
                 </a>
             </li>
             <li>
+                <a href="{% url "episodes:index" %}"
+                   accesskey="n"
+                   tabindex="0"
+                   class="{{ sidebar_css }}">
+                    {% heroicon_outline "sparkles" class=icon_css %}
+                    New Releases
+                </a>
+            </li>
+            <li>
                 <a href="{% url "podcasts:discover" %}"
                    accesskey="d"
                    tabindex="0"
@@ -22,12 +31,12 @@
                 </a>
             </li>
             <li>
-                <a href="{% url "episodes:index" %}"
-                   accesskey="n"
+                <a href="{% url "podcasts:category_list" %}"
+                   accesskey="c"
                    tabindex="0"
                    class="{{ sidebar_css }}">
-                    {% heroicon_outline "sparkles" class=icon_css %}
-                    New Releases
+                    {% heroicon_outline "tag" class=icon_css %}
+                    Categories
                 </a>
             </li>
             <li>
@@ -55,15 +64,6 @@
                    class="{{ sidebar_css }}">
                     {% heroicon_outline "lock-closed" class=icon_css %}
                     Private Feeds
-                </a>
-            </li>
-            <li>
-                <a href="{% url "podcasts:category_list" %}"
-                   accesskey="c"
-                   tabindex="0"
-                   class="{{ sidebar_css }}">
-                    {% heroicon_outline "tag" class=icon_css %}
-                    Categories
                 </a>
             </li>
             <li>
