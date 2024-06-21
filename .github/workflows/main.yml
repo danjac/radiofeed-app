@@ -1,4 +1,4 @@
-name: listenwave_default
+name: radiofeed_default
 on: [pull_request, push]
 run-name: ${{ github.actor }} is running checks
 jobs:
