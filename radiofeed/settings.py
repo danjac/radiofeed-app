@@ -148,7 +148,7 @@ ROOT_URLCONF = "radiofeed.urls"
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 # User-Agent header for API calls from this site
-USER_AGENT = env("USER_AGENT", default="Listenwave/0.0.0")
+USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 
 SITE_ID = 1
 
@@ -246,7 +246,7 @@ SOCIALACCOUNT_PROVIDERS = {
 # admin settings
 
 ADMIN_URL = env("ADMIN_URL", default="admin/")
-ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Listenwave Admin")
+ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 # Internationalization/Localization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

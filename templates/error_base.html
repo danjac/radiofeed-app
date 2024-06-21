@@ -5,7 +5,7 @@
         <head>
             <title>
                 {% block title %}
-                    Listenwave: Error
+                    Radiofeed: Error
                 {% endblock title %}
             </title>
             <meta charset="UTF-8">
@@ -21,7 +21,7 @@
         <body class="mx-auto font-sans text-sm antialiased md:text-base dark:text-white container-xl scroll-smooth dark:bg-zinc-900">
             {% url 'podcasts:index' as home_url %}
             <header class="sticky top-0 z-20 w-full text-white bg-violet-900">
-                {% with site_name="Listenwave" %}
+                {% with site_name="Radiofeed" %}
                     <nav class="flex justify-between items-center p-2">
                         <div class="flex flex-shrink-0 items-center space-x-3">
                             <a class="inline-flex items-center text-lg font-bold md:text-xl xl:text-2xl hover:text-blue-300"
