@@ -8,7 +8,7 @@ window.htmx = htmx;
 
 window.htmx.config.historyCacheSize = 0;
 window.htmx.config.refreshOnHistoryMiss = false;
-window.htmx.config.scrollBehavior = "smooth";
+window.htmx.config.scrollBehavior = "instant";
 window.htmx.config.scrollIntoViewOnBoost = false;
 window.htmx.config.useTemplateFragments = true;
 
