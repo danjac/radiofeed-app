@@ -195,9 +195,9 @@ MANAGERS = (
     getaddresses([MANAGERS]) if (MANAGERS := env("MANAGERS", default="")) else ADMINS
 )
 
-SERVER_EMAIL = env("SERVER_EMAIL", default=f"errors@{EMAIL_HOST}")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=f"no-reply@{EMAIL_HOST}")
-CONTACT_EMAIL = env("CONTACT_EMAIL", default=f"support@{EMAIL_HOST}")
+SERVER_EMAIL = env("SERVER_EMAIL", default=f"no-reply@{EMAIL_HOST}")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=SERVER_EMAIL)
+CONTACT_EMAIL = env("CONTACT_EMAIL", default=SERVER_EMAIL)
 
 # authentication settings
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
