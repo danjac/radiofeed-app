@@ -51,11 +51,11 @@ class FeedResultSet:
         self._client = client
         self._search_term = search_term
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Returns number of feeds."""
         return len(self.feeds)
 
-    def __getitem__(self, key: int):
+    def __getitem__(self, key: int) -> Feed:
         """Return item by key"""
         return self.feeds[key]
 
