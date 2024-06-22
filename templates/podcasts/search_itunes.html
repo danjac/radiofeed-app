@@ -22,31 +22,7 @@
         </nav>
     </header>
     {% cache CACHE_TIMEOUT search-itunes request.get_full_path %}
-    <ul class="divide-y divide-solid">
-        {% for feed in feeds %}
-            {% if forloop.first %}
-                <li class="pb-2 text-center sm:text-left">
-                    Any new results returned from iTunes will be automatically added to our database.
-                </li>
-            {% endif %}
-            <li class="py-3 first:pt-0 last:pb-0">
-                {% if feed.podcast and feed.podcast.pub_date %}
-                    {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
-                {% else %}
-                    <div class="flex items-center space-x-3">
-                        {% cover_image feed.image "sm" title=feed.title css_class="h-16 w-16" %}
-                        <div class="flex flex-col place-content-between h-14">
-                            <h2 class="font-bold tracking-tight leading-tight break-words line-clamp-2">{{ feed.title }}</h2>
-                            <h3 class="w-60 text-xs font-semibold tracking-tight leading-tight text-gray-600 md:w-96 md:text-sm dark:text-gray-300 truncate">
-                                <span class="animate-pulse">Adding podcast to database...</span>
-                            </h3>
-                        </div>
-                    </div>
-                {% endif %}
-            </li>
-        {% empty %}
-            <li class="text-center sm:text-left">Sorry, no results found for your search.</li>
-        {% endfor %}
-    </ul>
+    {% paginate feeds as page_obj %}
+    {% include "podcasts/_itunes_feeds.html" %}
 {% endcache %}
 {% endblock content %}

@@ -1,0 +1,15 @@
+{# vim: set filetype=htmldjango #}
+{% extends "_pagination.html" %}
+{% block pagination_items %}
+    <li class="py-3 text-center sm:text-left">
+        Any new results returned from iTunes will be automatically added to our database.
+    </li>
+    {{ block.super }}
+{% endblock pagination_items %}
+{% block pagination_item %}
+    {% if item.podcast and item.podcast.pub_date %}
+        {% include "podcasts/_podcast.html" with podcast=item.podcast %}
+    {% else %}
+        {% include "podcasts/_itunes_feed.html" with feed=item %}
+    {% endif %}
+{% endblock pagination_item %}

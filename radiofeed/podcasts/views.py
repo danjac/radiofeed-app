@@ -127,19 +127,16 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
     if request.search:
-        try:
-            feeds = itunes.search(get_client(), request.search.value)
-            return render(
-                request,
-                "podcasts/search_itunes.html",
-                {
-                    "feeds": feeds,
-                    "clear_search_url": _discover_url,
-                },
-            )
+        feeds = itunes.search(get_client(), request.search.value)
 
-        except itunes.ItunesError:
-            messages.error(request, "Error: iTunes unavailable")
+        return render(
+            request,
+            "podcasts/search_itunes.html",
+            {
+                "feeds": feeds,
+                "clear_search_url": _discover_url,
+            },
+        )
 
     return redirect(_discover_url)
 
