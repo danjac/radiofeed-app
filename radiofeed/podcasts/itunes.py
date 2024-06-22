@@ -49,9 +49,9 @@ class FeedResultSet:
         """Returns number of feeds."""
         return len(self._result_cache)
 
-    def __getitem__(self, key: int) -> Feed:
-        """Return item by key"""
-        return self._result_cache[key]
+    def __getitem__(self, index: int) -> Feed:
+        """Return item by index"""
+        return self._result_cache[index]
 
     def __iter__(self) -> FeedIterator:
         """Iterates feeds."""
