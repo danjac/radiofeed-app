@@ -13,8 +13,7 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.utils.safestring import mark_safe
 
-from radiofeed.cover_image import get_cover_image_attrs
-from radiofeed.markdown import render_markdown
+from radiofeed import cover_image, markdown
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
@@ -59,10 +58,10 @@ def active_link(
     )
 
 
-@register.inclusion_tag("_markdown.html")
-def markdown(value: str | None) -> dict:
+@register.inclusion_tag("_markdown.html", name="markdown")
+def render_markdown(value: str | None) -> dict:
     """Renders cleaned HTML/Markdown content."""
-    return {"content": mark_safe(render_markdown(value or ""))}  # noqa: S308
+    return {"content": mark_safe(markdown.render(value or ""))}  # noqa: S308
 
 
 @register.inclusion_tag("_cookie_notice.html", takes_context=True)
@@ -173,8 +172,8 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-@register.inclusion_tag("_cover_image.html")
-def cover_image(
+@register.inclusion_tag("_cover_image.html", name="cover_image")
+def render_cover_image(
     cover_url: str | None,
     size: CoverImageSize,
     title: str,
@@ -192,4 +191,4 @@ def cover_image(
     }
 
 
-get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
+get_cover_image_attrs = register.simple_tag(cover_image.get_cover_image_attrs)

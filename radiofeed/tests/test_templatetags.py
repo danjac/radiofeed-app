@@ -7,9 +7,9 @@ from radiofeed.templatetags import (
     absolute_uri,
     active_link,
     format_duration,
-    markdown,
     percentage,
     query_string,
+    render_markdown,
 )
 
 
@@ -131,7 +131,7 @@ class TestMarkdown:
         ],
     )
     def test_markdown(self, value, expected):
-        assert markdown(value) == {"content": expected}
+        assert render_markdown(value) == {"content": expected}
 
 
 class TestAbsoluteUri:
