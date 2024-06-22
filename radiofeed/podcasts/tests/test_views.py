@@ -142,21 +142,25 @@ class TestSearchItunes:
 
     @pytest.mark.django_db()
     def test_search(self, client, auth_user, podcast, mocker):
-        feeds = [
-            itunes.Feed(
-                url="https://example.com/id123456",
-                rss="https://feeds.fireside.fm/testandcode/rss",
-                title="Test & Code : Py4hon Testing",
-                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-            ),
-            itunes.Feed(
-                url=podcast.website,
-                rss=podcast.rss,
-                title=podcast.title,
-                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-                podcast=podcast,
-            ),
-        ]
+        feeds = itunes.FeedResultSet(
+            iter(
+                [
+                    itunes.Feed(
+                        url="https://example.com/id123456",
+                        rss="https://feeds.fireside.fm/testandcode/rss",
+                        title="Test & Code : Py4hon Testing",
+                        image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                    ),
+                    itunes.Feed(
+                        url=podcast.website,
+                        rss=podcast.rss,
+                        title=podcast.title,
+                        image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                        podcast=podcast,
+                    ),
+                ]
+            )
+        )
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search", return_value=feeds
         )
