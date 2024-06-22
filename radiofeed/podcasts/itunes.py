@@ -3,6 +3,7 @@ import functools
 import itertools
 import logging
 from collections.abc import Iterator
+from typing import TypeAlias
 
 import httpx
 from django.conf import settings
@@ -35,18 +36,14 @@ class Feed:
     podcast: Podcast | None = None
 
 
+FeedIterator: TypeAlias = Iterator[Feed]
+
+
 class FeedResultSet:
-    """Contains list of iTunes results.
+    """Pagination-friendly way to handle iterator."""
 
-    Example:
-
-        qs = FeedResultSet(search_term)
-        for feed in qs:
-            ....
-    """
-
-    def __init__(self, feeds: Iterator[Feed]) -> None:
-        self._feeds = feeds
+    def __init__(self, iterator: FeedIterator) -> None:
+        self._iterator = iterator
 
     def __len__(self) -> int:
         """Returns number of feeds."""
@@ -56,9 +53,9 @@ class FeedResultSet:
         """Return item by key"""
         return self._result_cache[key]
 
-    def __iter__(self) -> Iterator[Feed]:
+    def __iter__(self) -> FeedIterator:
         """Iterates feeds."""
-        return self._feeds
+        return self._iterator
 
     @cached_property
     def _result_cache(self) -> list[Feed]:
@@ -67,7 +64,7 @@ class FeedResultSet:
 
 def search(client: httpx.Client, search_term: str) -> FeedResultSet:
     """Runs cached search for podcasts on iTunes API."""
-    return FeedResultSet(_search_feeds(client, search_term))
+    return FeedResultSet(_search_itunes(client, search_term))
 
 
 @functools.cache
@@ -78,14 +75,11 @@ def search_cache_key(search_term: str) -> str:
     )
 
 
-def _search_feeds(client: httpx.Client, search_term: str) -> Iterator[Feed]:
-    return _insert_podcasts(_parse_feeds_from_json(_get_json(client, search_term)))
+def _search_itunes(client: httpx.Client, search_term: str) -> FeedIterator:
+    return _insert_podcasts(_parse_feeds_from_json(_get_response(client, search_term)))
 
 
-def _get_json(
-    client: httpx.Client,
-    search_term: str,
-) -> dict:
+def _get_response(client: httpx.Client, search_term: str) -> dict:
     cache_key = search_cache_key(search_term)
 
     if cached := cache.get(cache_key):
@@ -113,7 +107,7 @@ def _get_json(
     return data
 
 
-def _parse_feeds_from_json(data: dict) -> Iterator[Feed]:
+def _parse_feeds_from_json(data: dict) -> FeedIterator:
     for result in data.get("results", []):
         try:
             yield Feed(
@@ -126,7 +120,7 @@ def _parse_feeds_from_json(data: dict) -> Iterator[Feed]:
             continue
 
 
-def _insert_podcasts(feeds: Iterator[Feed]) -> Iterator[Feed]:
+def _insert_podcasts(feeds: FeedIterator) -> FeedIterator:
     feeds_for_podcasts, feeds = itertools.tee(feeds)
 
     podcasts = Podcast.objects.filter(
