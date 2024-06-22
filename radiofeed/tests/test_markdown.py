@@ -1,7 +1,7 @@
 from radiofeed.markdown import render_markdown
 
 
-class TestRenderMarkdown:
+class TestRender:
     def test_empty(self):
         assert render_markdown("") == ""
 
