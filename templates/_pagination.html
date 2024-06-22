@@ -5,14 +5,12 @@
             {% if has_other_pages %}
                 <li class="pb-3">{% include "_pagination_links.html" %}</li>
             {% endif %}
-            {% block pagination_items %}
-                {% for item in page_obj %}
-                    <li class="py-3 first:pt-0 last:pb-0">
-                        {% block pagination_item %}
-                        {% endblock pagination_item %}
-                    </li>
-                {% endfor %}
-            {% endblock pagination_items %}
+            {% for item in page_obj %}
+                <li class="py-3 first:pt-0 last:pb-0">
+                    {% block pagination_item %}
+                    {% endblock pagination_item %}
+                </li>
+            {% endfor %}
             {% if has_other_pages %}
                 <li class="pt-3">{% include "_pagination_links.html" %}</li>
             {% endif %}

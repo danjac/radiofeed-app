@@ -3,15 +3,17 @@ import functools
 import itertools
 import logging
 from collections.abc import Iterator
+from typing import Final
 
 import httpx
-from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.functional import cached_property
 from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.podcasts.models import Podcast
+
+_CACHE_TIMEOUT: Final = 24 * 60 * 60
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +80,7 @@ class FeedResultSet:
             logging.error(e)
             return {}
 
-        cache.set(cache_key, data, settings.CACHE_TIMEOUT)
+        cache.set(cache_key, data, _CACHE_TIMEOUT)
         return data
 
     def _get_response(self):
