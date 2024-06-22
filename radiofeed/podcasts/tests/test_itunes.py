@@ -59,26 +59,26 @@ class TestSearch:
         return httpx.Client(transport=httpx.MockTransport(_handle))
 
     @pytest.mark.django_db()
-    def test_not_ok(self, bad_client):
-        with pytest.raises(itunes.ItunesError):
-            list(itunes.search(bad_client, "test"))
-        assert not Podcast.objects.exists()
-
-    @pytest.mark.django_db()
     def test_ok(self, good_client):
-        feeds = list(itunes.search(good_client, "test"))
+        feeds = itunes.search(good_client, "test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     @pytest.mark.django_db()
+    def test_not_ok(self, bad_client):
+        feeds = itunes.search(bad_client, "test")
+        assert len(feeds) == 0
+        assert not Podcast.objects.exists()
+
+    @pytest.mark.django_db()
     def test_bad_data(self, invalid_client):
-        feeds = list(itunes.search(invalid_client, "test"))
-        assert not feeds
+        feeds = itunes.search(invalid_client, "test")
+        assert len(feeds) == 0
 
     @pytest.mark.django_db()
     @pytest.mark.usefixtures("_locmem_cache")
     def test_is_not_cached(self, good_client):
-        feeds = list(itunes.search(good_client, "test"))
+        feeds = itunes.search(good_client, "test")
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
@@ -90,7 +90,7 @@ class TestSearch:
     def test_is_cached(self, good_client):
         cache.set(itunes.search_cache_key("test"), {"results": [MOCK_RESULT]})
 
-        feeds = list(itunes.search(good_client, "test"))
+        feeds = itunes.search(good_client, "test")
 
         assert len(feeds) == 1
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
@@ -99,6 +99,6 @@ class TestSearch:
     def test_podcast_exists(self, good_client):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
 
-        feeds = list(itunes.search(good_client, "test"))
+        feeds = itunes.search(good_client, "test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()

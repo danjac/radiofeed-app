@@ -158,23 +158,11 @@ class TestSearchItunes:
             ),
         ]
         mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search", return_value=iter(feeds)
+            "radiofeed.podcasts.itunes.search", return_value=feeds
         )
 
         response = client.get(self.url, {"search": "test"})
         assert response.status_code == http.HTTPStatus.OK
-
-        mock_search.assert_called()
-
-    @pytest.mark.django_db()
-    def test_search_exception(self, client, auth_user, mocker):
-        mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search",
-            side_effect=itunes.ItunesError("oops"),
-        )
-
-        response = client.get(reverse("podcasts:search_itunes"), {"search": "test"})
-        assert response.url == _discover_url
 
         mock_search.assert_called()
 
