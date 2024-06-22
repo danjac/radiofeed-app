@@ -116,12 +116,16 @@ class FeedResultSet:
             rss__in={f.rss for f in feeds_for_podcasts}
         ).in_bulk(field_name="rss")
 
+        # insert podcasts to feeds where we have a match
+
         feeds_for_insert, feeds = itertools.tee(
             (
                 dataclasses.replace(feed, podcast=podcasts.get(feed.rss))
                 for feed in feeds
             ),
         )
+
+        # create new podcasts for feeds without a match
 
         Podcast.objects.bulk_create(
             (
