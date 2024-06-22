@@ -58,39 +58,6 @@ def active_link(
     )
 
 
-@register.inclusion_tag("_markdown.html", name="markdown")
-def render_markdown(value: str | None) -> dict:
-    """Renders cleaned HTML/Markdown content."""
-    return {"content": mark_safe(markdown.render(value or ""))}  # noqa: S308
-
-
-@register.inclusion_tag("_cookie_notice.html", takes_context=True)
-def cookie_notice(context: RequestContext) -> dict:
-    """Renders GDPR cookie notice. Notice should be hidden once user has clicked
-    "Accept Cookies" button."""
-    return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
-
-
-@register.inclusion_tag(
-    "_search_form.html",
-    name="search_form",
-    takes_context=True,
-)
-def render_search_form(
-    context: RequestContext,
-    placeholder: str,
-    search_url: str = "",
-    clear_search_url: str = "",
-) -> dict:
-    """Renders search form component."""
-    return {
-        "placeholder": placeholder,
-        "search_url": search_url or context.request.path,
-        "clear_search_url": clear_search_url or context.request.path,
-        "request": context.request,
-    }
-
-
 @register.filter
 def format_duration(total_seconds: int | None) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1h 30min."""
@@ -174,6 +141,35 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     scheme = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
     return f"{scheme}://{site.domain}{path}"
+
+
+@register.inclusion_tag("_markdown.html", name="markdown")
+def render_markdown(value: str | None) -> dict:
+    """Renders cleaned HTML/Markdown content."""
+    return {"content": mark_safe(markdown.render(value or ""))}  # noqa: S308
+
+
+@register.inclusion_tag("_cookie_notice.html", name="cookie_notice", takes_context=True)
+def render_cookie_notice(context: RequestContext) -> dict:
+    """Renders GDPR cookie notice. Notice should be hidden once user has clicked
+    "Accept Cookies" button."""
+    return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
+
+
+@register.inclusion_tag("_search_form.html", name="search_form", takes_context=True)
+def render_search_form(
+    context: RequestContext,
+    placeholder: str,
+    search_url: str = "",
+    clear_search_url: str = "",
+) -> dict:
+    """Renders search form component."""
+    return {
+        "placeholder": placeholder,
+        "search_url": search_url or context.request.path,
+        "clear_search_url": clear_search_url or context.request.path,
+        "request": context.request,
+    }
 
 
 @register.inclusion_tag("_cover_image.html", name="cover_image")
