@@ -71,8 +71,12 @@ def cookie_notice(context: RequestContext) -> dict:
     return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
 
 
-@register.inclusion_tag("_search_form.html", takes_context=True)
-def search_form(
+@register.inclusion_tag(
+    "_search_form.html",
+    name="search_form",
+    takes_context=True,
+)
+def render_search_form(
     context: RequestContext,
     placeholder: str,
     search_url: str = "",

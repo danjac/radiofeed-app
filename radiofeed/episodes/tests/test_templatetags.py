@@ -3,8 +3,8 @@ from django.template.context import RequestContext
 
 from radiofeed.episodes.middleware import AudioPlayerDetail
 from radiofeed.episodes.templatetags.audio_player import (
-    audio_player,
     get_media_metadata,
+    render_audio_player,
 )
 from radiofeed.episodes.tests.factories import AudioLogFactory, EpisodeFactory
 from radiofeed.podcasts.tests.factories import PodcastFactory
@@ -67,7 +67,7 @@ class TestAudioPlayer:
         req.user = anonymous_user
         req.session = {}
         req.audio_player = AudioPlayerDetail(req)
-        assert audio_player(RequestContext(req)) == {
+        assert render_audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
         }
@@ -78,7 +78,7 @@ class TestAudioPlayer:
         req.user = user
         req.session = {}
         req.audio_player = AudioPlayerDetail(req)
-        assert audio_player(RequestContext(req)) == defaults | {"request": req}
+        assert render_audio_player(RequestContext(req)) == defaults | {"request": req}
 
     @pytest.mark.django_db()
     def test_is_playing(self, rf, user, audio_log, defaults):
@@ -89,7 +89,7 @@ class TestAudioPlayer:
         req.audio_player = AudioPlayerDetail(req)
         req.audio_player.set(audio_log.episode.pk)
 
-        assert audio_player(RequestContext(req)) == {
+        assert render_audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
             "episode": audio_log.episode,
@@ -106,4 +106,4 @@ class TestAudioPlayer:
         req.audio_player = AudioPlayerDetail(req)
         req.audio_player.set(episode.pk)
 
-        assert audio_player(RequestContext(req)) == defaults | {"request": req}
+        assert render_audio_player(RequestContext(req)) == defaults | {"request": req}
