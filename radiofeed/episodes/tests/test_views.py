@@ -6,7 +6,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from pytest_django.asserts import assertContains, assertNotContains
 
-from radiofeed.episodes.middleware import AudioPlayerDetail
+from radiofeed.episodes.middleware import AudioPlayerDetails
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.episodes.tests.factories import (
     AudioLogFactory,
@@ -23,7 +23,7 @@ def player_episode(auth_user, client, episode):
     AudioLogFactory(user=auth_user, episode=episode)
 
     session = client.session
-    session[AudioPlayerDetail.session_key] = episode.pk
+    session[AudioPlayerDetails.session_key] = episode.pk
     session.save()
 
     return episode
@@ -206,7 +206,7 @@ class TestStartPlayer:
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        assert client.session[AudioPlayerDetail.session_key] == episode.pk
+        assert client.session[AudioPlayerDetails.session_key] == episode.pk
 
     @pytest.mark.django_db()
     def test_play_private_subscribed(self, client, auth_user):
@@ -218,7 +218,7 @@ class TestStartPlayer:
         )
         assert response.status_code == http.HTTPStatus.OK
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-        assert client.session[AudioPlayerDetail.session_key] == episode.pk
+        assert client.session[AudioPlayerDetails.session_key] == episode.pk
 
     @pytest.mark.django_db()
     def test_another_episode_in_player(self, client, auth_user, player_episode):
@@ -231,7 +231,7 @@ class TestStartPlayer:
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        assert client.session[AudioPlayerDetail.session_key] == episode.pk
+        assert client.session[AudioPlayerDetails.session_key] == episode.pk
 
     @pytest.mark.django_db()
     def test_resume(self, client, auth_user, player_episode):
@@ -241,7 +241,7 @@ class TestStartPlayer:
         )
         assert response.status_code == http.HTTPStatus.OK
 
-        assert client.session[AudioPlayerDetail.session_key] == player_episode.pk
+        assert client.session[AudioPlayerDetails.session_key] == player_episode.pk
 
 
 class TestClosePlayer:
@@ -289,7 +289,7 @@ class TestPlayerTimeUpdate:
     @pytest.mark.django_db()
     def test_player_log_missing(self, client, auth_user, episode):
         session = client.session
-        session[AudioPlayerDetail.session_key] = episode.pk
+        session[AudioPlayerDetails.session_key] = episode.pk
         session.save()
 
         response = client.post(
