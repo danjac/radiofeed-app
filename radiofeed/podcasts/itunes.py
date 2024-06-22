@@ -47,7 +47,7 @@ class FeedResultSet:
             ....
     """
 
-    def __init__(self, client: httpx.Client, search_term: str):
+    def __init__(self, client: httpx.Client, search_term: str) -> None:
         self._client = client
         self._search_term = search_term
 
