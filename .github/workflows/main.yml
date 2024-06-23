@@ -4,3 +4,8 @@ run-name: ${{ github.actor }} is running checks
 jobs:
     run_checks:
         uses: ./.github/workflows/checks.yml
+    build_docker:
+        if: github.ref == 'refs/heads/main'
+        needs: run_checks
+        uses: ./github/workflows/docker.yml
+        secrets: inherit
