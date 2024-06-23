@@ -313,9 +313,7 @@ if env.bool("USE_HSTS", default=False):
 
 PERMISSIONS_POLICY: dict[str, list] = {
     "accelerometer": [],
-    "ambient-light-sensor": [],
     "camera": [],
-    "document-domain": [],
     "encrypted-media": [],
     "fullscreen": [],
     "geolocation": [],
@@ -323,7 +321,6 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "magnetometer": [],
     "microphone": [],
     "payment": [],
-    "usb": [],
 }
 
 # Logging
