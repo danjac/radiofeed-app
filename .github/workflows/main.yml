@@ -7,5 +7,5 @@ jobs:
     build_docker:
         needs: run_checks
         if: github.ref == 'refs/heads/main'
-        uses: ././github/workflows/docker.yml
+        uses: ./.github/workflows/docker.yml
         secrets: inherit
