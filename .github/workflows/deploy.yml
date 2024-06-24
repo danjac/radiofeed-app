@@ -28,6 +28,7 @@ jobs:
                   script: |
                     docker compose --project-directory ${{ secrets.PROJECT_DIR }} pull
                     docker compose --project-directory ${{ secrets.PROJECT_DIR }} run --rm cron_scheduler ./release.sh
+                    docker system prune -f
     deploy_app_servers:
         runs-on: ubuntu-latest
         needs: deploy_cron_scheduler
