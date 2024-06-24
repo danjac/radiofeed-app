@@ -34,7 +34,7 @@ click==8.1.7
     # via
     #   django-click
     #   nltk
-coverage==7.5.3
+coverage==7.5.4
     # via
     #   radiofeed (pyproject.toml)
     #   pytest-cov
@@ -63,7 +63,7 @@ django==5.0.6
     #   heroicons
 django-allauth==0.63.3
     # via radiofeed (pyproject.toml)
-django-anymail==10.3
+django-anymail==11.0
     # via radiofeed (pyproject.toml)
 django-browser-reload==1.13.0
     # via radiofeed (pyproject.toml)
@@ -77,7 +77,7 @@ django-extensions==3.2.3
     # via radiofeed (pyproject.toml)
 django-fast-update==0.2.3
     # via radiofeed (pyproject.toml)
-django-health-check==3.18.2
+django-health-check==3.18.3
     # via radiofeed (pyproject.toml)
 django-htmx==1.18.0
     # via radiofeed (pyproject.toml)
@@ -97,7 +97,7 @@ factory-boy==3.3.0
     # via radiofeed (pyproject.toml)
 faker==25.9.1
     # via factory-boy
-filelock==3.15.3
+filelock==3.15.4
     # via pytest-mypy
 gunicorn==22.0.0
     # via radiofeed (pyproject.toml)

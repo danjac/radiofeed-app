@@ -48,7 +48,7 @@ django==5.0.6
     #   heroicons
 django-allauth==0.63.3
     # via radiofeed (pyproject.toml)
-django-anymail==10.3
+django-anymail==11.0
     # via radiofeed (pyproject.toml)
 django-click==2.4.0
     # via radiofeed (pyproject.toml)
@@ -58,7 +58,7 @@ django-extensions==3.2.3
     # via radiofeed (pyproject.toml)
 django-fast-update==0.2.3
     # via radiofeed (pyproject.toml)
-django-health-check==3.18.2
+django-health-check==3.18.3
     # via radiofeed (pyproject.toml)
 django-htmx==1.18.0
     # via radiofeed (pyproject.toml)
