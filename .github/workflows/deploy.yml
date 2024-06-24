@@ -46,3 +46,4 @@ jobs:
                   script: |
                     docker compose --project-directory ${{ secrets.PROJECT_DIR }} pull
                     docker compose --project-directory ${{ secrets.PROJECT_DIR }} up -d
+                    docker system prune -f
