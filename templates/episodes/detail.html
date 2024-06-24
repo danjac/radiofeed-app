@@ -52,9 +52,9 @@
         {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
             {% if episode_type or episode_num or season %}
                 <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
-                    {% if episode_type %}{{ episode_type|capfirst }}{% endif %}
-                    {% if episode_num %}Episode {{ episode_num }}{% endif %}
-                    {% if season %}Season {{ season }}{% endif %}
+                    {% if episode_type %}<span>{{ episode_type|capfirst }}</span>{% endif %}
+                    {% if episode_num %}<span>Episode {{ episode_num }}</span>{% endif %}
+                    {% if season %}<span>Season {{ season }}</span>{% endif %}
                 </div>
             {% endif %}
         {% endwith %}
