@@ -1,7 +1,7 @@
 {% extends "podcasts/detail_base.html" %}
 {% load cache heroicons partials %}
 {% block podcast_content %}
-    <article class="space-y-3">
+    <article class="space-y-3 lg:space-y-6">
         {% if podcast.owner %}<h2 class="text-base font-semibold lg:text-lg">{{ podcast.owner }}</h2>{% endif %}
         <div class="flex items-center space-x-3 sm:space-x-6">
             {% cover_image podcast.cover_url "md" podcast.cleaned_title css_class="h-32 w-32 md:h-40 md:w-40" %}
