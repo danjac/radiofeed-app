@@ -8,7 +8,7 @@
         title="{{ title }}"
         alt="{{ title }}"
         {% get_cover_image_attrs cover_url size as attrs %}
-        {% include "django/forms/attrs.html" %}
+        {% for name, value in attrs.items %}{{ name }}="{{ value|stringformat:"s" }}"{% endfor %}
         {% if url %}
             role="link"
             hx-get="{{ url }}"

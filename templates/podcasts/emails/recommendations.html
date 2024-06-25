@@ -6,42 +6,71 @@
         <meta http-equiv=”content-language” content="en-us" />
         {% get_site as site %}
         <title>{{ site.name }}</title>
+        <style>
+            body {
+                font-family: Helvetica, sans-serif;
+                font-size: 16px;
+                line-height: 20px;
+            }
+            h1 {
+                margin-bottom: 12px;
+                font-weight: 700;
+                font-size: 32px;
+                line-height: 36px;
+            }
+            h2 {
+                margin-bottom: 24px;
+                font-size: 28px;
+                line-height: 32px;
+                font-weight: 600;
+            }
+            h3 {
+                font-weight: 600;
+                font-size: 20px;
+                line-height: 20px;
+            }
+            a {
+                text-decoration: underline;
+                color: #000;
+            }
+            .clearfix::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+            .podcast {
+                margin-bottom: 12px;
+                padding-bottom: 12px;
+                border-bottom: 1px solid #eee;
+                .content {
+                    img {
+                        float: left;
+                        padding-right:12px;
+                    }
+                }
+        </style>
     </head>
-    <body style="font-family: Helvetica, sans-serif;">
-        <h1 style="margin-bottom: 0.75rem;
-                   font-weight: 700;
-                   font-size: 1.25rem;
-                   line-height: 1.75rem">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
-        <p style="margin-bottom: 0.75rem; font-weight: 600;">Here are some podcasts you might find interesting:</p>
+    <body>
+        <h1>Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
+        <h2>Here are some podcasts you might find interesting:</h2>
         {% for podcast in podcasts %}
-            <div style="margin-bottom: 0.75rem;
-                        padding-bottom: 0.75rem;
-                        border-bottom: 1px solid #eee">
-                <div style="display:flex; align-items:center;">
+            <div class="podcast clearfix">
+                <h3>
+                    <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+                </h3>
+                <div class="content">
                     {% get_cover_image_attrs podcast.cover_url "sm" as cover_image_attrs %}
-                    <div>
-                        <img src="{% absolute_uri cover_image_attrs.src %}"
-                             width="{{ cover_image_attrs.width }}"
-                             height="{{ cover_image_attrs.height }}"
-                             alt="{{ podcast.cleaned_title }}"
-                             style="height: 4rem;
-                                    width: 4rem;
-                                    margin-right:12px">
-                    </div>
-                    <h2 style="font-weight: 600; font-size: 1.125rem;">
-                        <a style="text-decoration: underline;
-                                  color: #000"
-                           href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
-                    </h2>
+                    <img src="{% absolute_uri cover_image_attrs.src %}"
+                         width="{{ cover_image_attrs.width }}"
+                         height="{{ cover_image_attrs.height }}"
+                         alt="{{ podcast.cleaned_title }}">
+                    <p>{{ podcast.cleaned_description|urlize|truncatewords:60 }}</p>
                 </div>
-                <p>{{ podcast.cleaned_description|urlize|truncatewords:60 }}</p>
             </div>
         {% endfor %}
         <p>
             If you do not want to receive any more notifications, just uncheck the "Send email notifications"
-            option on your <a style="text-decoration: underline;
-           color: #000"
-    href="{% absolute_uri 'users:preferences' %}">Settings</a> page.
+            option on your <a href="{% absolute_uri 'users:preferences' %}">Settings</a> page.
         </p>
     </body>
 </html>
