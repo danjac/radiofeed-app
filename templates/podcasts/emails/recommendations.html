@@ -33,39 +33,39 @@
                 text-decoration: underline;
                 color: #000;
             }
-            .clearfix::after {
-                content: "";
-                clear: both;
-                display: table;
-            }
             .podcast {
                 margin-bottom: 12px;
                 padding-bottom: 12px;
                 border-bottom: 1px solid #eee;
-                .content {
-                    img {
-                        float: left;
-                        padding-right:12px;
-                    }
-                }
+            }
+            td.image {
+                padding-right: 12px;
+            }
+            td.description {
+                vertical-align: top;
+            }
         </style>
     </head>
     <body>
         <h1>Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
         <h2>Here are some podcasts you might find interesting:</h2>
         {% for podcast in podcasts %}
-            <div class="podcast clearfix">
+            <div class="podcast">
                 <h3>
                     <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
                 </h3>
-                <div class="content">
-                    {% get_cover_image_attrs podcast.cover_url "sm" as cover_image_attrs %}
-                    <img src="{% absolute_uri cover_image_attrs.src %}"
-                         width="{{ cover_image_attrs.width }}"
-                         height="{{ cover_image_attrs.height }}"
-                         alt="{{ podcast.cleaned_title }}">
-                    <p>{{ podcast.cleaned_description|urlize|truncatewords:60 }}</p>
-                </div>
+                <table class="content">
+                    <tr>
+                        <td class="image">
+                            {% get_cover_image_attrs podcast.cover_url "sm" as cover_image_attrs %}
+                            <img src="{% absolute_uri cover_image_attrs.src %}"
+                                 width="{{ cover_image_attrs.width }}"
+                                 height="{{ cover_image_attrs.height }}"
+                                 alt="{{ podcast.cleaned_title }}">
+                        </td>
+                        <td class="description">{{ podcast.cleaned_description|urlize|truncatewords:60 }}</td>
+                    </tr>
+                </table>
             </div>
         {% endfor %}
         <p>
