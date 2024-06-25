@@ -5,7 +5,7 @@ from django.template import loader
 from radiofeed.html import strip_html
 
 
-def send_email(
+def send_templated_mail(
     subject: str,
     recipient_list: list[str],
     template: str,

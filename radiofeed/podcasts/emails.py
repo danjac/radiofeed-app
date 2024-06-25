@@ -1,6 +1,6 @@
 from django.db.models import Case, Value, When
 
-from radiofeed.emails import send_email
+from radiofeed.emails import send_templated_mail
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.models import User
@@ -73,7 +73,7 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
     if podcasts:
         user.recommended_podcasts.add(*podcasts)
 
-        send_email(
+        send_templated_mail(
             f"Hi {user.first_name or user.username}, here are some new podcasts you might like!",
             [user.email],
             "podcasts/emails/recommendations.html",
