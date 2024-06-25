@@ -1,12 +1,14 @@
 from django.db.models import Case, Value, When
 
-from radiofeed.emails import send_templated_mail
 from radiofeed.episodes.models import AudioLog, Bookmark
+from radiofeed.mail import send_templated_mail
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.models import User
 
 
-def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
+def send_recommendations_email(
+    user: User, num_podcasts: int = 6, **email_settings
+) -> None:
     """Sends email to user with a list of recommended podcasts.
 
     Recommendations based on their subscriptions, bookmarks and listening history, or latest promoted podcasts.
@@ -81,4 +83,5 @@ def send_recommendations_email(user: User, num_podcasts: int = 6) -> None:
                 "podcasts": podcasts,
                 "recipient": user,
             },
+            **email_settings,
         )
