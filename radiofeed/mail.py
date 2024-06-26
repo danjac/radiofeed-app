@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.mail import send_mail
 from django.template import loader
 
@@ -10,7 +9,6 @@ def send_templated_mail(
     recipient_list: list[str],
     template: str,
     context: dict | None = None,
-    *,
     from_email: str | None = None,
     **email_settings,
 ) -> int:
@@ -20,7 +18,7 @@ def send_templated_mail(
 
     return send_mail(
         subject,
-        from_email=from_email or settings.DEFAULT_FROM_EMAIL,
+        from_email=from_email,
         recipient_list=recipient_list,
         message=strip_html(html_message),
         html_message=html_message,
