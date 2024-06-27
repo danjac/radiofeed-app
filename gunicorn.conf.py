@@ -10,7 +10,7 @@ wsgi_app = "radiofeed.wsgi"
 accesslog = "-"
 
 # number of workers should be CPU*2 + 1
-workers = multiprocessing.cpu_count() * 2 + 1
+workers = (multiprocessing.cpu_count() * 2) + 1
 
 # total available memory in GB
 memory = math.floor(psutil.virtual_memory().total / (pow(1000, 3)))
