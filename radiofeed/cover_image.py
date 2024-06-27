@@ -56,7 +56,7 @@ def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
 
     sizes = ", ".join(
         [
-            f"(max-width: 767.99px){min_size}px",
+            f"(max-width: 767.99px) {min_size}px",
             f"(min-width: 768px) {full_size}px",
         ]
     )
