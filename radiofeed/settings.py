@@ -132,6 +132,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "radiofeed.context_processors.cache_timeout",
+                "radiofeed.context_processors.page_size",
                 "radiofeed.context_processors.theme_color",
             ],
         },
@@ -410,3 +411,5 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
 # Site-specific settings
 
 THEME_COLOR = env("THEME_COLOR", default="#26323C")
+
+PAGE_SIZE = 30

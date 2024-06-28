@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -212,7 +213,6 @@ def similar(
     request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
-    limit: int = 12,
 ) -> HttpResponse:
     """List similar podcasts based on recommendations."""
 
@@ -221,7 +221,7 @@ def similar(
     recommendations = (
         podcast.recommendations.with_relevance()
         .select_related("recommended")
-        .order_by("-relevance")[:limit]
+        .order_by("-relevance")[: settings.PAGE_SIZE]
     )
 
     return render(
