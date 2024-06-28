@@ -10,53 +10,44 @@
                 {{ podcast.cleaned_title }}
             </h1>
         {% endblock podcast_header %}
-        {% cache CACHE_TIMEOUT podcast-detail-header request.get_full_path %}
+        {% cache CACHE_TIMEOUT podcast-detail-nav request.get_full_path %}
         <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
-            <nav class="flex justify-center items-center sm:justify-start">
-                <ul class="flex items-center space-x-6">
-                    {% active_link podcast.get_detail_url as link %}
-                    <li>
-                        <a class="{{ link.css }}"
-                           href="{{ link.url }}"
-                           {% if link.active %}aria-current="page"{% endif %}
-                           aria-label="{{ podcast.cleaned_title }} | Details"
-                           title="{{ podcast.cleaned_title }} | Details">Details</a>
-                    </li>
-                    {% active_link podcast.get_episodes_url as link %}
-                    <li>
-                        <a class="{{ link.css }}"
-                           href="{{ link.url }}"
-                           {% if link.active %}aria-current="page"{% endif %}
-                           aria-label="{{ podcast.cleaned_title }} | Episodes"
-                           title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ podcast.num_episodes }})</a>
-                    </li>
-                    {% if podcast.has_similar %}
-                        {% active_link podcast.get_similar_url as link %}
+            {% block podcast_nav %}
+                <nav class="flex justify-center items-center sm:justify-start">
+                    <ul class="flex items-center space-x-6">
+                        {% active_link podcast.get_detail_url as link %}
                         <li>
                             <a class="{{ link.css }}"
                                href="{{ link.url }}"
                                {% if link.active %}aria-current="page"{% endif %}
-                               aria-label="{{ podcast.cleaned_title }} | Similar"
-                               title="{{ podcast.cleaned_title }} | Similar">Similar</a>
+                               aria-label="{{ podcast.cleaned_title }} | Details"
+                               title="{{ podcast.cleaned_title }} | Details">Details</a>
                         </li>
-                    {% elif podcast.private %}
+                        {% active_link podcast.get_episodes_url as link %}
                         <li>
-                            <a class="link" href="{% url "podcasts:private_feeds" %}">Private Feeds</a>
+                            <a class="{{ link.css }}"
+                               href="{{ link.url }}"
+                               {% if link.active %}aria-current="page"{% endif %}
+                               aria-label="{{ podcast.cleaned_title }} | Episodes"
+                               title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ podcast.num_episodes }})</a>
                         </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% if podcast.num_episodes > PAGE_SIZE %}
-                <nav class="flex justify-center items-center sm:justify-start">
-                    <ul class="justify-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
-                        {% block search_form %}
-                            <li class="flex justify-center items-center sm:justify-end">
-                                {% search_form "Search: Episodes" search_url=podcast.get_episodes_url %}
+                        {% if podcast.has_similar %}
+                            {% active_link podcast.get_similar_url as link %}
+                            <li>
+                                <a class="{{ link.css }}"
+                                   href="{{ link.url }}"
+                                   {% if link.active %}aria-current="page"{% endif %}
+                                   aria-label="{{ podcast.cleaned_title }} | Similar"
+                                   title="{{ podcast.cleaned_title }} | Similar">Similar</a>
                             </li>
-                        {% endblock search_form %}
+                        {% elif podcast.private %}
+                            <li>
+                                <a class="link" href="{% url "podcasts:private_feeds" %}">Private Feeds</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </nav>
-            {% endif %}
+            {% endblock podcast_nav %}
         </div>
     {% endcache %}
 </header>

@@ -3,28 +3,35 @@
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
-{% block search_form %}
-    {% if request.search %}
-        <li class="flex justify-center items-center sm:justify-end">
-            <a class="inline-flex items-center btn btn-default"
-               href="{% url "episodes:search_episodes" %}{{ request.search.qs }}">
-                {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                Search All Episodes
-            </a>
-        </li>
-    {% else %}
-        <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
-            {% if ordering_asc %}
-                <a href="{{ request.path }}{% query_string order="desc" page=None %}"
-                   class="link">Newest First</a>
-            {% else %}
-                <a href="{{ request.path }}{% query_string order="asc" page=None %}"
-                   class="link">Oldest First</a>
-            {% endif %}
-        </li>
-    {% endif %}
+{% block podcast_nav %}
     {{ block.super }}
-{% endblock search_form %}
+    {% if podcast.num_episodes > PAGE_SIZE %}
+        <nav class="flex justify-center items-center sm:justify-start">
+            <ul class="flex items-center space-x-6">
+                {% if request.search %}
+                    <li class="flex justify-center items-center sm:justify-end">
+                        <a class="inline-flex items-center btn btn-default"
+                           href="{% url "episodes:search_episodes" %}{{ request.search.qs }}">
+                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                            Search All Episodes
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
+                        {% if ordering_asc %}
+                            <a href="{{ request.path }}{% query_string order="desc" page=None %}"
+                               class="link">Newest First</a>
+                        {% else %}
+                            <a href="{{ request.path }}{% query_string order="asc" page=None %}"
+                               class="link">Oldest First</a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+                <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: Episodes" %}</li>
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock podcast_nav %}
 {% block podcast_content %}
     {% cache CACHE_TIMEOUT podcast-episodes request.get_full_path %}
     {% paginate episodes as page_obj %}
