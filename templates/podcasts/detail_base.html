@@ -4,9 +4,9 @@
     {{ block.super }} | {{ podcast.cleaned_title }}
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-3 space-y-3 border-b lg:space-y-6">
+    <header class="pb-3 mb-3 space-y-6 border-b">
         {% block podcast_header %}
-            <h1 class="flex justify-center items-center text-lg font-bold text-center sm:justify-start md:text-xl lg:text-2xl xl:text-3xl sm:text-start">
+            <h1 class="flex justify-center items-center text-lg font-bold text-center sm:justify-start md:text-xl lg:text-2xl sm:text-start">
                 {{ podcast.cleaned_title }}
             </h1>
         {% endblock podcast_header %}
@@ -19,8 +19,8 @@
                         <a class="{{ link.css }}"
                            href="{{ link.url }}"
                            {% if link.active %}aria-current="page"{% endif %}
-                           aria-label="{{ podcast.cleaned_title }} | About"
-                           title="{{ podcast.cleaned_title }} | About">About</a>
+                           aria-label="{{ podcast.cleaned_title }} | Details"
+                           title="{{ podcast.cleaned_title }} | Details">Details</a>
                     </li>
                     {% active_link podcast.get_episodes_url as link %}
                     <li>
