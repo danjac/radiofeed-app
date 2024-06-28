@@ -27,7 +27,7 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
                     docker compose --project-directory ${{ secrets.PROJECT_DIR }} pull
-                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} run --rm cron_scheduler ./release.sh
+                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} up -d
                     docker system prune -f
     deploy_app_servers:
         runs-on: ubuntu-latest
