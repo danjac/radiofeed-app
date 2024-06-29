@@ -14,7 +14,7 @@
         <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
             {% block podcast_nav %}
                 <nav class="flex justify-center items-center sm:justify-start">
-                    <ul class="flex items-center space-x-3 sm:space-x-6">
+                    <ul class="flex items-center space-x-6">
                         {% active_link podcast.get_detail_url as link %}
                         <li>
                             <a class="{{ link.css }}"
