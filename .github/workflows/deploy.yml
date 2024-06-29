@@ -1,5 +1,5 @@
 name: radiofeed_deploy_docker
-run-name: ${{ github.actor }} is deploying to Docker
+run-name: ${{ github.actor }} is deploying to app servers
 on:
     workflow_dispatch:
         branches:
