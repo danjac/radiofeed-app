@@ -202,6 +202,7 @@
     .btn:disabled,
     .btn:hover:disabled {
         background-color: theme("colors.gray.600");
+        color: theme("colors.white");
         border-color: theme("colors.gray.600");
         cursor: not-allowed;
     }
