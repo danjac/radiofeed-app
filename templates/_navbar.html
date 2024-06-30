@@ -42,7 +42,7 @@
                             {% heroicon_outline "user-circle" size=30 x_show="!showDropdown" %}
                             {% heroicon_solid "user-circle" size=30 x_show="showDropdown" %}
                         </button>
-                        <div class="absolute right-1 z-20 w-64 bg-white rounded-lg shadow dark:bg-gray-900 dark:border"
+                        <div class="absolute right-1 z-20 w-64 bg-gray-100 rounded-lg shadow dark:bg-gray-800 dark:border"
                              x-cloak
                              x-show="showDropdown"
                              x-transition.scape.origin.top>
@@ -53,12 +53,12 @@
                                 <li>
                                     <a href="{% url "users:preferences" %}"
                                        accesskey="s"
-                                       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700">
                                         Settings
                                     </a>
                                 </li>
                                 <li>
-                                    <form class="items-center py-2 px-4 hover:bg-gray-100 flex-inline w-42 dark:hover:bg-gray-800"
+                                    <form class="items-center py-2 px-4 hover:bg-gray-200 flex-inline w-42 dark:hover:bg-gray-700"
                                           hx-disable="true"
                                           action="{% url "account_logout" %}"
                                           method="post">
