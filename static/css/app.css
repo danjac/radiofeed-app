@@ -209,12 +209,12 @@
 
     .btn-default {
         color: theme("colors.white");
-        background-color: theme("colors.purple.800");
-        border: solid theme("borderWidth.DEFAULT") theme("colors.purple.800");
+        background-color: theme("colors.violet.800");
+        border: solid theme("borderWidth.DEFAULT") theme("colors.violet.800");
     }
 
     .btn-default:hover {
-        background-color: theme("colors.purple.600");
+        background-color: theme("colors.violet.600");
     }
 
     .btn-danger {
