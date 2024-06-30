@@ -13,7 +13,7 @@ Radiofeed requires the following basic dependencies to get started:
 
 If your system uses an older version of Python and/or Node, consider using [pyenv](https://github.com/pyenv/pyenv) and [nvm](https://github.com/nvm-sh/nvm).
 
-For ease of local development a `docker-compose` file is provided which includes Docker images:
+For ease of local development a `docker-compose.yml` file is provided which includes Docker images:
 
 * PostgreSQL
 * Redis
