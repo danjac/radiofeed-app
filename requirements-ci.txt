@@ -120,7 +120,7 @@ idna==3.7
     #   requests
 iniconfig==2.0.0
     # via pytest
-ipython==8.25.0
+ipython==8.26.0
     # via radiofeed (pyproject.toml)
 jedi==0.19.1
     # via ipython
