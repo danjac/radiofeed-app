@@ -1,11 +1,11 @@
 {% load static heroicons %}
-<header class="sticky top-0 z-20 w-full text-white bg-violet-900"
+<header class="sticky top-0 z-20 w-full text-white bg-black"
     :class="scrolling ? 'drop-shadow-xl': ''"
     x-data="{showMenu: false, showDropdown: false, scrolling: false}"
     {# djlint: off #}
-        x-init="
-            $watch('showMenu', () => { if (showMenu) showDropdown = false; });
-            $watch('showDropdown', () => { if (showDropdown) showMenu = false; });"
+    x-init="
+        $watch('showMenu', value => { if (value) showDropdown = false; });
+        $watch('showDropdown', value => { if (value) showMenu = false; });"
     {# djlint: on #}
     @scroll.window="scrolling = window.pageYOffset > 0"
     @htmx:before-request.window="showMenu=false; showDropdown=false">

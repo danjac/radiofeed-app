@@ -25,7 +25,7 @@
                    @error.prevent="error">
                 <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
             </audio>
-            <div class="fixed bottom-0 z-10 p-2 w-full font-semibold text-white bg-gradient-to-b from-violet-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+            <div class="fixed bottom-0 z-10 p-2 w-full font-semibold text-white bg-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                 <div class="items-center space-y-2 w-full divide-y divide-gray-500 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x">
                     <div class="sm:w-1/2" hx-swap="innerHTML show:window:top">
                         {% with podcast=episode.podcast %}
