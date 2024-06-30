@@ -26,6 +26,8 @@ jobs:
                 file: ./Dockerfile
                 push: true
                 tags: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+                cache-from: type=gha
+                cache-to: type=gha,mode=max
             - name: Generate artifact attestation
               uses: actions/attest-build-provenance@v1
               with:
