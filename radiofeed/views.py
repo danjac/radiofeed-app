@@ -201,7 +201,7 @@ def cover_image(request: HttpRequest, size: int) -> HttpResponse:
         image.save(output, format="webp", optimize=True, quality=90)
         output.seek(0)
 
-    except (OSError, httpx.HTTPError):
+    except (OSError, httpx.HTTPError, httpx.StreamError):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 
