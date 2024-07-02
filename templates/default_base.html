@@ -33,9 +33,9 @@
         <div class="flex flex-col h-screen">
             <div class="grow">
                 {% include "_navbar.html" %}
-                <div class="flex relative p-2 py-6 mx-auto min-h-screen xl:pt-12">
+                <div class="flex relative p-2 py-6 mx-auto min-h-screen">
                     {% if user.is_authenticated %}
-                        <aside class="hidden w-full xl:block xl:sticky xl:top-28 xl:w-1/6 xl:h-full">
+                        <aside class="hidden w-full xl:block xl:sticky xl:top-24 xl:w-1/6 xl:h-full">
                             {% include "_sidebar.html" %}
                         </aside>
                     {% endif %}
