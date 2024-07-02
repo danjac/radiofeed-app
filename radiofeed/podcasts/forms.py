@@ -7,7 +7,9 @@ from radiofeed.users.models import User
 class PrivateFeedForm(forms.Form):
     """Form to add a private feed."""
 
-    rss = forms.URLField(max_length=300, label="Feed RSS")
+    rss = forms.URLField(
+        max_length=300, label="Add Private Feed", help_text="RSS feed for podcast"
+    )
 
     def __init__(self, user: User, *args, **kwargs) -> None:
         self.user = user
