@@ -5,21 +5,21 @@
          tabindex="0"
          hx-get="{{ episode_url }}"
          hx-push-url="true">
-        {% with size="sm" css_class="h-16 w-16 group-hover:grayscale" %}
+        {% with size="sm" css_class="h-14 w-14 sm:h-16 sm:w-16 group-hover:grayscale" %}
             {% if is_podcast_detail %}
                 {% cover_image episode.get_cover_url size episode.cleaned_title css_class=css_class %}
             {% else %}
                 {% cover_image podcast.cover_url size podcast.cleaned_title css_class=css_class %}
             {% endif %}
         {% endwith %}
-        <div class="flex flex-col place-content-between h-16">
-            <h2 class="font-bold tracking-tight leading-tight break-words line-clamp-2"
+        <div class="flex flex-col place-content-between h-14 sm:h-16">
+            <h2 class="font-bold leading-tight break-words line-clamp-2"
                 aria-label="{{ episode.cleaned_title }}"
                 title="{{ episode.cleaned_title }}">
                 <a class="group-hover:text-blue-600 link dark:group-hover:text-blue-300"
                    href="{{ episode_url }}">{{ episode.cleaned_title }}</a>
             </h2>
-            <h3 class="w-60 text-xs font-semibold tracking-tight leading-tight text-gray-600 md:text-sm dark:text-gray-300 truncate sm:w-128"
+            <h3 class="text-xs font-semibold leading-tight text-gray-600 sm:text-sm dark:text-gray-300 line-clamp-1"
                 aria-label="{{ podcast.cleaned_title }}"
                 title="{{ podcast.cleaned_title }}">
                 {% if is_podcast_detail %}

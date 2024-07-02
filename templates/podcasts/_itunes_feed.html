@@ -1,9 +1,9 @@
 {# vim: set filetype=htmldjango #}
 <div class="flex items-center space-x-3">
-    {% cover_image feed.image "sm" title=feed.title css_class="h-16 w-16" %}
-    <div class="flex flex-col place-content-between h-14">
-        <h2 class="font-bold tracking-tight leading-tight break-words line-clamp-2">{{ feed.title }}</h2>
-        <h3 class="w-60 text-xs font-semibold tracking-tight leading-tight text-gray-600 md:w-96 md:text-sm dark:text-gray-300 truncate">
+    {% cover_image feed.image "sm" title=feed.title css_class="h-14 w-14 sm:h-16 sm:w-16" %}
+    <div class="flex flex-col place-content-between h-14 sm:h-16">
+        <h2 class="font-bold leading-tight break-words line-clamp-2">{{ feed.title }}</h2>
+        <h3 class="text-xs font-semibold leading-tight text-gray-600 sm:text-sm dark:text-gray-300 line-clamp-1">
             <span class="animate-pulse">Adding podcast to database...</span>
         </h3>
     </div>
