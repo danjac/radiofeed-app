@@ -1,5 +1,4 @@
 import functools
-import re
 from typing import Final
 
 import nh3
@@ -63,17 +62,10 @@ _TAG_ATTRIBUTES: Final = {
     },
 }
 
-_RE_EXTRA_SPACES: Final = r" +"
-
-
-@functools.cache
-def _markdown():
-    return MarkdownIt("commonmark", {"linkify": True}).enable("linkify")
-
 
 def render(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown."""
-    if value := re.sub(_RE_EXTRA_SPACES, " ", value).strip():
+    if value := value.strip():
         return nh3.clean(
             value if nh3.is_html(value) else _markdown().render(value),
             clean_content_tags=_CLEAN_TAGS,
@@ -82,3 +74,8 @@ def render(value: str) -> str:
             tags=_ALLOWED_TAGS,
         )
     return ""
+
+
+@functools.cache
+def _markdown():
+    return MarkdownIt("commonmark", {"linkify": True}).enable("linkify")

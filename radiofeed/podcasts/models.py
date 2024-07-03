@@ -13,8 +13,8 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
+from radiofeed.cleaners import strip_html
 from radiofeed.fast_count import FastCountQuerySetMixin
-from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 
 if TYPE_CHECKING:  # pragma: no cover
