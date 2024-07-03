@@ -5,10 +5,10 @@
 {% endblock title %}
 {% block settings_content %}
     {% if form.accounts %}
-        <div class="space-y-3 xl:space-y-6">
+        <div class="space-y-3">
             <p>You can sign in to your account using any of the following third party accounts:</p>
             <form method="post"
-                  class="space-y-3 xl:space-y-6"
+                  class="space-y-3"
                   hx-disable="true"
                   action="{% url 'socialaccount_connections' %}">
                 {% csrf_token %}

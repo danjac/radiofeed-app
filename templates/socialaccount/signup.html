@@ -8,7 +8,7 @@
         <h1 class="flex justify-center items-center pb-3 mb-3 text-lg font-bold border-b sm:justify-start lg:text-xl xl:text-2xl">
             Sign Up
         </h1>
-        <div class="space-y-3 xl:space-y-6">
+        <div class="space-y-3">
             <p>
                 You are about to
                 use your {{ provider_name }} account to login to
@@ -16,7 +16,7 @@
             </p>
             <form method="post"
                   action="{{ request.path }}"
-                  class="space-y-3 xl:space-y-6"
+                  class="space-y-3"
                   hx-disable="true">
                 {% csrf_token %}
                 {% if redirect_field_value %}

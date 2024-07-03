@@ -4,9 +4,9 @@
     {{ block.super }} | Import/Export Feeds
 {% endblock title %}
 {% block settings_content %}
-    <div class="space-y-3 xl:space-y-6">
+    <div class="space-y-3">
         {% if user.subscriptions.exists %}
-            <div class="space-y-3 xl:space-y-6">
+            <div class="space-y-3">
                 <h2 class="text-base font-semibold lg:text-lg xl:text-xl">Export feeds</h2>
                 <div>
                     <a class="inline-flex items-center btn btn-default"
@@ -22,10 +22,10 @@
                 <hr />
             </div>
         {% endif %}
-        <div class="space-y-3 xl:space-y-6">
+        <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg xl:text-xl">Import feeds</h2>
             {% partialdef import_feeds_form inline=True %}
-            <form class="space-y-3 xl:space-y-6"
+            <form class="space-y-3"
                   id="import-feeds-form"
                   hx-encoding="multipart/form-data"
                   hx-target="this"
