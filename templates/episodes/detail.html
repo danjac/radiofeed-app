@@ -5,7 +5,7 @@
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b">
-        <h1 class="text-xl font-bold lg:text-2xl xl:text-3xl">{{ episode.cleaned_title }}</h1>
+        <h1 class="text-xl font-bold lg:text-2xl">{{ episode.cleaned_title }}</h1>
         {% cache CACHE_TIMEOUT episode-nav-header episode.pk %}
         {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
             {% if next_episode or previous_episode %}
@@ -43,7 +43,7 @@
 </header>
 {% with podcast=episode.podcast %}
     <article class="space-y-3">
-        <h2 class="text-base font-semibold lg:text-lg xl:text-xl">
+        <h2 class="text-base font-semibold lg:text-lg">
             <a href="{{ podcast.get_episodes_url }}"
                aria-label="See all episodes for {{ podcast.cleaned_title }}"
                title="See all episodes for {{ podcast.cleaned_title }}"
