@@ -4,7 +4,7 @@
     {{ block.super }} | Sign In
 {% endblock title %}
 {% block content %}
-    <div class="space-y-3">
+    <div class="space-y-3 xl:space-y-6">
         <h1 class="flex justify-center items-center pb-3 mb-3 text-xl font-bold border-b sm:justify-start lg:text-2xl xl:text-3xl">
             Sign In
         </h1>
@@ -15,7 +15,7 @@
         </p>
         <form method="post"
               action="{{ request.path }}"
-              class="space-y-3"
+              class="space-y-3 xl:space-y-6"
               hx-disable="true">
             {% csrf_token %}
             {% if redirect_field_value %}

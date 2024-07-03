@@ -11,7 +11,7 @@
     </header>
     <form method="post"
           action="{{ request.path }}"
-          class="space-y-3"
+          class="space-y-3 xl:space-y-6"
           id="private-feed-form">
         {% csrf_token %}
         {{ form }}

@@ -4,7 +4,7 @@
     {{ block.super }} | Sign Up
 {% endblock title %}
 {% block content %}
-    <div class="space-y-3">
+    <div class="space-y-3 xl:space-y-6">
         <h1 class="flex justify-center items-center pb-3 mb-3 text-xl font-bold border-b sm:justify-start lg:text-2xl xl:text-3xl">
             Sign Up
         </h1>
@@ -13,7 +13,7 @@
             Already have an account? Then please
             <a class="underline link" href="{{ login_url }}">sign in</a>.
         </p>
-        <div class="space-y-3">
+        <div class="space-y-3 xl:space-y-6">
             <form method="post"
                   action="{{ request.path }}"
                   class="space-y-3"

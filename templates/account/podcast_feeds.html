@@ -4,9 +4,9 @@
     {{ block.super }} | Import/Export Feeds
 {% endblock title %}
 {% block settings_content %}
-    <div class="space-y-3">
+    <div class="space-y-3 xl:space-y-6">
         {% if user.subscriptions.exists %}
-            <div class="space-y-3">
+            <div class="space-y-3 xl:space-y-6">
                 <h2 class="font-semibold">Export your podcast feeds to an OPML file.</h2>
                 <div>
                     <a class="inline-flex items-center btn btn-default"
@@ -22,7 +22,7 @@
                 <hr />
             </div>
         {% endif %}
-        <div class="space-y-3">
+        <div class="space-y-3 xl:space-y-6">
             <h2 class="font-semibold">Import feeds from an OPML file into your collection.</h2>
             {% partialdef import_feeds_form inline=True %}
             <form class="space-y-3"

@@ -5,49 +5,51 @@
 {% endblock title %}
 {% block settings_content %}
     {% if form.accounts %}
-        <p>You can sign in to your account using any of the following third party accounts:</p>
-        <form method="post"
-              class="mb-3 space-y-3"
-              hx-disable="true"
-              action="{% url 'socialaccount_connections' %}">
-            {% csrf_token %}
-            {% for base_account in form.accounts %}
-                {% with base_account.get_provider_account as account %}
-                    <div>
-                        <label for="id_account_{{ base_account.id }}"
-                               class="flex items-center font-semibold">
-                            <input id="id_account_{{ base_account.id }}"
-                                   type="radio"
-                                   name="account"
-                                   class="inline-block mr-3"
-                                   value="{{ base_account.id }}" />
-                            <div class="{{ base_account.provider }} {{ account.get_brand.id }}">
-                                {{ account.get_brand.name }}
-                                {{ account }}
-                            </div>
-                        </label>
-                    </div>
-                {% endwith %}
-            {% endfor %}
-            <div class="flex items-center">
-                <button class="inline-flex items-center btn btn-danger"
-                        type="submit"
-                        value="1"
-                        title="Remove this connection"
-                        aria-label="Remove this connection"
-                        name="action_remove">
-                    {% heroicon_mini "trash" class="mr-2" %}
-                    Remove
-                </button>
-            </div>
-        </form>
-    {% else %}
-        <p class="mb-3">You currently have no social network accounts connected to this account.</p>
-    {% endif %}
-    <h2 class="mb-3 font-semibold">Add a 3rd Party Account</h2>
-    <ul class="flex items-center">
-        {% get_providers as socialaccount_providers %}
-        {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-    </ul>
-    {% include "socialaccount/snippets/login_extra.html" %}
+        <div class="space-y-3 xl:space-y-6">
+            <p>You can sign in to your account using any of the following third party accounts:</p>
+            <form method="post"
+                  class="space-y-3 xl:space-y-6"
+                  hx-disable="true"
+                  action="{% url 'socialaccount_connections' %}">
+                {% csrf_token %}
+                {% for base_account in form.accounts %}
+                    {% with base_account.get_provider_account as account %}
+                        <div>
+                            <label for="id_account_{{ base_account.id }}"
+                                   class="flex items-center font-semibold">
+                                <input id="id_account_{{ base_account.id }}"
+                                       type="radio"
+                                       name="account"
+                                       class="inline-block mr-3"
+                                       value="{{ base_account.id }}" />
+                                <div class="{{ base_account.provider }} {{ account.get_brand.id }}">
+                                    {{ account.get_brand.name }}
+                                    {{ account }}
+                                </div>
+                            </label>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
+                <div class="flex items-center">
+                    <button class="inline-flex items-center btn btn-danger"
+                            type="submit"
+                            value="1"
+                            title="Remove this connection"
+                            aria-label="Remove this connection"
+                            name="action_remove">
+                        {% heroicon_mini "trash" class="mr-2" %}
+                        Remove
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="mb-3">You currently have no social network accounts connected to this account.</p>
+        {% endif %}
+        <h2 class="mb-3 font-semibold">Add a 3rd Party Account</h2>
+        <ul class="flex items-center">
+            {% get_providers as socialaccount_providers %}
+            {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+        </ul>
+        {% include "socialaccount/snippets/login_extra.html" %}
+    </div>
 {% endblock settings_content %}
