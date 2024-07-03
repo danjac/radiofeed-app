@@ -25,6 +25,6 @@ def strip_extra_spaces(value: str) -> str:
 
 
 def _strip_spaces_from_lines(value: str) -> Iterator[str]:
-    for line in value.split("\n"):
+    for line in value.splitlines():
         if stripped := re.sub(_RE_EXTRA_SPACES, " ", line).strip():
             yield stripped
