@@ -28,13 +28,11 @@
             <div class="fixed bottom-0 z-10 p-2 w-full font-semibold text-white bg-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                 <div class="items-center space-y-2 w-full divide-y divide-gray-500 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x">
                     <div class="sm:w-1/2" hx-swap="innerHTML show:window:top">
-                        <div class="flex items-center pr-2 space-x-2 lg:space-x-3">
-                            {% with podcast=episode.podcast %}
-                                <div class="flex items-center space-x-3 cursor-pointer group"
-                                     role="link"
-                                     tabindex="0"
-                                     hx-get="{{ episode.get_absolute_url }}"
-                                     hx-push-url="true">
+                        {% with podcast=episode.podcast %}
+                            <div class="flex items-center pr-2 cursor-pointer group"
+                                 hx-get="{{ episode.get_absolute_url }}"
+                                 hx-push-url="true">
+                                <div class="flex items-center space-x-3" role="link" tabindex="0">
                                     {% with size="sm" css_class="h-14 w-14 sm:h-16 sm:w-16 group-hover:grayscale" %}
                                         {% if is_podcast_detail %}
                                             {% cover_image episode.get_cover_url size episode.cleaned_title css_class=css_class %}
@@ -53,8 +51,8 @@
                                         </h3>
                                     </div>
                                 </div>
-                            {% endwith %}
-                        </div>
+                            </div>
+                        {% endwith %}
                     </div>
                     <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-3 sm:w-1/2">
                         <div class="grid grid-cols-3 place-content-between h-12"
