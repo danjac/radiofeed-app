@@ -4,20 +4,19 @@
     {{ block.super }} | About
 {% endblock title %}
 {% block content %}
-    {% cache CACHE_TIMEOUT about-page %}
     {% with site_name=request.site.name %}
-        <h1 class="flex flex-wrap justify-center pb-3 mb-3 text-xl font-bold border-b sm:justify-start lg:text-2xl">
+        <h1 class="flex flex-wrap justify-center pb-3 mb-3 text-xl font-bold border-b sm:justify-start lg:text-2xl xl:text-3xl">
             About {{ site_name }}
         </h1>
         <div class="break-words prose prose-sm md:prose-base dark:prose-invert">
             <section>
-                <h2 class="!text-base md:!text-lg xl:!text-xl">About Us</h2>
+                <h2 class="text-lg lg:text-xl xl:text-2xl">About Us</h2>
                 <p>
                     <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
                 </p>
             </section>
             <section>
-                <h2 class="!text-base md:!text-lg xl:!text-xl">Technology</h2>
+                <h2 class="text-lg lg:text-xl xl:text-2xl">Technology</h2>
                 <p>
                     <strong>{{ site_name }}</strong> runs on
                     <a rel="noopener noreferer nofollow"
@@ -29,7 +28,7 @@
                 </p>
             </section>
             <section>
-                <h2 class="!text-base md:!text-lg xl:!text-xl">Additional Credits</h2>
+                <h2 class="text-lg lg:text-xl xl:text-2xl">Additional Credits</h2>
                 <ul>
                     <li>
                         Icons from <a href="https://heroicons.com"
@@ -49,22 +48,25 @@
                 </ul>
             </section>
             <section>
-                <h2 class="!text-base md:!text-lg xl:!text-xl">General Disclaimer</h2>
+                <h2 class="text-lg lg:text-xl xl:text-2xl">General Disclaimer</h2>
                 <p>
                     All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
                     nor endorsed by {{ site_name }}. All audio files are played directly from the source.
                 </p>
             </section>
             <section>
-                <h2 class="!text-base md:!text-lg xl:!text-xl">Contact Us</h2>
-                <p class="flex items-center space-x-3">
-                    <a rel="noopener noreferer nofollow" href="mailto:{{ contact_email }}">Feedback</a>
-                    <a rel="noopener noreferer nofollow"
-                       href="https://github.com/danjac/radiofeed/issues"
-                       target="_blank">Issues</a>
-                </p>
+                <h2 class="text-lg lg:text-xl xl:text-2xl">Contact Us</h2>
+                <ul>
+                    <li>
+                        <a rel="noopener noreferer nofollow" href="mailto:{{ contact_email }}">Feedback</a>
+                    </li>
+                    <li>
+                        <a rel="noopener noreferer nofollow"
+                           href="https://github.com/danjac/radiofeed/issues"
+                           target="_blank">Issues</a>
+                    </li>
+                </ul>
             </section>
         </div>
     {% endwith %}
-{% endcache %}
 {% endblock content %}
