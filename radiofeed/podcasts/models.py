@@ -66,7 +66,7 @@ class Category(models.Model):
             },
         )
 
-    @property
+    @cached_property
     def slug(self) -> str:
         """Returns slugified name."""
         return slugify(self.name, allow_unicode=False)
