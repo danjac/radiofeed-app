@@ -64,15 +64,17 @@
                                         {% heroicon_mini "envelope" class="mr-2" %}
                                     Email Addresses</a>
                                 </li>
-                                <li>
-                                    {% active_link 'account_change_password' css=dropdown_css active_css=active_css as link %}
-                                    <a href="{{ link.url }}"
-                                       tabindex="5"
-                                       class="{{ link.css }}"
-                                       {% if link.active %}x-init="select($el)"{% endif %}>
-                                        {% heroicon_mini "key" class="mr-2" %}
-                                    Change Password</a>
-                                </li>
+                                {% if user.has_usable_password %}
+                                    <li>
+                                        {% active_link 'account_change_password' css=dropdown_css active_css=active_css as link %}
+                                        <a href="{{ link.url }}"
+                                           tabindex="5"
+                                           class="{{ link.css }}"
+                                           {% if link.active %}x-init="select($el)"{% endif %}>
+                                            {% heroicon_mini "key" class="mr-2" %}
+                                        Change Password</a>
+                                    </li>
+                                {% endif %}
                                 {% get_providers as socialaccount_providers %}
                                 {% if socialaccount_providers %}
                                     <li>
