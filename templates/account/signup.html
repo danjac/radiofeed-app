@@ -16,7 +16,7 @@
         <div class="space-y-3 xl:space-y-6">
             <form method="post"
                   action="{{ request.path }}"
-                  class="space-y-3"
+                  class="space-y-3 xl:space-y-6"
                   hx-disable="true">
                 {% csrf_token %}
                 {% if redirect_field_value %}
