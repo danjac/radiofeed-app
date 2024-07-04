@@ -58,7 +58,7 @@
                             <div x-text="counters.current"
                                  aria-label="Current Time"
                                  title="Current Time"
-                                 class="flex justify-start items-center font-mono text-xs md:text-sm"
+                                 class="flex justify-start items-center font-mono"
                                  :class="{'text-gray-300': !isPlaying}"></div>
                             {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                 <div class="flex justify-center items-center space-x-6">
@@ -96,7 +96,7 @@
                             <div x-text="counters.remaining"
                                  aria-label="Time Remaining"
                                  title="Time Remaining"
-                                 class="flex justify-end items-center font-mono text-xs md:text-sm"
+                                 class="flex justify-end items-center font-mono"
                                  :class="isPlaying ? '' : 'text-gray-300'"></div>
                         </div>
                         <div class="w-full h-4">
