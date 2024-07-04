@@ -1,12 +1,4 @@
 {% if content %}
     <div class="break-words prose prose-sm prose-h1:text-base prose-h2:text-sm prose-h3:text-sm prose-h4:text-sm prose-ul:list-inside prose-ol:list-inside lg:prose-base lg:prose-h1:text-lg lg:prose-h2:text-base lg:prose-h3:text-base lg:prose-h4:text-base dark:prose-invert"
-        hx-disable="true"
-        {# djlint:off #}
-        x-init="
-        $el.querySelectorAll('p,div,li').forEach(el => {
-            if (!el.innerText.trim()) {
-                el.parentNode.removeChild(el);
-            }
-        });
-        "{# djlint:on #}>{{ content }}</div>
+         hx-disable="true">{{ content }}</div>
 {% endif %}
