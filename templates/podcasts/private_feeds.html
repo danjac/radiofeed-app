@@ -36,8 +36,12 @@
         </nav>
     </header>
     {% if not request.search and not page_obj.paginator.count %}
-        <p class="text-center sm:text-left">
-            You do not have any private podcast feeds. Click the <strong>Add Private Feed</strong> button above to add a feed to your personal collection, for example from a Patreon subscription.
+        <p class="p-3 rounded-lg border sm:text-center">
+            {% if request.search %}
+                Sorry, no results found for your search. Click the <strong>Search Podcasts</strong> button above to search the entire podcast database.
+            {% else %}
+                You do not have any private podcast feeds. Click the <strong>Add Private Feed</strong> button above to add a feed to your personal collection, for example from a Patreon subscription.
+            {% endif %}
         </p>
     {% else %}
         {% include "podcasts/_podcasts.html" %}

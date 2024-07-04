@@ -30,8 +30,8 @@
     {% if page_obj.paginator.count %}
         {% include "podcasts/_podcasts.html" %}
     {% else %}
-        <p class="text-center sm:text-left">
-            Sorry, no results found for your search. Click the <strong>Search iTunes</strong> button above to find a podcast in the iTunes catalog.
+        <p class="p-3 rounded-lg border sm:text-center">
+            Sorry, no results found for your search. Click the <strong>Search iTunes</strong> button above to search the iTunes catalog.
         </p>
     {% endif %}
 {% endcache %}

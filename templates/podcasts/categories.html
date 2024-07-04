@@ -23,9 +23,9 @@
             {% endfor %}
         </ul>
     {% else %}
-        <p class="text-center sm:text-left">
+        <p class="p-3 rounded-lg border sm:text-center">
             {% if request.search %}
-                No results found for <span class="font-bold">{{ request.search.value }}</span>.
+                Sorry, no search results found.
             {% else %}
                 Nothing to see here.
             {% endif %}

@@ -1,6 +1,6 @@
 {% load heroicons cache %}
-<nav class="px-2 xl:px-0" id="sidebar">
-    <ul class="space-y-3 text-lg sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 lg:text-xl xl:flex xl:flex-col sm:grid-flow-cols">
+<nav id="sidebar">
+    <ul class="space-y-3 text-lg sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 lg:text-xl xl:flex xl:flex-col xl:justify-around xl:space-y-3 sm:grid-flow-cols">
         {% with sidebar_css="inline-flex items-center w-full sm:w-auto link" icon_css="mr-3 lg:mr-6" %}
             <li>
                 <a href="{% url "podcasts:subscriptions" %}"

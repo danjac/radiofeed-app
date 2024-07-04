@@ -19,7 +19,7 @@
     {% if page_obj.paginator.count %}
         {% include "episodes/_episodes.html" %}
     {% else %}
-        <p class="text-center sm:text-left">
+        <p class="p-3 rounded-lg border sm:text-center">
             This shows latest releases from your <a href="{% url "podcasts:subscriptions" %}" class="link">subscribed podcasts</a> from the last <strong>{{ since.days }} day{{ since.days|pluralize }}</strong>. If you are not subscribed to any podcasts, you can find new podcasts on the <a href="{% url "podcasts:discover" %}" class="link">Discover</a> page and click the <strong>Subscribe</strong> button to add a podcast to your collection.
         </p>
     {% endif %}

@@ -34,11 +34,15 @@
             </nav>
         {% endif %}
     </header>
-    {% if not request.search and not page_obj.paginator.count %}
-        <p class="text-center sm:text-left">
-            You do not have any episodes in your listening History. When you play a podcast episode, it will appear here.
-        </p>
-    {% else %}
+    {% if page_obj.paginator.count %}
         {% include "episodes/_episodes.html" with is_fk=True %}
+    {% else %}
+        <p class="p-3 rounded-lg border sm:text-center">
+            {% if request.search %}
+                Sorry, no search results found in your History. Click the <strong>Search All Episodes</strong> button above to search for episodes in the entire podcast database.
+            {% else %}
+                You do not have any episodes in your History. When you play a podcast episode, it will be added here.
+            {% endif %}
+        </p>
     {% endif %}
 {% endblock content %}
