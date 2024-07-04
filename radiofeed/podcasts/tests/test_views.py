@@ -259,7 +259,7 @@ class TestPodcastEpisodes:
     def test_no_episodes(self, client, auth_user, podcast):
         response = client.get(self.url(podcast))
         assert response.status_code == http.HTTPStatus.OK
-        assert len(response.context["page_obj"].object_list) == 0
+        assert "page_obj" not in response.context
 
     @pytest.mark.django_db()
     def test_ascending(self, client, auth_user, podcast):
@@ -358,7 +358,7 @@ class TestCategoryDetail:
         response = client.get(category.get_absolute_url())
         assert response.status_code == http.HTTPStatus.OK
 
-        assert len(response.context["page_obj"].object_list) == 0
+        assert "page_obj" not in response.context
 
 
 class TestSubscribe:
