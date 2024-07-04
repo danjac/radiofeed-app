@@ -20,7 +20,7 @@ brotli==1.1.0
     # via
     #   radiofeed (pyproject.toml)
     #   whitenoise
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   httpcore
     #   httpx
@@ -191,9 +191,9 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.22
     # via cffi
-pydantic==2.8.0
+pydantic==2.8.2
     # via radiofeed (pyproject.toml)
-pydantic-core==2.20.0
+pydantic-core==2.20.1
     # via pydantic
 pygments==2.18.0
     # via
@@ -252,7 +252,7 @@ requests-oauthlib==2.0.0
     # via django-allauth
 rich==13.7.1
     # via bandit
-scikit-learn==1.5.0
+scikit-learn==1.5.1
     # via radiofeed (pyproject.toml)
 scipy==1.14.0
     # via
