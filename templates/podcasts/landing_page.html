@@ -12,7 +12,7 @@
     <div class="flex flex-wrap gap-1 justify-center" hx-disable="true">
         {% cache CACHE_TIMEOUT podcasts-landing-page %}
         {% for podcast in podcasts|slice:30 %}
-            {% with css_class="h-28 w-28 md:h-48 md:w-48 xl:h-56 xl:w-56 hover:grayscale" %}
+            {% with css_class="h-28 w-28 lg:h-56 lg:w-56 hover:grayscale" %}
                 <a href="{{ podcast.get_absolute_url }}"
                    class="{{ css_class }}"
                    title="{{ podcast.cleaned_title }}"

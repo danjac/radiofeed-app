@@ -21,11 +21,13 @@ class CoverImageSize(StrEnum):
     LARGE = "lg"
 
 
-_COVER_IMAGE_VARIANTS = {
+_COVER_IMAGE_VARIANTS: Final = {
     CoverImageSize.SMALL: (64, 96),
     CoverImageSize.MEDIUM: (128, 180),
     CoverImageSize.LARGE: (180, 240),
 }
+
+_MIN_MAX_WIDTH: Final = 1024
 
 
 @functools.cache
@@ -41,7 +43,6 @@ def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
         "src": full_src,
     }
 
-    # one size only
     min_src = get_cover_image_url(cover_url, min_size)
 
     srcset = ", ".join(
@@ -53,8 +54,8 @@ def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
 
     sizes = ", ".join(
         [
-            f"(max-width: 767.99px) {min_size}px",
-            f"(min-width: 768px) {full_size}px",
+            f"(max-width: {_MIN_MAX_WIDTH - 0.01}px) {min_size}px",
+            f"(min-width: {_MIN_MAX_WIDTH}px) {full_size}px",
         ]
     )
 
