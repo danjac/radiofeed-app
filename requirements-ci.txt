@@ -69,7 +69,7 @@ django-browser-reload==1.13.0
     # via radiofeed (pyproject.toml)
 django-click==2.4.0
     # via radiofeed (pyproject.toml)
-django-debug-toolbar==4.4.3
+django-debug-toolbar==4.4.5
     # via radiofeed (pyproject.toml)
 django-environ==0.11.2
     # via radiofeed (pyproject.toml)
