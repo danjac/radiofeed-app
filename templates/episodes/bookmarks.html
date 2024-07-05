@@ -37,7 +37,7 @@
     {% if page_obj.paginator.count %}
         {% include "episodes/_episodes.html" with is_fk=True %}
     {% else %}
-        <p class="p-3 rounded-lg border sm:text-center">
+        <p class="py-3 text-center sm:text-start">
             {% if request.search %}
                 Sorry, no search results found in your Bookmarks. Click the <strong>Search All Episodes</strong> button above to search for episodes in the entire podcast database.
             {% else %}

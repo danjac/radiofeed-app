@@ -36,7 +36,7 @@
         </nav>
     </header>
     {% if not request.search and not page_obj.paginator.count %}
-        <p class="p-3 rounded-lg border sm:text-center">
+        <p class="py-3 text-center sm:text-start">
             {% if request.search %}
                 Sorry, no results found for your search. Click the <strong>Search Podcasts</strong> button above to search the entire podcast database.
             {% else %}
