@@ -6,6 +6,8 @@ import pytest
 from django.core.signing import Signer
 from django.urls import reverse
 
+from radiofeed.http_client import DEFAULT_TIMEOUT
+
 
 class TestManifest:
     @pytest.mark.django_db()
@@ -75,7 +77,9 @@ class TestCoverImage:
         def _handler(request):
             return httpx.Response(http.HTTPStatus.OK, content=b"")
 
-        mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
+        mock_client = httpx.Client(
+            transport=httpx.MockTransport(_handler), timeout=DEFAULT_TIMEOUT
+        )
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         response = client.get(self.get_url(128, self.encode_url(self.cover_url)))
@@ -101,7 +105,9 @@ class TestCoverImage:
         def _handler(request):
             raise httpx.HTTPError("invalid")
 
-        mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
+        mock_client = httpx.Client(
+            transport=httpx.MockTransport(_handler), timeout=DEFAULT_TIMEOUT
+        )
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
 
         response = client.get(self.get_url(128, self.encode_url(self.cover_url)))
@@ -112,7 +118,9 @@ class TestCoverImage:
         def _handler(request):
             return httpx.Response(http.HTTPStatus.OK, content=b"")
 
-        mock_client = httpx.Client(transport=httpx.MockTransport(_handler))
+        mock_client = httpx.Client(
+            transport=httpx.MockTransport(_handler), timeout=DEFAULT_TIMEOUT
+        )
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
         response = client.get(self.get_url(128, self.encode_url(self.cover_url)))

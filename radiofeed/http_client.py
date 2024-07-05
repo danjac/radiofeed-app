@@ -1,12 +1,16 @@
+from typing import Final
+
 import httpx
 from django.conf import settings
+
+DEFAULT_TIMEOUT: Final = 5
 
 
 def get_client(
     *,
     headers: dict | None = None,
     follow_redirects: bool = True,
-    timeout: int = 5,
+    timeout: int = DEFAULT_TIMEOUT,
     **kwargs,
 ) -> httpx.Client:
     """Returns HTTP client with default settings."""

@@ -23,6 +23,7 @@ from radiofeed.feedparser.feed_parser import (
     make_content_hash,
     parse_feed,
 )
+from radiofeed.http_client import DEFAULT_TIMEOUT
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
@@ -34,7 +35,7 @@ def _mock_client(*, url="https://example.com", **response_kwargs):
         response.request = request
         return response
 
-    return httpx.Client(transport=httpx.MockTransport(_handle))
+    return httpx.Client(transport=httpx.MockTransport(_handle), timeout=DEFAULT_TIMEOUT)
 
 
 def _get_mock_file_path(filename):
@@ -45,7 +46,7 @@ def _mock_error_client(exc):
     def _handle(request):
         raise exc
 
-    return httpx.Client(transport=httpx.MockTransport(_handle))
+    return httpx.Client(transport=httpx.MockTransport(_handle), timeout=DEFAULT_TIMEOUT)
 
 
 class TestMakeContentHash:
@@ -97,7 +98,9 @@ class TestFeedParser:
         def _handle(request):
             raise ValueError("oops")
 
-        client = httpx.Client(transport=httpx.MockTransport(_handle))
+        client = httpx.Client(
+            transport=httpx.MockTransport(_handle), timeout=DEFAULT_TIMEOUT
+        )
         with pytest.raises(ValueError, match="oops"):
             parse_feed(podcast, client)
 
