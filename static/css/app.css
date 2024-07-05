@@ -308,7 +308,7 @@
         color: theme("colors.blue.600");
     }
 
-    .link[target=_blank] {
+    .link[target="_blank"] {
         text-decoration: underline;
     }
 
@@ -346,6 +346,7 @@
     .message-warning {
         background-color: theme("colors.yellow.600");
     }
+
 }
 
 @layer utilities {
