@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -203,7 +202,7 @@ def episodes(
             "podcast": podcast,
             "episodes": episodes,
             "ordering_asc": ordering_asc,
-            "page_size": settings.PAGE_SIZE,
+            "page_size": 30,
         },
     )
 
@@ -222,7 +221,7 @@ def similar(
     recommendations = (
         podcast.recommendations.with_relevance()
         .select_related("recommended")
-        .order_by("-relevance")[: settings.PAGE_SIZE]
+        .order_by("-relevance")[:30]
     )
 
     return render(
