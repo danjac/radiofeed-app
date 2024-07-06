@@ -18,7 +18,7 @@
             <link rel="apple-touch-icon image_src" href="{% static "img/apple-touch-icon.png" %}">
             <link href="{% static "dist/app.css" %}{% if debug %}?{% now "U" %}{% endif %}" rel="stylesheet" type="text/css" media="screen">
         </head>
-        <body class="mx-auto font-sans text-sm antialiased lg:text-base dark:text-white container-xl scroll-smooth dark:bg-zinc-900">
+        <body class="mx-auto font-sans text-sm antialiased lg:text-base dark:bg-gray-900 container-xl scroll-smooth">
             <header class="sticky top-0 z-20 w-full text-white bg-black">
                 <nav class="flex justify-between items-center p-2">
                     {% with site_name="Radiofeed" %}
