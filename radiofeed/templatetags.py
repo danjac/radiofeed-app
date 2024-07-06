@@ -92,12 +92,11 @@ def paginate(
     context: RequestContext,
     object_list: QuerySet,
     param: str = "page",
-    page_size: int = 30,
     **kwargs,
 ) -> Page:
     """Returns paginated object list."""
 
-    return Paginator(object_list, page_size).get_page(
+    return Paginator(object_list, settings.PAGE_SIZE).get_page(
         context.request.GET.get(param, ""), **kwargs
     )
 

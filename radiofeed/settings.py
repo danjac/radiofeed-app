@@ -368,6 +368,10 @@ HEALTH_CHECK = {
     "MEMORY_MIN": 100,  # in MB
 }
 
+# Page size
+
+PAGE_SIZE = 30
+
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
