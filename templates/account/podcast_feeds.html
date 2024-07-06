@@ -7,7 +7,7 @@
     <div class="space-y-3">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">
-                <h2 class="text-base font-semibold lg:text-lg xl:text-xl">Export feeds</h2>
+                <h2 class="text-base font-semibold lg:text-lg">Export feeds</h2>
                 <div>
                     <a class="inline-flex items-center btn btn-default"
                        href="{% url 'users:export_podcast_feeds' %}"
@@ -23,7 +23,7 @@
             </div>
         {% endif %}
         <div class="space-y-3">
-            <h2 class="text-base font-semibold lg:text-lg xl:text-xl">Import feeds</h2>
+            <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef import_feeds_form inline=True %}
             <form class="space-y-3"
                   id="import-feeds-form"
