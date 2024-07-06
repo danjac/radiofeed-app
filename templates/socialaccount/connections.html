@@ -46,7 +46,7 @@
             <p>You currently have no social network accounts connected to this account.</p>
         {% endif %}
         <hr />
-        <h2 class="text-base font-semibold lg:text-lg">Add a 3rd Party Account</h2>
+        <h2 class="text-base font-semibold lg:text-lg xl:text-xl">Add a 3rd Party Account</h2>
         <ul class="flex items-center">
             {% get_providers as socialaccount_providers %}
             {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
