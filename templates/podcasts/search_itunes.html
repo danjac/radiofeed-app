@@ -23,12 +23,6 @@
     </header>
     {% cache CACHE_TIMEOUT search-itunes request.get_full_path %}
     {% paginate feeds as page_obj %}
-    {% if page_obj.paginator.count %}
-        {% include "podcasts/_itunes_feeds.html" %}
-    {% else %}
-        <p class="py-3 text-center sm:text-start">
-            Sorry, no results found in iTunes. Click the <strong>Search Podcasts</strong> button above to search our database.
-        </p>
-    {% endif %}
+    {% include "podcasts/_itunes_feeds.html" %}
 {% endcache %}
 {% endblock content %}

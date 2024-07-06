@@ -34,7 +34,7 @@ class TestIndex:
     def test_no_episodes(self, client, auth_user):
         response = client.get(_index_url)
         assert response.status_code == http.HTTPStatus.OK
-        assert "page_obj" not in response.context
+        assert len(response.context["page_obj"].object_list) == 0
 
     @pytest.mark.django_db()
     def test_has_no_subscriptions(self, client, auth_user):
@@ -42,7 +42,7 @@ class TestIndex:
         response = client.get(_index_url)
 
         assert response.status_code == http.HTTPStatus.OK
-        assert "page_obj" not in response.context
+        assert len(response.context["page_obj"].object_list) == 0
 
     @pytest.mark.django_db()
     def test_has_subscriptions(self, client, auth_user):

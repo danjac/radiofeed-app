@@ -27,16 +27,6 @@
             </nav>
         {% endif %}
     </header>
-    {% if page_obj.paginator.count %}
-        {% include "podcasts/_podcasts.html" %}
-    {% else %}
-        <p class="py-3 text-center sm:text-start">
-            {% if request.search %}
-                Sorry, no search results found in category <strong>{{ category.name }}</strong>. Click the <strong>Search All Podcasts</strong> button above to search the entire podcast database.
-            {% else %}
-                The category <strong>{{ category.name }}</strong> does not have any podcasts.
-            {% endif %}
-        </p>
-    {% endif %}
+    {% include "podcasts/_podcasts.html" %}
 {% endcache %}
 {% endblock content %}

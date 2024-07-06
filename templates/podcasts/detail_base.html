@@ -18,8 +18,8 @@
                             <a class="{{ link.css }}"
                                href="{{ link.url }}"
                                {% if link.active %}aria-current="page"{% endif %}
-                               aria-label="{{ podcast.cleaned_title }} | Details"
-                               title="{{ podcast.cleaned_title }} | Details">Details</a>
+                               aria-label="{{ podcast.cleaned_title }} | About"
+                               title="{{ podcast.cleaned_title }} | About">About</a>
                         </li>
                         {% active_link podcast.get_episodes_url as link %}
                         <li>

@@ -35,16 +35,6 @@
 {% block podcast_content %}
     {% cache CACHE_TIMEOUT podcast-episodes request.get_full_path %}
     {% paginate episodes as page_obj %}
-    {% if page_obj.paginator.count %}
-        {% include "episodes/_episodes.html" with is_podcast_detail=True %}
-    {% else %}
-        <p class="py-3 text-center sm:text-start">
-            {% if request.search %}
-                Sorry, no search results found in this podcast. Click the <strong>Search All Episodes</strong> button above to search for episodes in the entire podcast database.
-            {% else %}
-                This podcast does not have any episodes.
-            {% endif %}
-        </p>
-    {% endif %}
+    {% include "episodes/_episodes.html" with is_podcast_detail=True %}
 {% endcache %}
 {% endblock podcast_content %}

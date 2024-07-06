@@ -27,12 +27,6 @@
     </header>
     {% cache CACHE_TIMEOUT search-podcasts request.get_full_path %}
     {% paginate podcasts as page_obj %}
-    {% if page_obj.paginator.count %}
-        {% include "podcasts/_podcasts.html" %}
-    {% else %}
-        <p class="py-3 text-center sm:text-start">
-            Sorry, no results found for your search. Click the <strong>Search iTunes</strong> button above to search the iTunes catalog.
-        </p>
-    {% endif %}
+    {% include "podcasts/_podcasts.html" %}
 {% endcache %}
 {% endblock content %}

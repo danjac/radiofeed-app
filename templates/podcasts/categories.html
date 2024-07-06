@@ -23,9 +23,9 @@
             {% endfor %}
         </ul>
     {% else %}
-        <p class="py-3 text-center sm:text-start">
+        <p class="text-center sm:text-start">
             {% if request.search %}
-                Sorry, no search results found.
+                No results for &quot;<strong>{{ request.search.value }}</strong>&quot;.
             {% else %}
                 Nothing to see here.
             {% endif %}
