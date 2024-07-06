@@ -21,7 +21,7 @@
             </ul>
         </nav>
     </header>
-    {% cache CACHE_TIMEOUT search-itunes request.get_full_path %}
+    {% cache 300 search-itunes request.get_full_path %}
     {% paginate feeds as page_obj %}
     {% include "podcasts/_itunes_feeds.html" %}
 {% endcache %}

@@ -106,7 +106,7 @@
                target="_blank">{{ podcast.funding_text|default:'Support this podcast' }}</a>
         </div>
     {% endif %}
-    {% cache CACHE_TIMEOUT podcast-categories podcast.pk %}
+    {% cache 300 podcast-categories podcast.pk %}
     {% with categories=podcast.categories.all %}
         {% if categories %}
             <div class="flex flex-wrap items-center space-x-2 max-w-prose leading-loose sm:space-x-3">

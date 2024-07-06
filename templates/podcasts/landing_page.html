@@ -10,7 +10,7 @@
         </h2>
     </header>
     <div class="flex flex-wrap gap-1 justify-center" hx-disable="true">
-        {% cache CACHE_TIMEOUT podcasts-landing-page %}
+        {% cache 300 podcasts-landing-page %}
         {% for podcast in podcasts|slice:30 %}
             {% with css_class="h-28 w-28 lg:h-56 lg:w-56 hover:grayscale" %}
                 <a href="{{ podcast.get_absolute_url }}"

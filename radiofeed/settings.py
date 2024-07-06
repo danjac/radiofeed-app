@@ -95,12 +95,11 @@ DATABASES = {
 
 # Caches
 
-CACHE_TIMEOUT = 300
 
 CACHES = {
     "default": env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0")
     | {
-        "TIMEOUT": CACHE_TIMEOUT,
+        "TIMEOUT": 300,
         "OPTIONS": {
             "PARSER_CLASS": "redis.connection._HiredisParser",
         },
@@ -131,9 +130,6 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "radiofeed.context_processors.cache_timeout",
-                "radiofeed.context_processors.page_size",
-                "radiofeed.context_processors.theme_color",
             ],
         },
     }
@@ -408,10 +404,3 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
 
     # INTERNAL_IPS required for debug toolbar
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
-
-
-# Site-specific settings
-
-THEME_COLOR = env("THEME_COLOR", default="#26323C")
-
-PAGE_SIZE = 30

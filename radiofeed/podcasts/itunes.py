@@ -3,10 +3,9 @@ import functools
 import itertools
 import logging
 from collections.abc import Iterator
-from typing import TypeAlias
+from typing import Final, TypeAlias
 
 import httpx
-from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.functional import cached_property
@@ -15,6 +14,8 @@ from django.utils.http import urlsafe_base64_encode
 from radiofeed.podcasts.models import Podcast
 
 logger = logging.getLogger(__name__)
+
+_CACHE_TIMEOUT: Final = 60 * 60 * 24
 
 
 @dataclasses.dataclass(frozen=True)
@@ -103,7 +104,7 @@ def _get_response(client: httpx.Client, search_term: str) -> dict:
         logging.error(e)
         return {}
 
-    cache.set(cache_key, data, settings.CACHE_TIMEOUT)
+    cache.set(cache_key, data, _CACHE_TIMEOUT)
     return data
 
 

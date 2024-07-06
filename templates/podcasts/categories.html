@@ -10,7 +10,7 @@
             {% search_form "Search: Categories" %}
         </nav>
     </header>
-    {% cache CACHE_TIMEOUT categories request.get_full_path %}
+    {% cache 300 categories request.get_full_path %}
     {% if categories %}
         <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
             {% for category in categories %}
