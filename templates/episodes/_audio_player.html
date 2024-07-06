@@ -38,13 +38,13 @@
                                     {% with size="sm" css_class="h-14 w-14 lg:h-16 lg:w-16 group-hover:grayscale" %}
                                         {% cover_image episode.get_cover_url size podcast.cleaned_title css_class=css_class %}
                                     {% endwith %}
-                                    <div class="flex flex-col place-content-between h-14 lg:h-16 group-hover:text-blue-600 dark:group-hover:text-blue-300">
+                                    <div class="flex flex-col place-content-between h-14 lg:h-16 group-hover:text-blue-300">
                                         <h2 class="font-bold leading-tight break-words line-clamp-2">
                                             <a href="{{ episode_url }}"
                                                title="{{ episode.cleaned_title }}"
-                                               class="group-hover:text-blue-600 link dark:group-hover:text-blue-300">{{ episode.cleaned_title }}</a>
+                                               class="group-hover:text-blue-300">{{ episode.cleaned_title }}</a>
                                         </h2>
-                                        <h3 class="text-xs font-semibold leading-tight text-gray-300 lg:text-sm group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300"
+                                        <h3 class="text-xs font-semibold leading-tight text-gray-300 lg:text-sm group-hover:text-blue-300 line-clamp-1"
                                             aria-label="{{ podcast.cleaned_title }}"
                                             title="{{ podcast.cleaned_title }}">
                                             {{ podcast.cleaned_title|truncatechars:180 }}
