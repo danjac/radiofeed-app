@@ -14,7 +14,7 @@
                    aria-label="{{ podcast.cleaned_title }}"
                    href="{{ podcast_url }}">{{ podcast.cleaned_title }}</a>
             </h2>
-            <h3 class="w-60 text-xs font-semibold leading-tight text-gray-600 lg:text-sm dark:text-gray-300 line-clamp-1">
+            <h3 class="w-60 text-xs font-semibold leading-tight text-gray-600 lg:text-sm dark:text-gray-300 group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
                 {% include "_date.html" with value=podcast.pub_date title="Latest Episode" %}
             </h3>
         </div>
