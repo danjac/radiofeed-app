@@ -32,6 +32,5 @@ jobs:
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
-                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} pull
                     docker compose --project-directory ${{ secrets.PROJECT_DIR }} up -d --remove-orphans
                     docker system prune -f
