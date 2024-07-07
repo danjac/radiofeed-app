@@ -24,7 +24,6 @@ if TYPE_CHECKING:  # pragma: nocover
 
 ACCEPT_COOKIES_NAME: Final = "accept-cookies"
 
-PAGE_SIZE: Final = 30
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
