@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
@@ -20,8 +20,6 @@ from radiofeed.http import (
     HttpResponseConflict,
     HttpResponseNoContent,
 )
-
-_index_url = reverse_lazy("episodes:index")
 
 
 @require_safe
@@ -56,6 +54,8 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
 def search_episodes(request: HttpRequest) -> HttpResponse:
     """Search any episodes in the database."""
 
+    index_url = reverse("episodes:index")
+
     if request.search:
         episodes = (
             Episode.objects.search(request.search.value)
@@ -69,11 +69,11 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             "episodes/search.html",
             {
                 "episodes": episodes,
-                "clear_search_url": _index_url,
+                "clear_search_url": index_url,
             },
         )
 
-    return redirect(_index_url)
+    return redirect(index_url)
 
 
 @require_safe

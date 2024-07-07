@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import (
@@ -22,7 +22,6 @@ from radiofeed.podcasts.models import Category, Podcast
 
 _discover_url = reverse_lazy("podcasts:discover")
 _private_feeds_url = reverse_lazy("podcasts:private_feeds")
-_search_podcasts_url = reverse_lazy("podcasts:search_podcasts")
 
 
 @require_safe
@@ -90,7 +89,7 @@ def discover(request: HttpRequest) -> HttpResponse:
         "podcasts/discover.html",
         {
             "podcasts": podcasts,
-            "search_url": _search_podcasts_url,
+            "search_url": reverse("podcasts:search_podcasts"),
         },
     )
 
