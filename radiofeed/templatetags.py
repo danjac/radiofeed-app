@@ -8,12 +8,12 @@ from typing import TYPE_CHECKING, Any, Final, TypedDict
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.paginator import Page, Paginator
+from django.core.paginator import Page
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.utils.safestring import mark_safe
 
-from radiofeed import cover_image, markdown
+from radiofeed import cover_image, markdown, pagination
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
@@ -22,8 +22,9 @@ if TYPE_CHECKING:  # pragma: nocover
 
     from radiofeed.cover_image import CoverImageSize
 
-ACCEPT_COOKIES_NAME = "accept-cookies"
+ACCEPT_COOKIES_NAME: Final = "accept-cookies"
 
+PAGE_SIZE: Final = 30
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
@@ -91,15 +92,11 @@ def percentage(value: float, total: float) -> int:
 def paginate(
     context: RequestContext,
     object_list: QuerySet,
-    param: str = "page",
-    page_size: int = 30,
     **kwargs,
 ) -> Page:
     """Returns paginated object list."""
 
-    return Paginator(object_list, page_size).get_page(
-        context.request.GET.get(param, ""), **kwargs
-    )
+    return pagination.paginate(context.request, object_list, **kwargs)
 
 
 @register.simple_tag(takes_context=True)

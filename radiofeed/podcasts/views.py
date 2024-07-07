@@ -15,6 +15,7 @@ from radiofeed.decorators import (
 from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict
 from radiofeed.http_client import get_client
+from radiofeed.pagination import PAGE_SIZE
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -202,7 +203,7 @@ def episodes(
             "podcast": podcast,
             "episodes": episodes,
             "ordering_asc": ordering_asc,
-            "page_size": 30,
+            "page_size": PAGE_SIZE,
         },
     )
 
@@ -221,7 +222,7 @@ def similar(
     recommendations = (
         podcast.recommendations.with_relevance()
         .select_related("recommended")
-        .order_by("-relevance")[:30]
+        .order_by("-relevance")[:PAGE_SIZE]
     )
 
     return render(
