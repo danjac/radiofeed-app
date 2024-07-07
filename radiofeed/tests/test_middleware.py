@@ -8,7 +8,6 @@ from radiofeed.middleware import (
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
     HtmxRestoreMiddleware,
-    SearchDetails,
     SearchMiddleware,
 )
 
@@ -137,19 +136,3 @@ class TestSearchMiddleware:
         mw(req)
         assert not req.search
         assert not str(req.search)
-
-
-class TestSearchDetails:
-    def test_search(self, rf):
-        req = rf.get("/", {"search": "testing"})
-        search = SearchDetails(req)
-        assert search
-        assert str(search) == "testing"
-        assert search.qs == "?search=testing"
-
-    def test_no_search(self, rf):
-        req = rf.get("/")
-        search = SearchDetails(req)
-        assert not search
-        assert not str(search)
-        assert search.qs == ""
