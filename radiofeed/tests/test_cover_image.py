@@ -3,6 +3,19 @@ import pytest
 from radiofeed import cover_image
 
 
+class TestGetPlaceholderUrl:
+    @pytest.mark.parametrize(
+        ("size", "expected"),
+        [
+            pytest.param(size, f"/static/img/placeholder-{size}.webp", id=str(size))
+            for size in cover_image.COVER_IMAGE_SIZES
+        ],
+    )
+    def test_check_paths(self, settings, size, expected):
+        settings.STATIC_URL = "/static/"
+        assert cover_image.get_placeholder_url(size) == expected
+
+
 class TestGetCoverImageAttrs:
     @pytest.mark.parametrize(
         ("size", "expected"),

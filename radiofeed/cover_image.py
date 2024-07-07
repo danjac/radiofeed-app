@@ -10,10 +10,10 @@ from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 
-_COVER_IMAGE_SIZES: Final = (64, 96, 128, 180, 240)
+COVER_IMAGE_SIZES: Final = (64, 96, 128, 180, 240)
 
 
-class CoverImageSize(StrEnum):
+class CoverImageVariant(StrEnum):
     """Possible size variations."""
 
     SMALL = "sm"
@@ -22,14 +22,14 @@ class CoverImageSize(StrEnum):
 
 
 _COVER_IMAGE_VARIANTS: Final = {
-    CoverImageSize.SMALL: (64, 96),
-    CoverImageSize.MEDIUM: (128, 180),
-    CoverImageSize.LARGE: (180, 240),
+    CoverImageVariant.SMALL: (64, 96),
+    CoverImageVariant.MEDIUM: (128, 180),
+    CoverImageVariant.LARGE: (180, 240),
 }
 
 
 @functools.cache
-def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
+def get_cover_image_attrs(cover_url: str, size: CoverImageVariant) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_IMAGE_VARIANTS[size]
     full_src = get_cover_image_url(cover_url, full_size)
@@ -98,7 +98,7 @@ def get_placeholder_path(size: int) -> pathlib.Path:
 
 def is_cover_image_size(size: int) -> bool:
     """Check image has correct size."""
-    return size in _COVER_IMAGE_SIZES
+    return size in COVER_IMAGE_SIZES
 
 
 def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]:
@@ -109,5 +109,5 @@ def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]
             "sizes": f"{size}x{size}",
             "type": "image/webp",
         }
-        for size in _COVER_IMAGE_SIZES
+        for size in COVER_IMAGE_SIZES
     ]

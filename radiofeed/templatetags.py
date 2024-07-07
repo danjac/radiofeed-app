@@ -20,7 +20,7 @@ if TYPE_CHECKING:  # pragma: nocover
     from django.db.models import QuerySet
     from django.template.context import RequestContext
 
-    from radiofeed.cover_image import CoverImageSize
+    from radiofeed.cover_image import CoverImageVariant
 
 ACCEPT_COOKIES_NAME: Final = "accept-cookies"
 
@@ -171,7 +171,7 @@ def render_search_form(
 @register.inclusion_tag("_cover_image.html", name="cover_image")
 def render_cover_image(
     cover_url: str | None,
-    size: CoverImageSize,
+    size: CoverImageVariant,
     title: str,
     *,
     url: str = "",
