@@ -21,7 +21,7 @@ class CoverImageVariant(StrEnum):
     LARGE = "lg"
 
 
-_COVER_IMAGE_VARIANTS: Final = {
+COVER_IMAGE_VARIANTS: Final = {
     CoverImageVariant.SMALL: (64, 96),
     CoverImageVariant.MEDIUM: (128, 180),
     CoverImageVariant.LARGE: (180, 240),
@@ -31,7 +31,7 @@ _COVER_IMAGE_VARIANTS: Final = {
 @functools.cache
 def get_cover_image_attrs(cover_url: str, size: CoverImageVariant) -> dict:
     """Returns the HTML attributes for an image."""
-    min_size, full_size = _COVER_IMAGE_VARIANTS[size]
+    min_size, full_size = COVER_IMAGE_VARIANTS[size]
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
