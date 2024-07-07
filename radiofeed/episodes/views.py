@@ -24,7 +24,7 @@ from radiofeed.http import (
 
 @require_safe
 @login_required
-def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions."""
 
     episodes = (
@@ -33,7 +33,10 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
                 request.user.subscriptions.filter(podcast=OuterRef("podcast"))
             )
         )
-        .filter(is_subscribed=True, pub_date__gt=timezone.now() - since)
+        .filter(
+            is_subscribed=True,
+            pub_date__gt=timezone.now() - timedelta(days=14),
+        )
         .select_related("podcast")
         .order_by("-pub_date", "-id")
     )
@@ -43,7 +46,6 @@ def index(request: HttpRequest, since: timedelta = timedelta(days=14)) -> HttpRe
         "episodes/index.html",
         {
             "episodes": episodes,
-            "since": since,
             "search_url": reverse("episodes:search_episodes"),
         },
     )
