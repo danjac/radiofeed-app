@@ -27,14 +27,11 @@ _COVER_IMAGE_VARIANTS: Final = {
     CoverImageSize.LARGE: (180, 240),
 }
 
-_MIN_MAX_WIDTH: Final = 1024
-
 
 @functools.cache
 def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_IMAGE_VARIANTS[size]
-
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
@@ -54,8 +51,8 @@ def get_cover_image_attrs(cover_url: str, size: CoverImageSize) -> dict:
 
     sizes = ", ".join(
         [
-            f"(max-width: {_MIN_MAX_WIDTH - 0.01}px) {min_size}px",
-            f"(min-width: {_MIN_MAX_WIDTH}px) {full_size}px",
+            f"(max-width: 1023.99px) {min_size}px",
+            f"(min-width: 1024px) {full_size}px",
         ]
     )
 
