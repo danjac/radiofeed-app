@@ -106,7 +106,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated %}
-        <nav class="absolute left-0 z-50 py-6 pl-3 w-full h-screen bg-white shadow-xl sm:h-auto xl:hidden dark:bg-black"
+        <nav class="absolute left-0 z-50 py-6 pl-3 w-full h-screen bg-white shadow-xl sm:h-auto xl:hidden dark:bg-gray-800"
              x-cloak
              x-init="$el.innerHTML = document.getElementById('sidebar').innerHTML"
              x-show.transition="showMenu"
