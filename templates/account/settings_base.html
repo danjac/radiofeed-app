@@ -22,12 +22,12 @@
                         <span class="inline-flex items-center" x-ref="selected"></span>
                         {% heroicon_mini "chevron-down" class="ml-3" %}
                     </button>
-                    <div class="absolute z-20 my-2 w-56 bg-gray-100 rounded shadow sm:right-1 dark:bg-gray-800 dark:border"
+                    <div class="absolute z-20 my-2 w-56 rounded shadow sm:right-1 dark:border bg-stone-100 dark:bg-stone-800"
                          x-cloak
                          x-show="showDropdown"
                          x-transition.scape.origin.top>
                         <ul class="py-1 list-none" aria-labelledby="settings-dropdown-btn">
-                            {% with dropdown_css="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-300 dark:text-gray-100 dark:hover:bg-gray-700" active_css="font-bold" %}
+                            {% with dropdown_css="flex items-center px-4 py-2 text-stone-700 hover:bg-stone-300 dark:text-stone-100 dark:hover:bg-stone-700" active_css="font-bold" %}
                                 <li>
                                     {% active_link 'users:preferences' css=dropdown_css active_css=active_css as link %}
                                     <a href="{{ link.url }}"
