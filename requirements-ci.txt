@@ -150,7 +150,7 @@ mypy-extensions==1.0.0
     # via
     #   radiofeed (pyproject.toml)
     #   mypy
-nh3==0.2.17
+nh3==0.2.18
     # via radiofeed (pyproject.toml)
 nltk==3.8.1
     # via radiofeed (pyproject.toml)
@@ -258,7 +258,7 @@ scipy==1.14.0
     # via
     #   radiofeed (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.7.1
+sentry-sdk==2.8.0
     # via radiofeed (pyproject.toml)
 setuptools==70.2.0
     # via radiofeed (pyproject.toml)
