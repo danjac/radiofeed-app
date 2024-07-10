@@ -21,7 +21,9 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li class="flex justify-center items-center space-x-3 sm:justify-end">{% search_form "Search: Subscriptions" %}</li>
+                    <li class="flex justify-center items-center space-x-3 sm:justify-end">
+                        {% include "_search_form.html" with placeholder="Search: Subscriptions" %}
+                    </li>
                 </ul>
             </nav>
         {% endif %}

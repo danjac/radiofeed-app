@@ -22,7 +22,9 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: "|add:category.name %}</li>
+                    <li class="flex justify-center items-center sm:justify-end">
+                        {% include "_search_form.html" with placeholder="Search: "|add:category.name %}
+                    </li>
                 </ul>
             </nav>
         {% endif %}
