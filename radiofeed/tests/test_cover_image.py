@@ -26,7 +26,7 @@ class TestGetCoverImageAttrs:
                     "height": 96,
                     "width": 96,
                     "src": "/covers/96/cover.webp?url=test.jpg",
-                    "sizes": "(max-width: 1023.99px) 64px, (min-width: 1024px) 96px",
+                    "sizes": "(max-width: 1023.99px) 96px, (min-width: 1024px) 96px",
                 },
                 id="sm",
             ),

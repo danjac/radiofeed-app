@@ -21,12 +21,12 @@ class TestMediaMetadata:
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
 
-        assert len(data["artwork"]) == 5
+        assert len(data["artwork"]) == 4
 
         assert data["artwork"][0]["src"].startswith(
-            "http://testserver/covers/64/cover.webp"
+            "http://testserver/covers/96/cover.webp"
         )
-        assert data["artwork"][0]["sizes"] == "64x64"
+        assert data["artwork"][0]["sizes"] == "96x96"
         assert data["artwork"][0]["type"] == "image/webp"
 
     @pytest.mark.django_db()
@@ -37,13 +37,13 @@ class TestMediaMetadata:
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
 
-        assert len(data["artwork"]) == 5
+        assert len(data["artwork"]) == 4
 
         assert (
             data["artwork"][0]["src"]
-            == "http://testserver/static/img/placeholder-64.webp"
+            == "http://testserver/static/img/placeholder-96.webp"
         )
-        assert data["artwork"][0]["sizes"] == "64x64"
+        assert data["artwork"][0]["sizes"] == "96x96"
         assert data["artwork"][0]["type"] == "image/webp"
 
 
