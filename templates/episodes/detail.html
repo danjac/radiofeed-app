@@ -5,7 +5,7 @@
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b">
-        <h1 class="text-xl font-bold lg:text-2xl">{{ episode.cleaned_title }}</h1>
+        <h1 class="text-2xl font-bold">{{ episode.cleaned_title }}</h1>
         {% cache 300 episode-nav-header episode.pk %}
         {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
             {% if next_episode or previous_episode %}
@@ -43,7 +43,7 @@
 </header>
 {% with podcast=episode.podcast %}
     <article class="space-y-3">
-        <h2 class="text-base font-semibold lg:text-lg">
+        <h2 class="text-lg font-semibold">
             <a href="{{ podcast.get_episodes_url }}"
                aria-label="See all episodes for {{ podcast.cleaned_title }}"
                title="See all episodes for {{ podcast.cleaned_title }}"
@@ -59,8 +59,8 @@
             {% endif %}
         {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">
-            {% cover_image episode.get_cover_url "md" podcast.cleaned_title url=podcast.get_absolute_url css_class="h-32 w-32 lg:h-40 lg:w-40" %}
-            <div class="flex flex-col place-content-between h-28 lg:h-32">
+            {% cover_image episode.get_cover_url "md" podcast.cleaned_title url=podcast.get_absolute_url css_class="h-40 w-40" %}
+            <div class="flex flex-col place-content-between h-32">
                 {% partialdef audio_player_button inline=True %}
                 {% with target="audio-player-button" %}
                     <div id="{{ target }}"

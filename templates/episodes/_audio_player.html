@@ -35,16 +35,16 @@
                                  hx-get="{{ episode_url }}"
                                  hx-push-url="true">
                                 <div class="flex items-center space-x-3">
-                                    {% with size="sm" css_class="h-14 w-14 lg:h-16 lg:w-16 group-hover:grayscale" %}
+                                    {% with size="sm" css_class="w-16 h-16 group-hover:grayscale" %}
                                         {% cover_image episode.get_cover_url size podcast.cleaned_title css_class=css_class %}
                                     {% endwith %}
-                                    <div class="flex flex-col place-content-between h-14 lg:h-16 group-hover:text-blue-300">
+                                    <div class="flex flex-col place-content-between h-16 group-hover:text-blue-300">
                                         <h2 class="font-bold leading-tight break-words line-clamp-2">
                                             <a href="{{ episode_url }}"
                                                title="{{ episode.cleaned_title }}"
                                                class="group-hover:text-blue-300">{{ episode.cleaned_title }}</a>
                                         </h2>
-                                        <h3 class="text-xs font-semibold leading-tight text-gray-300 lg:text-sm group-hover:text-blue-300 line-clamp-1"
+                                        <h3 class="text-sm font-semibold leading-tight text-gray-300 group-hover:text-blue-300 line-clamp-1"
                                             aria-label="{{ podcast.cleaned_title }}"
                                             title="{{ podcast.cleaned_title }}">
                                             {{ podcast.cleaned_title|truncatechars:180 }}
@@ -60,7 +60,7 @@
                             <div x-text="counters.current"
                                  aria-label="Current Time"
                                  title="Current Time"
-                                 class="flex justify-start items-center font-mono text-xs lg:text-sm"
+                                 class="flex justify-start items-center font-mono text-sm"
                                  :class="{'text-gray-300': !isPlaying}"></div>
                             {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                 <div class="flex justify-center items-center space-x-6">
@@ -98,7 +98,7 @@
                             <div x-text="counters.remaining"
                                  aria-label="Time Remaining"
                                  title="Time Remaining"
-                                 class="flex justify-end items-center font-mono text-xs lg:text-sm"
+                                 class="flex justify-end items-center font-mono text-sm"
                                  :class="isPlaying ? '' : 'text-gray-300'"></div>
                         </div>
                         <div class="w-full h-4">

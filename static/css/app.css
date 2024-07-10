@@ -168,20 +168,10 @@
         padding: theme("padding.1") theme("padding.2");
         border-radius: theme("borderRadius.DEFAULT");
         font-weight: theme("fontWeight.semibold");
-        font-size: theme("fontSize.xs");
     }
 
     .btn-lg {
-        font-size: theme("fontSize.sm");
-    }
-
-    @media screen(md) {
-        .btn {
-            font-size: theme("fontSize.sm");
-        }
-        .btn-lg {
-            font-size: theme("fontSize.base");
-        }
+        font-size: theme("fontSize.lg");
     }
 
     .btn.focus {
