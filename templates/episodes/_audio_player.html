@@ -32,18 +32,15 @@
                             <div class="flex items-center pr-2 cursor-pointer group"
                                  role="link"
                                  tabindex="0"
-                                 hx-get="{{ episode_url }}"
-                                 hx-push-url="true">
+                                 hx-get="{{ episode.get_absolute_url }}?modal=true"
+                                 hx-target="#modal"
+                                 hx-push-url="false">
                                 <div class="flex items-center space-x-3">
                                     {% with size="sm" css_class="w-16 h-16 group-hover:grayscale" %}
                                         {% cover_image episode.get_cover_url size podcast.cleaned_title css_class=css_class %}
                                     {% endwith %}
                                     <div class="flex flex-col place-content-between h-16 group-hover:text-blue-300">
-                                        <h2 class="font-bold leading-tight break-words line-clamp-2">
-                                            <a href="{{ episode_url }}"
-                                               title="{{ episode.cleaned_title }}"
-                                               class="group-hover:text-blue-300">{{ episode.cleaned_title }}</a>
-                                        </h2>
+                                        <h2 class="font-bold leading-tight break-words group-hover:text-blue-300 line-clamp-2">{{ episode.cleaned_title }}</h2>
                                         <h3 class="text-sm font-semibold leading-tight text-gray-300 group-hover:text-blue-300 line-clamp-1"
                                             aria-label="{{ podcast.cleaned_title }}"
                                             title="{{ podcast.cleaned_title }}">

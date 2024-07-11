@@ -124,6 +124,18 @@ class TestEpisodeDetail:
         assert response.context["episode"] == episode
 
     @pytest.mark.django_db()
+    def test_modal(
+        self,
+        client,
+        auth_user,
+        episode,
+    ):
+        response = client.get(episode.get_absolute_url(), {"modal": True})
+        assert response.status_code == http.HTTPStatus.OK
+        assert response.context["episode"] == episode
+        assert response.context["is_modal"] is True
+
+    @pytest.mark.django_db()
     def test_not_authenticated(
         self,
         client,
