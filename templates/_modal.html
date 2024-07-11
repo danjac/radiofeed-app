@@ -1,0 +1,29 @@
+{# vim: set filetype=htmldjango #}
+{% load heroicons %}
+<div class="overflow-y-auto fixed inset-0 z-20 modal"
+     x-data="{show: false, header: null}"
+     x-show="show"
+     x-cloak
+     :aria-hidden="!show"
+     @modal-open.window="show=true; header=event.detail.header"
+     @modal-close.window="show=false"
+     @keyup.escape.window="show=false"
+     @click.outside="show=false"
+     @htmx:after-request.window="if($event.detail.requestConfig.boosted) show=false">
+    <div class="flex justify-center items-center h-full min-h-screen text-center sm:px-4 sm:pt-4 sm:pb-20 sm:h-auto">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="inline-block overflow-hidden px-4 pt-5 pb-4 w-full h-full text-left align-bottom bg-white transition-all transform sm:p-6 sm:w-5/6 sm:align-middle sm:rounded-lg sm:shadow-xl">
+            <div>
+                <div class="flex absolute top-0 right-0 z-50 flex-col items-center mt-4 mr-4 text-sm text-black cursor-pointer">
+                    <button class="transition transform focus:outline-none"
+                            aria-label="Close"
+                            title="Close"
+                            x-cloak
+                            x-show.transition="show"
+                            @click="show=false">{% heroicon_outline "x-mark" size=30 title="Toggle Menu" %}</button>
+                </div>
+                <div id="modal"></div>
+            </div>
+        </div>
+    </div>
+</div>

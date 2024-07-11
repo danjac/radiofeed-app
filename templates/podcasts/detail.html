@@ -1,4 +1,4 @@
-{% extends "podcasts/detail_base.html" %}
+{% extends is_modal|yesno:"podcasts/modal_base.html,podcasts/detail_base.html" %}
 {% load cache heroicons partials %}
 {% block podcast_content %}
     <article class="space-y-3">

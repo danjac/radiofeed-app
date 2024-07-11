@@ -1,0 +1,9 @@
+{# vim: set filetype=htmldjango #}
+{% extends "modal_base.html" %}
+{% block modal_title %}
+    <a href="{{ podcast.get_absolute_url }}" class="link">{{ podcast.cleaned_title }}</a>
+{% endblock modal_title %}
+{% block content %}
+    {% block podcast_content %}
+    {% endblock podcast_content %}
+{% endblock content %}
