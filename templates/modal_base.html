@@ -1,9 +1,9 @@
 {# vim: set filetype=htmldjango #}
-<h3 class="pb-3 mb-3 text-xl font-bold leading-6 text-gray-900 border-b lg:text-2xl">
-    {% block modal_title %}
-    {% endblock modal_title %}
+<h3 class="pb-3 mb-3 text-xl font-bold leading-6 text-gray-900 break-words border-b lg:text-2xl">
+    {% block title %}
+    {% endblock title %}
 </h3>
-<div class="overflow-y-auto mt-2 max-h-screen sm:max-h-svh">
+<div class="overflow-y-auto mt-2 max-h-screen sm:max-h-[25%]">
     {% block content %}
     {% endblock content %}
 </div>

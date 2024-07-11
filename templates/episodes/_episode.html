@@ -3,8 +3,9 @@
     <div class="flex items-center space-x-3 cursor-pointer group"
          role="link"
          tabindex="0"
-         hx-get="{{ episode_url }}"
-         hx-push-url="true">
+         hx-get="{{ episode_url }}?modal=true"
+         hx-target="#modal"
+         hx-push-url="false">
         {% with size="sm" css_class="w-16 h-16 group-hover:grayscale" %}
             {% if is_podcast_detail %}
                 {% cover_image episode.get_cover_url size episode.cleaned_title css_class=css_class %}
