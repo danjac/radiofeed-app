@@ -2,7 +2,9 @@
 {% load cache heroicons partials %}
 {% block title %}
     {% if is_modal %}
-        <a href="{{ episode.get_absolute_url }}" class="link">{{ episode.cleaned_title }}</a>
+        <a href="{{ episode.get_absolute_url }}"
+           class="link"
+           @click="$dispatch('modal-close')">{{ episode.cleaned_title }}</a>
     {% else %}
         {{ block.super }}| {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
     {% endif %}
@@ -48,11 +50,12 @@
     </header>
 {% endif %}
 {% with podcast=episode.podcast %}
-    <article class="space-y-3">
+    <article class="space-y-3" x-data>
         <h2 class="text-lg font-semibold">
             <a href="{{ podcast.get_absolute_url }}"
                aria-label="See all episodes for {{ podcast.cleaned_title }}"
                title="{{ podcast.cleaned_title }}"
+               @click="$dispatch('modal-close')"
                class="link">{{ podcast.cleaned_title }}</a>
         </h2>
         {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
@@ -154,7 +157,9 @@
         </div>
     </div>
 </div>
-<a href="{{ podcast.get_episodes_url }}" class="inline-block link">See all episodes</a>
+<a href="{{ podcast.get_episodes_url }}"
+   class="inline-block link"
+   @click="$dispatch('modal-close')">See all episodes</a>
 {% if episode.is_explicit %}
     <div title="May contain adult themes and language. Listener discretion advised."
          class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
