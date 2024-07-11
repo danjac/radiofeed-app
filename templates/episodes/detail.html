@@ -81,8 +81,7 @@
                                     class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                     hx-disabled-elt="this"
                                     hx-post="{% url 'episodes:close_player' %}"
-                                    hx-trigger="click once"
-                                    @click="$dispatch('modal-close')">
+                                    hx-trigger="click once">
                                 {% heroicon_mini "stop-circle" class="mr-2" %}
                                 Close
                             </button>
@@ -92,8 +91,7 @@
                                     class="inline-flex items-center btn btn-primary btn-lg"
                                     hx-disabled-elt="this"
                                     hx-post="{% url 'episodes:start_player' episode.pk %}"
-                                    hx-trigger="click once"
-                                    @click="$dispatch('modal-close')">
+                                    hx-trigger="click once">
                                 {% heroicon_mini "play-circle" class="mr-2" %}
                                 Play
                             </button>
