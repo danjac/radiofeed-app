@@ -43,12 +43,12 @@
 </header>
 {% with podcast=episode.podcast %}
     <article class="space-y-3" x-data>
-        <h2 class="text-lg font-semibold lg:text-xl">
+        <h2 class="text-lg font-semibold">
             <a href="{{ podcast.get_absolute_url }}"
                title="{{ podcast.cleaned_title }}"
                class="link">{{ podcast.cleaned_title }}</a>
         </h2>
-        <h3 class="font-semibold lg:text-lg">
+        <h3 class="font-semibold">
             <a href="{{ podcast.get_episodes_url }}"
                title="See all episodes for {{ podcast.cleaned_title }}"
                class="link">See all episodes</a>
