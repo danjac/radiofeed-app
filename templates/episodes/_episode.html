@@ -1,12 +1,10 @@
 {# vim: set filetype=htmldjango #}
-{% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
+{% with podcast=episode.podcast %}
     <div class="flex items-center space-x-3 cursor-pointer group"
          role="link"
          tabindex="0"
-         hx-get="{{ episode.get_absolute_url }}?modal=true"
-         hx-target="#modal"
-         hx-swap="outerHTML"
-         hx-push-url="false">
+         hx-get="{{ episode.get_absolute_url }}"
+         hx-push-url="true">
         {% with size="sm" css_class="w-16 h-16 group-hover:grayscale" %}
             {% if is_podcast_detail %}
                 {% cover_image episode.get_cover_url size episode.cleaned_title css_class=css_class %}

@@ -1,63 +1,58 @@
-{% extends is_modal|yesno:"modal_base.html,base.html" %}
+{% extends "base.html" %}
 {% load cache heroicons partials %}
 {% block title %}
-    {% if is_modal %}
-        <a href="{{ episode.get_absolute_url }}"
-           class="link"
-           @click="$dispatch('modal-close')">{{ episode.cleaned_title }}</a>
-    {% else %}
-        {{ block.super }}| {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
-    {% endif %}
+    {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
 {% block content %}
-    {% if not is_modal %}
-        <header class="pb-3 mb-3 space-y-6 border-b">
-            <h1 class="text-xl font-bold lg:text-2xl">{{ episode.cleaned_title }}</h1>
-            {% cache 300 episode-nav-header episode.pk %}
-            {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
-                {% if next_episode or previous_episode %}
-                    <nav>
-                        <ul class="flex justify-between" aria-label="Pagination">
-                            <li>
-                                {% if previous_episode %}
-                                    <a class="link"
-                                       href="{{ previous_episode.get_absolute_url }}"
-                                       aria-label="{{ previous_episode.cleaned_title }}"
-                                       title="{{ previous_episode.cleaned_title }}">Previous</a>
-                                {% else %}
-                                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
-                                          title="First Episode"
-                                          aria-label="First Episode">Previous</span>
-                                {% endif %}
-                            </li>
-                            <li>
-                                {% if next_episode %}
-                                    <a class="link"
-                                       href="{{ next_episode.get_absolute_url }}"
-                                       aria-label="{{ next_episode.cleaned_title }}"
-                                       title="{{ next_episode.cleaned_title }}">Next</a>
-                                {% else %}
-                                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
-                                          title="Last Episode"
-                                          aria-label="Last Episode">Next</span>
-                                {% endif %}
-                            </li>
-                        </ul>
-                    </nav>
-                {% endif %}
-            {% endwith %}
-        {% endcache %}
-    </header>
-{% endif %}
+    <header class="pb-3 mb-3 space-y-6 border-b">
+        <h1 class="text-xl font-bold lg:text-2xl">{{ episode.cleaned_title }}</h1>
+        {% cache 300 episode-nav-header episode.pk %}
+        {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
+            {% if next_episode or previous_episode %}
+                <nav>
+                    <ul class="flex justify-between" aria-label="Pagination">
+                        <li>
+                            {% if previous_episode %}
+                                <a class="link"
+                                   href="{{ previous_episode.get_absolute_url }}"
+                                   aria-label="{{ previous_episode.cleaned_title }}"
+                                   title="{{ previous_episode.cleaned_title }}">Previous</a>
+                            {% else %}
+                                <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                                      title="First Episode"
+                                      aria-label="First Episode">Previous</span>
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if next_episode %}
+                                <a class="link"
+                                   href="{{ next_episode.get_absolute_url }}"
+                                   aria-label="{{ next_episode.cleaned_title }}"
+                                   title="{{ next_episode.cleaned_title }}">Next</a>
+                            {% else %}
+                                <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                                      title="Last Episode"
+                                      aria-label="Last Episode">Next</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </nav>
+            {% endif %}
+        {% endwith %}
+    {% endcache %}
+</header>
 {% with podcast=episode.podcast %}
     <article class="space-y-3" x-data>
-        <h2 class="text-lg font-semibold">
+        <h2 class="text-lg font-semibold lg:text-xl">
             <a href="{{ podcast.get_absolute_url }}"
-               aria-label="See all episodes for {{ podcast.cleaned_title }}"
                title="{{ podcast.cleaned_title }}"
-               @click="$dispatch('modal-close')"
                class="link">{{ podcast.cleaned_title }}</a>
         </h2>
+        <h3 class="font-semibold lg:text-lg">
+            <a href="{{ podcast.get_episodes_url }}"
+               title="See all episodes for {{ podcast.cleaned_title }}"
+               class="link">See all episodes</a>
+        </h3>
         {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
             {% if episode_type or episode_num or season %}
                 <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
@@ -157,9 +152,6 @@
         </div>
     </div>
 </div>
-<a href="{{ podcast.get_episodes_url }}"
-   class="inline-block link"
-   @click="$dispatch('modal-close')">See all episodes</a>
 {% if episode.is_explicit %}
     <div title="May contain adult themes and language. Listener discretion advised."
          class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">

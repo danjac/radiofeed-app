@@ -6,7 +6,6 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import trigger_client_event
 
 from radiofeed.decorators import (
     htmx_login_required,
@@ -169,25 +168,14 @@ def podcast_detail(
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
-    is_modal = "modal" in request.GET
-
-    response = render(
+    return render(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
-            "is_modal": is_modal,
             "is_subscribed": is_subscribed,
         },
     )
-
-    if is_modal:
-        response = trigger_client_event(
-            response,
-            "modal-open",
-        )
-
-    return response
 
 
 @require_safe

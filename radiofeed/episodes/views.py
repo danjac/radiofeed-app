@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
-from django_htmx.http import trigger_client_event
 
 from radiofeed.decorators import (
     ajax_login_required,
@@ -90,26 +89,16 @@ def episode_detail(
         pk=episode_id,
     )
 
-    is_modal = "modal" in request.GET
-
-    response = render(
+    return render(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_modal": is_modal,
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
             "is_playing": request.audio_player.has(episode.pk),
         },
     )
-    if is_modal:
-        response = trigger_client_event(
-            response,
-            "modal-open",
-        )
-
-    return response
 
 
 @require_POST

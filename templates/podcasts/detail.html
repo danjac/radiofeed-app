@@ -1,14 +1,5 @@
-{% extends is_modal|yesno:"podcasts/modal_base.html,podcasts/detail_base.html" %}
+{% extends "podcasts/detail_base.html" %}
 {% load cache heroicons partials %}
-{% block title %}
-    {% if is_modal %}
-        <a href="{{ podcast.get_absolute_url }}"
-           class="link"
-           @click="$dispatch('modal-close')">{{ podcast.cleaned_title }}</a>
-    {% else %}
-        {{ block.super }}
-    {% endif %}
-{% endblock title %}
 {% block podcast_content %}
     <article class="space-y-3">
         {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}
@@ -98,10 +89,7 @@
                 <div class="flex flex-wrap">
                     <a href="{{ podcast.get_latest_episode_url }}"
                        class="link"
-                       aria-label="Latest Release"
-                       title="Latest Release">
-                        {% include "_date.html" with value=podcast.pub_date title="Release Date" %}
-                    </a>
+                       title="Latest episode released {{ podcast.pub_date|date:"j M Y" }}">Latest Episode</a>
                 </div>
             {% endif %}
         </div>
@@ -123,7 +111,6 @@
                     <a class="inline-flex items-center link"
                        aria-label="{{ category.name }} Podcasts"
                        title="{{ category.name }} Podcasts"
-                       @click="$dispatch('modal-close')"
                        href="{{ category.get_absolute_url }}">
                         {% heroicon_mini "tag" class="mr-2" %}
                         {{ category.name }}

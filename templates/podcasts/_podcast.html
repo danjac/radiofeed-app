@@ -3,11 +3,10 @@
     <div class="flex items-center space-x-3 cursor-pointer group"
          role="link"
          tabindex="0"
-         hx-get="{{ podcast_url }}?modal=true"
-         hx-target="#modal"
-         hx-indicator="this"
-         hx-swap="outerHTML"
-         hx-push-url="false">
+         hx-get="{{ podcast_url }}"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="true">
         {% cover_image podcast.cover_url "sm" podcast.cleaned_title css_class="w-16 h-16 group-hover:grayscale" %}
         <div class="flex flex-col place-content-between h-16">
             <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300"

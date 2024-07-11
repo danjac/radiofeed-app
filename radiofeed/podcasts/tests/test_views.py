@@ -235,13 +235,6 @@ class TestPodcastDetail:
         assert response.context["is_subscribed"] is False
 
     @pytest.mark.django_db()
-    def test_get_modal(self, client, auth_user, podcast):
-        response = client.get(podcast.get_absolute_url(), {"modal": True})
-        assert response.status_code == http.HTTPStatus.OK
-        assert response.context["podcast"] == podcast
-        assert response.context["is_modal"] is True
-
-    @pytest.mark.django_db()
     def test_get_podcast_admin(self, client, staff_user, podcast):
         response = client.get(podcast.get_absolute_url())
         assert response.status_code == http.HTTPStatus.OK
