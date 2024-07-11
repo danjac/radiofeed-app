@@ -87,7 +87,8 @@
             </nav>
             {% if podcast.pub_date %}
                 <a href="{{ podcast.get_latest_episode_url }}"
-                   class="inline-flex flex-wrap link">
+                   class="flex flex-wrap space-x-1 link">
+                    <span>Last release</span>
                     {% include "_date.html" with value=podcast.pub_date title="Released" %}
                 </a>
             {% endif %}
