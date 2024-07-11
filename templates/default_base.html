@@ -30,7 +30,6 @@
           hx-indicator="#hx-indicator">
         {% include "_hx_indicator.html" %}
         {% include "_messages.html" %}
-        {% include "_modal.html" %}
         <div class="flex flex-col h-screen">
             <div class="grow">
                 {% include "_navbar.html" %}
@@ -49,6 +48,7 @@
             {% audio_player %}
             {% cookie_notice %}
         </div>
+        <div id="modal"></div>
         {% django_htmx_script %}
         <script defer src="{% static "dist/app.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
         <script>

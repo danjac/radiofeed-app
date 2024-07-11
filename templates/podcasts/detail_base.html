@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends is_modal|yesno:"modal_base.html,base.html" %}
 {% load cache heroicons %}
 {% block title %}
     {{ block.super }} | {{ podcast.cleaned_title }}

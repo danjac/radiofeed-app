@@ -50,9 +50,9 @@
 {% with podcast=episode.podcast %}
     <article class="space-y-3">
         <h2 class="text-lg font-semibold">
-            <a href="{{ podcast.get_episodes_url }}"
+            <a href="{{ podcast.get_absolute_url }}"
                aria-label="See all episodes for {{ podcast.cleaned_title }}"
-               title="See all episodes for {{ podcast.cleaned_title }}"
+               title="{{ podcast.cleaned_title }}"
                class="link">{{ podcast.cleaned_title }}</a>
         </h2>
         {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
@@ -65,7 +65,7 @@
             {% endif %}
         {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">
-            {% cover_image episode.get_cover_url "md" podcast.cleaned_title url=podcast.get_absolute_url css_class="h-40 w-40" %}
+            {% cover_image episode.get_cover_url "sm" podcast.cleaned_title css_class="h-40 w-40" %}
             <div class="flex flex-col place-content-between h-32">
                 {% partialdef audio_player_button inline=True %}
                 {% with target="audio-player-button" %}
@@ -154,6 +154,7 @@
         </div>
     </div>
 </div>
+<a href="{{ podcast.get_episodes_url }}" class="inline-block link">See all episodes</a>
 {% if episode.is_explicit %}
     <div title="May contain adult themes and language. Listener discretion advised."
          class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
