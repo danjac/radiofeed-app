@@ -34,7 +34,7 @@ click==8.1.7
     # via
     #   django-click
     #   nltk
-coverage==7.5.4
+coverage==7.6.0
     # via
     #   radiofeed (pyproject.toml)
     #   pytest-cov
@@ -61,9 +61,9 @@ django==5.0.7
     #   django-redis
     #   django-template-partials
     #   heroicons
-django-allauth==0.63.4
+django-allauth==0.63.6
     # via radiofeed (pyproject.toml)
-django-anymail==11.0
+django-anymail==11.0.1
     # via radiofeed (pyproject.toml)
 django-browser-reload==1.13.0
     # via radiofeed (pyproject.toml)

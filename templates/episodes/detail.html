@@ -48,11 +48,6 @@
                title="{{ podcast.cleaned_title }}"
                class="link">{{ podcast.cleaned_title }}</a>
         </h2>
-        <h3 class="font-semibold">
-            <a href="{{ podcast.get_episodes_url }}"
-               title="See all episodes for {{ podcast.cleaned_title }}"
-               class="link">See all episodes</a>
-        </h3>
         {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
             {% if episode_type or episode_num or season %}
                 <div class="flex items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
@@ -62,6 +57,9 @@
                 </div>
             {% endif %}
         {% endwith %}
+        <a href="{{ podcast.get_episodes_url }}"
+           title="See all episodes for {{ podcast.cleaned_title }}"
+           class="inline-block link">See all episodes</a>
         <div class="flex items-center space-x-3 sm:space-x-6">
             {% cover_image episode.get_cover_url "md" podcast.cleaned_title css_class="h-40 w-40" %}
             <div class="flex flex-col place-content-between h-32">
