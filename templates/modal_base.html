@@ -19,9 +19,11 @@
                 {% block title %}
                 {% endblock title %}
             </h3>
-            <div class="overflow-y-auto pb-12 mt-2 sm:pb-3 max-h-[90svh] sm:max-h-[60svh]">
-                {% block content %}
-                {% endblock content %}
+            <div class="overflow-y-auto mt-2 mb-3 sm:pb-3 sm:mb-0 max-h-[80svh] sm:max-h-[60svh]">
+                <div class="pb-3 mb-6 sm:mb-0">
+                    {% block content %}
+                    {% endblock content %}
+                </div>
             </div>
         </div>
     </div>
