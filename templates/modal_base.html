@@ -11,17 +11,14 @@
      @keyup.escape.window="show=false">
     <div class="fixed inset-0 bg-black bg-opacity-75 transition-opacity dark:bg-opacity-50"></div>
     <div class="flex justify-center items-center h-full min-h-screen text-center sm:pt-4 sm:pb-20 sm:h-auto">
-        <div class="inline-block overflow-hidden py-6 px-4 w-full h-full max-h-screen text-left align-bottom bg-gray-100 transition-all transform sm:p-6 sm:w-5/6 sm:h-auto sm:align-middle sm:rounded-lg sm:shadow-xl lg:w-2/3 dark:bg-gray-900 sm:max-h-[90svh]">
-            <div class="overflow-y-auto px-2 pb-3 max-h-[90svh] sm:max-h-[60svh]">
+        <div class="inline-block overflow-hidden relative py-6 px-4 w-full h-full max-h-screen text-left align-bottom bg-gray-100 transition-all transform sm:p-6 sm:w-5/6 sm:h-auto sm:align-middle sm:rounded-lg sm:shadow-xl lg:w-2/3 dark:bg-gray-900 sm:max-h-[90svh]">
+            <button class="absolute top-5 right-5 p-6 m-6 z-100"
+                    @click="show=false"
+                    title="Close (Esc)">{% heroicon_outline "x-mark" size=30 title="Close" %}</button>
+            <div class="overflow-y-auto px-2 pb-3 mt-10 max-h-[90svh] sm:max-h-[60svh]">
                 {% block content %}
                 {% endblock content %}
             </div>
-            <button class="flex justify-center items-center p-1 space-x-1 w-full text-lg font-semibold leading-tight text-white bg-purple-800 rounded-lg hover:bg-purple-600"
-                    aria-label="Close"
-                    title="Close"
-                    @click="show=false">
-                {% heroicon_mini "x-mark" title="Close" %} <span>Close</span>
-            </button>
         </div>
     </div>
 </div>
