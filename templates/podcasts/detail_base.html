@@ -1,17 +1,17 @@
 {% extends is_modal|yesno:"modal_base.html,base.html" %}
 {% load cache heroicons %}
 {% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }}
+    {% if is_modal %}
+        <a class="link"
+           href="{{ podcast.get_absolute_url }}"
+           @click="$dispatch('modal-close')">{{ podcast.cleaned_title }}</a>
+    {% else %}
+        {{ block.super }} | {{ podcast.cleaned_title }}
+    {% endif %}
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-3 space-y-6 border-b" x-data>
-        {% if is_modal %}
-            <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl sm:text-start">
-                <a class="link"
-                   href="{{ podcast.get_absolute_url }}"
-                   @click="$dispatch('modal-close')">{{ podcast.cleaned_title }}</a>
-            </h1>
-        {% else %}
+    {% if not is_modal %}
+        <header class="pb-3 mb-3 space-y-6 border-b">
             <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl sm:text-start">
                 {{ podcast.cleaned_title }}
             </h1>
@@ -55,8 +55,8 @@
                 {% endblock podcast_nav %}
             </div>
         {% endcache %}
-    {% endif %}
-</header>
+    </header>
+{% endif %}
 {% block podcast_content %}
 {% endblock podcast_content %}
 {% endblock content %}

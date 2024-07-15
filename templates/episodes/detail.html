@@ -1,17 +1,17 @@
 {% extends is_modal|yesno:"modal_base.html,base.html" %}
 {% load cache heroicons partials %}
 {% block title %}
-    {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
+    {% if is_modal %}
+        <a class="link"
+           href="{{ episode.get_absolute_url }}"
+           @click="$dispatch('modal-close')">{{ episode.cleaned_title }}</a>
+    {% else %}
+        {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
+    {% endif %}
 {% endblock title %}
 {% block content %}
-    <header class="pb-3 mb-3 space-y-6 border-b" x-data>
-        {% if is_modal %}
-            <h1 class="text-xl font-bold lg:text-2xl">
-                <a class="link"
-                   href="{{ episode.get_absolute_url }}"
-                   @click="$dispatch('modal-close')">{{ episode.cleaned_title }}</a>
-            </h1>
-        {% else %}
+    {% if not is_modal %}
+        <header class="pb-3 mb-3 space-y-6 border-b">
             <h1 class="text-xl font-bold lg:text-2xl">{{ episode.cleaned_title }}</h1>
             {% cache 300 episode-nav-header episode.pk %}
             {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
@@ -47,8 +47,8 @@
                 {% endif %}
             {% endwith %}
         {% endcache %}
-    {% endif %}
-</header>
+    </header>
+{% endif %}
 {% with podcast=episode.podcast %}
     <article class="space-y-3" x-data>
         <h2 class="text-lg font-semibold">
