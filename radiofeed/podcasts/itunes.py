@@ -65,7 +65,13 @@ class FeedResultSet:
 
 def search(client: httpx.Client, search_term: str) -> FeedResultSet:
     """Runs cached search for podcasts on iTunes API."""
-    return FeedResultSet(_search_itunes(client, search_term))
+    return FeedResultSet(
+        _insert_podcasts(
+            _parse_feeds_from_json(
+                _get_response(client, search_term),
+            ),
+        ),
+    )
 
 
 @functools.cache
@@ -74,10 +80,6 @@ def search_cache_key(search_term: str) -> str:
     return "itunes:" + urlsafe_base64_encode(
         force_bytes(search_term.casefold(), "utf-8")
     )
-
-
-def _search_itunes(client: httpx.Client, search_term: str) -> FeedIterator:
-    return _insert_podcasts(_parse_feeds_from_json(_get_response(client, search_term)))
 
 
 def _get_response(client: httpx.Client, search_term: str) -> dict:
