@@ -17,7 +17,7 @@
                         <li>
                             {% if previous_episode %}
                                 <a class="link"
-                                   {% if is_modal %} href="#" hx-get="{{ previous_episode.get_absolute_url }}{% query_string modal="true" %}" hx-swap="outerHTML" hx-target="#modal" hx-push-url="false" {% else %} href="{{ previous_episode.get_absolute_url }}"  {% endif %}
+                                   {% if is_modal %} href="#" hx-get="{{ previous_episode.get_absolute_url }}{% query_string modal="true" %}" hx-swap="outerHTML show:window:top" hx-target="#modal" hx-push-url="false" {% else %} href="{{ previous_episode.get_absolute_url }}"  {% endif %}
                                    aria-label="{{ previous_episode.cleaned_title }}"
                                    title="{{ previous_episode.cleaned_title }}">Previous</a>
                             {% else %}
@@ -29,7 +29,7 @@
                         <li>
                             {% if next_episode %}
                                 <a class="link"
-                                   {% if is_modal %} href="#" hx-get="{{ next_episode.get_absolute_url }}{% query_string modal="true" %}" hx-swap="outerHTML" hx-target="#modal" hx-push-url="false" hx-push-url="false" {% else %} href="{{ next_episode.get_absolute_url }}" {% endif %}
+                                   {% if is_modal %} href="#" hx-get="{{ next_episode.get_absolute_url }}{% query_string modal="true" %}" hx-swap="outerHTML show:window:top" hx-target="#modal" hx-push-url="false" {% else %} href="{{ next_episode.get_absolute_url }}" {% endif %}
                                    aria-label="{{ next_episode.cleaned_title }}"
                                    title="{{ next_episode.cleaned_title }}">Next</a>
                             {% else %}
