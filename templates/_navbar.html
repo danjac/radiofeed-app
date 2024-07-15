@@ -81,12 +81,16 @@
                             title="Show Menu"
                             x-cloak
                             x-show.transition="!showMenu"
+                            x-transition:enter-start="rotate-45"
+                            x-transition:enter-end="rotate-0"
                             @click="showMenu=true">{% heroicon_outline "bars-3" size=30 title="Toggle Menu" %}</button>
                     <button class="transition transform focus:outline-none"
                             aria-label="Hide Menu"
                             title="Hide Menu"
                             x-cloak
                             x-show.transition="showMenu"
+                            x-transition:enter-start="-rotate-45"
+                            x-transition:enter-end="rotate-0"
                             @click="showMenu=false"
                             @keyup.escape.window="showMenu=false">
                         {% heroicon_outline "x-mark" size=30 title="Toggle Menu" %}
@@ -106,7 +110,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated %}
-        <nav class="absolute left-0 z-20 py-6 pl-3 w-full h-screen bg-white sm:h-auto sm:shadow-xl xl:hidden dark:bg-gray-800"
+        <nav class="absolute left-0 py-6 px-3 w-full bg-white shadow-xl xl:hidden dark:bg-gray-800"
              x-cloak
              x-init="$el.innerHTML = document.getElementById('sidebar').innerHTML"
              x-show.transition="showMenu"
