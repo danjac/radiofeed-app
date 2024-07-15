@@ -42,7 +42,7 @@
                             {% heroicon_outline "user-circle" size=30 x_show="!showDropdown" %}
                             {% heroicon_solid "user-circle" size=30 x_show="showDropdown" %}
                         </button>
-                        <div class="absolute right-1 z-20 w-64 bg-gray-100 rounded-lg border shadow-lg dark:bg-gray-800 dark:border"
+                        <div class="absolute right-1 z-20 w-64 bg-white rounded-lg border shadow-lg dark:bg-gray-800 dark:border"
                              x-cloak
                              x-show="showDropdown"
                              x-transition.scape.origin.top>
@@ -106,7 +106,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated %}
-        <nav class="absolute left-0 z-50 py-6 pl-3 w-full h-screen bg-gray-100 sm:h-auto sm:shadow-xl xl:hidden dark:bg-gray-900"
+        <nav class="absolute left-0 z-50 py-6 pl-3 w-full h-screen bg-white sm:h-auto sm:shadow-xl xl:hidden dark:bg-gray-900"
              x-cloak
              x-init="$el.innerHTML = document.getElementById('sidebar').innerHTML"
              x-show.transition="showMenu"
