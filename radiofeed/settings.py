@@ -368,6 +368,17 @@ HEALTH_CHECK = {
     "MEMORY_MIN": 100,  # in MB
 }
 
+# Digital Assetlinks
+# https://developer.chrome.com/docs/android/trusted-web-activity/android-for-web-devs#digital-asset-links
+
+ASSETLINKS = {
+    "namespace": env("ASSETLINKS_NAMESPACE", default="radiofeed"),
+    "package_name": env("ASSETLINKS_PACKAGE_NAME", default="app.radiofeed"),
+    "sha256_cert_fingerprints": env.list(
+        "ASSETLINKS_SHA256_CERT_FINGERPRINTS", default=[]
+    ),
+}
+
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 

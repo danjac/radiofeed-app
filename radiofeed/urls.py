@@ -19,6 +19,7 @@ urlpatterns = [
     path("service-worker.js", views.service_worker, name="service_worker"),
     path("manifest.json", views.manifest, name="manifest"),
     path("favicon.ico", views.favicon, name="favicon"),
+    path(".well-known/assetlinks.json", views.assetlinks, name="assetlinks"),
     path(".well-known/security.txt", views.security, name="security"),
     path("ht/", include("health_check.urls")),
     path(settings.ADMIN_URL, admin.site.urls),

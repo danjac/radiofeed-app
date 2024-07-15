@@ -16,6 +16,13 @@ class TestManifest:
         assert response.status_code == http.HTTPStatus.OK
 
 
+class TestAssetlinks:
+    @pytest.mark.django_db()
+    def test_get(self, client):
+        response = client.get(reverse("assetlinks"))
+        assert response.status_code == http.HTTPStatus.OK
+
+
 class TestServiceWorker:
     @pytest.mark.django_db()
     def test_get(self, client):

@@ -79,6 +79,28 @@ def service_worker(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
+def assetlinks(request: HttpRequest) -> HttpResponse:
+    """PWA assetlinks"""
+    return JsonResponse(
+        [
+            {
+                "relation": ["delegate_permission/common.handle_all_urls"],
+                "target": {
+                    "namespace": "android_app",
+                    "package_name": settings.ASSETLINKS["package_name"],
+                    "sha256_cert_fingerprints": settings.ASSETLINKS[
+                        "sha256_cert_fingerprints"
+                    ],
+                },
+            }
+        ],
+        safe=False,
+    )
+
+
+@require_safe
+@_cache_control
+@_cache_page
 def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
     start_url = reverse("podcasts:index")
