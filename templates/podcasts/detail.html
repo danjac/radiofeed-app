@@ -1,7 +1,7 @@
 {% extends "podcasts/detail_base.html" %}
 {% load cache heroicons partials %}
 {% block podcast_content %}
-    <article class="space-y-3" x-data>
+    <article class="space-y-3">
         {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}
         <div class="flex items-center space-x-3 sm:space-x-6">
             {% cover_image podcast.cover_url "md" podcast.cleaned_title css_class="h-40 w-40" %}
@@ -87,8 +87,7 @@
             </nav>
             {% if podcast.pub_date %}
                 <a href="{{ podcast.get_latest_episode_url }}"
-                   class="flex flex-wrap space-x-1 link"
-                   @click="$dispatch('modal-close')">
+                   class="flex flex-wrap space-x-1 link">
                     <span>Last update</span>
                     {% include "_date.html" with value=podcast.pub_date title="Released" %}
                 </a>
@@ -111,8 +110,7 @@
                     <a class="inline-flex items-center link"
                        aria-label="{{ category.name }} Podcasts"
                        title="{{ category.name }} Podcasts"
-                       href="{{ category.get_absolute_url }}"
-                       @click="$dispatch('modal-close')">
+                       href="{{ category.get_absolute_url }}">
                         {% heroicon_mini "tag" class="mr-2" %}
                         {{ category.name }}
                     </a>

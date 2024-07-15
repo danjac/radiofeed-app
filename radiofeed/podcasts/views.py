@@ -167,7 +167,6 @@ def podcast_detail(
     podcast = _get_podcast_or_404(podcast_id)
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
-    is_modal = request.GET.get("modal") == "true"
 
     return render(
         request,
@@ -175,7 +174,6 @@ def podcast_detail(
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,
-            "is_modal": is_modal,
         },
     )
 
@@ -197,8 +195,6 @@ def episodes(
         else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
     )
 
-    is_modal = request.GET.get("modal") == "true"
-
     return render(
         request,
         "podcasts/episodes.html",
@@ -206,7 +202,6 @@ def episodes(
             "podcast": podcast,
             "episodes": episodes,
             "ordering_asc": ordering_asc,
-            "is_modal": is_modal,
             "page_size": PAGE_SIZE,
         },
     )
@@ -228,7 +223,6 @@ def similar(
         .select_related("recommended")
         .order_by("-relevance")[:PAGE_SIZE]
     )
-    is_modal = request.GET.get("modal") == "true"
 
     return render(
         request,
@@ -236,7 +230,6 @@ def similar(
         {
             "podcast": podcast,
             "recommendations": recommendations,
-            "is_modal": is_modal,
         },
     )
 

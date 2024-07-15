@@ -89,8 +89,6 @@ def episode_detail(
         pk=episode_id,
     )
 
-    is_modal = request.GET.get("modal") == "true"
-
     return render(
         request,
         "episodes/detail.html",
@@ -98,7 +96,6 @@ def episode_detail(
             "episode": episode,
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
-            "is_modal": is_modal,
             "is_playing": request.audio_player.has(episode.pk),
         },
     )
