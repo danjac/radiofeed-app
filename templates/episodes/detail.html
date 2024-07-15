@@ -5,44 +5,49 @@
 {% endblock title %}
 {% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b" x-data>
-        <h1 class="text-xl font-bold lg:text-2xl{% if is_modal %} link cursor-pointer{% endif %}"
-            {% if is_modal %} hx-get="{{ episode.get_absolute_url }}" hx-push-url="true" role="link" @click="$dispatch('modal-close')"  {% endif %}>
-            {{ episode.cleaned_title }}
-        </h1>
-        {% cache 300 episode-nav-header episode.pk %}
-        {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
-            {% if next_episode or previous_episode %}
-                <nav>
-                    <ul class="flex justify-between" aria-label="Pagination">
-                        <li>
-                            {% if previous_episode %}
-                                <a class="link"
-                                   {% if is_modal %} href="#" hx-get="{{ previous_episode.get_absolute_url }}{% query_string modal="true" %}" hx-swap="outerHTML show:window:top" hx-target="#modal" hx-push-url="false" {% else %} href="{{ previous_episode.get_absolute_url }}"  {% endif %}
-                                   aria-label="{{ previous_episode.cleaned_title }}"
-                                   title="{{ previous_episode.cleaned_title }}">Previous</a>
-                            {% else %}
-                                <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
-                                      title="First Episode"
-                                      aria-label="First Episode">Previous</span>
-                            {% endif %}
-                        </li>
-                        <li>
-                            {% if next_episode %}
-                                <a class="link"
-                                   {% if is_modal %} href="#" hx-get="{{ next_episode.get_absolute_url }}{% query_string modal="true" %}" hx-swap="outerHTML show:window:top" hx-target="#modal" hx-push-url="false" {% else %} href="{{ next_episode.get_absolute_url }}" {% endif %}
-                                   aria-label="{{ next_episode.cleaned_title }}"
-                                   title="{{ next_episode.cleaned_title }}">Next</a>
-                            {% else %}
-                                <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
-                                      title="Last Episode"
-                                      aria-label="Last Episode">Next</span>
-                            {% endif %}
-                        </li>
-                    </ul>
-                </nav>
-            {% endif %}
-        {% endwith %}
-    {% endcache %}
+        {% if is_modal %}
+            <h1 class="text-xl font-bold lg:text-2xl">
+                <a class="link"
+                   href="{{ episode.get_absolute_url }}"
+                   @click="$dispatch('modal-close')">{{ episode.cleaned_title }}</a>
+            </h1>
+        {% else %}
+            <h1 class="text-xl font-bold lg:text-2xl">{{ episode.cleaned_title }}</h1>
+            {% cache 300 episode-nav-header episode.pk %}
+            {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
+                {% if next_episode or previous_episode %}
+                    <nav>
+                        <ul class="flex justify-between" aria-label="Pagination">
+                            <li>
+                                {% if previous_episode %}
+                                    <a class="link"
+                                       href="{{ previous_episode.get_absolute_url }}"
+                                       aria-label="{{ previous_episode.cleaned_title }}"
+                                       title="{{ previous_episode.cleaned_title }}">Previous</a>
+                                {% else %}
+                                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                                          title="First Episode"
+                                          aria-label="First Episode">Previous</span>
+                                {% endif %}
+                            </li>
+                            <li>
+                                {% if next_episode %}
+                                    <a class="link"
+                                       href="{{ next_episode.get_absolute_url }}"
+                                       aria-label="{{ next_episode.cleaned_title }}"
+                                       title="{{ next_episode.cleaned_title }}">Next</a>
+                                {% else %}
+                                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                                          title="Last Episode"
+                                          aria-label="Last Episode">Next</span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% endwith %}
+        {% endcache %}
+    {% endif %}
 </header>
 {% with podcast=episode.podcast %}
     <article class="space-y-3" x-data>

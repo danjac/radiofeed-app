@@ -1,7 +1,7 @@
 {% extends "podcasts/detail_base.html" %}
 {% load cache heroicons partials %}
 {% block podcast_content %}
-    <article class="space-y-3">
+    <article class="space-y-3" x-data>
         {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}
         <div class="flex items-center space-x-3 sm:space-x-6">
             {% cover_image podcast.cover_url "md" podcast.cleaned_title css_class="h-40 w-40" %}
@@ -105,13 +105,13 @@
     {% cache 300 podcast-categories podcast.pk %}
     {% with categories=podcast.categories.all %}
         {% if categories %}
-            <div class="flex flex-wrap items-center space-x-2 max-w-prose leading-loose sm:space-x-3"
-                 x-data>
+            <div class="flex flex-wrap items-center space-x-2 max-w-prose leading-loose sm:space-x-3">
                 {% for category in categories %}
                     <a class="inline-flex items-center link"
                        aria-label="{{ category.name }} Podcasts"
                        title="{{ category.name }} Podcasts"
-                       href="{{ category.get_absolute_url }}">
+                       href="{{ category.get_absolute_url }}"
+                       @click="$dispatch('modal-close')">
                         {% heroicon_mini "tag" class="mr-2" %}
                         {{ category.name }}
                     </a>
