@@ -6,11 +6,11 @@
          hx-get="{{ podcast_url }}"
          hx-push-url="true">
         {% cover_image podcast.cover_url "sm" podcast.cleaned_title css_class="w-16 h-16 group-hover:grayscale" %}
-        <div class="flex flex-col place-content-between h-16">
-            <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300"
+        <div class="flex flex-col place-content-between h-16 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-300">
+            <h2 class="font-bold break-words line-clamp-2"
                 aria-label="{{ podcast.cleaned_title }}"
                 title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</h2>
-            <h3 class="text-sm font-semibold leading-tight text-gray-600 dark:text-gray-300 group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
+            <h3 class="text-sm font-semibold leading-tight line-clamp-1">
                 {% include "_date.html" with value=podcast.pub_date title="Latest Episode" %}
             </h3>
         </div>
