@@ -372,8 +372,8 @@ HEALTH_CHECK = {
 # https://developer.chrome.com/docs/android/trusted-web-activity/android-for-web-devs#digital-asset-links
 
 ASSETLINKS = {
-    "namespace": env("ASSETLINKS_NAMESPACE", default="radiofeed"),
-    "package_name": env("ASSETLINKS_PACKAGE_NAME", default="app.radiofeed"),
+    "namespace": env("ASSETLINKS_NAMESPACE", default="android_app"),
+    "package_name": env("ASSETLINKS_PACKAGE_NAME", default="app.radiofeed.twa"),
     "sha256_cert_fingerprints": env.list(
         "ASSETLINKS_SHA256_CERT_FINGERPRINTS", default=[]
     ),
