@@ -159,7 +159,8 @@ class TestSearchItunes:
                         podcast=podcast,
                     ),
                 ]
-            )
+            ),
+            length=2,
         )
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search", return_value=feeds

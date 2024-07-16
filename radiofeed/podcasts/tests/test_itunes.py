@@ -11,10 +11,15 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 MOCK_RESULT = {
-    "feedUrl": "https://feeds.fireside.fm/testandcode/rss",
-    "collectionName": "Test & Code : Python Testing",
-    "collectionViewUrl": "https//itunes.com/id123345",
-    "artworkUrl600": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+    "results": [
+        {
+            "feedUrl": "https://feeds.fireside.fm/testandcode/rss",
+            "collectionName": "Test & Code : Python Testing",
+            "collectionViewUrl": "https//itunes.com/id123345",
+            "artworkUrl600": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+        }
+    ],
+    "resultCount": 1,
 }
 
 
@@ -29,7 +34,7 @@ class TestSearch:
             transport=httpx.MockTransport(
                 lambda request: httpx.Response(
                     http.HTTPStatus.OK,
-                    json={"results": [MOCK_RESULT]},
+                    json=MOCK_RESULT,
                 )
             ),
             timeout=DEFAULT_TIMEOUT,
@@ -47,7 +52,7 @@ class TestSearch:
                                 "id": 12345,
                                 "url": "bad-url",
                             }
-                        ]
+                        ],
                     },
                 )
             ),
@@ -79,6 +84,7 @@ class TestSearch:
     def test_bad_data(self, invalid_client):
         feeds = itunes.search(invalid_client, "test")
         assert len(feeds) == 0
+        assert list(feeds) == []
 
     @pytest.mark.django_db()
     @pytest.mark.usefixtures("_locmem_cache")
@@ -88,12 +94,12 @@ class TestSearch:
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
-        assert cache.get(itunes.search_cache_key("test")) == {"results": [MOCK_RESULT]}
+        assert cache.get(itunes.search_cache_key("test")) == MOCK_RESULT
 
     @pytest.mark.django_db()
     @pytest.mark.usefixtures("_locmem_cache")
     def test_is_cached(self, good_client):
-        cache.set(itunes.search_cache_key("test"), {"results": [MOCK_RESULT]})
+        cache.set(itunes.search_cache_key("test"), MOCK_RESULT)
 
         feeds = itunes.search(good_client, "test")
 
