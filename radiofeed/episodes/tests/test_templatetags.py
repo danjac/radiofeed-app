@@ -21,7 +21,7 @@ class TestMediaMetadata:
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
 
-        assert len(data["artwork"]) == 4
+        assert len(data["artwork"]) == 5
 
         assert data["artwork"][0]["src"].startswith(
             "http://testserver/covers/96/cover.webp"
@@ -37,7 +37,7 @@ class TestMediaMetadata:
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
 
-        assert len(data["artwork"]) == 4
+        assert len(data["artwork"]) == 5
 
         assert (
             data["artwork"][0]["src"]
