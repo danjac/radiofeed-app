@@ -1,39 +1,40 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en-us">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv=”content-language” content="en-us" />
-        {% get_site as site %}
-        <title>{{ site.name }}</title>
-    </head>
-    <body style="font-family: Helvetica, Arial, sans-serif;">
-        <h1>Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
-        <h2>Here are some podcasts you might find interesting:</h2>
+    {% get_site as site %}
+    <title>Podcast recommendations for {{ site.name }}</title>
+    {% with font_family="font-family: Helvetica, Arial, sans-serif;" %}
+        <h1 style="{{ font_family }}">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
+        <h2 style="{{ font_family }}">Here are some podcasts you might find interesting:</h2>
         {% for podcast in podcasts %}
-            <div>
-                <h3>
-                    <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
-                </h3>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td valign="center">
-                                {% get_cover_image_attrs podcast.cover_url "sm" as cover_image_attrs %}
-                                <img src="{% absolute_uri cover_image_attrs.src %}"
-                                     width="{{ cover_image_attrs.width }}"
-                                     height="{{ cover_image_attrs.height }}"
-                                     alt="{{ podcast.cleaned_title }}">
-                            </td>
-                            <td valign="top">{{ podcast.cleaned_description|urlize|truncatewords:60 }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table style="{{ font_family }}">
+                <tbody>
+                    <tr>
+                        <td>
+                            <h3>
+                                <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% get_cover_image_attrs podcast.cover_url "sm" as cover_image_attrs %}
+                            <img src="{% absolute_uri cover_image_attrs.src %}"
+                                 width="{{ cover_image_attrs.width }}"
+                                 height="{{ cover_image_attrs.height }}"
+                                 alt="{{ podcast.cleaned_title }}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{{ podcast.cleaned_description|urlize|truncatewords:60 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr />
         {% endfor %}
-        <p>
+        <p style="{{ font_family }}">
             If you do not want to receive any more notifications, just uncheck the "Send email notifications"
             option on your <a href="{% absolute_uri 'users:preferences' %}">Settings</a> page.
         </p>
-    </body>
+    {% endwith %}
 </html>
