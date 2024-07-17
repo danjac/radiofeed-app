@@ -28,7 +28,7 @@
             <div class="fixed bottom-0 p-2 w-full font-semibold text-white bg-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
                 <div class="items-center space-y-2 w-full divide-y divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x">
                     <div class="sm:w-1/2">
-                        <div class="flex items-center space-x-3 cursor-pointer group"
+                        <div class="flex items-center space-x-3 cursor-pointer sm:pr-2 group"
                              role="link"
                              tabindex="0"
                              hx-get="{{ episode.get_absolute_url }}"
@@ -46,7 +46,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-3 sm:w-1/2">
+                    <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-2 sm:w-1/2">
                         <div class="grid grid-cols-3 place-content-between h-12"
                              :class="!isLoaded ? 'animate-pulse': ''">
                             <div x-text="counters.current"
