@@ -1,6 +1,6 @@
 {# vim: set filetype=htmldjango #}
 <div class="flex items-center space-x-3">
-    {% cover_image feed.image "sm" title=feed.title css_class="w-16 h-16" %}
+    {% cover_image feed.image "card" title=feed.title css_class="w-16 h-16" %}
     <div class="flex flex-col place-content-between h-16">
         <h2 class="font-bold leading-tight break-words line-clamp-2">{{ feed.title }}</h2>
         <h3 class="text-sm font-semibold leading-tight text-gray-600 dark:text-gray-300 line-clamp-1">

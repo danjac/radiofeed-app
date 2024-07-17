@@ -155,7 +155,7 @@ def render_cookie_notice(context: RequestContext) -> dict:
 @register.inclusion_tag("_cover_image.html", name="cover_image")
 def render_cover_image(
     cover_url: str | None,
-    size: CoverImageVariant,
+    variant: CoverImageVariant,
     title: str,
     *,
     url: str = "",
@@ -165,7 +165,7 @@ def render_cover_image(
     return {
         "cover_url": cover_url,
         "css_class": css_class,
-        "size": size,
+        "variant": variant,
         "title": title,
         "url": url,
     }
