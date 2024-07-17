@@ -127,7 +127,7 @@ def manifest(request: HttpRequest) -> HttpResponse:
             "id": "?homescreen=1",
             "display_override": [
                 "fullscreen",
-                "window-controls-override",
+                "window-controls-overlay",
             ],
             "launch_handler": {
                 "client_mode": [
