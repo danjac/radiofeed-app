@@ -120,9 +120,21 @@ def manifest(request: HttpRequest) -> HttpResponse:
             "display": "standalone",
             "name": request.site.name,
             "short_name": truncatechars(request.site.name, 12),
+            "prefer_related_applications": False,
             "orientation": "any",
             "scope": start_url,
             "start_url": start_url,
+            "id": "?homescreen=1",
+            "display_override": [
+                "fullscreen",
+                "window-controls-override",
+            ],
+            "launch_handler": {
+                "client_mode": [
+                    "focus-existing",
+                    "auto",
+                ]
+            },
             "categories": [
                 "books",
                 "education",
