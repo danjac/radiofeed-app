@@ -80,18 +80,17 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .order_by("podcast__title")
     )
 
-    response = TemplateResponse(
+    return TemplateResponse(
         request,
         "account/podcasts.opml",
         {
             "subscriptions": subscriptions,
         },
         content_type="text/x-opml",
+        headers={
+            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+        },
     )
-    response["Content-Disposition"] = (
-        f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-    )
-    return response
 
 
 @require_safe
