@@ -11,7 +11,6 @@ from django.contrib.sites.models import Site
 from django.core.paginator import Page
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
-from django.utils.safestring import mark_safe
 
 from radiofeed import cover_image, markdown, pagination
 
@@ -40,6 +39,9 @@ class ActiveLink(TypedDict):
     active: bool
 
 
+get_cover_image_attrs = register.simple_tag(cover_image.get_cover_image_attrs)
+
+
 @register.simple_tag(takes_context=True)
 def active_link(
     context: RequestContext,
@@ -56,35 +58,6 @@ def active_link(
         if context.request.path == url
         else ActiveLink(active=False, css=css, url=url)
     )
-
-
-@register.filter
-def format_duration(total_seconds: int | None) -> str:
-    """Formats duration (in seconds) as human readable value e.g. 1h 30min."""
-    if total_seconds is None or total_seconds < _SECONDS_IN_MINUTE:
-        return ""
-
-    rv: list[str] = []
-
-    if total_hours := math.floor(total_seconds / _SECONDS_IN_HOUR):
-        rv.append(f"{total_hours} hour{pluralize(total_hours)}")
-
-    if total_minutes := round((total_seconds % _SECONDS_IN_HOUR) / _SECONDS_IN_MINUTE):
-        rv.append(f"{total_minutes} minute{pluralize(total_minutes)}")
-
-    return " ".join(rv)
-
-
-@register.filter
-def percentage(value: float, total: float) -> int:
-    """Returns % value.
-
-    Example:
-    {{ value|percentage:total }}% done
-    """
-    if 0 in (value, total):
-        return 0
-    return math.ceil((value / total) * 100)
 
 
 @register.simple_tag(takes_context=True)
@@ -139,21 +112,15 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-@register.inclusion_tag("_markdown.html", name="markdown")
-def render_markdown(value: str | None) -> dict:
-    """Renders cleaned HTML/Markdown content."""
-    return {"content": mark_safe(markdown.render(value or ""))}  # noqa: S308
-
-
-@register.inclusion_tag("_cookie_notice.html", name="cookie_notice", takes_context=True)
-def render_cookie_notice(context: RequestContext) -> dict:
+@register.inclusion_tag("_cookie_notice.html", takes_context=True)
+def cookie_notice(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
     "Accept Cookies" button."""
     return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
 
 
 @register.inclusion_tag("_cover_image.html", name="cover_image")
-def render_cover_image(
+def cover_image_(
     cover_url: str | None,
     variant: CoverImageVariant,
     title: str,
@@ -171,4 +138,36 @@ def render_cover_image(
     }
 
 
-get_cover_image_attrs = register.simple_tag(cover_image.get_cover_image_attrs)
+@register.filter(name="markdown")
+def markdown_(content: str | None) -> str:
+    """Render content as Markdown."""
+    return markdown.render(content or "")
+
+
+@register.filter
+def format_duration(total_seconds: int | None) -> str:
+    """Formats duration (in seconds) as human readable value e.g. 1h 30min."""
+    if total_seconds is None or total_seconds < _SECONDS_IN_MINUTE:
+        return ""
+
+    rv: list[str] = []
+
+    if total_hours := math.floor(total_seconds / _SECONDS_IN_HOUR):
+        rv.append(f"{total_hours} hour{pluralize(total_hours)}")
+
+    if total_minutes := round((total_seconds % _SECONDS_IN_HOUR) / _SECONDS_IN_MINUTE):
+        rv.append(f"{total_minutes} minute{pluralize(total_minutes)}")
+
+    return " ".join(rv)
+
+
+@register.filter
+def percentage(value: float, total: float) -> int:
+    """Returns % value.
+
+    Example:
+    {{ value|percentage:total }}% done
+    """
+    if 0 in (value, total):
+        return 0
+    return math.ceil((value / total) * 100)

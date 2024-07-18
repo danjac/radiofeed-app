@@ -98,7 +98,7 @@
             {% endwith %}
         </div>
         {% include "episodes/_audio_log.html" %}
-        {% markdown episode.description %}
+        {% include "_markdown.html" with content=episode.description %}
     </article>
 {% endwith %}
 {% endblock content %}

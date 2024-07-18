@@ -2,6 +2,7 @@ import functools
 from typing import Final
 
 import nh3
+from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
 
 _ALLOWED_TAGS: Final = {
@@ -63,6 +64,7 @@ _TAG_ATTRIBUTES: Final = {
 }
 
 
+@mark_safe  # noqa: S308
 def render(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown."""
     if value := value.strip():

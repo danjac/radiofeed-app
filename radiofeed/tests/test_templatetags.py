@@ -9,7 +9,6 @@ from radiofeed.templatetags import (
     format_duration,
     percentage,
     query_string,
-    render_markdown,
 )
 
 
@@ -115,23 +114,6 @@ class TestActiveLink:
             "css": "link active",
             "active": True,
         }
-
-
-class TestMarkdown:
-    @pytest.mark.parametrize(
-        ("value", "expected"),
-        [
-            pytest.param(None, "", id="none"),
-            pytest.param("", "", id="empty"),
-            pytest.param("test", "<p>test</p>\n", id="text"),
-            pytest.param("   ", "", id="space"),
-            pytest.param("<p>test</p>", "<p>test</p>", id="html"),
-            pytest.param("<p>test</p>   ", "<p>test</p>", id="html and spaces"),
-            pytest.param("<script>test</script>", "", id="unsafe html"),
-        ],
-    )
-    def test_markdown(self, value, expected):
-        assert render_markdown(value) == {"content": expected}
 
 
 class TestAbsoluteUri:
