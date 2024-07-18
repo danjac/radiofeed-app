@@ -13,8 +13,6 @@ from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.podcasts.models import Podcast
 
-logger = logging.getLogger(__name__)
-
 _CACHE_TIMEOUT: Final = 60 * 60 * 24
 
 
