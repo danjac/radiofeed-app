@@ -70,15 +70,6 @@ class TestUserStats:
         assert response.status_code == http.HTTPStatus.OK
 
 
-class TestManagePodcastFeeds:
-    @pytest.mark.django_db()
-    def test_get(self, client, auth_user):
-        SubscriptionFactory(subscriber=auth_user)
-
-        response = client.get(reverse("users:manage_podcast_feeds"))
-        assert response.status_code == http.HTTPStatus.OK
-
-
 class TestImportPodcastFeeds:
     url = reverse_lazy("users:import_podcast_feeds")
     redirect_url = reverse_lazy("users:manage_podcast_feeds")
@@ -92,6 +83,11 @@ class TestImportPodcastFeeds:
         )
 
     @pytest.mark.django_db()
+    def test_get(self, client, auth_user):
+        response = client.get(self.url)
+        assert response.status_code == http.HTTPStatus.OK
+
+    @pytest.mark.django_db()
     def test_post_has_new_feeds(self, client, auth_user, upload_file):
         podcast = PodcastFactory(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"
@@ -101,7 +97,7 @@ class TestImportPodcastFeeds:
             self.url,
             data={"opml": upload_file},
         )
-        assert response.url == reverse("users:manage_podcast_feeds")
+        assert response.url == self.url
         assert Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
         ).exists()
