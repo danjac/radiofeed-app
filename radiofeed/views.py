@@ -8,8 +8,8 @@ import httpx
 from django.conf import settings
 from django.core.signing import BadSignature, Signer
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render
 from django.template.defaultfilters import truncatechars
+from django.template.response import TemplateResponse
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
@@ -31,7 +31,7 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 @require_safe
 def about_page(request: HttpRequest) -> HttpResponse:
     """Renders about page."""
-    return render(
+    return TemplateResponse(
         request,
         "about.html",
         {
@@ -69,7 +69,7 @@ def favicon(_) -> HttpResponse:
 @_cache_page
 def service_worker(request: HttpRequest) -> HttpResponse:
     """PWA service worker."""
-    return render(
+    return TemplateResponse(
         request,
         "service_worker.js",
         content_type="application/javascript",

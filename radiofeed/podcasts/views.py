@@ -2,8 +2,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
@@ -27,7 +28,7 @@ def index(request: HttpRequest) -> HttpResponse:
     if request.user.is_anonymous:
         podcasts = _get_promoted_podcasts().order_by("-pub_date")
 
-        return render(
+        return TemplateResponse(
             request,
             "podcasts/landing_page.html",
             {
@@ -35,7 +36,7 @@ def index(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    return redirect("podcasts:subscriptions")
+    return HttpResponseRedirect(reverse("podcasts:subscriptions"))
 
 
 @require_safe
@@ -66,7 +67,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/subscriptions.html",
         {
@@ -81,7 +82,8 @@ def discover(request: HttpRequest) -> HttpResponse:
     """Shows all promoted podcasts."""
 
     podcasts = _get_promoted_podcasts().order_by("-pub_date")
-    return render(
+
+    return TemplateResponse(
         request,
         "podcasts/discover.html",
         {
@@ -96,46 +98,51 @@ def discover(request: HttpRequest) -> HttpResponse:
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     """Search all public podcasts in database."""
 
-    if request.search:
-        podcasts = (
-            _get_podcasts()
-            .filter(private=False)
-            .search(request.search.value)
-            .order_by(
-                "-exact_match",
-                "-rank",
-                "-pub_date",
-            )
-        )
+    discover_url = reverse("podcasts:discover")
 
-        return render(
-            request,
-            "podcasts/search.html",
-            {
-                "podcasts": podcasts,
-                "clear_search_url": reverse("podcasts:discover"),
-            },
+    if not request.search:
+        return HttpResponseRedirect(discover_url)
+
+    podcasts = (
+        _get_podcasts()
+        .filter(private=False)
+        .search(request.search.value)
+        .order_by(
+            "-exact_match",
+            "-rank",
+            "-pub_date",
         )
-    return redirect("podcasts:discover")
+    )
+
+    return TemplateResponse(
+        request,
+        "podcasts/search.html",
+        {
+            "podcasts": podcasts,
+            "clear_search_url": discover_url,
+        },
+    )
 
 
 @require_safe
 @login_required
 def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
-    if request.search:
-        feeds = itunes.search(get_client(), request.search.value)
+    discover_url = reverse("podcasts:discover")
 
-        return render(
-            request,
-            "podcasts/search_itunes.html",
-            {
-                "feeds": feeds,
-                "clear_search_url": reverse("podcasts:discover"),
-            },
-        )
+    if not request.search:
+        return HttpResponseRedirect(discover_url)
 
-    return redirect("podcasts:discover")
+    feeds = itunes.search(get_client(), request.search.value)
+
+    return TemplateResponse(
+        request,
+        "podcasts/search_itunes.html",
+        {
+            "feeds": feeds,
+            "clear_search_url": reverse("podcasts:discover"),
+        },
+    )
 
 
 @require_safe
@@ -153,7 +160,7 @@ def podcast_detail(
         Episode.objects.filter(podcast=podcast_id).order_by("-pub_date").first()
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
@@ -181,7 +188,7 @@ def episodes(
         else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/episodes.html",
         {
@@ -210,7 +217,7 @@ def similar(
         .order_by("-relevance")[:PAGE_SIZE]
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/similar.html",
         {
@@ -241,7 +248,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         categories = categories.search(request.search.value)
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/categories.html",
         {
@@ -272,7 +279,7 @@ def category_detail(
         else podcasts.order_by("-pub_date")
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/category_detail.html",
         {
@@ -333,7 +340,7 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/private_feeds.html",
         {
@@ -358,14 +365,14 @@ def add_private_feed(
                     request,
                     "Podcast added to your Private Feeds and will appear here soon",
                 )
-                return redirect("podcasts:private_feeds")
+                return HttpResponseRedirect(reverse("podcasts:private_feeds"))
 
             messages.success(request, "Podcast added to your Private Feeds")
-            return redirect(podcast)
+            return HttpResponseRedirect(podcast.get_absolute_url())
     else:
         form = PrivateFeedForm(request.user)
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/private_feed_form.html",
         {
@@ -381,7 +388,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = _get_podcast_or_404(podcast_id, private=True)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Removed from Private Feeds")
-    return redirect("podcasts:private_feeds")
+    return HttpResponseRedirect(reverse("podcasts:private_feeds"))
 
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
@@ -398,8 +405,8 @@ def _get_promoted_podcasts() -> QuerySet[Podcast]:
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
-) -> HttpResponse:
-    return render(
+) -> TemplateResponse:
+    return TemplateResponse(
         request,
         "podcasts/_subscribe_button.html",
         {

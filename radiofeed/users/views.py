@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
@@ -24,13 +24,12 @@ def user_preferences(
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-
-            return redirect(request.path)
+            return HttpResponseRedirect(request.path)
 
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return render(
+    return TemplateResponse(
         request,
         "account/preferences.html",
         {"form": form},
@@ -54,11 +53,11 @@ def import_podcast_feeds(
             else:
                 messages.info(request, "No new podcasts found in uploaded file")
 
-            return redirect(request.path)
+            return HttpResponseRedirect(request.path)
     else:
         form = OpmlUploadForm()
 
-    return render(
+    return TemplateResponse(
         request,
         "account/podcast_feeds.html",
         {
@@ -81,7 +80,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .order_by("podcast__title")
     )
 
-    response = render(
+    response = TemplateResponse(
         request,
         "account/podcasts.opml",
         {
@@ -125,7 +124,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
             "url": reverse("episodes:history"),
         },
     ]
-    return render(request, "account/stats.html", {"stats": stats})
+    return TemplateResponse(request, "account/stats.html", {"stats": stats})
 
 
 @require_form_methods
@@ -136,5 +135,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect("podcasts:index")
-    return render(request, "account/delete_account.html")
+        return HttpResponseRedirect(reverse("podcasts:index"))
+    return TemplateResponse(request, "account/delete_account.html")

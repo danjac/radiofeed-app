@@ -4,8 +4,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseRedirect,
+)
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
@@ -41,7 +48,7 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date", "-id")
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/index.html",
         {
@@ -58,24 +65,24 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
     index_url = reverse("episodes:index")
 
-    if request.search:
-        episodes = (
-            Episode.objects.search(request.search.value)
-            .filter(podcast__private=False)
-            .select_related("podcast")
-            .order_by("-rank", "-pub_date")
-        )
+    if not request.search:
+        return HttpResponseRedirect(index_url)
 
-        return render(
-            request,
-            "episodes/search.html",
-            {
-                "episodes": episodes,
-                "clear_search_url": index_url,
-            },
-        )
+    episodes = (
+        Episode.objects.search(request.search.value)
+        .filter(podcast__private=False)
+        .select_related("podcast")
+        .order_by("-rank", "-pub_date")
+    )
 
-    return redirect(index_url)
+    return TemplateResponse(
+        request,
+        "episodes/search.html",
+        {
+            "episodes": episodes,
+            "clear_search_url": index_url,
+        },
+    )
 
 
 @require_safe
@@ -89,7 +96,7 @@ def episode_detail(
         pk=episode_id,
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/detail.html",
         {
@@ -119,7 +126,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.audio_player.set(episode.pk)
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/_audio_player_button.html",
         {
@@ -141,7 +148,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return render(
+        return TemplateResponse(
             request,
             "episodes/_audio_player_button.html",
             {
@@ -191,7 +198,7 @@ def history(request: HttpRequest) -> HttpResponse:
         else audio_logs.order_by("listened" if ordering_asc else "-listened")
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/history.html",
         {
@@ -218,7 +225,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     messages.info(request, "Removed from History")
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/_audio_log.html",
         {
@@ -241,7 +248,7 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
         else bookmarks.order_by("created" if ordering_asc else "-created")
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "episodes/bookmarks.html",
         {
@@ -281,8 +288,8 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
-) -> HttpResponse:
-    return render(
+) -> TemplateResponse:
+    return TemplateResponse(
         request,
         "episodes/_bookmark_button.html",
         {
