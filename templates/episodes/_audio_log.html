@@ -1,0 +1,34 @@
+{# vim: set filetype=htmldjango #}
+{% load heroicons %}
+<div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
+    {% if audio_log %}
+        <div class="flex-wrap items-center space-y-3 font-semibold text-gray-600 sm:flex sm:space-y-0 sm:space-x-3 dark:text-gray-300">
+            <div class="flex flex-wrap items-center space-x-3">
+                <div class="flex items-center">
+                    Listened
+                    {% include "_date.html" with value=audio_log.listened title="Listened" css_class="ml-2" %}
+                </div>
+                {% with percent_complete=audio_log.current_time|percentage:episode.duration_in_seconds %}
+                    {% if percent_complete and percent_complete < 100 %}
+                        <div>{{ percent_complete }}% Complete</div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            {% if not is_playing %}
+                <button class="inline-flex items-center btn btn-danger"
+                        title="Remove episode from your History"
+                        hx-disabled-elt="this"
+                        hx-target="#audio-log"
+                        hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                        hx-indicator="this"
+                        hx-push-url="false"
+                        hx-swap="outerHTML"
+                        hx-confirm="Are you sure you want to remove this episode from your History?"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                    {% heroicon_mini "trash" class="mr-2" %}
+                    Remove
+                </button>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

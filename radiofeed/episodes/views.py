@@ -121,7 +121,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return render(
         request,
-        "episodes/detail.html#audio_player_button",
+        "episodes/_audio_player_button.html",
         {
             "audio_log": audio_log,
             "episode": episode,
@@ -143,7 +143,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
         )
         return render(
             request,
-            "episodes/detail.html#audio_player_button",
+            "episodes/_audio_player_button.html",
             {
                 "audio_log": audio_log,
                 "episode": audio_log.episode,
@@ -220,7 +220,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     return render(
         request,
-        "episodes/detail.html#audio_log",
+        "episodes/_audio_log.html",
         {
             "episode": audio_log.episode,
         },
