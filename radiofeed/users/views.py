@@ -68,7 +68,7 @@ def import_podcast_feeds(
 
 @require_safe
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     subscriptions = (
@@ -95,7 +95,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @login_required
-def user_stats(request: HttpRequest) -> HttpResponse:
+def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     stats = [
         {

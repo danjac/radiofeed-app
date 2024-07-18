@@ -41,7 +41,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @login_required
-def subscriptions(request: HttpRequest) -> HttpResponse:
+def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page.
     If user does not have any subscribed podcasts, redirects to Discover page.
     """
@@ -78,7 +78,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @login_required
-def discover(request: HttpRequest) -> HttpResponse:
+def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
 
     podcasts = _get_promoted_podcasts().order_by("-pub_date")
@@ -149,7 +149,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 @login_required
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Details for a single podcast."""
 
     podcast = _get_podcast_or_404(podcast_id)
@@ -175,7 +175,7 @@ def podcast_detail(
 @login_required
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
 
@@ -206,7 +206,7 @@ def similar(
     request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
-) -> HttpResponse:
+) -> TemplateResponse:
     """List similar podcasts based on recommendations."""
 
     podcast = _get_podcast_or_404(podcast_id)
@@ -229,7 +229,7 @@ def similar(
 
 @require_safe
 @login_required
-def category_list(request: HttpRequest) -> HttpResponse:
+def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.annotate(
@@ -261,7 +261,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
 @login_required
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -306,7 +306,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_DELETE
 @htmx_login_required
-def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
     request.user.subscriptions.filter(podcast=podcast).delete()
@@ -316,7 +316,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_safe
 @login_required
-def private_feeds(request: HttpRequest) -> HttpResponse:
+def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = (
         _get_podcasts()
@@ -383,7 +383,7 @@ def add_private_feed(
 
 @require_DELETE
 @htmx_login_required
-def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRedirect:
     """Removes subscription to private feed."""
     podcast = _get_podcast_or_404(podcast_id, private=True)
     request.user.subscriptions.filter(podcast=podcast).delete()

@@ -31,7 +31,7 @@ from radiofeed.http import (
 
 @require_safe
 @login_required
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
     episodes = (
@@ -89,7 +89,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 @login_required
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
@@ -110,7 +110,7 @@ def episode_detail(
 
 @require_POST
 @htmx_login_required
-def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
@@ -187,7 +187,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @login_required
-def history(request: HttpRequest) -> HttpResponse:
+def history(request: HttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
     ordering_asc = request.GET.get("order", "desc") == "asc"
@@ -210,7 +210,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 @require_DELETE
 @htmx_login_required
-def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
     if request.audio_player.has(episode_id):
@@ -236,7 +236,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_safe
 @login_required
-def bookmarks(request: HttpRequest) -> HttpResponse:
+def bookmarks(request: HttpRequest) -> TemplateResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
 
@@ -276,7 +276,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_DELETE
 @htmx_login_required
-def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
     request.user.bookmarks.filter(episode=episode).delete()

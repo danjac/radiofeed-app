@@ -29,7 +29,7 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
-def about_page(request: HttpRequest) -> HttpResponse:
+def about_page(request: HttpRequest) -> TemplateResponse:
     """Renders about page."""
     return TemplateResponse(
         request,
@@ -59,7 +59,7 @@ def accept_cookies(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def favicon(_) -> HttpResponse:
+def favicon(_) -> FileResponse:
     """Generates favicon file."""
     return FileResponse(_favicon_path().open("rb"))
 
@@ -67,7 +67,7 @@ def favicon(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def service_worker(request: HttpRequest) -> HttpResponse:
+def service_worker(request: HttpRequest) -> TemplateResponse:
     """PWA service worker."""
     return TemplateResponse(
         request,
@@ -79,7 +79,7 @@ def service_worker(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def assetlinks(request: HttpRequest) -> HttpResponse:
+def assetlinks(request: HttpRequest) -> JsonResponse:
     """PWA assetlinks"""
     return JsonResponse(
         [
@@ -101,7 +101,7 @@ def assetlinks(request: HttpRequest) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def manifest(request: HttpRequest) -> HttpResponse:
+def manifest(request: HttpRequest) -> JsonResponse:
     """PWA manifest.json file."""
     start_url = reverse("podcasts:index")
 
@@ -206,7 +206,7 @@ def security(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, size: int) -> HttpResponse:
+def cover_image(request: HttpRequest, size: int) -> FileResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
