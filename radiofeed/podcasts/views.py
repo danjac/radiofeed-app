@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.decorators import (
@@ -19,9 +19,6 @@ from radiofeed.pagination import PAGE_SIZE
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-
-_discover_url = reverse_lazy("podcasts:discover")
-_private_feeds_url = reverse_lazy("podcasts:private_feeds")
 
 
 @require_safe
@@ -116,7 +113,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             "podcasts/search.html",
             {
                 "podcasts": podcasts,
-                "clear_search_url": _discover_url,
+                "clear_search_url": reverse("podcasts:discover"),
             },
         )
     return redirect("podcasts:discover")
@@ -134,11 +131,11 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             "podcasts/search_itunes.html",
             {
                 "feeds": feeds,
-                "clear_search_url": _discover_url,
+                "clear_search_url": reverse("podcasts:discover"),
             },
         )
 
-    return redirect(_discover_url)
+    return redirect("podcasts:discover")
 
 
 @require_safe
@@ -372,7 +369,7 @@ def add_private_feed(
                     request,
                     "Podcast added to your Private Feeds and will appear here soon",
                 )
-                return redirect(_private_feeds_url)
+                return redirect("podcasts:private_feeds")
 
             messages.success(request, "Podcast added to your Private Feeds")
             return redirect(podcast)
@@ -395,7 +392,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = _get_podcast_or_404(podcast_id, private=True)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Removed from Private Feeds")
-    return redirect(_private_feeds_url)
+    return redirect("podcasts:private_feeds")
 
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
