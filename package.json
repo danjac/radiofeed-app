@@ -24,6 +24,6 @@
         "globals": "^15.8.0",
         "npm-check-updates": "^16.14.20",
         "npm-update-all": "^1.0.1",
-        "tailwindcss": "^3.4.4"
+        "tailwindcss": "^3.4.6"
     }
 }
